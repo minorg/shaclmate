@@ -12,7 +12,7 @@ export function ObjectType_toRdfResourceFunctionDeclaration(
 
   const statements: Code[] = this.parentObjectTypes.map(
     (parentObjectType) =>
-      code`${parentObjectType.name}._toRdfResource({ ...parameters, ignoreRdfType: true });`,
+      code`${parentObjectType.alias.unsafeCoerce()}._toRdfResource({ ...parameters, ignoreRdfType: true });`,
   );
 
   if (this.toRdfTypes.length > 0) {
@@ -45,7 +45,7 @@ export function ObjectType_toRdfResourceFunctionDeclaration(
   statements.push(code`return ${variables.resource};`);
 
   return Maybe.of(code`\
-export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.name}> = (parameters) => {
+export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}> = (parameters) => {
 ${joinCode(statements)}
 }
 

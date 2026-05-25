@@ -343,7 +343,7 @@ export namespace AbstractType {
   export interface ConversionFunction {
     readonly code: Code;
     readonly sourceTypes: {
-      readonly name: Code | string;
+      readonly expression: Code;
       readonly typeof: Typeof;
     }[];
   }

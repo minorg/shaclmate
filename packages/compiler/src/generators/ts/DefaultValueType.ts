@@ -42,7 +42,7 @@ export class DefaultValueType<
       sourceTypes: itemConversionFunction.sourceTypes
         .filter((sourceType) => sourceType.typeof !== "undefined")
         .concat({
-          name: "undefined",
+          expression: code`undefined`,
           typeof: "undefined",
         }),
     });
@@ -78,7 +78,7 @@ export class DefaultValueType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.name}, ${this.itemType.schemaType}>`;
+    return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.expression}, ${this.itemType.schemaType}>`;
   }
 
   @Memoize()

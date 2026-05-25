@@ -14,7 +14,7 @@ export const schema = { properties: { ${joinCode(
     this.parentObjectTypes
       .map(
         (parentObjectType) =>
-          code`...${parentObjectType.name}.schema.properties`,
+          code`...${parentObjectType.alias.unsafeCoerce()}.schema.properties`,
       )
       .concat(
         this.properties.flatMap((property) =>

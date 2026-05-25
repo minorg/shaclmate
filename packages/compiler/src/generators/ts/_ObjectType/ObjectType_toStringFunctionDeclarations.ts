@@ -12,7 +12,7 @@ export function ObjectType_toStringFunctionDeclarations(
   if (this.parentObjectTypes.length > 0) {
     for (const parentObjectType of this.parentObjectTypes) {
       propertiesToStringInitializers.push(
-        code`...${parentObjectType.name}._propertiesToStrings(${this.thisVariable})`,
+        code`...${parentObjectType.alias.unsafeCoerce()}._propertiesToStrings(${this.thisVariable})`,
       );
     }
   }
@@ -33,18 +33,18 @@ export function ObjectType_toStringFunctionDeclarations(
 
   const propertiesToStringsReturnExpression = code`${this.reusables.snippets.compactRecord}({${joinCode(propertiesToStringInitializers, { on: "," })}})`;
   const toStringReturnExpression = (propertiesToStrings: Code) =>
-    code`\`${this.name}(\${JSON.stringify(${propertiesToStrings})})\``;
+    code`\`${this.alias.unsafeCoerce()}(\${JSON.stringify(${propertiesToStrings})})\``;
 
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return [
     // Use overloads to allow the function to be attached to an instance or used freestanding
     code`\
-export function _propertiesToStrings(${this.thisVariable}: ${this.name}): Record<string, string> {
+export function _propertiesToStrings(${this.thisVariable}: ${this.expression}): Record<string, string> {
   return ${propertiesToStringsReturnExpression};
 }`,
 
     code`\
-export function ${syntheticNamePrefix}toString(${this.thisVariable}: ${this.name}): string {
+export function ${syntheticNamePrefix}toString(${this.thisVariable}: ${this.expression}): string {
   return ${toStringReturnExpression(code`_propertiesToStrings(${this.thisVariable})`)};
 }`,
   ];

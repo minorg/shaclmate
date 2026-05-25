@@ -1,6 +1,8 @@
 import type { BlankNode } from "@rdfjs/types";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -10,24 +12,24 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       code: code`${this.reusables.snippets.convertToBlankNode}`,
       sourceTypes: [
         {
-          name: code`${this.reusables.imports.BlankNode}`,
+          expression: code`${this.reusables.imports.BlankNode}`,
           typeof: "object",
         },
         {
-          name: "undefined",
+          expression: code`undefined`,
           typeof: "undefined",
         },
       ],
     });
+  override readonly expression = code`${this.reusables.imports.BlankNode}`;
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBlankNode}`;
   override readonly filterType =
     code`${this.reusables.snippets.BlankNodeFilter}`;
+  override readonly kind = "BlankNode";
+  override readonly nodeKinds = nodeKinds;
   override readonly parseFunction =
     code`${this.reusables.snippets.parseBlankNode};`;
-  override readonly kind = "BlankNode";
-  override readonly name = code`${this.reusables.imports.BlankNode}`;
-  override readonly nodeKinds = nodeKinds;
   override readonly schemaType =
     code`${this.reusables.snippets.BlankNodeSchema}`;
   override readonly valueSparqlWherePatternsFunction =
@@ -51,7 +53,17 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   }: Parameters<
     AbstractIdentifierType<BlankNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.name}>(${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)))`;
+    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)))`;
+  }
+
+  override jsonSchema({
+    includeDiscriminantProperty,
+  }: Parameters<AbstractIdentifierType<BlankNode>["jsonSchema"]>[0]): Code {
+    const discriminantProperty = includeDiscriminantProperty
+      ? code`, termType: ${this.reusables.imports.z}.literal("BlankNode")`
+      : "";
+
+    return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   @Memoize()
@@ -65,16 +77,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     return new AbstractIdentifierType.JsonType(
       code`{ readonly "@id": string${discriminantProperty} }`,
     );
-  }
-
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<AbstractIdentifierType<BlankNode>["jsonSchema"]>[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.literal("BlankNode")`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   override toJsonExpression({

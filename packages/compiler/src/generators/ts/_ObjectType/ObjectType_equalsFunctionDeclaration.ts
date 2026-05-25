@@ -12,7 +12,7 @@ export function ObjectType_equalsFunctionDeclaration(
   const chain: Code[] = [];
   // For every parent, find the nearest equals implementation
   for (const parentObjectType of this.parentObjectTypes) {
-    chain.push(code`${parentObjectType.name}.equals(left, right)`);
+    chain.push(code`${parentObjectType.equalsFunction}(left, right)`);
   }
 
   for (const property of this.properties) {
@@ -26,7 +26,7 @@ export function ObjectType_equalsFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function equals(left: ${this.name}, right: ${this.name}): ${this.reusables.snippets.EqualsResult} {
+export function equals(left: ${this.expression}, right: ${this.expression}): ${this.reusables.snippets.EqualsResult} {
   return ${joinCode(
     chain.map((chainPart, chainPartI) =>
       chainPartI === 0 ? chainPart : code`chain(() => ${chainPart})`,

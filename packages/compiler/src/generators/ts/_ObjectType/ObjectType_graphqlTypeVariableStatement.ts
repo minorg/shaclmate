@@ -14,7 +14,7 @@ export function ObjectType_graphqlTypeVariableStatement(
   }
 
   return Maybe.of(code`\
-export const GraphQL = new ${this.reusables.imports.GraphQLObjectType}<${this.name}, { objectSet: ${this.configuration.syntheticNamePrefix}ObjectSet }>(${{
+export const GraphQL = new ${this.reusables.imports.GraphQLObjectType}<${this.expression}, { objectSet: ${this.configuration.syntheticNamePrefix}ObjectSet }>(${{
     description: this.comment.extract(),
     fields: code`() => (${this.properties.reduce(
       (fields, property) => {
@@ -41,6 +41,6 @@ export const GraphQL = new ${this.reusables.imports.GraphQLObjectType}<${this.na
       },
       {} as Record<string, object>,
     )})`,
-    name: this.name,
+    name: this.alias.unsafeCoerce(),
   }});`);
 }

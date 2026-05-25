@@ -1,3 +1,4 @@
+import { codeEquals } from "../codeEquals.js";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
@@ -9,7 +10,11 @@ export function identifierTypeDeclarations(this: ObjectType): readonly Code[] {
   const ancestorObjectTypeWithSameIdentifierType =
     this.ancestorObjectTypes.find(
       (ancestorObjectType) =>
-        ancestorObjectType.identifierType.name === this.identifierType.name,
+        ancestorObjectType.identifierType.kind === this.identifierType.kind &&
+        codeEquals(
+          ancestorObjectType.identifierType.expression,
+          this.identifierType.expression,
+        ),
     );
 
   if (ancestorObjectTypeWithSameIdentifierType) {
@@ -23,7 +28,7 @@ export function identifierTypeDeclarations(this: ObjectType): readonly Code[] {
 
   // Bespoke identifier type and associated functions
   return [
-    code`export type Identifier = ${this.identifierType.name};`,
+    code`export type Identifier = ${this.identifierType.expression};`,
     code`\
 export namespace Identifier {
   export const parse = ${this.identifierType.parseFunction};

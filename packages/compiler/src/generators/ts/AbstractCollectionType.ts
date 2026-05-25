@@ -46,9 +46,9 @@ export abstract class AbstractCollectionType<
 
     const sourceTypes: AbstractType.ConversionFunction["sourceTypes"] = [
       {
-        name: code`readonly (${joinCode(
+        expression: code`readonly (${joinCode(
           itemConversionFunction.sourceTypes.map(
-            (itemSourceType) => code`${itemSourceType.name}`,
+            (itemSourceType) => code`${itemSourceType.expression}`,
           ),
           { on: " | " },
         )})[]`,
@@ -57,7 +57,7 @@ export abstract class AbstractCollectionType<
     ];
     if (this.minCount === 0n) {
       sourceTypes.push({
-        name: "undefined",
+        expression: code`undefined`,
         typeof: "undefined",
       });
     }
@@ -74,8 +74,13 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
+  override get expression(): Code {
+    return code`${!this._mutable ? "readonly " : ""}(${this.itemType.expression})[]`;
+  }
+
+  @Memoize()
   get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterArray}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+    return code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()
@@ -98,11 +103,6 @@ export abstract class AbstractCollectionType<
 
   override get mutable(): boolean {
     return this._mutable || this.itemType.mutable;
-  }
-
-  @Memoize()
-  override get name(): Code {
-    return code`${!this._mutable ? "readonly " : ""}(${this.itemType.name})[]`;
   }
 
   @Memoize()
@@ -138,7 +138,7 @@ export abstract class AbstractCollectionType<
     if (this.minCount === 0n) {
       expression = code`(${expression} ?? [])`;
     }
-    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.name}>(${expression}.map(item => (${this.itemType.fromJsonExpression(
+    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${expression}.map(item => (${this.itemType.fromJsonExpression(
       {
         variables: { value: code`item` },
       },

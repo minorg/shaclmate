@@ -51,7 +51,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const conversionFunction = this.type.conversionFunction.extract();
 
     if (!conversionFunction) {
-      return Maybe.of(code`readonly ${this.name}: ${this.type.name};`);
+      return Maybe.of(code`readonly ${this.name}: ${this.type.expression};`);
     }
 
     let hasQuestionToken = false;
@@ -61,7 +61,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       if (type.typeof === "undefined") {
         hasQuestionToken = true;
       } else {
-        typeNames.push(code`${type.name}`);
+        typeNames.push(code`${type.expression}`);
       }
     }
 
@@ -81,7 +81,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       .alt(this.description)
       .alt(this.label)
       .map(tsComment)
-      .orDefault("")}${joinCode(lhs, { on: " " })}: ${this.type.name};`;
+      .orDefault("")}${joinCode(lhs, { on: " " })}: ${this.type.expression};`;
   }
 
   @Memoize()
@@ -164,11 +164,11 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const validationFunction = this.type.validationFunction.extract();
     let rhs: Code;
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.objectType.name}.schema.properties.${this.name}.type, value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.objectType.alias.unsafeCoerce()}.schema.properties.${this.name}.type, value))`;
     } else if (conversionFunction) {
       rhs = code`${conversionFunction}(${parameterVariable})`;
     } else if (validationFunction) {
-      rhs = code`${validationFunction}(${this.objectType.name}.schema.properties.${this.name}.type, ${parameterVariable})`;
+      rhs = code`${validationFunction}(${this.objectType.alias.unsafeCoerce()}.schema.properties.${this.name}.type, ${parameterVariable})`;
     } else {
       rhs = code`${this.reusables.imports.Either}.of(${parameterVariable})`;
     }
@@ -207,7 +207,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
             variables: {
               ...variables,
               ignoreRdfType: true,
-              propertyPath: code`${this.objectType.name}.schema.properties.${this.name}.path`,
+              propertyPath: code`${this.objectType.alias.unsafeCoerce()}.schema.properties.${this.name}.path`,
               resourceValues: code`resourceValues`,
             },
           },
@@ -308,7 +308,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         return [];
     }
 
-    const propertyPath = code`${this.objectType.name}.schema.properties.${this.name}.path`;
+    const propertyPath = code`${this.objectType.alias.unsafeCoerce()}.schema.properties.${this.name}.path`;
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
         {

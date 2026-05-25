@@ -7,10 +7,10 @@ export function ObjectType_interfaceDeclaration(this: ObjectType): Code {
 ${this.comment
   .alt(this.label)
   .map(tsComment)
-  .orDefault("")}export interface ${this.name}${
+  .orDefault("")}export interface ${this.alias.unsafeCoerce()}${
     this.parentObjectTypes.length > 0
       ? ` extends ${this.parentObjectTypes
-          .map((parentObjectType) => parentObjectType.name)
+          .map((parentObjectType) => parentObjectType.alias.unsafeCoerce())
           .join(", ")}`
       : ""
   } {

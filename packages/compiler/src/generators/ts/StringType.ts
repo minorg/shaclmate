@@ -1,6 +1,8 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { Memoize } from "typescript-memoize";
+
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
@@ -14,18 +16,21 @@ export class StringType extends AbstractPrimitiveType<string> {
   );
   override readonly hashFunction = code`${this.reusables.snippets.hashString}`;
   override readonly kind = "String";
-  override readonly schemaType =
-    code`${this.reusables.snippets.StringSchema}<${this.name}>`;
   override readonly typeofs = ["string" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
 
   @Memoize()
-  override get name(): string {
+  override get expression(): Code {
     if (this.primitiveIn.length > 0) {
-      return `${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
+      return code`${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
     }
-    return `string`;
+    return code`string`;
+  }
+
+  @Memoize()
+  override get schemaType(): Code {
+    return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
   }
 
   override jsonSchema(

@@ -25,7 +25,7 @@ export function ObjectType_focusSparqlWherePatternsFunctionDeclaration(
 
   for (const parentObjectType of this.parentObjectTypes) {
     statements.push(code`\
-patterns = patterns.concat(${parentObjectType.name}.focusSparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, preferredLanguages: variables.preferredLanguages, variablePrefix: variables.variablePrefix }}));`);
+patterns = patterns.concat(${parentObjectType.alias.unsafeCoerce()}.focusSparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, preferredLanguages: variables.preferredLanguages, variablePrefix: variables.variablePrefix }}));`);
     patternsVariableDeclarationKeyword = "let";
   }
 

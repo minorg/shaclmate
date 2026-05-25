@@ -29,7 +29,7 @@ export function ObjectType_filterFunctionDeclaration(
   statements.push(code`return true;`);
 
   return Maybe.of(code`\
-export function filter(filter: ${this.filterType}, value: ${this.name}): boolean {
+export function filter(filter: ${this.filterType}, value: ${this.expression}): boolean {
   ${joinCode(statements)}
 }`);
 }

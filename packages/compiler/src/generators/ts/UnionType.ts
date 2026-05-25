@@ -196,12 +196,12 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
       sourceTypes:
         this.discriminant.kind === "Typeof"
           ? this.members.map(({ primaryDiscriminantValue, type }) => ({
-              name: type.expression,
+              expression: type.expression,
               typeof: primaryDiscriminantValue as Typeof,
             }))
           : [
               {
-                name: this.expression,
+                expression: this.expression,
                 typeof: "object",
               },
             ],

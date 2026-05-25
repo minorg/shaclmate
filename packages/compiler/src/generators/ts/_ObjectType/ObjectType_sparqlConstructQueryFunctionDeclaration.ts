@@ -23,7 +23,7 @@ export function sparqlConstructQuery({ filter, ignoreRdfType, preferredLanguages
     prefixes: prefixes ?? {},
     queryType: "CONSTRUCT",
     template: (queryParameters.template ?? []).concat(
-      ${this.name}.focusSparqlConstructTriples({
+      ${this.alias}.focusSparqlConstructTriples({
         filter,
         focusIdentifier: subject,
         ignoreRdfType: !!ignoreRdfType,
@@ -33,7 +33,7 @@ export function sparqlConstructQuery({ filter, ignoreRdfType, preferredLanguages
     type: "query",
     where: (queryParameters.where ?? []).concat(
       ${this.reusables.snippets.normalizeSparqlWherePatterns}(
-        ${this.name}.focusSparqlWherePatterns({
+        ${this.alias}.focusSparqlWherePatterns({
           filter,
           focusIdentifier: subject,
           ignoreRdfType: !!ignoreRdfType,

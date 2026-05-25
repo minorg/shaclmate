@@ -56,7 +56,7 @@ export abstract class AbstractPrimitiveType<
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.name}>(${variables.value})`;
+    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${variables.value})`;
   }
 
   override graphqlResolveExpression({
@@ -67,7 +67,7 @@ export abstract class AbstractPrimitiveType<
 
   @Memoize()
   override jsonType(): AbstractLiteralType.JsonType {
-    return new AbstractLiteralType.JsonType(this.name);
+    return new AbstractLiteralType.JsonType(this.expression);
   }
 
   abstract override literalExpression(literal: Literal | ValueT): Code;

@@ -66,7 +66,7 @@ export abstract class AbstractContainerType<
       code: code`${this.reusables.snippets.identityConversionFunction}`,
       sourceTypes: [
         {
-          name: this.itemType.name,
+          expression: this.itemType.expression,
           typeof: this.itemType.typeofs[0],
         },
       ],

@@ -12,21 +12,21 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly kind = "Iri";
   override readonly nodeKinds = nodeKinds;
   override readonly schemaType =
-    code`${this.reusables.snippets.IriSchema}<${this.valueTypeName}>`;
+    code`${this.reusables.snippets.IriSchema}<${this.valueTypeExpression}>`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.iriSparqlWherePatterns}`;
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractIdentifierType.ConversionFunction> {
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToIri}<${this.valueTypeName}>`,
+      code: code`${this.reusables.snippets.convertToIri}<${this.valueTypeExpression}>`,
       sourceTypes: [
         {
-          name: this.valueTypeName,
+          expression: this.valueTypeExpression,
           typeof: "string" as const,
         },
         {
-          name: this.name,
+          expression: this.expression,
           typeof: "object" as const,
         },
       ],
@@ -34,25 +34,18 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }
 
   @Memoize()
-  override get name(): Code {
+  override get expression(): Code {
     if (this.in_.length > 0) {
-      return code`${this.reusables.imports.NamedNode}<${this.valueTypeName}>`;
+      return code`${this.reusables.imports.NamedNode}<${this.valueTypeExpression}>`;
     }
 
     return code`${this.reusables.imports.NamedNode}`;
   }
 
   @Memoize()
-  private get valueTypeName(): string {
-    return this.in_.length > 0
-      ? `(${this.in_.map((in_) => `"${in_.value}"`).join(" | ")})`
-      : "string";
-  }
-
-  @Memoize()
   get parseFunction(): Code {
     if (this.in_.length > 0) {
-      return code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.name});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
+      return code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.expression});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
     }
     return code`${this.reusables.snippets.parseIri}`;
   }
@@ -67,12 +60,19 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     return initializers;
   }
 
+  @Memoize()
+  private get valueTypeExpression(): Code {
+    return this.in_.length > 0
+      ? code`(${this.in_.map((in_) => `"${in_.value}"`).join(" | ")})`
+      : code`string`;
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<
     AbstractIdentifierType<NamedNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.name}>(${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"]))`;
+    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"]))`;
   }
 
   override jsonSchema({
@@ -103,7 +103,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
       : "";
 
     return new AbstractIdentifierType.JsonType(
-      code`{ readonly "@id": ${this.valueTypeName}${discriminantProperty} }`,
+      code`{ readonly "@id": ${this.valueTypeExpression}${discriminantProperty} }`,
     );
   }
 

@@ -24,8 +24,8 @@ export class ObjectUnionType extends UnionType<ObjectType> {
     return this.alias
       .map((alias) =>
         ObjectType_objectSetMethodNames.call({
+          alias,
           configuration: this.configuration,
-          name: alias,
         }),
       )
       .unsafeCoerce();
@@ -65,9 +65,9 @@ export class ObjectUnionType extends UnionType<ObjectType> {
         .map((code_) => singleEntryRecord(`sparqlConstructQuery`, code_))
         .orDefault({}),
       ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
+        alias,
         configuration: this.configuration,
         filterType: this.filterType,
-        name: alias,
         reusables: this.reusables,
       })
         .map((code_) => singleEntryRecord(`sparqlConstructQueryString`, code_))
@@ -198,7 +198,7 @@ export const GraphQL = new ${this.reusables.imports.GraphQLUnionType}(${{
     return singleEntryRecord(
       `Identifier`,
       code`\
-export type Identifier = ${this.identifierType.unsafeCoerce().name};
+export type Identifier = ${this.identifierType.unsafeCoerce().expression};
 export namespace Identifier {
   export const parse = ${this.identifierType.unsafeCoerce().parseFunction};
   export const stringify = ${this.identifierType.unsafeCoerce().stringifyFunction};

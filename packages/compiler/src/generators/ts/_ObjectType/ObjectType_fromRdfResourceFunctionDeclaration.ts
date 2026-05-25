@@ -35,7 +35,7 @@ export function ObjectType_fromRdfResourceFunctionDeclaration(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     chains.push({
-      expression: code`${parentObjectType.name}._fromRdfResource(${variables.resource}, { ...${optionsVariable}, ignoreRdfType: true })`,
+      expression: code`${parentObjectType.alias.unsafeCoerce()}._fromRdfResource(${variables.resource}, { ...${optionsVariable}, ignoreRdfType: true })`,
       variable: `super${parentObjectTypeI}`,
     });
     partials.push(`super${parentObjectTypeI}`);
@@ -92,7 +92,7 @@ export function ObjectType_fromRdfResourceFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export const _fromRdfResource: ${this.reusables.snippets._FromRdfResourceFunction}<${this.name}> = (${variables.resource}, ${optionsVariable}) => {
+export const _fromRdfResource: ${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}> = (${variables.resource}, ${optionsVariable}) => {
   return ${returnExpression};
 }
 

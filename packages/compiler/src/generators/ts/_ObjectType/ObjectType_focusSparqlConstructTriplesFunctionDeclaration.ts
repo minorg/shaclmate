@@ -24,7 +24,7 @@ export function ObjectType_focusSparqlConstructTriplesFunctionDeclaration(
 
   for (const parentObjectType of this.parentObjectTypes) {
     statements.push(
-      code`triples = triples.concat(${parentObjectType.name}.focusSparqlConstructTriples(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
+      code`triples = triples.concat(${parentObjectType.alias.unsafeCoerce()}.focusSparqlConstructTriples(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
     );
     triplesVariableDeclarationKeyword = "let";
   }

@@ -50,8 +50,8 @@ export const graphqlSchema = new ${this.reusables.imports.GraphQLSchema}({ query
             },
           },
           resolve: code`\
-  async (_source, args: { identifier: string }, { objectSet }): Promise<${namedObjectType.name}> => 
-    (await ${this.reusables.imports.EitherAsync}<Error, ${namedObjectType.name}>(async ({ liftEither }) => 
+  async (_source, args: { identifier: string }, { objectSet }): Promise<${namedObjectType.expression}> => 
+    (await ${this.reusables.imports.EitherAsync}<Error, ${namedObjectType.expression}>(async ({ liftEither }) => 
       liftEither(await objectSet.${namedObjectType.objectSetMethodNames.object}(await liftEither(${namedObjectType.identifierTypeAlias}.parse(args.identifier))))
     )).unsafeCoerce()`,
           type: namedObjectType.graphqlType.name,
@@ -85,8 +85,8 @@ export const graphqlSchema = new ${this.reusables.imports.GraphQLSchema}({ query
             },
           },
           resolve: code`\
-  async (_source, args: { identifiers: readonly string[] | null; limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly ${namedObjectType.name}[]> =>
-  (await ${this.reusables.imports.EitherAsync}<Error, readonly ${namedObjectType.name}[]>(async ({ liftEither }) => {
+  async (_source, args: { identifiers: readonly string[] | null; limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly ${namedObjectType.expression}[]> =>
+  (await ${this.reusables.imports.EitherAsync}<Error, readonly ${namedObjectType.expression}[]>(async ({ liftEither }) => {
     let filter: ${namedObjectType.filterType} | undefined;
     if (args.identifiers) {
       const identifiers: ${namedObjectType.identifierTypeAlias}[] = [];

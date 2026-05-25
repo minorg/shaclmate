@@ -1,7 +1,9 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { type IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
@@ -13,33 +15,33 @@ export class IdentifierType extends AbstractIdentifierType<
       code: code`${this.reusables.snippets.convertToIdentifier}`,
       sourceTypes: [
         {
-          name: code`${this.reusables.imports.BlankNode}`,
+          expression: code`${this.reusables.imports.BlankNode}`,
           typeof: "object",
         },
         {
-          name: code`${this.reusables.imports.NamedNode}`,
+          expression: code`${this.reusables.imports.NamedNode}`,
           typeof: "object",
         },
         {
-          name: "string",
+          expression: code`string`,
           typeof: "string",
         },
         {
-          name: "undefined",
+          expression: code`undefined`,
           typeof: "undefined",
         },
       ],
     });
+  override readonly expression =
+    code`(${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode})`;
   override readonly filterFunction =
     code`${this.reusables.snippets.filterIdentifier}`;
   override readonly filterType =
     code`${this.reusables.snippets.IdentifierFilter}`;
+  override readonly kind = "Identifier";
+  override readonly nodeKinds = nodeKinds;
   override readonly parseFunction =
     code`${this.reusables.snippets.parseIdentifier};`;
-  override readonly kind = "Identifier";
-  override readonly name =
-    code`(${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode})`;
-  override readonly nodeKinds = nodeKinds;
   override readonly schemaType =
     code`${this.reusables.snippets.IdentifierSchema}`;
   override readonly valueSparqlWherePatternsFunction =
@@ -65,7 +67,19 @@ export class IdentifierType extends AbstractIdentifierType<
   }: Parameters<
     AbstractIdentifierType<BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.name}>((${variables.value}["@id"].startsWith("_:") ? ${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)) : ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])))`;
+    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>((${variables.value}["@id"].startsWith("_:") ? ${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)) : ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])))`;
+  }
+
+  override jsonSchema({
+    includeDiscriminantProperty,
+  }: Parameters<
+    AbstractIdentifierType<BlankNode | NamedNode>["jsonSchema"]
+  >[0]): Code {
+    const discriminantProperty = includeDiscriminantProperty
+      ? code`, termType: ${this.reusables.imports.z}.enum(${arrayOf(...this.nodeKinds)})`
+      : "";
+
+    return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   @Memoize()
@@ -81,18 +95,6 @@ export class IdentifierType extends AbstractIdentifierType<
     return new AbstractIdentifierType.JsonType(
       code`{ readonly "@id": string${discriminantProperty} }`,
     );
-  }
-
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode | NamedNode>["jsonSchema"]
-  >[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.enum(${arrayOf(...this.nodeKinds)})`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   override toJsonExpression({

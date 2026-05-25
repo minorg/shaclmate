@@ -13,7 +13,7 @@ export function ObjectType_jsonUiSchemaFunctionDeclaration(
   const elements: Code[] = this.parentObjectTypes
     .map(
       (parentObjectType) =>
-        code`${parentObjectType.name}.Json.uiSchema({ scopePrefix })`,
+        code`${parentObjectType.alias.unsafeCoerce()}.Json.uiSchema({ scopePrefix })`,
     )
     .concat(
       this.properties.flatMap((property) =>
@@ -24,6 +24,6 @@ export function ObjectType_jsonUiSchemaFunctionDeclaration(
   return Maybe.of(code`\
 export function uiSchema(parameters?: { scopePrefix?: string }): any {
   const scopePrefix = parameters?.scopePrefix ?? "#";
-  return { "elements": [ ${joinCode(elements, { on: "," })} ], label: "${this.label.orDefault(this.name)}", type: "Group" };
+  return { "elements": [ ${joinCode(elements, { on: "," })} ], label: "${this.label.orDefault(this.alias.unsafeCoerce())}", type: "Group" };
 }`);
 }

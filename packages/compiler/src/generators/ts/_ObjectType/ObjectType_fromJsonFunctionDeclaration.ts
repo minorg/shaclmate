@@ -17,7 +17,7 @@ export function ObjectType_fromJsonFunctionDeclaration(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     chains.push({
-      expression: code`${parentObjectType.name}.fromJson(${variables.jsonObject})`,
+      expression: code`${parentObjectType.alias.unsafeCoerce()}.fromJson(${variables.jsonObject})`,
       variable: `super${parentObjectTypeI}`,
     });
   });
@@ -52,7 +52,7 @@ export function ObjectType_fromJsonFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function fromJson(${variables.jsonObject}: ${this.jsonType().name}): ${this.reusables.imports.Either}<Error, ${this.name}> {
+export function fromJson(${variables.jsonObject}: ${this.jsonType().name}): ${this.reusables.imports.Either}<Error, ${this.expression}> {
   return ${returnExpression};
 }`);
 }

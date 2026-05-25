@@ -20,7 +20,7 @@ export function ObjectType_createFunctionDeclaration(
   }
   for (const parentObjectType of this.parentObjectTypes) {
     parametersType.push(
-      code`Parameters<typeof ${parentObjectType.name}.create>[0]`,
+      code`Parameters<typeof ${parentObjectType.alias.unsafeCoerce()}.create>[0]`,
     );
   }
   if (parametersType.length === 0) {
@@ -41,7 +41,7 @@ export function ObjectType_createFunctionDeclaration(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     chains.push({
-      expression: code`${parentObjectType.name}.create(parameters)`,
+      expression: code`${parentObjectType.alias.unsafeCoerce()}.create(parameters)`,
       variable: `super${parentObjectTypeI}`,
     });
   });
@@ -87,11 +87,11 @@ export function ObjectType_createFunctionDeclaration(
     );
 
   return Maybe.of(code`\
-export function create(${parametersSignature}): ${this.reusables.imports.Either}<Error, ${this.name}> {
+export function create(${parametersSignature}): ${this.reusables.imports.Either}<Error, ${this.expression}> {
   return ${returnExpression};
 }
   
-export function createUnsafe(${parametersSignature}): ${this.name} {
+export function createUnsafe(${parametersSignature}): ${this.expression} {
   return create(parameters).unsafeCoerce();
 }`);
 }

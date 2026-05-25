@@ -33,7 +33,7 @@ export class IdentifierProperty extends AbstractProperty<
       if (type.typeof === "undefined") {
         hasQuestionToken = true;
       } else {
-        typeNames.push(code`${type.name}`);
+        typeNames.push(code`${type.expression}`);
       }
     }
 

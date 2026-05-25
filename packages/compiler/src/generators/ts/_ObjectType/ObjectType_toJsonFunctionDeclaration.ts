@@ -12,7 +12,7 @@ export function ObjectType_toJsonFunctionDeclaration(
   const jsonObjectMembers: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     jsonObjectMembers.push(
-      code`...${parentObjectType.name}.toJson(${this.thisVariable})`,
+      code`...${parentObjectType.alias.unsafeCoerce()}.toJson(${this.thisVariable})`,
     );
   }
 
@@ -49,7 +49,7 @@ export function ObjectType_toJsonFunctionDeclaration(
   // }
 
   return Maybe.of(code`\
-export function toJson(${this.thisVariable}: ${this.name}): ${returnType} {
+export function toJson(${this.thisVariable}: ${this.expression}): ${returnType} {
   return JSON.parse(JSON.stringify({ ${joinCode(jsonObjectMembers, { on: "," })} } satisfies ${this.jsonType().name}));
 }`);
 }

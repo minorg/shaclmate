@@ -29,7 +29,7 @@ export function ObjectType_filterTypeDeclaration(
     }
   }
   for (const parentObjectType of this.parentObjectTypes) {
-    members.push(code`${parentObjectType.name}.Filter`);
+    members.push(code`${parentObjectType.alias.unsafeCoerce()}.Filter`);
   }
 
   return Maybe.of(code`\

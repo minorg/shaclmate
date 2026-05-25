@@ -10,7 +10,7 @@ export function ObjectType_isTypeFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function is${this.name}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.name} {
+export function is${this.alias.unsafeCoerce()}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.alias.unsafeCoerce()} {
   switch (object.${this._discriminantProperty.name}) {
     ${this._discriminantProperty.type.descendantValues
       .concat(this._discriminantProperty.type.ownValues)

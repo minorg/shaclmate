@@ -28,11 +28,11 @@ export function ObjectType_hashFunctionDeclarations(
   const hashStatements: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     hashShaclPropertiesStatements.push(
-      code`${parentObjectType.name}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
+      code`${parentObjectType.alias.unsafeCoerce()}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
     );
   }
   hashStatements.push(
-    code`${this.name}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
+    code`${this.alias.unsafeCoerce()}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
   );
 
   hashShaclPropertiesStatements.push(...hashOwnShaclPropertiesStatements);
@@ -54,11 +54,11 @@ export function ObjectType_hashFunctionDeclarations(
 
   return [
     code`\
-export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.name}): HasherT {
+export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.expression}): HasherT {
   ${joinCode(hashStatements)}
 }`,
     code`\
-export function hashShaclProperties<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.name}): HasherT {
+export function hashShaclProperties<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.expression}): HasherT {
   ${joinCode(hashShaclPropertiesStatements)}
 }`,
   ];
