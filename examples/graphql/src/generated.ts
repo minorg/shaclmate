@@ -2317,12 +2317,9 @@ export namespace Child {
     name: "Child",
   });
 
-  export type Identifier = NamedNode;
+  export type Identifier = Parent.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = Parent.Identifier;
 
   export function filter(filter: Child.Filter, value: Child): boolean {
     if (!Parent.filter(filter, value)) {
