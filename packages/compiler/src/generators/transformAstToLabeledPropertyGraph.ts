@@ -19,17 +19,17 @@ export function transformAstToLabeledPropertyGraph(
       let itemType: ast.Type;
 
       switch (namedObjectTypeProperty.type.kind) {
-        case "DefaultValueType":
-        case "ListType":
-        case "OptionType":
-        case "SetType":
+        case "DefaultValue":
+        case "List":
+        case "Option":
+        case "Set":
           itemType = namedObjectTypeProperty.type.itemType;
           break;
-        case "LazyObjectType":
+        case "LazyObject":
           itemType = namedObjectTypeProperty.type.resolveType;
           break;
-        case "LazyObjectOptionType":
-        case "LazyObjectSetType":
+        case "LazyObjectOption":
+        case "LazyObjectSet":
           itemType = namedObjectTypeProperty.type.resolveType.itemType;
           break;
         default:
@@ -38,9 +38,9 @@ export function transformAstToLabeledPropertyGraph(
       }
 
       switch (itemType.kind) {
-        case "IntersectionType":
-        case "ObjectType":
-        case "UnionType":
+        case "Intersection":
+        case "Object":
+        case "Union":
           if (itemType.name.isJust()) {
             relationships.push({
               id: namedObjectTypeProperty.shapeIdentifier.toString(),

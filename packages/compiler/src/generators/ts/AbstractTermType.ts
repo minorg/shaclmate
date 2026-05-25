@@ -5,7 +5,6 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-import { removeUndefined } from "./removeUndefined.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -34,6 +33,7 @@ export abstract class AbstractTermType<
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
+  override readonly referencesObjectType = false;
   override readonly typeofs: readonly Typeof[] = ["object" as const];
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
@@ -63,24 +63,6 @@ export abstract class AbstractTermType<
       ownValues: [...this.nodeKinds].map(NodeKind.toTermType),
       type: "string" as const,
     });
-  }
-
-  @Memoize()
-  override get schema(): Code {
-    return code`${removeUndefined(this.schemaObject)}`;
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.in_.length > 0
-          ? code`[${joinCode(
-              this.in_.map((in_) => this.rdfjsTermExpression(in_)),
-              { on: ", " },
-            )}] as const`
-          : undefined,
-    };
   }
 
   @Memoize()

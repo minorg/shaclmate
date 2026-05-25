@@ -8,15 +8,15 @@ import type { ObjectUnionType } from "./ObjectUnionType.js";
 export class UnionType<
   MemberTypeT extends UnionType.MemberType = UnionType.MemberType,
 > extends AbstractCompoundType<UnionType.Member<MemberTypeT>, MemberTypeT> {
-  override readonly kind = "UnionType";
+  override readonly kind = "Union";
 
   isObjectUnionType(): this is ObjectUnionType {
     return (
       this.members.length > 0 &&
       this.members.every(
         (member) =>
-          member.type.kind === "ObjectType" ||
-          (member.type.kind === "UnionType" && member.type.isObjectUnionType()),
+          member.type.kind === "Object" ||
+          (member.type.kind === "Union" && member.type.isObjectUnionType()),
       )
     );
   }

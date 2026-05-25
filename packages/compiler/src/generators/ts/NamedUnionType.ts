@@ -6,7 +6,7 @@ import type { Code } from "./ts-poet-wrapper.js";
 
 export class NamedUnionType extends AbstractNamedUnionType<Type> {
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  override readonly kind = "NamedUnionType";
+  override readonly kind = "NamedUnion";
 
   override graphqlResolveExpression(): Code {
     throw new Error("GraphQL doesn't support scalar unions");

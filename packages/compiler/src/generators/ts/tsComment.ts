@@ -6,5 +6,5 @@ export function tsComment(comment: string): string {
     .trim()
     .split(/\r?\n|\r|\n/g)
     .map((line) => ` * ${line}`)
-    .join("\n")}\n */\n`;
+    .join("\n")}\n **/\n`;
 }

@@ -8,8 +8,8 @@ export const snippets_IriSchema: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}IriSchema`,
     code`\
-interface ${syntheticNamePrefix}IriSchema {
-  readonly in?: readonly ${imports.NamedNode}[];
+interface ${syntheticNamePrefix}IriSchema<IriT extends string = string> {
+  readonly in?: readonly ${imports.NamedNode}<IriT>[];
   readonly kind: "Iri";
 }`,
   );

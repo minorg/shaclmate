@@ -6,7 +6,6 @@ import { AbstractType } from "./AbstractType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
-import { removeUndefined } from "./removeUndefined.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -26,6 +25,7 @@ export abstract class AbstractLazyObjectType<
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
+  override readonly referencesObjectType = true;
   override readonly typeofs = ["object" as const];
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
@@ -48,11 +48,6 @@ export abstract class AbstractLazyObjectType<
   }
 
   @Memoize()
-  override get hashFunction(): Code {
-    return code`((hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName}))`;
-  }
-
-  @Memoize()
   get filterFunction(): Code {
     return code`((filter: ${this.filterType}, value: ${this.name}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
   }
@@ -65,6 +60,11 @@ export abstract class AbstractLazyObjectType<
     return this.resolveType.graphqlType;
   }
 
+  @Memoize()
+  override get hashFunction(): Code {
+    return code`((hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName}))`;
+  }
+
   override get name(): Code {
     return this.runtimeClass.name;
   }
@@ -73,9 +73,10 @@ export abstract class AbstractLazyObjectType<
     return this.partialType.recursive;
   }
 
-  @Memoize()
-  override get schema(): Code {
-    return code`${removeUndefined(this.schemaObject)}`;
+  protected override get schemaInitializers(): readonly Code[] {
+    return super.schemaInitializers.concat(
+      code`get partialType() { return ${this.partialType.schema}; }`,
+    );
   }
 
   @Memoize()
@@ -83,7 +84,6 @@ export abstract class AbstractLazyObjectType<
     return code`${{
       kind: this.kind,
       partialType: this.partialType.schemaType,
-      resolveType: this.resolveType.schemaType,
     }}`;
   }
 
@@ -93,21 +93,12 @@ export abstract class AbstractLazyObjectType<
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partial() }))`;
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partialType }))`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partial() }))`;
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      partial: code`() => (${this.partialType.schema})`,
-      // Commenting out to reduce schema size
-      // resolved: code`() => (${this.resolveType.schema})`,
-    };
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partialType }))`;
   }
 
   override jsonSchema(
@@ -159,6 +150,37 @@ export abstract class AbstractLazyObjectType<
     });
   }
 
+  protected resolveToPartialFunction<
+    ObjectTypeT extends AbstractLazyObjectType.ObjectTypeConstraint,
+  >({
+    partialType,
+    resolveType,
+  }: {
+    partialType: ObjectTypeT;
+    resolveType: ObjectTypeT;
+  }): Code {
+    if (partialType.kind === "NamedObjectType") {
+      return code`${partialType.name}.createUnsafe`;
+    }
+
+    invariant(partialType.kind === "NamedObjectUnion");
+    invariant(resolveType.kind === "NamedObjectUnion");
+
+    invariant(partialType.members.length === resolveType.members.length);
+
+    const caseBlocks = resolveType.members.map(
+      ({ discriminantValues }, memberI) => {
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialType.members[memberI].type.name}.createUnsafe(resolved);`;
+      },
+    );
+
+    caseBlocks.push(
+      code`default: resolved satisfies never; throw new Error("unrecognized type");`,
+    );
+
+    return code`((resolved: ${resolveType.name}) => { switch (resolved.${resolveType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} } })`;
+  }
+
   protected resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({
     resolvedNamedObjectUnionType,
     partialNamedObjectUnionType,
@@ -182,37 +204,6 @@ export abstract class AbstractLazyObjectType<
       code`default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
     );
     return code`switch (${variables.resolvedObjectUnion}.${resolvedNamedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
-  }
-
-  protected resolveToPartialFunction<
-    ObjectTypeT extends AbstractLazyObjectType.ObjectTypeConstraint,
-  >({
-    partialType,
-    resolveType,
-  }: {
-    partialType: ObjectTypeT;
-    resolveType: ObjectTypeT;
-  }): Code {
-    if (partialType.kind === "NamedObjectType") {
-      return code`${partialType.name}.createUnsafe`;
-    }
-
-    invariant(partialType.kind === "NamedObjectUnionType");
-    invariant(resolveType.kind === "NamedObjectUnionType");
-
-    invariant(partialType.members.length === resolveType.members.length);
-
-    const caseBlocks = resolveType.members.map(
-      ({ discriminantValues }, memberI) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialType.members[memberI].type.name}.createUnsafe(resolved);`;
-      },
-    );
-
-    caseBlocks.push(
-      code`default: resolved satisfies never; throw new Error("unrecognized type");`,
-    );
-
-    return code`((resolved: ${resolveType.name}) => { switch (resolved.${resolveType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} } })`;
   }
 }
 

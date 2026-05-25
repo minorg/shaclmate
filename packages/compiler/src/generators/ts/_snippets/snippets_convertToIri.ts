@@ -8,7 +8,7 @@ export const snippets_convertToIri: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIri`,
     code`\
-function ${syntheticNamePrefix}convertToIri<IriT extends string = string>(value: IriT | ${imports.NamedNode}<IriT>): ${imports.Either}<Error, ${imports.NamedNode}<IriT>> {
+function ${syntheticNamePrefix}convertToIri<IriT extends string>(value: IriT | ${imports.NamedNode}<IriT>): ${imports.Either}<Error, ${imports.NamedNode}<IriT>> {
   switch (typeof value) {
     case "object":
       return ${imports.Either}.of(value);

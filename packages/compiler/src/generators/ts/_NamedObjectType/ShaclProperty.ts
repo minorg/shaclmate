@@ -13,7 +13,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   private readonly display: boolean;
   private readonly label: Maybe<string>;
 
-  override readonly kind = "ShaclProperty";
+  override readonly kind = "Shacl";
   override readonly mutable: boolean;
   readonly path: PropertyPath;
   override readonly recursive: boolean;
@@ -136,25 +136,21 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     );
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      // comment: this.comment.map(JSON.stringify).extract(),
-      // description: this.description.map(JSON.stringify).extract(),
-      path:
-        this.configuration.features.has("Object.fromRdf") ||
-        this.configuration.features.has("Object.toRdf") ||
-        this.configuration.features.has("Object.SPARQL")
-          ? this.propertyPathToCode(this.path)
-          : undefined,
-      // label: this.label.map(JSON.stringify).extract(),
-      // mutable: this.mutable ? true : undefined,
-      // recursive: this.recursive ? true : undefined,
-      // visibility:
-      //   this.visibility !== "public"
-      //     ? `${JSON.stringify(this.visibility)} as const`
-      //     : undefined,
-    };
+  protected override get schemaInitializers(): readonly Code[] {
+    const initializers = super.schemaInitializers.concat();
+    if (
+      this.configuration.features.has("Object.fromRdf") ||
+      this.configuration.features.has("Object.toRdf")
+    ) {
+      initializers.push(code`path: ${this.propertyPathToCode(this.path)}`);
+    }
+    // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
+    if (this.recursive || this.type.referencesObjectType) {
+      initializers.push(code`get type() { return ${this.type.schema}; }`);
+    } else {
+      initializers.push(code`type: ${this.type.schema}`);
+    }
+    return initializers;
   }
 
   override constructorInitializer({
@@ -168,11 +164,11 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const validationFunction = this.type.validationFunction.extract();
     let rhs: Code;
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type(), value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type, value))`;
     } else if (conversionFunction) {
       rhs = code`${conversionFunction}(${parameterVariable})`;
     } else if (validationFunction) {
-      rhs = code`${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type(), ${parameterVariable})`;
+      rhs = code`${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type, ${parameterVariable})`;
     } else {
       rhs = code`${this.reusables.imports.Either}.of(${parameterVariable})`;
     }
@@ -340,12 +336,12 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         return code`{ members: [${joinCode(
           propertyPath.members.map((member) => this.propertyPathToCode(member)),
           { on: "," },
-        )}] as const, termType: ${literalOf(propertyPath.termType)} as const }`;
+        )}], termType: ${literalOf(propertyPath.termType)} }`;
       case "InversePath":
       case "OneOrMorePath":
       case "ZeroOrMorePath":
       case "ZeroOrOnePath":
-        return code`{ path: ${this.propertyPathToCode(propertyPath.path)}, termType: ${literalOf(propertyPath.termType)} as const }`;
+        return code`{ path: ${this.propertyPathToCode(propertyPath.path)}, termType: ${literalOf(propertyPath.termType)} }`;
       case "NamedNode":
         return this.rdfjsTermExpression(propertyPath);
     }

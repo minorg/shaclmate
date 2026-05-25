@@ -18,7 +18,6 @@ import type { LiteralType } from "./LiteralType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { NamedUnionType } from "./NamedUnionType.js";
-import { removeUndefined } from "./removeUndefined.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -31,11 +30,7 @@ export abstract class AbstractContainerType<
   ItemTypeT extends AbstractContainerType.ItemType,
 > extends AbstractType {
   override readonly declaration: Maybe<Code> = Maybe.empty();
-  abstract override readonly kind:
-    | "DefaultValueType"
-    | "ListType"
-    | "OptionType"
-    | "SetType";
+  abstract override readonly kind: "DefaultValue" | "List" | "Option" | "Set";
 
   /**
    * Container item type.
@@ -58,9 +53,8 @@ export abstract class AbstractContainerType<
     return this.itemType.recursive;
   }
 
-  @Memoize()
-  get schema(): Code {
-    return code`${removeUndefined(this.schemaObject)}`;
+  get referencesObjectType(): boolean {
+    return this.itemType.referencesObjectType;
   }
 
   override get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
@@ -85,11 +79,16 @@ export abstract class AbstractContainerType<
     return code`${this.reusables.snippets.identityValidationFunction}`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      item: code`() => (${this.itemType.schema})`,
-    };
+  protected override get schemaInitializers(): readonly Code[] {
+    const initializers = super.schemaInitializers.concat();
+    if (this.recursive || this.itemType.referencesObjectType) {
+      initializers.push(
+        code`get itemType() { return ${this.itemType.schema}; }`,
+      );
+    } else {
+      initializers.push(code`itemType: ${this.itemType.schema}`);
+    }
+    return initializers;
   }
 }
 
@@ -121,31 +120,31 @@ export namespace AbstractContainerType {
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
-      case "AnonymousUnionType":
-      case "BigDecimalType":
-      case "BigIntType":
-      case "BlankNodeType":
-      case "BooleanType":
-      case "DateTimeType":
-      case "DateType":
-      case "FloatType":
-      case "IdentifierType":
-      case "IntType":
-      case "IriType":
-      case "ListType":
-      case "LiteralType":
-      case "NamedObjectUnionType":
-      case "NamedUnionType":
+      case "AnonymousUnion":
+      case "BigDecimal":
+      case "BigInt":
+      case "BlankNode":
+      case "Boolean":
+      case "DateTime":
+      case "Date":
+      case "Float":
+      case "Identifier":
+      case "Int":
+      case "Iri":
+      case "List":
+      case "Literal":
+      case "NamedObjectUnion":
+      case "NamedUnion":
       case "NamedObjectType":
-      case "StringType":
-      case "TermType":
+      case "String":
+      case "Term":
         return true;
-      case "DefaultValueType":
-      case "LazyObjectOptionType":
-      case "LazyObjectSetType":
-      case "LazyObjectType":
-      case "OptionType":
-      case "SetType":
+      case "DefaultValue":
+      case "LazyObjectOption":
+      case "LazyObjectSet":
+      case "LazyObject":
+      case "Option":
+      case "Set":
         return false;
     }
   }

@@ -16,7 +16,7 @@ export function NamedObjectType_equalsFunctionDeclaration(
   }
 
   for (const property of this.properties) {
-    if (property.kind === "DiscriminantProperty") {
+    if (property.kind === "Discriminant") {
       continue;
     }
 

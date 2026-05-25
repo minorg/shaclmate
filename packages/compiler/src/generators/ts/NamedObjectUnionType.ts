@@ -20,7 +20,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
   readonly #identifierType: BlankNodeType | IdentifierType | IriType;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly kind = "NamedObjectUnionType";
+  readonly kind = "NamedObjectUnion";
   readonly synthetic: boolean;
 
   constructor({
@@ -268,7 +268,7 @@ export namespace Identifier {
           (ancestorObjectType) => ancestorObjectType.properties,
         ),
       )) {
-        if (memberTypeProperty.kind !== "ShaclProperty") {
+        if (memberTypeProperty.kind !== "Shacl") {
           continue;
         }
         let commonProperty = commonPropertiesByName[memberTypeProperty.name];
@@ -300,17 +300,15 @@ export namespace Identifier {
       if (!memberTypesWithProperty.every((value) => value)) {
         continue;
       }
-      propertiesObject.push(code`${property.name}: ${property.schema}`);
+      property.schema.ifJust(propertySchema => {
+        propertiesObject.push(code`${property.name}: ${propertySchema}`);
+      });
     }
 
     return singleEntryRecord(
       `schema`,
       code`\
-export const schema =
-${{
-  ...super.schemaObject,
-  properties: code`{ ${joinCode(propertiesObject, { on: ", " })} }`,
-}} as const;`,
+export const schema = { ${joinCode(super.schemaInitializers.concat(code`properties: { ${joinCode(propertiesObject, { on: ", " })} }`), { on: ", " })} } as const;`,
     );
   }
 

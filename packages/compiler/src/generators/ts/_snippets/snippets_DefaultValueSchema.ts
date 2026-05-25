@@ -9,7 +9,7 @@ export const snippets_DefaultValueSchema: SnippetFactory = ({
     code`\
 interface ${syntheticNamePrefix}DefaultValueSchema<DefaultValueT, ItemSchemaT> {
   readonly defaultValue: DefaultValueT;
-  readonly item: () => ItemSchemaT;
+  readonly itemType: ItemSchemaT;
   readonly kind: "DefaultValue";
 }`,
   );

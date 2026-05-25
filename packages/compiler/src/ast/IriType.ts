@@ -6,7 +6,7 @@ import { AbstractTermType } from "./AbstractTermType.js";
  * A type corresponding to sh:nodeKind sh:IRI.
  */
 export class IriType extends AbstractTermType<NamedNode, NamedNode> {
-  override readonly kind = "IriType";
+  override readonly kind = "Iri";
   override readonly nodeKinds = nodeKinds;
 }
 

@@ -31,17 +31,17 @@ export function transformShapeToAstCompoundType(
           .map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
       ),
     ).chain(([andConstraintShapes, xoneConstraintShapes]) => {
-      let compoundTypeKind: "IntersectionType" | "UnionType";
+      let compoundTypeKind: "Intersection" | "Union";
       // Distinguish constraints that take arbitrary shapes from those that only take node shapes
       // With the latter we'll do special transformations.
       let memberShapes: readonly input.Shape[];
 
       if (andConstraintShapes.length > 0) {
         memberShapes = andConstraintShapes;
-        compoundTypeKind = "IntersectionType";
+        compoundTypeKind = "Intersection";
       } else if (xoneConstraintShapes.length > 0) {
         memberShapes = xoneConstraintShapes;
-        compoundTypeKind = "UnionType";
+        compoundTypeKind = "Union";
       } else {
         return Either.of(Maybe.empty());
       }
@@ -50,7 +50,7 @@ export function transformShapeToAstCompoundType(
 
       const memberDiscriminantValues = new Set<number | string>();
       const compoundType: ast.IntersectionType | ast.UnionType = new (
-        compoundTypeKind === "IntersectionType"
+        compoundTypeKind === "Intersection"
           ? ast.IntersectionType
           : ast.UnionType
       )({
@@ -108,7 +108,7 @@ export function transformShapeToAstCompoundType(
               }
 
               let memberDiscriminantValue: number | string | undefined;
-              if (compoundTypeKind === "UnionType") {
+              if (compoundTypeKind === "Union") {
                 if (memberShape.$type === "NodeShape") {
                   memberDiscriminantValue =
                     memberShape.discriminantValue.extract();

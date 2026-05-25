@@ -9,7 +9,7 @@ export abstract class AbstractNumericType<
   ValueT extends bigint | number,
 > extends AbstractPrimitiveType<ValueT> {
   override readonly hashFunction = code`${this.reusables.snippets.hashNumeric}`;
-  abstract override readonly kind: "BigIntType" | "FloatType" | "IntType";
+  abstract override readonly kind: "BigInt" | "Float" | "Int";
 
   @Memoize()
   override get filterFunction(): Code {

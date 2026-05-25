@@ -72,7 +72,7 @@ export class ObjectType extends AbstractType {
   /**
    * Type discriminant.
    */
-  readonly kind = "ObjectType";
+  readonly kind = "Object";
   override readonly nodeKinds = nodeKinds;
 
   /**
@@ -387,15 +387,15 @@ export namespace ObjectType {
         const currentPropertyType = propertyType.at(-1)!;
 
         switch (currentPropertyType.kind) {
-          case "BlankNodeType":
-          case "IdentifierType":
-          case "IriType":
-          case "LiteralType":
-          case "TermType":
+          case "BlankNode":
+          case "Identifier":
+          case "Iri":
+          case "Literal":
+          case "Term":
             return false;
-          case "LazyObjectOptionType":
-          case "LazyObjectSetType":
-          case "LazyObjectType": {
+          case "LazyObjectOption":
+          case "LazyObjectSet":
+          case "LazyObject": {
             if (
               helper(
                 stack.concat({
@@ -427,7 +427,7 @@ export namespace ObjectType {
             return false;
           }
 
-          case "ObjectType": {
+          case "Object": {
             if (DEBUG) {
               process.stderr.write(`recurse into ${currentPropertyType}`);
             }
@@ -446,8 +446,8 @@ export namespace ObjectType {
 
             return false;
           }
-          case "IntersectionType":
-          case "UnionType": {
+          case "Intersection":
+          case "Union": {
             if (DEBUG) {
               process.stderr.write(`recurse into ${currentPropertyType}`);
             }
@@ -466,10 +466,10 @@ export namespace ObjectType {
             }
             return false;
           }
-          case "DefaultValueType":
-          case "ListType":
-          case "OptionType":
-          case "SetType":
+          case "DefaultValue":
+          case "List":
+          case "Option":
+          case "Set":
             return helper(
               stack.concat({
                 objectType,

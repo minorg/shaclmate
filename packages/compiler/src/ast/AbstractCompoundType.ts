@@ -33,7 +33,7 @@ export abstract class AbstractCompoundType<
   /**
    * Type discriminant
    */
-  abstract override readonly kind: "IntersectionType" | "UnionType";
+  abstract override readonly kind: "Intersection" | "Union";
 
   /**
    * Was this type synthesized or did it come from SHACL?
@@ -97,22 +97,22 @@ export namespace AbstractCompoundType {
 
   export function isMemberType(type: Type): type is MemberType {
     switch (type.kind) {
-      case "BlankNodeType":
-      case "IdentifierType":
-      case "IntersectionType":
-      case "IriType":
-      case "LiteralType":
-      case "ObjectType":
-      case "TermType":
-      case "UnionType":
+      case "BlankNode":
+      case "Identifier":
+      case "Intersection":
+      case "Iri":
+      case "Literal":
+      case "Object":
+      case "Term":
+      case "Union":
         return true;
-      case "DefaultValueType":
-      case "LazyObjectOptionType":
-      case "LazyObjectSetType":
-      case "LazyObjectType":
-      case "ListType":
-      case "OptionType":
-      case "SetType":
+      case "DefaultValue":
+      case "LazyObjectOption":
+      case "LazyObjectSet":
+      case "LazyObject":
+      case "List":
+      case "Option":
+      case "Set":
         return false;
     }
   }

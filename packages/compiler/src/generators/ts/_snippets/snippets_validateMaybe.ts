@@ -11,6 +11,6 @@ export const snippets_validateMaybe: SnippetFactory = ({
     code`\
 function ${syntheticNamePrefix}validateMaybe<ItemSchemaT, ItemValueT>(validateItem: ${snippets.ValidationFunction}<ItemSchemaT, ItemValueT>) {
   return (schema: ${snippets.MaybeSchema}<ItemSchemaT>, valueMaybe: ${imports.Maybe}<ItemValueT>): ${imports.Either}<Error, ${imports.Maybe}<ItemValueT>> =>
-    valueMaybe.map(value => validateItem(schema.item(), value).map(() => valueMaybe)).orDefault(${imports.Either}.of(valueMaybe));
+    valueMaybe.map(value => validateItem(schema.itemType, value).map(() => valueMaybe)).orDefault(${imports.Either}.of(valueMaybe));
 }`,
   );

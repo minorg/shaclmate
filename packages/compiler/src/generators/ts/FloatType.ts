@@ -7,7 +7,7 @@ import { AbstractNumericType } from "./AbstractNumericType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class FloatType extends AbstractNumericType<number> {
-  override readonly kind = "FloatType";
+  override readonly kind = "Float";
   override readonly typeofs = ["number" as const];
 
   @Memoize()

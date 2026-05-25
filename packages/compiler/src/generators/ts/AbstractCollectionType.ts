@@ -119,11 +119,14 @@ export abstract class AbstractCollectionType<
     );
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      minCount: this.minCount > 0n ? Number(this.minCount) : undefined,
-    };
+  protected override get schemaInitializers() {
+    let schemaInitializers = super.schemaInitializers;
+    if (this.minCount > 0n) {
+      schemaInitializers = schemaInitializers.concat(
+        code`minCount: ${Number(this.minCount)}`,
+      );
+    }
+    return schemaInitializers;
   }
 
   override fromJsonExpression({

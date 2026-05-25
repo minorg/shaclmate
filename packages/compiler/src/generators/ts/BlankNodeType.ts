@@ -25,7 +25,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     code`${this.reusables.snippets.BlankNodeFilter}`;
   override readonly parseFunction =
     code`${this.reusables.snippets.parseBlankNode};`;
-  override readonly kind = "BlankNodeType";
+  override readonly kind = "BlankNode";
   override readonly name = code`${this.reusables.imports.BlankNode}`;
   override readonly nodeKinds = nodeKinds;
   override readonly schemaType =

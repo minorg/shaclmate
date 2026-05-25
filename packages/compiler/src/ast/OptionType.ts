@@ -6,7 +6,7 @@ import { AbstractContainerType } from "./AbstractContainerType.js";
 export class OptionType<
   ItemTypeT extends OptionType.ItemType = OptionType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
-  override readonly kind = "OptionType";
+  override readonly kind = "Option";
 
   constructor({
     itemType,

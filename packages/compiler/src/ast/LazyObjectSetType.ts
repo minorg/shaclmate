@@ -5,5 +5,5 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
   SetType<AbstractLazyObjectType.ObjectTypeConstraint>
 > {
-  override readonly kind = "LazyObjectSetType";
+  override readonly kind = "LazyObjectSet";
 }

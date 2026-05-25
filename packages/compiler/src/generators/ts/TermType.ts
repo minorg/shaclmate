@@ -19,7 +19,7 @@ export class TermType<
   override readonly filterFunction =
     code`${this.reusables.snippets.filterTerm}`;
   override readonly filterType = code`${this.reusables.snippets.TermFilter}`;
-  override readonly kind = "TermType";
+  override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly schemaType = code`${this.reusables.snippets.TermSchema}`;
   override readonly valueSparqlWherePatternsFunction =

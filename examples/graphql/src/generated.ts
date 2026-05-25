@@ -249,6 +249,30 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
   };
 }
 
+function $ensureRdfResourceType(
+  resource: Resource,
+  types: readonly NamedNode[],
+  options: { graph: Exclude<Quad_Graph, Variable> | undefined },
+): Either<Error, undefined> {
+  return resource
+    .value($RdfVocabularies.rdf.type, options)
+    .chain((actualRdfTypeValue) => actualRdfTypeValue.toIri())
+    .chain((actualRdfType) => {
+      // Check the expected type and its known subtypes
+      for (const type of types) {
+        if (resource.isInstanceOf(type, options)) {
+          return Right(undefined);
+        }
+      }
+
+      return Left(
+        new Error(
+          `${resource.identifier} has unexpected RDF type (actual: ${actualRdfType}, expected one of ${types})`,
+        ),
+      );
+    });
+}
+
 function $filterArray<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
 ) {
@@ -580,8 +604,8 @@ const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
 interface $MaybeSchema<ItemSchemaT> {
-  readonly item: () => ItemSchemaT;
-  readonly kind: "Maybe";
+  readonly itemType: ItemSchemaT;
+  readonly kind: "Option";
 }
 
 function $monkeyPatchObject<T extends object>(
@@ -788,7 +812,7 @@ function $shaclPropertyFromRdf<T>({
 export interface $ShaclPropertySchema<TypeSchemaT = object> {
   readonly kind: "Shacl";
   readonly path: $PropertyPath;
-  readonly type: () => TypeSchemaT;
+  readonly type: TypeSchemaT;
 }
 
 interface $StringFilter {
@@ -834,7 +858,9 @@ function $validateMaybe<ItemSchemaT, ItemValueT>(
     valueMaybe: Maybe<ItemValueT>,
   ): Either<Error, Maybe<ItemValueT>> =>
     valueMaybe
-      .map((value) => validateItem(schema.item(), value).map(() => valueMaybe))
+      .map((value) =>
+        validateItem(schema.itemType, value).map(() => valueMaybe),
+      )
       .orDefault(Either.of(valueMaybe));
 }
 
@@ -891,6 +917,7 @@ function $wrap_ToRdfResourceFunction<
 }
 export interface $DefaultPartial {
   readonly $identifier: () => $DefaultPartial.Identifier;
+
   readonly $type: "$DefaultPartial";
 }
 
@@ -992,15 +1019,8 @@ export namespace $DefaultPartial {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["$DefaultPartial"],
-        }),
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
       },
     },
   } as const;
@@ -1031,10 +1051,12 @@ export namespace $DefaultPartial {
 
 export interface UnionMember2 {
   readonly $identifier: () => UnionMember2.Identifier;
-  readonly $type: "UnionMember2" /**
-   * Optional string property
-   */;
 
+  readonly $type: "UnionMember2";
+
+  /**
+   * Optional string property
+   */
   readonly optionalStringProperty: Maybe<string>;
 }
 
@@ -1053,7 +1075,7 @@ export namespace UnionMember2 {
         parameters?.optionalStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          UnionMember2.schema.properties.optionalStringProperty.type(),
+          UnionMember2.schema.properties.optionalStringProperty.type,
           value,
         ),
       ),
@@ -1142,31 +1164,9 @@ export namespace UnionMember2 {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/UnionMember2":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(UnionMember2.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [UnionMember2.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -1239,25 +1239,18 @@ export namespace UnionMember2 {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["UnionMember2"],
-        }),
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
       },
       optionalStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
     },
   } as const;
@@ -1302,10 +1295,12 @@ export namespace UnionMember2 {
 
 export interface UnionMember1 {
   readonly $identifier: () => UnionMember1.Identifier;
-  readonly $type: "UnionMember1" /**
-   * Optional number property
-   */;
 
+  readonly $type: "UnionMember1";
+
+  /**
+   * Optional number property
+   */
   readonly optionalNumberProperty: Maybe<number>;
 }
 
@@ -1324,7 +1319,7 @@ export namespace UnionMember1 {
         parameters?.optionalNumberProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          UnionMember1.schema.properties.optionalNumberProperty.type(),
+          UnionMember1.schema.properties.optionalNumberProperty.type,
           value,
         ),
       ),
@@ -1413,31 +1408,9 @@ export namespace UnionMember1 {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/UnionMember1":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(UnionMember1.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [UnionMember1.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -1504,25 +1477,15 @@ export namespace UnionMember1 {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["UnionMember1"],
-        }),
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
       },
       optionalNumberProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Float" as const }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
         ),
+        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
       },
     },
   } as const;
@@ -1569,18 +1532,22 @@ export namespace UnionMember1 {
 
 export interface Nested {
   readonly $identifier: () => Nested.Identifier;
-  readonly $type: "Nested" /**
+
+  readonly $type: "Nested";
+
+  /**
    * Optional number property
-   */;
+   */
+  readonly optionalNumberProperty: Maybe<number>;
 
-  readonly optionalNumberProperty: Maybe<number> /**
+  /**
    * Optional string property
-   */;
+   */
+  readonly optionalStringProperty: Maybe<string>;
 
-  readonly optionalStringProperty: Maybe<string> /**
+  /**
    * Required string property
-   */;
-
+   */
   readonly requiredStringProperty: string;
 }
 
@@ -1601,7 +1568,7 @@ export namespace Nested {
         parameters.optionalNumberProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          UnionMember1.schema.properties.optionalNumberProperty.type(),
+          UnionMember1.schema.properties.optionalNumberProperty.type,
           value,
         ),
       ),
@@ -1609,7 +1576,7 @@ export namespace Nested {
         parameters.optionalStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          UnionMember2.schema.properties.optionalStringProperty.type(),
+          UnionMember2.schema.properties.optionalStringProperty.type,
           value,
         ),
       ),
@@ -1732,31 +1699,9 @@ export namespace Nested {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/Nested":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(Nested.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [Nested.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -1863,42 +1808,32 @@ export namespace Nested {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["Nested"],
-        }),
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
       },
       optionalNumberProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Float" as const }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
         ),
+        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
       },
       optionalStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       requiredStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
+        type: { kind: "String" as const },
       },
     },
   } as const;
@@ -1955,10 +1890,12 @@ export namespace Nested {
 
 export interface Parent {
   readonly $identifier: () => Parent.Identifier;
-  readonly $type: "Parent" | "Child" /**
-   * Parent string property
-   */;
 
+  readonly $type: "Parent" | "Child";
+
+  /**
+   * Parent string property
+   */
   readonly parentStringProperty: Maybe<string>;
 }
 
@@ -1975,7 +1912,7 @@ export namespace Parent {
         parameters.parentStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          Parent.schema.properties.parentStringProperty.type(),
+          Parent.schema.properties.parentStringProperty.type,
           value,
         ),
       ),
@@ -2056,32 +1993,11 @@ export namespace Parent {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/Parent":
-                case "http://example.com/Child":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(Parent.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Parent)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [Parent.fromRdfType, Child.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -2154,25 +2070,14 @@ export namespace Parent {
 
   export const schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          descendantValues: ["Child"],
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["Parent"],
-        }),
-      },
+      $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
       parentStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/parentStringProperty"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
     },
   } as const;
@@ -2215,38 +2120,45 @@ export namespace Parent {
 
 export interface Child extends Parent {
   readonly $identifier: () => Child.Identifier;
-  readonly $type: "Child" /**
+
+  readonly $type: "Child";
+
+  /**
    * Child string property
-   */;
+   */
+  readonly childStringProperty: Maybe<string>;
 
-  readonly childStringProperty: Maybe<string> /**
+  /**
    * Lazy object set property
-   */;
-
+   */
   readonly lazyObjectSetProperty: $LazyObjectSet<
     Nested.Identifier,
     $DefaultPartial,
     Nested
-  > /**
-   * Optional lazy object property
-   */;
+  >;
 
+  /**
+   * Optional lazy object property
+   */
   readonly optionalLazyObjectProperty: $LazyObjectOption<
     Nested.Identifier,
     $DefaultPartial,
     Nested
-  > /**
+  >;
+
+  /**
    * Optional object property
-   */;
+   */
+  readonly optionalObjectProperty: Maybe<Nested>;
 
-  readonly optionalObjectProperty: Maybe<Nested> /**
+  /**
    * Optional string property
-   */;
+   */
+  readonly optionalStringProperty: Maybe<string>;
 
-  readonly optionalStringProperty: Maybe<string> /**
+  /**
    * Required string property
-   */;
-
+   */
   readonly requiredStringProperty: string;
 }
 
@@ -2276,7 +2188,7 @@ export namespace Child {
           parameters.childStringProperty,
         ).chain((value) =>
           $validateMaybe($identityValidationFunction)(
-            Child.schema.properties.childStringProperty.type(),
+            Child.schema.properties.childStringProperty.type,
             value,
           ),
         ),
@@ -2294,7 +2206,7 @@ export namespace Child {
           parameters.optionalObjectProperty,
         ).chain((value) =>
           $validateMaybe($identityValidationFunction)(
-            Child.schema.properties.optionalObjectProperty.type(),
+            Child.schema.properties.optionalObjectProperty.type,
             value,
           ),
         ),
@@ -2302,7 +2214,7 @@ export namespace Child {
           parameters.optionalStringProperty,
         ).chain((value) =>
           $validateMaybe($identityValidationFunction)(
-            UnionMember2.schema.properties.optionalStringProperty.type(),
+            UnionMember2.schema.properties.optionalStringProperty.type,
             value,
           ),
         ),
@@ -2510,31 +2422,9 @@ export namespace Child {
       ignoreRdfType: true,
     }).chain((super0) =>
       (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/Child":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(Child.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Child)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [Child.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         $sequenceRecord({
@@ -2759,72 +2649,81 @@ export namespace Child {
   export const schema = {
     properties: {
       ...Parent.schema.properties,
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["Child"],
-        }),
-      },
+      $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
       childStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/childStringProperty"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       lazyObjectSetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectSet" as const,
-          partial: () => ({
-            kind: "Set" as const,
-            item: () => $DefaultPartial.schema,
-          }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazyObjectSetProperty"),
+        get type() {
+          return {
+            kind: "LazyObjectSet" as const,
+            get partialType() {
+              return {
+                kind: "Set" as const,
+                get itemType() {
+                  return $DefaultPartial.schema;
+                },
+              };
+            },
+          };
+        },
       },
       optionalLazyObjectProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => $DefaultPartial.schema,
-          }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalLazyObjectProperty",
         ),
+        get type() {
+          return {
+            kind: "LazyObjectOption" as const,
+            get partialType() {
+              return {
+                kind: "Option" as const,
+                get itemType() {
+                  return $DefaultPartial.schema;
+                },
+              };
+            },
+          };
+        },
       },
       optionalObjectProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Maybe" as const, item: () => Nested.schema }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalObjectProperty",
         ),
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return Nested.schema;
+            },
+          };
+        },
       },
       optionalStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       requiredStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
+        type: { kind: "String" as const },
       },
     },
   } as const;

@@ -7,8 +7,8 @@ export const snippets_BooleanSchema: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}BooleanSchema`,
     code`\
-interface ${syntheticNamePrefix}BooleanSchema {
+interface ${syntheticNamePrefix}BooleanSchema<T extends boolean> {
+  readonly in?: readonly T[];
   readonly kind: "Boolean";
-  readonly in?: readonly boolean[];
 }`,
   );

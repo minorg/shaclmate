@@ -1,7 +1,6 @@
-import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_fromRdfResourceFunctionDeclaration(
   this: NamedObjectType,
@@ -42,32 +41,9 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
     partials.push(`super${parentObjectTypeI}`);
   });
 
-  this.fromRdfType.ifJust((fromRdfType) => {
-    const fromRdfTypeVariable = this.fromRdfTypeVariable.unsafeCoerce();
-    const predicate = this.rdfjsTermExpression(rdf.type);
-    // Check the expected type and its known subtypes
-    const cases = new Set<string>();
-    cases.add(fromRdfType.value);
-    for (const descendantFromRdfType of this.descendantFromRdfTypes) {
-      cases.add(descendantFromRdfType.value);
-    }
+  this.fromRdfTypeVariable.ifJust((fromRdfTypeVariable) => {
     chains.push({
-      expression: code`!${variables.ignoreRdfType} ? ${variables.resource}.value(${predicate}, ${{ graph: variables.graph }})
-    .chain(actualRdfType => actualRdfType.toIri())
-    .chain((actualRdfType) => {
-      // Check the expected type and its known subtypes
-      switch (actualRdfType.value) {
-        ${[...cases].map((fromRdfType) => `case "${fromRdfType}":`).join("\n")}
-          return ${this.reusables.imports.Right}(true as const);
-      }
-
-      // Check arbitrary rdfs:subClassOf's of the expected type
-      if (${variables.resource}.isInstanceOf(${fromRdfTypeVariable}, ${{ graph: variables.graph }})) {
-        return ${this.reusables.imports.Right}(true as const);
-      }
-
-      return ${this.reusables.imports.Left}(new Error(\`\${${variables.resource}.identifier} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
-    }) : ${this.reusables.imports.Right}(true as const)`,
+      expression: code`!${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.resource}, ${arrayOf(fromRdfTypeVariable, ...this.descendantFromRdfTypeVariables)}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
       variable: `_rdfTypeCheck`,
     });
   });

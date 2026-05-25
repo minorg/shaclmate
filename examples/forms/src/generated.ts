@@ -29,7 +29,7 @@ export type $_ToRdfResourceFunction<
 }) => void;
 
 interface $CollectionSchema<ItemSchemaT> {
-  readonly item: () => ItemSchemaT;
+  readonly itemType: ItemSchemaT;
   readonly kind: "List" | "Set";
   readonly minCount?: number;
 }
@@ -129,8 +129,8 @@ function $identityValidationFunction<T>(
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 interface $MaybeSchema<ItemSchemaT> {
-  readonly item: () => ItemSchemaT;
-  readonly kind: "Maybe";
+  readonly itemType: ItemSchemaT;
+  readonly kind: "Option";
 }
 
 function $monkeyPatchObject<T extends object>(
@@ -329,7 +329,7 @@ function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
     }
 
     return Either.sequence(
-      valueArray.map((value) => validateItem(schema.item(), value)),
+      valueArray.map((value) => validateItem(schema.itemType, value)),
     ) as Either<Error, EitherR>;
   };
 }
@@ -342,7 +342,9 @@ function $validateMaybe<ItemSchemaT, ItemValueT>(
     valueMaybe: Maybe<ItemValueT>,
   ): Either<Error, Maybe<ItemValueT>> =>
     valueMaybe
-      .map((value) => validateItem(schema.item(), value).map(() => valueMaybe))
+      .map((value) =>
+        validateItem(schema.itemType, value).map(() => valueMaybe),
+      )
       .orDefault(Either.of(valueMaybe));
 }
 
@@ -378,10 +380,12 @@ function $wrap_ToRdfResourceFunction<
 }
 export interface NestedNodeShape {
   readonly $identifier: () => NestedNodeShape.Identifier;
-  readonly $type: "NestedNodeShape" /**
-   * Required string
-   */;
 
+  readonly $type: "NestedNodeShape";
+
+  /**
+   * Required string
+   */
   readonly requiredStringProperty: string;
 }
 
@@ -509,22 +513,15 @@ export namespace NestedNodeShape {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NestedNodeShape"],
-        }),
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
       },
       requiredStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
+        type: { kind: "String" as const },
       },
     },
   } as const;
@@ -575,30 +572,37 @@ export namespace NestedNodeShape {
 
 export interface FormNodeShape {
   readonly $identifier: () => FormNodeShape.Identifier;
-  readonly $type: "FormNodeShape" /**
+
+  readonly $type: "FormNodeShape";
+
+  /**
    * Empty string set
-   */;
+   */
+  readonly emptyStringSetProperty: readonly string[];
 
-  readonly emptyStringSetProperty: readonly string[] /**
+  /**
    * Nested object
-   */;
+   */
+  readonly nestedObjectProperty: NestedNodeShape;
 
-  readonly nestedObjectProperty: NestedNodeShape /**
+  /**
    * Non-empty string set
-   */;
+   */
+  readonly nonEmptyStringSetProperty: readonly string[];
 
-  readonly nonEmptyStringSetProperty: readonly string[] /**
+  /**
    * Optional string
-   */;
+   */
+  readonly optionalStringProperty: Maybe<string>;
 
-  readonly optionalStringProperty: Maybe<string> /**
+  /**
    * Required int
-   */;
+   */
+  readonly requiredIntProperty: number;
 
-  readonly requiredIntProperty: number /**
+  /**
    * Required string
-   */;
-
+   */
   readonly requiredStringProperty: string;
 }
 
@@ -623,7 +627,7 @@ export namespace FormNodeShape {
         true,
       )(parameters.emptyStringSetProperty).chain((value) =>
         $validateArray($identityValidationFunction, true)(
-          FormNodeShape.schema.properties.emptyStringSetProperty.type(),
+          FormNodeShape.schema.properties.emptyStringSetProperty.type,
           value,
         ),
       ),
@@ -633,7 +637,7 @@ export namespace FormNodeShape {
         true,
       )(parameters.nonEmptyStringSetProperty).chain((value) =>
         $validateArray($identityValidationFunction, true)(
-          FormNodeShape.schema.properties.nonEmptyStringSetProperty.type(),
+          FormNodeShape.schema.properties.nonEmptyStringSetProperty.type,
           value,
         ),
       ),
@@ -641,7 +645,7 @@ export namespace FormNodeShape {
         parameters.optionalStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          FormNodeShape.schema.properties.optionalStringProperty.type(),
+          FormNodeShape.schema.properties.optionalStringProperty.type,
           value,
         ),
       ),
@@ -834,63 +838,55 @@ export namespace FormNodeShape {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["FormNodeShape"],
-        }),
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
       },
       emptyStringSetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
         ),
+        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       nestedObjectProperty: {
-        kind: "Shacl" as const,
-        type: () => NestedNodeShape.schema,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nestedObjectProperty"),
+        get type() {
+          return NestedNodeShape.schema;
+        },
       },
       nonEmptyStringSetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "String" as const }),
-          minCount: 1,
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/nonEmptyStringSetProperty",
         ),
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "String" as const },
+          minCount: 1,
+        },
       },
       optionalStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       requiredIntProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Int" as const }),
+        kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/requiredIntProperty"),
+        type: { kind: "Int" as const },
       },
       requiredStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
+        type: { kind: "String" as const },
       },
     },
   } as const;
@@ -1058,11 +1054,11 @@ export namespace $Object {
     },
     properties: {
       requiredStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
+        type: { kind: "String" as const },
       },
     },
   } as const;

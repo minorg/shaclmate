@@ -55,6 +55,7 @@ export class NamedObjectType extends AbstractType {
   override readonly kind = "NamedObjectType";
   override readonly name: string;
   override readonly recursive: boolean;
+  override readonly referencesObjectType = true;
   readonly synthetic: boolean;
   override readonly typeofs = ["object" as const];
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
@@ -337,7 +338,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${this.reusables.imports.Resource}${this.identifierType.kind === "IriType" ? code`<${this.reusables.imports.NamedNode}>` : ""}`;
+    return code`${this.reusables.imports.Resource}${this.identifierType.kind === "Iri" ? code`<${this.reusables.imports.NamedNode}>` : ""}`;
   }
 
   @Memoize()

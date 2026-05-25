@@ -19,11 +19,7 @@ export abstract class AbstractContainerType<
   ItemTypeT extends
     AbstractContainerType.ItemType = AbstractContainerType.ItemType,
 > extends AbstractType {
-  abstract override readonly kind:
-    | "DefaultValueType"
-    | "ListType"
-    | "OptionType"
-    | "SetType";
+  abstract override readonly kind: "DefaultValue" | "List" | "Option" | "Set";
 
   /**
    * Container item type.
@@ -84,22 +80,22 @@ export namespace AbstractContainerType {
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
-      case "BlankNodeType":
-      case "IdentifierType":
-      case "IntersectionType":
-      case "IriType":
-      case "ListType":
-      case "LiteralType":
-      case "ObjectType":
-      case "TermType":
-      case "UnionType":
+      case "BlankNode":
+      case "Identifier":
+      case "Intersection":
+      case "Iri":
+      case "List":
+      case "Literal":
+      case "Object":
+      case "Term":
+      case "Union":
         return true;
-      case "DefaultValueType":
-      case "LazyObjectOptionType":
-      case "LazyObjectSetType":
-      case "LazyObjectType":
-      case "OptionType":
-      case "SetType":
+      case "DefaultValue":
+      case "LazyObjectOption":
+      case "LazyObjectSet":
+      case "LazyObject":
+      case "Option":
+      case "Set":
         return false;
     }
   }

@@ -12,7 +12,7 @@ export function NamedObjectType_hashFunctionDeclarations(
 
   const hashOwnShaclPropertiesStatements = this.properties.flatMap(
     (property) =>
-      property.kind === "ShaclProperty"
+      property.kind === "Shacl"
         ? property.hashStatements({
             variables: {
               hasher: hasherVariable,
@@ -40,7 +40,7 @@ export function NamedObjectType_hashFunctionDeclarations(
 
   hashStatements.push(
     ...this.properties
-      .filter((property) => property.kind !== "ShaclProperty")
+      .filter((property) => property.kind !== "Shacl")
       .flatMap((property) =>
         property.hashStatements({
           variables: {

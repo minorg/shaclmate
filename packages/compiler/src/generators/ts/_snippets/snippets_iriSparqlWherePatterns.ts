@@ -8,7 +8,7 @@ export const snippets_iriSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}iriSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}iriSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.IriFilter}, ${snippets.IriSchema}> =
+const ${syntheticNamePrefix}iriSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.IriFilter}, ${snippets.IriSchema}<string>> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 

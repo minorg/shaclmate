@@ -10,15 +10,15 @@ export class IntersectionType<
   AbstractCompoundType.Member<MemberTypeT>,
   MemberTypeT
 > {
-  override readonly kind = "IntersectionType";
+  override readonly kind = "Intersection";
 
   isObjectIntersectionType(): this is ObjectIntersectionType {
     return (
       this.members.length > 0 &&
       this.members.every(
         (member) =>
-          member.type.kind === "ObjectType" ||
-          (member.type.kind === "IntersectionType" &&
+          member.type.kind === "Object" ||
+          (member.type.kind === "Intersection" &&
             member.type.isObjectIntersectionType()),
       )
     );

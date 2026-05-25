@@ -232,35 +232,35 @@ export class TypeFactory {
     parameters?: { defaultValue?: Literal | NamedNode },
   ): Type {
     switch (astType.kind) {
-      case "BlankNodeType":
+      case "BlankNode":
         return this.createBlankNodeType(astType);
-      case "DefaultValueType":
+      case "DefaultValue":
         return this.createDefaultValueType(astType);
-      case "IdentifierType":
+      case "Identifier":
         return this.createIdentifierType(astType);
-      case "IntersectionType":
+      case "Intersection":
         throw new Error("not implemented");
-      case "IriType":
+      case "Iri":
         return this.createIriType(astType);
-      case "LazyObjectOptionType":
+      case "LazyObjectOption":
         return this.createLazyObjectOptionType(astType);
-      case "LazyObjectSetType":
+      case "LazyObjectSet":
         return this.createLazyObjectSetType(astType);
-      case "LazyObjectType":
+      case "LazyObject":
         return this.createLazyObjectType(astType);
-      case "ListType":
+      case "List":
         return this.createListType(astType);
-      case "LiteralType":
+      case "Literal":
         return this.createLiteralType(astType, parameters);
-      case "ObjectType":
+      case "Object":
         return this.createNamedObjectType(astType);
-      case "OptionType":
+      case "Option":
         return this.createOptionType(astType);
-      case "SetType":
+      case "Set":
         return this.createSetType(astType);
-      case "TermType":
+      case "Term":
         return this.createTermType(astType);
-      case "UnionType":
+      case "Union":
         return this.createUnionType(astType);
     }
   }
@@ -338,9 +338,9 @@ export class TypeFactory {
     astType: ast.BlankNodeType | ast.IdentifierType | ast.IriType,
   ): BlankNodeType | IdentifierType | IriType {
     switch (astType.kind) {
-      case "BlankNodeType":
+      case "BlankNode":
         return this.createBlankNodeType(astType);
-      case "IdentifierType":
+      case "Identifier":
         return new IdentifierType({
           comment: astType.comment,
           configuration: this.configuration,
@@ -348,7 +348,7 @@ export class TypeFactory {
           logger: this.logger,
           reusables: this.reusables,
         });
-      case "IriType":
+      case "Iri":
         return this.createIriType(astType);
     }
   }

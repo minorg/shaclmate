@@ -22,7 +22,7 @@ export class IdentifierProperty extends AbstractProperty<
 > {
   private readonly typeAlias: Code;
 
-  override readonly kind = "IdentifierProperty";
+  override readonly kind = "Identifier";
   override readonly mutable = false;
   override readonly recursive = false;
 
@@ -84,7 +84,7 @@ export class IdentifierProperty extends AbstractProperty<
   @Memoize()
   override get jsonSchema(): AbstractProperty<IdentifierType>["jsonSchema"] {
     let schema: Code;
-    if (this.type.in_.length > 0 && this.type.kind === "IriType") {
+    if (this.type.in_.length > 0 && this.type.kind === "Iri") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       schema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.type.in_.map((iri) => iri.value))})`;
@@ -107,6 +107,10 @@ export class IdentifierProperty extends AbstractProperty<
     }
 
     return Maybe.of(code`readonly "@id": string`);
+  }
+
+  protected override get schemaInitializers(): readonly Code[] {
+    return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
   }
 
   override accessExpression({
@@ -212,7 +216,7 @@ export class IdentifierProperty extends AbstractProperty<
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: code`${this.namedObjectType.name}.schema.properties.${this.name}.type()`,
+        schema: code`${this.namedObjectType.name}.schema.properties.${this.name}.type`,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,

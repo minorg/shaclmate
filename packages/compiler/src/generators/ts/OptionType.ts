@@ -4,7 +4,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class OptionType<
   ItemTypeT extends OptionType.ItemType,
@@ -13,7 +13,7 @@ export class OptionType<
     Maybe.empty();
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  override readonly kind = "OptionType";
+  override readonly kind = "Option";
   override readonly typeofs = ["object" as const];
 
   @Memoize()
@@ -101,13 +101,6 @@ export class OptionType<
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
     return code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      kind: code`${literalOf("Maybe")} as const`,
-    };
   }
 
   override fromJsonExpression({

@@ -4,7 +4,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends bigint | boolean | Date | string | number,
@@ -16,14 +16,14 @@ export abstract class AbstractPrimitiveType<
   override readonly equalsFunction =
     code`${this.reusables.snippets.strictEquals}`;
   abstract override readonly kind:
-    | "BigIntType"
-    | "BooleanType"
-    | "DateTimeType"
-    | "DateType"
-    | "FloatType"
-    | "IntType"
+    | "BigInt"
+    | "Boolean"
+    | "DateTime"
+    | "Date"
+    | "Float"
+    | "Int"
     | "NumberType"
-    | "StringType";
+    | "String";
   readonly primitiveIn: readonly ValueT[];
 
   constructor({
@@ -43,17 +43,14 @@ export abstract class AbstractPrimitiveType<
     return Maybe.empty();
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.primitiveIn.length > 0
-          ? code`[${joinCode(
-              this.primitiveIn.map((in_) => this.literalExpression(in_)),
-              { on: ", " },
-            )}] as const`
-          : undefined,
-    };
+  protected override get schemaInitializers() {
+    let initializers = super.schemaInitializers;
+    if (this.primitiveIn.length > 0) {
+      initializers = initializers.concat(
+        code`in: ${arrayOf(...this.primitiveIn.map((in_) => this.literalExpression(in_)))}`,
+      );
+    }
+    return initializers;
   }
 
   override fromJsonExpression({

@@ -11,7 +11,7 @@ export class DateTimeType extends AbstractDateType {
   );
   override readonly hashFunction =
     code`${this.reusables.snippets.hashDateTime}`;
-  override readonly kind = "DateTimeType";
+  override readonly kind = "DateTime";
 
   override jsonSchema(
     _parameters: Parameters<AbstractDateType["jsonSchema"]>[0],

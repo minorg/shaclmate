@@ -1,5 +1,4 @@
 import type { Maybe } from "purify-ts";
-import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 
@@ -7,7 +6,7 @@ import type { Reusables } from "./Reusables.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import type { Typeof } from "./Typeof.js";
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class all types.
@@ -108,9 +107,9 @@ export abstract class AbstractType {
   abstract readonly recursive: boolean;
 
   /**
-   * TypeScript object describing this type, for runtime use.
+   * Is this type an ObjectType or does it reference an object type?
    */
-  abstract readonly schema: Code;
+  abstract readonly referencesObjectType: boolean;
 
   /**
    * TypeScript type describing .schema.
@@ -193,13 +192,18 @@ export abstract class AbstractType {
   }
 
   /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  @Memoize()
+  get schema(): Code {
+    return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
+  }
+
+  /**
    * Helper to compose the result of schema along the type hierarchy.
    */
-  protected get schemaObject() {
-    invariant(this.kind.endsWith("Type"));
-    return {
-      kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Type".length))} as const`,
-    };
+  protected get schemaInitializers(): readonly Code[] {
+    return [code`kind: ${literalOf(this.kind)} as const`];
   }
 
   /**

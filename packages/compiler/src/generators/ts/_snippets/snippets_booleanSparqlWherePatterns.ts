@@ -8,7 +8,7 @@ export const snippets_booleanSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}booleanSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.BooleanFilter}, ${snippets.BooleanSchema}> =
+const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.BooleanFilter}, ${snippets.BooleanSchema}<boolean>> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
