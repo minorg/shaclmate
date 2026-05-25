@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_graphqlTypeVariableStatement(
+export function ObjectType_graphqlTypeVariableStatement(
   this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("GraphQL")) {

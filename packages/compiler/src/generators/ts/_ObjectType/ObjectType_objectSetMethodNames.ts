@@ -2,7 +2,7 @@ import { camelCase, trainCase } from "change-case";
 import plur from "plur";
 import type { TsGenerator } from "../TsGenerator.js";
 
-export function NamedObjectType_objectSetMethodNames(this: {
+export function ObjectType_objectSetMethodNames(this: {
   readonly configuration: TsGenerator.Configuration;
   readonly name: string;
 }) {

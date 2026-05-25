@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration(
+export function ObjectType_valueSparqlConstructTriplesFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("Object.SPARQL")) {

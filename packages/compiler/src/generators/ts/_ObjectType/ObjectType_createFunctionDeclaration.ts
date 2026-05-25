@@ -3,7 +3,7 @@ import { invariant } from "ts-invariant";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_createFunctionDeclaration(
+export function ObjectType_createFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("Object.create")) {

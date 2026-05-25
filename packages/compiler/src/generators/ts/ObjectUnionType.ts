@@ -2,9 +2,9 @@ import { PropertyPath } from "@rdfx/resource";
 
 import { pascalCase } from "change-case";
 import { Memoize } from "typescript-memoize";
-import { NamedObjectType_objectSetMethodNames } from "./_NamedObjectType/NamedObjectType_objectSetMethodNames.js";
-import { NamedObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";
-import { NamedObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
+import { ObjectType_objectSetMethodNames } from "./_NamedObjectType/ObjectType_objectSetMethodNames.js";
+import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
@@ -23,7 +23,7 @@ export class ObjectUnionType extends UnionType<NamedObjectType> {
   get objectSetMethodNames(): NamedObjectType.ObjectSetMethodNames {
     return this._name
       .map((name) =>
-        NamedObjectType_objectSetMethodNames.call({
+        ObjectType_objectSetMethodNames.call({
           configuration: this.configuration,
           name,
         }),
@@ -56,7 +56,7 @@ export class ObjectUnionType extends UnionType<NamedObjectType> {
       ...this.graphqlTypeVariableStatement,
       ...this.isTypeFunctionDeclaration,
       ...this.schemaVariableStatement,
-      ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.call({
+      ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
         configuration: this.configuration,
         filterType: this.filterType,
         name,
@@ -64,7 +64,7 @@ export class ObjectUnionType extends UnionType<NamedObjectType> {
       })
         .map((code_) => singleEntryRecord(`sparqlConstructQuery`, code_))
         .orDefault({}),
-      ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
+      ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
         configuration: this.configuration,
         filterType: this.filterType,
         name,

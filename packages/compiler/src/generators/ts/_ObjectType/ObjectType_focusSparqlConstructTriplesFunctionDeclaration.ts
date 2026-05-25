@@ -9,7 +9,7 @@ const variables = {
   variablePrefix: code`parameters.variablePrefix`,
 };
 
-export function NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration(
+export function ObjectType_focusSparqlConstructTriplesFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("Object.SPARQL")) {

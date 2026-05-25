@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_schemaVariableStatement(
+export function ObjectType_schemaVariableStatement(
   this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("Object.schema")) {
@@ -17,9 +17,11 @@ export const schema = { properties: { ${joinCode(
           code`...${parentObjectType.name}.schema.properties`,
       )
       .concat(
-        this.properties.flatMap(property => property.schema.toList().map(propertySchema =>
-         code`${property.name}: ${propertySchema}`,
-        )),
+        this.properties.flatMap((property) =>
+          property.schema
+            .toList()
+            .map((propertySchema) => code`${property.name}: ${propertySchema}`),
+        ),
       ),
     { on: ", " },
   )} } } as const;`);

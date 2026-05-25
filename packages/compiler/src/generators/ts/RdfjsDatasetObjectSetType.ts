@@ -109,7 +109,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
           };
 
           switch (namedObjectType.kind) {
-            case "NamedObject": {
+            case "Object": {
               return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.name}[]> {
   return this.#objectsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType.filterFunction, namedObjectType)}, query);

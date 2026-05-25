@@ -179,7 +179,7 @@ export namespace ListType {
       case "Int":
       case "Literal":
       case "ObjectUnion":
-      case "NamedObject":
+      case "Object":
       case "String":
       case "Term":
       case "Union":

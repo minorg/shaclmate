@@ -130,7 +130,7 @@ export namespace AbstractContainerType {
       case "Iri":
       case "List":
       case "Literal":
-      case "NamedObject":
+      case "Object":
       case "ObjectUnion":
       case "String":
       case "Term":

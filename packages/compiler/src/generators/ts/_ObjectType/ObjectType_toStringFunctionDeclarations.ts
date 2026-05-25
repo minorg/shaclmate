@@ -1,7 +1,7 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_toStringFunctionDeclarations(
+export function ObjectType_toStringFunctionDeclarations(
   this: NamedObjectType,
 ): readonly Code[] {
   if (!this.configuration.features.has("Object.toString")) {

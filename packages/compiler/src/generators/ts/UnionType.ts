@@ -123,7 +123,7 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
 
             if (discriminant.kind === "Intrinsic" && !json) {
               switch (member.type.kind) {
-                case "NamedObject":
+                case "Object":
                 case "ObjectUnion":
                   return code`${member.type.name}.is${member.type.name}(${instance})`;
               }
@@ -303,7 +303,7 @@ ${joinCode(
     const name = this._name.extract();
     if (
       !name ||
-      !this.members.every((member) => member.type.kind === "NamedObject")
+      !this.members.every((member) => member.type.kind === "Object")
     ) {
       throw new Error("not implemented");
     }

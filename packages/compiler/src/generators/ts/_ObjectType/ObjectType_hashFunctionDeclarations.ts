@@ -3,7 +3,7 @@ import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const hasherVariable = code`hasher`;
 
-export function NamedObjectType_hashFunctionDeclarations(
+export function ObjectType_hashFunctionDeclarations(
   this: NamedObjectType,
 ): readonly Code[] {
   if (!this.configuration.features.has("Object.hash")) {

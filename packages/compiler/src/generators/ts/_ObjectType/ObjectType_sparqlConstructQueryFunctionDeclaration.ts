@@ -4,7 +4,7 @@ import type { Reusables } from "../Reusables.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_sparqlConstructQueryFunctionDeclaration(this: {
+export function ObjectType_sparqlConstructQueryFunctionDeclaration(this: {
   readonly configuration: TsGenerator.Configuration;
   readonly filterType: Code;
   readonly name: string;

@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_fromRdfResourceFunctionDeclaration(
+export function ObjectType_fromRdfResourceFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("Object.fromRdf")) {
