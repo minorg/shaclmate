@@ -5517,7 +5517,7 @@ export namespace Shape {
   }
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       NodeShape: { discriminantValues: ["NodeShape"], type: NodeShape.schema },
       PropertyShape: {
@@ -5897,7 +5897,7 @@ export namespace $Object {
   }
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       NodeShape: { discriminantValues: ["NodeShape"], type: NodeShape.schema },
       Ontology: { discriminantValues: ["Ontology"], type: Ontology.schema },
