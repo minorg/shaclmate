@@ -661,7 +661,7 @@ ${joinCode(
           this.members.map(({ primaryDiscriminantValue, type }, memberI) => {
             switch (discriminant.memberValues[memberI].kind) {
               case "Extrinsic":
-                return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${this.expression} }`;
+                return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.expression} }`;
               case "Intrinsic":
                 return code`${type.expression}`;
               default:
