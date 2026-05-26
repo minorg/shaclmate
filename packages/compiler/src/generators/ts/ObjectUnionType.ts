@@ -183,7 +183,9 @@ export const GraphQL = new ${this.reusables.imports.GraphQLUnionType}(${{
         name: alias,
         resolveType: code`(value: ${alias}) => value.${this.configuration.syntheticNamePrefix}type`,
         types: code`[${joinCode(
-          this.members.map((member) => member.type.graphqlType.nullableName),
+          this.members.map(
+            (member) => member.type.graphqlType.nullableExpression,
+          ),
           { on: ", " },
         )}]`,
       }});`,

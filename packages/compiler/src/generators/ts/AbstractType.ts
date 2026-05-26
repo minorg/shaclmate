@@ -366,27 +366,27 @@ export namespace AbstractType {
     readonly nullable: boolean;
 
     /**
-     * The name of the type when it's nullable -- so it should never include "new graphql.GraphQLNonNull(...)" around it.
+     * The expression of the type when it's nullable -- so it should never include "new graphql.GraphQLNonNull(...)" around it.
      */
-    readonly nullableName: Code;
+    readonly nullableExpression: Code;
 
     private readonly reusables: Reusables;
 
     constructor(
-      nullableName: Code,
+      nullableExpression: Code,
       reusables: Reusables,
       options?: { nullable: boolean },
     ) {
       this.nullable = !!options?.nullable;
-      this.nullableName = nullableName;
+      this.nullableExpression = nullableExpression;
       this.reusables = reusables;
     }
 
     @Memoize()
-    get name(): Code {
+    get expression(): Code {
       return this.nullable
-        ? this.nullableName
-        : code`new ${this.reusables.imports.GraphQLNonNull}(${this.nullableName})`;
+        ? this.nullableExpression
+        : code`new ${this.reusables.imports.GraphQLNonNull}(${this.nullableExpression})`;
     }
   }
 
@@ -397,25 +397,25 @@ export namespace AbstractType {
     readonly optional: boolean;
 
     /**
-     * The name of the type when it's required i.e. -- so it should never include "| undefined".
+     * The expression of the type when it's required i.e. -- so it should never include "| undefined".
      */
-    readonly requiredName: Code | string;
+    readonly requiredExpression: Code;
 
     constructor(
-      requiredName: Code | string,
+      requiredExpression: Code,
       parameters?: {
         optional: boolean;
       },
     ) {
       this.optional = !!parameters?.optional;
-      this.requiredName = requiredName;
+      this.requiredExpression = requiredExpression;
     }
 
     @Memoize()
-    get name(): Code | string {
+    get expression(): Code {
       return this.optional
-        ? code`(${this.requiredName}) | undefined`
-        : this.requiredName;
+        ? code`(${this.requiredExpression}) | undefined`
+        : this.requiredExpression;
     }
   }
 }

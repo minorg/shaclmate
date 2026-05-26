@@ -62,7 +62,7 @@ export class OptionType<
   override get graphqlType(): AbstractContainerType.GraphqlType {
     invariant(!this.itemType.graphqlType.nullable);
     return new AbstractContainerType.GraphqlType(
-      this.itemType.graphqlType.name,
+      this.itemType.graphqlType.expression,
       this.reusables,
       {
         nullable: true,
@@ -144,7 +144,7 @@ export class OptionType<
   ): AbstractContainerType.JsonType {
     const itemTypeJsonType = this.itemType.jsonType(parameters);
     invariant(!itemTypeJsonType.optional);
-    return new AbstractContainerType.JsonType(itemTypeJsonType.name, {
+    return new AbstractContainerType.JsonType(itemTypeJsonType.expression, {
       optional: true,
     });
   }

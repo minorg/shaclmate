@@ -52,7 +52,7 @@ export function ObjectType_fromJsonFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function fromJson(${variables.jsonObject}: ${this.jsonType().name}): ${this.reusables.imports.Either}<Error, ${this.expression}> {
+export function fromJson(${variables.jsonObject}: ${this.jsonType().expression}): ${this.reusables.imports.Either}<Error, ${this.expression}> {
   return ${returnExpression};
 }`);
 }

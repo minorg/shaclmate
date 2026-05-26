@@ -49,7 +49,7 @@ export class BigDecimalType extends AbstractLiteralType {
 
   @Memoize()
   override jsonType(): AbstractLiteralType.JsonType {
-    return new AbstractLiteralType.JsonType("string");
+    return new AbstractLiteralType.JsonType(code`string`);
   }
 
   override literalExpression(literal: Literal): Code {

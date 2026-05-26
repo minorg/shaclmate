@@ -27,18 +27,18 @@ export class IdentifierProperty extends AbstractProperty<
   @Memoize()
   override get constructorParameter(): Maybe<Code> {
     let hasQuestionToken: boolean = false;
-    const typeNames: Code[] = [code`(() => ${this.typeExpression})`];
+    const typeExpressions: Code[] = [code`(() => ${this.typeExpression})`];
     for (const type of this.type.conversionFunction.unsafeCoerce()
       .sourceTypes) {
       if (type.typeof === "undefined") {
         hasQuestionToken = true;
       } else {
-        typeNames.push(code`${type.expression}`);
+        typeExpressions.push(code`${type.expression}`);
       }
     }
 
     return Maybe.of(
-      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeNames, { on: "|" })};`,
+      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
     );
   }
 
@@ -64,7 +64,7 @@ export class IdentifierProperty extends AbstractProperty<
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
       resolve: code`(source) => ${this.typeExpression}.stringify(${this.accessExpression({ variables: { object: code`source` } })})`,
-      type: this.type.graphqlType.name,
+      type: this.type.graphqlType.expression,
     });
   }
 
