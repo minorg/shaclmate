@@ -83,7 +83,7 @@ export class ListType<
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
     return new AbstractCollectionType.JsonType(
-      code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().name})[]`,
+      code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().expression})[]`,
     );
   }
 
@@ -94,16 +94,16 @@ export class ListType<
   >[0]): Code {
     let mintListIdentifierFunction: Code;
     let mintSubListIdentifierFunction: Code;
-    let resourceTypeName: Code;
+    let resourceTypeExpression: Code;
     switch (this.identifierNodeKind) {
       case "BlankNode": {
         mintListIdentifierFunction =
           mintSubListIdentifierFunction = code`(() => ${this.reusables.imports.dataFactory}.blankNode())`;
-        resourceTypeName = code`${this.reusables.imports.Resource}<${this.reusables.imports.BlankNode}>`;
+        resourceTypeExpression = code`${this.reusables.imports.Resource}<${this.reusables.imports.BlankNode}>`;
         break;
       }
       case "IRI": {
-        resourceTypeName = code`${this.reusables.imports.Resource}<${this.reusables.imports.NamedNode}>`;
+        resourceTypeExpression = code`${this.reusables.imports.Resource}<${this.reusables.imports.NamedNode}>`;
         throw new RangeError("list IRI minting is unsupported");
       }
     }
@@ -131,8 +131,8 @@ export class ListType<
     currentSubListResource: null,
     listResource: ${variables.resourceSet}.resource(${mintListIdentifierFunction}()),
   } as {
-    currentSubListResource: ${resourceTypeName} | null;
-    listResource: ${resourceTypeName};
+    currentSubListResource: ${resourceTypeExpression} | null;
+    listResource: ${resourceTypeExpression};
   },
 ).listResource.identifier : ${this.rdfjsTermExpression(rdf.nil)}]`;
   }

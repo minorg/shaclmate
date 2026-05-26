@@ -32,7 +32,7 @@ export function ObjectType_toJsonFunctionDeclaration(
     );
   }
 
-  const returnType = this.jsonType().name;
+  const returnType = this.jsonType().expression;
 
   // 20241220: don't add @type until we're doing JSON-LD
   // switch (this.toRdfTypes.length) {
@@ -50,6 +50,6 @@ export function ObjectType_toJsonFunctionDeclaration(
 
   return Maybe.of(code`\
 export function toJson(${this.thisVariable}: ${this.expression}): ${returnType} {
-  return JSON.parse(JSON.stringify({ ${joinCode(jsonObjectMembers, { on: "," })} } satisfies ${this.jsonType().name}));
+  return JSON.parse(JSON.stringify({ ${joinCode(jsonObjectMembers, { on: "," })} } satisfies ${this.jsonType().expression}));
 }`);
 }

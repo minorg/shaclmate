@@ -54,7 +54,7 @@ export const graphqlSchema = new ${this.reusables.imports.GraphQLSchema}({ query
     (await ${this.reusables.imports.EitherAsync}<Error, ${namedObjectType.expression}>(async ({ liftEither }) => 
       liftEither(await objectSet.${namedObjectType.objectSetMethodNames.object}(await liftEither(${namedObjectType.identifierTypeAlias}.parse(args.identifier))))
     )).unsafeCoerce()`,
-          type: namedObjectType.graphqlType.name,
+          type: namedObjectType.graphqlType.expression,
         };
 
         fields[namedObjectType.objectSetMethodNames.objectIdentifiers] = {
@@ -97,7 +97,7 @@ export const graphqlSchema = new ${this.reusables.imports.GraphQLSchema}({ query
     }
     return await liftEither(await objectSet.${namedObjectType.objectSetMethodNames.objects}({ filter, limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined }));
   })).unsafeCoerce()`,
-          type: code`new ${this.reusables.imports.GraphQLNonNull}(new ${this.reusables.imports.GraphQLList}(${namedObjectType.graphqlType.name}))`,
+          type: code`new ${this.reusables.imports.GraphQLNonNull}(new ${this.reusables.imports.GraphQLList}(${namedObjectType.graphqlType.expression}))`,
         };
 
         fields[namedObjectType.objectSetMethodNames.objectCount] = {

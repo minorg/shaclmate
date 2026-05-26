@@ -144,7 +144,7 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
               this.discriminant.kind === "Intrinsic" ||
               (this.discriminant.kind === "Hybrid" &&
                 this.discriminant.memberValues[memberI].kind === "Intrinsic"),
-          }).name,
+          }).expression,
           jsonTypeCheck: typeCheck(true),
           primaryDiscriminantValue: discriminantValues[0],
           type: member.type,
@@ -329,7 +329,7 @@ ${joinCode(
   }
 
   get jsonTypeAliasDeclaration(): Code {
-    return code`export type Json = ${this.inlineJsonType.name}`;
+    return code`export type Json = ${this.inlineJsonType.expression}`;
   }
 
   @Memoize()
@@ -462,7 +462,7 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
 
   protected get inlineFromJsonFunction(): Code {
     return code`\
-((value: ${this.jsonType().name}): ${this.reusables.imports.Either}<Error, ${this.expression}> => {
+((value: ${this.jsonType().expression}): ${this.reusables.imports.Either}<Error, ${this.expression}> => {
 ${joinCode(
   this.members.map(
     ({ jsonType, jsonTypeCheck, type, unwrap, wrap }) =>
@@ -692,7 +692,7 @@ ${joinCode(
 
   protected get inlineToJsonFunction(): Code {
     return code`\
-((value: ${this.expression}): ${this.jsonType().name} => {
+((value: ${this.expression}): ${this.jsonType().expression} => {
 ${joinCode(
   this.members.map(
     ({ typeCheck, typeToJsonExpression, unwrap, wrap }) =>
@@ -922,7 +922,7 @@ export namespace Json {
       .map((alias) => code`${alias}.Json.schema()`)
       .orDefault(this.inlineJsonSchema);
     if (context === "property" && this.recursive) {
-      return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.jsonType().name}> => ${expression})`;
+      return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.jsonType().expression}> => ${expression})`;
     }
     return expression;
   }
@@ -930,7 +930,7 @@ export namespace Json {
   @Memoize()
   override jsonType(): AbstractType.JsonType {
     return this.alias
-      .map((alias) => new AbstractType.JsonType(`${alias}.Json`))
+      .map((alias) => new AbstractType.JsonType(code`${alias}.Json`))
       .orDefault(this.inlineJsonType);
   }
 
@@ -1097,7 +1097,7 @@ export namespace Discriminant {
     // hybrid
     // If some member type is an RDF/JS term then reuse "termType" as the discriminant.
     if (memberTypes.some((memberType) => termTypes(memberType).size > 0)) {
-      const extrinsicMemberTypeNamesSet = new Set<string>();
+      const extrinsicMemberTypeAliasesSet = new Set<string>();
       let extrinsicMemberTypeCount = 0;
       for (const memberType of memberTypes) {
         if (termTypes(memberType).size > 0) {
@@ -1105,7 +1105,7 @@ export namespace Discriminant {
         }
         extrinsicMemberTypeCount++;
         if (memberType.alias.isJust()) {
-          extrinsicMemberTypeNamesSet.add(memberType.alias.extract());
+          extrinsicMemberTypeAliasesSet.add(memberType.alias.extract());
         } else {
           break;
         }
@@ -1126,7 +1126,7 @@ export namespace Discriminant {
           return {
             kind: "Extrinsic",
             ownValues:
-              extrinsicMemberTypeNamesSet.size === extrinsicMemberTypeCount
+              extrinsicMemberTypeAliasesSet.size === extrinsicMemberTypeCount
                 ? [memberType.alias.unsafeCoerce()]
                 : [memberTypeI.toString()],
           };

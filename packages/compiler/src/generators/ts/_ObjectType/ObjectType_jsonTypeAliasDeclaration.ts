@@ -19,7 +19,7 @@ export function ObjectType_jsonTypeAliasDeclaration(
     );
   }
   for (const parentObjectType of this.parentObjectTypes) {
-    members.push(code`${parentObjectType.jsonType().name}`);
+    members.push(code`${parentObjectType.jsonType().expression}`);
   }
 
   return Maybe.of(

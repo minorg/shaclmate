@@ -56,17 +56,17 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
     let hasQuestionToken = false;
 
-    const typeNames: Code[] = [];
+    const typeExpressions: Code[] = [];
     for (const type of conversionFunction.sourceTypes) {
       if (type.typeof === "undefined") {
         hasQuestionToken = true;
       } else {
-        typeNames.push(code`${type.expression}`);
+        typeExpressions.push(code`${type.expression}`);
       }
     }
 
     return Maybe.of(
-      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeNames, { on: "|" })};`,
+      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
     );
   }
 
@@ -101,7 +101,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       description: this.comment.map(JSON.stringify),
       name: this.name,
       resolve: code`(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: code`source.${this.name}` } })}`,
-      type: this.type.graphqlType.name,
+      type: this.type.graphqlType.expression,
     });
   }
 
@@ -132,7 +132,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   override get jsonSignature(): Maybe<Code> {
     const typeJsonType = this.type.jsonType();
     return Maybe.of(
-      code`${!this.mutable ? "readonly " : ""}${this.name}${typeJsonType.optional ? "?" : ""}: ${typeJsonType.requiredName}`,
+      code`${!this.mutable ? "readonly " : ""}${this.name}${typeJsonType.optional ? "?" : ""}: ${typeJsonType.requiredExpression}`,
     );
   }
 

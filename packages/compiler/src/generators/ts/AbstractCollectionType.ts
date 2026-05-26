@@ -91,7 +91,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   override get graphqlType(): AbstractContainerType.GraphqlType {
     return new AbstractContainerType.GraphqlType(
-      code`new ${this.reusables.imports.GraphQLList}(${this.itemType.graphqlType.name})`,
+      code`new ${this.reusables.imports.GraphQLList}(${this.itemType.graphqlType.expression})`,
       this.reusables,
     );
   }
