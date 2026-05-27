@@ -7,6 +7,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
+import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { TermType } from "./TermType.js";
@@ -90,6 +91,7 @@ export namespace AbstractCompoundType {
     | IdentifierType
     | IntersectionType
     | IriType
+    | ListType
     | LiteralType
     | ObjectType
     | TermType
@@ -101,6 +103,7 @@ export namespace AbstractCompoundType {
       case "Identifier":
       case "Intersection":
       case "Iri":
+      case "List":
       case "Literal":
       case "Object":
       case "Term":
@@ -110,7 +113,6 @@ export namespace AbstractCompoundType {
       case "LazyObjectOption":
       case "LazyObjectSet":
       case "LazyObject":
-      case "List":
       case "Option":
       case "Set":
         return false;

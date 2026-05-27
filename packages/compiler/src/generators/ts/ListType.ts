@@ -158,6 +158,7 @@ export namespace ListType {
     | IdentifierType
     | IntType
     | IriType
+    | ListType<ListType.ItemType>
     | LiteralType
     | ObjectUnionType
     | ObjectType
@@ -177,6 +178,7 @@ export namespace ListType {
       case "Identifier":
       case "Iri":
       case "Int":
+      case "List":
       case "Literal":
       case "ObjectUnion":
       case "Object":
@@ -188,7 +190,6 @@ export namespace ListType {
       case "LazyObjectOption":
       case "LazyObjectSet":
       case "LazyObject":
-      case "List":
       case "Option":
       case "Set":
         return false;

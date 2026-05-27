@@ -62,6 +62,7 @@ export namespace ListType {
     | IdentifierType
     | IntersectionType
     | IriType
+    | ListType
     | LiteralType
     | ObjectType
     | TermType
@@ -73,6 +74,7 @@ export namespace ListType {
       case "Identifier":
       case "Intersection":
       case "Iri":
+      case "List":
       case "Literal":
       case "Object":
       case "Term":
@@ -82,7 +84,6 @@ export namespace ListType {
       case "LazyObjectOption":
       case "LazyObjectSet":
       case "LazyObject":
-      case "List":
       case "Option":
       case "Set":
         return false;
