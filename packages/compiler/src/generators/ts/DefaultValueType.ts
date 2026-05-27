@@ -81,6 +81,10 @@ export class DefaultValueType<
     return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.expression}, ${this.itemType.schemaType}>`;
   }
 
+  override get toRdfResourceValueTypes(): AbstractContainerType<ItemTypeT>["toRdfResourceValueTypes"] {
+    return this.itemType.toRdfResourceValueTypes;
+  }
+
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     return this.itemType.valueSparqlConstructTriplesFunction;

@@ -46,16 +46,6 @@ export class ListType<
     this.toRdfTypes = toRdfTypes;
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractCollectionType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
-    if (!this._mutable) {
-      schema = code`${schema}.readonly()`;
-    }
-    return schema;
-  }
-
   @Memoize()
   override get conversionFunction(): Maybe<AbstractCollectionType.ConversionFunction> {
     const itemConversionFunction = this.itemType.conversionFunction.orDefault(
@@ -76,6 +66,11 @@ export class ListType<
         },
       ],
     });
+  }
+
+  @Memoize()
+  override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
+    return new Set(["BlankNode", "NamedNode"]); // List or rdf:nil
   }
 
   @Memoize()
@@ -122,6 +117,16 @@ export class ListType<
       ],
       { on: "." },
     );
+  }
+
+  override jsonSchema(
+    parameters: Parameters<AbstractCollectionType<ItemTypeT>["jsonSchema"]>[0],
+  ): Code {
+    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
+    if (!this._mutable) {
+      schema = code`${schema}.readonly()`;
+    }
+    return schema;
   }
 
   @Memoize()

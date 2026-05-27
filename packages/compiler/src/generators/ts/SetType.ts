@@ -60,6 +60,10 @@ export class SetType<
     });
   }
 
+  override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
+    return this.itemType.toRdfResourceValueTypes;
+  }
+
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     return code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;

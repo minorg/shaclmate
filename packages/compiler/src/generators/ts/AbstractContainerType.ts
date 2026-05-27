@@ -56,10 +56,6 @@ export abstract class AbstractContainerType<
     return this.itemType.referencesObjectType;
   }
 
-  override get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
-    return this.itemType.toRdfResourceValueTypes;
-  }
-
   @Memoize()
   protected get itemConversionFunctionDefault(): AbstractType.ConversionFunction {
     return {

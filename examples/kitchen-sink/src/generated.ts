@@ -16791,7 +16791,7 @@ export namespace ListSets {
       ListSets.schema.properties.listUnionSetProperty.path,
       parameters.object.listUnionSetProperty.flatMap((item) =>
         (
-          ((value, _options): Literal[] => {
+          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
             if (typeof value === "object") {
               return [
                 value.length > 0

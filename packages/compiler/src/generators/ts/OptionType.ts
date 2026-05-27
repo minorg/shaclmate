@@ -84,6 +84,10 @@ export class OptionType<
     return code`${this.reusables.snippets.MaybeSchema}<${this.itemType.schemaType}>`;
   }
 
+  override get toRdfResourceValueTypes(): AbstractContainerType<ItemTypeT>["toRdfResourceValueTypes"] {
+    return this.itemType.toRdfResourceValueTypes;
+  }
+
   @Memoize()
   override get validationFunction(): Maybe<Code> {
     return Maybe.of(
