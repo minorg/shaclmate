@@ -15477,11 +15477,8 @@ export namespace ListSets {
       | BlankNode
       | NamedNode
       | string;
-    readonly listListSetProperty?: readonly (
-      | readonly (readonly string[] | undefined)[]
-      | undefined
-    )[];
-    readonly listSetProperty?: readonly (readonly string[] | undefined)[];
+    readonly listListSetProperty?: readonly (readonly (readonly string[])[])[];
+    readonly listSetProperty?: readonly (readonly string[])[];
     readonly listUnionSetProperty?: readonly (readonly string[] | string)[];
   }): Either<Error, ListSets> {
     return $sequenceRecord({
@@ -15533,11 +15530,8 @@ export namespace ListSets {
       | BlankNode
       | NamedNode
       | string;
-    readonly listListSetProperty?: readonly (
-      | readonly (readonly string[] | undefined)[]
-      | undefined
-    )[];
-    readonly listSetProperty?: readonly (readonly string[] | undefined)[];
+    readonly listListSetProperty?: readonly (readonly (readonly string[])[])[];
+    readonly listSetProperty?: readonly (readonly string[])[];
     readonly listUnionSetProperty?: readonly (readonly string[] | string)[];
   }): ListSets {
     return create(parameters).unsafeCoerce();
@@ -15694,19 +15688,18 @@ export namespace ListSets {
           listListSetProperty: z
             .string()
             .array()
-            .optional()
+            .readonly()
+            .array()
             .readonly()
             .array()
             .optional()
             .readonly()
-            .array()
-            .optional()
-            .readonly()
-            .meta({ description: "Set of lists of lists" }),
+            .meta({
+              description: "Set of lists of lists",
+            }),
           listSetProperty: z
             .string()
             .array()
-            .optional()
             .readonly()
             .array()
             .optional()
@@ -15715,7 +15708,7 @@ export namespace ListSets {
               description: "Set of lists",
             }),
           listUnionSetProperty: z
-            .union([z.string().array().optional().readonly(), z.string()])
+            .union([z.string().array().readonly(), z.string()])
             .readonly()
             .array()
             .optional()
@@ -16191,9 +16184,9 @@ export namespace ListSets {
       >(
         ($json["listListSetProperty"] ?? []).map((item) =>
           Either.sequence<Error, readonly string[]>(
-            (item ?? []).map((item) =>
+            item.map((item) =>
               Either.sequence<Error, string>(
-                (item ?? []).map((item) => Either.of<Error, string>(item)),
+                item.map((item) => Either.of<Error, string>(item)),
               ),
             ),
           ),
@@ -16202,7 +16195,7 @@ export namespace ListSets {
       listSetProperty: Either.sequence<Error, readonly string[]>(
         ($json["listSetProperty"] ?? []).map((item) =>
           Either.sequence<Error, string>(
-            (item ?? []).map((item) => Either.of<Error, string>(item)),
+            item.map((item) => Either.of<Error, string>(item)),
           ),
         ),
       ),
@@ -16213,7 +16206,7 @@ export namespace ListSets {
           ): Either<Error, readonly string[] | string> => {
             if (typeof value === "object") {
               return Either.sequence<Error, string>(
-                ((value as readonly string[]) ?? []).map((item) =>
+                (value as readonly string[]).map((item) =>
                   Either.of<Error, string>(item),
                 ),
               ).map((value) => value);
@@ -26606,7 +26599,7 @@ export namespace MutableProperties {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("MutableProperties"),
-          mutableListProperty: z.string().array().optional().optional().meta({
+          mutableListProperty: z.string().array().optional().meta({
             description:
               "List-valued property that can't be reassigned but whose value can be mutated",
           }),
@@ -26900,7 +26893,7 @@ export namespace MutableProperties {
       mutableListProperty: Maybe.fromNullable($json["mutableListProperty"])
         .map((item) =>
           Either.sequence<Error, string>(
-            (item ?? []).map((item) => Either.of<Error, string>(item)),
+            item.map((item) => Either.of<Error, string>(item)),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
@@ -29130,7 +29123,7 @@ export namespace ListProperties {
       | readonly NonClass[]
       | Maybe<readonly NonClass[]>;
     readonly stringListListProperty?:
-      | readonly (readonly string[] | undefined)[]
+      | readonly (readonly string[])[]
       | Maybe<readonly (readonly string[])[]>;
     readonly stringListProperty?: readonly string[] | Maybe<readonly string[]>;
   }): Either<Error, ListProperties> {
@@ -29194,7 +29187,7 @@ export namespace ListProperties {
       | readonly NonClass[]
       | Maybe<readonly NonClass[]>;
     readonly stringListListProperty?:
-      | readonly (readonly string[] | undefined)[]
+      | readonly (readonly string[])[]
       | Maybe<readonly (readonly string[])[]>;
     readonly stringListProperty?: readonly string[] | Maybe<readonly string[]>;
   }): ListProperties {
@@ -29336,33 +29329,23 @@ export namespace ListProperties {
           iriListProperty: z
             .object({ "@id": z.string().min(1) })
             .array()
-            .optional()
             .readonly()
             .optional()
             .meta({}),
           objectListProperty: NonClass.Json.schema()
             .array()
-            .optional()
             .readonly()
             .optional()
             .meta({}),
           stringListListProperty: z
             .string()
             .array()
-            .optional()
             .readonly()
             .array()
-            .optional()
             .readonly()
             .optional()
             .meta({}),
-          stringListProperty: z
-            .string()
-            .array()
-            .optional()
-            .readonly()
-            .optional()
-            .meta({}),
+          stringListProperty: z.string().array().readonly().optional().meta({}),
         })
         .meta({
           description: "Node shape that uses the list shapes in properties.",
@@ -29728,7 +29711,7 @@ export namespace ListProperties {
       iriListProperty: Maybe.fromNullable($json["iriListProperty"])
         .map((item) =>
           Either.sequence<Error, NamedNode>(
-            (item ?? []).map((item) =>
+            item.map((item) =>
               Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
             ),
           ).map(Maybe.of),
@@ -29737,7 +29720,7 @@ export namespace ListProperties {
       objectListProperty: Maybe.fromNullable($json["objectListProperty"])
         .map((item) =>
           Either.sequence<Error, NonClass>(
-            (item ?? []).map((item) => NonClass.fromJson(item)),
+            item.map((item) => NonClass.fromJson(item)),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
@@ -29746,9 +29729,9 @@ export namespace ListProperties {
       )
         .map((item) =>
           Either.sequence<Error, readonly string[]>(
-            (item ?? []).map((item) =>
+            item.map((item) =>
               Either.sequence<Error, string>(
-                (item ?? []).map((item) => Either.of<Error, string>(item)),
+                item.map((item) => Either.of<Error, string>(item)),
               ),
             ),
           ).map(Maybe.of),
@@ -29757,7 +29740,7 @@ export namespace ListProperties {
       stringListProperty: Maybe.fromNullable($json["stringListProperty"])
         .map((item) =>
           Either.sequence<Error, string>(
-            (item ?? []).map((item) => Either.of<Error, string>(item)),
+            item.map((item) => Either.of<Error, string>(item)),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),

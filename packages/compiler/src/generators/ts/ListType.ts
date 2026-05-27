@@ -2,6 +2,7 @@ import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
@@ -15,14 +16,13 @@ import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
-
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 import type { UnionType } from "./UnionType.js";
 
 export class ListType<
@@ -46,6 +46,38 @@ export class ListType<
     this.toRdfTypes = toRdfTypes;
   }
 
+  override jsonSchema(
+    parameters: Parameters<AbstractCollectionType<ItemTypeT>["jsonSchema"]>[0],
+  ): Code {
+    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
+    if (!this._mutable) {
+      schema = code`${schema}.readonly()`;
+    }
+    return schema;
+  }
+
+  @Memoize()
+  override get conversionFunction(): Maybe<AbstractCollectionType.ConversionFunction> {
+    const itemConversionFunction = this.itemType.conversionFunction.orDefault(
+      this.itemConversionFunctionDefault,
+    );
+
+    return Maybe.of({
+      code: code`${this.reusables.snippets.convertToArray}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
+      sourceTypes: [
+        {
+          expression: code`readonly (${joinCode(
+            itemConversionFunction.sourceTypes.map(
+              (itemSourceType) => code`${itemSourceType.expression}`,
+            ),
+            { on: " | " },
+          )})[]`,
+          typeof: "object",
+        },
+      ],
+    });
+  }
+
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     return code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
@@ -54,6 +86,18 @@ export class ListType<
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
     return code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  }
+
+  override fromJsonExpression({
+    variables,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["fromJsonExpression"]
+  >[0]): Code {
+    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${variables.value}.map(item => (${this.itemType.fromJsonExpression(
+      {
+        variables: { value: code`item` },
+      },
+    )})))`;
   }
 
   override fromRdfResourceValuesExpression({
