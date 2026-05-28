@@ -1,8 +1,8 @@
 import type { NamedNode } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -18,16 +18,17 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractIdentifierType.ConversionFunction> {
+    invariant(this.jsTypes.length === 1);
     return Maybe.of({
       code: code`${this.reusables.snippets.convertToIri}<${this.valueTypeExpression}>`,
       sourceTypes: [
         {
           expression: this.valueTypeExpression,
-          typeof: "string" as const,
+          jsType: { typeof: "string" },
         },
         {
           expression: this.expression,
-          typeof: "object" as const,
+          jsType: this.jsTypes[0],
         },
       ],
     });

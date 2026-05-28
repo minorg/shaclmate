@@ -6,7 +6,6 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
 import type { Type } from "./Type.js";
-import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -34,7 +33,6 @@ export abstract class AbstractTermType<
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
   override readonly referencesObjectType = false;
-  override readonly typeofs: readonly Typeof[] = ["object" as const];
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
@@ -174,6 +172,7 @@ export namespace AbstractTermType {
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
+  export type JsType = AbstractType.JsType;
   export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
 }

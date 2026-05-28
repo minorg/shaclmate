@@ -1,12 +1,14 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
+
 import { Memoize } from "typescript-memoize";
+
 import { AbstractNumericType } from "./AbstractNumericType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class IntType extends AbstractNumericType<number> {
+  override readonly jsTypes = [{ typeof: "number" }] as const;
   override readonly kind = "Int";
-  override readonly typeofs = ["number" as const];
 
   @Memoize()
   override get graphqlType() {

@@ -13,12 +13,12 @@ export abstract class AbstractNumericType<
 
   @Memoize()
   override get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterNumeric}<${this.typeofs[0]}>`;
+    return code`${this.reusables.snippets.filterNumeric}<${this.jsTypes[0].typeof}>`;
   }
 
   @Memoize()
   override get filterType(): Code {
-    return code`${this.reusables.snippets.NumericFilter}<${this.typeofs[0]}>`;
+    return code`${this.reusables.snippets.NumericFilter}<${this.jsTypes[0].typeof}>`;
   }
 
   @Memoize()
@@ -29,17 +29,17 @@ export abstract class AbstractNumericType<
         { on: " | " },
       )}`;
     }
-    return code`${this.typeofs[0]}`;
+    return code`${this.jsTypes[0].typeof}`;
   }
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.reusables.snippets.NumericSchema}<${this.typeofs[0]}>`;
+    return code`${this.reusables.snippets.NumericSchema}<${this.jsTypes[0].typeof}>`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction() {
-    return code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.typeofs[0]}>`;
+    return code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.jsTypes[0].typeof}>`;
   }
 
   override jsonSchema(
@@ -47,7 +47,7 @@ export abstract class AbstractNumericType<
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return code`${this.reusables.imports.z}.${this.typeofs[0]}()`;
+        return code`${this.reusables.imports.z}.${this.jsTypes[0].typeof}()`;
       case 1:
         return code`${this.reusables.imports.z}.literal(${this.literalExpression(this.primitiveIn[0])})`;
       default:
@@ -66,7 +66,7 @@ export abstract class AbstractNumericType<
   }: Parameters<
     AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${this.reusables.snippets.literalFactory}.${this.typeofs[0]}(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
+    return code`[${this.reusables.snippets.literalFactory}.${this.jsTypes[0].typeof}(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
 
   protected override fromRdfResourceValuesExpressionChain({

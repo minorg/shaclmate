@@ -7,8 +7,8 @@ import { AbstractNumericType } from "./AbstractNumericType.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
+  override readonly jsTypes = [{ typeof: "bigint" } as const];
   override readonly kind = "BigInt";
-  override readonly typeofs = ["bigint" as const];
 
   @Memoize()
   override get graphqlType() {

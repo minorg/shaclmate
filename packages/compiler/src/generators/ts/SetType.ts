@@ -13,6 +13,9 @@ export class SetType<
     Maybe.empty();
   override readonly kind = "Set";
   readonly minCount: bigint;
+  override readonly jsTypes = [
+    { instanceof: "Array", typeof: "object" },
+  ] as const;
 
   constructor({
     minCount,
@@ -43,14 +46,14 @@ export class SetType<
             ),
             { on: " | " },
           )})[]`,
-          typeof: "object",
+          jsType: { instanceof: "Array", typeof: "object" },
         },
       ];
 
     if (this.minCount === 0n) {
       sourceTypes.push({
         expression: code`undefined`,
-        typeof: "undefined",
+        jsType: { typeof: "undefined" },
       });
     }
 

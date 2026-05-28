@@ -17,21 +17,24 @@ export class LiteralType extends AbstractLiteralType {
           ["bigint", "boolean", "number", "string"] satisfies readonly Typeof[]
         ).map((typeof_) => ({
           expression: code`${typeof_}`,
-          typeof: typeof_,
+          jsType: { typeof: typeof_ },
         })),
         {
           expression: code`Date`,
-          typeof: "object",
+          jsType: { instanceof: "Date", typeof: "object" },
         },
         {
           expression: code`${this.reusables.imports.Literal}`,
-          typeof: "object",
+          jsType: { instanceof: "Object", typeof: "object" },
         },
       ],
     });
   override readonly filterFunction =
     code`${this.reusables.snippets.filterLiteral}`;
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
+  override readonly jsTypes = [
+    { instanceof: "Object", typeof: "object" },
+  ] as const;
   override readonly kind = "Literal";
   override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;
   override readonly valueSparqlWherePatternsFunction =

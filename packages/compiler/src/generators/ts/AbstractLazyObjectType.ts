@@ -26,7 +26,6 @@ export abstract class AbstractLazyObjectType<
     Maybe.empty();
   override readonly mutable = false;
   override readonly referencesObjectType = true;
-  override readonly typeofs = ["object" as const];
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
@@ -67,6 +66,17 @@ export abstract class AbstractLazyObjectType<
   @Memoize()
   override get hashFunction(): Code {
     return code`((hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName}))`;
+  }
+
+  @Memoize()
+  override get jsTypes(): readonly AbstractType.JsType[] {
+    return [
+      {
+        className: this.runtimeClass.rawName,
+        instanceof: "class",
+        typeof: "object",
+      },
+    ];
   }
 
   get recursive(): boolean {

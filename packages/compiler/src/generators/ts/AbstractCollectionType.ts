@@ -16,7 +16,6 @@ export abstract class AbstractCollectionType<
     Maybe.empty();
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  override readonly typeofs = ["object" as const];
 
   constructor({
     mutable,

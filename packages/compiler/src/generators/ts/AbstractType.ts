@@ -5,7 +5,6 @@ import { Memoize } from "typescript-memoize";
 import type { Reusables } from "./Reusables.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { TsGenerator } from "./TsGenerator.js";
-import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 /**
@@ -92,6 +91,11 @@ export abstract class AbstractType {
   abstract readonly hashFunction: Code;
 
   /**
+   * JavaScript type(s) the type.
+   */
+  abstract readonly jsTypes: readonly AbstractType.JsType[];
+
+  /**
    * Type discriminant.
    */
   abstract readonly kind: string;
@@ -127,11 +131,6 @@ export abstract class AbstractType {
   abstract readonly toRdfResourceValueTypes: ReadonlySet<
     "BlankNode" | "NamedNode" | "Literal"
   >;
-
-  /**
-   * JavaScript typeof(s) the type.
-   */
-  abstract readonly typeofs: readonly Typeof[];
 
   /**
    * Function that takes
@@ -344,7 +343,7 @@ export namespace AbstractType {
     readonly code: Code;
     readonly sourceTypes: {
       readonly expression: Code;
-      readonly typeof: Typeof;
+      readonly jsType: JsType;
     }[];
   }
 
@@ -387,6 +386,65 @@ export namespace AbstractType {
       return this.nullable
         ? this.nullableExpression
         : code`new ${this.reusables.imports.GraphQLNonNull}(${this.nullableExpression})`;
+    }
+  }
+
+  export type JsType =
+    | {
+        typeof: "bigint";
+      }
+    | {
+        typeof: "boolean";
+      }
+    | {
+        typeof: "function";
+      }
+    | {
+        typeof: "number";
+      }
+    | {
+        instanceof: "Array";
+        typeof: "object";
+      }
+    | {
+        className: Code;
+        instanceof: "class";
+        typeof: "object";
+      }
+    | {
+        instanceof: "Date";
+        typeof: "object";
+      }
+    | {
+        instanceof: "Maybe";
+        typeof: "object";
+      }
+    | {
+        instanceof: "Object";
+        typeof: "object";
+      }
+    | {
+        typeof: "string";
+      }
+    | {
+        typeof: "undefined";
+      };
+
+  export namespace JsType {
+    export function equals(left: JsType, right: JsType): boolean {
+      if (left.typeof !== right.typeof) {
+        return false;
+      }
+
+      if (
+        left.typeof === "object" &&
+        right.typeof === "object" &&
+        left.instanceof !== right.instanceof
+      ) {
+        return false;
+      }
+
+      return true;
     }
   }
 

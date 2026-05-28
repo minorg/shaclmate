@@ -63,7 +63,7 @@ export abstract class AbstractContainerType<
       sourceTypes: [
         {
           expression: this.itemType.expression,
-          typeof: this.itemType.typeofs[0],
+          jsType: this.itemType.jsTypes[0],
         },
       ],
     };

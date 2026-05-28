@@ -30,7 +30,7 @@ export class IdentifierProperty extends AbstractProperty<
     const typeExpressions: Code[] = [code`(() => ${this.typeExpression})`];
     for (const type of this.type.conversionFunction.unsafeCoerce()
       .sourceTypes) {
-      if (type.typeof === "undefined") {
+      if (type.jsType.typeof === "undefined") {
         hasQuestionToken = true;
       } else {
         typeExpressions.push(code`${type.expression}`);

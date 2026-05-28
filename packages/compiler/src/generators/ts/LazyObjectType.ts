@@ -1,6 +1,6 @@
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -13,16 +13,19 @@ export class LazyObjectType extends AbstractLazyObjectType<
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
+    invariant(this.jsTypes.length === 1);
+    invariant(this.resolveType.jsTypes.length === 1);
+
     return Maybe.of({
       code: code`${this.reusables.snippets.convertToLazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.expression}, ${this.resolveType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
       sourceTypes: [
         {
           expression: this.expression,
-          typeof: "object",
+          jsType: this.jsTypes[0],
         },
         {
           expression: this.resolveType.expression,
-          typeof: "object",
+          jsType: this.resolveType.jsTypes[0],
         },
       ],
     });

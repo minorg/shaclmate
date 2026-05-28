@@ -31,6 +31,9 @@ export class ListType<
   private readonly identifierNodeKind: IdentifierNodeKind;
   private readonly toRdfTypes: readonly NamedNode[];
 
+  override readonly jsTypes = [
+    { instanceof: "Array", typeof: "object" },
+  ] as const;
   override readonly kind = "List";
 
   constructor({
@@ -62,7 +65,7 @@ export class ListType<
             ),
             { on: " | " },
           )})[]`,
-          typeof: "object",
+          jsType: { instanceof: "Array", typeof: "object" },
         },
       ],
     });

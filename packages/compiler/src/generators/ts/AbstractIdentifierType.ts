@@ -9,6 +9,9 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export abstract class AbstractIdentifierType<
   IdentifierT extends BlankNode | NamedNode,
 > extends AbstractTermType<NamedNode, IdentifierT> {
+  override readonly jsTypes = [
+    { instanceof: "Object", typeof: "object" },
+  ] as const;
   abstract override readonly kind: "BlankNode" | "Identifier" | "Iri";
   abstract override readonly nodeKinds: ReadonlySet<IdentifierNodeKind>;
   abstract readonly parseFunction: Code;

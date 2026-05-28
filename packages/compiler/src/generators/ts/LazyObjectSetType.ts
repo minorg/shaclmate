@@ -1,6 +1,6 @@
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -21,25 +21,29 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
+    invariant(this.jsTypes.length === 1);
+    invariant(this.resolveType.jsTypes.length === 1);
+
     return Maybe.of({
       code: code`${this.reusables.snippets.convertToLazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
       sourceTypes: [
         {
           expression: this.expression,
-          typeof: "object",
+          jsType: this.jsTypes[0],
         },
         {
           expression: this.resolveType.expression,
-          typeof: "object",
+          jsType: this.resolveType.jsTypes[0],
         },
         {
           expression: code`undefined`,
-          typeof: "undefined",
+          jsType: { typeof: "undefined" },
         },
       ],
     });
   }
 
+  @Memoize()
   protected override get runtimeClass() {
     return {
       name: code`${this.reusables.snippets.LazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>`,
