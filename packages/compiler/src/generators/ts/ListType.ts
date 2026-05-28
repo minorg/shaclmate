@@ -56,7 +56,7 @@ export class ListType<
     );
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToArray}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
+      code: code`${this.reusables.snippets.convertToList}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
       sourceTypes: [
         {
           expression: code`readonly (${joinCode(

@@ -18,8 +18,6 @@ import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
 import { snippets_ConversionFunction } from "./_snippets/snippets_ConversionFunction.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
-import { snippets_convertToArray } from "./_snippets/snippets_convertToArray.js";
-import { snippets_convertToArrayArray } from "./_snippets/snippets_convertToArrayArray.js";
 import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
@@ -29,8 +27,11 @@ import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_co
 import { snippets_convertToLazyObject } from "./_snippets/snippets_convertToLazyObject.js";
 import { snippets_convertToLazyObjectOption } from "./_snippets/snippets_convertToLazyObjectOption.js";
 import { snippets_convertToLazyObjectSet } from "./_snippets/snippets_convertToLazyObjectSet.js";
+import { snippets_convertToList } from "./_snippets/snippets_convertToList.js";
+import { snippets_convertToListSet } from "./_snippets/snippets_convertToListSet.js";
 import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
 import { snippets_convertToMaybe } from "./_snippets/snippets_convertToMaybe.js";
+import { snippets_convertToNonListSet } from "./_snippets/snippets_convertToNonListSet.js";
 import { snippets_convertWithDefaultValue } from "./_snippets/snippets_convertWithDefaultValue.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
@@ -452,16 +453,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get convertToArray(): Snippet {
-    return this.snippet(snippets_convertToArray);
-  }
-
-  @Memoize()
-  get convertToArrayArray(): Snippet {
-    return this.snippet(snippets_convertToArrayArray);
-  }
-
-  @Memoize()
   get convertToBlankNode(): Snippet {
     return this.snippet(snippets_convertToBlankNode);
   }
@@ -507,6 +498,16 @@ export class Snippets {
   }
 
   @Memoize()
+  get convertToList(): Snippet {
+    return this.snippet(snippets_convertToList);
+  }
+
+  @Memoize()
+  get convertToListSet(): Snippet {
+    return this.snippet(snippets_convertToListSet);
+  }
+
+  @Memoize()
   get convertToLiteral(): Snippet {
     return this.snippet(snippets_convertToLiteral);
   }
@@ -514,6 +515,11 @@ export class Snippets {
   @Memoize()
   get convertToMaybe(): Snippet {
     return this.snippet(snippets_convertToMaybe);
+  }
+
+  @Memoize()
+  get convertToNonListSet(): Snippet {
+    return this.snippet(snippets_convertToNonListSet);
   }
 
   @Memoize()
