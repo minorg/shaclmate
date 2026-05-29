@@ -10,8 +10,8 @@ export const snippets_convertToArraySet: SnippetFactory = ({
     `${syntheticNamePrefix}convertToArraySet`,
     code`\
 function ${syntheticNamePrefix}convertToArraySet<ItemSourceT, ItemTargetT, Readonly extends boolean>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>, _readonly: Readonly) {
-  type EitherR = Readonly extends true ? ReadonlyArray<ItemTargetT> : Array<ItemTargetT>;
-  return (value: readonly ItemSourceT[] | undefined): ${imports.Either}<Error, EitherR> => 
-    (typeof value === "undefined" ? ${imports.Either}.of([]) : ${imports.Either}.sequence(value.map(convertToItem))) as ${imports.Either}<Error, EitherR>;
+  type ItemTargetArrayT = Readonly extends true ? ReadonlyArray<ItemTargetT> : Array<ItemTargetT>;
+  return (value: readonly ItemSourceT[] | undefined): ${imports.Either}<Error, ItemTargetArrayT> => 
+    (typeof value === "undefined" ? ${imports.Either}.of([]) : ${imports.Either}.sequence(value.map(convertToItem))) as ${imports.Either}<Error, ItemTargetArrayT>;
 }`,
   );

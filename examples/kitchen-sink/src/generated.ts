@@ -312,17 +312,22 @@ type $ConversionFunction<SourceT, TargetT> = (
   source: SourceT,
 ) => Either<Error, TargetT>;
 
-function $convertToArray<ItemSourceT, ItemTargetT, Readonly extends boolean>(
+function $convertToArraySet<ItemSourceT, ItemTargetT, Readonly extends boolean>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
   _readonly: Readonly,
 ) {
-  type EitherR = Readonly extends true
+  type ItemTargetArrayT = Readonly extends true
     ? ReadonlyArray<ItemTargetT>
     : Array<ItemTargetT>;
-  return (value: readonly ItemSourceT[] | undefined): Either<Error, EitherR> =>
+  return (
+    value: readonly ItemSourceT[] | undefined,
+  ): Either<Error, ItemTargetArrayT> =>
     (typeof value === "undefined"
       ? Either.of([])
-      : Either.sequence(value.map(convertToItem))) as Either<Error, EitherR>;
+      : Either.sequence(value.map(convertToItem))) as Either<
+      Error,
+      ItemTargetArrayT
+    >;
 }
 
 function $convertToBlankNode(
@@ -555,6 +560,20 @@ function $convertToLazyObjectSet<
   };
 }
 
+function $convertToList<ItemSourceT, ItemTargetT, Readonly extends boolean>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  _readonly: Readonly,
+) {
+  type ItemTargetArrayT = Readonly extends true
+    ? ReadonlyArray<ItemTargetT>
+    : Array<ItemTargetT>;
+  return (value: readonly ItemSourceT[]): Either<Error, ItemTargetArrayT> =>
+    Either.sequence(value.map(convertToItem)) as Either<
+      Error,
+      ItemTargetArrayT
+    >;
+}
+
 function $convertToLiteral(
   value: bigint | boolean | Date | number | string | Literal,
 ): Either<Error, Literal> {
@@ -586,6 +605,38 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
     }
 
     return convertToItem(value).map(Maybe.of);
+  };
+}
+
+function $convertToScalarSet<
+  ItemSourceT,
+  ItemTargetT,
+  Readonly extends boolean,
+>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  _readonly: Readonly,
+) {
+  type ItemTargetArrayT = Readonly extends true
+    ? ReadonlyArray<ItemTargetT>
+    : Array<ItemTargetT>;
+  return (
+    value: ItemSourceT | readonly ItemSourceT[] | undefined,
+  ): Either<Error, ItemTargetArrayT> => {
+    if (typeof value === "undefined") {
+      return Either.of<Error, ItemTargetArrayT>(
+        [] as unknown as ItemTargetArrayT,
+      );
+    }
+    if (Array.isArray(value)) {
+      return Either.sequence(value.map(convertToItem)) as Either<
+        Error,
+        ItemTargetArrayT
+      >;
+    }
+    return Either.of([convertToItem(value as ItemSourceT)]) as Either<
+      Error,
+      ItemTargetArrayT
+    >;
   };
 }
 
@@ -4656,20 +4707,36 @@ export namespace UnionDiscriminants {
           value: UnionMember2;
         }
       | { type: "string"; value: string };
-    readonly setIriOrLiteralProperty?: readonly (NamedNode | Literal)[];
-    readonly setIriOrStringProperty?: readonly (NamedNode | string)[];
-    readonly setNodeOrLiteralProperty?: readonly (
-      | { termType: "UnionMember1"; value: UnionMember1 }
-      | Literal
-    )[];
-    readonly setNodeOrNodeOrStringProperty?: readonly (
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | { type: "UnionMember2"; value: UnionMember2 }
-      | {
-          type: "string";
-          value: string;
-        }
-    )[];
+    readonly setIriOrLiteralProperty?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
+    readonly setIriOrStringProperty?:
+      | NamedNode
+      | string
+      | readonly (NamedNode | string)[];
+    readonly setNodeOrLiteralProperty?:
+      | ({ termType: "UnionMember1"; value: UnionMember1 } | Literal)
+      | readonly (
+          | { termType: "UnionMember1"; value: UnionMember1 }
+          | Literal
+        )[];
+    readonly setNodeOrNodeOrStringProperty?:
+      | (
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        )
+      | readonly (
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        )[];
   }): Either<Error, UnionDiscriminants> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
@@ -4720,7 +4787,7 @@ export namespace UnionDiscriminants {
       requiredNodeOrNodeOrStringProperty: $identityConversionFunction(
         parameters.requiredNodeOrNodeOrStringProperty,
       ),
-      setIriOrLiteralProperty: $convertToArray(
+      setIriOrLiteralProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.setIriOrLiteralProperty).chain((value) =>
@@ -4729,7 +4796,7 @@ export namespace UnionDiscriminants {
           value,
         ),
       ),
-      setIriOrStringProperty: $convertToArray(
+      setIriOrStringProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.setIriOrStringProperty).chain((value) =>
@@ -4738,7 +4805,7 @@ export namespace UnionDiscriminants {
           value,
         ),
       ),
-      setNodeOrLiteralProperty: $convertToArray(
+      setNodeOrLiteralProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.setNodeOrLiteralProperty).chain((value) =>
@@ -4747,7 +4814,7 @@ export namespace UnionDiscriminants {
           value,
         ),
       ),
-      setNodeOrNodeOrStringProperty: $convertToArray(
+      setNodeOrNodeOrStringProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.setNodeOrNodeOrStringProperty).chain((value) =>
@@ -4810,20 +4877,36 @@ export namespace UnionDiscriminants {
           value: UnionMember2;
         }
       | { type: "string"; value: string };
-    readonly setIriOrLiteralProperty?: readonly (NamedNode | Literal)[];
-    readonly setIriOrStringProperty?: readonly (NamedNode | string)[];
-    readonly setNodeOrLiteralProperty?: readonly (
-      | { termType: "UnionMember1"; value: UnionMember1 }
-      | Literal
-    )[];
-    readonly setNodeOrNodeOrStringProperty?: readonly (
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | { type: "UnionMember2"; value: UnionMember2 }
-      | {
-          type: "string";
-          value: string;
-        }
-    )[];
+    readonly setIriOrLiteralProperty?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
+    readonly setIriOrStringProperty?:
+      | NamedNode
+      | string
+      | readonly (NamedNode | string)[];
+    readonly setNodeOrLiteralProperty?:
+      | ({ termType: "UnionMember1"; value: UnionMember1 } | Literal)
+      | readonly (
+          | { termType: "UnionMember1"; value: UnionMember1 }
+          | Literal
+        )[];
+    readonly setNodeOrNodeOrStringProperty?:
+      | (
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        )
+      | readonly (
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        )[];
   }): UnionDiscriminants {
     return create(parameters).unsafeCoerce();
   }
@@ -15483,11 +15566,8 @@ export namespace ListSets {
   }): Either<Error, ListSets> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      listListSetProperty: $convertToArray(
-        $convertToArray(
-          $convertToArray($identityConversionFunction, true),
-          true,
-        ),
+      listListSetProperty: $convertToArraySet(
+        $convertToList($convertToList($identityConversionFunction, true), true),
         true,
       )(parameters?.listListSetProperty).chain((value) =>
         $validateArray(
@@ -15498,8 +15578,8 @@ export namespace ListSets {
           true,
         )(ListSets.schema.properties.listListSetProperty.type, value),
       ),
-      listSetProperty: $convertToArray(
-        $convertToArray($identityConversionFunction, true),
+      listSetProperty: $convertToArraySet(
+        $convertToList($identityConversionFunction, true),
         true,
       )(parameters?.listSetProperty).chain((value) =>
         $validateArray($validateArray($identityValidationFunction, true), true)(
@@ -15507,7 +15587,7 @@ export namespace ListSets {
           value,
         ),
       ),
-      listUnionSetProperty: $convertToArray(
+      listUnionSetProperty: $convertToArraySet(
         $identityConversionFunction,
         true,
       )(parameters?.listUnionSetProperty).chain((value) =>
@@ -16944,14 +17024,14 @@ export namespace PropertyCardinalities {
       | BlankNode
       | NamedNode
       | string;
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly emptyStringSetProperty?: string | readonly string[];
+    readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
   }): Either<Error, PropertyCardinalities> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      emptyStringSetProperty: $convertToArray(
+      emptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.emptyStringSetProperty).chain((value) =>
@@ -16960,7 +17040,7 @@ export namespace PropertyCardinalities {
           value,
         ),
       ),
-      nonEmptyStringSetProperty: $convertToArray(
+      nonEmptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.nonEmptyStringSetProperty).chain((value) =>
@@ -16993,8 +17073,8 @@ export namespace PropertyCardinalities {
       | BlankNode
       | NamedNode
       | string;
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly emptyStringSetProperty?: string | readonly string[];
+    readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
   }): PropertyCardinalities {
@@ -26444,20 +26524,20 @@ export namespace MutableProperties {
       | NamedNode
       | string;
     readonly mutableListProperty?: readonly string[] | Maybe<string[]>;
-    readonly mutableSetProperty?: readonly string[];
+    readonly mutableSetProperty?: string | readonly string[];
     readonly mutableStringProperty?: string | Maybe<string>;
   }): Either<Error, MutableProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       mutableListProperty: $convertToMaybe(
-        $convertToArray($identityConversionFunction, false),
+        $convertToList($identityConversionFunction, false),
       )(parameters?.mutableListProperty).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, false))(
           MutableProperties.schema.properties.mutableListProperty.type,
           value,
         ),
       ),
-      mutableSetProperty: $convertToArray(
+      mutableSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         false,
       )(parameters?.mutableSetProperty).chain((value) =>
@@ -26489,7 +26569,7 @@ export namespace MutableProperties {
       | NamedNode
       | string;
     readonly mutableListProperty?: readonly string[] | Maybe<string[]>;
-    readonly mutableSetProperty?: readonly string[];
+    readonly mutableSetProperty?: string | readonly string[];
     readonly mutableStringProperty?: string | Maybe<string>;
   }): MutableProperties {
     return create(parameters).unsafeCoerce();
@@ -29130,7 +29210,7 @@ export namespace ListProperties {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       iriListProperty: $convertToMaybe(
-        $convertToArray($convertToIri<string>, true),
+        $convertToList($convertToIri<string>, true),
       )(parameters?.iriListProperty).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           ListProperties.schema.properties.iriListProperty.type,
@@ -29138,7 +29218,7 @@ export namespace ListProperties {
         ),
       ),
       objectListProperty: $convertToMaybe(
-        $convertToArray($identityConversionFunction, true),
+        $convertToList($identityConversionFunction, true),
       )(parameters?.objectListProperty).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           ListProperties.schema.properties.objectListProperty.type,
@@ -29146,10 +29226,7 @@ export namespace ListProperties {
         ),
       ),
       stringListListProperty: $convertToMaybe(
-        $convertToArray(
-          $convertToArray($identityConversionFunction, true),
-          true,
-        ),
+        $convertToList($convertToList($identityConversionFunction, true), true),
       )(parameters?.stringListListProperty).chain((value) =>
         $validateMaybe(
           $validateArray(
@@ -29159,7 +29236,7 @@ export namespace ListProperties {
         )(ListProperties.schema.properties.stringListListProperty.type, value),
       ),
       stringListProperty: $convertToMaybe(
-        $convertToArray($identityConversionFunction, true),
+        $convertToList($identityConversionFunction, true),
       )(parameters?.stringListProperty).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           ListProperties.schema.properties.stringListProperty.type,
@@ -35167,18 +35244,18 @@ export namespace LanguageInProperties {
       | BlankNode
       | NamedNode
       | string;
-    readonly languageInLiteralProperty: readonly (
+    readonly languageInLiteralProperty:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
   }): Either<Error, LanguageInProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      languageInLiteralProperty: $convertToArray(
+      languageInLiteralProperty: $convertToScalarSet(
         $convertToLiteral,
         true,
       )(parameters.languageInLiteralProperty).chain((value) =>
@@ -35201,14 +35278,14 @@ export namespace LanguageInProperties {
       | BlankNode
       | NamedNode
       | string;
-    readonly languageInLiteralProperty: readonly (
+    readonly languageInLiteralProperty:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
   }): LanguageInProperties {
     return create(parameters).unsafeCoerce();
   }
@@ -35693,11 +35770,15 @@ export namespace JsPrimitiveUnionProperty {
       | BlankNode
       | NamedNode
       | string;
-    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
+    readonly jsPrimitiveUnionProperty?:
+      | boolean
+      | number
+      | string
+      | readonly (boolean | number | string)[];
   }): Either<Error, JsPrimitiveUnionProperty> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      jsPrimitiveUnionProperty: $convertToArray(
+      jsPrimitiveUnionProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters?.jsPrimitiveUnionProperty).chain((value) =>
@@ -35721,7 +35802,11 @@ export namespace JsPrimitiveUnionProperty {
       | BlankNode
       | NamedNode
       | string;
-    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
+    readonly jsPrimitiveUnionProperty?:
+      | boolean
+      | number
+      | string
+      | readonly (boolean | number | string)[];
   }): JsPrimitiveUnionProperty {
     return create(parameters).unsafeCoerce();
   }
@@ -48031,21 +48116,27 @@ export namespace ConvertibleTypeProperties {
       | BlankNode
       | NamedNode
       | string;
-    readonly convertibleIriNonEmptySetProperty: readonly (string | NamedNode)[];
+    readonly convertibleIriNonEmptySetProperty:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly convertibleIriOptionProperty?:
       | string
       | NamedNode
       | Maybe<NamedNode>;
     readonly convertibleIriProperty: string | NamedNode;
-    readonly convertibleIriSetProperty?: readonly (string | NamedNode)[];
-    readonly convertibleLiteralNonEmptySetProperty: readonly (
+    readonly convertibleIriSetProperty?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly convertibleLiteralNonEmptySetProperty:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
     readonly convertibleLiteralOptionProperty?:
       | bigint
       | boolean
@@ -48061,32 +48152,28 @@ export namespace ConvertibleTypeProperties {
       | string
       | Date
       | Literal;
-    readonly convertibleLiteralSetProperty?: readonly (
+    readonly convertibleLiteralSetProperty?:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
-    readonly convertibleTermNonEmptySetProperty: readonly (
-      | BlankNode
-      | NamedNode
-      | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
+    readonly convertibleTermNonEmptySetProperty:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
     readonly convertibleTermOptionProperty?:
       | (BlankNode | NamedNode | Literal)
       | Maybe<BlankNode | NamedNode | Literal>;
     readonly convertibleTermProperty: BlankNode | NamedNode | Literal;
-    readonly convertibleTermSetProperty?: readonly (
-      | BlankNode
-      | NamedNode
-      | Literal
-    )[];
+    readonly convertibleTermSetProperty?:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
   }): Either<Error, ConvertibleTypeProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      convertibleIriNonEmptySetProperty: $convertToArray(
+      convertibleIriNonEmptySetProperty: $convertToScalarSet(
         $convertToIri<string>,
         true,
       )(parameters.convertibleIriNonEmptySetProperty).chain((value) =>
@@ -48108,7 +48195,7 @@ export namespace ConvertibleTypeProperties {
       convertibleIriProperty: $convertToIri<string>(
         parameters.convertibleIriProperty,
       ),
-      convertibleIriSetProperty: $convertToArray(
+      convertibleIriSetProperty: $convertToScalarSet(
         $convertToIri<string>,
         true,
       )(parameters.convertibleIriSetProperty).chain((value) =>
@@ -48118,7 +48205,7 @@ export namespace ConvertibleTypeProperties {
           value,
         ),
       ),
-      convertibleLiteralNonEmptySetProperty: $convertToArray(
+      convertibleLiteralNonEmptySetProperty: $convertToScalarSet(
         $convertToLiteral,
         true,
       )(parameters.convertibleLiteralNonEmptySetProperty).chain((value) =>
@@ -48140,7 +48227,7 @@ export namespace ConvertibleTypeProperties {
       convertibleLiteralProperty: $convertToLiteral(
         parameters.convertibleLiteralProperty,
       ),
-      convertibleLiteralSetProperty: $convertToArray(
+      convertibleLiteralSetProperty: $convertToScalarSet(
         $convertToLiteral,
         true,
       )(parameters.convertibleLiteralSetProperty).chain((value) =>
@@ -48150,7 +48237,7 @@ export namespace ConvertibleTypeProperties {
           value,
         ),
       ),
-      convertibleTermNonEmptySetProperty: $convertToArray(
+      convertibleTermNonEmptySetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.convertibleTermNonEmptySetProperty).chain((value) =>
@@ -48170,7 +48257,7 @@ export namespace ConvertibleTypeProperties {
         ),
       ),
       convertibleTermProperty: Either.of(parameters.convertibleTermProperty),
-      convertibleTermSetProperty: $convertToArray(
+      convertibleTermSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.convertibleTermSetProperty).chain((value) =>
@@ -48194,21 +48281,27 @@ export namespace ConvertibleTypeProperties {
       | BlankNode
       | NamedNode
       | string;
-    readonly convertibleIriNonEmptySetProperty: readonly (string | NamedNode)[];
+    readonly convertibleIriNonEmptySetProperty:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly convertibleIriOptionProperty?:
       | string
       | NamedNode
       | Maybe<NamedNode>;
     readonly convertibleIriProperty: string | NamedNode;
-    readonly convertibleIriSetProperty?: readonly (string | NamedNode)[];
-    readonly convertibleLiteralNonEmptySetProperty: readonly (
+    readonly convertibleIriSetProperty?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly convertibleLiteralNonEmptySetProperty:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
     readonly convertibleLiteralOptionProperty?:
       | bigint
       | boolean
@@ -48224,28 +48317,24 @@ export namespace ConvertibleTypeProperties {
       | string
       | Date
       | Literal;
-    readonly convertibleLiteralSetProperty?: readonly (
+    readonly convertibleLiteralSetProperty?:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
-    readonly convertibleTermNonEmptySetProperty: readonly (
-      | BlankNode
-      | NamedNode
-      | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
+    readonly convertibleTermNonEmptySetProperty:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
     readonly convertibleTermOptionProperty?:
       | (BlankNode | NamedNode | Literal)
       | Maybe<BlankNode | NamedNode | Literal>;
     readonly convertibleTermProperty: BlankNode | NamedNode | Literal;
-    readonly convertibleTermSetProperty?: readonly (
-      | BlankNode
-      | NamedNode
-      | Literal
-    )[];
+    readonly convertibleTermSetProperty?:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
   }): ConvertibleTypeProperties {
     return create(parameters).unsafeCoerce();
   }

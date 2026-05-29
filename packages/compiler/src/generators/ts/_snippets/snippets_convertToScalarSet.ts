@@ -10,15 +10,15 @@ export const snippets_convertToScalarSet: SnippetFactory = ({
     `${syntheticNamePrefix}convertToScalarSet`,
     code`\
 function ${syntheticNamePrefix}convertToScalarSet<ItemSourceT, ItemTargetT, Readonly extends boolean>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>, _readonly: Readonly) {
-  type EitherR = Readonly extends true ? ReadonlyArray<ItemTargetT> : Array<ItemTargetT>;
-  return (value: ItemSourceT | readonly ItemSourceT[] | undefined): ${imports.Either}<Error, EitherR> => {
+  type ItemTargetArrayT = Readonly extends true ? ReadonlyArray<ItemTargetT> : Array<ItemTargetT>;
+  return (value: ItemSourceT | readonly ItemSourceT[] | undefined): ${imports.Either}<Error, ItemTargetArrayT> => {
     if (typeof value === "undefined") {
-      return ${imports.Either}.of<Error, EitherR>([]);
+      return ${imports.Either}.of<Error, ItemTargetArrayT>([] as unknown as ItemTargetArrayT);
     }
     if (Array.isArray(value)) {
-      return ${imports.Either}.sequence<Error, EitherR>(value.map(convertToItem));
+      return ${imports.Either}.sequence(value.map(convertToItem)) as ${imports.Either}<Error, ItemTargetArrayT>;
     }
-    return ${imports.Either}.of<Error, EitherR>(convertToItem(value));
+    return ${imports.Either}.of([convertToItem(value as ItemSourceT)]) as ${imports.Either}<Error, ItemTargetArrayT>;
   };
 }`,
   );
