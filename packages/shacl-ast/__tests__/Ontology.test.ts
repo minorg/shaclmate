@@ -1,6 +1,6 @@
-import dataFactory from "@rdfx/data-factory";
 import { beforeAll, describe, it } from "vitest";
 import type { Ontology } from "../src/generated.js";
+import { ex } from "./namespaces.js";
 import { testData } from "./testData.js";
 
 describe("Ontology", () => {
@@ -9,7 +9,7 @@ describe("Ontology", () => {
   beforeAll(() => {
     sut = testData.shapesGraphs.wellFormed.syntax
       .unsafeCoerce()
-      .ontology(dataFactory.namedNode("http://example.com/"))
+      .ontology(ex(""))
       .unsafeCoerce();
   });
 

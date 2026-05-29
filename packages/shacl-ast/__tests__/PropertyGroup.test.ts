@@ -1,6 +1,6 @@
-import dataFactory from "@rdfx/data-factory";
 import { beforeAll, describe, it } from "vitest";
 import type { PropertyGroup } from "../src/generated.js";
+import { ex } from "./namespaces.js";
 import { testData } from "./testData.js";
 
 describe("PropertyGroup", () => {
@@ -9,7 +9,7 @@ describe("PropertyGroup", () => {
   beforeAll(() => {
     sut = testData.shapesGraphs.wellFormed.syntax
       .unsafeCoerce()
-      .propertyGroup(dataFactory.namedNode("http://example.com/PropertyGroup"))
+      .propertyGroup(ex("PropertyGroup"))
       .unsafeCoerce();
   });
 
