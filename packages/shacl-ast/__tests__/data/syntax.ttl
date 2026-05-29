@@ -23,6 +23,7 @@
     sh:datatype :datatype ;
     sh:deactivated true ;
     sh:disjoint :disjoint ;
+    sh:equals :equals ;
     sh:flags "flags" ;
     sh:hasValue :hasValue ;
     sh:ignoredProperties (:ignoredProperty1

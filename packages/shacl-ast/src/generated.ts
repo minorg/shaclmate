@@ -613,7 +613,9 @@ export interface PropertyShape {
 
   readonly disjoint: readonly NamedNode[];
 
-  readonly flags: readonly string[];
+  readonly equals: readonly NamedNode[];
+
+  readonly flags: Maybe<string>;
 
   readonly groups: readonly (BlankNode | NamedNode)[];
 
@@ -690,7 +692,8 @@ export namespace PropertyShape {
     readonly defaultValue?: (NamedNode | Literal) | Maybe<NamedNode | Literal>;
     readonly description?: string | Maybe<string>;
     readonly disjoint?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly flags?: string | readonly string[];
+    readonly equals?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly flags?: string | Maybe<string>;
     readonly groups?:
       | BlankNode
       | NamedNode
@@ -862,11 +865,19 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      flags: $convertToScalarSet(
-        $identityConversionFunction,
+      equals: $convertToScalarSet(
+        $convertToIri<string>,
         true,
-      )(parameters.flags).chain((value) =>
+      )(parameters.equals).chain((value) =>
         $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.equals.type,
+          value,
+        ),
+      ),
+      flags: $convertToMaybe($identityConversionFunction)(
+        parameters.flags,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.flags.type,
           value,
         ),
@@ -1089,7 +1100,8 @@ export namespace PropertyShape {
     readonly defaultValue?: (NamedNode | Literal) | Maybe<NamedNode | Literal>;
     readonly description?: string | Maybe<string>;
     readonly disjoint?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly flags?: string | readonly string[];
+    readonly equals?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly flags?: string | Maybe<string>;
     readonly groups?:
       | BlankNode
       | NamedNode
@@ -1418,6 +1430,22 @@ export namespace PropertyShape {
                 }),
               ),
         }),
+        equals: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.equals,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath: PropertyShape.schema.properties.equals.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
         flags: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -1431,13 +1459,14 @@ export namespace PropertyShape {
                 ),
               )
               .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.flags.path,
-                  value: valuesArray,
-                }),
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath: PropertyShape.schema.properties.flags.path,
+                      value: Maybe.empty(),
+                    }),
               ),
         }),
         groups: $shaclPropertyFromRdf({
@@ -2161,10 +2190,18 @@ export namespace PropertyShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#disjoint"),
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
+      equals: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#equals"),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
       flags: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
-        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       groups: {
         kind: "Shacl",
@@ -2491,8 +2528,15 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
+      PropertyShape.schema.properties.equals.path,
+      parameters.object.equals.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
       PropertyShape.schema.properties.flags.path,
-      parameters.object.flags.flatMap((item) => [$literalFactory.string(item)]),
+      parameters.object.flags
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -3365,7 +3409,9 @@ export interface NodeShape {
 
   readonly disjoint: readonly NamedNode[];
 
-  readonly flags: readonly string[];
+  readonly equals: readonly NamedNode[];
+
+  readonly flags: Maybe<string>;
 
   readonly hasValues: readonly (NamedNode | Literal)[];
 
@@ -3439,7 +3485,8 @@ export namespace NodeShape {
     readonly datatype?: string | NamedNode | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
     readonly disjoint?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly flags?: string | readonly string[];
+    readonly equals?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly flags?: string | Maybe<string>;
     readonly hasValues?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
@@ -3604,11 +3651,19 @@ export namespace NodeShape {
           value,
         ),
       ),
-      flags: $convertToScalarSet(
-        $identityConversionFunction,
+      equals: $convertToScalarSet(
+        $convertToIri<string>,
         true,
-      )(parameters?.flags).chain((value) =>
+      )(parameters?.equals).chain((value) =>
         $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.equals.type,
+          value,
+        ),
+      ),
+      flags: $convertToMaybe($identityConversionFunction)(
+        parameters?.flags,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.flags.type,
           value,
         ),
@@ -3832,7 +3887,8 @@ export namespace NodeShape {
     readonly datatype?: string | NamedNode | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
     readonly disjoint?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly flags?: string | readonly string[];
+    readonly equals?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly flags?: string | Maybe<string>;
     readonly hasValues?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
@@ -4117,6 +4173,22 @@ export namespace NodeShape {
                 }),
               ),
         }),
+        equals: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.equals,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath: PropertyShape.schema.properties.equals.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
         flags: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -4130,13 +4202,14 @@ export namespace NodeShape {
                 ),
               )
               .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.flags.path,
-                  value: valuesArray,
-                }),
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath: PropertyShape.schema.properties.flags.path,
+                      value: Maybe.empty(),
+                    }),
               ),
         }),
         hasValues: $shaclPropertyFromRdf({
@@ -4852,10 +4925,18 @@ export namespace NodeShape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#disjoint"),
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
+      equals: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#equals"),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
       flags: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
-        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       hasValues: {
         kind: "Shacl",
@@ -5174,8 +5255,15 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
+      PropertyShape.schema.properties.equals.path,
+      parameters.object.equals.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
       PropertyShape.schema.properties.flags.path,
-      parameters.object.flags.flatMap((item) => [$literalFactory.string(item)]),
+      parameters.object.flags
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -5710,10 +5798,18 @@ export namespace Shape {
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#disjoint"),
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
+      equals: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#equals"),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
       flags: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
-        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       hasValues: {
         kind: "Shacl",

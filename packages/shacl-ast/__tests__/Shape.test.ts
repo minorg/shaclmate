@@ -69,6 +69,15 @@ describe("Shape", () => {
         expect(shape.disjoint[0].equals(ex("disjoint"))).toStrictEqual(true);
       });
 
+      it("equals", ({ expect }) => {
+        expect(shape.equals).toHaveLength(1);
+        expect(shape.equals[0].equals(ex("equals"))).toStrictEqual(true);
+      });
+
+      it("flags", ({ expect }) => {
+        expect(shape.flags.extract()).toStrictEqual("flags");
+      });
+
       it("label", ({ expect }) => {
         expect(shape.label.extract()).toStrictEqual("label");
       });
