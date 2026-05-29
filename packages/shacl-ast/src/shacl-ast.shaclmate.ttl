@@ -75,7 +75,7 @@ shaclmate:NodeShape
     shaclmate:fromRdfType sh:NodeShape ;
     shaclmate:name "NodeShape" ;
     a owl:Class, sh:NodeShape ;
-    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-types, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
+    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-types, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-disjoint, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
 
 shaclmate:NodeShape-closed
     a sh:PropertyShape ;
@@ -126,7 +126,7 @@ shaclmate:PropertyShape
     shaclmate:fromRdfType sh:PropertyShape ;
     shaclmate:name "PropertyShape" ;
     a owl:Class, sh:NodeShape ;
-    sh:property shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-description, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-name, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-uniqueLang, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
+    sh:property shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-description, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-name, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-uniqueLang, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-disjoint, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
 
 shaclmate:PropertyShape-defaultValue
     a sh:PropertyShape ;
@@ -201,6 +201,11 @@ shaclmate:Shape-deactivated
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path sh:deactivated .
+
+shaclmate:Shape-disjoint
+    a sh:PropertyShape ;
+    sh:nodeKind sh:IRI ;
+    sh:path sh:disjoint .
 
 shaclmate:Shape-flags
     a sh:PropertyShape ;
