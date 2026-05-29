@@ -3,15 +3,16 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import datasetFactory from "@rdfjs/dataset";
 import type { DatasetCore } from "@rdfjs/types";
-import { ShapesGraph } from "@shaclmate/shacl-ast";
+import dataFactory from "@rdfx/data-factory";
 import { Parser } from "n3";
 import type { Either } from "purify-ts";
+import { ShapesGraph } from "../src/ShapesGraph.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 function parseDataset(filePath: string): DatasetCore {
   return datasetFactory.dataset(
-    new Parser({ format: "Turtle" }).parse(
+    new Parser({ factory: dataFactory, format: "Turtle" }).parse(
       fs.readFileSync(filePath).toString(),
     ),
   );
