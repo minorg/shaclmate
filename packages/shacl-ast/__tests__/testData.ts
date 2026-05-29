@@ -53,13 +53,6 @@ export const testData = {
         );
       },
 
-      get propertyPaths() {
-        return parseShapesGraph(
-          path.join(thisDirectoryPath, "data", "property-paths.ttl"),
-          { ignoreUndefinedShapes: true },
-        );
-      },
-
       get shaclAst() {
         return parseShapesGraph(
           path.join(
