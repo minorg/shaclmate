@@ -1,28 +1,41 @@
-import { schema } from "@tpluscode/rdf-ns-builders";
-import { describe, it } from "vitest";
+import { beforeAll, describe, it } from "vitest";
+import type { NodeShape } from "../src/generated.js";
+import { ex } from "./namespaces.js";
 import { testData } from "./testData.js";
+import { rdfs, sh } from "@tpluscode/rdf-ns-builders";
 
 describe("NodeShape", () => {
-  const shapesGraph = testData.schema.shapesGraph;
+  let sut: NodeShape;
 
-  it("constraints: should get closed true", ({ expect }) => {
-    expect(
-      shapesGraph
-        .nodeShape(schema.DatedMoneySpecification)
-        .unsafeCoerce()
-        .closed.unsafeCoerce(),
-    ).toStrictEqual(true);
+  beforeAll(() => {
+    sut = testData.shapesGraphs.wellFormed.syntax
+      .unsafeCoerce()
+      .nodeShape(ex("NodeShape"))
+      .unsafeCoerce();
   });
 
-  it("constraints: should have properties", ({ expect }) => {
-    expect(
-      shapesGraph.nodeShape(schema.Person).unsafeCoerce().properties,
-    ).toHaveLength(9);
+  it("closed", ({ expect }) => {
+    expect(sut.closed.extract()).toStrictEqual(true);
   });
 
-  // it("should convert to a string", ({ expect }) => {
-  //   expect(
-  //     shapesGraph.nodeShape(schema.Person).unsafeCoerce().toString(),
-  //   ).not.toHaveLength(0);
-  // });
+  it("ignored properties", ({ expect }) => {
+    const ignoredProperties = sut.ignoredProperties.extract();
+    expect(ignoredProperties).toHaveLength(2);
+    expect(ignoredProperties![0].equals(ex("ignoredProperty1"))).toStrictEqual(
+      true,
+    );
+    expect(ignoredProperties![1].equals(ex("ignoredProperty2"))).toStrictEqual(
+      true,
+    );
+  });
+
+  it("properties", ({ expect }) => {
+    expect(sut.properties).toHaveLength(1);
+  });
+
+  it("types", ({expect}) => {
+    expect(sut.types).toHaveLength(2);
+    expect(sut.types.some(type => type.equals(rdfs.Class))).toStrictEqual(true);
+    expect(sut.types.some(type => type.equals(sh.NodeShape))).toStrictEqual(true);
+  });
 });
