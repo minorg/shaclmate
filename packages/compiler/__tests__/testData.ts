@@ -17,7 +17,7 @@ function parseShapesGraph(
   return Either.encase(() => {
     const dataset = datasetFactory.dataset();
     const iriPrefixes: PrefixMapInit = [];
-    const parser = new Parser({ format: "Turtle" });
+    const parser = new Parser({ factory: dataFactory, format: "Turtle" });
     for (const filePath of filePaths) {
       for (const quad of parser.parse(
         fs.readFileSync(filePath).toString(),
@@ -147,7 +147,7 @@ export const testData = {
       //     .extractNullable();
       // },
 
-      get kitchenSink() {
+      get kitchenSinkExample() {
         return parseShapesGraph(
           path.join(
             thisDirectoryPath,

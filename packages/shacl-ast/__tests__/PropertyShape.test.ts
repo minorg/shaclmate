@@ -1,100 +1,101 @@
-import { fail } from "node:assert";
-import type { NamedNode } from "@rdfjs/types";
-import { dash, rdf, schema } from "@tpluscode/rdf-ns-builders";
-import { describe, expect, it } from "vitest";
+import dataFactory from "@rdfx/data-factory";
+import { invariant } from "ts-invariant";
+import { beforeAll, describe, it } from "vitest";
+import type { PropertyShape } from "../src/generated.js";
+import type { ShapesGraph } from "../src/ShapesGraph.js";
+import { ex } from "./namespaces.js";
 import { testData } from "./testData.js";
 
 describe("PropertyShape", () => {
-  const shapesGraph = testData.schema.shapesGraph;
+  let sut: PropertyShape;
+  let shapesGraph: ShapesGraph;
 
-  // it("should convert to a string", ({ expect }) => {
-  //   expect(
-  //     findPropertyShape(schema.Person, schema.givenName).toString(),
-  //   ).not.toHaveLength(0);
-  // });
+  beforeAll(() => {
+    shapesGraph = testData.shapesGraphs.wellFormed.syntax.unsafeCoerce();
+    sut = shapesGraph.propertyShape(ex("PropertyShape")).unsafeCoerce();
+  });
 
-  const findPropertyShape = (
-    nodeShapeIdentifier: NamedNode,
-    path: NamedNode,
-  ) => {
-    const nodeShape = shapesGraph.nodeShape(nodeShapeIdentifier).unsafeCoerce();
-    const propertyShape = nodeShape.properties
-      .map((_) => shapesGraph.propertyShape(_).unsafeCoerce())
-      .find((propertyShape) => {
-        const propertyShapePath = propertyShape.path;
-        return (
-          propertyShapePath.termType === "NamedNode" &&
-          propertyShapePath.equals(path)
-        );
-      });
-    expect(propertyShape).toBeDefined();
-    return propertyShape!;
-  };
-
-  // No sh:defaultValue in the test data
-
-  it("should have a group", ({ expect }) => {
-    const groups = findPropertyShape(
-      dash.ScriptAPIShape,
-      dash.generateClass,
-    ).groups.map((_) => shapesGraph.propertyGroup(_).unsafeCoerce());
-    expect(groups).toHaveLength(1);
+  it("defaultValue", ({ expect }) => {
     expect(
-      groups[0].$identifier().equals(dash.ScriptAPIGenerationRules),
+      sut.defaultValue.extract()?.equals(dataFactory.literal("defaultValue")),
     ).toStrictEqual(true);
   });
 
-  it("should have an order", ({ expect }) => {
-    expect(
-      findPropertyShape(
-        dash.ScriptAPIShape,
-        dash.generatePrefixClasses,
-      ).order.unsafeCoerce(),
-    ).toStrictEqual(15);
+  it("description", ({ expect }) => {
+    expect(sut.description.extract()).toStrictEqual("description");
   });
 
-  it("should parse a property path", ({ expect }) => {
-    const path = findPropertyShape(
-      dash.ScriptAPIShape,
-      dash.generatePrefixClasses,
-    ).path;
-    expect(path.termType).toStrictEqual("NamedNode");
+  it("disjoint", ({ expect }) => {
+    expect(sut.disjoint).toHaveLength(1);
+    expect(sut.disjoint[0].equals(ex("disjoint"))).toStrictEqual(true);
+  });
+
+  it("equals", ({ expect }) => {
+    expect(sut.equals).toHaveLength(1);
+    expect(sut.equals[0].equals(ex("equals"))).toStrictEqual(true);
+  });
+
+  it("group", ({ expect }) => {
+    expect(sut.groups).toHaveLength(1);
+    expect(sut.groups[0].equals(ex("PropertyGroup"))).toStrictEqual(true);
+  });
+
+  it("lessThan", ({ expect }) => {
+    expect(sut.lessThan).toHaveLength(1);
+    expect(sut.lessThan[0].equals(ex("lessThan"))).toStrictEqual(true);
+  });
+
+  it("lessThanOrEquals", ({ expect }) => {
+    expect(sut.lessThanOrEquals).toHaveLength(1);
     expect(
-      (path as NamedNode).equals(dash.generatePrefixClasses),
+      sut.lessThanOrEquals[0].equals(ex("lessThanOrEquals")),
     ).toStrictEqual(true);
   });
 
-  it("should parse an inverse property path", ({ expect }) => {
-    const nodeShape = shapesGraph.nodeShape(schema.Person).unsafeCoerce();
-    for (const propertyShape of nodeShape.properties.map((_) =>
-      shapesGraph.propertyShape(_).unsafeCoerce(),
-    )) {
-      if (propertyShape.path.termType !== "InversePath") {
-        continue;
-      }
-      expect(propertyShape.path.path.termType).toStrictEqual("NamedNode");
-      expect(
-        (propertyShape.path.path as NamedNode).equals(schema.parent),
-      ).toStrictEqual(true);
-      return;
-    }
-    fail();
+  it("maxCount", ({ expect }) => {
+    expect(sut.maxCount.extract()).toStrictEqual(1n);
   });
 
-  it("should parse a zero or more property path", ({ expect }) => {
-    const nodeShape = shapesGraph.nodeShape(dash.ListShape).unsafeCoerce();
-    for (const propertyShape of nodeShape.properties.map((_) =>
-      shapesGraph.propertyShape(_).unsafeCoerce(),
-    )) {
-      if (propertyShape.path.termType !== "ZeroOrMorePath") {
-        continue;
-      }
-      expect(propertyShape.path.path.termType).toStrictEqual("NamedNode");
-      expect(
-        (propertyShape.path.path as NamedNode).equals(rdf.rest),
-      ).toStrictEqual(true);
-      return;
-    }
-    fail();
+  it("minCount", ({ expect }) => {
+    expect(sut.minCount.extract()).toStrictEqual(0n);
+  });
+
+  it("name", ({ expect }) => {
+    expect(sut.name.extract()).toStrictEqual("name");
+  });
+
+  it("order", ({ expect }) => {
+    expect(sut.order.extract()).toStrictEqual(1);
+  });
+
+  it("qualifiedMaxCount", ({ expect }) => {
+    expect(sut.qualifiedMaxCount.extract()).toStrictEqual(1n);
+  });
+
+  it("qualifiedMinCount", ({ expect }) => {
+    expect(sut.qualifiedMinCount.extract()).toStrictEqual(1n);
+  });
+
+  it("qualifiedValueShape", ({ expect }) => {
+    const shapeIdentifier = sut.qualifiedValueShape.extract()!;
+    expect(shapeIdentifier).toBeDefined();
+    const shape = shapesGraph.shape(shapeIdentifier).unsafeCoerce();
+    expect(shape.hasValues).toHaveLength(1);
+    expect(shape.hasValues[0].equals(ex("qualifiedHasValue"))).toStrictEqual(
+      true,
+    );
+  });
+
+  it("qualifiedValueShapesDisjoint", ({ expect }) => {
+    expect(sut.qualifiedValueShapesDisjoint.extract()).toStrictEqual(true);
+  });
+
+  it("path", ({ expect }) => {
+    invariant(sut.path.termType === "NamedNode");
+    expect(sut.path.equals(ex("path"))).toStrictEqual(true);
+  });
+
+  it("uniqueLang", ({ expect }) => {
+    expect(sut.uniqueLang.extract()).toStrictEqual(true);
   });
 });

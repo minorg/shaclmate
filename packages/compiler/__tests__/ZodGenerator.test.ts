@@ -5,6 +5,7 @@ import {
   ShapesGraphToAstTransformer,
   ZodGenerator,
 } from "@shaclmate/compiler";
+import type { Either } from "purify-ts";
 import { describe, expect, it } from "vitest";
 import { compileTs } from "./compileTs.js";
 import { logger } from "./logger.js";
@@ -25,7 +26,10 @@ function generate(shapesGraph: ShapesGraph): string {
 describe("ZodGenerator", () => {
   for (const [id, shapesGraphEither] of Object.entries(
     testData.shapesGraphs.wellFormed,
-  )) {
+  ) as [
+    keyof typeof testData.shapesGraphs.wellFormed,
+    Either<Error, ShapesGraph>,
+  ][]) {
     if (shapesGraphEither === null) {
       continue;
     }
@@ -40,7 +44,7 @@ describe("ZodGenerator", () => {
     it(id, () => {
       let sourceDirectoryPath: string | undefined;
       switch (id) {
-        case "kitchenSink":
+        case "kitchenSinkExample":
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
             "..",

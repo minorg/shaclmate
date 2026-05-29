@@ -5,6 +5,7 @@ import {
   ShapesGraphToAstTransformer,
   TsGenerator,
 } from "@shaclmate/compiler";
+import type { Either } from "purify-ts";
 import { describe, expect, it } from "vitest";
 import { TS_FEATURES } from "../src/generators/ts/TsFeature.js";
 import { compileTs } from "./compileTs.js";
@@ -29,7 +30,10 @@ function generate(
 describe("TsGenerator", () => {
   for (const [id, shapesGraphEither] of Object.entries(
     testData.shapesGraphs.wellFormed,
-  )) {
+  ) as [
+    keyof typeof testData.shapesGraphs.wellFormed,
+    Either<Error, ShapesGraph>,
+  ][]) {
     if (shapesGraphEither === null) {
       continue;
     }
@@ -49,7 +53,7 @@ describe("TsGenerator", () => {
             "input",
           );
           break;
-        case "kitchenSink":
+        case "kitchenSinkExample":
           configuration = {
             ...TsGenerator.Configuration.default_,
             features: new Set([

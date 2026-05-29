@@ -1,0 +1,157 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://example.com/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+<http://example.com/>
+    a owl:Ontology ;
+    rdfs:label "label" .
+
+:NodeShape
+    a rdfs:Class, sh:NodeShape ;
+    sh:and ([
+            sh:datatype :andDatatype1
+        ]
+        [
+            sh:datatype :andDatatype2
+        ]
+    ) ;
+    rdfs:comment "comment" ;
+    sh:class :Class ;
+    sh:closed true ;
+    sh:datatype :datatype ;
+    sh:deactivated true ;
+    sh:disjoint :disjoint ;
+    sh:equals :equals ;
+    sh:flags "flags" ;
+    sh:hasValue :hasValue ;
+    sh:ignoredProperties (:ignoredProperty1
+        :ignoredProperty2
+    ) ;
+    sh:in (:in1
+        :in2
+    ) ;
+    rdfs:label "label" ;
+    sh:languageIn ("en"
+        "fr"
+    ) ;
+    sh:maxExclusive 1 ;
+    sh:maxInclusive 1 ;
+    sh:maxLength 1 ;
+    sh:message "message" ;
+    sh:minExclusive 0 ;
+    sh:minInclusive 0 ;
+    sh:minLength 0 ;
+    sh:node [
+        sh:datatype :nodeDatatype
+    ] ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:not [
+        sh:datatype :notDatatype
+    ] ;
+    sh:or ([
+            sh:datatype :orDatatype1
+        ]
+        [
+            sh:datatype :orDatatype2
+        ]
+    ) ;
+    sh:pattern "pattern" ;
+    sh:property :PropertyShape ;
+    sh:severity sh:Info ;
+    sh:targetClass :TargetClass ;
+    sh:targetNode :targetNode ;
+    sh:targetObjectsOf :targetObjectOf ;
+    sh:targetSubjectsOf :targetSubjectOf ;
+    sh:xone ([
+            sh:datatype :xoneDatatype1
+        ]
+        [
+            sh:datatype :xoneDatatype2
+        ]
+    ) .
+
+:PropertyGroup
+    a sh:PropertyGroup ;
+    rdfs:label "label" .
+
+:PropertyShape
+    a sh:PropertyShape ;
+    sh:and ([
+            sh:datatype :andDatatype1
+        ]
+        [
+            sh:datatype :andDatatype2
+        ]
+    ) ;
+    sh:class :Class ;
+    rdfs:comment "comment" ;
+    sh:datatype :datatype ;
+    sh:deactivated true ;
+    sh:defaultValue "defaultValue" ;
+    sh:description "description" ;
+    sh:disjoint :disjoint ;
+    sh:equals :equals ;
+    sh:flags "flags" ;
+    sh:group :PropertyGroup ;
+    sh:hasValue :hasValue ;
+    sh:ignoredProperties (:ignoredProperty1
+        :ignoredProperty2
+    ) ;
+    sh:in (:in1
+        :in2
+    ) ;
+    rdfs:label "label" ;
+    sh:languageIn ("en"
+        "fr"
+    ) ;
+    sh:lessThan :lessThan ;
+    sh:lessThanOrEquals :lessThanOrEquals ;
+    sh:maxCount 1 ;
+    sh:maxExclusive 1 ;
+    sh:maxInclusive 1 ;
+    sh:maxLength 1 ;
+    sh:message "message" ;
+    sh:minCount 0 ;
+    sh:minExclusive 0 ;
+    sh:minInclusive 0 ;
+    sh:minLength 0 ;
+    sh:name "name" ;
+    sh:node [
+        sh:datatype :nodeDatatype
+    ] ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:not [
+        sh:datatype :notDatatype
+    ] ;
+    sh:or ([
+            sh:datatype :orDatatype1
+        ]
+        [
+            sh:datatype :orDatatype2
+        ]
+    ) ;
+    sh:order 1 ;
+    sh:path :path ;
+    sh:pattern "pattern" ;
+    sh:qualifiedMaxCount 1 ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [
+        sh:hasValue :qualifiedHasValue
+    ] ;
+    sh:qualifiedValueShapesDisjoint true ;
+    sh:severity sh:Info ;
+    sh:targetClass :TargetClass ;
+    sh:targetNode :targetNode ;
+    sh:targetObjectsOf :targetObjectOf ;
+    sh:targetSubjectsOf :targetSubjectOf ;
+    sh:uniqueLang true ;
+    sh:xone ([
+            sh:datatype :xoneDatatype1
+        ]
+        [
+            sh:datatype :xoneDatatype2
+        ]
+    ) .
+

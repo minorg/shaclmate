@@ -1,180 +1,188 @@
 import {
   // biome-ignore lint/correctness/noUnusedImports: ast gets removed for no reason
   type ast,
+  type ShapesGraph,
   ShapesGraphToAstTransformer,
 } from "@shaclmate/compiler";
+import type { Either } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 import { logger } from "./logger.js";
 import { testData } from "./testData.js";
 
-describe("ShapesGraphToAstTransformer: well-formed", () => {
-  for (const [id, shapesGraphEither] of Object.entries(
-    testData.shapesGraphs.wellFormed,
-  )) {
-    if (shapesGraphEither === null) {
-      continue;
-    }
-
-    describe(id, () => {
-      let ast: ast.Ast;
-      const astObjectTypesByShapeIdentifier: Record<string, ast.ObjectType> =
-        {};
-
-      beforeAll(() => {
-        ast = new ShapesGraphToAstTransformer({
-          logger,
-          shapesGraph: shapesGraphEither.unsafeCoerce(),
-        })
-          .transform()
-          .unsafeCoerce();
-        for (const astObjectType of ast.namedObjectTypes) {
-          if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
-            continue;
-          }
-          invariant(
-            !astObjectTypesByShapeIdentifier[
-              astObjectType.shapeIdentifier.value
-            ],
-          );
-          astObjectTypesByShapeIdentifier[astObjectType.shapeIdentifier.value] =
-            astObjectType;
-        }
-      });
-
-      it("should transform object types", ({ expect }) => {
-        if (id === "kitchenSink") {
-          expect(ast.namedObjectTypes).toHaveLength(60);
-        } else {
-          expect(ast.namedObjectTypes).not.toHaveLength(0);
-        }
-      });
-
-      it("should transform named intersection types", ({ expect }) => {
-        expect(ast.namedIntersectionTypes).toHaveLength(0);
-      });
-
-      it("should transform named union types", ({ expect }) => {
-        if (id === "kitchenSink") {
-          expect(ast.namedUnionTypes).toHaveLength(8);
-        }
-      });
-
-      if (id === "kitchenSink") {
-        for (const [classIri, recursivePropertyIri] of [
-          [
-            "http://example.com/DirectRecursive",
-            "http://example.com/directRecursiveProperty",
-          ],
-          [
-            "http://example.com/IndirectRecursive",
-            "http://example.com/indirectRecursiveHelperProperty",
-          ],
-          [
-            "http://example.com/RecursiveUnionMember1",
-            "http://example.com/recursiveUnionMember1Property",
-          ],
-          [
-            "http://example.com/RecursiveUnionMember2",
-            "http://example.com/recursiveUnionMember2Property",
-          ],
-        ]) {
-          it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
-            expect,
-          }) => {
-            const astObjectType = astObjectTypesByShapeIdentifier[classIri];
-            expect(astObjectType).toBeDefined();
-            const recursiveProperty = astObjectType.properties.find(
-              (property) =>
-                property.path.termType === "NamedNode" &&
-                property.path.value === recursivePropertyIri,
-            );
-            expect(recursiveProperty).toBeDefined();
-            expect(recursiveProperty!.recursive).toStrictEqual(true);
-          });
-        }
+describe("ShapesGraphToAstTransformer", () => {
+  describe("well-formed", () => {
+    for (const [id, shapesGraphEither] of Object.entries(
+      testData.shapesGraphs.wellFormed,
+    ) as [
+      keyof typeof testData.shapesGraphs.wellFormed,
+      Either<Error, ShapesGraph> | null,
+    ][]) {
+      if (shapesGraphEither === null) {
+        continue;
       }
+
+      describe(id, () => {
+        let ast: ast.Ast;
+        const astObjectTypesByShapeIdentifier: Record<string, ast.ObjectType> =
+          {};
+
+        beforeAll(() => {
+          ast = new ShapesGraphToAstTransformer({
+            logger,
+            shapesGraph: shapesGraphEither.unsafeCoerce(),
+          })
+            .transform()
+            .unsafeCoerce();
+          for (const astObjectType of ast.namedObjectTypes) {
+            if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
+              continue;
+            }
+            invariant(
+              !astObjectTypesByShapeIdentifier[
+                astObjectType.shapeIdentifier.value
+              ],
+            );
+            astObjectTypesByShapeIdentifier[
+              astObjectType.shapeIdentifier.value
+            ] = astObjectType;
+          }
+        });
+
+        it("should transform object types", ({ expect }) => {
+          if (id === "kitchenSinkExample") {
+            expect(ast.namedObjectTypes).toHaveLength(60);
+          } else {
+            expect(ast.namedObjectTypes).not.toHaveLength(0);
+          }
+        });
+
+        it("should transform named intersection types", ({ expect }) => {
+          expect(ast.namedIntersectionTypes).toHaveLength(0);
+        });
+
+        it("should transform named union types", ({ expect }) => {
+          if (id === "kitchenSinkExample") {
+            expect(ast.namedUnionTypes).toHaveLength(8);
+          }
+        });
+
+        if (id === "kitchenSinkExample") {
+          for (const [classIri, recursivePropertyIri] of [
+            [
+              "http://example.com/DirectRecursive",
+              "http://example.com/directRecursiveProperty",
+            ],
+            [
+              "http://example.com/IndirectRecursive",
+              "http://example.com/indirectRecursiveHelperProperty",
+            ],
+            [
+              "http://example.com/RecursiveUnionMember1",
+              "http://example.com/recursiveUnionMember1Property",
+            ],
+            [
+              "http://example.com/RecursiveUnionMember2",
+              "http://example.com/recursiveUnionMember2Property",
+            ],
+          ]) {
+            it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
+              expect,
+            }) => {
+              const astObjectType = astObjectTypesByShapeIdentifier[classIri];
+              expect(astObjectType).toBeDefined();
+              const recursiveProperty = astObjectType.properties.find(
+                (property) =>
+                  property.path.termType === "NamedNode" &&
+                  property.path.value === recursivePropertyIri,
+              );
+              expect(recursiveProperty).toBeDefined();
+              expect(recursiveProperty!.recursive).toStrictEqual(true);
+            });
+          }
+        }
+      });
+    }
+  });
+
+  describe("ill-formed", () => {
+    it("sh:defaultValue and sh:hasValue conflict", ({ expect }) => {
+      const error = new ShapesGraphToAstTransformer({
+        logger,
+        shapesGraph:
+          testData.shapesGraphs.illFormed.defaultValueHasValueConflict.unsafeCoerce(),
+      })
+        .transform()
+        .extract();
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).includes(
+        "default value conflicts with has-value",
+      );
     });
-  }
-});
 
-describe("ShapesGraphToAstTransformer: ill-formed", () => {
-  it("sh:defaultValue and sh:hasValue conflict", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer({
-      logger,
-      shapesGraph:
-        testData.shapesGraphs.illFormed.defaultValueHasValueConflict.unsafeCoerce(),
-    })
-      .transform()
-      .extract();
-    expect(error).toBeInstanceOf(Error);
-    expect((error as Error).message).includes(
-      "default value conflicts with has-value",
-    );
-  });
+    it("sh:defaultValue and multiple sh:hasValue", ({ expect }) => {
+      const error = new ShapesGraphToAstTransformer({
+        logger,
+        shapesGraph:
+          testData.shapesGraphs.illFormed.defaultValueMultipleHasValues.unsafeCoerce(),
+      })
+        .transform()
+        .extract();
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).includes(
+        "default value and multiple has-values",
+      );
+    });
 
-  it("sh:defaultValue and multiple sh:hasValue", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer({
-      logger,
-      shapesGraph:
-        testData.shapesGraphs.illFormed.defaultValueMultipleHasValues.unsafeCoerce(),
-    })
-      .transform()
-      .extract();
-    expect(error).toBeInstanceOf(Error);
-    expect((error as Error).message).includes(
-      "default value and multiple has-values",
-    );
-  });
+    it("sh:defaultValue and sh:in conflict", ({ expect }) => {
+      const error = new ShapesGraphToAstTransformer({
+        logger,
+        shapesGraph:
+          testData.shapesGraphs.illFormed.defaultValueInConflict.unsafeCoerce(),
+      })
+        .transform()
+        .extract();
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).includes(
+        "default value conflicts with in value",
+      );
+    });
 
-  it("sh:defaultValue and sh:in conflict", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer({
-      logger,
-      shapesGraph:
-        testData.shapesGraphs.illFormed.defaultValueInConflict.unsafeCoerce(),
-    })
-      .transform()
-      .extract();
-    expect(error).toBeInstanceOf(Error);
-    expect((error as Error).message).includes(
-      "default value conflicts with in value",
-    );
-  });
+    it("inverse paths can only have blank or IRI node kinds", ({ expect }) => {
+      const error = new ShapesGraphToAstTransformer({
+        logger,
+        shapesGraph:
+          testData.shapesGraphs.illFormed.inversePathNodeKindConflict.unsafeCoerce(),
+      })
+        .transform()
+        .extract();
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).includes("inverse paths can only");
+    });
 
-  it("inverse paths can only have blank or IRI node kinds", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer({
-      logger,
-      shapesGraph:
-        testData.shapesGraphs.illFormed.inversePathNodeKindConflict.unsafeCoerce(),
-    })
-      .transform()
-      .extract();
-    expect(error).toBeInstanceOf(Error);
-    expect((error as Error).message).includes("inverse paths can only");
-  });
+    it("incompatible node shape identifiers", ({ expect }) => {
+      const error = new ShapesGraphToAstTransformer({
+        logger,
+        shapesGraph:
+          testData.shapesGraphs.illFormed.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
+      })
+        .transform()
+        .extract();
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).includes("not in its parent's");
+    });
 
-  it("incompatible node shape identifiers", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer({
-      logger,
-      shapesGraph:
-        testData.shapesGraphs.illFormed.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
-    })
-      .transform()
-      .extract();
-    expect(error).toBeInstanceOf(Error);
-    expect((error as Error).message).includes("not in its parent's");
-  });
-
-  it("no required property property", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer({
-      logger,
-      shapesGraph:
-        testData.shapesGraphs.illFormed.noRequiredProperty.unsafeCoerce(),
-    })
-      .transform()
-      .extract();
-    expect(error).toBeInstanceOf(Error);
-    invariant(error instanceof Error);
-    expect(error.message).includes("no required properties");
+    it("no required property property", ({ expect }) => {
+      const error = new ShapesGraphToAstTransformer({
+        logger,
+        shapesGraph:
+          testData.shapesGraphs.illFormed.noRequiredProperty.unsafeCoerce(),
+      })
+        .transform()
+        .extract();
+      expect(error).toBeInstanceOf(Error);
+      invariant(error instanceof Error);
+      expect(error.message).includes("no required properties");
+    });
   });
 });

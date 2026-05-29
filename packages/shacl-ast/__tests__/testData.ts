@@ -3,16 +3,16 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import datasetFactory from "@rdfjs/dataset";
 import type { DatasetCore } from "@rdfjs/types";
-import { ShapesGraph } from "@shaclmate/shacl-ast";
+import dataFactory from "@rdfx/data-factory";
 import { Parser } from "n3";
-import { Maybe } from "purify-ts";
-import { Memoize } from "typescript-memoize";
+import type { Either } from "purify-ts";
+import { ShapesGraph } from "../src/ShapesGraph.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 function parseDataset(filePath: string): DatasetCore {
   return datasetFactory.dataset(
-    new Parser({ format: "Turtle" }).parse(
+    new Parser({ factory: dataFactory, format: "Turtle" }).parse(
       fs.readFileSync(filePath).toString(),
     ),
   );
@@ -21,80 +21,57 @@ function parseDataset(filePath: string): DatasetCore {
 function parseShapesGraph(
   filePath: string,
   options?: { ignoreUndefinedShapes?: boolean },
-) {
+): Either<Error, ShapesGraph> {
   return ShapesGraph.builder()
     .parseDataset(parseDataset(filePath), options)
-    .unsafeCoerce()
-    .build();
+    .map((_) => _.build());
 }
 
-class TestData {
-  @Memoize()
-  get kitchenSink() {
-    return {
-      shapesGraph: parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "..",
-          "..",
-          "..",
-          "examples",
-          "kitchen-sink",
-          "src",
-          "kitchen-sink.shaclmate.ttl",
-        ),
-      ),
-    };
-  }
+export const testData = {
+  shapesGraphs: {
+    illFormed: {
+      get undefinedShape() {
+        return parseShapesGraph(
+          path.join(thisDirectoryPath, "data", "undefined-shape.shaclmate.ttl"),
+        );
+      },
+    },
 
-  @Memoize()
-  get propertyPaths() {
-    return {
-      shapesGraph: parseShapesGraph(
-        path.join(thisDirectoryPath, "data", "property-paths.ttl"),
-        { ignoreUndefinedShapes: true },
-      ),
-    };
-  }
+    wellFormed: {
+      get kitchenSinkExample() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "..",
+            "examples",
+            "kitchen-sink",
+            "src",
+            "kitchen-sink.shaclmate.ttl",
+          ),
+        );
+      },
 
-  @Memoize()
-  get schema() {
-    return {
-      shapesGraph: parseShapesGraph(
-        path.join(thisDirectoryPath, "data", "schemashacl.ttl"),
-        { ignoreUndefinedShapes: true },
-      ),
-    };
-  }
+      get shaclAst() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "shacl-ast",
+            "src",
+            "shacl-ast.shaclmate.ttl",
+          ),
+        );
+      },
 
-  @Memoize()
-  get skos() {
-    return Maybe.of(
-      path.join(
-        thisDirectoryPath,
-        "..",
-        "..",
-        "..",
-        "..",
-        "kos-kit",
-        "lib",
-        "packages",
-        "models",
-        "models.shaclmate.ttl",
-      ),
-    )
-      .filter((filePath) => fs.existsSync(filePath))
-      .map(parseShapesGraph);
-  }
-
-  @Memoize()
-  get undefinedShape() {
-    return {
-      dataset: parseDataset(
-        path.join(thisDirectoryPath, "data", "undefined-shape.shaclmate.ttl"),
-      ),
-    };
-  }
-}
-
-export const testData = new TestData();
+      get syntax() {
+        return parseShapesGraph(
+          path.join(thisDirectoryPath, "data", "syntax.ttl"),
+          { ignoreUndefinedShapes: true },
+        );
+      },
+    },
+  },
+};

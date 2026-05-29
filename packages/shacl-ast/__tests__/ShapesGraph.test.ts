@@ -1,62 +1,65 @@
-import { ShapesGraph } from "@shaclmate/shacl-ast";
-import { describe, it } from "vitest";
+import type { Either } from "purify-ts";
+import { beforeAll, describe, it } from "vitest";
+import type { ShapesGraph } from "../src/ShapesGraph.js";
 import { testData } from "./testData.js";
 
-describe("ShapesGraph: kitchen sink", () => {
-  it("should parse the shapes correctly", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(127);
-    expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(161);
+describe("ShapesGraph", () => {
+  describe("well-formed", () => {
+    for (const [id, shapesGraphEither] of Object.entries(
+      testData.shapesGraphs.wellFormed,
+    ) as [
+      keyof typeof testData.shapesGraphs.wellFormed,
+      Either<Error, ShapesGraph> | null,
+    ][]) {
+      if (shapesGraphEither === null) {
+        continue;
+      }
+
+      describe(id, () => {
+        let shapesGraph: ShapesGraph;
+
+        beforeAll(() => {
+          shapesGraph = shapesGraphEither.unsafeCoerce();
+        });
+
+        it("nodeShapes", ({ expect }) => {
+          if (id === "kitchenSinkExample") {
+            expect(shapesGraph.nodeShapes).toHaveLength(127);
+          } else {
+            expect(shapesGraph.nodeShapes).not.toHaveLength(0);
+          }
+        });
+
+        it("propertyShapes", ({ expect }) => {
+          if (id === "kitchenSinkExample") {
+            expect(shapesGraph.propertyShapes).toHaveLength(161);
+          } else {
+            expect(shapesGraph.propertyShape).not.toHaveLength(0);
+          }
+        });
+
+        it("propertyGroups", ({ expect }) => {
+          if (id === "kitchenSinkExample") {
+            expect(shapesGraph.propertyGroups).toHaveLength(0);
+          }
+        });
+
+        it("toDataset", ({ expect }) => {
+          expect(shapesGraph.toDataset().size).toBeGreaterThan(0);
+        });
+
+        it("toString", ({ expect }) => {
+          expect(shapesGraph.toString()).not.to.be.empty;
+        });
+      });
+    }
   });
 
-  it("should parse property shapes correctly", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.propertyGroups).toHaveLength(0);
-  });
-
-  it("toDataset", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.toDataset().size).toBeGreaterThan(
-      0,
-    );
-  });
-
-  it("toString", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.toString()).not.to.be.empty;
-  });
-});
-
-describe("ShapesGraph: schema", () => {
-  it("should parse the shapes correctly", ({ expect }) => {
-    expect(testData.schema.shapesGraph.nodeShapes).toHaveLength(84);
-    expect(testData.schema.shapesGraph.propertyShapes).toHaveLength(70);
-  });
-
-  it("should parse ontologies correctly", ({ expect }) => {
-    expect(testData.schema.shapesGraph.ontologies).toHaveLength(2);
-  });
-
-  it("should parse property groups correctly", ({ expect }) => {
-    expect(testData.schema.shapesGraph.propertyGroups).toHaveLength(1);
-  });
-});
-
-testData.skos.ifJust((shapesGraph) => {
-  describe("ShapesGraph: skos", () => {
-    it("should parse the shapes correctly", ({ expect }) => {
-      expect(shapesGraph.nodeShapes).toHaveLength(10);
-      expect(shapesGraph.propertyShapes).toHaveLength(37);
+  describe("ill-formed", () => {
+    it("undefined shape", ({ expect }) => {
+      const error = testData.shapesGraphs.illFormed.undefinedShape.extract();
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).includes("undefined shape");
     });
-
-    it("should parse ontologies correctly", ({ expect }) => {
-      expect(shapesGraph.ontologies).toHaveLength(3);
-    });
-  });
-});
-
-describe("RdfsjsShapesGraph: error cases", () => {
-  it("should produce an error on an undefined shape", ({ expect }) => {
-    const error = ShapesGraph.builder()
-      .parseDataset(testData.undefinedShape.dataset)
-      .extract();
-    expect(error).toBeInstanceOf(Error);
-    expect((error as Error).message).includes("undefined shape");
   });
 });

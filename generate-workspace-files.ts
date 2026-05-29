@@ -387,7 +387,7 @@ const workspaces = {
         ],
       },
       devDependencies: {
-        external: ["@types/n3", "n3", "ts-invariant"],
+        external: ["@rdfx/literal", "@types/n3", "n3", "ts-invariant"],
       },
     },
   } satisfies Record<PackageName, Workspace>,
