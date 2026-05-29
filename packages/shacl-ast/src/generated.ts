@@ -3425,15 +3425,11 @@ export interface NodeShape {
 
   readonly languageIn: Maybe<readonly string[]>;
 
-  readonly maxCount: Maybe<bigint>;
-
   readonly maxExclusive: Maybe<Literal>;
 
   readonly maxInclusive: Maybe<Literal>;
 
   readonly maxLength: Maybe<bigint>;
-
-  readonly minCount: Maybe<bigint>;
 
   readonly minExclusive: Maybe<Literal>;
 
@@ -3503,7 +3499,6 @@ export namespace NodeShape {
       | Maybe<BlankNode | NamedNode>;
     readonly label?: string | Maybe<string>;
     readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
-    readonly maxCount?: bigint | Maybe<bigint>;
     readonly maxExclusive?:
       | bigint
       | boolean
@@ -3521,7 +3516,6 @@ export namespace NodeShape {
       | Literal
       | Maybe<Literal>;
     readonly maxLength?: bigint | Maybe<bigint>;
-    readonly minCount?: bigint | Maybe<bigint>;
     readonly minExclusive?:
       | bigint
       | boolean
@@ -3717,14 +3711,6 @@ export namespace NodeShape {
           value,
         ),
       ),
-      maxCount: $convertToMaybe($identityConversionFunction)(
-        parameters?.maxCount,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          PropertyShape.schema.properties.maxCount.type,
-          value,
-        ),
-      ),
       maxExclusive: $convertToMaybe($convertToLiteral)(
         parameters?.maxExclusive,
       ).chain((value) =>
@@ -3746,14 +3732,6 @@ export namespace NodeShape {
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.maxLength.type,
-          value,
-        ),
-      ),
-      minCount: $convertToMaybe($identityConversionFunction)(
-        parameters?.minCount,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          PropertyShape.schema.properties.minCount.type,
           value,
         ),
       ),
@@ -3905,7 +3883,6 @@ export namespace NodeShape {
       | Maybe<BlankNode | NamedNode>;
     readonly label?: string | Maybe<string>;
     readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
-    readonly maxCount?: bigint | Maybe<bigint>;
     readonly maxExclusive?:
       | bigint
       | boolean
@@ -3923,7 +3900,6 @@ export namespace NodeShape {
       | Literal
       | Maybe<Literal>;
     readonly maxLength?: bigint | Maybe<bigint>;
-    readonly minCount?: bigint | Maybe<bigint>;
     readonly minExclusive?:
       | bigint
       | boolean
@@ -4433,24 +4409,6 @@ export namespace NodeShape {
                     }),
               ),
         }),
-        maxCount: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.maxCount,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.maxCount.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }),
         maxExclusive: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -4513,24 +4471,6 @@ export namespace NodeShape {
                       focusResource: $resource,
                       propertyPath:
                         PropertyShape.schema.properties.maxLength.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }),
-        minCount: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.minCount,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.minCount.path,
                       value: Maybe.empty(),
                     }),
               ),
@@ -4998,14 +4938,6 @@ export namespace NodeShape {
           },
         },
       },
-      maxCount: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
-        },
-      },
       maxExclusive: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
@@ -5025,14 +4957,6 @@ export namespace NodeShape {
       maxLength: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
-        },
-      },
-      minCount: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
         type: {
           kind: "Option" as const,
           itemType: { kind: "BigInt" as const },
@@ -5449,15 +5373,6 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      PropertyShape.schema.properties.maxCount.path,
-      parameters.object.maxCount
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
-        ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
       PropertyShape.schema.properties.maxExclusive.path,
       parameters.object.maxExclusive.toList(),
       parameters.graph,
@@ -5470,15 +5385,6 @@ export namespace NodeShape {
     parameters.resource.add(
       PropertyShape.schema.properties.maxLength.path,
       parameters.object.maxLength
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
-        ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      PropertyShape.schema.properties.minCount.path,
-      parameters.object.minCount
         .toList()
         .flatMap((value) => [
           $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
@@ -5858,14 +5764,6 @@ export namespace Shape {
           },
         },
       },
-      maxCount: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
-        },
-      },
       maxExclusive: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
@@ -5885,14 +5783,6 @@ export namespace Shape {
       maxLength: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "BigInt" as const },
-        },
-      },
-      minCount: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
         type: {
           kind: "Option" as const,
           itemType: { kind: "BigInt" as const },

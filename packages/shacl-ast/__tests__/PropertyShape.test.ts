@@ -30,6 +30,14 @@ describe("PropertyShape", () => {
     expect(sut.groups[0].equals(ex("PropertyGroup"))).toStrictEqual(true);
   });
 
+  it("maxCount", ({ expect }) => {
+    expect(sut.maxCount.extract()).toStrictEqual(1n);
+  });
+
+  it("minCount", ({ expect }) => {
+    expect(sut.minCount.extract()).toStrictEqual(0n);
+  });
+
   it("name", ({ expect }) => {
     expect(sut.name.extract()).toStrictEqual("name");
   });
