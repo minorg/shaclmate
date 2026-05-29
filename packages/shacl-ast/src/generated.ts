@@ -680,6 +680,14 @@ export interface PropertyShape {
 
   readonly qualifiedValueShape: Maybe<BlankNode | NamedNode>;
 
+  readonly severity: Maybe<
+    NamedNode<
+      | "http://www.w3.org/ns/shacl#Info"
+      | "http://www.w3.org/ns/shacl#Warning"
+      | "http://www.w3.org/ns/shacl#Violation"
+    >
+  >;
+
   readonly uniqueLang: Maybe<boolean>;
 
   readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
@@ -814,6 +822,24 @@ export namespace PropertyShape {
       | NamedNode
       | string
       | Maybe<BlankNode | NamedNode>;
+    readonly severity?:
+      | (
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        )
+      | NamedNode<
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        >
+      | Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#Info"
+            | "http://www.w3.org/ns/shacl#Warning"
+            | "http://www.w3.org/ns/shacl#Violation"
+          >
+        >;
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -1123,6 +1149,18 @@ export namespace PropertyShape {
           value,
         ),
       ),
+      severity: $convertToMaybe(
+        $convertToIri<
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        >,
+      )(parameters.severity).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.severity.type,
+          value,
+        ),
+      ),
       uniqueLang: $convertToMaybe($identityConversionFunction)(
         parameters.uniqueLang,
       ).chain((value) =>
@@ -1275,6 +1313,24 @@ export namespace PropertyShape {
       | NamedNode
       | string
       | Maybe<BlankNode | NamedNode>;
+    readonly severity?:
+      | (
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        )
+      | NamedNode<
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        >
+      | Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#Info"
+            | "http://www.w3.org/ns/shacl#Warning"
+            | "http://www.w3.org/ns/shacl#Violation"
+          >
+        >;
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -2204,6 +2260,42 @@ export namespace PropertyShape {
                     }),
               ),
         }),
+        severity: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.severity,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toIri([
+                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/ns/shacl#Violation",
+                    ),
+                  ]),
+                ),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<
+                      Maybe<
+                        NamedNode<
+                          | "http://www.w3.org/ns/shacl#Info"
+                          | "http://www.w3.org/ns/shacl#Warning"
+                          | "http://www.w3.org/ns/shacl#Violation"
+                        >
+                      >
+                    >({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties.severity.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
         uniqueLang: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -2606,6 +2698,21 @@ export namespace PropertyShape {
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
+        },
+      },
+      severity: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#severity"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "Iri" as const,
+            in: [
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
+            ],
+          },
         },
       },
       uniqueLang: {
@@ -3073,6 +3180,11 @@ export namespace PropertyShape {
     parameters.resource.add(
       PropertyShape.schema.properties.qualifiedValueShape.path,
       parameters.object.qualifiedValueShape.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.severity.path,
+      parameters.object.severity.toList(),
       parameters.graph,
     );
     parameters.resource.add(
@@ -3699,6 +3811,14 @@ export interface NodeShape {
 
   readonly properties: readonly (BlankNode | NamedNode)[];
 
+  readonly severity: Maybe<
+    NamedNode<
+      | "http://www.w3.org/ns/shacl#Info"
+      | "http://www.w3.org/ns/shacl#Warning"
+      | "http://www.w3.org/ns/shacl#Violation"
+    >
+  >;
+
   readonly subClassOf: readonly NamedNode[];
 
   readonly types: readonly NamedNode[];
@@ -3818,6 +3938,24 @@ export namespace NodeShape {
       | NamedNode
       | string
       | readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly severity?:
+      | (
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        )
+      | NamedNode<
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        >
+      | Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#Info"
+            | "http://www.w3.org/ns/shacl#Warning"
+            | "http://www.w3.org/ns/shacl#Violation"
+          >
+        >;
     readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
     readonly types?: string | NamedNode | readonly (string | NamedNode)[];
     readonly xone?:
@@ -4036,6 +4174,18 @@ export namespace NodeShape {
           value,
         ),
       ),
+      severity: $convertToMaybe(
+        $convertToIri<
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        >,
+      )(parameters?.severity).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.severity.type,
+          value,
+        ),
+      ),
       subClassOf: $convertToScalarSet(
         $convertToIri<string>,
         true,
@@ -4181,6 +4331,24 @@ export namespace NodeShape {
       | NamedNode
       | string
       | readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly severity?:
+      | (
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        )
+      | NamedNode<
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        >
+      | Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#Info"
+            | "http://www.w3.org/ns/shacl#Warning"
+            | "http://www.w3.org/ns/shacl#Violation"
+          >
+        >;
     readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
     readonly types?: string | NamedNode | readonly (string | NamedNode)[];
     readonly xone?:
@@ -4893,6 +5061,42 @@ export namespace NodeShape {
                 }),
               ),
         }),
+        severity: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.severity,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toIri([
+                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/ns/shacl#Violation",
+                    ),
+                  ]),
+                ),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<
+                      Maybe<
+                        NamedNode<
+                          | "http://www.w3.org/ns/shacl#Info"
+                          | "http://www.w3.org/ns/shacl#Warning"
+                          | "http://www.w3.org/ns/shacl#Violation"
+                        >
+                      >
+                    >({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties.severity.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
         subClassOf: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -5227,6 +5431,21 @@ export namespace NodeShape {
         type: {
           kind: "Set" as const,
           itemType: { kind: "Identifier" as const },
+        },
+      },
+      severity: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#severity"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "Iri" as const,
+            in: [
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
+            ],
+          },
         },
       },
       subClassOf: {
@@ -5664,6 +5883,11 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
+      PropertyShape.schema.properties.severity.path,
+      parameters.object.severity.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
       NodeShape.schema.properties.subClassOf.path,
       parameters.object.subClassOf.flatMap((item) => [item]),
       parameters.graph,
@@ -6028,6 +6252,21 @@ export namespace Shape {
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
+        },
+      },
+      severity: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#severity"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "Iri" as const,
+            in: [
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
+            ],
+          },
         },
       },
       xone: {

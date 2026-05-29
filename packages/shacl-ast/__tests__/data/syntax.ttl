@@ -59,7 +59,7 @@
     ) ;
     sh:pattern "pattern" ;
     sh:property :PropertyShape ;
-    sh:severity sh:Warning ;
+    sh:severity sh:Info ;
     sh:targetClass :TargetClass ;
     sh:targetNode :targetNode ;
     sh:targetObjectsOf :targetObjectOf ;

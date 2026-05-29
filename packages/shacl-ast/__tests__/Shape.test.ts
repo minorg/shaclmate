@@ -154,6 +154,10 @@ describe("Shape", () => {
         expect(shape.pattern.extract()).toStrictEqual("pattern");
       });
 
+      it("severity", ({ expect }) => {
+        expect(shape.severity.extract()?.equals(sh.Info)).toStrictEqual(true);
+      });
+
       it("xone", ({ expect }) => {
         const xone = shape.xone.extract()!;
         expect(xone).toBeDefined();
