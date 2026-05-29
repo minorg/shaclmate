@@ -40,9 +40,9 @@
     sh:maxInclusive 1 ;
     sh:maxLength 1 ;
     sh:message "message" ;
-    sh:minExclusive 1 ;
-    sh:minInclusive 1 ;
-    sh:minLength 1 ;
+    sh:minExclusive 0 ;
+    sh:minInclusive 0 ;
+    sh:minLength 0 ;
     sh:node [
         sh:datatype :nodeDatatype
     ] ;
@@ -113,10 +113,10 @@
     sh:maxInclusive 1 ;
     sh:maxLength 1 ;
     sh:message "message" ;
-    sh:minCount 1 ;
-    sh:minExclusive 1 ;
-    sh:minInclusive 1 ;
-    sh:minLength 1 ;
+    sh:minCount 0 ;
+    sh:minExclusive 0 ;
+    sh:minInclusive 0 ;
+    sh:minLength 0 ;
     sh:name "name" ;
     sh:node [
         sh:datatype :nodeDatatype
