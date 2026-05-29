@@ -641,6 +641,8 @@ export interface PropertyShape {
 
   readonly maxLength: Maybe<bigint>;
 
+  readonly message: Maybe<string>;
+
   readonly minCount: Maybe<bigint>;
 
   readonly minExclusive: Maybe<Literal>;
@@ -753,6 +755,7 @@ export namespace PropertyShape {
       | Literal
       | Maybe<Literal>;
     readonly maxLength?: bigint | Maybe<bigint>;
+    readonly message?: string | Maybe<string>;
     readonly minCount?: bigint | Maybe<bigint>;
     readonly minExclusive?:
       | bigint
@@ -1030,6 +1033,14 @@ export namespace PropertyShape {
           value,
         ),
       ),
+      message: $convertToMaybe($identityConversionFunction)(
+        parameters.message,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.message.type,
+          value,
+        ),
+      ),
       minCount: $convertToMaybe($identityConversionFunction)(
         parameters.minCount,
       ).chain((value) =>
@@ -1244,6 +1255,7 @@ export namespace PropertyShape {
       | Literal
       | Maybe<Literal>;
     readonly maxLength?: bigint | Maybe<bigint>;
+    readonly message?: string | Maybe<string>;
     readonly minCount?: bigint | Maybe<bigint>;
     readonly minExclusive?:
       | bigint
@@ -1917,6 +1929,30 @@ export namespace PropertyShape {
                     }),
               ),
         }),
+        message: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.message,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties.message.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
         minCount: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -2561,6 +2597,14 @@ export namespace PropertyShape {
           itemType: { kind: "BigInt" as const },
         },
       },
+      message: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#message"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
       minCount: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
@@ -3026,6 +3070,13 @@ export namespace PropertyShape {
         .flatMap((value) => [
           $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.message.path,
+      parameters.object.message
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -3784,6 +3835,8 @@ export interface NodeShape {
 
   readonly maxLength: Maybe<bigint>;
 
+  readonly message: Maybe<string>;
+
   readonly minExclusive: Maybe<Literal>;
 
   readonly minInclusive: Maybe<Literal>;
@@ -3875,6 +3928,7 @@ export namespace NodeShape {
       | Literal
       | Maybe<Literal>;
     readonly maxLength?: bigint | Maybe<bigint>;
+    readonly message?: string | Maybe<string>;
     readonly minExclusive?:
       | bigint
       | boolean
@@ -4094,6 +4148,14 @@ export namespace NodeShape {
           value,
         ),
       ),
+      message: $convertToMaybe($identityConversionFunction)(
+        parameters?.message,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.message.type,
+          value,
+        ),
+      ),
       minExclusive: $convertToMaybe($convertToLiteral)(
         parameters?.minExclusive,
       ).chain((value) =>
@@ -4268,6 +4330,7 @@ export namespace NodeShape {
       | Literal
       | Maybe<Literal>;
     readonly maxLength?: bigint | Maybe<bigint>;
+    readonly message?: string | Maybe<string>;
     readonly minExclusive?:
       | bigint
       | boolean
@@ -4829,6 +4892,30 @@ export namespace NodeShape {
                     }),
               ),
         }),
+        message: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.message,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties.message.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
         minExclusive: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -5344,6 +5431,14 @@ export namespace NodeShape {
           itemType: { kind: "BigInt" as const },
         },
       },
+      message: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#message"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
       minExclusive: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
@@ -5782,6 +5877,13 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
+      PropertyShape.schema.properties.message.path,
+      parameters.object.message
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    parameters.resource.add(
       PropertyShape.schema.properties.minExclusive.path,
       parameters.object.minExclusive.toList(),
       parameters.graph,
@@ -6171,6 +6273,14 @@ export namespace Shape {
         type: {
           kind: "Option" as const,
           itemType: { kind: "BigInt" as const },
+        },
+      },
+      message: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#message"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
         },
       },
       minExclusive: {

@@ -99,6 +99,10 @@ describe("Shape", () => {
         expect(shape.maxLength.extract()).toStrictEqual(1n);
       });
 
+      it("message", ({ expect }) => {
+        expect(shape.message.extract()).toStrictEqual("message");
+      });
+
       it("minExclusive", ({ expect }) => {
         expect(shape.minExclusive.extract()?.equals(literalFactory.number(0)));
       });
