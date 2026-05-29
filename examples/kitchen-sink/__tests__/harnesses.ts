@@ -4,6 +4,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
 import { Harness } from "./Harness.js";
+import { Maybe } from "purify-ts";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
 const literalFactory = new LiteralFactory({ dataFactory });
@@ -592,12 +593,35 @@ export const harnesses = {
     kitchenSink.NewName,
     "OverrideName",
   ),
-  propertyCardinalities: new Harness(
+  // Undefineds
+  propertyCardinalities1: new Harness(
     kitchenSink.PropertyCardinalities.createUnsafe({
       $identifier,
       emptyStringSetProperty: undefined,
-      nonEmptyStringSetProperty: ["test1"],
+      nonEmptyStringSetProperty: ["test"],
       optionalStringProperty: undefined,
+      requiredStringProperty: "test",
+    }),
+    kitchenSink.PropertyCardinalities,
+  ),
+  // Arrays and Maybes
+  propertyCardinalities2: new Harness(
+    kitchenSink.PropertyCardinalities.createUnsafe({
+      $identifier,
+      emptyStringSetProperty: [],
+      nonEmptyStringSetProperty: ["test"],
+      optionalStringProperty: Maybe.of("test"),
+      requiredStringProperty: "test",
+    }),
+    kitchenSink.PropertyCardinalities,
+  ),
+  // Convert scalar to set
+  propertyCardinalities3: new Harness(
+    kitchenSink.PropertyCardinalities.createUnsafe({
+      $identifier,
+      emptyStringSetProperty: "test",
+      nonEmptyStringSetProperty: "test",
+      optionalStringProperty: "test",
       requiredStringProperty: "test",
     }),
     kitchenSink.PropertyCardinalities,
