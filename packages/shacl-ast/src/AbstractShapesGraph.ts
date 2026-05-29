@@ -110,7 +110,9 @@ export abstract class AbstractShapesGraph<
   ): Either<Error, NodeShapeT | PropertyShapeT> {
     return (
       this.nodeShape(identifier) as Either<Error, NodeShapeT | PropertyShapeT>
-    ).alt(this.propertyShape(identifier));
+    )
+      .alt(this.propertyShape(identifier))
+      .mapLeft(() => new Error(`no such shape ${identifier}`));
   }
 
   /**
