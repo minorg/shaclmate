@@ -1,8 +1,10 @@
 import {
   // biome-ignore lint/correctness/noUnusedImports: ast gets removed for no reason
   type ast,
+  type ShapesGraph,
   ShapesGraphToAstTransformer,
 } from "@shaclmate/compiler";
+import type { Either } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 import { logger } from "./logger.js";
@@ -11,7 +13,10 @@ import { testData } from "./testData.js";
 describe("ShapesGraphToAstTransformer: well-formed", () => {
   for (const [id, shapesGraphEither] of Object.entries(
     testData.shapesGraphs.wellFormed,
-  )) {
+  ) as [
+    keyof typeof testData.shapesGraphs.wellFormed,
+    Either<Error, ShapesGraph>,
+  ][]) {
     if (shapesGraphEither === null) {
       continue;
     }
@@ -43,7 +48,7 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
       });
 
       it("should transform object types", ({ expect }) => {
-        if (id === "kitchenSink") {
+        if (id === "kitchenSinkExample") {
           expect(ast.namedObjectTypes).toHaveLength(60);
         } else {
           expect(ast.namedObjectTypes).not.toHaveLength(0);
@@ -55,12 +60,12 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
       });
 
       it("should transform named union types", ({ expect }) => {
-        if (id === "kitchenSink") {
+        if (id === "kitchenSinkExample") {
           expect(ast.namedUnionTypes).toHaveLength(8);
         }
       });
 
-      if (id === "kitchenSink") {
+      if (id === "kitchenSinkExample") {
         for (const [classIri, recursivePropertyIri] of [
           [
             "http://example.com/DirectRecursive",

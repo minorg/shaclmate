@@ -147,7 +147,7 @@ export const testData = {
       //     .extractNullable();
       // },
 
-      get kitchenSink() {
+      get kitchenSinkExample() {
         return parseShapesGraph(
           path.join(
             thisDirectoryPath,

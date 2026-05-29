@@ -56,6 +56,19 @@ class TestData {
     };
   }
 
+  get shaclAst() {
+    return parseShapesGraph(
+      path.join(
+        thisDirectoryPath,
+        "..",
+        "..",
+        "shacl-ast",
+        "src",
+        "shacl-ast.shaclmate.ttl",
+      ),
+    );
+  }
+
   @Memoize()
   get undefinedShape() {
     return {
