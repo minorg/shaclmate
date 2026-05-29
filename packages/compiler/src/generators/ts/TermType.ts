@@ -24,6 +24,9 @@ export class TermType<
   override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly schemaType = code`${this.reusables.snippets.TermSchema}`;
+  override readonly jsTypes = [
+    { instanceof: "Object", typeof: "object" },
+  ] as const;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.termSparqlWherePatterns}`;
 

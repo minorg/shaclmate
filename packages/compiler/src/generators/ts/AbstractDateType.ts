@@ -10,10 +10,15 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterDate}`;
   override readonly filterType = code`${this.reusables.snippets.DateFilter}`;
+  override readonly jsTypes = [
+    {
+      instanceof: "Date",
+      typeof: "object",
+    },
+  ] as const;
   abstract override readonly kind: "DateTime" | "Date";
   override readonly mutable = false;
   override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
-  override readonly typeofs = ["object" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.dateSparqlWherePatterns}`;
 

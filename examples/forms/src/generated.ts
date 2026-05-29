@@ -55,19 +55,6 @@ type $ConversionFunction<SourceT, TargetT> = (
   source: SourceT,
 ) => Either<Error, TargetT>;
 
-function $convertToArray<ItemSourceT, ItemTargetT, Readonly extends boolean>(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type EitherR = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (value: readonly ItemSourceT[] | undefined): Either<Error, EitherR> =>
-    (typeof value === "undefined"
-      ? Either.of([])
-      : Either.sequence(value.map(convertToItem))) as Either<Error, EitherR>;
-}
-
 function $convertToIdentifierProperty(
   identifier:
     | (() => BlankNode | NamedNode)
@@ -112,6 +99,37 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
     }
 
     return convertToItem(value).map(Maybe.of);
+  };
+}
+
+function $convertToScalarSet<
+  ItemSourceT,
+  ItemTargetT,
+  Readonly extends boolean,
+>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  _readonly: Readonly,
+) {
+  type ItemTargetArrayT = Readonly extends true
+    ? ReadonlyArray<ItemTargetT>
+    : Array<ItemTargetT>;
+  return (
+    value: ItemSourceT | readonly ItemSourceT[] | undefined,
+  ): Either<Error, ItemTargetArrayT> => {
+    if (typeof value === "undefined") {
+      return Either.of<Error, ItemTargetArrayT>(
+        [] as unknown as ItemTargetArrayT,
+      );
+    }
+    if (Array.isArray(value)) {
+      return Either.sequence(value.map(convertToItem)) as Either<
+        Error,
+        ItemTargetArrayT
+      >;
+    }
+    return convertToItem(value as ItemSourceT).map((value) => [
+      value,
+    ]) as Either<Error, ItemTargetArrayT>;
   };
 }
 
@@ -613,16 +631,16 @@ export namespace FormNodeShape {
       | BlankNode
       | NamedNode
       | string;
-    readonly emptyStringSetProperty?: readonly string[];
+    readonly emptyStringSetProperty?: string | readonly string[];
     readonly nestedObjectProperty: NestedNodeShape;
-    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
     readonly requiredStringProperty: string;
   }): Either<Error, FormNodeShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      emptyStringSetProperty: $convertToArray(
+      emptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.emptyStringSetProperty).chain((value) =>
@@ -632,7 +650,7 @@ export namespace FormNodeShape {
         ),
       ),
       nestedObjectProperty: Either.of(parameters.nestedObjectProperty),
-      nonEmptyStringSetProperty: $convertToArray(
+      nonEmptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.nonEmptyStringSetProperty).chain((value) =>
@@ -665,9 +683,9 @@ export namespace FormNodeShape {
       | BlankNode
       | NamedNode
       | string;
-    readonly emptyStringSetProperty?: readonly string[];
+    readonly emptyStringSetProperty?: string | readonly string[];
     readonly nestedObjectProperty: NestedNodeShape;
-    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
     readonly requiredStringProperty: string;

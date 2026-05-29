@@ -4,6 +4,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
 import { Harness } from "./Harness.js";
+import { Maybe } from "purify-ts";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
 const literalFactory = new LiteralFactory({ dataFactory });
@@ -196,13 +197,6 @@ export const harnesses = {
     }),
     kitchenSink.DisplayProperties,
   ),
-  emptyListProperties: new Harness(
-    kitchenSink.ListProperties.createUnsafe({
-      $identifier,
-      stringListProperty: [],
-    }),
-    kitchenSink.ListProperties,
-  ),
   explicitFromToRdfTypes: new Harness(
     kitchenSink.ExplicitFromToRdfTypes.createUnsafe({
       explicitFromToRdfTypesProperty: "test",
@@ -301,17 +295,6 @@ export const harnesses = {
       $identifier,
     }),
     kitchenSink.IriIdentifier,
-  ),
-  iriListProperty: new Harness(
-    kitchenSink.ListProperties.createUnsafe({
-      $identifier,
-      iriListProperty: [
-        // The constructor will convert these to NamedNode's
-        "http://example.com/example1",
-        "http://example.com/example2",
-      ],
-    }),
-    kitchenSink.ListProperties,
   ),
   // ...permute(jsPrimitiveValues).reduce(
   //   (harnesses, jsPrimitiveValues, i) => {
@@ -437,6 +420,58 @@ export const harnesses = {
     }),
     kitchenSink.LazyProperties,
   ),
+  listPropertiesDefault: new Harness(
+    kitchenSink.ListProperties.createUnsafe({
+      $identifier,
+    }),
+    kitchenSink.ListProperties,
+  ),
+  listProperiesFromArrays: new Harness(
+    kitchenSink.ListProperties.createUnsafe({
+      $identifier,
+      iriListProperty: [
+        // The constructor will convert these to NamedNode's
+        "http://example.com/example1",
+        "http://example.com/example2",
+      ],
+      objectListProperty: [
+        kitchenSink.NonClass.createUnsafe({ nonClassProperty: "Test1" }),
+        kitchenSink.NonClass.createUnsafe({ nonClassProperty: "Test2" }),
+      ],
+      stringListProperty: ["test1", "test2"],
+      stringListListProperty: [
+        ["test1", "test2"],
+        ["test3", "test4"],
+      ],
+    }),
+    kitchenSink.ListProperties,
+  ),
+  listSets: new Harness(
+    kitchenSink.ListSets.createUnsafe({
+      $identifier,
+      listUnionSetProperty: [
+        "test1",
+        ["test2", "test3"],
+        "test4",
+        ["test5", "test6"],
+      ],
+      listSetProperty: [
+        ["test1", "test2"],
+        ["test3", "test4"],
+      ],
+      listListSetProperty: [
+        [
+          ["test1", "test2"],
+          ["test3", "test4"],
+        ],
+        [
+          ["test5", "test6"],
+          ["test7", "test8"],
+        ],
+      ],
+    }),
+    kitchenSink.ListSets,
+  ),
   mutableProperties: new Harness(
     kitchenSink.MutableProperties.createUnsafe({
       $identifier,
@@ -542,16 +577,6 @@ export const harnesses = {
     }),
     kitchenSink.NumericProperties,
   ),
-  objectListProperty: new Harness(
-    kitchenSink.ListProperties.createUnsafe({
-      $identifier,
-      objectListProperty: [
-        kitchenSink.NonClass.createUnsafe({ nonClassProperty: "Test1" }),
-        kitchenSink.NonClass.createUnsafe({ nonClassProperty: "Test2" }),
-      ],
-    }),
-    kitchenSink.ListProperties,
-  ),
   orderedProperties: new Harness(
     kitchenSink.OrderedProperties.createUnsafe({
       $identifier,
@@ -568,12 +593,35 @@ export const harnesses = {
     kitchenSink.NewName,
     "OverrideName",
   ),
-  propertyCardinalities: new Harness(
+  // Undefineds
+  propertyCardinalities1: new Harness(
     kitchenSink.PropertyCardinalities.createUnsafe({
       $identifier,
       emptyStringSetProperty: undefined,
-      nonEmptyStringSetProperty: ["test1"],
+      nonEmptyStringSetProperty: ["test"],
       optionalStringProperty: undefined,
+      requiredStringProperty: "test",
+    }),
+    kitchenSink.PropertyCardinalities,
+  ),
+  // Arrays and Maybes
+  propertyCardinalities2: new Harness(
+    kitchenSink.PropertyCardinalities.createUnsafe({
+      $identifier,
+      emptyStringSetProperty: [],
+      nonEmptyStringSetProperty: ["test"],
+      optionalStringProperty: Maybe.of("test"),
+      requiredStringProperty: "test",
+    }),
+    kitchenSink.PropertyCardinalities,
+  ),
+  // Convert scalar to set
+  propertyCardinalities3: new Harness(
+    kitchenSink.PropertyCardinalities.createUnsafe({
+      $identifier,
+      emptyStringSetProperty: "test",
+      nonEmptyStringSetProperty: "test",
+      optionalStringProperty: "test",
       requiredStringProperty: "test",
     }),
     kitchenSink.PropertyCardinalities,
@@ -604,13 +652,6 @@ export const harnesses = {
       nonClassProperty: "Test",
     }),
     kitchenSink.NonClass,
-  ),
-  stringListProperty: new Harness(
-    kitchenSink.ListProperties.createUnsafe({
-      $identifier,
-      stringListProperty: ["Test1", "Test2"],
-    }),
-    kitchenSink.ListProperties,
   ),
   termProperties: new Harness(
     kitchenSink.TermProperties.createUnsafe({

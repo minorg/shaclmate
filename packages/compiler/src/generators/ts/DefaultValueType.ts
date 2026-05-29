@@ -18,7 +18,7 @@ export class DefaultValueType<
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly kind = "DefaultValue";
-  override readonly typeofs = ["object" as const];
+  override readonly jsTypes = this.itemType.jsTypes;
   override readonly validationFunction: Maybe<Code> =
     this.itemType.validationFunction;
 
@@ -40,10 +40,10 @@ export class DefaultValueType<
     return Maybe.of({
       code: code`${this.reusables.snippets.convertWithDefaultValue}(${itemConversionFunction.code}, ${this.defaultValueExpression})`,
       sourceTypes: itemConversionFunction.sourceTypes
-        .filter((sourceType) => sourceType.typeof !== "undefined")
+        .filter((sourceType) => sourceType.jsType.typeof !== "undefined")
         .concat({
           expression: code`undefined`,
-          typeof: "undefined",
+          jsType: { typeof: "undefined" },
         }),
     });
   }
@@ -79,6 +79,10 @@ export class DefaultValueType<
   @Memoize()
   override get schemaType(): Code {
     return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.expression}, ${this.itemType.schemaType}>`;
+  }
+
+  override get toRdfResourceValueTypes(): AbstractContainerType<ItemTypeT>["toRdfResourceValueTypes"] {
+    return this.itemType.toRdfResourceValueTypes;
   }
 
   @Memoize()

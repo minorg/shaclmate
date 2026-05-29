@@ -3,10 +3,10 @@ import { harnesses } from "./harnesses.js";
 
 describe("constructor", () => {
   it("construct a class instance from convertible parameters", ({ expect }) => {
-    const instance = harnesses.propertyCardinalities.instance;
+    const instance = harnesses.propertyCardinalities1.instance;
     expect(instance.emptyStringSetProperty).toHaveLength(0);
     expect(instance.optionalStringProperty.isNothing()).toStrictEqual(true);
-    expect(instance.nonEmptyStringSetProperty).toStrictEqual(["test1"]);
+    expect(instance.nonEmptyStringSetProperty).toStrictEqual(["test"]);
     expect(instance.requiredStringProperty).toStrictEqual("test");
   });
 

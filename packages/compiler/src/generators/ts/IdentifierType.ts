@@ -10,30 +10,32 @@ import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
 > {
+  override readonly expression =
+    code`(${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode})`;
   override readonly conversionFunction: Maybe<AbstractIdentifierType.ConversionFunction> =
     Maybe.of({
       code: code`${this.reusables.snippets.convertToIdentifier}`,
       sourceTypes: [
         {
           expression: code`${this.reusables.imports.BlankNode}`,
-          typeof: "object",
+          jsType: this.jsTypes[0],
         },
         {
           expression: code`${this.reusables.imports.NamedNode}`,
-          typeof: "object",
+          jsType: this.jsTypes[0],
         },
         {
+          // To NamedNode
           expression: code`string`,
-          typeof: "string",
+          jsType: { typeof: "string" },
         },
         {
+          // To BlankNode
           expression: code`undefined`,
-          typeof: "undefined",
+          jsType: { typeof: "undefined" },
         },
       ],
     });
-  override readonly expression =
-    code`(${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode})`;
   override readonly filterFunction =
     code`${this.reusables.snippets.filterIdentifier}`;
   override readonly filterType =

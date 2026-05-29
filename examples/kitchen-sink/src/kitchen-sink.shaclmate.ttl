@@ -591,6 +591,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :StringList ;
         sh:path :stringListProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:node :StringListList ;
+        sh:path :stringListListProperty
     ] .
 
 :ClassMultipleInheritanceParent1
@@ -953,6 +957,29 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :nonEmptyStringSetProperty
     ] .
 
+:ListSets
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        rdfs:comment "Set of lists" ;
+        sh:node :StringList ;
+        sh:path :listSetProperty
+    ], [
+        rdfs:comment "Set of lists of lists" ;
+        sh:node :StringListList ;
+        sh:path :listListSetProperty
+    ], [
+        rdfs:comment "Set of typeof union that includes a list" ;
+        sh:xone (
+            [
+                sh:node :StringList
+            ]
+            [
+                sh:datatype xsd:string ;
+            ]
+        ) ;
+        sh:path :listUnionSetProperty ;
+    ] .
+
 :PropertyNames
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that uses different methods to name properties" ;
@@ -1050,6 +1077,27 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
                 sh:maxCount 1 ;
                 sh:minCount 1 ;
                 sh:node :StringList ;
+                sh:path rdf:rest
+            ]
+        ]
+    ) .
+
+:StringListList
+    a sh:NodeShape ;
+    rdfs:comment "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property." ;
+    sh:xone ([
+            sh:hasValue ( )
+        ]
+        [
+            sh:property [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:node :StringList ;
+                sh:path rdf:first
+            ], [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:node :StringListList ;
                 sh:path rdf:rest
             ]
         ]

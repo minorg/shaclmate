@@ -405,7 +405,6 @@ export class TypeFactory {
       itemType,
       label: astType.label,
       logger: this.logger,
-      minCount: 0n,
       mutable: astType.mutable,
       reusables: this.reusables,
       toRdfTypes: astType.toRdfTypes,

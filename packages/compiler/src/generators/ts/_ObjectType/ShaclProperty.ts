@@ -58,7 +58,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
     const typeExpressions: Code[] = [];
     for (const type of conversionFunction.sourceTypes) {
-      if (type.typeof === "undefined") {
+      if (type.jsType.typeof === "undefined") {
         hasQuestionToken = true;
       } else {
         typeExpressions.push(code`${type.expression}`);

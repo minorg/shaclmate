@@ -7,21 +7,21 @@ import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
+  override readonly expression = code`${this.reusables.imports.BlankNode}`;
   override readonly conversionFunction: Maybe<AbstractIdentifierType.ConversionFunction> =
     Maybe.of({
       code: code`${this.reusables.snippets.convertToBlankNode}`,
       sourceTypes: [
         {
           expression: code`${this.reusables.imports.BlankNode}`,
-          typeof: "object",
+          jsType: this.jsTypes[0],
         },
         {
           expression: code`undefined`,
-          typeof: "undefined",
+          jsType: { typeof: "undefined" },
         },
       ],
     });
-  override readonly expression = code`${this.reusables.imports.BlankNode}`;
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBlankNode}`;
   override readonly filterType =

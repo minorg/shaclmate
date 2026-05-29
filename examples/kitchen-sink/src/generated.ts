@@ -312,17 +312,22 @@ type $ConversionFunction<SourceT, TargetT> = (
   source: SourceT,
 ) => Either<Error, TargetT>;
 
-function $convertToArray<ItemSourceT, ItemTargetT, Readonly extends boolean>(
+function $convertToArraySet<ItemSourceT, ItemTargetT, Readonly extends boolean>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
   _readonly: Readonly,
 ) {
-  type EitherR = Readonly extends true
+  type ItemTargetArrayT = Readonly extends true
     ? ReadonlyArray<ItemTargetT>
     : Array<ItemTargetT>;
-  return (value: readonly ItemSourceT[] | undefined): Either<Error, EitherR> =>
+  return (
+    value: readonly ItemSourceT[] | undefined,
+  ): Either<Error, ItemTargetArrayT> =>
     (typeof value === "undefined"
       ? Either.of([])
-      : Either.sequence(value.map(convertToItem))) as Either<Error, EitherR>;
+      : Either.sequence(value.map(convertToItem))) as Either<
+      Error,
+      ItemTargetArrayT
+    >;
 }
 
 function $convertToBlankNode(
@@ -555,6 +560,20 @@ function $convertToLazyObjectSet<
   };
 }
 
+function $convertToList<ItemSourceT, ItemTargetT, Readonly extends boolean>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  _readonly: Readonly,
+) {
+  type ItemTargetArrayT = Readonly extends true
+    ? ReadonlyArray<ItemTargetT>
+    : Array<ItemTargetT>;
+  return (value: readonly ItemSourceT[]): Either<Error, ItemTargetArrayT> =>
+    Either.sequence(value.map(convertToItem)) as Either<
+      Error,
+      ItemTargetArrayT
+    >;
+}
+
 function $convertToLiteral(
   value: bigint | boolean | Date | number | string | Literal,
 ): Either<Error, Literal> {
@@ -586,6 +605,37 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
     }
 
     return convertToItem(value).map(Maybe.of);
+  };
+}
+
+function $convertToScalarSet<
+  ItemSourceT,
+  ItemTargetT,
+  Readonly extends boolean,
+>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  _readonly: Readonly,
+) {
+  type ItemTargetArrayT = Readonly extends true
+    ? ReadonlyArray<ItemTargetT>
+    : Array<ItemTargetT>;
+  return (
+    value: ItemSourceT | readonly ItemSourceT[] | undefined,
+  ): Either<Error, ItemTargetArrayT> => {
+    if (typeof value === "undefined") {
+      return Either.of<Error, ItemTargetArrayT>(
+        [] as unknown as ItemTargetArrayT,
+      );
+    }
+    if (Array.isArray(value)) {
+      return Either.sequence(value.map(convertToItem)) as Either<
+        Error,
+        ItemTargetArrayT
+      >;
+    }
+    return convertToItem(value as ItemSourceT).map((value) => [
+      value,
+    ]) as Either<Error, ItemTargetArrayT>;
   };
 }
 
@@ -4656,20 +4706,36 @@ export namespace UnionDiscriminants {
           value: UnionMember2;
         }
       | { type: "string"; value: string };
-    readonly setIriOrLiteralProperty?: readonly (NamedNode | Literal)[];
-    readonly setIriOrStringProperty?: readonly (NamedNode | string)[];
-    readonly setNodeOrLiteralProperty?: readonly (
-      | { termType: "UnionMember1"; value: UnionMember1 }
-      | Literal
-    )[];
-    readonly setNodeOrNodeOrStringProperty?: readonly (
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | { type: "UnionMember2"; value: UnionMember2 }
-      | {
-          type: "string";
-          value: string;
-        }
-    )[];
+    readonly setIriOrLiteralProperty?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
+    readonly setIriOrStringProperty?:
+      | NamedNode
+      | string
+      | readonly (NamedNode | string)[];
+    readonly setNodeOrLiteralProperty?:
+      | ({ termType: "UnionMember1"; value: UnionMember1 } | Literal)
+      | readonly (
+          | { termType: "UnionMember1"; value: UnionMember1 }
+          | Literal
+        )[];
+    readonly setNodeOrNodeOrStringProperty?:
+      | (
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        )
+      | readonly (
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        )[];
   }): Either<Error, UnionDiscriminants> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
@@ -4720,7 +4786,7 @@ export namespace UnionDiscriminants {
       requiredNodeOrNodeOrStringProperty: $identityConversionFunction(
         parameters.requiredNodeOrNodeOrStringProperty,
       ),
-      setIriOrLiteralProperty: $convertToArray(
+      setIriOrLiteralProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.setIriOrLiteralProperty).chain((value) =>
@@ -4729,7 +4795,7 @@ export namespace UnionDiscriminants {
           value,
         ),
       ),
-      setIriOrStringProperty: $convertToArray(
+      setIriOrStringProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.setIriOrStringProperty).chain((value) =>
@@ -4738,7 +4804,7 @@ export namespace UnionDiscriminants {
           value,
         ),
       ),
-      setNodeOrLiteralProperty: $convertToArray(
+      setNodeOrLiteralProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.setNodeOrLiteralProperty).chain((value) =>
@@ -4747,7 +4813,7 @@ export namespace UnionDiscriminants {
           value,
         ),
       ),
-      setNodeOrNodeOrStringProperty: $convertToArray(
+      setNodeOrNodeOrStringProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.setNodeOrNodeOrStringProperty).chain((value) =>
@@ -4810,20 +4876,36 @@ export namespace UnionDiscriminants {
           value: UnionMember2;
         }
       | { type: "string"; value: string };
-    readonly setIriOrLiteralProperty?: readonly (NamedNode | Literal)[];
-    readonly setIriOrStringProperty?: readonly (NamedNode | string)[];
-    readonly setNodeOrLiteralProperty?: readonly (
-      | { termType: "UnionMember1"; value: UnionMember1 }
-      | Literal
-    )[];
-    readonly setNodeOrNodeOrStringProperty?: readonly (
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | { type: "UnionMember2"; value: UnionMember2 }
-      | {
-          type: "string";
-          value: string;
-        }
-    )[];
+    readonly setIriOrLiteralProperty?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
+    readonly setIriOrStringProperty?:
+      | NamedNode
+      | string
+      | readonly (NamedNode | string)[];
+    readonly setNodeOrLiteralProperty?:
+      | ({ termType: "UnionMember1"; value: UnionMember1 } | Literal)
+      | readonly (
+          | { termType: "UnionMember1"; value: UnionMember1 }
+          | Literal
+        )[];
+    readonly setNodeOrNodeOrStringProperty?:
+      | (
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        )
+      | readonly (
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        )[];
   }): UnionDiscriminants {
     return create(parameters).unsafeCoerce();
   }
@@ -15448,6 +15530,1462 @@ export namespace PropertyNames {
         variablePrefix,
       }),
     );
+}
+export interface ListSets {
+  readonly $identifier: () => ListSets.Identifier;
+
+  readonly $type: "ListSets";
+
+  /**
+   * Set of lists of lists
+   */
+  readonly listListSetProperty: readonly (readonly (readonly string[])[])[];
+
+  /**
+   * Set of lists
+   */
+  readonly listSetProperty: readonly (readonly string[])[];
+
+  /**
+   * Set of typeof union that includes a list
+   */
+  readonly listUnionSetProperty: readonly (readonly string[] | string)[];
+}
+
+export namespace ListSets {
+  export function create(parameters?: {
+    readonly $identifier?:
+      | (() => ListSets.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly listListSetProperty?: readonly (readonly (readonly string[])[])[];
+    readonly listSetProperty?: readonly (readonly string[])[];
+    readonly listUnionSetProperty?: readonly (readonly string[] | string)[];
+  }): Either<Error, ListSets> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      listListSetProperty: $convertToArraySet(
+        $convertToList($convertToList($identityConversionFunction, true), true),
+        true,
+      )(parameters?.listListSetProperty).chain((value) =>
+        $validateArray(
+          $validateArray(
+            $validateArray($identityValidationFunction, true),
+            true,
+          ),
+          true,
+        )(ListSets.schema.properties.listListSetProperty.type, value),
+      ),
+      listSetProperty: $convertToArraySet(
+        $convertToList($identityConversionFunction, true),
+        true,
+      )(parameters?.listSetProperty).chain((value) =>
+        $validateArray($validateArray($identityValidationFunction, true), true)(
+          ListSets.schema.properties.listSetProperty.type,
+          value,
+        ),
+      ),
+      listUnionSetProperty: $convertToArraySet(
+        $identityConversionFunction,
+        true,
+      )(parameters?.listUnionSetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ListSets.schema.properties.listUnionSetProperty.type,
+          value,
+        ),
+      ),
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ListSets" as const },
+        { toJson, $toString },
+      ),
+    );
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => ListSets.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly listListSetProperty?: readonly (readonly (readonly string[])[])[];
+    readonly listSetProperty?: readonly (readonly string[])[];
+    readonly listUnionSetProperty?: readonly (readonly string[] | string)[];
+  }): ListSets {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export function equals(left: ListSets, right: ListSets): $EqualsResult {
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
+        left,
+        right,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, (left, right) =>
+              $arrayEquals(left, right, $strictEquals),
+            ),
+          ))(left.listListSetProperty, right.listListSetProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "listListSetProperty",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, $strictEquals),
+          ))(left.listSetProperty, right.listSetProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "listSetProperty",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(
+            left,
+            right,
+            (
+              left: readonly string[] | string,
+              right: readonly string[] | string,
+            ) => {
+              if (typeof left === "object" && typeof right === "object") {
+                return ((left, right) =>
+                  $arrayEquals(left, right, $strictEquals))(
+                  left as readonly string[],
+                  right as readonly string[],
+                );
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left as string, right as string);
+              }
+
+              return Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
+                },
+                type: "property" as const,
+              });
+            },
+          ))(left.listUnionSetProperty, right.listUnionSetProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "listUnionSetProperty",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      );
+  }
+
+  export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
+    _listSets: ListSets,
+  ): HasherT {
+    ListSets.hashShaclProperties(hasher, _listSets);
+    hasher.update(_listSets.$identifier().value);
+    hasher.update(_listSets.$type);
+    return hasher;
+  }
+
+  export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
+    _listSets: ListSets,
+  ): HasherT {
+    $hashArray($hashArray($hashArray($hashString)))(
+      hasher,
+      _listSets.listListSetProperty,
+    );
+    $hashArray($hashArray($hashString))(hasher, _listSets.listSetProperty);
+    $hashArray(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: readonly string[] | string,
+      ): HasherT => {
+        if (typeof value === "object") {
+          return $hashArray($hashString)(hasher, value);
+        }
+        if (typeof value === "string") {
+          return $hashString(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _listSets.listUnionSetProperty);
+    return hasher;
+  }
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly "@type": "ListSets";
+    readonly listListSetProperty?: readonly (readonly (readonly string[])[])[];
+    readonly listSetProperty?: readonly (readonly string[])[];
+    readonly listUnionSetProperty?: readonly (readonly string[] | string)[];
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          "@type": z.literal("ListSets"),
+          listListSetProperty: z
+            .string()
+            .array()
+            .readonly()
+            .array()
+            .readonly()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              description: "Set of lists of lists",
+            }),
+          listSetProperty: z
+            .string()
+            .array()
+            .readonly()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              description: "Set of lists",
+            }),
+          listUnionSetProperty: z
+            .union([z.string().array().readonly(), z.string()])
+            .readonly()
+            .array()
+            .optional()
+            .readonly()
+            .meta({ description: "Set of typeof union that includes a list" }),
+        })
+        .meta({}) satisfies z.ZodType<Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ListSets" as const },
+                scope: `${scopePrefix}/properties/@type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/@type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/listListSetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/listSetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/listUnionSetProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ListSets",
+        type: "Group",
+      };
+    }
+  }
+
+  export function filter(filter: ListSets.Filter, value: ListSets): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.listListSetProperty !== undefined &&
+      !$filterArray<
+        readonly (readonly string[])[],
+        $CollectionFilter<$CollectionFilter<$StringFilter>>
+      >(
+        $filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
+          $filterArray<string, $StringFilter>($filterString),
+        ),
+      )(filter.listListSetProperty, value.listListSetProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.listSetProperty !== undefined &&
+      !$filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
+        $filterArray<string, $StringFilter>($filterString),
+      )(filter.listSetProperty, value.listSetProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.listUnionSetProperty !== undefined &&
+      !$filterArray<
+        readonly string[] | string,
+        {
+          readonly on?: {
+            readonly object?: $CollectionFilter<$StringFilter>;
+            readonly string?: $StringFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly object?: $CollectionFilter<$StringFilter>;
+              readonly string?: $StringFilter;
+            };
+          },
+          value: readonly string[] | string,
+        ) => {
+          if (
+            filter.on?.["object"] !== undefined &&
+            typeof value === "object"
+          ) {
+            if (
+              !$filterArray<string, $StringFilter>($filterString)(
+                filter.on["object"],
+                value,
+              )
+            ) {
+              return false;
+            }
+          }
+          if (
+            filter.on?.["string"] !== undefined &&
+            typeof value === "string"
+          ) {
+            if (!$filterString(filter.on["string"], value)) {
+              return false;
+            }
+          }
+
+          return true;
+        },
+      )(filter.listUnionSetProperty, value.listUnionSetProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly listListSetProperty?: $CollectionFilter<
+      $CollectionFilter<$CollectionFilter<$StringFilter>>
+    >;
+    readonly listSetProperty?: $CollectionFilter<
+      $CollectionFilter<$StringFilter>
+    >;
+    readonly listUnionSetProperty?: $CollectionFilter<{
+      readonly on?: {
+        readonly object?: $CollectionFilter<$StringFilter>;
+        readonly string?: $StringFilter;
+      };
+    }>;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ListSets.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.listListSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "listListSetProperty",
+        propertySchema: schema.properties.listListSetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $CollectionFilter<$CollectionFilter<$StringFilter>>,
+          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+        >(
+          $listSparqlConstructTriples<
+            $CollectionFilter<$StringFilter>,
+            $CollectionSchema<$StringSchema<string>>
+          >(
+            $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
+              (_: object) => [],
+            ),
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.listSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "listSetProperty",
+        propertySchema: schema.properties.listSetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema<string>>
+        >(
+          $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
+            (_: object) => [],
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.listUnionSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "listUnionSetProperty",
+        propertySchema: schema.properties.listUnionSetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly object?: $CollectionFilter<$StringFilter>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $CollectionSchema<$StringSchema<string>>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
+              (_: object) => [],
+            )({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly object?: $CollectionFilter<$StringFilter>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $CollectionSchema<$StringSchema<string>>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ListSets.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ListSets.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ListSets.schema.properties.$identifier.type,
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.listListSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "listListSetProperty",
+        propertySchema: schema.properties.listListSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $CollectionFilter<$CollectionFilter<$StringFilter>>,
+          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+        >(
+          $listSparqlWherePatterns<
+            $CollectionFilter<$StringFilter>,
+            $CollectionSchema<$StringSchema<string>>
+          >(
+            $listSparqlWherePatterns<$StringFilter, $StringSchema<string>>(
+              $stringSparqlWherePatterns,
+            ),
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.listSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "listSetProperty",
+        propertySchema: schema.properties.listSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema<string>>
+        >(
+          $listSparqlWherePatterns<$StringFilter, $StringSchema<string>>(
+            $stringSparqlWherePatterns,
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.listUnionSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "listUnionSetProperty",
+        propertySchema: schema.properties.listUnionSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly object?: $CollectionFilter<$StringFilter>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $CollectionSchema<$StringSchema<string>>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $listSparqlWherePatterns<
+              $StringFilter,
+              $StringSchema<string>
+            >($stringSparqlWherePatterns)({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly object?: $CollectionFilter<$StringFilter>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $CollectionSchema<$StringSchema<string>>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export function fromJson($json: ListSets.Json): Either<Error, ListSets> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      listListSetProperty: Either.sequence<
+        Error,
+        readonly (readonly string[])[]
+      >(
+        ($json["listListSetProperty"] ?? []).map((item) =>
+          Either.sequence<Error, readonly string[]>(
+            item.map((item) =>
+              Either.sequence<Error, string>(
+                item.map((item) => Either.of<Error, string>(item)),
+              ),
+            ),
+          ),
+        ),
+      ),
+      listSetProperty: Either.sequence<Error, readonly string[]>(
+        ($json["listSetProperty"] ?? []).map((item) =>
+          Either.sequence<Error, string>(
+            item.map((item) => Either.of<Error, string>(item)),
+          ),
+        ),
+      ),
+      listUnionSetProperty: Either.sequence<Error, readonly string[] | string>(
+        ($json["listUnionSetProperty"] ?? []).map((item) =>
+          ((
+            value: readonly string[] | string,
+          ): Either<Error, readonly string[] | string> => {
+            if (typeof value === "object") {
+              return Either.sequence<Error, string>(
+                (value as readonly string[]).map((item) =>
+                  Either.of<Error, string>(item),
+                ),
+              ).map((value) => value);
+            }
+            if (typeof value === "string") {
+              return Either.of<Error, string>(value as string).map(
+                (value) => value,
+              );
+            }
+
+            throw new Error("unable to deserialize JSON");
+          })(item),
+        ),
+      ),
+    }).chain(create);
+  }
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<ListSets> = (
+    $resource,
+    _$options,
+  ) => {
+    return (
+      !_$options.ignoreRdfType
+        ? $ensureRdfResourceType($resource, [ListSets.fromRdfType], {
+            graph: _$options.graph,
+          })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head()),
+        listListSetProperty: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.listListSetProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toList({ graph: _$options.graph }),
+                ),
+              )
+              .chain((valueLists) =>
+                valueLists.chainMap((valueList) =>
+                  Right(
+                    Resource.Values.fromArray({
+                      focusResource: $resource,
+                      propertyPath:
+                        ListSets.schema.properties.listListSetProperty.path,
+                      values: valueList.toArray(),
+                    }),
+                  )
+                    .chain((values) =>
+                      values.chainMap((value) =>
+                        value.toList({ graph: _$options.graph }),
+                      ),
+                    )
+                    .chain((valueLists) =>
+                      valueLists.chainMap((valueList) =>
+                        Right(
+                          Resource.Values.fromArray({
+                            focusResource: $resource,
+                            propertyPath:
+                              ListSets.schema.properties.listListSetProperty
+                                .path,
+                            values: valueList.toArray(),
+                          }),
+                        )
+                          .chain((values) =>
+                            $fromRdfPreferredLanguages(
+                              values,
+                              _$options.preferredLanguages,
+                            ),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) => value.toString()),
+                          ),
+                      ),
+                    )
+                    .map((valueLists) =>
+                      valueLists.map((valueList) => valueList.toArray()),
+                    ),
+                ),
+              )
+              .map((valueLists) =>
+                valueLists.map((valueList) => valueList.toArray()),
+              )
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    ListSets.schema.properties.listListSetProperty.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+        listSetProperty: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.listSetProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toList({ graph: _$options.graph }),
+                ),
+              )
+              .chain((valueLists) =>
+                valueLists.chainMap((valueList) =>
+                  Right(
+                    Resource.Values.fromArray({
+                      focusResource: $resource,
+                      propertyPath:
+                        ListSets.schema.properties.listSetProperty.path,
+                      values: valueList.toArray(),
+                    }),
+                  )
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages(
+                        values,
+                        _$options.preferredLanguages,
+                      ),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+                ),
+              )
+              .map((valueLists) =>
+                valueLists.map((valueList) => valueList.toArray()),
+              )
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath: ListSets.schema.properties.listSetProperty.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+        listUnionSetProperty: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.listUnionSetProperty,
+          typeFromRdf: (resourceValues) =>
+            (
+              ((values, _options) =>
+                values.chain((values) =>
+                  values.chainMap((value) => {
+                    const valueAsValues = Right(value.toValues());
+                    return (
+                      valueAsValues
+                        .chain((values) =>
+                          values.chainMap((value) =>
+                            value.toList({ graph: _options.graph }),
+                          ),
+                        )
+                        .chain((valueLists) =>
+                          valueLists.chainMap((valueList) =>
+                            Right(
+                              Resource.Values.fromArray({
+                                focusResource: _options.resource,
+                                propertyPath: _options.propertyPath,
+                                values: valueList.toArray(),
+                              }),
+                            )
+                              .chain((values) =>
+                                $fromRdfPreferredLanguages(
+                                  values,
+                                  _options.preferredLanguages,
+                                ),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toString()),
+                              ),
+                          ),
+                        )
+                        .map((valueLists) =>
+                          valueLists.map((valueList) => valueList.toArray()),
+                        ) as Either<
+                        Error,
+                        Resource.Values<readonly string[] | string>
+                      >
+                    )
+                      .altLazy(
+                        () =>
+                          valueAsValues
+                            .chain((values) =>
+                              $fromRdfPreferredLanguages(
+                                values,
+                                _options.preferredLanguages,
+                              ),
+                            )
+                            .chain((values) =>
+                              values.chainMap((value) => value.toString()),
+                            ) as Either<
+                            Error,
+                            Resource.Values<readonly string[] | string>
+                          >,
+                      )
+                      .chain((values) => values.head());
+                  }),
+                )) satisfies $FromRdfResourceValuesFunction<
+                readonly string[] | string
+              >
+            )(resourceValues, {
+              context: _$options.context,
+              graph: _$options.graph,
+              objectSet: _$options.objectSet,
+              preferredLanguages: _$options.preferredLanguages,
+              resource: $resource,
+              ignoreRdfType: true,
+              propertyPath:
+                ListSets.schema.properties.listUnionSetProperty.path,
+            })
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    ListSets.schema.properties.listUnionSetProperty.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+      }).chain((properties) => create(properties)),
+    );
+  };
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ListSets
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) => ListSets.fromRdfResource(resource, options)),
+      ),
+    );
+
+  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ListSets",
+  );
+
+  export function isListSets(object: $Object): object is ListSets {
+    switch (object.$type) {
+      case "ListSets":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      listListSetProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/listListSetProperty"),
+        type: {
+          kind: "Set" as const,
+          itemType: {
+            kind: "List" as const,
+            itemType: {
+              kind: "List" as const,
+              itemType: { kind: "String" as const },
+            },
+          },
+        },
+      },
+      listSetProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/listSetProperty"),
+        type: {
+          kind: "Set" as const,
+          itemType: {
+            kind: "List" as const,
+            itemType: { kind: "String" as const },
+          },
+        },
+      },
+      listUnionSetProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/listUnionSetProperty"),
+        type: {
+          kind: "Set" as const,
+          itemType: {
+            kind: "Union" as const,
+            members: {
+              object: {
+                discriminantValues: ["object"],
+                type: {
+                  kind: "List" as const,
+                  itemType: { kind: "String" as const },
+                },
+              },
+              string: {
+                discriminantValues: ["string"],
+                type: { kind: "String" as const },
+              },
+            },
+          },
+        },
+      },
+    },
+  } as const;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ListSets.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "listSets";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ListSets.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ListSets.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ListSets.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ListSets.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function toJson(_listSets: ListSets): ListSets.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _listSets.$identifier().termType === "BlankNode"
+            ? `_:${_listSets.$identifier().value}`
+            : _listSets.$identifier().value,
+        "@type": _listSets.$type,
+        listListSetProperty: _listSets.listListSetProperty.map((item) =>
+          item.map((item) => item.map((item) => item)),
+        ),
+        listSetProperty: _listSets.listSetProperty.map((item) =>
+          item.map((item) => item),
+        ),
+        listUnionSetProperty: _listSets.listUnionSetProperty.map((item) =>
+          ((value: readonly string[] | string): readonly string[] | string => {
+            if (typeof value === "object") {
+              return value.map((item) => item);
+            }
+            if (typeof value === "string") {
+              return value;
+            }
+
+            throw new Error("unable to serialize to JSON");
+          })(item),
+        ),
+      } satisfies ListSets.Json),
+    );
+  }
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ListSets.Identifier,
+    ListSets
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/ListSets"),
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      ListSets.schema.properties.listListSetProperty.path,
+      parameters.object.listListSetProperty.flatMap((item) => [
+        item.length > 0
+          ? item.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = parameters.resourceSet.resource(
+                    (() => dataFactory.blankNode())(),
+                  );
+                  currentSubListResource!.add(
+                    $RdfVocabularies.rdf.rest,
+                    newSubListResource.identifier,
+                    parameters.graph,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  [
+                    item.length > 0
+                      ? item.reduce(
+                          (
+                            { currentSubListResource, listResource },
+                            item,
+                            itemIndex,
+                            list,
+                          ) => {
+                            if (itemIndex === 0) {
+                              currentSubListResource = listResource;
+                            } else {
+                              const newSubListResource =
+                                parameters.resourceSet.resource(
+                                  (() => dataFactory.blankNode())(),
+                                );
+                              currentSubListResource!.add(
+                                $RdfVocabularies.rdf.rest,
+                                newSubListResource.identifier,
+                                parameters.graph,
+                              );
+                              currentSubListResource = newSubListResource;
+                            }
+
+                            currentSubListResource.add(
+                              $RdfVocabularies.rdf.first,
+                              [$literalFactory.string(item)],
+                              parameters.graph,
+                            );
+
+                            if (itemIndex + 1 === list.length) {
+                              currentSubListResource.add(
+                                $RdfVocabularies.rdf.rest,
+                                $RdfVocabularies.rdf.nil,
+                                parameters.graph,
+                              );
+                            }
+
+                            return { currentSubListResource, listResource };
+                          },
+                          {
+                            currentSubListResource: null,
+                            listResource: parameters.resourceSet.resource(
+                              (() => dataFactory.blankNode())(),
+                            ),
+                          } as {
+                            currentSubListResource: Resource<BlankNode> | null;
+                            listResource: Resource<BlankNode>;
+                          },
+                        ).listResource.identifier
+                      : $RdfVocabularies.rdf.nil,
+                  ],
+                  parameters.graph,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
+                    parameters.graph,
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: parameters.resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
+              } as {
+                currentSubListResource: Resource<BlankNode> | null;
+                listResource: Resource<BlankNode>;
+              },
+            ).listResource.identifier
+          : $RdfVocabularies.rdf.nil,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ListSets.schema.properties.listSetProperty.path,
+      parameters.object.listSetProperty.flatMap((item) => [
+        item.length > 0
+          ? item.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = parameters.resourceSet.resource(
+                    (() => dataFactory.blankNode())(),
+                  );
+                  currentSubListResource!.add(
+                    $RdfVocabularies.rdf.rest,
+                    newSubListResource.identifier,
+                    parameters.graph,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  [$literalFactory.string(item)],
+                  parameters.graph,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
+                    parameters.graph,
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: parameters.resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
+              } as {
+                currentSubListResource: Resource<BlankNode> | null;
+                listResource: Resource<BlankNode>;
+              },
+            ).listResource.identifier
+          : $RdfVocabularies.rdf.nil,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ListSets.schema.properties.listUnionSetProperty.path,
+      parameters.object.listUnionSetProperty.flatMap((item) =>
+        (
+          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+            if (typeof value === "object") {
+              return [
+                value.length > 0
+                  ? value.reduce(
+                      (
+                        { currentSubListResource, listResource },
+                        item,
+                        itemIndex,
+                        list,
+                      ) => {
+                        if (itemIndex === 0) {
+                          currentSubListResource = listResource;
+                        } else {
+                          const newSubListResource =
+                            _options.resourceSet.resource(
+                              (() => dataFactory.blankNode())(),
+                            );
+                          currentSubListResource!.add(
+                            $RdfVocabularies.rdf.rest,
+                            newSubListResource.identifier,
+                            _options.graph,
+                          );
+                          currentSubListResource = newSubListResource;
+                        }
+
+                        currentSubListResource.add(
+                          $RdfVocabularies.rdf.first,
+                          [$literalFactory.string(item)],
+                          _options.graph,
+                        );
+
+                        if (itemIndex + 1 === list.length) {
+                          currentSubListResource.add(
+                            $RdfVocabularies.rdf.rest,
+                            $RdfVocabularies.rdf.nil,
+                            _options.graph,
+                          );
+                        }
+
+                        return { currentSubListResource, listResource };
+                      },
+                      {
+                        currentSubListResource: null,
+                        listResource: _options.resourceSet.resource(
+                          (() => dataFactory.blankNode())(),
+                        ),
+                      } as {
+                        currentSubListResource: Resource<BlankNode> | null;
+                        listResource: Resource<BlankNode>;
+                      },
+                    ).listResource.identifier
+                  : $RdfVocabularies.rdf.nil,
+              ];
+            }
+            if (typeof value === "string") {
+              return [$literalFactory.string(value)];
+            }
+
+            throw new Error("unable to serialize to RDF");
+          }) satisfies $ToRdfResourceValuesFunction<readonly string[] | string>
+        )(item, {
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath: ListSets.schema.properties.listUnionSetProperty.path,
+        }),
+      ),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export function _propertiesToStrings(
+    _listSets: ListSets,
+  ): Record<string, string> {
+    return $compactRecord({ $identifier: _listSets.$identifier().toString() });
+  }
+
+  export function $toString(_listSets: ListSets): string {
+    return `ListSets(${JSON.stringify(_propertiesToStrings(_listSets))})`;
+  }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ListSets.Filter,
+    typeof ListSets.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ListSets.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ListSets.Filter,
+    typeof ListSets.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ListSets.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that has properties with different cardinalities
  */
@@ -15485,14 +17023,14 @@ export namespace PropertyCardinalities {
       | BlankNode
       | NamedNode
       | string;
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly emptyStringSetProperty?: string | readonly string[];
+    readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
   }): Either<Error, PropertyCardinalities> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      emptyStringSetProperty: $convertToArray(
+      emptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.emptyStringSetProperty).chain((value) =>
@@ -15501,7 +17039,7 @@ export namespace PropertyCardinalities {
           value,
         ),
       ),
-      nonEmptyStringSetProperty: $convertToArray(
+      nonEmptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.nonEmptyStringSetProperty).chain((value) =>
@@ -15534,8 +17072,8 @@ export namespace PropertyCardinalities {
       | BlankNode
       | NamedNode
       | string;
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly emptyStringSetProperty?: string | readonly string[];
+    readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
   }): PropertyCardinalities {
@@ -24985,20 +26523,20 @@ export namespace MutableProperties {
       | NamedNode
       | string;
     readonly mutableListProperty?: readonly string[] | Maybe<string[]>;
-    readonly mutableSetProperty?: readonly string[];
+    readonly mutableSetProperty?: string | readonly string[];
     readonly mutableStringProperty?: string | Maybe<string>;
   }): Either<Error, MutableProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       mutableListProperty: $convertToMaybe(
-        $convertToArray($identityConversionFunction, false),
+        $convertToList($identityConversionFunction, false),
       )(parameters?.mutableListProperty).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, false))(
           MutableProperties.schema.properties.mutableListProperty.type,
           value,
         ),
       ),
-      mutableSetProperty: $convertToArray(
+      mutableSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         false,
       )(parameters?.mutableSetProperty).chain((value) =>
@@ -25030,7 +26568,7 @@ export namespace MutableProperties {
       | NamedNode
       | string;
     readonly mutableListProperty?: readonly string[] | Maybe<string[]>;
-    readonly mutableSetProperty?: readonly string[];
+    readonly mutableSetProperty?: string | readonly string[];
     readonly mutableStringProperty?: string | Maybe<string>;
   }): MutableProperties {
     return create(parameters).unsafeCoerce();
@@ -25140,7 +26678,7 @@ export namespace MutableProperties {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("MutableProperties"),
-          mutableListProperty: z.string().array().optional().optional().meta({
+          mutableListProperty: z.string().array().optional().meta({
             description:
               "List-valued property that can't be reassigned but whose value can be mutated",
           }),
@@ -25434,7 +26972,7 @@ export namespace MutableProperties {
       mutableListProperty: Maybe.fromNullable($json["mutableListProperty"])
         .map((item) =>
           Either.sequence<Error, string>(
-            (item ?? []).map((item) => Either.of<Error, string>(item)),
+            item.map((item) => Either.of<Error, string>(item)),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
@@ -27645,6 +29183,8 @@ export interface ListProperties {
 
   readonly objectListProperty: Maybe<readonly NonClass[]>;
 
+  readonly stringListListProperty: Maybe<readonly (readonly string[])[]>;
+
   readonly stringListProperty: Maybe<readonly string[]>;
 }
 
@@ -27661,12 +29201,15 @@ export namespace ListProperties {
     readonly objectListProperty?:
       | readonly NonClass[]
       | Maybe<readonly NonClass[]>;
+    readonly stringListListProperty?:
+      | readonly (readonly string[])[]
+      | Maybe<readonly (readonly string[])[]>;
     readonly stringListProperty?: readonly string[] | Maybe<readonly string[]>;
   }): Either<Error, ListProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       iriListProperty: $convertToMaybe(
-        $convertToArray($convertToIri<string>, true),
+        $convertToList($convertToIri<string>, true),
       )(parameters?.iriListProperty).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           ListProperties.schema.properties.iriListProperty.type,
@@ -27674,15 +29217,25 @@ export namespace ListProperties {
         ),
       ),
       objectListProperty: $convertToMaybe(
-        $convertToArray($identityConversionFunction, true),
+        $convertToList($identityConversionFunction, true),
       )(parameters?.objectListProperty).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           ListProperties.schema.properties.objectListProperty.type,
           value,
         ),
       ),
+      stringListListProperty: $convertToMaybe(
+        $convertToList($convertToList($identityConversionFunction, true), true),
+      )(parameters?.stringListListProperty).chain((value) =>
+        $validateMaybe(
+          $validateArray(
+            $validateArray($identityValidationFunction, true),
+            true,
+          ),
+        )(ListProperties.schema.properties.stringListListProperty.type, value),
+      ),
       stringListProperty: $convertToMaybe(
-        $convertToArray($identityConversionFunction, true),
+        $convertToList($identityConversionFunction, true),
       )(parameters?.stringListProperty).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           ListProperties.schema.properties.stringListProperty.type,
@@ -27709,6 +29262,9 @@ export namespace ListProperties {
     readonly objectListProperty?:
       | readonly NonClass[]
       | Maybe<readonly NonClass[]>;
+    readonly stringListListProperty?:
+      | readonly (readonly string[])[]
+      | Maybe<readonly (readonly string[])[]>;
     readonly stringListProperty?: readonly string[] | Maybe<readonly string[]>;
   }): ListProperties {
     return create(parameters).unsafeCoerce();
@@ -27757,6 +29313,22 @@ export namespace ListProperties {
       .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, (left, right) =>
+              $arrayEquals(left, right, $strictEquals),
+            ),
+          ))(left.stringListListProperty, right.stringListListProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "stringListListProperty",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) =>
             $arrayEquals(left, right, $strictEquals),
           ))(left.stringListProperty, right.stringListProperty).mapLeft(
           (propertyValuesUnequal) => ({
@@ -27789,6 +29361,10 @@ export namespace ListProperties {
       hasher,
       _listProperties.objectListProperty,
     );
+    $hashMaybe($hashArray($hashArray($hashString)))(
+      hasher,
+      _listProperties.stringListListProperty,
+    );
     $hashMaybe($hashArray($hashString))(
       hasher,
       _listProperties.stringListProperty,
@@ -27808,6 +29384,7 @@ export namespace ListProperties {
     readonly "@type": "ListProperties";
     readonly iriListProperty?: readonly { readonly "@id": string }[];
     readonly objectListProperty?: readonly NonClass.Json[];
+    readonly stringListListProperty?: readonly (readonly string[])[];
     readonly stringListProperty?: readonly string[];
   };
 
@@ -27828,23 +29405,23 @@ export namespace ListProperties {
           iriListProperty: z
             .object({ "@id": z.string().min(1) })
             .array()
-            .optional()
             .readonly()
             .optional()
             .meta({}),
           objectListProperty: NonClass.Json.schema()
             .array()
-            .optional()
             .readonly()
             .optional()
             .meta({}),
-          stringListProperty: z
+          stringListListProperty: z
             .string()
             .array()
-            .optional()
+            .readonly()
+            .array()
             .readonly()
             .optional()
             .meta({}),
+          stringListProperty: z.string().array().readonly().optional().meta({}),
         })
         .meta({
           description: "Node shape that uses the list shapes in properties.",
@@ -27878,6 +29455,10 @@ export namespace ListProperties {
           NonClass.Json.uiSchema({
             scopePrefix: `${scopePrefix}/properties/objectListProperty`,
           }),
+          {
+            scope: `${scopePrefix}/properties/stringListListProperty`,
+            type: "Control",
+          },
           {
             scope: `${scopePrefix}/properties/stringListProperty`,
             type: "Control",
@@ -27916,6 +29497,19 @@ export namespace ListProperties {
       return false;
     }
     if (
+      filter.stringListListProperty !== undefined &&
+      !$filterMaybe<
+        readonly (readonly string[])[],
+        $CollectionFilter<$CollectionFilter<$StringFilter>>
+      >(
+        $filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
+          $filterArray<string, $StringFilter>($filterString),
+        ),
+      )(filter.stringListListProperty, value.stringListListProperty)
+    ) {
+      return false;
+    }
+    if (
       filter.stringListProperty !== undefined &&
       !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
         $filterArray<string, $StringFilter>($filterString),
@@ -27931,6 +29525,9 @@ export namespace ListProperties {
     readonly iriListProperty?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
     readonly objectListProperty?: $MaybeFilter<
       $CollectionFilter<NonClass.Filter>
+    >;
+    readonly stringListListProperty?: $MaybeFilter<
+      $CollectionFilter<$CollectionFilter<$StringFilter>>
     >;
     readonly stringListProperty?: $MaybeFilter<
       $CollectionFilter<$StringFilter>
@@ -27986,6 +29583,29 @@ export namespace ListProperties {
         >(
           $listSparqlConstructTriples<NonClass.Filter, typeof NonClass.schema>(
             NonClass.valueSparqlConstructTriples,
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringListListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringListListProperty",
+        propertySchema: schema.properties.stringListListProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$CollectionFilter<$StringFilter>>,
+          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+        >(
+          $listSparqlConstructTriples<
+            $CollectionFilter<$StringFilter>,
+            $CollectionSchema<$StringSchema<string>>
+          >(
+            $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
+              (_: object) => [],
+            ),
           ),
         ),
         variablePrefix: parameters.variablePrefix,
@@ -28111,6 +29731,30 @@ export namespace ListProperties {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringListListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringListListProperty",
+        propertySchema: schema.properties.stringListListProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$CollectionFilter<$StringFilter>>,
+          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+        >(
+          $listSparqlWherePatterns<
+            $CollectionFilter<$StringFilter>,
+            $CollectionSchema<$StringSchema<string>>
+          >(
+            $listSparqlWherePatterns<$StringFilter, $StringSchema<string>>(
+              $stringSparqlWherePatterns,
+            ),
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.stringListProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -28143,7 +29787,7 @@ export namespace ListProperties {
       iriListProperty: Maybe.fromNullable($json["iriListProperty"])
         .map((item) =>
           Either.sequence<Error, NamedNode>(
-            (item ?? []).map((item) =>
+            item.map((item) =>
               Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
             ),
           ).map(Maybe.of),
@@ -28152,14 +29796,27 @@ export namespace ListProperties {
       objectListProperty: Maybe.fromNullable($json["objectListProperty"])
         .map((item) =>
           Either.sequence<Error, NonClass>(
-            (item ?? []).map((item) => NonClass.fromJson(item)),
+            item.map((item) => NonClass.fromJson(item)),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      stringListListProperty: Maybe.fromNullable(
+        $json["stringListListProperty"],
+      )
+        .map((item) =>
+          Either.sequence<Error, readonly string[]>(
+            item.map((item) =>
+              Either.sequence<Error, string>(
+                item.map((item) => Either.of<Error, string>(item)),
+              ),
+            ),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       stringListProperty: Maybe.fromNullable($json["stringListProperty"])
         .map((item) =>
           Either.sequence<Error, string>(
-            (item ?? []).map((item) => Either.of<Error, string>(item)),
+            item.map((item) => Either.of<Error, string>(item)),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
@@ -28274,6 +29931,77 @@ export namespace ListProperties {
                       focusResource: $resource,
                       propertyPath:
                         ListProperties.schema.properties.objectListProperty
+                          .path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
+        stringListListProperty: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.stringListListProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toList({ graph: _$options.graph }),
+                ),
+              )
+              .chain((valueLists) =>
+                valueLists.chainMap((valueList) =>
+                  Right(
+                    Resource.Values.fromArray({
+                      focusResource: $resource,
+                      propertyPath:
+                        ListProperties.schema.properties.stringListListProperty
+                          .path,
+                      values: valueList.toArray(),
+                    }),
+                  )
+                    .chain((values) =>
+                      values.chainMap((value) =>
+                        value.toList({ graph: _$options.graph }),
+                      ),
+                    )
+                    .chain((valueLists) =>
+                      valueLists.chainMap((valueList) =>
+                        Right(
+                          Resource.Values.fromArray({
+                            focusResource: $resource,
+                            propertyPath:
+                              ListProperties.schema.properties
+                                .stringListListProperty.path,
+                            values: valueList.toArray(),
+                          }),
+                        )
+                          .chain((values) =>
+                            $fromRdfPreferredLanguages(
+                              values,
+                              _$options.preferredLanguages,
+                            ),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) => value.toString()),
+                          ),
+                      ),
+                    )
+                    .map((valueLists) =>
+                      valueLists.map((valueList) => valueList.toArray()),
+                    ),
+                ),
+              )
+              .map((valueLists) =>
+                valueLists.map((valueList) => valueList.toArray()),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<
+                      Maybe<readonly (readonly string[])[]>
+                    >({
+                      focusResource: $resource,
+                      propertyPath:
+                        ListProperties.schema.properties.stringListListProperty
                           .path,
                       value: Maybe.empty(),
                     }),
@@ -28394,6 +30122,22 @@ export namespace ListProperties {
           };
         },
       },
+      stringListListProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/stringListListProperty",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "List" as const,
+            itemType: {
+              kind: "List" as const,
+              itemType: { kind: "String" as const },
+            },
+          },
+        },
+      },
       stringListProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringListProperty"),
@@ -28477,6 +30221,9 @@ export namespace ListProperties {
           .extract(),
         objectListProperty: _listProperties.objectListProperty
           .map((item) => item.map((item) => NonClass.toJson(item)))
+          .extract(),
+        stringListListProperty: _listProperties.stringListListProperty
+          .map((item) => item.map((item) => item.map((item) => item)))
           .extract(),
         stringListProperty: _listProperties.stringListProperty
           .map((item) => item.map((item) => item))
@@ -28583,6 +30330,112 @@ export namespace ListProperties {
                       graph: parameters.graph,
                       resourceSet: parameters.resourceSet,
                     }).identifier,
+                  ],
+                  parameters.graph,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
+                    parameters.graph,
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: parameters.resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
+              } as {
+                currentSubListResource: Resource<BlankNode> | null;
+                listResource: Resource<BlankNode>;
+              },
+            ).listResource.identifier
+          : $RdfVocabularies.rdf.nil,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ListProperties.schema.properties.stringListListProperty.path,
+      parameters.object.stringListListProperty.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = parameters.resourceSet.resource(
+                    (() => dataFactory.blankNode())(),
+                  );
+                  currentSubListResource!.add(
+                    $RdfVocabularies.rdf.rest,
+                    newSubListResource.identifier,
+                    parameters.graph,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  [
+                    item.length > 0
+                      ? item.reduce(
+                          (
+                            { currentSubListResource, listResource },
+                            item,
+                            itemIndex,
+                            list,
+                          ) => {
+                            if (itemIndex === 0) {
+                              currentSubListResource = listResource;
+                            } else {
+                              const newSubListResource =
+                                parameters.resourceSet.resource(
+                                  (() => dataFactory.blankNode())(),
+                                );
+                              currentSubListResource!.add(
+                                $RdfVocabularies.rdf.rest,
+                                newSubListResource.identifier,
+                                parameters.graph,
+                              );
+                              currentSubListResource = newSubListResource;
+                            }
+
+                            currentSubListResource.add(
+                              $RdfVocabularies.rdf.first,
+                              [$literalFactory.string(item)],
+                              parameters.graph,
+                            );
+
+                            if (itemIndex + 1 === list.length) {
+                              currentSubListResource.add(
+                                $RdfVocabularies.rdf.rest,
+                                $RdfVocabularies.rdf.nil,
+                                parameters.graph,
+                              );
+                            }
+
+                            return { currentSubListResource, listResource };
+                          },
+                          {
+                            currentSubListResource: null,
+                            listResource: parameters.resourceSet.resource(
+                              (() => dataFactory.blankNode())(),
+                            ),
+                          } as {
+                            currentSubListResource: Resource<BlankNode> | null;
+                            listResource: Resource<BlankNode>;
+                          },
+                        ).listResource.identifier
+                      : $RdfVocabularies.rdf.nil,
                   ],
                   parameters.graph,
                 );
@@ -33390,18 +35243,18 @@ export namespace LanguageInProperties {
       | BlankNode
       | NamedNode
       | string;
-    readonly languageInLiteralProperty: readonly (
+    readonly languageInLiteralProperty:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
   }): Either<Error, LanguageInProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      languageInLiteralProperty: $convertToArray(
+      languageInLiteralProperty: $convertToScalarSet(
         $convertToLiteral,
         true,
       )(parameters.languageInLiteralProperty).chain((value) =>
@@ -33424,14 +35277,14 @@ export namespace LanguageInProperties {
       | BlankNode
       | NamedNode
       | string;
-    readonly languageInLiteralProperty: readonly (
+    readonly languageInLiteralProperty:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
   }): LanguageInProperties {
     return create(parameters).unsafeCoerce();
   }
@@ -33916,11 +35769,15 @@ export namespace JsPrimitiveUnionProperty {
       | BlankNode
       | NamedNode
       | string;
-    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
+    readonly jsPrimitiveUnionProperty?:
+      | boolean
+      | number
+      | string
+      | readonly (boolean | number | string)[];
   }): Either<Error, JsPrimitiveUnionProperty> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      jsPrimitiveUnionProperty: $convertToArray(
+      jsPrimitiveUnionProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters?.jsPrimitiveUnionProperty).chain((value) =>
@@ -33944,7 +35801,11 @@ export namespace JsPrimitiveUnionProperty {
       | BlankNode
       | NamedNode
       | string;
-    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
+    readonly jsPrimitiveUnionProperty?:
+      | boolean
+      | number
+      | string
+      | readonly (boolean | number | string)[];
   }): JsPrimitiveUnionProperty {
     return create(parameters).unsafeCoerce();
   }
@@ -46254,21 +48115,27 @@ export namespace ConvertibleTypeProperties {
       | BlankNode
       | NamedNode
       | string;
-    readonly convertibleIriNonEmptySetProperty: readonly (string | NamedNode)[];
+    readonly convertibleIriNonEmptySetProperty:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly convertibleIriOptionProperty?:
       | string
       | NamedNode
       | Maybe<NamedNode>;
     readonly convertibleIriProperty: string | NamedNode;
-    readonly convertibleIriSetProperty?: readonly (string | NamedNode)[];
-    readonly convertibleLiteralNonEmptySetProperty: readonly (
+    readonly convertibleIriSetProperty?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly convertibleLiteralNonEmptySetProperty:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
     readonly convertibleLiteralOptionProperty?:
       | bigint
       | boolean
@@ -46284,32 +48151,28 @@ export namespace ConvertibleTypeProperties {
       | string
       | Date
       | Literal;
-    readonly convertibleLiteralSetProperty?: readonly (
+    readonly convertibleLiteralSetProperty?:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
-    readonly convertibleTermNonEmptySetProperty: readonly (
-      | BlankNode
-      | NamedNode
-      | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
+    readonly convertibleTermNonEmptySetProperty:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
     readonly convertibleTermOptionProperty?:
       | (BlankNode | NamedNode | Literal)
       | Maybe<BlankNode | NamedNode | Literal>;
     readonly convertibleTermProperty: BlankNode | NamedNode | Literal;
-    readonly convertibleTermSetProperty?: readonly (
-      | BlankNode
-      | NamedNode
-      | Literal
-    )[];
+    readonly convertibleTermSetProperty?:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
   }): Either<Error, ConvertibleTypeProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      convertibleIriNonEmptySetProperty: $convertToArray(
+      convertibleIriNonEmptySetProperty: $convertToScalarSet(
         $convertToIri<string>,
         true,
       )(parameters.convertibleIriNonEmptySetProperty).chain((value) =>
@@ -46331,7 +48194,7 @@ export namespace ConvertibleTypeProperties {
       convertibleIriProperty: $convertToIri<string>(
         parameters.convertibleIriProperty,
       ),
-      convertibleIriSetProperty: $convertToArray(
+      convertibleIriSetProperty: $convertToScalarSet(
         $convertToIri<string>,
         true,
       )(parameters.convertibleIriSetProperty).chain((value) =>
@@ -46341,7 +48204,7 @@ export namespace ConvertibleTypeProperties {
           value,
         ),
       ),
-      convertibleLiteralNonEmptySetProperty: $convertToArray(
+      convertibleLiteralNonEmptySetProperty: $convertToScalarSet(
         $convertToLiteral,
         true,
       )(parameters.convertibleLiteralNonEmptySetProperty).chain((value) =>
@@ -46363,7 +48226,7 @@ export namespace ConvertibleTypeProperties {
       convertibleLiteralProperty: $convertToLiteral(
         parameters.convertibleLiteralProperty,
       ),
-      convertibleLiteralSetProperty: $convertToArray(
+      convertibleLiteralSetProperty: $convertToScalarSet(
         $convertToLiteral,
         true,
       )(parameters.convertibleLiteralSetProperty).chain((value) =>
@@ -46373,7 +48236,7 @@ export namespace ConvertibleTypeProperties {
           value,
         ),
       ),
-      convertibleTermNonEmptySetProperty: $convertToArray(
+      convertibleTermNonEmptySetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.convertibleTermNonEmptySetProperty).chain((value) =>
@@ -46393,7 +48256,7 @@ export namespace ConvertibleTypeProperties {
         ),
       ),
       convertibleTermProperty: Either.of(parameters.convertibleTermProperty),
-      convertibleTermSetProperty: $convertToArray(
+      convertibleTermSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.convertibleTermSetProperty).chain((value) =>
@@ -46417,21 +48280,27 @@ export namespace ConvertibleTypeProperties {
       | BlankNode
       | NamedNode
       | string;
-    readonly convertibleIriNonEmptySetProperty: readonly (string | NamedNode)[];
+    readonly convertibleIriNonEmptySetProperty:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly convertibleIriOptionProperty?:
       | string
       | NamedNode
       | Maybe<NamedNode>;
     readonly convertibleIriProperty: string | NamedNode;
-    readonly convertibleIriSetProperty?: readonly (string | NamedNode)[];
-    readonly convertibleLiteralNonEmptySetProperty: readonly (
+    readonly convertibleIriSetProperty?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly convertibleLiteralNonEmptySetProperty:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
     readonly convertibleLiteralOptionProperty?:
       | bigint
       | boolean
@@ -46447,28 +48316,24 @@ export namespace ConvertibleTypeProperties {
       | string
       | Date
       | Literal;
-    readonly convertibleLiteralSetProperty?: readonly (
+    readonly convertibleLiteralSetProperty?:
       | bigint
       | boolean
       | number
       | string
       | Date
       | Literal
-    )[];
-    readonly convertibleTermNonEmptySetProperty: readonly (
-      | BlankNode
-      | NamedNode
-      | Literal
-    )[];
+      | readonly (bigint | boolean | number | string | Date | Literal)[];
+    readonly convertibleTermNonEmptySetProperty:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
     readonly convertibleTermOptionProperty?:
       | (BlankNode | NamedNode | Literal)
       | Maybe<BlankNode | NamedNode | Literal>;
     readonly convertibleTermProperty: BlankNode | NamedNode | Literal;
-    readonly convertibleTermSetProperty?: readonly (
-      | BlankNode
-      | NamedNode
-      | Literal
-    )[];
+    readonly convertibleTermSetProperty?:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
   }): ConvertibleTypeProperties {
     return create(parameters).unsafeCoerce();
   }
@@ -56381,6 +58246,7 @@ export type $Object =
   | UnionMember2
   | UnionMemberCommonParent
   | PropertyCardinalities
+  | ListSets
   | PropertyNames
   | PropertyPaths
   | RecursiveUnionMember1
@@ -56549,6 +58415,9 @@ export namespace $Object {
     }
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
       return PropertyCardinalities.$toString(value);
+    }
+    if (ListSets.isListSets(value)) {
+      return ListSets.$toString(value);
     }
     if (PropertyNames.isPropertyNames(value)) {
       return PropertyNames.$toString(value);
@@ -56996,6 +58865,9 @@ export namespace $Object {
         left as PropertyCardinalities,
         right as PropertyCardinalities,
       );
+    }
+    if (ListSets.isListSets(left) && ListSets.isListSets(right)) {
+      return ListSets.equals(left as ListSets, right as ListSets);
     }
     if (
       PropertyNames.isPropertyNames(left) &&
@@ -57573,6 +59445,11 @@ export namespace $Object {
         return false;
       }
     }
+    if (filter.on?.["ListSets"] !== undefined && ListSets.isListSets(value)) {
+      if (!ListSets.filter(filter.on["ListSets"], value)) {
+        return false;
+      }
+    }
     if (
       filter.on?.["PropertyNames"] !== undefined &&
       PropertyNames.isPropertyNames(value)
@@ -57700,6 +59577,7 @@ export namespace $Object {
       readonly UnionMember2?: UnionMember2.Filter;
       readonly UnionMemberCommonParent?: UnionMemberCommonParent.Filter;
       readonly PropertyCardinalities?: PropertyCardinalities.Filter;
+      readonly ListSets?: ListSets.Filter;
       readonly PropertyNames?: PropertyNames.Filter;
       readonly PropertyPaths?: PropertyPaths.Filter;
       readonly RecursiveUnionMember1?: RecursiveUnionMember1.Filter;
@@ -58021,6 +59899,12 @@ export namespace $Object {
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}PropertyCardinalities`,
+      }).concat(),
+      ...ListSets.focusSparqlConstructTriples({
+        filter: filter?.on?.ListSets,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ListSets`,
       }).concat(),
       ...PropertyNames.focusSparqlConstructTriples({
         filter: filter?.on?.PropertyNames,
@@ -58607,6 +60491,16 @@ export namespace $Object {
           type: "group",
         },
         {
+          patterns: ListSets.focusSparqlWherePatterns({
+            filter: filter?.on?.ListSets,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ListSets`,
+          }).concat(),
+          type: "group",
+        },
+        {
           patterns: PropertyNames.focusSparqlWherePatterns({
             filter: filter?.on?.PropertyNames,
             focusIdentifier,
@@ -58938,6 +60832,9 @@ export namespace $Object {
       return PropertyCardinalities.fromJson(
         value as PropertyCardinalities.Json,
       ).map((value) => value);
+    }
+    if (value["@type"] === "ListSets") {
+      return ListSets.fromJson(value as ListSets.Json).map((value) => value);
     }
     if (value["@type"] === "PropertyNames") {
       return PropertyNames.fromJson(value as PropertyNames.Json).map(
@@ -59332,6 +61229,13 @@ export namespace $Object {
       .altLazy(
         () =>
           PropertyCardinalities.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ListSets.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -60020,6 +61924,18 @@ export namespace $Object {
             )
             .altLazy(
               () =>
+                ListSets.fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
                 PropertyNames.fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
@@ -60280,6 +62196,9 @@ export namespace $Object {
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
       return PropertyCardinalities.hash(hasher, value);
     }
+    if (ListSets.isListSets(value)) {
+      return ListSets.hash(hasher, value);
+    }
     if (PropertyNames.isPropertyNames(value)) {
       return PropertyNames.hash(hasher, value);
     }
@@ -60367,6 +62286,7 @@ export namespace $Object {
           UnionMember2.Json.schema(),
           UnionMemberCommonParent.Json.schema(),
           PropertyCardinalities.Json.schema(),
+          ListSets.Json.schema(),
           PropertyNames.Json.schema(),
           PropertyPaths.Json.schema(),
           RecursiveUnionMember1.Json.schema(),
@@ -60439,6 +62359,7 @@ export namespace $Object {
     | UnionMember2.Json
     | UnionMemberCommonParent.Json
     | PropertyCardinalities.Json
+    | ListSets.Json
     | PropertyNames.Json
     | PropertyPaths.Json
     | RecursiveUnionMember1.Json
@@ -60639,6 +62560,7 @@ export namespace $Object {
         discriminantValues: ["PropertyCardinalities"],
         type: PropertyCardinalities.schema,
       },
+      ListSets: { discriminantValues: ["ListSets"], type: ListSets.schema },
       PropertyNames: {
         discriminantValues: ["PropertyNames"],
         type: PropertyNames.schema,
@@ -60890,6 +62812,9 @@ export namespace $Object {
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
       return PropertyCardinalities.toJson(value);
     }
+    if (ListSets.isListSets(value)) {
+      return ListSets.toJson(value);
+    }
     if (PropertyNames.isPropertyNames(value)) {
       return PropertyNames.toJson(value);
     }
@@ -61082,6 +63007,9 @@ export namespace $Object {
     }
     if (PropertyCardinalities.isPropertyCardinalities(object)) {
       return PropertyCardinalities.toRdfResource(object, options);
+    }
+    if (ListSets.isListSets(object)) {
+      return ListSets.toRdfResource(object, options);
     }
     if (PropertyNames.isPropertyNames(object)) {
       return PropertyNames.toRdfResource(object, options);
@@ -61517,6 +63445,14 @@ export namespace $Object {
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
       return [
         PropertyCardinalities.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (ListSets.isListSets(value)) {
+      return [
+        ListSets.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -61994,6 +63930,14 @@ export namespace $Object {
         filter: filter?.on?.["PropertyCardinalities"],
         ignoreRdfType: false,
         schema: schema.members["PropertyCardinalities"].type,
+      }),
+    );
+    triples = triples.concat(
+      ListSets.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ListSets"],
+        ignoreRdfType: false,
+        schema: schema.members["ListSets"].type,
       }),
     );
     triples = triples.concat(
@@ -62522,6 +64466,15 @@ export namespace $Object {
         filter: filter?.on?.["PropertyCardinalities"],
         ignoreRdfType: false,
         schema: schema.members["PropertyCardinalities"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ListSets.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ListSets"],
+        ignoreRdfType: false,
+        schema: schema.members["ListSets"].type,
       }).concat(),
       type: "group",
     });
@@ -63512,6 +65465,26 @@ export interface $ObjectSet {
   listPropertieses(
     query?: $ObjectSet.Query<ListProperties.Filter, ListProperties.Identifier>,
   ): Promise<Either<Error, readonly ListProperties[]>>;
+
+  listSets(
+    identifier: ListSets.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ListSets>>;
+
+  listSetsCount(
+    query?: Pick<
+      $ObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  listSetsIdentifiers(
+    query?: $ObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+  ): Promise<Either<Error, readonly ListSets.Identifier[]>>;
+
+  listSetses(
+    query?: $ObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+  ): Promise<Either<Error, readonly ListSets[]>>;
 
   mutableProperties(
     identifier: MutableProperties.Identifier,
@@ -67192,6 +69165,74 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async listSets(
+    identifier: ListSets.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ListSets>> {
+    return this.listSetsSync(identifier, options);
+  }
+
+  listSetsSync(
+    identifier: ListSets.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, ListSets> {
+    return this.listSetsesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async listSetsCount(
+    query?: Pick<
+      $ObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.listSetsCountSync(query);
+  }
+
+  listSetsCountSync(
+    query?: Pick<
+      $ObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.listSetsesSync(query).map((objects) => objects.length);
+  }
+
+  async listSetsIdentifiers(
+    query?: $ObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+  ): Promise<Either<Error, readonly ListSets.Identifier[]>> {
+    return this.listSetsIdentifiersSync(query);
+  }
+
+  listSetsIdentifiersSync(
+    query?: $ObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+  ): Either<Error, readonly ListSets.Identifier[]> {
+    return this.listSetsesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async listSetses(
+    query?: $ObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+  ): Promise<Either<Error, readonly ListSets[]>> {
+    return this.listSetsesSync(query);
+  }
+
+  listSetsesSync(
+    query?: $ObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+  ): Either<Error, readonly ListSets[]> {
+    return this.#objectsSync<ListSets, ListSets.Filter, ListSets.Identifier>(
+      {
+        filter: ListSets.filter,
+        fromRdfResource: ListSets.fromRdfResource,
+        fromRdfTypes: [ListSets.fromRdfType],
+      },
+      query,
+    );
+  }
+
   async mutableProperties(
     identifier: MutableProperties.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -69824,6 +71865,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           filter: $Object.filter,
+          fromRdfResource: ListSets.fromRdfResource,
+          fromRdfTypes: [ListSets.fromRdfType],
+        },
+        {
+          filter: $Object.filter,
           fromRdfResource: PropertyNames.fromRdfResource,
           fromRdfTypes: [PropertyNames.fromRdfType],
         },
@@ -71928,6 +73974,48 @@ export class $SparqlObjectSet implements $ObjectSet {
       ListProperties.Filter,
       ListProperties.Identifier
     >(ListProperties, query);
+  }
+
+  async listSets(
+    identifier: ListSets.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ListSets>> {
+    return (
+      await this.listSetses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async listSetsCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<ListSets.Filter, ListSets.Identifier>(
+      ListSets,
+      query,
+    );
+  }
+
+  async listSetsIdentifiers(
+    query?: $SparqlObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+  ): Promise<Either<Error, readonly ListSets.Identifier[]>> {
+    return this.#objectIdentifiers<ListSets.Filter, ListSets.Identifier>(
+      ListSets,
+      query,
+    );
+  }
+
+  async listSetses(
+    query?: $SparqlObjectSet.Query<ListSets.Filter, ListSets.Identifier>,
+  ): Promise<Either<Error, readonly ListSets[]>> {
+    return this.#objects<ListSets, ListSets.Filter, ListSets.Identifier>(
+      ListSets,
+      query,
+    );
   }
 
   async mutableProperties(

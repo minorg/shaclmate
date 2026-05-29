@@ -195,14 +195,19 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
       code: code`${this.reusables.snippets.identityConversionFunction}`,
       sourceTypes:
         this.discriminant.kind === "Typeof"
-          ? this.members.map(({ primaryDiscriminantValue, type }) => ({
-              expression: type.expression,
-              typeof: primaryDiscriminantValue as Typeof,
-            }))
+          ? this.members.flatMap(({ type }) =>
+              type.jsTypes.map((jsType) => ({
+                expression: type.expression,
+                jsType,
+              })),
+            )
           : [
               {
                 expression: this.expression,
-                typeof: "object",
+                jsType: {
+                  instanceof: "Object",
+                  typeof: "object",
+                },
               },
             ],
     });
@@ -381,8 +386,20 @@ ${joinCode(
   }
 
   @Memoize()
-  override get typeofs(): AbstractType["typeofs"] {
-    return [...new Set(this.members.flatMap((member) => member.type.typeofs))];
+  override get jsTypes(): AbstractType["jsTypes"] {
+    const jsTypes: AbstractType.JsType[] = [];
+    for (const member of this.members) {
+      for (const memberJsType of member.type.jsTypes) {
+        if (
+          !jsTypes.some((jsType) =>
+            AbstractType.JsType.equals(jsType, memberJsType),
+          )
+        ) {
+          jsTypes.push(memberJsType);
+        }
+      }
+    }
+    return jsTypes;
   }
 
   @Memoize()
@@ -1080,15 +1097,17 @@ export namespace Discriminant {
 
     // typeof
     {
+      const memberTypeofs: Typeof[] = [];
       const memberTypeofsSet = new Set<Typeof>();
       for (const memberType of memberTypes) {
-        for (const memberTypeof of memberType.typeofs) {
-          memberTypeofsSet.add(memberTypeof);
+        for (const memberJsType of memberType.jsTypes) {
+          memberTypeofs.push(memberJsType.typeof);
+          memberTypeofsSet.add(memberJsType.typeof);
         }
       }
       if (memberTypeofsSet.size === memberTypes.length) {
         return {
-          memberValues: memberTypes.flatMap((memberType) => memberType.typeofs),
+          memberValues: memberTypeofs,
           kind: "Typeof",
         };
       }
@@ -1140,7 +1159,8 @@ export namespace Discriminant {
       let memberValues: readonly AbstractType.DiscriminantProperty.Value[];
       {
         const memberTypeNames: readonly string[] = memberTypes.map(
-          (memberType) => memberType.alias.orDefault(memberType.typeofs[0]),
+          (memberType) =>
+            memberType.alias.orDefault(memberType.jsTypes[0].typeof),
         );
         const memberTypeNamesSet = new Set(memberTypeNames);
         if (memberTypeNamesSet.size === memberTypeNames.length) {

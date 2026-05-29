@@ -56,7 +56,9 @@ export class ObjectType extends AbstractType {
   override readonly recursive: boolean;
   override readonly referencesObjectType = true;
   readonly synthetic: boolean;
-  override readonly typeofs = ["object" as const];
+  override readonly jsTypes = [
+    { instanceof: "Object", typeof: "object" },
+  ] as const;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({

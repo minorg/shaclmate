@@ -15,8 +15,12 @@ export class StringType extends AbstractPrimitiveType<string> {
     this.reusables,
   );
   override readonly hashFunction = code`${this.reusables.snippets.hashString}`;
+  override readonly jsTypes = [
+    {
+      typeof: "string",
+    },
+  ] as const;
   override readonly kind = "String";
-  override readonly typeofs = ["string" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
 

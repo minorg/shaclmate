@@ -1,9 +1,11 @@
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import type { AbstractContainerType } from "./AbstractContainerType.js";
+import type { Snippet } from "./Snippet.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class SetType<
   ItemTypeT extends SetType.ItemType,
@@ -11,6 +13,77 @@ export class SetType<
   override readonly graphqlArgs: AbstractCollectionType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
   override readonly kind = "Set";
+  readonly minCount: bigint;
+  override readonly jsTypes = [
+    { instanceof: "Array", typeof: "object" },
+  ] as const;
+
+  constructor({
+    minCount,
+    ...superParameters
+  }: {
+    minCount: bigint;
+  } & ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0]) {
+    super(superParameters);
+    this.minCount = minCount;
+    invariant(this.minCount >= 0n);
+    if (this._mutable) {
+      invariant(this.minCount === 0n);
+    }
+  }
+
+  @Memoize()
+  override get conversionFunction(): Maybe<AbstractCollectionType.ConversionFunction> {
+    const itemConversionFunction = this.itemType.conversionFunction.orDefault(
+      this.itemConversionFunctionDefault,
+    );
+
+    let conversionFunction: Snippet;
+    const sourceTypes: AbstractContainerType.ConversionFunction["sourceTypes"] =
+      [];
+
+    if (
+      itemConversionFunction.sourceTypes.some(
+        (sourceType) =>
+          sourceType.jsType.typeof === "object" &&
+          sourceType.jsType.instanceof === "Array",
+      )
+    ) {
+      conversionFunction = this.reusables.snippets.convertToArraySet;
+    } else {
+      conversionFunction = this.reusables.snippets.convertToScalarSet;
+      // Convert from a single item
+      sourceTypes.push(...itemConversionFunction.sourceTypes);
+    }
+
+    // Convert from an array of items
+    sourceTypes.push({
+      expression: code`readonly (${joinCode(
+        itemConversionFunction.sourceTypes.map(
+          (itemSourceType) => code`${itemSourceType.expression}`,
+        ),
+        { on: " | " },
+      )})[]`,
+      jsType: { instanceof: "Array", typeof: "object" },
+    });
+
+    // Convert from undefined to an empty array
+    if (this.minCount === 0n) {
+      sourceTypes.push({
+        expression: code`undefined`,
+        jsType: { typeof: "undefined" },
+      });
+    }
+
+    return Maybe.of({
+      code: code`${conversionFunction}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
+      sourceTypes,
+    });
+  }
+
+  override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
+    return this.itemType.toRdfResourceValueTypes;
+  }
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
@@ -20,6 +93,32 @@ export class SetType<
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
     return code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  }
+
+  protected override get schemaInitializers() {
+    let schemaInitializers = super.schemaInitializers;
+    if (this.minCount > 0n) {
+      schemaInitializers = schemaInitializers.concat(
+        code`minCount: ${Number(this.minCount)}`,
+      );
+    }
+    return schemaInitializers;
+  }
+
+  override fromJsonExpression({
+    variables,
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["fromJsonExpression"]
+  >[0]): Code {
+    let expression = variables.value;
+    if (this.minCount === 0n) {
+      expression = code`(${expression} ?? [])`;
+    }
+    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${expression}.map(item => (${this.itemType.fromJsonExpression(
+      {
+        variables: { value: code`item` },
+      },
+    )})))`;
   }
 
   override fromRdfResourceValuesExpression(
@@ -36,6 +135,21 @@ export class SetType<
       ],
       { on: "." },
     );
+  }
+
+  override jsonSchema(
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
+  ): Code {
+    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
+    if (this.minCount > 0n) {
+      schema = code`${schema}.nonempty().min(${this.minCount})`;
+    } else {
+      schema = code`${schema}.optional()`;
+    }
+    if (!this._mutable) {
+      schema = code`${schema}.readonly()`;
+    }
+    return schema;
   }
 
   @Memoize()

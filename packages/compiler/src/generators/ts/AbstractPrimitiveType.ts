@@ -82,6 +82,7 @@ export abstract class AbstractPrimitiveType<
 export namespace AbstractPrimitiveType {
   export type ConversionFunction = AbstractLiteralType.ConversionFunction;
   export type DiscriminantProperty = AbstractLiteralType.DiscriminantProperty;
+  export type JsType = AbstractLiteralType.JsType;
   export const GraphqlType = AbstractLiteralType.GraphqlType;
   export type GraphqlType = AbstractLiteralType.GraphqlType;
   export const JsonType = AbstractLiteralType.JsonType;
