@@ -1,15 +1,15 @@
 import dataFactory from "@rdfx/data-factory";
 import { beforeAll, describe, it } from "vitest";
-import type { PropertyGroup } from "../src/generated.js";
+import type { Ontology } from "../src/generated.js";
 import { testData } from "./testData.js";
 
-describe("PropertyGroup", () => {
-  let sut: PropertyGroup;
+describe("Ontology", () => {
+  let sut: Ontology;
 
   beforeAll(() => {
     sut = testData.shapesGraphs.wellFormed.syntax
       .unsafeCoerce()
-      .propertyGroup(dataFactory.namedNode("http://example.com/PropertyGroup"))
+      .ontology(dataFactory.namedNode("http://example.com/"))
       .unsafeCoerce();
   });
 
