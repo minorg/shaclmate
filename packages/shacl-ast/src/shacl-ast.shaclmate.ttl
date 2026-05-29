@@ -75,7 +75,7 @@ shaclmate:NodeShape
     shaclmate:fromRdfType sh:NodeShape ;
     shaclmate:name "NodeShape" ;
     a owl:Class, sh:NodeShape ;
-    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-types, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-message, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-pattern, shaclmate:Shape-severity, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
+    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-types, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-message, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-pattern, shaclmate:Shape-severity, shaclmate:Shape-targetClass, shaclmate:Shape-targetNode, shaclmate:Shape-targetObjectsOf, shaclmate:Shape-targetSubjectsOf, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
 
 shaclmate:NodeShape-closed
     a sh:PropertyShape ;
@@ -126,7 +126,7 @@ shaclmate:PropertyShape
     shaclmate:fromRdfType sh:PropertyShape ;
     shaclmate:name "PropertyShape" ;
     a owl:Class, sh:NodeShape ;
-    sh:property shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-description, shaclmate:PropertyShape-disjoint, shaclmate:PropertyShape-equals, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-lessThan, shaclmate:PropertyShape-lessThanOrEquals, shaclmate:PropertyShape-maxCount, shaclmate:PropertyShape-minCount, shaclmate:PropertyShape-name, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-qualifiedMaxCount, shaclmate:PropertyShape-qualifiedMinCount, shaclmate:PropertyShape-qualifiedValueShape, shaclmate:PropertyShape-uniqueLang, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-message, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-pattern, shaclmate:Shape-severity, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
+    sh:property shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-description, shaclmate:PropertyShape-disjoint, shaclmate:PropertyShape-equals, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-lessThan, shaclmate:PropertyShape-lessThanOrEquals, shaclmate:PropertyShape-maxCount, shaclmate:PropertyShape-minCount, shaclmate:PropertyShape-name, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-qualifiedMaxCount, shaclmate:PropertyShape-qualifiedMinCount, shaclmate:PropertyShape-qualifiedValueShape, shaclmate:PropertyShape-uniqueLang, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-message, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-pattern, shaclmate:Shape-severity, shaclmate:Shape-targetClass, shaclmate:Shape-targetNode, shaclmate:Shape-targetObjectsOf, shaclmate:Shape-targetSubjectsOf, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
 
 shaclmate:PropertyShape-defaultValue
     a sh:PropertyShape ;
@@ -369,6 +369,28 @@ shaclmate:Shape-severity
     ) ;
     sh:maxCount 1 ;
     sh:path sh:severity .
+
+shaclmate:Shape-targetClass
+    a sh:PropertyShape ;
+    sh:name "targetClasses" ;
+    sh:nodeKind sh:IRI ;
+    sh:path sh:targetClass .
+
+shaclmate:Shape-targetNode
+    a sh:PropertyShape ;
+    sh:name "targetNodes" ;
+    sh:nodeKind sh:IRIOrLiteral ;
+    sh:path sh:targetNode .
+
+shaclmate:Shape-targetObjectsOf
+    a sh:PropertyShape ;
+    sh:nodeKind sh:IRI ;
+    sh:path sh:targetObjectsOf .
+
+shaclmate:Shape-targetSubjectsOf
+    a sh:PropertyShape ;
+    sh:nodeKind sh:IRI ;
+    sh:path sh:targetSubjectsOf .
 
 shaclmate:Shape-xone
     a sh:PropertyShape ;

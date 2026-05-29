@@ -690,6 +690,14 @@ export interface PropertyShape {
     >
   >;
 
+  readonly targetClasses: readonly NamedNode[];
+
+  readonly targetNodes: readonly (NamedNode | Literal)[];
+
+  readonly targetObjectsOf: readonly NamedNode[];
+
+  readonly targetSubjectsOf: readonly NamedNode[];
+
   readonly uniqueLang: Maybe<boolean>;
 
   readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
@@ -843,6 +851,21 @@ export namespace PropertyShape {
             | "http://www.w3.org/ns/shacl#Violation"
           >
         >;
+    readonly targetClasses?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly targetNodes?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
+    readonly targetObjectsOf?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly targetSubjectsOf?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -1172,6 +1195,42 @@ export namespace PropertyShape {
           value,
         ),
       ),
+      targetClasses: $convertToScalarSet(
+        $convertToIri<string>,
+        true,
+      )(parameters.targetClasses).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.targetClasses.type,
+          value,
+        ),
+      ),
+      targetNodes: $convertToScalarSet(
+        $identityConversionFunction,
+        true,
+      )(parameters.targetNodes).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.targetNodes.type,
+          value,
+        ),
+      ),
+      targetObjectsOf: $convertToScalarSet(
+        $convertToIri<string>,
+        true,
+      )(parameters.targetObjectsOf).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.targetObjectsOf.type,
+          value,
+        ),
+      ),
+      targetSubjectsOf: $convertToScalarSet(
+        $convertToIri<string>,
+        true,
+      )(parameters.targetSubjectsOf).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.targetSubjectsOf.type,
+          value,
+        ),
+      ),
       uniqueLang: $convertToMaybe($identityConversionFunction)(
         parameters.uniqueLang,
       ).chain((value) =>
@@ -1343,6 +1402,21 @@ export namespace PropertyShape {
             | "http://www.w3.org/ns/shacl#Violation"
           >
         >;
+    readonly targetClasses?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly targetNodes?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
+    readonly targetObjectsOf?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly targetSubjectsOf?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -2332,6 +2406,94 @@ export namespace PropertyShape {
                     }),
               ),
         }),
+        targetClasses: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.targetClasses,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    PropertyShape.schema.properties.targetClasses.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+        targetNodes: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.targetNodes,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toTerm().chain((term) => {
+                    switch (term.termType) {
+                      case "NamedNode":
+                      case "Literal":
+                        return Either.of<Error, NamedNode | Literal>(term);
+                      default:
+                        return Left<Error, NamedNode | Literal>(
+                          new Resource.MistypedTermValueError({
+                            actualValue: term,
+                            expectedValueType: "(NamedNode | Literal)",
+                            focusResource: $resource,
+                            propertyPath:
+                              PropertyShape.schema.properties.targetNodes.path,
+                          }),
+                        );
+                    }
+                  }),
+                ),
+              )
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    PropertyShape.schema.properties.targetNodes.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+        targetObjectsOf: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.targetObjectsOf,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    PropertyShape.schema.properties.targetObjectsOf.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+        targetSubjectsOf: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.targetSubjectsOf,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    PropertyShape.schema.properties.targetSubjectsOf.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
         uniqueLang: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -2758,6 +2920,30 @@ export namespace PropertyShape {
             ],
           },
         },
+      },
+      targetClasses: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetClass"),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      targetNodes: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetNode"),
+        type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
+      },
+      targetObjectsOf: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#targetObjectsOf",
+        ),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      targetSubjectsOf: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#targetSubjectsOf",
+        ),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       uniqueLang: {
         kind: "Shacl",
@@ -3236,6 +3422,26 @@ export namespace PropertyShape {
     parameters.resource.add(
       PropertyShape.schema.properties.severity.path,
       parameters.object.severity.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.targetClasses.path,
+      parameters.object.targetClasses.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.targetNodes.path,
+      parameters.object.targetNodes.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.targetObjectsOf.path,
+      parameters.object.targetObjectsOf.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.targetSubjectsOf.path,
+      parameters.object.targetSubjectsOf.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -3874,6 +4080,14 @@ export interface NodeShape {
 
   readonly subClassOf: readonly NamedNode[];
 
+  readonly targetClasses: readonly NamedNode[];
+
+  readonly targetNodes: readonly (NamedNode | Literal)[];
+
+  readonly targetObjectsOf: readonly NamedNode[];
+
+  readonly targetSubjectsOf: readonly NamedNode[];
+
   readonly types: readonly NamedNode[];
 
   readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
@@ -4011,6 +4225,21 @@ export namespace NodeShape {
           >
         >;
     readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly targetClasses?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly targetNodes?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
+    readonly targetObjectsOf?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly targetSubjectsOf?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly types?: string | NamedNode | readonly (string | NamedNode)[];
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -4257,6 +4486,42 @@ export namespace NodeShape {
           value,
         ),
       ),
+      targetClasses: $convertToScalarSet(
+        $convertToIri<string>,
+        true,
+      )(parameters?.targetClasses).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.targetClasses.type,
+          value,
+        ),
+      ),
+      targetNodes: $convertToScalarSet(
+        $identityConversionFunction,
+        true,
+      )(parameters?.targetNodes).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.targetNodes.type,
+          value,
+        ),
+      ),
+      targetObjectsOf: $convertToScalarSet(
+        $convertToIri<string>,
+        true,
+      )(parameters?.targetObjectsOf).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.targetObjectsOf.type,
+          value,
+        ),
+      ),
+      targetSubjectsOf: $convertToScalarSet(
+        $convertToIri<string>,
+        true,
+      )(parameters?.targetSubjectsOf).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.targetSubjectsOf.type,
+          value,
+        ),
+      ),
       types: $convertToScalarSet(
         $convertToIri<string>,
         true,
@@ -4413,6 +4678,21 @@ export namespace NodeShape {
           >
         >;
     readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly targetClasses?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly targetNodes?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
+    readonly targetObjectsOf?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
+    readonly targetSubjectsOf?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly types?: string | NamedNode | readonly (string | NamedNode)[];
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -5200,6 +5480,94 @@ export namespace NodeShape {
                 }),
               ),
         }),
+        targetClasses: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.targetClasses,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    PropertyShape.schema.properties.targetClasses.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+        targetNodes: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.targetNodes,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toTerm().chain((term) => {
+                    switch (term.termType) {
+                      case "NamedNode":
+                      case "Literal":
+                        return Either.of<Error, NamedNode | Literal>(term);
+                      default:
+                        return Left<Error, NamedNode | Literal>(
+                          new Resource.MistypedTermValueError({
+                            actualValue: term,
+                            expectedValueType: "(NamedNode | Literal)",
+                            focusResource: $resource,
+                            propertyPath:
+                              PropertyShape.schema.properties.targetNodes.path,
+                          }),
+                        );
+                    }
+                  }),
+                ),
+              )
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    PropertyShape.schema.properties.targetNodes.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+        targetObjectsOf: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.targetObjectsOf,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    PropertyShape.schema.properties.targetObjectsOf.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+        targetSubjectsOf: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.targetSubjectsOf,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    PropertyShape.schema.properties.targetSubjectsOf.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
         types: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -5546,6 +5914,30 @@ export namespace NodeShape {
       subClassOf: {
         kind: "Shacl",
         path: $RdfVocabularies.rdfs.subClassOf,
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      targetClasses: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetClass"),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      targetNodes: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetNode"),
+        type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
+      },
+      targetObjectsOf: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#targetObjectsOf",
+        ),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      targetSubjectsOf: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#targetSubjectsOf",
+        ),
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       types: {
@@ -5995,6 +6387,26 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
+      PropertyShape.schema.properties.targetClasses.path,
+      parameters.object.targetClasses.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.targetNodes.path,
+      parameters.object.targetNodes.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.targetObjectsOf.path,
+      parameters.object.targetObjectsOf.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.targetSubjectsOf.path,
+      parameters.object.targetSubjectsOf.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
       NodeShape.schema.properties.types.path,
       parameters.object.types.flatMap((item) => [item]),
       parameters.graph,
@@ -6378,6 +6790,30 @@ export namespace Shape {
             ],
           },
         },
+      },
+      targetClasses: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetClass"),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      targetNodes: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetNode"),
+        type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
+      },
+      targetObjectsOf: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#targetObjectsOf",
+        ),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      targetSubjectsOf: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#targetSubjectsOf",
+        ),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       xone: {
         kind: "Shacl",

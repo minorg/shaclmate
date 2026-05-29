@@ -162,6 +162,34 @@ describe("Shape", () => {
         expect(shape.severity.extract()?.equals(sh.Info)).toStrictEqual(true);
       });
 
+      it("targetClass", ({ expect }) => {
+        expect(shape.targetClasses).toHaveLength(1);
+        expect(shape.targetClasses[0].equals(ex("TargetClass"))).toStrictEqual(
+          true,
+        );
+      });
+
+      it("targetNode", ({ expect }) => {
+        expect(shape.targetNodes).toHaveLength(1);
+        expect(shape.targetNodes[0].equals(ex("targetNode"))).toStrictEqual(
+          true,
+        );
+      });
+
+      it("targetObjectsOf", ({ expect }) => {
+        expect(shape.targetObjectsOf).toHaveLength(1);
+        expect(
+          shape.targetObjectsOf[0].equals(ex("targetObjectOf")),
+        ).toStrictEqual(true);
+      });
+
+      it("targetSubjectsOf", ({ expect }) => {
+        expect(shape.targetSubjectsOf).toHaveLength(1);
+        expect(
+          shape.targetSubjectsOf[0].equals(ex("targetSubjectOf")),
+        ).toStrictEqual(true);
+      });
+
       it("xone", ({ expect }) => {
         const xone = shape.xone.extract()!;
         expect(xone).toBeDefined();
