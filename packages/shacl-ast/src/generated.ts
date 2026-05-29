@@ -65,19 +65,6 @@ type $ConversionFunction<SourceT, TargetT> = (
   source: SourceT,
 ) => Either<Error, TargetT>;
 
-function $convertToArray<ItemSourceT, ItemTargetT, Readonly extends boolean>(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type EitherR = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (value: readonly ItemSourceT[] | undefined): Either<Error, EitherR> =>
-    (typeof value === "undefined"
-      ? Either.of([])
-      : Either.sequence(value.map(convertToItem))) as Either<Error, EitherR>;
-}
-
 function $convertToIdentifier(
   value: BlankNode | NamedNode | string | undefined,
 ): Either<Error, BlankNode | NamedNode> {
@@ -128,6 +115,20 @@ function $convertToIri<IriT extends string>(
   }
 }
 
+function $convertToList<ItemSourceT, ItemTargetT, Readonly extends boolean>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  _readonly: Readonly,
+) {
+  type ItemTargetArrayT = Readonly extends true
+    ? ReadonlyArray<ItemTargetT>
+    : Array<ItemTargetT>;
+  return (value: readonly ItemSourceT[]): Either<Error, ItemTargetArrayT> =>
+    Either.sequence(value.map(convertToItem)) as Either<
+      Error,
+      ItemTargetArrayT
+    >;
+}
+
 function $convertToLiteral(
   value: bigint | boolean | Date | number | string | Literal,
 ): Either<Error, Literal> {
@@ -159,6 +160,37 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
     }
 
     return convertToItem(value).map(Maybe.of);
+  };
+}
+
+function $convertToScalarSet<
+  ItemSourceT,
+  ItemTargetT,
+  Readonly extends boolean,
+>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  _readonly: Readonly,
+) {
+  type ItemTargetArrayT = Readonly extends true
+    ? ReadonlyArray<ItemTargetT>
+    : Array<ItemTargetT>;
+  return (
+    value: ItemSourceT | readonly ItemSourceT[] | undefined,
+  ): Either<Error, ItemTargetArrayT> => {
+    if (typeof value === "undefined") {
+      return Either.of<Error, ItemTargetArrayT>(
+        [] as unknown as ItemTargetArrayT,
+      );
+    }
+    if (Array.isArray(value)) {
+      return Either.sequence(value.map(convertToItem)) as Either<
+        Error,
+        ItemTargetArrayT
+      >;
+    }
+    return convertToItem(value as ItemSourceT).map((value) => [
+      value,
+    ]) as Either<Error, ItemTargetArrayT>;
   };
 }
 
@@ -649,15 +681,21 @@ export namespace PropertyShape {
     readonly and?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?: readonly (string | NamedNode)[];
+    readonly classes?: string | NamedNode | readonly (string | NamedNode)[];
     readonly comment?: string | Maybe<string>;
     readonly datatype?: string | NamedNode | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
     readonly defaultValue?: (NamedNode | Literal) | Maybe<NamedNode | Literal>;
     readonly description?: string | Maybe<string>;
-    readonly flags?: readonly string[];
-    readonly groups?: readonly (BlankNode | NamedNode | string | undefined)[];
-    readonly hasValues?: readonly (NamedNode | Literal)[];
+    readonly flags?: string | readonly string[];
+    readonly groups?:
+      | BlankNode
+      | NamedNode
+      | string
+      | readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly hasValues?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
     readonly in_?:
       | readonly (NamedNode | Literal)[]
       | Maybe<readonly (NamedNode | Literal)[]>;
@@ -737,13 +775,17 @@ export namespace PropertyShape {
             | "http://www.w3.org/ns/shacl#Literal"
           >
         >;
-    readonly not?: readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly not?:
+      | BlankNode
+      | NamedNode
+      | string
+      | readonly (BlankNode | NamedNode | string | undefined)[];
     readonly or?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
-    readonly patterns?: readonly string[];
+    readonly patterns?: string | readonly string[];
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -751,7 +793,7 @@ export namespace PropertyShape {
   }): Either<Error, PropertyShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      and: $convertToMaybe($convertToArray($convertToIdentifier, true))(
+      and: $convertToMaybe($convertToList($convertToIdentifier, true))(
         parameters.and,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
@@ -759,7 +801,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      classes: $convertToArray(
+      classes: $convertToScalarSet(
         $convertToIri<string>,
         true,
       )(parameters.classes).chain((value) =>
@@ -808,7 +850,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      flags: $convertToArray(
+      flags: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.flags).chain((value) =>
@@ -817,7 +859,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      groups: $convertToArray(
+      groups: $convertToScalarSet(
         $convertToIdentifier,
         true,
       )(parameters.groups).chain((value) =>
@@ -826,7 +868,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      hasValues: $convertToArray(
+      hasValues: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.hasValues).chain((value) =>
@@ -835,7 +877,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      in_: $convertToMaybe($convertToArray($identityConversionFunction, true))(
+      in_: $convertToMaybe($convertToList($identityConversionFunction, true))(
         parameters.in_,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
@@ -860,7 +902,7 @@ export namespace PropertyShape {
         ),
       ),
       languageIn: $convertToMaybe(
-        $convertToArray($identityConversionFunction, true),
+        $convertToList($identityConversionFunction, true),
       )(parameters.languageIn).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           PropertyShape.schema.properties.languageIn.type,
@@ -960,7 +1002,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      not: $convertToArray(
+      not: $convertToScalarSet(
         $convertToIdentifier,
         true,
       )(parameters.not).chain((value) =>
@@ -969,7 +1011,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      or: $convertToMaybe($convertToArray($convertToIdentifier, true))(
+      or: $convertToMaybe($convertToList($convertToIdentifier, true))(
         parameters.or,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
@@ -986,7 +1028,7 @@ export namespace PropertyShape {
         ),
       ),
       path: Either.of(parameters.path),
-      patterns: $convertToArray(
+      patterns: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters.patterns).chain((value) =>
@@ -1003,7 +1045,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      xone: $convertToMaybe($convertToArray($convertToIdentifier, true))(
+      xone: $convertToMaybe($convertToList($convertToIdentifier, true))(
         parameters.xone,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
@@ -1028,15 +1070,21 @@ export namespace PropertyShape {
     readonly and?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?: readonly (string | NamedNode)[];
+    readonly classes?: string | NamedNode | readonly (string | NamedNode)[];
     readonly comment?: string | Maybe<string>;
     readonly datatype?: string | NamedNode | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
     readonly defaultValue?: (NamedNode | Literal) | Maybe<NamedNode | Literal>;
     readonly description?: string | Maybe<string>;
-    readonly flags?: readonly string[];
-    readonly groups?: readonly (BlankNode | NamedNode | string | undefined)[];
-    readonly hasValues?: readonly (NamedNode | Literal)[];
+    readonly flags?: string | readonly string[];
+    readonly groups?:
+      | BlankNode
+      | NamedNode
+      | string
+      | readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly hasValues?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
     readonly in_?:
       | readonly (NamedNode | Literal)[]
       | Maybe<readonly (NamedNode | Literal)[]>;
@@ -1116,13 +1164,17 @@ export namespace PropertyShape {
             | "http://www.w3.org/ns/shacl#Literal"
           >
         >;
-    readonly not?: readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly not?:
+      | BlankNode
+      | NamedNode
+      | string
+      | readonly (BlankNode | NamedNode | string | undefined)[];
     readonly or?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
-    readonly patterns?: readonly string[];
+    readonly patterns?: string | readonly string[];
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -3340,13 +3392,15 @@ export namespace NodeShape {
     readonly and?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?: readonly (string | NamedNode)[];
+    readonly classes?: string | NamedNode | readonly (string | NamedNode)[];
     readonly closed?: boolean | Maybe<boolean>;
     readonly comment?: string | Maybe<string>;
     readonly datatype?: string | NamedNode | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
-    readonly flags?: readonly string[];
-    readonly hasValues?: readonly (NamedNode | Literal)[];
+    readonly flags?: string | readonly string[];
+    readonly hasValues?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
     readonly ignoredProperties?:
       | readonly (string | NamedNode)[]
       | Maybe<readonly NamedNode[]>;
@@ -3428,26 +3482,29 @@ export namespace NodeShape {
             | "http://www.w3.org/ns/shacl#Literal"
           >
         >;
-    readonly not?: readonly (BlankNode | NamedNode | string | undefined)[];
-    readonly or?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly patterns?: readonly string[];
-    readonly properties?: readonly (
+    readonly not?:
       | BlankNode
       | NamedNode
       | string
-      | undefined
-    )[];
-    readonly subClassOf?: readonly (string | NamedNode)[];
-    readonly types?: readonly (string | NamedNode)[];
+      | readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly or?:
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+    readonly patterns?: string | readonly string[];
+    readonly properties?:
+      | BlankNode
+      | NamedNode
+      | string
+      | readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly types?: string | NamedNode | readonly (string | NamedNode)[];
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
   }): Either<Error, NodeShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      and: $convertToMaybe($convertToArray($convertToIdentifier, true))(
+      and: $convertToMaybe($convertToList($convertToIdentifier, true))(
         parameters?.and,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
@@ -3455,7 +3512,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      classes: $convertToArray(
+      classes: $convertToScalarSet(
         $convertToIri<string>,
         true,
       )(parameters?.classes).chain((value) =>
@@ -3496,7 +3553,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      flags: $convertToArray(
+      flags: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters?.flags).chain((value) =>
@@ -3505,7 +3562,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      hasValues: $convertToArray(
+      hasValues: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters?.hasValues).chain((value) =>
@@ -3515,14 +3572,14 @@ export namespace NodeShape {
         ),
       ),
       ignoredProperties: $convertToMaybe(
-        $convertToArray($convertToIri<string>, true),
+        $convertToList($convertToIri<string>, true),
       )(parameters?.ignoredProperties).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           NodeShape.schema.properties.ignoredProperties.type,
           value,
         ),
       ),
-      in_: $convertToMaybe($convertToArray($identityConversionFunction, true))(
+      in_: $convertToMaybe($convertToList($identityConversionFunction, true))(
         parameters?.in_,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
@@ -3547,7 +3604,7 @@ export namespace NodeShape {
         ),
       ),
       languageIn: $convertToMaybe(
-        $convertToArray($identityConversionFunction, true),
+        $convertToList($identityConversionFunction, true),
       )(parameters?.languageIn).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           PropertyShape.schema.properties.languageIn.type,
@@ -3640,7 +3697,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      not: $convertToArray(
+      not: $convertToScalarSet(
         $convertToIdentifier,
         true,
       )(parameters?.not).chain((value) =>
@@ -3649,7 +3706,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      or: $convertToMaybe($convertToArray($convertToIdentifier, true))(
+      or: $convertToMaybe($convertToList($convertToIdentifier, true))(
         parameters?.or,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
@@ -3657,7 +3714,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      patterns: $convertToArray(
+      patterns: $convertToScalarSet(
         $identityConversionFunction,
         true,
       )(parameters?.patterns).chain((value) =>
@@ -3666,7 +3723,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      properties: $convertToArray(
+      properties: $convertToScalarSet(
         $convertToIdentifier,
         true,
       )(parameters?.properties).chain((value) =>
@@ -3675,7 +3732,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      subClassOf: $convertToArray(
+      subClassOf: $convertToScalarSet(
         $convertToIri<string>,
         true,
       )(parameters?.subClassOf).chain((value) =>
@@ -3684,7 +3741,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      types: $convertToArray(
+      types: $convertToScalarSet(
         $convertToIri<string>,
         true,
       )(parameters?.types).chain((value) =>
@@ -3693,7 +3750,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      xone: $convertToMaybe($convertToArray($convertToIdentifier, true))(
+      xone: $convertToMaybe($convertToList($convertToIdentifier, true))(
         parameters?.xone,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
@@ -3718,13 +3775,15 @@ export namespace NodeShape {
     readonly and?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?: readonly (string | NamedNode)[];
+    readonly classes?: string | NamedNode | readonly (string | NamedNode)[];
     readonly closed?: boolean | Maybe<boolean>;
     readonly comment?: string | Maybe<string>;
     readonly datatype?: string | NamedNode | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
-    readonly flags?: readonly string[];
-    readonly hasValues?: readonly (NamedNode | Literal)[];
+    readonly flags?: string | readonly string[];
+    readonly hasValues?:
+      | (NamedNode | Literal)
+      | readonly (NamedNode | Literal)[];
     readonly ignoredProperties?:
       | readonly (string | NamedNode)[]
       | Maybe<readonly NamedNode[]>;
@@ -3806,19 +3865,22 @@ export namespace NodeShape {
             | "http://www.w3.org/ns/shacl#Literal"
           >
         >;
-    readonly not?: readonly (BlankNode | NamedNode | string | undefined)[];
-    readonly or?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
-      | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly patterns?: readonly string[];
-    readonly properties?: readonly (
+    readonly not?:
       | BlankNode
       | NamedNode
       | string
-      | undefined
-    )[];
-    readonly subClassOf?: readonly (string | NamedNode)[];
-    readonly types?: readonly (string | NamedNode)[];
+      | readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly or?:
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+    readonly patterns?: string | readonly string[];
+    readonly properties?:
+      | BlankNode
+      | NamedNode
+      | string
+      | readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly types?: string | NamedNode | readonly (string | NamedNode)[];
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
