@@ -629,6 +629,10 @@ export interface PropertyShape {
 
   readonly languageIn: Maybe<readonly string[]>;
 
+  readonly lessThan: readonly NamedNode[];
+
+  readonly lessThanOrEquals: readonly NamedNode[];
+
   readonly maxCount: Maybe<bigint>;
 
   readonly maxExclusive: Maybe<Literal>;
@@ -712,6 +716,11 @@ export namespace PropertyShape {
       | Maybe<BlankNode | NamedNode>;
     readonly label?: string | Maybe<string>;
     readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
+    readonly lessThan?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly lessThanOrEquals?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly maxCount?: bigint | Maybe<bigint>;
     readonly maxExclusive?:
       | bigint
@@ -932,6 +941,24 @@ export namespace PropertyShape {
           value,
         ),
       ),
+      lessThan: $convertToScalarSet(
+        $convertToIri<string>,
+        true,
+      )(parameters.lessThan).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.lessThan.type,
+          value,
+        ),
+      ),
+      lessThanOrEquals: $convertToScalarSet(
+        $convertToIri<string>,
+        true,
+      )(parameters.lessThanOrEquals).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.lessThanOrEquals.type,
+          value,
+        ),
+      ),
       maxCount: $convertToMaybe($identityConversionFunction)(
         parameters.maxCount,
       ).chain((value) =>
@@ -1119,6 +1146,11 @@ export namespace PropertyShape {
       | Maybe<BlankNode | NamedNode>;
     readonly label?: string | Maybe<string>;
     readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
+    readonly lessThan?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly lessThanOrEquals?:
+      | string
+      | NamedNode
+      | readonly (string | NamedNode)[];
     readonly maxCount?: bigint | Maybe<bigint>;
     readonly maxExclusive?:
       | bigint
@@ -1666,6 +1698,39 @@ export namespace PropertyShape {
                         PropertyShape.schema.properties.languageIn.path,
                       value: Maybe.empty(),
                     }),
+              ),
+        }),
+        lessThan: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.lessThan,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath: PropertyShape.schema.properties.lessThan.path,
+                  value: valuesArray,
+                }),
+              ),
+        }),
+        lessThanOrEquals: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.lessThanOrEquals,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toIri()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    PropertyShape.schema.properties.lessThanOrEquals.path,
+                  value: valuesArray,
+                }),
               ),
         }),
         maxCount: $shaclPropertyFromRdf({
@@ -2259,6 +2324,18 @@ export namespace PropertyShape {
           },
         },
       },
+      lessThan: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#lessThan"),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
+      lessThanOrEquals: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#lessThanOrEquals",
+        ),
+        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
+      },
       maxCount: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
@@ -2673,6 +2750,16 @@ export namespace PropertyShape {
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
       ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.lessThan.path,
+      parameters.object.lessThan.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.lessThanOrEquals.path,
+      parameters.object.lessThanOrEquals.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -3411,10 +3498,6 @@ export interface NodeShape {
 
   readonly deactivated: Maybe<boolean>;
 
-  readonly disjoint: readonly NamedNode[];
-
-  readonly equals: readonly NamedNode[];
-
   readonly flags: Maybe<string>;
 
   readonly hasValues: readonly (NamedNode | Literal)[];
@@ -3484,8 +3567,6 @@ export namespace NodeShape {
     readonly comment?: string | Maybe<string>;
     readonly datatype?: string | NamedNode | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
-    readonly disjoint?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly equals?: string | NamedNode | readonly (string | NamedNode)[];
     readonly flags?: string | Maybe<string>;
     readonly hasValues?:
       | (NamedNode | Literal)
@@ -3637,24 +3718,6 @@ export namespace NodeShape {
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.deactivated.type,
-          value,
-        ),
-      ),
-      disjoint: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters?.disjoint).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
-          PropertyShape.schema.properties.disjoint.type,
-          value,
-        ),
-      ),
-      equals: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters?.equals).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
-          PropertyShape.schema.properties.equals.type,
           value,
         ),
       ),
@@ -3867,8 +3930,6 @@ export namespace NodeShape {
     readonly comment?: string | Maybe<string>;
     readonly datatype?: string | NamedNode | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
-    readonly disjoint?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly equals?: string | NamedNode | readonly (string | NamedNode)[];
     readonly flags?: string | Maybe<string>;
     readonly hasValues?:
       | (NamedNode | Literal)
@@ -4134,38 +4195,6 @@ export namespace NodeShape {
                         PropertyShape.schema.properties.deactivated.path,
                       value: Maybe.empty(),
                     }),
-              ),
-        }),
-        disjoint: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.disjoint,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.disjoint.path,
-                  value: valuesArray,
-                }),
-              ),
-        }),
-        equals: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.equals,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.equals.path,
-                  value: valuesArray,
-                }),
               ),
         }),
         flags: $shaclPropertyFromRdf({
@@ -4865,16 +4894,6 @@ export namespace NodeShape {
           itemType: { kind: "Boolean" as const },
         },
       },
-      disjoint: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#disjoint"),
-        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
-      },
-      equals: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#equals"),
-        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
-      },
       flags: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
@@ -5179,16 +5198,6 @@ export namespace NodeShape {
         .flatMap((value) => [
           $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
         ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      PropertyShape.schema.properties.disjoint.path,
-      parameters.object.disjoint.flatMap((item) => [item]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      PropertyShape.schema.properties.equals.path,
-      parameters.object.equals.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -5706,16 +5715,6 @@ export namespace Shape {
           kind: "Option" as const,
           itemType: { kind: "Boolean" as const },
         },
-      },
-      disjoint: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#disjoint"),
-        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
-      },
-      equals: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#equals"),
-        type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       flags: {
         kind: "Shacl",

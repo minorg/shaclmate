@@ -25,9 +25,31 @@ describe("PropertyShape", () => {
     expect(sut.description.extract()).toStrictEqual("description");
   });
 
+  it("disjoint", ({ expect }) => {
+    expect(sut.disjoint).toHaveLength(1);
+    expect(sut.disjoint[0].equals(ex("disjoint"))).toStrictEqual(true);
+  });
+
+  it("equals", ({ expect }) => {
+    expect(sut.equals).toHaveLength(1);
+    expect(sut.equals[0].equals(ex("equals"))).toStrictEqual(true);
+  });
+
   it("group", ({ expect }) => {
     expect(sut.groups).toHaveLength(1);
     expect(sut.groups[0].equals(ex("PropertyGroup"))).toStrictEqual(true);
+  });
+
+  it("lessThan", ({ expect }) => {
+    expect(sut.lessThan).toHaveLength(1);
+    expect(sut.lessThan[0].equals(ex("lessThan"))).toStrictEqual(true);
+  });
+
+  it("lessThanOrEquals", ({ expect }) => {
+    expect(sut.lessThanOrEquals).toHaveLength(1);
+    expect(
+      sut.lessThanOrEquals[0].equals(ex("lessThanOrEquals")),
+    ).toStrictEqual(true);
   });
 
   it("maxCount", ({ expect }) => {
