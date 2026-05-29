@@ -2,17 +2,17 @@ import dataFactory from "@rdfx/data-factory";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 import type { PropertyShape } from "../src/generated.js";
+import type { ShapesGraph } from "../src/ShapesGraph.js";
 import { ex } from "./namespaces.js";
 import { testData } from "./testData.js";
 
 describe("PropertyShape", () => {
   let sut: PropertyShape;
+  let shapesGraph: ShapesGraph;
 
   beforeAll(() => {
-    sut = testData.shapesGraphs.wellFormed.syntax
-      .unsafeCoerce()
-      .propertyShape(ex("PropertyShape"))
-      .unsafeCoerce();
+    shapesGraph = testData.shapesGraphs.wellFormed.syntax.unsafeCoerce();
+    sut = shapesGraph.propertyShape(ex("PropertyShape")).unsafeCoerce();
   });
 
   it("defaultValue", ({ expect }) => {
@@ -66,6 +66,24 @@ describe("PropertyShape", () => {
 
   it("order", ({ expect }) => {
     expect(sut.order.extract()).toStrictEqual(1);
+  });
+
+  it("qualifiedMaxCount", ({ expect }) => {
+    expect(sut.qualifiedMaxCount.extract()).toStrictEqual(1n);
+  });
+
+  it("qualifiedMinCount", ({ expect }) => {
+    expect(sut.qualifiedMinCount.extract()).toStrictEqual(1n);
+  });
+
+  it("qualifiedValueShape", ({ expect }) => {
+    const shapeIdentifier = sut.qualifiedValueShape.extract()!;
+    expect(shapeIdentifier).toBeDefined();
+    const shape = shapesGraph.shape(shapeIdentifier).unsafeCoerce();
+    expect(shape.hasValues).toHaveLength(1);
+    expect(shape.hasValues[0].equals(ex("qualifiedHasValue"))).toStrictEqual(
+      true,
+    );
   });
 
   it("path", ({ expect }) => {

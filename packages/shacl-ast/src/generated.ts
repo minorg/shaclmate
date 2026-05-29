@@ -674,6 +674,12 @@ export interface PropertyShape {
 
   readonly pattern: Maybe<string>;
 
+  readonly qualifiedMaxCount: Maybe<bigint>;
+
+  readonly qualifiedMinCount: Maybe<bigint>;
+
+  readonly qualifiedValueShape: Maybe<BlankNode | NamedNode>;
+
   readonly uniqueLang: Maybe<boolean>;
 
   readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
@@ -801,6 +807,13 @@ export namespace PropertyShape {
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
     readonly pattern?: string | Maybe<string>;
+    readonly qualifiedMaxCount?: bigint | Maybe<bigint>;
+    readonly qualifiedMinCount?: bigint | Maybe<bigint>;
+    readonly qualifiedValueShape?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -1086,6 +1099,30 @@ export namespace PropertyShape {
           value,
         ),
       ),
+      qualifiedMaxCount: $convertToMaybe($identityConversionFunction)(
+        parameters.qualifiedMaxCount,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.qualifiedMaxCount.type,
+          value,
+        ),
+      ),
+      qualifiedMinCount: $convertToMaybe($identityConversionFunction)(
+        parameters.qualifiedMinCount,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.qualifiedMinCount.type,
+          value,
+        ),
+      ),
+      qualifiedValueShape: $convertToMaybe($convertToIdentifier)(
+        parameters.qualifiedValueShape,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.qualifiedValueShape.type,
+          value,
+        ),
+      ),
       uniqueLang: $convertToMaybe($identityConversionFunction)(
         parameters.uniqueLang,
       ).chain((value) =>
@@ -1231,6 +1268,13 @@ export namespace PropertyShape {
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
     readonly pattern?: string | Maybe<string>;
+    readonly qualifiedMaxCount?: bigint | Maybe<bigint>;
+    readonly qualifiedMinCount?: bigint | Maybe<bigint>;
+    readonly qualifiedValueShape?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -2103,6 +2147,63 @@ export namespace PropertyShape {
                     }),
               ),
         }),
+        qualifiedMaxCount: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.qualifiedMaxCount,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toBigInt()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<bigint>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties.qualifiedMaxCount.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
+        qualifiedMinCount: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.qualifiedMinCount,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toBigInt()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<bigint>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties.qualifiedMinCount.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
+        qualifiedValueShape: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.qualifiedValueShape,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) => value.toIdentifier()),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<BlankNode | NamedNode>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties.qualifiedValueShape
+                          .path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
         uniqueLang: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -2475,6 +2576,36 @@ export namespace PropertyShape {
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
+        },
+      },
+      qualifiedMaxCount: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#qualifiedMaxCount",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "BigInt" as const },
+        },
+      },
+      qualifiedMinCount: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#qualifiedMinCount",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "BigInt" as const },
+        },
+      },
+      qualifiedValueShape: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#qualifiedValueShape",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Identifier" as const },
         },
       },
       uniqueLang: {
@@ -2919,6 +3050,29 @@ export namespace PropertyShape {
       parameters.object.pattern
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.qualifiedMaxCount.path,
+      parameters.object.qualifiedMaxCount
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
+        ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.qualifiedMinCount.path,
+      parameters.object.qualifiedMinCount
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
+        ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.qualifiedValueShape.path,
+      parameters.object.qualifiedValueShape.toList(),
       parameters.graph,
     );
     parameters.resource.add(
