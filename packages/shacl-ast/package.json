@@ -15,6 +15,7 @@
     "typescript-memoize": "~1.1.1"
   },
   "devDependencies": {
+    "@rdfx/literal": "0.0.18",
     "@types/n3": "~1.26.0",
     "n3": "~1.26.0",
     "ts-invariant": "~0.10.3"
