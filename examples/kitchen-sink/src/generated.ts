@@ -633,10 +633,9 @@ function $convertToScalarSet<
         ItemTargetArrayT
       >;
     }
-    return Either.of([convertToItem(value as ItemSourceT)]) as Either<
-      Error,
-      ItemTargetArrayT
-    >;
+    return convertToItem(value as ItemSourceT).map((value) => [
+      value,
+    ]) as Either<Error, ItemTargetArrayT>;
   };
 }
 

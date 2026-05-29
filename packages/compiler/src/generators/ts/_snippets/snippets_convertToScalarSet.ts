@@ -18,7 +18,7 @@ function ${syntheticNamePrefix}convertToScalarSet<ItemSourceT, ItemTargetT, Read
     if (Array.isArray(value)) {
       return ${imports.Either}.sequence(value.map(convertToItem)) as ${imports.Either}<Error, ItemTargetArrayT>;
     }
-    return ${imports.Either}.of([convertToItem(value as ItemSourceT)]) as ${imports.Either}<Error, ItemTargetArrayT>;
+    return convertToItem(value as ItemSourceT).map(value => [value]) as ${imports.Either}<Error, ItemTargetArrayT>;
   };
 }`,
   );
