@@ -1,37 +1,63 @@
-import { ShapesGraph } from "@shaclmate/shacl-ast";
-import { describe, it } from "vitest";
+import type { ShapesGraph } from "@shaclmate/shacl-ast";
+import type { Either } from "purify-ts";
+import { beforeAll, describe, it } from "vitest";
 import { testData } from "./testData.js";
 
-describe("Shapes Graph", () => {
-  describe("kitchen sink example", () => {
-    it("should parse the node shapes correctly", ({ expect }) => {
-      expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(127);
-    });
+describe("ShapesGraph", () => {
+  describe("well-formed", () => {
+    for (const [id, shapesGraphEither] of Object.entries(
+      testData.shapesGraphs.wellFormed,
+    ) as [
+      keyof typeof testData.shapesGraphs.wellFormed,
+      Either<Error, ShapesGraph> | null,
+    ][]) {
+      if (shapesGraphEither === null) {
+        continue;
+      }
 
-    it("should parse the property shapes correctly", ({ expect }) => {
-      expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(161);
-    });
+      describe(id, () => {
+        let shapesGraph: ShapesGraph;
 
-    it("should parse property property groups correctly", ({ expect }) => {
-      expect(testData.kitchenSink.shapesGraph.propertyGroups).toHaveLength(0);
-    });
+        beforeAll(() => {
+          shapesGraph = shapesGraphEither.unsafeCoerce();
+        });
 
-    it("toDataset", ({ expect }) => {
-      expect(testData.kitchenSink.shapesGraph.toDataset().size).toBeGreaterThan(
-        0,
-      );
-    });
+        it("nodeShapes", ({ expect }) => {
+          if (id === "kitchenSinkExample") {
+            expect(shapesGraph.nodeShapes).toHaveLength(127);
+          } else if (id !== "propertyPaths") {
+            expect(shapesGraph.nodeShapes).not.toHaveLength(0);
+          }
+        });
 
-    it("toString", ({ expect }) => {
-      expect(testData.kitchenSink.shapesGraph.toString()).not.to.be.empty;
-    });
+        it("propertyShapes", ({ expect }) => {
+          if (id === "kitchenSinkExample") {
+            expect(shapesGraph.propertyShapes).toHaveLength(161);
+          } else {
+            expect(shapesGraph.propertyShape).not.toHaveLength(0);
+          }
+        });
+
+        it("propertyGroups", ({ expect }) => {
+          if (id === "kitchenSinkExample") {
+            expect(shapesGraph.propertyGroups).toHaveLength(0);
+          }
+        });
+
+        it("toDataset", ({ expect }) => {
+          expect(shapesGraph.toDataset().size).toBeGreaterThan(0);
+        });
+
+        it("toString", ({ expect }) => {
+          expect(shapesGraph.toString()).not.to.be.empty;
+        });
+      });
+    }
   });
 
-  describe("error cases", () => {
+  describe("ill-formed", () => {
     it("undefined shape", ({ expect }) => {
-      const error = ShapesGraph.builder()
-        .parseDataset(testData.undefinedShape.dataset)
-        .extract();
+      const error = testData.shapesGraphs.illFormed.undefinedShape.extract();
       expect(error).toBeInstanceOf(Error);
       expect((error as Error).message).includes("undefined shape");
     });
