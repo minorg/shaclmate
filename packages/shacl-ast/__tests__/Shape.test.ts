@@ -4,6 +4,7 @@ import type { Shape } from "../src/generated.js";
 import { testData } from "./testData.js";
 import "@rdfx/testing";
 import { LiteralFactory } from "@rdfx/literal";
+import { sh } from "@tpluscode/rdf-ns-builders";
 import type { ShapesGraph } from "../src/ShapesGraph.js";
 import { ex } from "./namespaces.js";
 
@@ -118,6 +119,66 @@ describe("Shape", () => {
 
       it("minLength", ({ expect }) => {
         expect(shape.minLength.extract()).toStrictEqual(0n);
+      });
+
+      it("node", ({ expect }) => {
+        const node = shape.node.extract()!;
+        expect(node).toBeDefined();
+        const nodeShape = shapesGraph.nodeShape(node).unsafeCoerce();
+        expect(nodeShape.datatype.extract()?.equals(ex("nodeDatatype")));
+      });
+
+      it("nodeKind", ({ expect }) => {
+        expect(
+          shape.nodeKind.extract()?.equals(sh.BlankNodeOrIRI),
+        ).toStrictEqual(true);
+      });
+
+      it("not", ({ expect }) => {
+        const not = shape.not;
+        expect(not).toHaveLength(1);
+        for (const notShapeIdentifier of not) {
+          const notShape = shapesGraph.shape(notShapeIdentifier).unsafeCoerce();
+          expect(notShape.datatype.extract()?.equals(ex("notDatatype")));
+        }
+      });
+
+      it("or", ({ expect }) => {
+        const or = shape.or.extract()!;
+        expect(or).toBeDefined();
+        expect(or).toHaveLength(2);
+        or.forEach((memberIdentifier, memberI) => {
+          expect(memberIdentifier.termType).toStrictEqual("BlankNode");
+          const memberShape = shapesGraph
+            .shape(memberIdentifier)
+            .unsafeCoerce();
+          expect(
+            memberShape.datatype
+              .extract()
+              ?.equals(ex(`orDatatype${memberI + 1}`)),
+          );
+        });
+      });
+
+      it("pattern", ({ expect }) => {
+        expect(shape.pattern.extract()).toStrictEqual("pattern");
+      });
+
+      it("xone", ({ expect }) => {
+        const xone = shape.xone.extract()!;
+        expect(xone).toBeDefined();
+        expect(xone).toHaveLength(2);
+        xone.forEach((memberIdentifier, memberI) => {
+          expect(memberIdentifier.termType).toStrictEqual("BlankNode");
+          const memberShape = shapesGraph
+            .shape(memberIdentifier)
+            .unsafeCoerce();
+          expect(
+            memberShape.datatype
+              .extract()
+              ?.equals(ex(`xoneDatatype${memberI + 1}`)),
+          );
+        });
       });
     });
   }

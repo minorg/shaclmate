@@ -668,7 +668,7 @@ export interface PropertyShape {
 
   readonly path: $PropertyPath;
 
-  readonly patterns: readonly string[];
+  readonly pattern: Maybe<string>;
 
   readonly uniqueLang: Maybe<boolean>;
 
@@ -791,7 +791,7 @@ export namespace PropertyShape {
       | Maybe<readonly (BlankNode | NamedNode)[]>;
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
-    readonly patterns?: string | readonly string[];
+    readonly pattern?: string | Maybe<string>;
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -1051,12 +1051,11 @@ export namespace PropertyShape {
         ),
       ),
       path: Either.of(parameters.path),
-      patterns: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.patterns).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
-          PropertyShape.schema.properties.patterns.type,
+      pattern: $convertToMaybe($identityConversionFunction)(
+        parameters.pattern,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.pattern.type,
           value,
         ),
       ),
@@ -1199,7 +1198,7 @@ export namespace PropertyShape {
       | Maybe<readonly (BlankNode | NamedNode)[]>;
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
-    readonly patterns?: string | readonly string[];
+    readonly pattern?: string | Maybe<string>;
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -2015,10 +2014,10 @@ export namespace PropertyShape {
               propertyPath: PropertyShape.schema.properties.path.path,
             }),
         }),
-        patterns: $shaclPropertyFromRdf({
+        pattern: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.patterns,
+          propertySchema: schema.properties.pattern,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -2028,13 +2027,15 @@ export namespace PropertyShape {
                 ),
               )
               .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.patterns.path,
-                  value: valuesArray,
-                }),
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties.pattern.path,
+                      value: Maybe.empty(),
+                    }),
               ),
         }),
         uniqueLang: $shaclPropertyFromRdf({
@@ -2391,10 +2392,13 @@ export namespace PropertyShape {
           return $PropertyPath.schema;
         },
       },
-      patterns: {
+      pattern: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
-        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       uniqueLang: {
         kind: "Shacl",
@@ -2824,10 +2828,10 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      PropertyShape.schema.properties.patterns.path,
-      parameters.object.patterns.flatMap((item) => [
-        $literalFactory.string(item),
-      ]),
+      PropertyShape.schema.properties.pattern.path,
+      parameters.object.pattern
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -3454,7 +3458,7 @@ export interface NodeShape {
 
   readonly or: Maybe<readonly (BlankNode | NamedNode)[]>;
 
-  readonly patterns: readonly string[];
+  readonly pattern: Maybe<string>;
 
   readonly properties: readonly (BlankNode | NamedNode)[];
 
@@ -3573,7 +3577,7 @@ export namespace NodeShape {
     readonly or?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly patterns?: string | readonly string[];
+    readonly pattern?: string | Maybe<string>;
     readonly properties?:
       | BlankNode
       | NamedNode
@@ -3798,12 +3802,11 @@ export namespace NodeShape {
           value,
         ),
       ),
-      patterns: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters?.patterns).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
-          PropertyShape.schema.properties.patterns.type,
+      pattern: $convertToMaybe($identityConversionFunction)(
+        parameters?.pattern,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.pattern.type,
           value,
         ),
       ),
@@ -3957,7 +3960,7 @@ export namespace NodeShape {
     readonly or?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly patterns?: string | readonly string[];
+    readonly pattern?: string | Maybe<string>;
     readonly properties?:
       | BlankNode
       | NamedNode
@@ -4665,10 +4668,10 @@ export namespace NodeShape {
                     }),
               ),
         }),
-        patterns: $shaclPropertyFromRdf({
+        pattern: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.patterns,
+          propertySchema: schema.properties.pattern,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -4678,13 +4681,15 @@ export namespace NodeShape {
                 ),
               )
               .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.patterns.path,
-                  value: valuesArray,
-                }),
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties.pattern.path,
+                      value: Maybe.empty(),
+                    }),
               ),
         }),
         properties: $shaclPropertyFromRdf({
@@ -5035,10 +5040,13 @@ export namespace NodeShape {
           },
         },
       },
-      patterns: {
+      pattern: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
-        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       properties: {
         kind: "Shacl",
@@ -5481,10 +5489,10 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      PropertyShape.schema.properties.patterns.path,
-      parameters.object.patterns.flatMap((item) => [
-        $literalFactory.string(item),
-      ]),
+      PropertyShape.schema.properties.pattern.path,
+      parameters.object.pattern
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -5861,10 +5869,13 @@ export namespace Shape {
           },
         },
       },
-      patterns: {
+      pattern: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
-        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
       xone: {
         kind: "Shacl",
