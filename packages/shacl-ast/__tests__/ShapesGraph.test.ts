@@ -1,6 +1,6 @@
-import type { ShapesGraph } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";
 import { beforeAll, describe, it } from "vitest";
+import type { ShapesGraph } from "../src/ShapesGraph.js";
 import { testData } from "./testData.js";
 
 describe("ShapesGraph", () => {
@@ -25,7 +25,7 @@ describe("ShapesGraph", () => {
         it("nodeShapes", ({ expect }) => {
           if (id === "kitchenSinkExample") {
             expect(shapesGraph.nodeShapes).toHaveLength(127);
-          } else if (id !== "propertyPaths") {
+          } else {
             expect(shapesGraph.nodeShapes).not.toHaveLength(0);
           }
         });
