@@ -71,6 +71,13 @@ export const testData = {
           ),
         );
       },
+
+      get syntax() {
+        return parseShapesGraph(
+          path.join(thisDirectoryPath, "data", "syntax.ttl"),
+          { ignoreUndefinedShapes: true },
+        );
+      },
     },
   },
 };
