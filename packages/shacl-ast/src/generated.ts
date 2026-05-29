@@ -682,6 +682,8 @@ export interface PropertyShape {
 
   readonly qualifiedValueShape: Maybe<BlankNode | NamedNode>;
 
+  readonly qualifiedValueShapesDisjoint: Maybe<boolean>;
+
   readonly severity: Maybe<
     NamedNode<
       | "http://www.w3.org/ns/shacl#Info"
@@ -833,6 +835,7 @@ export namespace PropertyShape {
       | NamedNode
       | string
       | Maybe<BlankNode | NamedNode>;
+    readonly qualifiedValueShapesDisjoint?: boolean | Maybe<boolean>;
     readonly severity?:
       | (
           | "http://www.w3.org/ns/shacl#Info"
@@ -1183,6 +1186,14 @@ export namespace PropertyShape {
           value,
         ),
       ),
+      qualifiedValueShapesDisjoint: $convertToMaybe(
+        $identityConversionFunction,
+      )(parameters.qualifiedValueShapesDisjoint).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.qualifiedValueShapesDisjoint.type,
+          value,
+        ),
+      ),
       severity: $convertToMaybe(
         $convertToIri<
           | "http://www.w3.org/ns/shacl#Info"
@@ -1384,6 +1395,7 @@ export namespace PropertyShape {
       | NamedNode
       | string
       | Maybe<BlankNode | NamedNode>;
+    readonly qualifiedValueShapesDisjoint?: boolean | Maybe<boolean>;
     readonly severity?:
       | (
           | "http://www.w3.org/ns/shacl#Info"
@@ -2370,6 +2382,25 @@ export namespace PropertyShape {
                     }),
               ),
         }),
+        qualifiedValueShapesDisjoint: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.qualifiedValueShapesDisjoint,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) => values.chainMap((value) => value.toBoolean()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<boolean>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        PropertyShape.schema.properties
+                          .qualifiedValueShapesDisjoint.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
         severity: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -2906,6 +2937,16 @@ export namespace PropertyShape {
           itemType: { kind: "Identifier" as const },
         },
       },
+      qualifiedValueShapesDisjoint: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#qualifiedValueShapesDisjoint",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Boolean" as const },
+        },
+      },
       severity: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#severity"),
@@ -3417,6 +3458,15 @@ export namespace PropertyShape {
     parameters.resource.add(
       PropertyShape.schema.properties.qualifiedValueShape.path,
       parameters.object.qualifiedValueShape.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.qualifiedValueShapesDisjoint.path,
+      parameters.object.qualifiedValueShapesDisjoint
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
+        ]),
       parameters.graph,
     );
     parameters.resource.add(

@@ -126,7 +126,7 @@ shaclmate:PropertyShape
     shaclmate:fromRdfType sh:PropertyShape ;
     shaclmate:name "PropertyShape" ;
     a owl:Class, sh:NodeShape ;
-    sh:property shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-description, shaclmate:PropertyShape-disjoint, shaclmate:PropertyShape-equals, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-lessThan, shaclmate:PropertyShape-lessThanOrEquals, shaclmate:PropertyShape-maxCount, shaclmate:PropertyShape-minCount, shaclmate:PropertyShape-name, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-qualifiedMaxCount, shaclmate:PropertyShape-qualifiedMinCount, shaclmate:PropertyShape-qualifiedValueShape, shaclmate:PropertyShape-uniqueLang, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-message, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-pattern, shaclmate:Shape-severity, shaclmate:Shape-targetClass, shaclmate:Shape-targetNode, shaclmate:Shape-targetObjectsOf, shaclmate:Shape-targetSubjectsOf, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
+    sh:property shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-description, shaclmate:PropertyShape-disjoint, shaclmate:PropertyShape-equals, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-lessThan, shaclmate:PropertyShape-lessThanOrEquals, shaclmate:PropertyShape-maxCount, shaclmate:PropertyShape-minCount, shaclmate:PropertyShape-name, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-qualifiedMaxCount, shaclmate:PropertyShape-qualifiedMinCount, shaclmate:PropertyShape-qualifiedValueShape, shaclmate:PropertyShape-qualifiedValueShapesDisjoint, shaclmate:PropertyShape-uniqueLang, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-message, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-node, shaclmate:Shape-nodeKind, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-pattern, shaclmate:Shape-severity, shaclmate:Shape-targetClass, shaclmate:Shape-targetNode, shaclmate:Shape-targetObjectsOf, shaclmate:Shape-targetSubjectsOf, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
 
 shaclmate:PropertyShape-defaultValue
     a sh:PropertyShape ;
@@ -215,6 +215,12 @@ shaclmate:PropertyShape-qualifiedValueShape
     sh:maxCount 1 ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path sh:qualifiedValueShape .
+
+shaclmate:PropertyShape-qualifiedValueShapesDisjoint
+    a sh:PropertyShape ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:path sh:qualifiedValueShapesDisjoint .
 
 shaclmate:PropertyShape-uniqueLang
     a sh:PropertyShape ;

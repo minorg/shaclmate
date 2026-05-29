@@ -72,6 +72,11 @@ describe("Shape", () => {
         expect(shape.flags.extract()).toStrictEqual("flags");
       });
 
+      it("hasValue", ({ expect }) => {
+        expect(shape.hasValues).toHaveLength(1);
+        expect(shape.hasValues[0].equals(ex("hasValue"))).toStrictEqual(true);
+      });
+
       it("in", ({ expect }) => {
         const in_ = shape.in_.extract()!;
         expect(in_).toHaveLength(2);

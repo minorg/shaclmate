@@ -86,6 +86,10 @@ describe("PropertyShape", () => {
     );
   });
 
+  it("qualifiedValueShapesDisjoint", ({ expect }) => {
+    expect(sut.qualifiedValueShapesDisjoint.extract()).toStrictEqual(true);
+  });
+
   it("path", ({ expect }) => {
     invariant(sut.path.termType === "NamedNode");
     expect(sut.path.equals(ex("path"))).toStrictEqual(true);

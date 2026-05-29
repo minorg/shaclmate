@@ -140,6 +140,7 @@
     sh:qualifiedValueShape [
         sh:hasValue :qualifiedHasValue
     ] ;
+    sh:qualifiedValueShapesDisjoint true ;
     sh:severity sh:Info ;
     sh:targetClass :TargetClass ;
     sh:targetNode :targetNode ;
