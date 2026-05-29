@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AbstractContainerType } from "./AbstractContainerType.js";
+import type { Snippet } from "./Snippet.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class SetType<
@@ -37,19 +38,36 @@ export class SetType<
       this.itemConversionFunctionDefault,
     );
 
+    let conversionFunction: Snippet;
     const sourceTypes: AbstractContainerType.ConversionFunction["sourceTypes"] =
-      [
-        {
-          expression: code`readonly (${joinCode(
-            itemConversionFunction.sourceTypes.map(
-              (itemSourceType) => code`${itemSourceType.expression}`,
-            ),
-            { on: " | " },
-          )})[]`,
-          jsType: { instanceof: "Array", typeof: "object" },
-        },
-      ];
+      [];
 
+    if (
+      itemConversionFunction.sourceTypes.some(
+        (sourceType) =>
+          sourceType.jsType.typeof === "object" &&
+          sourceType.jsType.instanceof === "Array",
+      )
+    ) {
+      conversionFunction = this.reusables.snippets.convertToArraySet;
+    } else {
+      conversionFunction = this.reusables.snippets.convertToScalarSet;
+      // Convert from a single item
+      sourceTypes.push(...itemConversionFunction.sourceTypes);
+    }
+
+    // Convert from an array of items
+    sourceTypes.push({
+      expression: code`readonly (${joinCode(
+        itemConversionFunction.sourceTypes.map(
+          (itemSourceType) => code`${itemSourceType.expression}`,
+        ),
+        { on: " | " },
+      )})[]`,
+      jsType: { instanceof: "Array", typeof: "object" },
+    });
+
+    // Convert from undefined to an empty array
     if (this.minCount === 0n) {
       sourceTypes.push({
         expression: code`undefined`,
@@ -58,7 +76,7 @@ export class SetType<
     }
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToList}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
+      code: code`${conversionFunction}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
       sourceTypes,
     });
   }
