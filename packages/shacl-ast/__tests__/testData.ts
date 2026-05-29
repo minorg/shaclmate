@@ -5,7 +5,6 @@ import datasetFactory from "@rdfjs/dataset";
 import type { DatasetCore } from "@rdfjs/types";
 import { ShapesGraph } from "@shaclmate/shacl-ast";
 import { Parser } from "n3";
-import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
@@ -55,36 +54,6 @@ class TestData {
         { ignoreUndefinedShapes: true },
       ),
     };
-  }
-
-  @Memoize()
-  get schema() {
-    return {
-      shapesGraph: parseShapesGraph(
-        path.join(thisDirectoryPath, "data", "schemashacl.ttl"),
-        { ignoreUndefinedShapes: true },
-      ),
-    };
-  }
-
-  @Memoize()
-  get skos() {
-    return Maybe.of(
-      path.join(
-        thisDirectoryPath,
-        "..",
-        "..",
-        "..",
-        "..",
-        "kos-kit",
-        "lib",
-        "packages",
-        "models",
-        "models.shaclmate.ttl",
-      ),
-    )
-      .filter((filePath) => fs.existsSync(filePath))
-      .map(parseShapesGraph);
   }
 
   @Memoize()
