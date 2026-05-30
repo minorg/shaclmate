@@ -65,11 +65,7 @@ export class ObjectType extends AbstractType {
     extern,
     fromRdfType,
     identifierType,
-    lazyAncestorObjectTypes,
-    lazyChildObjectTypes,
-    lazyDescendantObjectTypes,
     lazyDiscriminantProperty,
-    lazyParentObjectTypes,
     lazyProperties,
     recursive,
     synthetic,
@@ -81,13 +77,9 @@ export class ObjectType extends AbstractType {
     fromRdfType: Maybe<NamedNode>;
     identifierType: BlankNodeType | IdentifierType | IriType;
     label: Maybe<string>;
-    lazyAncestorObjectTypes: () => readonly ObjectType[];
-    lazyChildObjectTypes: () => readonly ObjectType[];
     lazyDiscriminantProperty: (
       namedObjectType: ObjectType,
     ) => ObjectType.DiscriminantProperty;
-    lazyDescendantObjectTypes: () => readonly ObjectType[];
-    lazyParentObjectTypes: () => readonly ObjectType[];
     lazyProperties: (
       namedObjectType: ObjectType,
     ) => readonly ObjectType.Property[];
@@ -100,11 +92,7 @@ export class ObjectType extends AbstractType {
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
     // Lazily initialize some members in getters to avoid recursive construction
-    this.lazyAncestorObjectTypes = lazyAncestorObjectTypes;
-    this.lazyChildObjectTypes = lazyChildObjectTypes;
-    this.lazyDescendantObjectTypes = lazyDescendantObjectTypes;
     this.lazyDiscriminantProperty = lazyDiscriminantProperty;
-    this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
     this.recursive = recursive;
     this.synthetic = synthetic;
@@ -114,16 +102,6 @@ export class ObjectType extends AbstractType {
   @Memoize()
   get _discriminantProperty(): ObjectType.DiscriminantProperty {
     return this.lazyDiscriminantProperty(this);
-  }
-
-  @Memoize()
-  get ancestorObjectTypes(): readonly ObjectType[] {
-    return this.lazyAncestorObjectTypes();
-  }
-
-  @Memoize()
-  get childObjectTypes(): readonly ObjectType[] {
-    return this.lazyChildObjectTypes();
   }
 
   override get declaration(): Maybe<Code> {
@@ -217,31 +195,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get descendantFromRdfTypeVariables(): readonly Code[] {
-    return this.descendantObjectTypes.flatMap((descendantObjectType) =>
-      descendantObjectType.fromRdfTypeVariable.toList(),
-    );
-  }
-
-  @Memoize()
-  get descendantFromRdfTypes(): readonly NamedNode[] {
-    return this.descendantObjectTypes.flatMap((descendantObjectType) =>
-      descendantObjectType.fromRdfType.toList(),
-    );
-  }
-
-  @Memoize()
-  get descendantObjectTypes(): readonly ObjectType[] {
-    return this.lazyDescendantObjectTypes();
-  }
-
-  @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
       jsonName: this._discriminantProperty.jsonName,
       name: this._discriminantProperty.name,
-      ownValues: this._discriminantProperty.type.ownValues,
-      descendantValues: this._discriminantProperty.type.descendantValues,
+      values: [this._discriminantProperty.value],
     });
   }
 
@@ -306,11 +264,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       alias: this.alias.unsafeCoerce(),
       configuration: this.configuration,
     });
-  }
-
-  @Memoize()
-  get parentObjectTypes(): readonly ObjectType[] {
-    return this.lazyParentObjectTypes();
   }
 
   @Memoize()
@@ -438,17 +391,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return code`${this.alias.unsafeCoerce()}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
   }
 
-  private readonly lazyAncestorObjectTypes: () => readonly ObjectType[];
-
-  private readonly lazyChildObjectTypes: () => readonly ObjectType[];
-
-  private readonly lazyDescendantObjectTypes: () => readonly ObjectType[];
-
   private readonly lazyDiscriminantProperty: (
     namedObjectType: ObjectType,
   ) => ObjectType.DiscriminantProperty;
-
-  private readonly lazyParentObjectTypes: () => readonly ObjectType[];
 
   private readonly lazyProperties: (
     namedObjectType: ObjectType,
