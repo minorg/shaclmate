@@ -93,44 +93,17 @@ export class TypeFactory {
       fromRdfType: astType.fromRdfType,
       identifierType,
       label: astType.label,
-      lazyAncestorObjectTypes: () =>
-        astType.ancestorObjectTypes.map((astType) =>
-          this.createObjectType(astType),
-        ),
-      lazyChildObjectTypes: () =>
-        astType.childObjectTypes.map((astType) =>
-          this.createObjectType(astType),
-        ),
-      lazyDescendantObjectTypes: () =>
-        astType.descendantObjectTypes.map((astType) =>
-          this.createObjectType(astType),
-        ),
       lazyDiscriminantProperty: (objectType: ObjectType) => {
         // Discriminant property
-        const discriminantDescendantValues = new Set<string>();
-        for (const descendantObjectType of objectType.descendantObjectTypes) {
-          discriminantDescendantValues.add(
-            descendantObjectType.discriminantValue,
-          );
-        }
-
         return new ObjectType.DiscriminantProperty({
           configuration: this.configuration,
           logger: this.logger,
           name: `${this.configuration.syntheticNamePrefix}type`,
           objectType,
           reusables: this.reusables,
-          type: new ObjectType.DiscriminantProperty.Type({
-            descendantValues: [...discriminantDescendantValues].sort(),
-            mutable: false,
-            ownValues: [objectType.discriminantValue],
-          }),
+          value: objectType.discriminantValue,
         });
       },
-      lazyParentObjectTypes: () =>
-        astType.parentObjectTypes.map((astType) =>
-          this.createObjectType(astType),
-        ),
       lazyProperties: (objectType: ObjectType) => {
         const properties: ObjectType.Property[] = astType.properties
           .toSorted((left, right) => {
