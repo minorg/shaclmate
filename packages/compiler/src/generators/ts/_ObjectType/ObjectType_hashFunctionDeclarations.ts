@@ -10,35 +10,11 @@ export function ObjectType_hashFunctionDeclarations(
     return [];
   }
 
-  const hashOwnShaclPropertiesStatements = this.properties.flatMap(
-    (property) =>
-      property.kind === "Shacl"
-        ? property.hashStatements({
-            variables: {
-              hasher: hasherVariable,
-              value: property.accessExpression({
-                variables: { object: this.thisVariable },
-              }),
-            },
-          })
-        : [],
-  );
-
-  const hashShaclPropertiesStatements: Code[] = [];
-  const hashStatements: Code[] = [];
-  for (const parentObjectType of this.parentObjectTypes) {
-    hashShaclPropertiesStatements.push(
-      code`${parentObjectType.alias.unsafeCoerce()}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
-    );
-  }
-  hashStatements.push(
+  return [
+    code`\
+export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.expression}): HasherT {
+  ${joinCode([
     code`${this.alias.unsafeCoerce()}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
-  );
-
-  hashShaclPropertiesStatements.push(...hashOwnShaclPropertiesStatements);
-  hashShaclPropertiesStatements.push(code`return ${hasherVariable};`);
-
-  hashStatements.push(
     ...this.properties
       .filter((property) => property.kind !== "Shacl")
       .flatMap((property) =>
@@ -49,17 +25,26 @@ export function ObjectType_hashFunctionDeclarations(
           },
         }),
       ),
-  );
-  hashStatements.push(code`return ${hasherVariable};`);
-
-  return [
-    code`\
-export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.expression}): HasherT {
-  ${joinCode(hashStatements)}
+    code`return ${hasherVariable};`,
+  ])}
 }`,
     code`\
 export function hashShaclProperties<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.expression}): HasherT {
-  ${joinCode(hashShaclPropertiesStatements)}
+  ${joinCode([
+    ...this.properties.flatMap((property) =>
+      property.kind === "Shacl"
+        ? property.hashStatements({
+            variables: {
+              hasher: hasherVariable,
+              value: property.accessExpression({
+                variables: { object: this.thisVariable },
+              }),
+            },
+          })
+        : [],
+    ),
+    code`return ${hasherVariable};`,
+  ])}
 }`,
   ];
 }

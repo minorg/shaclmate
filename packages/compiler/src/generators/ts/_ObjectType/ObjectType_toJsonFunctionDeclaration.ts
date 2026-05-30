@@ -9,47 +9,21 @@ export function ObjectType_toJsonFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const jsonObjectMembers: Code[] = [];
-  for (const parentObjectType of this.parentObjectTypes) {
-    jsonObjectMembers.push(
-      code`...${parentObjectType.alias.unsafeCoerce()}.toJson(${this.thisVariable})`,
-    );
-  }
-
-  if (this.properties.length > 0) {
-    jsonObjectMembers.push(
-      ...this.properties.flatMap((property) =>
-        property
-          .toJsonInitializer({
-            variables: {
-              value: property.accessExpression({
-                variables: { object: this.thisVariable },
-              }),
-            },
-          })
-          .toList(),
-      ),
-    );
-  }
-
-  const returnType = this.jsonType().expression;
-
-  // 20241220: don't add @type until we're doing JSON-LD
-  // switch (this.toRdfTypes.length) {
-  //   case 0:
-  //     break;
-  //   case 1:
-  //     jsonObjectMembers.push(`"@type": "${this.toRdfTypes[0].value}"`);
-  //     break;
-  //   default:
-  //     jsonObjectMembers.push(
-  //       `"@type": ${JSON.stringify(this.toRdfTypes.map((rdfType) => rdfType.value))}`,
-  //     );
-  //     break;
-  // }
-
   return Maybe.of(code`\
-export function toJson(${this.thisVariable}: ${this.expression}): ${returnType} {
-  return JSON.parse(JSON.stringify({ ${joinCode(jsonObjectMembers, { on: "," })} } satisfies ${this.jsonType().expression}));
+export function toJson(${this.thisVariable}: ${this.expression}): ${this.jsonType().expression} {
+  return JSON.parse(JSON.stringify({ ${joinCode(
+    this.properties.flatMap((property) =>
+      property
+        .toJsonInitializer({
+          variables: {
+            value: property.accessExpression({
+              variables: { object: this.thisVariable },
+            }),
+          },
+        })
+        .toList(),
+    ),
+    { on: "," },
+  )} } satisfies ${this.jsonType().expression}));
 }`);
 }

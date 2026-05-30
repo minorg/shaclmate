@@ -8,16 +8,7 @@ export function ObjectType_toStringFunctionDeclarations(
     return [];
   }
 
-  let propertiesToStringInitializers: Code[] = [];
-  if (this.parentObjectTypes.length > 0) {
-    for (const parentObjectType of this.parentObjectTypes) {
-      propertiesToStringInitializers.push(
-        code`...${parentObjectType.alias.unsafeCoerce()}._propertiesToStrings(${this.thisVariable})`,
-      );
-    }
-  }
-
-  propertiesToStringInitializers = propertiesToStringInitializers.concat(
+  const propertiesToStringsReturnExpression = code`${this.reusables.snippets.compactRecord}({${joinCode(
     this.properties.flatMap((property) =>
       property
         .toStringInitializer({
@@ -29,9 +20,9 @@ export function ObjectType_toStringFunctionDeclarations(
         })
         .toList(),
     ),
-  );
+    { on: "," },
+  )}})`;
 
-  const propertiesToStringsReturnExpression = code`${this.reusables.snippets.compactRecord}({${joinCode(propertiesToStringInitializers, { on: "," })}})`;
   const toStringReturnExpression = (propertiesToStrings: Code) =>
     code`\`${this.alias.unsafeCoerce()}(\${JSON.stringify(${propertiesToStrings})})\``;
 

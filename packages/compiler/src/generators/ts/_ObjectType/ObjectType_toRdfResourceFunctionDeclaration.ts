@@ -10,10 +10,7 @@ export function ObjectType_toRdfResourceFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const statements: Code[] = this.parentObjectTypes.map(
-    (parentObjectType) =>
-      code`${parentObjectType.alias.unsafeCoerce()}._toRdfResource({ ...parameters, ignoreRdfType: true });`,
-  );
+  const statements: Code[] = [];
 
   if (this.toRdfTypes.length > 0) {
     statements.push(

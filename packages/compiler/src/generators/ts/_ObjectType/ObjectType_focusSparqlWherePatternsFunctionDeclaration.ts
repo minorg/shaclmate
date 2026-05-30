@@ -23,36 +23,13 @@ export function ObjectType_focusSparqlWherePatternsFunctionDeclaration(
   let patternsVariableDeclarationKeyword = "const";
   const statements: Code[] = [];
 
-  for (const parentObjectType of this.parentObjectTypes) {
-    statements.push(code`\
-patterns = patterns.concat(${parentObjectType.alias.unsafeCoerce()}.focusSparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, preferredLanguages: variables.preferredLanguages, variablePrefix: variables.variablePrefix }}));`);
-    patternsVariableDeclarationKeyword = "let";
-  }
-
-  if (this.fromRdfType.isJust()) {
-    const fromRdfTypeVariables = this.fromRdfTypeVariable
-      .toList()
-      .concat(this.descendantFromRdfTypeVariables);
-
+  this.fromRdfTypeVariable.ifJust((fromRdfTypeVariable) => {
     statements.push(
       code`const rdfTypeVariable = ${rdfTypeVariable};`,
       code`\
 if (!parameters?.ignoreRdfType) {
   patterns.push(
-    ${
-      fromRdfTypeVariables.length > 1
-        ? code`\
-    {
-      type: "values" as const,
-      values: [${joinCode(fromRdfTypeVariables, { on: "," })}].map((identifier) => {
-        const valuePatternRow: ${this.reusables.imports.sparqljs}.ValuePatternRow = {};
-        valuePatternRow[\`?\${${variables.variablePrefix}}FromRdfType\`] = identifier as ${this.reusables.imports.NamedNode};
-        return valuePatternRow;
-      }),
-    },
-    ${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject: ${variables.focusIdentifier} }),`
-        : code`${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject: ${variables.focusIdentifier} }),`
-    }
+    ${code`${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariable}, subject: ${variables.focusIdentifier} }),`}
     {
       triples: [
         {
@@ -85,7 +62,7 @@ if (!parameters?.ignoreRdfType) {
   );
 }`,
     );
-  }
+  });
 
   for (const property of this.properties) {
     if (property.recursive) {

@@ -7,13 +7,7 @@ export function ObjectType_interfaceDeclaration(this: ObjectType): Code {
 ${this.comment
   .alt(this.label)
   .map(tsComment)
-  .orDefault("")}export interface ${this.alias.unsafeCoerce()}${
-    this.parentObjectTypes.length > 0
-      ? ` extends ${this.parentObjectTypes
-          .map((parentObjectType) => parentObjectType.alias.unsafeCoerce())
-          .join(", ")}`
-      : ""
-  } {
+  .orDefault("")}export interface ${this.alias.unsafeCoerce()} {
   ${joinCode(
     this.properties.map((property) => property.declaration),
     { on: "\n\n" },

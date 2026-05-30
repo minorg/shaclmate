@@ -9,20 +9,10 @@ export function ObjectType_jsonTypeAliasDeclaration(
     return Maybe.empty();
   }
 
-  const members: Code[] = [];
-  if (this.properties.length > 0) {
-    members.push(
-      code`{ ${joinCode(
-        this.properties.flatMap((property) => property.jsonSignature.toList()),
-        { on: ";" },
-      )} }`,
-    );
-  }
-  for (const parentObjectType of this.parentObjectTypes) {
-    members.push(code`${parentObjectType.jsonType().expression}`);
-  }
-
   return Maybe.of(
-    code`export type Json = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`,
+    code`export type Json = { ${joinCode(
+      this.properties.flatMap((property) => property.jsonSignature.toList()),
+      { on: ";" },
+    )} }`,
   );
 }
