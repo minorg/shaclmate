@@ -48,10 +48,6 @@ export abstract class AbstractTermType<
     this.in_ = in_;
   }
 
-  get constrained(): boolean {
-    return this.hasValues.length > 0 || this.in_.length > 0;
-  }
-
   @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
