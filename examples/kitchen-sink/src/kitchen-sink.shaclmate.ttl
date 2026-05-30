@@ -241,22 +241,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :explicitRdfTypeProperty
     ] .
 
-:Extern
-    shaclmate:extern true ;
-    shaclmate:tsImport "import { Extern } from \"./Extern.js\";" ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "An extern object type in TypeScript" .
-
-:ExternProperty
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape that references the Extern in a property." ;
-    sh:property [
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :Extern ;
-        sh:path :externProperty
-    ] .
-
 :FlattenUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these." ;
