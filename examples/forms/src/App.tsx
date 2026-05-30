@@ -36,10 +36,10 @@ const classes = {
   },
 };
 
-const initialData = generated.FormNodeShape.toJson(
-  generated.FormNodeShape.createUnsafe({
+const initialData = generated.FormObject.toJson(
+  generated.FormObject.createUnsafe({
     $identifier: dataFactory.namedNode("http://example.com/form"),
-    nestedObjectProperty: generated.NestedNodeShape.createUnsafe({
+    nestedObjectProperty: generated.NestedObject.createUnsafe({
       $identifier: dataFactory.namedNode("http://example.com/nested"),
       requiredStringProperty: "required/nested",
     }),
@@ -49,9 +49,9 @@ const initialData = generated.FormNodeShape.toJson(
   }),
 );
 
-const jsonSchema = z.toJSONSchema(generated.FormNodeShape.Json.schema(), {target: "draft-7"});
+const jsonSchema = z.toJSONSchema(generated.FormObject.Json.schema(), {target: "draft-7"});
 const jsonSchemaString = JSON.stringify(jsonSchema, null, 2);
-const jsonUiSchema = generated.FormNodeShape.Json.uiSchema();
+const jsonUiSchema = generated.FormObject.Json.uiSchema();
 const jsonUiSchemaString = JSON.stringify(jsonUiSchema, null, 2);
 
 const renderers = materialRenderers;
@@ -61,11 +61,11 @@ const App: FC = () => {
   const dataJsonString = useMemo(() => JSON.stringify(data, null, 2), [data]);
   const dataRdfString = useMemo(
     () =>
-      generated.FormNodeShape.Json.parse(data)
-        .chain(generated.FormNodeShape.fromJson)
+      generated.FormObject.Json.parse(data)
+        .chain(generated.FormObject.fromJson)
         .map((instance) => {
           return new Writer({ format: "N-Triples" }).quadsToString([
-            ...generated.FormNodeShape.toRdfResource(instance).dataset,
+            ...generated.FormObject.toRdfResource(instance).dataset,
           ]);
         })
         .mapLeft((error) => error.toString())

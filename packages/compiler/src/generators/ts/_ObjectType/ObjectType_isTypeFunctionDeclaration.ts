@@ -17,6 +17,6 @@ export function ObjectType_isTypeFunctionDeclaration(
 
   return Maybe.of(code`\
 export function is${alias}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${alias} {
-  return ${discriminantProperty.name} === ${literalOf(discriminantProperty.value)};
+  return object.${discriminantProperty.name} === ${literalOf(discriminantProperty.value)};
 }`);
 }
