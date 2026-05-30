@@ -1,5 +1,5 @@
 import type { Logger } from "ts-log";
-import * as ast from "../../ast/index.js";
+import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
 import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
@@ -29,29 +29,32 @@ export class ZodGenerator implements Generator {
 
     const declarations: Code[] = [];
 
-    for (const namedObjectType of ast.ObjectType.toposort(
-      ast_.namedObjectTypes,
-    ).map((astObjectType) => typeFactory.createObjectType(astObjectType))) {
-      declarations.push(code`\
-export namespace ${namedObjectType.alias.unsafeCoerce()} {
-  ${joinCode(ObjectType_jsonTypeAliasDeclaration.call(namedObjectType).toList())}
+    for (const astNamedType of ast_.namedTypes) {
+      switch (astNamedType.kind) {
+        case "Object": {
+          const tsNamedObjectType = typeFactory.createObjectType(astNamedType);
+          declarations.push(code`\
+export namespace ${tsNamedObjectType.alias.unsafeCoerce()} {
+  ${joinCode(ObjectType_jsonTypeAliasDeclaration.call(tsNamedObjectType).toList())}
 
   export namespace Json {
-    ${joinCode(ObjectType_jsonSchemaFunctionDeclaration.call(namedObjectType).toList())}
+    ${joinCode(ObjectType_jsonSchemaFunctionDeclaration.call(tsNamedObjectType).toList())}
   }
 }`);
-    }
-
-    for (const astNamedUnionType of ast_.namedUnionTypes.map(
-      (astNamedUnionType) => typeFactory.createUnionType(astNamedUnionType),
-    )) {
-      declarations.push(code`\
-export namespace ${astNamedUnionType.alias.unsafeCoerce()} {
-  ${astNamedUnionType.jsonTypeAliasDeclaration}
+          break;
+        }
+        case "Union": {
+          const tsNamedUnionType = typeFactory.createUnionType(astNamedType);
+          declarations.push(code`\
+export namespace ${tsNamedUnionType.alias.unsafeCoerce()} {
+  ${tsNamedUnionType.jsonTypeAliasDeclaration}
   export namespace Json {
-    ${astNamedUnionType.jsonSchemaFunctionDeclaration}
+    ${tsNamedUnionType.jsonSchemaFunctionDeclaration}
   }
 }`);
+          break;
+        }
+      }
     }
 
     declarations.splice(
