@@ -64,13 +64,13 @@ export const data = {
       case 0:
         return kitchenSink.UnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
-          unionMemberCommonParentProperty: `common parent ${i}`,
+          unionMemberCommonProperty: `common parent ${i}`,
           unionMember1Property: `member ${i}`,
         });
       case 1:
         return kitchenSink.UnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
-          unionMemberCommonParentProperty: `common parent ${i}`,
+          unionMemberCommonProperty: `common parent ${i}`,
           unionMember2Property: `member ${i}`,
         });
       default:

@@ -514,12 +514,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
               ? kitchenSink.UnionMember1.createUnsafe({
                   $identifier: identifiers[i],
                   unionMember1Property: `test${i}`,
-                  unionMemberCommonParentProperty: `test${i}`,
+                  unionMemberCommonProperty: `test${i}`,
                 })
               : kitchenSink.UnionMember2.createUnsafe({
                   $identifier: identifiers[i],
                   unionMember2Property: `test${i}`,
-                  unionMemberCommonParentProperty: `test${i}`,
+                  unionMemberCommonProperty: `test${i}`,
                 }),
           ),
           kitchenSink.TermProperties.createUnsafe({
@@ -539,10 +539,10 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             on: {
               UnionMember1: {
-                unionMemberCommonParentProperty: { in: ["test0"] },
+                unionMemberCommonProperty: { in: ["test0"] },
               },
               UnionMember2: {
-                unionMemberCommonParentProperty: { in: ["test1"] },
+                unionMemberCommonProperty: { in: ["test1"] },
               },
             },
           },
@@ -552,7 +552,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             on: {
               UnionMember1: {
-                unionMemberCommonParentProperty: { in: ["test1"] },
+                unionMemberCommonProperty: { in: ["test1"] },
               },
             },
           },
@@ -562,7 +562,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             on: {
               UnionMember1: {
-                unionMemberCommonParentProperty: { in: ["test0"] },
+                unionMemberCommonProperty: { in: ["test0"] },
               },
             },
           },
@@ -572,7 +572,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             on: {
               UnionMember2: {
-                unionMemberCommonParentProperty: { in: ["test0"] },
+                unionMemberCommonProperty: { in: ["test0"] },
               },
             },
           },
@@ -582,7 +582,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             on: {
               UnionMember2: {
-                unionMemberCommonParentProperty: { in: ["test1"] },
+                unionMemberCommonProperty: { in: ["test1"] },
               },
             },
           },
@@ -790,7 +790,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
                   "http://example.com/unionMember1",
                 ),
                 unionMember1Property: "http://example.com/test0",
-                unionMemberCommonParentProperty: "http://example.com/test0",
+                unionMemberCommonProperty: "http://example.com/test0",
               }),
             },
             requiredNodeOrLiteralProperty: {
@@ -800,7 +800,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
                   "http://example.com/unionMember1",
                 ),
                 unionMember1Property: "http://example.com/test0",
-                unionMemberCommonParentProperty: "http://example.com/test0",
+                unionMemberCommonProperty: "http://example.com/test0",
               }),
             },
             requiredIriOrLiteralProperty: dataFactory.namedNode(

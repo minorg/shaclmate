@@ -28,14 +28,14 @@ describe("schema", () => {
       expect,
     }) => {
       expect(
-        kitchenSink.Union.schema.properties.unionMemberCommonParentProperty.path
+        kitchenSink.Union.schema.properties.unionMemberCommonProperty.path
           .value,
-      ).toStrictEqual("http://example.com/unionMemberCommonParentProperty");
+      ).toStrictEqual("http://example.com/unionMemberCommonProperty");
     });
 
     it("object union common properties", ({ expect }) => {
       expect(kitchenSink.Union.schema.properties).toHaveProperty(
-        "unionMemberCommonParentProperty",
+        "unionMemberCommonProperty",
       );
     });
   });
