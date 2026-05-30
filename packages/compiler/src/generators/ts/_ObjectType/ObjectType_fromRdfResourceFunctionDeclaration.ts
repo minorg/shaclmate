@@ -35,7 +35,7 @@ export function ObjectType_fromRdfResourceFunctionDeclaration(
 
   this.fromRdfTypeVariable.ifJust((fromRdfTypeVariable) => {
     chains.push({
-      expression: code`!${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.resource}, ${arrayOf(fromRdfTypeVariable, ...this.descendantFromRdfTypeVariables)}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
+      expression: code`!${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.resource}, ${arrayOf(fromRdfTypeVariable)}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
       variable: `_rdfTypeCheck`,
     });
   });

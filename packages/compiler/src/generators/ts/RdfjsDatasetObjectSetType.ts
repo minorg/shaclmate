@@ -97,15 +97,11 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
           const runtimeObjectType = (
             filterFunction: Code,
             namedObjectType: {
-              descendantFromRdfTypeVariables: readonly Code[];
               expression: Code;
               fromRdfTypeVariable: Maybe<Code>;
             },
           ): Code => {
-            const fromRdfTypes = namedObjectType.fromRdfTypeVariable
-              .toList()
-              .concat(namedObjectType.descendantFromRdfTypeVariables);
-            return code`{ filter: ${filterFunction}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
+            return code`{ filter: ${filterFunction}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
           };
 
           switch (namedObjectType.kind) {
