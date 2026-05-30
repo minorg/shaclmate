@@ -55,10 +55,9 @@ export abstract class AbstractTermType<
   @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
-      descendantValues: [],
       jsonName: "termType",
       name: "termType",
-      ownValues: [...this.nodeKinds].map(NodeKind.toTermType),
+      values: [...this.nodeKinds].map(NodeKind.toTermType),
       type: "string" as const,
     });
   }

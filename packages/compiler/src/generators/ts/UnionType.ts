@@ -56,40 +56,11 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
             discriminantValues = [this.discriminant.memberValues[memberI]];
             break;
           case "Hybrid":
-            discriminantValues =
-              this.discriminant.memberValues[memberI].ownValues;
+            discriminantValues = this.discriminant.memberValues[memberI].values;
             break;
           case "Intrinsic": {
-            // A member type's combined discriminant property values are its "own" values plus any descendant values that are
-            // not the "own" values of some other member type.
-            // So if you have type A, type B, and B inherits A, then
-            // A has
-            //   own discriminant property values: ["A"]
-            //   descendant discriminant property values: ["B"]
-            // and B has
-            //  own discriminant property values: ["B"]
-            //  descendant discriminant property values ["B"]
-            // In this case A shouldn't have "B" as a combined discriminant property value since it's "claimed" by B.
-            const memberOwnDiscriminantPropertyValues =
-              new Set<AbstractType.DiscriminantProperty.Value>();
-            for (const member of members) {
-              for (const ownDiscriminantPropertyValue of member.type.discriminantProperty.unsafeCoerce()
-                .ownValues) {
-                memberOwnDiscriminantPropertyValues.add(
-                  ownDiscriminantPropertyValue,
-                );
-              }
-            }
-
-            discriminantValues = member.type.discriminantProperty
-              .unsafeCoerce()
-              .ownValues.concat(
-                member.type.discriminantProperty
-                  .unsafeCoerce()
-                  .descendantValues.filter(
-                    (value) => !memberOwnDiscriminantPropertyValues.has(value),
-                  ),
-              );
+            discriminantValues =
+              member.type.discriminantProperty.unsafeCoerce().values;
             break;
           }
           case "Typeof":
@@ -253,24 +224,20 @@ ${joinCode(
         return Maybe.of({
           descendantValues: [],
           jsonName: this.discriminant.jsonName,
-          ownValues: this.discriminant.memberValues,
           name: this.discriminant.name,
+          values: this.discriminant.memberValues,
         });
       case "Hybrid":
         return Maybe.of({
-          descendantValues: [],
           jsonName: this.discriminant.jsonName,
-          ownValues: this.discriminant.memberValues.flatMap((_) => _.ownValues),
           name: "termType",
+          values: this.discriminant.memberValues.flatMap((_) => _.values),
         });
       case "Intrinsic":
         return Maybe.of({
-          descendantValues: this.discriminant.memberValues.flatMap(
-            (_) => _.descendantValues,
-          ),
           jsonName: this.discriminant.jsonName,
           name: this.discriminant.name,
-          ownValues: this.discriminant.memberValues.flatMap((_) => _.ownValues),
+          values: this.discriminant.memberValues,
         });
       case "Typeof":
         return Maybe.empty();
@@ -995,7 +962,7 @@ type HybridDiscriminant = {
   readonly kind: "Hybrid";
   readonly memberValues: readonly {
     readonly kind: "Extrinsic" | "Intrinsic";
-    readonly ownValues: readonly AbstractType.DiscriminantProperty.Value[];
+    readonly values: readonly AbstractType.DiscriminantProperty.Value[];
   }[];
   readonly name: string;
 };
@@ -1003,10 +970,7 @@ type HybridDiscriminant = {
 type IntrinsicDiscriminant = {
   readonly jsonName: string;
   readonly kind: "Intrinsic";
-  readonly memberValues: readonly {
-    readonly descendantValues: readonly AbstractType.DiscriminantProperty.Value[];
-    readonly ownValues: readonly AbstractType.DiscriminantProperty.Value[];
-  }[];
+  readonly memberValues: readonly AbstractType.DiscriminantProperty.Value[];
   readonly name: string;
 };
 
@@ -1059,10 +1023,7 @@ export namespace Discriminant {
       let inlineDiscriminantProperty:
         | AbstractType.DiscriminantProperty
         | undefined;
-      const memberValues: {
-        readonly descendantValues: readonly AbstractType.DiscriminantProperty.Value[];
-        readonly ownValues: readonly AbstractType.DiscriminantProperty.Value[];
-      }[] = [];
+      let memberValues: AbstractType.DiscriminantProperty.Value[] = [];
       for (const memberType of memberTypes) {
         const memberTypeDiscriminantProperty =
           memberType.discriminantProperty.extract();
@@ -1079,10 +1040,9 @@ export namespace Discriminant {
           inlineDiscriminantProperty = undefined;
           break;
         }
-        memberValues.push({
-          descendantValues: memberTypeDiscriminantProperty.descendantValues,
-          ownValues: memberTypeDiscriminantProperty.ownValues,
-        });
+        memberValues = memberValues.concat(
+          memberTypeDiscriminantProperty.values,
+        );
       }
 
       if (inlineDiscriminantProperty) {
@@ -1138,13 +1098,13 @@ export namespace Discriminant {
           if (memberTermTypes.size > 0) {
             return {
               kind: "Intrinsic",
-              ownValues: [...memberTermTypes],
+              values: [...memberTermTypes],
             };
           }
 
           return {
             kind: "Extrinsic",
-            ownValues:
+            values:
               extrinsicMemberTypeAliasesSet.size === extrinsicMemberTypeCount
                 ? [memberType.alias.unsafeCoerce()]
                 : [memberTypeI.toString()],

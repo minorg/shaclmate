@@ -13,14 +13,16 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override readonly kind = "Discriminant";
   override readonly mutable = false;
   override readonly recursive = false;
+  readonly value: string;
 
   constructor({
-    type,
+    value,
     ...superParameters
   }: {
-    type: DiscriminantProperty.Type;
-  } & ConstructorParameters<typeof AbstractProperty>[0]) {
-    super({ ...superParameters, type });
+    value: string;
+  } & Omit<ConstructorParameters<typeof AbstractProperty>[0], "type">) {
+    super({ ...superParameters, type: new DiscriminantProperty.Type(value) });
+    this.value = value;
   }
 
   override get declaration(): Code {
@@ -55,7 +57,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   // protected override get schemaInitializers(): readonly Code[] {
   //   return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
   // }
-
   private get constValue(): Code {
     return code`${literalOf(this.objectType.discriminantValue)} as const`;
   }
@@ -129,45 +130,18 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 export namespace DiscriminantProperty {
   export class Type {
     readonly filterFunction = code`nonextant`;
-    readonly mutable: boolean;
-    readonly descendantValues: readonly string[];
-    readonly ownValues: readonly string[];
+    readonly mutable = false;
 
-    constructor({
-      descendantValues,
-      mutable,
-      ownValues,
-    }: {
-      descendantValues: readonly string[];
-      mutable: boolean;
-      ownValues: readonly string[];
-    }) {
-      this.descendantValues = descendantValues;
-      this.mutable = mutable;
-      this.ownValues = ownValues;
-    }
+    constructor(readonly value: string) {}
 
     @Memoize()
     get expression(): Code {
-      return code`${this.values.map((name) => `"${name}"`).join(" | ")}`;
+      return code`${literalOf(this.value)}`;
     }
 
     @Memoize()
     get schema(): Code {
       throw new Error("should never be called");
-      // const initializers: Record<string, unknown> = {};
-      // if (this.descendantValues.length > 0) {
-      //   initializers["descendantValues"] = this.descendantValues;
-      // }
-      // if (this.ownValues.length > 0) {
-      //   initializers["ownValues"] = this.ownValues;
-      // }
-      // return code`${initializers}`;
-    }
-
-    @Memoize()
-    get values() {
-      return this.ownValues.concat(this.descendantValues);
     }
   }
 }
