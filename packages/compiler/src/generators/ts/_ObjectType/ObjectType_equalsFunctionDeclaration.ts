@@ -10,11 +10,6 @@ export function ObjectType_equalsFunctionDeclaration(
   }
 
   const chain: Code[] = [];
-  // For every parent, find the nearest equals implementation
-  for (const parentObjectType of this.parentObjectTypes) {
-    chain.push(code`${parentObjectType.equalsFunction}(left, right)`);
-  }
-
   for (const property of this.properties) {
     if (property.kind === "Discriminant") {
       continue;

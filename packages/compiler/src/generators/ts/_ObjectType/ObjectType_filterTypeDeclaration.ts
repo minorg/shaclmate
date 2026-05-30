@@ -28,9 +28,6 @@ export function ObjectType_filterTypeDeclaration(
       );
     }
   }
-  for (const parentObjectType of this.parentObjectTypes) {
-    members.push(code`${parentObjectType.alias.unsafeCoerce()}.Filter`);
-  }
 
   return Maybe.of(code`\
 export type Filter = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`);
