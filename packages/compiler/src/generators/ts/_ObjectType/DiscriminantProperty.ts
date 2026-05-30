@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
-import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
+import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
@@ -13,14 +13,16 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override readonly kind = "Discriminant";
   override readonly mutable = false;
   override readonly recursive = false;
+  readonly value: string;
 
   constructor({
-    type,
+    value,
     ...superParameters
   }: {
-    type: DiscriminantProperty.Type;
-  } & ConstructorParameters<typeof AbstractProperty>[0]) {
-    super({ ...superParameters, type });
+    value: string;
+  } & Omit<ConstructorParameters<typeof AbstractProperty>[0], "type">) {
+    super({ ...superParameters, type: new DiscriminantProperty.Type(value) });
+    this.value = value;
   }
 
   override get declaration(): Code {
@@ -36,10 +38,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
     return Maybe.of({
       key: this.jsonName,
-      schema:
-        this.type.values.length > 1
-          ? code`${this.reusables.imports.z}.enum(${arrayOf(...this.type.values)})`
-          : code`${this.reusables.imports.z}.literal(${literalOf(this.type.values[0])})`,
+      schema: code`${this.reusables.imports.z}.literal(${literalOf(this.value)})`,
     });
   }
 
@@ -55,9 +54,8 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   // protected override get schemaInitializers(): readonly Code[] {
   //   return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
   // }
-
   private get constValue(): Code {
-    return code`${literalOf(this.objectType.discriminantValue)} as const`;
+    return code`${literalOf(this.value)} as const`;
   }
 
   override constructorInitializer(): Maybe<Code> {
@@ -77,10 +75,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
-    if (this.objectType.parentObjectTypes.length > 0) {
-      return [];
-    }
-
     return [code`${variables.hasher}.update(${variables.value});`];
   }
 
@@ -89,10 +83,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
-    if (this.objectType.parentObjectTypes.length > 0) {
-      return Maybe.empty();
-    }
-
     const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
     return Maybe.of(
       code`{ rule: { condition: { schema: { const: ${this.constValue} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
@@ -124,50 +114,28 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override toStringInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
+
+  @Memoize()
+  get values(): readonly string[] {
+    return [this.value];
+  }
 }
 
 export namespace DiscriminantProperty {
   export class Type {
     readonly filterFunction = code`nonextant`;
-    readonly mutable: boolean;
-    readonly descendantValues: readonly string[];
-    readonly ownValues: readonly string[];
+    readonly mutable = false;
 
-    constructor({
-      descendantValues,
-      mutable,
-      ownValues,
-    }: {
-      descendantValues: readonly string[];
-      mutable: boolean;
-      ownValues: readonly string[];
-    }) {
-      this.descendantValues = descendantValues;
-      this.mutable = mutable;
-      this.ownValues = ownValues;
-    }
+    constructor(readonly value: string) {}
 
     @Memoize()
     get expression(): Code {
-      return code`${this.values.map((name) => `"${name}"`).join(" | ")}`;
+      return code`${literalOf(this.value)}`;
     }
 
     @Memoize()
     get schema(): Code {
       throw new Error("should never be called");
-      // const initializers: Record<string, unknown> = {};
-      // if (this.descendantValues.length > 0) {
-      //   initializers["descendantValues"] = this.descendantValues;
-      // }
-      // if (this.ownValues.length > 0) {
-      //   initializers["ownValues"] = this.ownValues;
-      // }
-      // return code`${initializers}`;
-    }
-
-    @Memoize()
-    get values() {
-      return this.ownValues.concat(this.descendantValues);
     }
   }
 }

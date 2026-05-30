@@ -5,11 +5,15 @@ export class AstJsonGenerator implements Generator {
   generate(ast: ast.Ast): string {
     return JSON.stringify(
       {
-        objectTypes: ast.namedObjectTypes.map((objectType) => ({
-          ...objectType.toJSON(),
-          properties: objectType.properties.map((property) =>
-            property.toJSON(),
-          ),
+        namedTypes: ast.namedTypes.map((namedType) => ({
+          ...namedType.toJSON(),
+          ...(namedType.kind === "Object"
+            ? {
+                properties: namedType.properties.map((property) =>
+                  property.toJSON(),
+                ),
+              }
+            : {}),
         })),
       },
       undefined,

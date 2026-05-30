@@ -10,16 +10,9 @@ export function ObjectType_jsonUiSchemaFunctionDeclaration(
   }
 
   const variables = { scopePrefix: code`scopePrefix` };
-  const elements: Code[] = this.parentObjectTypes
-    .map(
-      (parentObjectType) =>
-        code`${parentObjectType.alias.unsafeCoerce()}.Json.uiSchema({ scopePrefix })`,
-    )
-    .concat(
-      this.properties.flatMap((property) =>
-        property.jsonUiSchemaElement({ variables }).toList(),
-      ),
-    );
+  const elements: Code[] = this.properties.flatMap((property) =>
+    property.jsonUiSchemaElement({ variables }).toList(),
+  );
 
   return Maybe.of(code`\
 export function uiSchema(parameters?: { scopePrefix?: string }): any {

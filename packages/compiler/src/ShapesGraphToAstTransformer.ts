@@ -9,138 +9,6 @@ import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transfor
 import type * as ast from "./ast/index.js";
 import type * as input from "./input/index.js";
 
-interface RelatedNodeShapes {
-  readonly ancestors: input.NodeShape[];
-  readonly children: input.NodeShape[];
-  readonly parents: input.NodeShape[];
-  readonly descendants: input.NodeShape[];
-}
-
-function relatedNodeShapes({
-  logger,
-  shapesGraph,
-}: {
-  logger: Logger;
-  shapesGraph: input.ShapesGraph;
-}): TermMap<input.NodeShape.Identifier, RelatedNodeShapes> {
-  const immediateRelatedNodeShapes = new TermMap<
-    input.NodeShape.Identifier,
-    {
-      children: TermMap<input.NodeShape.Identifier, input.NodeShape>;
-      parents: TermMap<input.NodeShape.Identifier, input.NodeShape>;
-    }
-  >();
-
-  for (const childNodeShape of shapesGraph.nodeShapes) {
-    let childRelatedNodeShapes = immediateRelatedNodeShapes.get(
-      childNodeShape.$identifier(),
-    );
-    if (!childRelatedNodeShapes) {
-      childRelatedNodeShapes = {
-        children: new TermMap(),
-        parents: new TermMap(),
-      };
-      immediateRelatedNodeShapes.set(
-        childNodeShape.$identifier(),
-        childRelatedNodeShapes,
-      );
-    }
-
-    for (const parentClassIdentifier of childNodeShape.subClassOf) {
-      shapesGraph
-        .nodeShape(parentClassIdentifier)
-        .ifLeft((error) => {
-          logger.error(
-            "%s is rdfs:subClassOf %s which is either missing or not a node shape: %s",
-            childNodeShape,
-            parentClassIdentifier,
-            error.message,
-          );
-        })
-        .ifRight((parentNodeShape) => {
-          childRelatedNodeShapes.parents.set(
-            parentNodeShape.$identifier(),
-            parentNodeShape,
-          );
-
-          let parentRelatedNodeShapes = immediateRelatedNodeShapes.get(
-            parentNodeShape.$identifier(),
-          );
-          if (!parentRelatedNodeShapes) {
-            parentRelatedNodeShapes = {
-              children: new TermMap(),
-              parents: new TermMap(),
-            };
-            immediateRelatedNodeShapes.set(
-              parentNodeShape.$identifier(),
-              parentRelatedNodeShapes,
-            );
-          }
-
-          parentRelatedNodeShapes.children.set(
-            childNodeShape.$identifier(),
-            childNodeShape,
-          );
-        });
-    }
-  }
-
-  const result = new TermMap<input.NodeShape.Identifier, RelatedNodeShapes>();
-
-  for (const nodeShape of shapesGraph.nodeShapes) {
-    const { children: childNodeShapes, parents: parentNodeShapes } =
-      immediateRelatedNodeShapes.get(nodeShape.$identifier())!;
-
-    const ancestorNodeShapes = new TermMap<
-      input.NodeShape.Identifier,
-      input.NodeShape
-    >();
-
-    function recurseAncestorNodeShapes(nodeShape: input.NodeShape) {
-      for (const parentNodeShape of immediateRelatedNodeShapes
-        .get(nodeShape.$identifier())!
-        .parents.values()) {
-        if (!ancestorNodeShapes.has(parentNodeShape.$identifier())) {
-          ancestorNodeShapes.set(
-            parentNodeShape.$identifier(),
-            parentNodeShape,
-          );
-          recurseAncestorNodeShapes(parentNodeShape);
-        }
-      }
-    }
-    recurseAncestorNodeShapes(nodeShape);
-
-    const descendantNodeShapes = new TermMap<
-      input.NodeShape.Identifier,
-      input.NodeShape
-    >();
-    function recurseDescendantNodeShapes(nodeShape: input.NodeShape) {
-      for (const childNodeShape of immediateRelatedNodeShapes
-        .get(nodeShape.$identifier())!
-        .children.values()) {
-        if (!descendantNodeShapes.has(childNodeShape.$identifier())) {
-          descendantNodeShapes.set(
-            childNodeShape.$identifier(),
-            childNodeShape,
-          );
-          recurseDescendantNodeShapes(childNodeShape);
-        }
-      }
-    }
-    recurseDescendantNodeShapes(nodeShape);
-
-    result.set(nodeShape.$identifier(), {
-      ancestors: [...ancestorNodeShapes.values()],
-      children: [...childNodeShapes.values()],
-      descendants: [...descendantNodeShapes.values()],
-      parents: [...parentNodeShapes.values()],
-    });
-  }
-
-  return result;
-}
-
 export class ShapesGraphToAstTransformer {
   // Members are protected so they're accessible to functions in other files
   protected readonly cachedAstTypesByShapeIdentifier: TermMap<
@@ -149,10 +17,6 @@ export class ShapesGraphToAstTransformer {
   > = new TermMap();
   protected readonly logger: Logger;
   protected readonly shapesGraph: input.ShapesGraph;
-  protected readonly relatedNodeShapesByIdentifier: TermMap<
-    BlankNode | NamedNode,
-    RelatedNodeShapes
-  > = new TermMap();
 
   constructor({
     logger,
@@ -162,18 +26,16 @@ export class ShapesGraphToAstTransformer {
     shapesGraph: input.ShapesGraph;
   }) {
     this.logger = logger;
-    this.relatedNodeShapesByIdentifier = relatedNodeShapes({
-      logger: this.logger,
-      shapesGraph,
-    });
     this.shapesGraph = shapesGraph;
   }
 
   transform(): Either<Error, ast.Ast> {
-    const astNamedIntersectionTypes: ast.IntersectionType[] = [];
-    const astObjectTypes: ast.ObjectType[] = [];
+    const astNamedTypes: (
+      | ast.IntersectionType
+      | ast.ObjectType
+      | ast.UnionType
+    )[] = [];
     const syntheticAstObjectTypesByName: Record<string, ast.ObjectType> = {};
-    const astNamedUnionTypes: ast.UnionType[] = [];
 
     for (const nodeShape of this.shapesGraph.nodeShapes) {
       if (nodeShape.$identifier().termType !== "NamedNode") {
@@ -196,8 +58,9 @@ export class ShapesGraphToAstTransformer {
 
       switch (nodeShapeAstType.kind) {
         case "Intersection":
+        case "Union":
           if (nodeShapeAstType.name.isJust()) {
-            astNamedIntersectionTypes.push(nodeShapeAstType);
+            astNamedTypes.push(nodeShapeAstType);
           }
           break;
         case "Object": {
@@ -205,7 +68,7 @@ export class ShapesGraphToAstTransformer {
             nodeShapeAstType.name.isJust(),
             `node shape missing name: ${nodeShapeAstType.shapeIdentifier}`,
           );
-          astObjectTypes.push(nodeShapeAstType);
+          astNamedTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
             switch (property.type.kind) {
               case "LazyObjectOption":
@@ -234,11 +97,6 @@ export class ShapesGraphToAstTransformer {
 
           break;
         }
-        case "Union":
-          if (nodeShapeAstType.name.isJust()) {
-            astNamedUnionTypes.push(nodeShapeAstType);
-          }
-          break;
         default:
           break;
       }
@@ -258,11 +116,9 @@ export class ShapesGraphToAstTransformer {
         },
         0,
       ),
-      namedIntersectionTypes: astNamedIntersectionTypes,
-      namedObjectTypes: astObjectTypes.concat(
+      namedTypes: astNamedTypes.concat(
         Object.values(syntheticAstObjectTypesByName),
       ),
-      namedUnionTypes: astNamedUnionTypes,
     });
   }
 }

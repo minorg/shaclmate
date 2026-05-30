@@ -3,7 +3,7 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
-import * as ast from "../../ast/index.js";
+import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { GraphqlSchema } from "./GraphqlSchema.js";
@@ -16,8 +16,13 @@ import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
 import { SparqlObjectSetType } from "./SparqlObjectSetType.js";
 import type { TsFeature } from "./TsFeature.js";
+import type { Type } from "./Type.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+
+function compareTsNamedType(left: Type, right: Type): number {
+  return left.alias.unsafeCoerce().localeCompare(right.alias.unsafeCoerce());
+}
 
 export class TsGenerator implements Generator {
   private readonly configuration?: Partial<TsGenerator.Configuration>;
@@ -49,89 +54,97 @@ export class TsGenerator implements Generator {
 
     let declarations: Code[] = [];
 
-    for (const namedObjectType of ast_.namedObjectTypes) {
-      for (const tsImport of namedObjectType.tsImports) {
-        declarations.push(code`${tsImport}`);
+    const tsNamedTypes: Type[] = [];
+    const tsNamedObjectTypes: ObjectType[] = [];
+    const tsNamedObjectUnionTypes: ObjectUnionType[] = [];
+    for (const astNamedType of ast_.namedTypes) {
+      const tsNamedType = typeFactory.createType(astNamedType);
+      tsNamedTypes.push(tsNamedType);
+
+      if (astNamedType.kind === "Object") {
+        for (const tsImport of astNamedType.tsImports) {
+          declarations.push(code`${tsImport}`);
+        }
+      }
+
+      switch (tsNamedType.kind) {
+        case "Object":
+          tsNamedObjectTypes.push(tsNamedType);
+          break;
+        case "ObjectUnion":
+          tsNamedObjectUnionTypes.push(tsNamedType as ObjectUnionType);
+          break;
       }
     }
 
-    for (const astNamedUnionType of ast_.namedUnionTypes) {
-      if (astNamedUnionType.isObjectUnionType()) {
-        continue;
+    tsNamedTypes.sort(compareTsNamedType);
+    tsNamedObjectTypes.sort(compareTsNamedType);
+    tsNamedObjectUnionTypes.sort(compareTsNamedType);
+
+    for (const tsNamedType of tsNamedTypes) {
+      switch (tsNamedType.kind) {
+        case "ObjectUnion":
+        case "Union":
+          continue; // Declare compound types last.
       }
-      declarations = declarations.concat(
-        typeFactory.createType(astNamedUnionType).declaration.toList(),
-      );
+
+      tsNamedType.declaration.ifJust((declaration) => {
+        declarations.push(declaration);
+      });
     }
 
-    const namedObjectTypesToposorted = ast.ObjectType.toposort(
-      ast_.namedObjectTypes,
-    ).map((astObjectType) => typeFactory.createObjectType(astObjectType));
+    // Declare compound types last.
+    for (const tsNamedType of tsNamedTypes) {
+      switch (tsNamedType.kind) {
+        case "ObjectUnion":
+        case "Union":
+          break;
+        default:
+          continue;
+      }
 
-    const namedObjectUnionTypesToposorted = ast_.namedUnionTypes
-      .filter((_) => _.isObjectUnionType())
-      .map((astObjectUnionType) =>
-        typeFactory.createObjectUnionType(astObjectUnionType),
-      );
-    for (const namedObjectType of namedObjectTypesToposorted) {
-      declarations = declarations.concat(namedObjectType.declaration.toList());
-    }
-    for (const namedObjectUnionType of namedObjectUnionTypesToposorted) {
-      declarations = declarations.concat(
-        namedObjectUnionType.declaration.toList(),
-      );
+      tsNamedType.declaration.ifJust((declaration) => {
+        declarations.push(declaration);
+      });
     }
 
-    const namedObjectTypesNameSorted = namedObjectTypesToposorted.toSorted(
-      (left, right) =>
-        left.alias.unsafeCoerce().localeCompare(right.alias.unsafeCoerce()),
-    );
-
-    const namedObjectUnionTypesNameSorted =
-      namedObjectUnionTypesToposorted.toSorted((left, right) =>
-        (left.alias.unsafeCoerce() as string).localeCompare(
-          right.alias.unsafeCoerce(),
-        ),
-      );
-
-    switch (namedObjectTypesNameSorted.length) {
+    switch (tsNamedObjectTypes.length) {
       case 0:
         break;
       case 1:
         declarations.push(
-          code`type ${configuration.syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].expression};`,
+          code`type ${configuration.syntheticNamePrefix}Object = ${tsNamedObjectTypes[0].expression};`,
         );
         break;
       default: {
         const uberObjectUnionType = this.synthesizeUberObjectUnionType({
           configuration,
-          namedObjectTypes: namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
+          namedObjectTypes: tsNamedObjectTypes,
           reusables,
         });
         declarations = declarations.concat(
           uberObjectUnionType.declaration.toList(),
         );
-        namedObjectUnionTypesNameSorted.push(uberObjectUnionType);
+        tsNamedObjectUnionTypes.push(uberObjectUnionType);
       }
     }
 
     declarations.push(
       ...this.objectSetTypeDeclarations({
         configuration,
-        namedObjectTypes: namedObjectTypesNameSorted,
-        namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
+        namedObjectTypes: tsNamedObjectTypes,
+        namedObjectUnionTypes: tsNamedObjectUnionTypes,
         reusables,
       }),
     );
 
     if (configuration.features.has("GraphQL")) {
-      const graphqlNamedObjectTypes = namedObjectTypesNameSorted.filter(
-        (namedObjectType) => !namedObjectType.synthetic,
+      const graphqlNamedObjectTypes = tsNamedObjectTypes.filter(
+        (tsNamedObjectType) => !tsNamedObjectType.synthetic,
       );
-      const graphqlNamedObjectUnionTypes =
-        namedObjectUnionTypesNameSorted.filter(
-          (namedObjectUnionType) => !namedObjectUnionType.synthetic,
-        );
+      const graphqlNamedObjectUnionTypes = tsNamedObjectUnionTypes.filter(
+        (tsNamedObjectUnionType) => !tsNamedObjectUnionType.synthetic,
+      );
 
       if (graphqlNamedObjectTypes.length > 0) {
         declarations.push(
@@ -213,7 +226,8 @@ export class TsGenerator implements Generator {
     reusables: Reusables;
   }): ObjectUnionType {
     const filteredNamedObjectTypes = namedObjectTypes.filter(
-      (namedObjectType) => !namedObjectType.extern, // && !namedObjectType.name.startsWith(syntheticNamePrefix),
+      (namedObjectType) =>
+        !namedObjectType.extern && !namedObjectType.synthetic,
     );
     invariant(filteredNamedObjectTypes.length > 0);
 

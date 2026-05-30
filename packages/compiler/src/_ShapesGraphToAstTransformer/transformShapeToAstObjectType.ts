@@ -6,7 +6,7 @@ import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
-import { ShapeStack } from "./ShapeStack.js";
+import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
@@ -89,16 +89,9 @@ export function transformShapeToAstObjectType(
       ),
     ).chain<Error, Maybe<ast.ObjectType>>(([nodeKinds, propertyShapes]) => {
       const nodeShapeIdentifier = nodeShape.$identifier();
-      const {
-        ancestors: ancestorNodeShapes,
-        descendants: descendantNodeShapes,
-        children: childNodeShapes,
-        parents: parentNodeShapes,
-      } = this.relatedNodeShapesByIdentifier.get(nodeShapeIdentifier)!;
 
       const isClass =
         nodeShape.subClassOf.length > 0 ||
-        descendantNodeShapes.length > 0 || // A node shape that is the object of an rdfs:subClassOf is itself an rdfs:Class
         nodeShape.types.some(
           (type) => type.equals(owl.Class) || type.equals(rdfs.Class),
         );
@@ -178,30 +171,6 @@ export function transformShapeToAstObjectType(
       );
 
       return (() => {
-        // Populate ancestor and descendant object types
-        const relatedObjectTypes = (
-          relatedNodeShapes: readonly input.NodeShape[],
-        ): readonly ast.ObjectType[] => {
-          return relatedNodeShapes
-            .flatMap((relatedNodeShape) =>
-              transformShapeToAstType
-                .call(this, relatedNodeShape, new ShapeStack())
-                .toMaybe()
-                .toList(),
-            )
-            .filter((astType) => astType.kind === "Object");
-        };
-        objectType.addAncestorObjectTypes(
-          ...relatedObjectTypes(ancestorNodeShapes),
-        );
-        objectType.addChildObjectTypes(...relatedObjectTypes(childNodeShapes));
-        objectType.addDescendantObjectTypes(
-          ...relatedObjectTypes(descendantNodeShapes),
-        );
-        objectType.addParentObjectTypes(
-          ...relatedObjectTypes(parentNodeShapes),
-        );
-
         // Populate properties
         for (const propertyShape of propertyShapes) {
           const propertyEither =

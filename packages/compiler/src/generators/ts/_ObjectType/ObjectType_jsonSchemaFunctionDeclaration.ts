@@ -9,19 +9,9 @@ export function ObjectType_jsonSchemaFunctionDeclaration(
     return Maybe.empty();
   }
 
-  let properties: Code[] = [];
-  for (const parentObjectType of this.parentObjectTypes) {
-    properties.push(
-      code`...${parentObjectType.jsonSchema({ context: "type" })}.shape`,
-    );
-  }
-  if (this.properties.length > 0) {
-    properties = properties.concat(
-      this.properties
-        .flatMap((property) => property.jsonSchema.toList())
-        .map(({ key, schema }) => code`"${key}": ${schema}`),
-    );
-  }
+  const properties = this.properties
+    .flatMap((property) => property.jsonSchema.toList())
+    .map(({ key, schema }) => code`"${key}": ${schema}`);
 
   const meta: Record<string, string> = {
     // id: this.name,

@@ -5,7 +5,6 @@ import { fileURLToPath } from "node:url";
 import datasetFactory from "@rdfjs/dataset";
 import dataFactory from "@rdfx/data-factory";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Parser, Writer } from "n3";
 import SHACLValidator from "rdf-validate-shacl";
 import { describe, it } from "vitest";
@@ -27,34 +26,6 @@ describe("toRdf", async () => {
       ).toString(),
     ),
   );
-
-  it("should populate a dataset", ({ expect }) => {
-    const resource = kitchenSink.ClassHierarchy3.toRdfResource(
-      harnesses.classHierarchy3.instance,
-    );
-    expect(resource.dataset.size).toStrictEqual(4);
-    expect(
-      resource.identifier.equals(
-        harnesses.classHierarchy3.instance.$identifier(),
-      ),
-    ).toStrictEqual(true);
-    expect(
-      resource
-        .value(rdf.type)
-        .chain((value) => value.toIri())
-        .unsafeCoerce()
-        .equals(kitchenSink.ClassHierarchy3.fromRdfType),
-    ).toStrictEqual(true);
-    expect(
-      resource
-        .value(
-          kitchenSink.ClassHierarchy3.schema.properties.classHierarchy3Property
-            .path,
-        )
-        .chain((value) => value.toString())
-        .unsafeCoerce(),
-    ).toStrictEqual("3");
-  });
 
   it("should produce serializable RDF", ({ expect }) => {
     const resource = kitchenSink.NonClass.toRdfResource(
@@ -144,32 +115,6 @@ describe("toRdf", async () => {
 
     const resource = kitchenSink.ListProperties.toRdfResource(instance);
     expect(resource.dataset.size).toStrictEqual(1); // The rdf:type statement
-  });
-
-  it("class multiple inheritance", ({ expect }) => {
-    const resource =
-      harnesses.classMultipleInheritanceChild.staticSide.toRdfResource(
-        harnesses.classMultipleInheritanceChild.instance,
-      );
-    expect(resource.dataset.size).toStrictEqual(4); // Child property + parent 1 property + parent 2 property + rdf:type
-    resource
-      .value(
-        kitchenSink.ClassMultipleInheritanceChild.schema.properties
-          .classMultipleInheritanceChildProperty.path,
-      )
-      .unsafeCoerce();
-    resource
-      .value(
-        kitchenSink.ClassMultipleInheritanceChild.schema.properties
-          .classMultipleInheritanceParent1Property.path,
-      )
-      .unsafeCoerce();
-    resource
-      .value(
-        kitchenSink.ClassMultipleInheritanceChild.schema.properties
-          .classMultipleInheritanceParent2Property.path,
-      )
-      .unsafeCoerce();
   });
 
   for (const [id, harness] of Object.entries(harnesses)) {

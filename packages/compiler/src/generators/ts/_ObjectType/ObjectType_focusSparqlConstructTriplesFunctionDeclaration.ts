@@ -22,13 +22,6 @@ export function ObjectType_focusSparqlConstructTriplesFunctionDeclaration(
   let triplesVariableDeclarationKeyword = "const";
   const statements: Code[] = [];
 
-  for (const parentObjectType of this.parentObjectTypes) {
-    statements.push(
-      code`triples = triples.concat(${parentObjectType.alias.unsafeCoerce()}.focusSparqlConstructTriples(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
-    );
-    triplesVariableDeclarationKeyword = "let";
-  }
-
   if (this.fromRdfType.isJust()) {
     statements.push(code`\
 if (!parameters?.ignoreRdfType) {

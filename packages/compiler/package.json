@@ -16,12 +16,10 @@
     "@types/rdfjs__prefix-map": "~0.1.5",
     "@types/rdfjs__term-map": "~2.0.10",
     "@types/rdfjs__term-set": "~2.0.9",
-    "@types/toposort": "2.0.7",
     "change-case": "~5.4.4",
     "plur": "~5.1.0",
     "purify-ts": "~2.1.4",
     "reserved-identifiers": "~1.0.0",
-    "toposort": "2.0.2",
     "ts-invariant": "~0.10.3",
     "ts-poet": "~6.12.0",
     "typescript-memoize": "~1.1.1"

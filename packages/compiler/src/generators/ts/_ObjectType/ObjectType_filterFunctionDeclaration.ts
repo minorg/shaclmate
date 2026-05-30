@@ -10,11 +10,6 @@ export function ObjectType_filterFunctionDeclaration(
   }
 
   const statements: Code[] = [];
-  for (const parentObjectType of this.parentObjectTypes) {
-    statements.push(
-      code`if (!${parentObjectType.filterFunction}(filter, value)) { return false; }`,
-    );
-  }
 
   if (this.properties.length > 0) {
     for (const property of this.properties) {

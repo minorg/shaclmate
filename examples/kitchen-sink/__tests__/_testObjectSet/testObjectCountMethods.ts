@@ -6,25 +6,29 @@ import { objectDataset } from "./objectDataset.js";
 export function testObjectCountMethods(createObjectSet: ObjectSetFactory) {
   describe("object count methods", () => {
     it("class", async ({ expect }) => {
-      const objectSet = createObjectSet(objectDataset(data.classHierarchy3s));
+      const objectSet = createObjectSet(
+        objectDataset(data.termPropertiesObjects),
+      );
       expect(
-        (await objectSet.classHierarchy3Count()).unsafeCoerce(),
-      ).toStrictEqual(data.classHierarchy3s.length);
+        (await objectSet.termPropertiesCount()).unsafeCoerce(),
+      ).toStrictEqual(data.termPropertiesObjects.length);
     });
 
     describe("union", () => {
       it("with fromRdfTypes", async ({ expect }) => {
-        const objectSet = createObjectSet(objectDataset(data.unions));
+        const objectSet = createObjectSet(objectDataset(data.unionObjects));
         expect((await objectSet.unionCount()).unsafeCoerce()).toStrictEqual(
-          data.unions.length,
+          data.unionObjects.length,
         );
       });
 
       it("without fromRdfTypes", async ({ expect }) => {
-        const objectSet = createObjectSet(objectDataset(data.noRdfTypeUnions));
+        const objectSet = createObjectSet(
+          objectDataset(data.noRdfTypeUnionObjects),
+        );
         expect(
           (await objectSet.noRdfTypeUnionCount()).unsafeCoerce(),
-        ).toStrictEqual(data.noRdfTypeUnions.length);
+        ).toStrictEqual(data.noRdfTypeUnionObjects.length);
       });
     });
   });

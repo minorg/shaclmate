@@ -1,9 +1,7 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { PropertyPath } from "@rdfx/resource";
-import { NTriplesIdentifier } from "@rdfx/string";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
-import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
@@ -14,34 +12,6 @@ import type { IriType } from "./IriType.js";
 import { Type } from "./Type.js";
 
 export class ObjectType extends AbstractType {
-  /**
-   * Ancestor (parents, their parents, ad nauseum) ObjectTypes of this ObjectType.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  readonly #ancestorObjectTypes: ObjectType[] = [];
-
-  /**
-   * Immediate child ObjectTypes of this ObjectType.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  readonly #childObjectTypes: ObjectType[] = [];
-
-  /**
-   * Descendant (children, their children, ad nauseum) ObjectTypes of this ObjectType.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  readonly #descendantObjectTypes: ObjectType[] = [];
-
-  /**
-   * Immediate parent ObjectTypes of this Object types.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  readonly #parentObjectTypes: ObjectType[] = [];
-
   /**
    * Properties of this ObjectType.
    *
@@ -123,46 +93,12 @@ export class ObjectType extends AbstractType {
     this.tsImports = tsImports;
   }
 
-  get ancestorObjectTypes(): readonly ObjectType[] {
-    return this.#ancestorObjectTypes;
-  }
-
-  get childObjectTypes(): readonly ObjectType[] {
-    return this.#childObjectTypes;
-  }
-
-  get descendantObjectTypes(): readonly ObjectType[] {
-    return this.#descendantObjectTypes;
-  }
-
-  get parentObjectTypes(): readonly ObjectType[] {
-    return this.#parentObjectTypes;
-  }
-
   get properties(): readonly ObjectType.Property[] {
     return this.#properties;
   }
 
   override get recursive(): boolean {
     return this.properties.some((property) => property.recursive);
-  }
-
-  addAncestorObjectTypes(...ancestorObjectTypes: readonly ObjectType[]): void {
-    this.#ancestorObjectTypes.push(...ancestorObjectTypes);
-  }
-
-  addChildObjectTypes(...childObjectTypes: readonly ObjectType[]): void {
-    this.#childObjectTypes.push(...childObjectTypes);
-  }
-
-  addDescendantObjectTypes(
-    ...descendantObjectTypes: readonly ObjectType[]
-  ): void {
-    this.#descendantObjectTypes.push(...descendantObjectTypes);
-  }
-
-  addParentObjectTypes(...parentObjectTypes: readonly ObjectType[]): void {
-    this.#parentObjectTypes.push(...parentObjectTypes);
   }
 
   addProperties(...properties: readonly ObjectType.Property[]): void {
@@ -194,14 +130,6 @@ export class ObjectType extends AbstractType {
       ...super.toJSON(),
       fromRdfType: this.fromRdfType.extract(),
       identifierType: this.identifierType.toJSON(),
-      parentObjectTypes:
-        this.parentObjectTypes.length > 0
-          ? this.parentObjectTypes.map(
-              (parentObjectType) =>
-                parentObjectType.name.extract() ??
-                parentObjectType.shapeIdentifier,
-            )
-          : undefined,
       synthetic: this.synthetic ? true : undefined,
       toRdfTypes: this.toRdfTypes.length > 0 ? this.toRdfTypes : undefined,
     };
@@ -501,36 +429,5 @@ export namespace ObjectType {
     toString(): string {
       return JSON.stringify(this.toJSON());
     }
-  }
-}
-
-export namespace ObjectType {
-  export function toposort(
-    objectTypes: readonly ObjectType[],
-  ): readonly ObjectType[] {
-    const objectTypesByShapeIdentifier: Record<string, ObjectType> = {};
-    const objectTypeGraphNodes: string[] = [];
-    const objectTypeGraphEdges: [string, string | undefined][] = [];
-    for (const objectType of objectTypes) {
-      const objectTypeShapeIdentifier = NTriplesIdentifier.stringify(
-        objectType.shapeIdentifier,
-      );
-      invariant(!objectTypesByShapeIdentifier[objectTypeShapeIdentifier]);
-      objectTypesByShapeIdentifier[objectTypeShapeIdentifier] = objectType;
-      objectTypeGraphNodes.push(objectTypeShapeIdentifier);
-      for (const parentAstObjectType of objectType.parentObjectTypes) {
-        objectTypeGraphEdges.push([
-          objectTypeShapeIdentifier,
-          NTriplesIdentifier.stringify(parentAstObjectType.shapeIdentifier),
-        ]);
-      }
-    }
-    return genericToposort
-      .array(objectTypeGraphNodes, objectTypeGraphEdges)
-      .map(
-        (objectTypeIdentifier) =>
-          objectTypesByShapeIdentifier[objectTypeIdentifier],
-      )
-      .reverse();
   }
 }

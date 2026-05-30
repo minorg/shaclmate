@@ -1,4 +1,5 @@
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import type { ObjectType } from "../ObjectType.js";
 import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -31,19 +32,10 @@ export function ObjectType_fromRdfResourceFunctionDeclaration(
   };
 
   const chains: { expression: Code; variable: string }[] = [];
-  const partials: string[] = [];
-
-  this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
-    chains.push({
-      expression: code`${parentObjectType.alias.unsafeCoerce()}._fromRdfResource(${variables.resource}, { ...${optionsVariable}, ignoreRdfType: true })`,
-      variable: `super${parentObjectTypeI}`,
-    });
-    partials.push(`super${parentObjectTypeI}`);
-  });
 
   this.fromRdfTypeVariable.ifJust((fromRdfTypeVariable) => {
     chains.push({
-      expression: code`!${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.resource}, ${arrayOf(fromRdfTypeVariable, ...this.descendantFromRdfTypeVariables)}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
+      expression: code`!${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.resource}, ${arrayOf(fromRdfTypeVariable)}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
       variable: `_rdfTypeCheck`,
     });
   });
@@ -56,44 +48,21 @@ export function ObjectType_fromRdfResourceFunctionDeclaration(
         })
         .toList(),
     );
-  if (Object.keys(propertyFromRdfResourceValuesInitializers).length > 0) {
-    chains.push({
-      expression: code`${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyFromRdfResourceValuesInitializers, { on: ", " })} })`,
-      variable: "properties",
-    });
-    partials.push("properties");
-  }
-
-  let partialsJoined: Code;
-  switch (partials.length) {
-    case 0:
-      partialsJoined = code`{}`;
-      break;
-    case 1:
-      partialsJoined = code`${partials[0]}`;
-      break;
-    default:
-      partialsJoined = code`{ ${partials.map((partial) => `...${partial}`).join(", ")} }`;
-      break;
-  }
-
-  let returnExpression: Code;
-  const resultExpression = code`create(${partialsJoined})`;
-  if (chains.length === 0) {
-    returnExpression = code`${this.reusables.imports.Right}(${resultExpression})`;
-  } else {
-    returnExpression = code`${chains
-      .reverse()
-      .reduce(
-        (acc, { expression, variable }) =>
-          code`(${expression}).chain(${variable} => ${acc})`,
-        code`(${resultExpression})`,
-      )}`;
-  }
+  invariant(Object.keys(propertyFromRdfResourceValuesInitializers).length > 0);
+  chains.push({
+    expression: code`${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyFromRdfResourceValuesInitializers, { on: ", " })} })`,
+    variable: "properties",
+  });
 
   return Maybe.of(code`\
 export const _fromRdfResource: ${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}> = (${variables.resource}, ${optionsVariable}) => {
-  return ${returnExpression};
+  return ${chains
+    .reverse()
+    .reduce(
+      (acc, { expression, variable }) =>
+        code`(${expression}).chain(${variable} => ${acc})`,
+      code`(create(properties))`,
+    )};
 }
 
 export const fromRdfResource = ${this.reusables.snippets.wrap_FromRdfResourceFunction}(_fromRdfResource);`);

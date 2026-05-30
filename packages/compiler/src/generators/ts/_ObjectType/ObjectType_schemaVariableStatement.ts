@@ -11,18 +11,11 @@ export function ObjectType_schemaVariableStatement(
 
   return Maybe.of(code`\
 export const schema = { properties: { ${joinCode(
-    this.parentObjectTypes
-      .map(
-        (parentObjectType) =>
-          code`...${parentObjectType.alias.unsafeCoerce()}.schema.properties`,
-      )
-      .concat(
-        this.properties.flatMap((property) =>
-          property.schema
-            .toList()
-            .map((propertySchema) => code`${property.name}: ${propertySchema}`),
-        ),
-      ),
+    this.properties.flatMap((property) =>
+      property.schema
+        .toList()
+        .map((propertySchema) => code`${property.name}: ${propertySchema}`),
+    ),
     { on: ", " },
   )} } } as const;`);
 }

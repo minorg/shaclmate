@@ -6,16 +6,6 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-:BaseForExtern
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Base type for :Extern to reuse" ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :baseForExternProperty
-    ] .
-
 :BlankNodeIdentifier
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can only have a blank node as an identifier" ;
@@ -24,41 +14,6 @@
 :BlankNodeOrIriIdentifier
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
-
-:ClassHierarchy0
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Root (level 0) of a class hierarchy" ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :classHierarchy0Property
-    ] .
-
-:ClassHierarchy1
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf :ClassHierarchy0 .
-
-:ClassHierarchy2
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf :ClassHierarchy1 ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :classHierarchy2Property
-    ] .
-
-:ClassHierarchy3
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf :ClassHierarchy2 ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :classHierarchy3Property
-    ] .
 
 :ClassProperties
     a owl:Class, sh:NodeShape ;
@@ -284,23 +239,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :explicitRdfTypeProperty
-    ] .
-
-:Extern
-    shaclmate:extern true ;
-    shaclmate:tsImport "import { Extern } from \"./Extern.js\";" ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "An extern object type in TypeScript" ;
-    rdfs:subClassOf :BaseForExtern .
-
-:ExternProperty
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape that references the Extern in a property." ;
-    sh:property [
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :Extern ;
-        sh:path :externProperty
     ] .
 
 :FlattenUnion
@@ -595,34 +533,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :StringListList ;
         sh:path :stringListListProperty
-    ] .
-
-:ClassMultipleInheritanceParent1
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :classMultipleInheritanceParent1Property
-    ] .
-
-:ClassMultipleInheritanceParent2
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :classMultipleInheritanceParent2Property
-    ] .
-
-:ClassMultipleInheritanceChild
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf :ClassMultipleInheritanceParent1, :ClassMultipleInheritanceParent2 ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :classMultipleInheritanceChildProperty
     ] .
 
 :MutableProperties
@@ -1152,32 +1062,30 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :UnionMember1
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf :UnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :unionMember1Property
-    ] .
+    ], :UnionMember-commonProperty .
 
 :UnionMember2
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf :UnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :unionMember2Property
-    ] .
+    ], :UnionMember-commonProperty .
 
-:UnionMemberCommonParent
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :unionMemberCommonParentProperty
-    ] .
+:UnionMember-commonProperty
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:name "unionMemberCommonProperty" ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path :unionMemberCommonProperty
+.
 
 :UnionDiscriminants
     a sh:NodeShape ;

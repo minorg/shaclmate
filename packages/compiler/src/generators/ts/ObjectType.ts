@@ -48,82 +48,52 @@ export class ObjectType extends AbstractType {
 
   override readonly conversionFunction: Maybe<AbstractType.ConversionFunction> =
     Maybe.empty();
+  override readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
+  override readonly jsTypes = [
+    { instanceof: "Object", typeof: "object" },
+  ] as const;
   override readonly kind = "Object";
   override readonly recursive: boolean;
   override readonly referencesObjectType = true;
   readonly synthetic: boolean;
-  override readonly jsTypes = [
-    { instanceof: "Object", typeof: "object" },
-  ] as const;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
+    discriminantProperty,
     extern,
     fromRdfType,
     identifierType,
-    lazyAncestorObjectTypes,
-    lazyChildObjectTypes,
-    lazyDescendantObjectTypes,
-    lazyDiscriminantProperty,
-    lazyParentObjectTypes,
     lazyProperties,
     recursive,
     synthetic,
     toRdfTypes,
     ...superParameters
   }: {
+    discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
     comment: Maybe<string>;
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierType: BlankNodeType | IdentifierType | IriType;
     label: Maybe<string>;
-    lazyAncestorObjectTypes: () => readonly ObjectType[];
-    lazyChildObjectTypes: () => readonly ObjectType[];
-    lazyDiscriminantProperty: (
-      namedObjectType: ObjectType,
-    ) => ObjectType.DiscriminantProperty;
-    lazyDescendantObjectTypes: () => readonly ObjectType[];
-    lazyParentObjectTypes: () => readonly ObjectType[];
-    lazyProperties: (
-      namedObjectType: ObjectType,
-    ) => readonly ObjectType.Property[];
+    lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
     recursive: boolean;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
+    this.discriminantProperty = discriminantProperty;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
     // Lazily initialize some members in getters to avoid recursive construction
-    this.lazyAncestorObjectTypes = lazyAncestorObjectTypes;
-    this.lazyChildObjectTypes = lazyChildObjectTypes;
-    this.lazyDescendantObjectTypes = lazyDescendantObjectTypes;
-    this.lazyDiscriminantProperty = lazyDiscriminantProperty;
-    this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
     this.recursive = recursive;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
-  }
-
-  @Memoize()
-  get _discriminantProperty(): ObjectType.DiscriminantProperty {
-    return this.lazyDiscriminantProperty(this);
-  }
-
-  @Memoize()
-  get ancestorObjectTypes(): readonly ObjectType[] {
-    return this.lazyAncestorObjectTypes();
-  }
-
-  @Memoize()
-  get childObjectTypes(): readonly ObjectType[] {
-    return this.lazyChildObjectTypes();
   }
 
   override get declaration(): Maybe<Code> {
@@ -217,40 +187,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get descendantFromRdfTypeVariables(): readonly Code[] {
-    return this.descendantObjectTypes.flatMap((descendantObjectType) =>
-      descendantObjectType.fromRdfTypeVariable.toList(),
-    );
-  }
-
-  @Memoize()
-  get descendantFromRdfTypes(): readonly NamedNode[] {
-    return this.descendantObjectTypes.flatMap((descendantObjectType) =>
-      descendantObjectType.fromRdfType.toList(),
-    );
-  }
-
-  @Memoize()
-  get descendantObjectTypes(): readonly ObjectType[] {
-    return this.lazyDescendantObjectTypes();
-  }
-
-  @Memoize()
-  override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
-    return Maybe.of({
-      jsonName: this._discriminantProperty.jsonName,
-      name: this._discriminantProperty.name,
-      ownValues: this._discriminantProperty.type.ownValues,
-      descendantValues: this._discriminantProperty.type.descendantValues,
-    });
-  }
-
-  @Memoize()
-  get discriminantValue(): string {
-    return this.alias.unsafeCoerce();
-  }
-
-  @Memoize()
   override get equalsFunction(): Code {
     return code`${this.alias.unsafeCoerce()}.equals`;
   }
@@ -309,11 +245,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get parentObjectTypes(): readonly ObjectType[] {
-    return this.lazyParentObjectTypes();
-  }
-
-  @Memoize()
   get properties(): readonly ObjectType.Property[] {
     const properties = this.lazyProperties(this);
     const propertyNames = new Set<string>();
@@ -342,10 +273,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   get toRdfjsResourceType(): Code {
-    if (this.parentObjectTypes.length > 0) {
-      return this.parentObjectTypes[0].toRdfjsResourceType;
-    }
-
     return code`${this.reusables.imports.Resource}${this.identifierType.kind === "Iri" ? code`<${this.reusables.imports.NamedNode}>` : ""}`;
   }
 
@@ -437,18 +364,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
     return code`${this.alias.unsafeCoerce()}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
   }
-
-  private readonly lazyAncestorObjectTypes: () => readonly ObjectType[];
-
-  private readonly lazyChildObjectTypes: () => readonly ObjectType[];
-
-  private readonly lazyDescendantObjectTypes: () => readonly ObjectType[];
-
-  private readonly lazyDiscriminantProperty: (
-    namedObjectType: ObjectType,
-  ) => ObjectType.DiscriminantProperty;
-
-  private readonly lazyParentObjectTypes: () => readonly ObjectType[];
 
   private readonly lazyProperties: (
     namedObjectType: ObjectType,

@@ -12,12 +12,12 @@ export function testObjectIdentifiersMethods(
   describe("object identifiers methods", () => {
     describe("graphs", () => {
       const defaultGraphObjects = [
-        data.classHierarchy3s[0],
-        data.classHierarchy3s[1],
+        data.termPropertiesObjects[0],
+        data.termPropertiesObjects[1],
       ];
-      const namedGraph1Object = data.classHierarchy3s[2];
+      const namedGraph1Object = data.termPropertiesObjects[2];
       const namedGraph1Iri = namedGraph1Object.$identifier() as NamedNode;
-      const namedGraph2Object = data.classHierarchy3s[3];
+      const namedGraph2Object = data.termPropertiesObjects[3];
       const namedGraph2Iri = namedGraph2Object.$identifier() as NamedNode;
       const datasetObjects: Record<string, readonly kitchenSink.$Object[]> = {
         "": defaultGraphObjects,
@@ -39,7 +39,7 @@ export function testObjectIdentifiersMethods(
       describe("default graph", () => {
         it("no query", async ({ expect }) => {
           expect(
-            (await defaultGraphObjectSet.classHierarchy3Identifiers())
+            (await defaultGraphObjectSet.termPropertiesIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value)
               .sort(),
@@ -51,7 +51,7 @@ export function testObjectIdentifiersMethods(
         it("query of named graph", async ({ expect }) => {
           expect(
             (
-              await defaultGraphObjectSet.classHierarchy3Identifiers({
+              await defaultGraphObjectSet.termPropertiesIdentifiers({
                 graph: namedGraph1Iri,
               })
             )
@@ -64,7 +64,7 @@ export function testObjectIdentifiersMethods(
       describe("named graph", () => {
         it("no query", async ({ expect }) => {
           expect(
-            (await namedGraph1ObjectSet.classHierarchy3Identifiers())
+            (await namedGraph1ObjectSet.termPropertiesIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value),
           ).toStrictEqual([namedGraph1Object.$identifier().value]);
@@ -73,7 +73,7 @@ export function testObjectIdentifiersMethods(
         it("query of different named graph", async ({ expect }) => {
           expect(
             (
-              await namedGraph1ObjectSet.classHierarchy3Identifiers({
+              await namedGraph1ObjectSet.termPropertiesIdentifiers({
                 graph: namedGraph2Iri,
               })
             )
@@ -86,7 +86,7 @@ export function testObjectIdentifiersMethods(
       describe("union graph", () => {
         it("no query", async ({ expect }) => {
           expect(
-            (await unionGraphObjectSet.classHierarchy3Identifiers())
+            (await unionGraphObjectSet.termPropertiesIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value)
               .sort(),
@@ -100,7 +100,7 @@ export function testObjectIdentifiersMethods(
         it("query of default graph", async ({ expect }) => {
           expect(
             (
-              await unionGraphObjectSet.classHierarchy3Identifiers({
+              await unionGraphObjectSet.termPropertiesIdentifiers({
                 graph: dataFactory.defaultGraph(),
               })
             )
@@ -114,7 +114,7 @@ export function testObjectIdentifiersMethods(
         it("query of named graph 1", async ({ expect }) => {
           expect(
             (
-              await unionGraphObjectSet.classHierarchy3Identifiers({
+              await unionGraphObjectSet.termPropertiesIdentifiers({
                 graph: namedGraph1Iri,
               })
             )
@@ -126,7 +126,7 @@ export function testObjectIdentifiersMethods(
         it("query of named graph 2", async ({ expect }) => {
           expect(
             (
-              await unionGraphObjectSet.classHierarchy3Identifiers({
+              await unionGraphObjectSet.termPropertiesIdentifiers({
                 graph: namedGraph2Iri,
               })
             )
@@ -138,47 +138,55 @@ export function testObjectIdentifiersMethods(
     });
 
     it("no options", async ({ expect }) => {
-      const objectSet = createObjectSet(objectDataset(data.classHierarchy3s));
+      const objectSet = createObjectSet(
+        objectDataset(data.termPropertiesObjects),
+      );
       expect(
-        (await objectSet.classHierarchy3Identifiers())
+        (await objectSet.termPropertiesIdentifiers())
           .unsafeCoerce()
           .map((identifier) => identifier.value),
       ).toStrictEqual(
-        data.classHierarchy3s.map((object) => object.$identifier().value),
+        data.termPropertiesObjects.map((object) => object.$identifier().value),
       );
     });
 
     it("limit 1", async ({ expect }) => {
-      const objectSet = createObjectSet(objectDataset(data.classHierarchy3s));
+      const objectSet = createObjectSet(
+        objectDataset(data.termPropertiesObjects),
+      );
       expect(
-        (await objectSet.classHierarchy3Identifiers({ limit: 1 }))
+        (await objectSet.termPropertiesIdentifiers({ limit: 1 }))
           .unsafeCoerce()
           .map((identifier) => identifier.value),
-      ).toStrictEqual([data.classHierarchy3s[0].$identifier().value]);
+      ).toStrictEqual([data.termPropertiesObjects[0].$identifier().value]);
     });
 
     it("offset 1", async ({ expect }) => {
-      const objectSet = createObjectSet(objectDataset(data.classHierarchy3s));
+      const objectSet = createObjectSet(
+        objectDataset(data.termPropertiesObjects),
+      );
       expect(
         (
-          await objectSet.classHierarchy3Identifiers({
+          await objectSet.termPropertiesIdentifiers({
             offset: 1,
           })
         )
           .unsafeCoerce()
           .map((identifier) => identifier.value),
       ).toStrictEqual(
-        data.classHierarchy3s
+        data.termPropertiesObjects
           .slice(1)
           .map((object) => object.$identifier().value),
       );
     });
 
     it("limit 2 offset 1", async ({ expect }) => {
-      const objectSet = createObjectSet(objectDataset(data.classHierarchy3s));
+      const objectSet = createObjectSet(
+        objectDataset(data.termPropertiesObjects),
+      );
       expect(
         (
-          await objectSet.classHierarchy3Identifiers({
+          await objectSet.termPropertiesIdentifiers({
             limit: 2,
             offset: 1,
           })
@@ -187,14 +195,14 @@ export function testObjectIdentifiersMethods(
           .map((identifier) => identifier.value)
           .sort(),
       ).toStrictEqual([
-        data.classHierarchy3s[1].$identifier().value,
-        data.classHierarchy3s[2].$identifier().value,
+        data.termPropertiesObjects[1].$identifier().value,
+        data.termPropertiesObjects[2].$identifier().value,
       ]);
     });
 
     describe("union", () => {
       it("class union", async ({ expect }) => {
-        const objectSet = createObjectSet(objectDataset(data.unions));
+        const objectSet = createObjectSet(objectDataset(data.unionObjects));
         expect(
           new Set(
             (await objectSet.unionIdentifiers())
@@ -202,17 +210,19 @@ export function testObjectIdentifiersMethods(
               .map((identifier) => identifier.value),
           ),
         ).toStrictEqual(
-          new Set(data.unions.map((object) => object.$identifier().value)),
+          new Set(
+            data.unionObjects.map((object) => object.$identifier().value),
+          ),
         );
       });
 
       it("class union limit 1", async ({ expect }) => {
-        const objectSet = createObjectSet(objectDataset(data.unions));
+        const objectSet = createObjectSet(objectDataset(data.unionObjects));
         expect(
           (await objectSet.unionIdentifiers({ limit: 1 }))
             .unsafeCoerce()
             .map((identifier) => identifier.value),
-        ).toStrictEqual([data.unions[0].$identifier().value]);
+        ).toStrictEqual([data.unionObjects[0].$identifier().value]);
       });
     });
   });

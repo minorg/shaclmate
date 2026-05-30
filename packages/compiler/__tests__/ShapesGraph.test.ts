@@ -19,6 +19,6 @@ describe("ShapesGraph", () => {
 
   it("toAst", ({ expect }) => {
     const ast = sut.toAst({ logger }).unsafeCoerce();
-    expect(ast.namedObjectTypes).not.toHaveLength(0);
+    expect(ast.namedTypes).not.toHaveLength(0);
   });
 });

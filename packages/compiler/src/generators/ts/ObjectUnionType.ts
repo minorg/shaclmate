@@ -248,11 +248,7 @@ export namespace Identifier {
     > = {};
 
     this.members.forEach((member, memberI) => {
-      for (const memberTypeProperty of member.type.properties.concat(
-        member.type.ancestorObjectTypes.flatMap(
-          (ancestorObjectType) => ancestorObjectType.properties,
-        ),
-      )) {
+      for (const memberTypeProperty of member.type.properties) {
         if (memberTypeProperty.kind !== "Shacl") {
           continue;
         }

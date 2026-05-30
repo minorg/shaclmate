@@ -2,9 +2,8 @@ import datasetFactory from "@rdfjs/dataset";
 import dataFactory from "@rdfx/data-factory";
 import { ResourceSet } from "@rdfx/resource";
 import {
-  Child,
-  Nested,
-  Parent,
+  NestedObject,
+  RootObject,
   UnionMember1,
   UnionMember2,
 } from "./generated.js";
@@ -15,39 +14,31 @@ const resourceSet = new ResourceSet({
   dataset,
 });
 for (let i = 0; i < 4; i++) {
-  const lazyObject = Nested.createUnsafe({
-    $identifier: dataFactory.namedNode(`http://example.com/child${i}/lazy`),
+  const lazyObject = NestedObject.createUnsafe({
+    $identifier: dataFactory.namedNode(
+      `http://example.com/rootObject${i}/lazyObject`,
+    ),
     optionalNumberProperty: 2,
-    optionalStringProperty: "optional string (nested)",
-    requiredStringProperty: "required string (nested)",
+    optionalStringProperty: "optional string (lazy)",
+    requiredStringProperty: "required string (lazy)",
   });
-  Nested.toRdfResource(lazyObject, { resourceSet });
+  NestedObject.toRdfResource(lazyObject, { resourceSet });
 
-  Child.toRdfResource(
-    Child.createUnsafe({
-      $identifier: dataFactory.namedNode(`http://example.com/child${i}`),
-      childStringProperty: "child string property",
+  RootObject.toRdfResource(
+    RootObject.createUnsafe({
+      $identifier: dataFactory.namedNode(`http://example.com/rootObject${i}`),
       lazyObjectSetProperty: [lazyObject],
       optionalLazyObjectProperty: lazyObject,
-      optionalObjectProperty: Nested.createUnsafe({
+      optionalObjectProperty: NestedObject.createUnsafe({
         $identifier: dataFactory.namedNode(
-          `http://example.com/child${i}/nested`,
+          `http://example.com/rootObject${i}/nestedObject`,
         ),
         optionalNumberProperty: 2,
         optionalStringProperty: "optional string (nested)",
         requiredStringProperty: "required string (nested)",
       }),
-      optionalStringProperty: "optional string (concrete child)",
-      parentStringProperty: "parent string (concrete child)",
-      requiredStringProperty: "required string (concrete child)",
-    }),
-    { resourceSet },
-  );
-
-  Parent.toRdfResource(
-    Parent.createUnsafe({
-      $identifier: dataFactory.namedNode(`http://example.com/parent${i}`),
-      parentStringProperty: "parent string",
+      optionalStringProperty: "optional string (root)",
+      requiredStringProperty: "required string (root)",
     }),
     { resourceSet },
   );

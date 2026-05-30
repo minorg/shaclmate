@@ -84,17 +84,6 @@ describe("fromRdf", () => {
     });
   }
 
-  it("concrete parent fromRdf", ({ expect }) => {
-    const fromRdfInstance = kitchenSink.ClassHierarchy2.fromRdfResource(
-      kitchenSink.ClassHierarchy3.toRdfResource(
-        harnesses.classHierarchy3.instance,
-      ),
-    ).unsafeCoerce();
-    expect(fromRdfInstance.classHierarchy2Property).toStrictEqual(
-      harnesses.classHierarchy3.instance.classHierarchy2Property,
-    );
-  });
-
   it("explicit fromRdfType ignore default rdf:type", ({ expect }) => {
     const resource = new ResourceSet({
       dataFactory,
@@ -136,12 +125,12 @@ describe("fromRdf", () => {
   });
 
   it("ignore extraneous RDF type", ({ expect }) => {
-    const expectedInstance = harnesses.classHierarchy3.instance;
+    const expectedInstance = harnesses.explicitRdfType.instance;
     const actualResource =
-      harnesses.classHierarchy3.staticSide.toRdfResource(expectedInstance);
-    expect(kitchenSink.ClassHierarchy3.fromRdfType.value).not.toStrictEqual(
-      "http://example.com/ExtraneousRdfType",
-    );
+      harnesses.explicitRdfType.staticSide.toRdfResource(expectedInstance);
+    expect(
+      kitchenSink.ExplicitFromToRdfTypes.fromRdfType.value,
+    ).not.toStrictEqual("http://example.com/ExtraneousRdfType");
     const actualRdfTypeQuads = [
       ...actualResource.dataset.match(actualResource.identifier, rdf.type),
     ];
@@ -153,9 +142,9 @@ describe("fromRdf", () => {
       actualRdfTypeQuads[0].object.equals(extraneousRdfType),
     ).toStrictEqual(false);
     expect(
-      kitchenSink.ClassHierarchy3.equals(
+      kitchenSink.ExplicitRdfType.equals(
         expectedInstance,
-        kitchenSink.ClassHierarchy3.fromRdfResource(
+        kitchenSink.ExplicitRdfType.fromRdfResource(
           actualResource,
         ).unsafeCoerce(),
       ).isRight(),
@@ -167,9 +156,9 @@ describe("fromRdf", () => {
       ...actualResource.dataset.match(actualResource.identifier, rdf.type),
     ]).toHaveLength(2);
     expect(
-      kitchenSink.ClassHierarchy3.equals(
+      kitchenSink.ExplicitRdfType.equals(
         expectedInstance,
-        kitchenSink.ClassHierarchy3.fromRdfResource(
+        kitchenSink.ExplicitRdfType.fromRdfResource(
           actualResource,
         ).unsafeCoerce(),
       ).isRight(),
@@ -463,52 +452,28 @@ describe("fromRdf", () => {
     // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
-  it("accept known child type", ({ expect }) => {
-    const classHierarchy3 = kitchenSink.ClassHierarchy3.createUnsafe({
-      classHierarchy0Property: "abcWith",
-      classHierarchy3Property: "child",
-      classHierarchy2Property: "parent",
-    });
-    const childResource =
-      kitchenSink.ClassHierarchy3.toRdfResource(classHierarchy3);
-
-    // Deserialize all of the superclasses of the child class
-
-    const classHierarchy2 =
-      kitchenSink.ClassHierarchy2.fromRdfResource(childResource).unsafeCoerce();
-
-    expect(classHierarchy2.classHierarchy0Property).toStrictEqual(
-      classHierarchy3.classHierarchy0Property,
-    );
-    expect(classHierarchy2.classHierarchy2Property).toStrictEqual(
-      classHierarchy3.classHierarchy2Property,
-    );
-  });
-
-  it("accept unknown child type", ({ expect }) => {
-    const child = kitchenSink.ClassHierarchy3.createUnsafe({
-      classHierarchy0Property: "abcWith",
-      classHierarchy3Property: "child",
-      classHierarchy2Property: "parent",
+  it("accept unknown sub-class type", ({ expect }) => {
+    const instance = kitchenSink.ExplicitRdfType.createUnsafe({
+      explicitRdfTypeProperty: "test",
     });
     const dataset = datasetFactory.dataset();
-    for (const quad of kitchenSink.ClassHierarchy3.toRdfResource(child)
+    for (const quad of kitchenSink.ExplicitRdfType.toRdfResource(instance)
       .dataset) {
       if (!quad.predicate.equals(rdf.type)) {
         dataset.add(quad);
       }
     }
-    const childResource = new ResourceSet({ dataFactory, dataset }).resource(
-      child.$identifier(),
+    const instanceResource = new ResourceSet({ dataFactory, dataset }).resource(
+      instance.$identifier(),
     );
     // Deserialization shouldn't work since there's no rdf:type statement
     expect(
-      kitchenSink.ClassHierarchy3.fromRdfResource(childResource),
+      kitchenSink.ExplicitRdfType.fromRdfResource(instanceResource),
     ).toBeLeft();
     // Add rdf:type <subclass> statement
     dataset.add(
       dataFactory.quad(
-        child.$identifier(),
+        instance.$identifier(),
         rdf.type,
         dataFactory.namedNode("http://example.com/newSubType"),
       ),
@@ -518,15 +483,15 @@ describe("fromRdf", () => {
       dataFactory.quad(
         dataFactory.namedNode("http://example.com/newSubType"),
         rdfs.subClassOf,
-        kitchenSink.ClassHierarchy3.fromRdfType,
+        kitchenSink.ExplicitRdfType.fromRdfType,
       ),
     );
 
     expect(
-      kitchenSink.ClassHierarchy3.equals(
-        child,
-        kitchenSink.ClassHierarchy3.fromRdfResource(
-          childResource,
+      kitchenSink.ExplicitRdfType.equals(
+        instance,
+        kitchenSink.ExplicitRdfType.fromRdfResource(
+          instanceResource,
         ).unsafeCoerce(),
       ).unsafeCoerce(),
     ).toStrictEqual(true);

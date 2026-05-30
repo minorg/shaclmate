@@ -396,202 +396,10 @@ function $wrap_ToRdfResourceFunction<
     return resource;
   };
 }
-export interface NestedNodeShape {
-  readonly $identifier: () => NestedNodeShape.Identifier;
+export interface FormObject {
+  readonly $identifier: () => FormObject.Identifier;
 
-  readonly $type: "NestedNodeShape";
-
-  /**
-   * Required string
-   */
-  readonly requiredStringProperty: string;
-}
-
-export namespace NestedNodeShape {
-  export function create(parameters: {
-    readonly $identifier?:
-      | (() => NestedNodeShape.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly requiredStringProperty: string;
-  }): Either<Error, NestedNodeShape> {
-    return $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    }).map((properties) =>
-      $monkeyPatchObject(
-        { ...properties, $type: "NestedNodeShape" as const },
-        { toJson, $toString },
-      ),
-    );
-  }
-
-  export function createUnsafe(parameters: {
-    readonly $identifier?:
-      | (() => NestedNodeShape.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly requiredStringProperty: string;
-  }): NestedNodeShape {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export type Identifier = BlankNode | NamedNode;
-
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly "@type": "NestedNodeShape";
-    readonly requiredStringProperty: string;
-  };
-
-  export namespace Json {
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("NestedNodeShape"),
-          requiredStringProperty: z.string().meta({ title: "Required string" }),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "NestedNodeShape" as const },
-                scope: `${scopePrefix}/properties/@type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/@type`,
-            type: "Control",
-          },
-          {
-            label: "Required string",
-            scope: `${scopePrefix}/properties/requiredStringProperty`,
-            type: "Control",
-          },
-        ],
-        label: "NestedNodeShape",
-        type: "Group",
-      };
-    }
-  }
-
-  export function fromJson(
-    $json: NestedNodeShape.Json,
-  ): Either<Error, NestedNodeShape> {
-    return $sequenceRecord({
-      $identifier: Either.of<Error, BlankNode | NamedNode>(
-        $json["@id"].startsWith("_:")
-          ? dataFactory.blankNode($json["@id"].substring(2))
-          : dataFactory.namedNode($json["@id"]),
-      ),
-      requiredStringProperty: Either.of<Error, string>(
-        $json["requiredStringProperty"],
-      ),
-    }).chain(create);
-  }
-
-  export function isNestedNodeShape(
-    object: $Object,
-  ): object is NestedNodeShape {
-    switch (object.$type) {
-      case "NestedNodeShape":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
-      requiredStringProperty: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/requiredStringProperty",
-        ),
-        type: { kind: "String" as const },
-      },
-    },
-  } as const;
-
-  export function toJson(
-    _nestedNodeShape: NestedNodeShape,
-  ): NestedNodeShape.Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _nestedNodeShape.$identifier().termType === "BlankNode"
-            ? `_:${_nestedNodeShape.$identifier().value}`
-            : _nestedNodeShape.$identifier().value,
-        "@type": _nestedNodeShape.$type,
-        requiredStringProperty: _nestedNodeShape.requiredStringProperty,
-      } satisfies NestedNodeShape.Json),
-    );
-  }
-
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    NestedNodeShape.Identifier,
-    NestedNodeShape
-  > = (parameters) => {
-    parameters.resource.add(
-      NestedNodeShape.schema.properties.requiredStringProperty.path,
-      [$literalFactory.string(parameters.object.requiredStringProperty)],
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export function _propertiesToStrings(
-    _nestedNodeShape: NestedNodeShape,
-  ): Record<string, string> {
-    return $compactRecord({
-      $identifier: _nestedNodeShape.$identifier().toString(),
-    });
-  }
-
-  export function $toString(_nestedNodeShape: NestedNodeShape): string {
-    return `NestedNodeShape(${JSON.stringify(_propertiesToStrings(_nestedNodeShape))})`;
-  }
-} /**
- * Form
- */
-
-export interface FormNodeShape {
-  readonly $identifier: () => FormNodeShape.Identifier;
-
-  readonly $type: "FormNodeShape";
+  readonly $type: "FormObject";
 
   /**
    * Empty string set
@@ -601,7 +409,7 @@ export interface FormNodeShape {
   /**
    * Nested object
    */
-  readonly nestedObjectProperty: NestedNodeShape;
+  readonly nestedObjectProperty: NestedObject;
 
   /**
    * Non-empty string set
@@ -624,20 +432,20 @@ export interface FormNodeShape {
   readonly requiredStringProperty: string;
 }
 
-export namespace FormNodeShape {
+export namespace FormObject {
   export function create(parameters: {
     readonly $identifier?:
-      | (() => FormNodeShape.Identifier)
+      | (() => FormObject.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedObjectProperty: NestedNodeShape;
+    readonly nestedObjectProperty: NestedObject;
     readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
     readonly requiredStringProperty: string;
-  }): Either<Error, FormNodeShape> {
+  }): Either<Error, FormObject> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       emptyStringSetProperty: $convertToScalarSet(
@@ -645,7 +453,7 @@ export namespace FormNodeShape {
         true,
       )(parameters.emptyStringSetProperty).chain((value) =>
         $validateArray($identityValidationFunction, true)(
-          FormNodeShape.schema.properties.emptyStringSetProperty.type,
+          FormObject.schema.properties.emptyStringSetProperty.type,
           value,
         ),
       ),
@@ -655,7 +463,7 @@ export namespace FormNodeShape {
         true,
       )(parameters.nonEmptyStringSetProperty).chain((value) =>
         $validateArray($identityValidationFunction, true)(
-          FormNodeShape.schema.properties.nonEmptyStringSetProperty.type,
+          FormObject.schema.properties.nonEmptyStringSetProperty.type,
           value,
         ),
       ),
@@ -663,33 +471,30 @@ export namespace FormNodeShape {
         parameters.optionalStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          FormNodeShape.schema.properties.optionalStringProperty.type,
+          FormObject.schema.properties.optionalStringProperty.type,
           value,
         ),
       ),
       requiredIntProperty: Either.of(parameters.requiredIntProperty),
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    }).map((properties) =>
-      $monkeyPatchObject(
-        { ...properties, $type: "FormNodeShape" as const },
-        { toJson, $toString },
-      ),
-    );
+    })
+      .map((properties) => ({ ...properties, $type: "FormObject" as const }))
+      .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
   }
 
   export function createUnsafe(parameters: {
     readonly $identifier?:
-      | (() => FormNodeShape.Identifier)
+      | (() => FormObject.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedObjectProperty: NestedNodeShape;
+    readonly nestedObjectProperty: NestedObject;
     readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
     readonly requiredStringProperty: string;
-  }): FormNodeShape {
+  }): FormObject {
     return create(parameters).unsafeCoerce();
   }
 
@@ -702,9 +507,9 @@ export namespace FormNodeShape {
 
   export type Json = {
     readonly "@id": string;
-    readonly "@type": "FormNodeShape";
+    readonly "@type": "FormObject";
     readonly emptyStringSetProperty?: readonly string[];
-    readonly nestedObjectProperty: NestedNodeShape.Json;
+    readonly nestedObjectProperty: NestedObject.Json;
     readonly nonEmptyStringSetProperty: readonly string[];
     readonly optionalStringProperty?: string;
     readonly requiredIntProperty: number;
@@ -724,14 +529,14 @@ export namespace FormNodeShape {
       return z
         .object({
           "@id": z.string().min(1),
-          "@type": z.literal("FormNodeShape"),
+          "@type": z.literal("FormObject"),
           emptyStringSetProperty: z
             .string()
             .array()
             .optional()
             .readonly()
             .meta({ title: "Empty string set" }),
-          nestedObjectProperty: NestedNodeShape.Json.schema().meta({
+          nestedObjectProperty: NestedObject.Json.schema().meta({
             title: "Nested object",
           }),
           nonEmptyStringSetProperty: z
@@ -750,7 +555,7 @@ export namespace FormNodeShape {
           requiredIntProperty: z.number().meta({ title: "Required int" }),
           requiredStringProperty: z.string().meta({ title: "Required string" }),
         })
-        .meta({ title: "Form" }) satisfies z.ZodType<Json>;
+        .meta({}) satisfies z.ZodType<Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -765,7 +570,7 @@ export namespace FormNodeShape {
           {
             rule: {
               condition: {
-                schema: { const: "FormNodeShape" as const },
+                schema: { const: "FormObject" as const },
                 scope: `${scopePrefix}/properties/@type`,
               },
               effect: "HIDE",
@@ -778,7 +583,7 @@ export namespace FormNodeShape {
             scope: `${scopePrefix}/properties/emptyStringSetProperty`,
             type: "Control",
           },
-          NestedNodeShape.Json.uiSchema({
+          NestedObject.Json.uiSchema({
             scopePrefix: `${scopePrefix}/properties/nestedObjectProperty`,
           }),
           {
@@ -802,15 +607,13 @@ export namespace FormNodeShape {
             type: "Control",
           },
         ],
-        label: "Form",
+        label: "FormObject",
         type: "Group",
       };
     }
   }
 
-  export function fromJson(
-    $json: FormNodeShape.Json,
-  ): Either<Error, FormNodeShape> {
+  export function fromJson($json: FormObject.Json): Either<Error, FormObject> {
     return $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
         $json["@id"].startsWith("_:")
@@ -822,7 +625,7 @@ export namespace FormNodeShape {
           Either.of<Error, string>(item),
         ),
       ),
-      nestedObjectProperty: NestedNodeShape.fromJson(
+      nestedObjectProperty: NestedObject.fromJson(
         $json["nestedObjectProperty"],
       ),
       nonEmptyStringSetProperty: Either.sequence<Error, string>(
@@ -844,13 +647,8 @@ export namespace FormNodeShape {
     }).chain(create);
   }
 
-  export function isFormNodeShape(object: $Object): object is FormNodeShape {
-    switch (object.$type) {
-      case "FormNodeShape":
-        return true;
-      default:
-        return false;
-    }
+  export function isFormObject(object: $Object): object is FormObject {
+    return object.$type === "FormObject";
   }
 
   export const schema = {
@@ -870,7 +668,7 @@ export namespace FormNodeShape {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nestedObjectProperty"),
         get type() {
-          return NestedNodeShape.schema;
+          return NestedObject.schema;
         },
       },
       nonEmptyStringSetProperty: {
@@ -909,47 +707,47 @@ export namespace FormNodeShape {
     },
   } as const;
 
-  export function toJson(_formNodeShape: FormNodeShape): FormNodeShape.Json {
+  export function toJson(_formObject: FormObject): FormObject.Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _formNodeShape.$identifier().termType === "BlankNode"
-            ? `_:${_formNodeShape.$identifier().value}`
-            : _formNodeShape.$identifier().value,
-        "@type": _formNodeShape.$type,
-        emptyStringSetProperty: _formNodeShape.emptyStringSetProperty.map(
+          _formObject.$identifier().termType === "BlankNode"
+            ? `_:${_formObject.$identifier().value}`
+            : _formObject.$identifier().value,
+        "@type": _formObject.$type,
+        emptyStringSetProperty: _formObject.emptyStringSetProperty.map(
           (item) => item,
         ),
-        nestedObjectProperty: NestedNodeShape.toJson(
-          _formNodeShape.nestedObjectProperty,
+        nestedObjectProperty: NestedObject.toJson(
+          _formObject.nestedObjectProperty,
         ),
-        nonEmptyStringSetProperty: _formNodeShape.nonEmptyStringSetProperty.map(
+        nonEmptyStringSetProperty: _formObject.nonEmptyStringSetProperty.map(
           (item) => item,
         ),
-        optionalStringProperty: _formNodeShape.optionalStringProperty
+        optionalStringProperty: _formObject.optionalStringProperty
           .map((item) => item)
           .extract(),
-        requiredIntProperty: _formNodeShape.requiredIntProperty,
-        requiredStringProperty: _formNodeShape.requiredStringProperty,
-      } satisfies FormNodeShape.Json),
+        requiredIntProperty: _formObject.requiredIntProperty,
+        requiredStringProperty: _formObject.requiredStringProperty,
+      } satisfies FormObject.Json),
     );
   }
 
   export const _toRdfResource: $_ToRdfResourceFunction<
-    FormNodeShape.Identifier,
-    FormNodeShape
+    FormObject.Identifier,
+    FormObject
   > = (parameters) => {
     parameters.resource.add(
-      FormNodeShape.schema.properties.emptyStringSetProperty.path,
+      FormObject.schema.properties.emptyStringSetProperty.path,
       parameters.object.emptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       parameters.graph,
     );
     parameters.resource.add(
-      FormNodeShape.schema.properties.nestedObjectProperty.path,
+      FormObject.schema.properties.nestedObjectProperty.path,
       [
-        NestedNodeShape.toRdfResource(parameters.object.nestedObjectProperty, {
+        NestedObject.toRdfResource(parameters.object.nestedObjectProperty, {
           graph: parameters.graph,
           resourceSet: parameters.resourceSet,
         }).identifier,
@@ -957,21 +755,21 @@ export namespace FormNodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      FormNodeShape.schema.properties.nonEmptyStringSetProperty.path,
+      FormObject.schema.properties.nonEmptyStringSetProperty.path,
       parameters.object.nonEmptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       parameters.graph,
     );
     parameters.resource.add(
-      FormNodeShape.schema.properties.optionalStringProperty.path,
+      FormObject.schema.properties.optionalStringProperty.path,
       parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      FormNodeShape.schema.properties.requiredIntProperty.path,
+      FormObject.schema.properties.requiredIntProperty.path,
       [
         $literalFactory.number(
           parameters.object.requiredIntProperty,
@@ -981,7 +779,7 @@ export namespace FormNodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      FormNodeShape.schema.properties.requiredStringProperty.path,
+      FormObject.schema.properties.requiredStringProperty.path,
       [$literalFactory.string(parameters.object.requiredStringProperty)],
       parameters.graph,
     );
@@ -991,39 +789,216 @@ export namespace FormNodeShape {
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function _propertiesToStrings(
-    _formNodeShape: FormNodeShape,
+    _formObject: FormObject,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _formNodeShape.$identifier().toString(),
+      $identifier: _formObject.$identifier().toString(),
     });
   }
 
-  export function $toString(_formNodeShape: FormNodeShape): string {
-    return `FormNodeShape(${JSON.stringify(_propertiesToStrings(_formNodeShape))})`;
+  export function $toString(_formObject: FormObject): string {
+    return `FormObject(${JSON.stringify(_propertiesToStrings(_formObject))})`;
   }
 }
-export type $Object = FormNodeShape | NestedNodeShape;
+export interface NestedObject {
+  readonly $identifier: () => NestedObject.Identifier;
+
+  readonly $type: "NestedObject";
+
+  /**
+   * Required string
+   */
+  readonly requiredStringProperty: string;
+}
+
+export namespace NestedObject {
+  export function create(parameters: {
+    readonly $identifier?:
+      | (() => NestedObject.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly requiredStringProperty: string;
+  }): Either<Error, NestedObject> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      requiredStringProperty: Either.of(parameters.requiredStringProperty),
+    })
+      .map((properties) => ({ ...properties, $type: "NestedObject" as const }))
+      .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => NestedObject.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly requiredStringProperty: string;
+  }): NestedObject {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly "@type": "NestedObject";
+    readonly requiredStringProperty: string;
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          "@type": z.literal("NestedObject"),
+          requiredStringProperty: z.string().meta({ title: "Required string" }),
+        })
+        .meta({}) satisfies z.ZodType<Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NestedObject" as const },
+                scope: `${scopePrefix}/properties/@type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/@type`,
+            type: "Control",
+          },
+          {
+            label: "Required string",
+            scope: `${scopePrefix}/properties/requiredStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "NestedObject",
+        type: "Group",
+      };
+    }
+  }
+
+  export function fromJson(
+    $json: NestedObject.Json,
+  ): Either<Error, NestedObject> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      requiredStringProperty: Either.of<Error, string>(
+        $json["requiredStringProperty"],
+      ),
+    }).chain(create);
+  }
+
+  export function isNestedObject(object: $Object): object is NestedObject {
+    return object.$type === "NestedObject";
+  }
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      requiredStringProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/requiredStringProperty",
+        ),
+        type: { kind: "String" as const },
+      },
+    },
+  } as const;
+
+  export function toJson(_nestedObject: NestedObject): NestedObject.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _nestedObject.$identifier().termType === "BlankNode"
+            ? `_:${_nestedObject.$identifier().value}`
+            : _nestedObject.$identifier().value,
+        "@type": _nestedObject.$type,
+        requiredStringProperty: _nestedObject.requiredStringProperty,
+      } satisfies NestedObject.Json),
+    );
+  }
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    NestedObject.Identifier,
+    NestedObject
+  > = (parameters) => {
+    parameters.resource.add(
+      NestedObject.schema.properties.requiredStringProperty.path,
+      [$literalFactory.string(parameters.object.requiredStringProperty)],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export function _propertiesToStrings(
+    _nestedObject: NestedObject,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _nestedObject.$identifier().toString(),
+    });
+  }
+
+  export function $toString(_nestedObject: NestedObject): string {
+    return `NestedObject(${JSON.stringify(_propertiesToStrings(_nestedObject))})`;
+  }
+}
+export type $Object = FormObject | NestedObject;
 
 export namespace $Object {
   export const $toString = (value: $Object): string => {
-    if (FormNodeShape.isFormNodeShape(value)) {
-      return FormNodeShape.$toString(value);
+    if (FormObject.isFormObject(value)) {
+      return FormObject.$toString(value);
     }
-    if (NestedNodeShape.isNestedNodeShape(value)) {
-      return NestedNodeShape.$toString(value);
+    if (NestedObject.isNestedObject(value)) {
+      return NestedObject.$toString(value);
     }
 
     throw new Error("unable to serialize to string");
   };
 
   export const fromJson = (value: $Object.Json): Either<Error, $Object> => {
-    if (value["@type"] === "FormNodeShape") {
-      return FormNodeShape.fromJson(value as FormNodeShape.Json).map(
+    if (value["@type"] === "FormObject") {
+      return FormObject.fromJson(value as FormObject.Json).map(
         (value) => value,
       );
     }
-    if (value["@type"] === "NestedNodeShape") {
-      return NestedNodeShape.fromJson(value as NestedNodeShape.Json).map(
+    if (value["@type"] === "NestedObject") {
+      return NestedObject.fromJson(value as NestedObject.Json).map(
         (value) => value,
       );
     }
@@ -1041,8 +1016,8 @@ export namespace $Object {
     export const schema = () =>
       z
         .discriminatedUnion("$type", [
-          FormNodeShape.Json.schema(),
-          NestedNodeShape.Json.schema(),
+          FormObject.Json.schema(),
+          NestedObject.Json.schema(),
         ])
         .readonly()
         .meta({});
@@ -1056,18 +1031,18 @@ export namespace $Object {
     }
   }
 
-  export type Json = FormNodeShape.Json | NestedNodeShape.Json;
+  export type Json = FormObject.Json | NestedObject.Json;
 
   export const schema = {
     kind: "ObjectUnion" as const,
     members: {
-      FormNodeShape: {
-        discriminantValues: ["FormNodeShape"],
-        type: FormNodeShape.schema,
+      FormObject: {
+        discriminantValues: ["FormObject"],
+        type: FormObject.schema,
       },
-      NestedNodeShape: {
-        discriminantValues: ["NestedNodeShape"],
-        type: NestedNodeShape.schema,
+      NestedObject: {
+        discriminantValues: ["NestedObject"],
+        type: NestedObject.schema,
       },
     },
     properties: {
@@ -1082,11 +1057,11 @@ export namespace $Object {
   } as const;
 
   export const toJson = (value: $Object): $Object.Json => {
-    if (FormNodeShape.isFormNodeShape(value)) {
-      return FormNodeShape.toJson(value);
+    if (FormObject.isFormObject(value)) {
+      return FormObject.toJson(value);
     }
-    if (NestedNodeShape.isNestedNodeShape(value)) {
-      return NestedNodeShape.toJson(value);
+    if (NestedObject.isNestedObject(value)) {
+      return NestedObject.toJson(value);
     }
 
     throw new Error("unable to serialize to JSON");
@@ -1096,11 +1071,11 @@ export namespace $Object {
     object,
     options,
   ) => {
-    if (FormNodeShape.isFormNodeShape(object)) {
-      return FormNodeShape.toRdfResource(object, options);
+    if (FormObject.isFormObject(object)) {
+      return FormObject.toRdfResource(object, options);
     }
-    if (NestedNodeShape.isNestedNodeShape(object)) {
-      return NestedNodeShape.toRdfResource(object, options);
+    if (NestedObject.isNestedObject(object)) {
+      return NestedObject.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -1109,17 +1084,17 @@ export namespace $Object {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (FormNodeShape.isFormNodeShape(value)) {
+    if (FormObject.isFormObject(value)) {
       return [
-        FormNodeShape.toRdfResource(value, {
+        FormObject.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
-    if (NestedNodeShape.isNestedNodeShape(value)) {
+    if (NestedObject.isNestedObject(value)) {
       return [
-        NestedNodeShape.toRdfResource(value, {
+        NestedObject.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,

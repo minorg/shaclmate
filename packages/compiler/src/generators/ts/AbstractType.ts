@@ -348,10 +348,9 @@ export namespace AbstractType {
   }
 
   export interface DiscriminantProperty {
-    readonly descendantValues: readonly DiscriminantProperty.Value[];
     readonly jsonName: string;
     readonly name: string;
-    readonly ownValues: readonly DiscriminantProperty.Value[];
+    readonly values: readonly DiscriminantProperty.Value[];
   }
 
   export namespace DiscriminantProperty {

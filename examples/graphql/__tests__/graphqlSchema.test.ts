@@ -14,14 +14,14 @@ describe("graphqlSchema", () => {
 
   it("optional lazy object", async ({ expect }) => {
     const result = await execute(
-      `query { child(identifier: "<http://example.com/child0>") { _identifier optionalLazyObjectProperty { _identifier } } }`,
+      `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier optionalLazyObjectProperty { _identifier } } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      child: {
-        _identifier: "<http://example.com/child0>",
+      rootObject: {
+        _identifier: "<http://example.com/rootObject0>",
         optionalLazyObjectProperty: {
-          _identifier: "<http://example.com/child0/lazy>",
+          _identifier: "<http://example.com/rootObject0/lazyObject>",
         },
       },
     });
@@ -29,15 +29,15 @@ describe("graphqlSchema", () => {
 
   it("lazy object set", async ({ expect }) => {
     const result = await execute(
-      `query { child(identifier: "<http://example.com/child0>") { _identifier lazyObjectSetProperty { _identifier } } }`,
+      `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier lazyObjectSetProperty { _identifier } } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      child: {
-        _identifier: "<http://example.com/child0>",
+      rootObject: {
+        _identifier: "<http://example.com/rootObject0>",
         lazyObjectSetProperty: [
           {
-            _identifier: "<http://example.com/child0/lazy>",
+            _identifier: "<http://example.com/rootObject0/lazyObject>",
           },
         ],
       },
@@ -46,12 +46,12 @@ describe("graphqlSchema", () => {
 
   it("lazy object set (limit and offset)", async ({ expect }) => {
     const result = await execute(
-      `query { child(identifier: "<http://example.com/child0>") { _identifier lazyObjectSetProperty(limit: 1, offset: 1) { _identifier } } }`,
+      `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier lazyObjectSetProperty(limit: 1, offset: 1) { _identifier } } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      child: {
-        _identifier: "<http://example.com/child0>",
+      rootObject: {
+        _identifier: "<http://example.com/rootObject0>",
         lazyObjectSetProperty: [],
       },
     });
@@ -59,119 +59,119 @@ describe("graphqlSchema", () => {
 
   it("nested object", async ({ expect }) => {
     const result = await execute(
-      `query { child(identifier: "<http://example.com/child0>") { _identifier optionalObjectProperty { _identifier } } }`,
+      `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier optionalObjectProperty { _identifier } } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      child: {
-        _identifier: "<http://example.com/child0>",
+      rootObject: {
+        _identifier: "<http://example.com/rootObject0>",
         optionalObjectProperty: {
-          _identifier: "<http://example.com/child0/nested>",
+          _identifier: "<http://example.com/rootObject0/nestedObject>",
         },
       },
     });
   });
 
-  it("object", async ({ expect }) => {
+  it("root object", async ({ expect }) => {
     const result = await execute(
-      `query { child(identifier: "<http://example.com/child0>") { _identifier, childStringProperty } }`,
+      `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier, requiredStringProperty } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      child: {
-        _identifier: "<http://example.com/child0>",
-        childStringProperty: "child string property",
+      rootObject: {
+        _identifier: "<http://example.com/rootObject0>",
+        requiredStringProperty: "required string (root)",
       },
     });
   });
 
-  it("object identifiers (all)", async ({ expect }) => {
-    const result = await execute("query { childIdentifiers }");
+  it("root object identifiers (all)", async ({ expect }) => {
+    const result = await execute("query { rootObjectIdentifiers }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      childIdentifiers: [...new Array(4)].map(
-        (_, i) => `<http://example.com/child${i}>`,
+      rootObjectIdentifiers: [...new Array(4)].map(
+        (_, i) => `<http://example.com/rootObject${i}>`,
       ),
     });
   });
 
-  it("object identifiers (limit)", async ({ expect }) => {
-    const result = await execute("query { childIdentifiers(limit: 2) }");
+  it("root object identifiers (limit)", async ({ expect }) => {
+    const result = await execute("query { rootObjectIdentifiers(limit: 2) }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      childIdentifiers: [...new Array(2)].map(
-        (_, i) => `<http://example.com/child${i}>`,
+      rootObjectIdentifiers: [...new Array(2)].map(
+        (_, i) => `<http://example.com/rootObject${i}>`,
       ),
     });
   });
 
-  it("object identifiers (offset)", async ({ expect }) => {
-    const result = await execute("query { childIdentifiers(offset: 1) }");
+  it("root object identifiers (offset)", async ({ expect }) => {
+    const result = await execute("query { rootObjectIdentifiers(offset: 1) }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      childIdentifiers: [...new Array(3)].map(
-        (_, i) => `<http://example.com/child${i + 1}>`,
+      rootObjectIdentifiers: [...new Array(3)].map(
+        (_, i) => `<http://example.com/rootObject${i + 1}>`,
       ),
     });
   });
 
-  it("objects (all)", async ({ expect }) => {
+  it("root objects (all)", async ({ expect }) => {
     const result = await execute(
-      "query { children { _identifier, childStringProperty } }",
+      "query { rootObjects { _identifier, requiredStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      children: [...new Array(4)].map((_, i) => ({
-        _identifier: `<http://example.com/child${i}>`,
-        childStringProperty: "child string property",
+      rootObjects: [...new Array(4)].map((_, i) => ({
+        _identifier: `<http://example.com/rootObject${i}>`,
+        requiredStringProperty: "required string (root)",
       })),
     });
   });
 
-  it("objects (identifiers)", async ({ expect }) => {
+  it("root objects (identifiers)", async ({ expect }) => {
     const result = await execute(
-      `query { children(identifiers: [${[...new Array(2)].map((_, i) => `"<http://example.com/child${i + 1}>"`).join(", ")}]) { _identifier, childStringProperty } }`,
+      `query { rootObjects(identifiers: [${[...new Array(2)].map((_, i) => `"<http://example.com/rootObject${i + 1}>"`).join(", ")}]) { _identifier, requiredStringProperty } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      children: [...new Array(2)].map((_, i) => ({
-        _identifier: `<http://example.com/child${i + 1}>`,
-        childStringProperty: "child string property",
+      rootObjects: [...new Array(2)].map((_, i) => ({
+        _identifier: `<http://example.com/rootObject${i + 1}>`,
+        requiredStringProperty: "required string (root)",
       })),
     });
   });
 
-  it("objects (limit)", async ({ expect }) => {
+  it("root objects (limit)", async ({ expect }) => {
     const result = await execute(
-      "query { children(limit: 2) { _identifier, childStringProperty } }",
+      "query { rootObjects(limit: 2) { _identifier, requiredStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      children: [...new Array(2)].map((_, i) => ({
-        _identifier: `<http://example.com/child${i}>`,
-        childStringProperty: "child string property",
+      rootObjects: [...new Array(2)].map((_, i) => ({
+        _identifier: `<http://example.com/rootObject${i}>`,
+        requiredStringProperty: "required string (root)",
       })),
     });
   });
 
-  it("objects (offset)", async ({ expect }) => {
+  it("root objects (offset)", async ({ expect }) => {
     const result = await execute(
-      "query { children(offset: 1) { _identifier, childStringProperty } }",
+      "query { rootObjects(offset: 1) { _identifier, requiredStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      children: [...new Array(3)].map((_, i) => ({
-        _identifier: `<http://example.com/child${i + 1}>`,
-        childStringProperty: "child string property",
+      rootObjects: [...new Array(3)].map((_, i) => ({
+        _identifier: `<http://example.com/rootObject${i + 1}>`,
+        requiredStringProperty: "required string (root)",
       })),
     });
   });
 
-  it("objectCount", async ({ expect }) => {
-    const result = await execute("query { childCount }");
+  it("root objectCount", async ({ expect }) => {
+    const result = await execute("query { rootObjectCount }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      childCount: 4,
+      rootObjectCount: 4,
     });
   });
 
