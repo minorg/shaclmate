@@ -226,7 +226,8 @@ export class TsGenerator implements Generator {
     reusables: Reusables;
   }): ObjectUnionType {
     const filteredNamedObjectTypes = namedObjectTypes.filter(
-      (namedObjectType) => !namedObjectType.extern, // && !namedObjectType.name.startsWith(syntheticNamePrefix),
+      (namedObjectType) =>
+        !namedObjectType.extern && !namedObjectType.synthetic,
     );
     invariant(filteredNamedObjectTypes.length > 0);
 
