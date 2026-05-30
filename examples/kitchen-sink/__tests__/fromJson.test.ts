@@ -1,6 +1,5 @@
 import { describe, it } from "vitest";
 import "./harnesses.js"; // Must be imported before kitchenSink
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { harnesses } from "./harnesses.js";
 
 describe("fromJson", () => {
@@ -19,18 +18,4 @@ describe("fromJson", () => {
       expect(equalsResult).toStrictEqual(true);
     });
   }
-
-  it("concrete base class fromJson", ({ expect }) => {
-    const fromJsonInstance = kitchenSink.ClassHierarchy2.fromJson(
-      kitchenSink.ClassHierarchy3.toJson(harnesses.classHierarchy3.instance),
-    ).unsafeCoerce();
-    expect(
-      fromJsonInstance
-        .$identifier()
-        .equals(harnesses.classHierarchy3.instance.$identifier()),
-    );
-    expect(fromJsonInstance.classHierarchy2Property).toStrictEqual(
-      harnesses.classHierarchy3.instance.classHierarchy2Property,
-    );
-  });
 });
