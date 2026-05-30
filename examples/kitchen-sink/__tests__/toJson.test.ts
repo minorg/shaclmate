@@ -16,7 +16,7 @@ describe("toJson", () => {
           "@type": "UnionMember1",
           "@id": "http://example.com/unionMember1a",
           unionMember1Property: "test",
-          unionMemberCommonParentProperty: "test",
+          unionMemberCommonProperty: "test",
         },
       });
       expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
@@ -32,7 +32,7 @@ describe("toJson", () => {
           "@type": "UnionMember1",
           "@id": "http://example.com/unionMember1b",
           unionMember1Property: "test",
-          unionMemberCommonParentProperty: "test",
+          unionMemberCommonProperty: "test",
         },
       });
       expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
@@ -58,7 +58,7 @@ describe("toJson", () => {
           "@type": "UnionMember2",
           "@id": "http://example.com/unionMember2a",
           unionMember2Property: "test",
-          unionMemberCommonParentProperty: "test",
+          unionMemberCommonProperty: "test",
         },
       });
       expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
@@ -86,7 +86,7 @@ describe("toJson", () => {
             "@type": "UnionMember2",
             "@id": "http://example.com/unionMember2b",
             unionMember2Property: "test",
-            unionMemberCommonParentProperty: "test",
+            unionMemberCommonProperty: "test",
           },
         },
         {
@@ -95,7 +95,7 @@ describe("toJson", () => {
             "@type": "UnionMember1",
             "@id": "http://example.com/unionMember1b",
             unionMember1Property: "test",
-            unionMemberCommonParentProperty: "test",
+            unionMemberCommonProperty: "test",
           },
         },
       ]);
@@ -118,19 +118,9 @@ describe("toJson", () => {
     }
   });
 
-  it("class hierarchy", ({ expect }) => {
-    const jsonObject = kitchenSink.ClassHierarchy3.toJson(
-      harnesses.classHierarchy3.instance,
-    );
-    expect(jsonObject.classHierarchy0Property).toStrictEqual("0");
-    expect(jsonObject.classHierarchy2Property).toStrictEqual("2");
-    expect(jsonObject.classHierarchy3Property).toStrictEqual("3");
-    expect(jsonObject["@type"]).toStrictEqual("ClassHierarchy3");
-  });
-
   it("toJSON", ({ expect }) => {
-    expect(JSON.stringify(harnesses.classHierarchy3.instance)).toStrictEqual(
-      `{"@id":"http://example.com/instance","@type":"ClassHierarchy3","classHierarchy0Property":"0","classHierarchy2Property":"2","classHierarchy3Property":"3"}`,
+    expect(JSON.stringify(harnesses.termProperties.instance)).toStrictEqual(
+      `{"@id":"http://example.com/instance","@type":"TermProperties","blankNodeTermProperty":{"@id":"_:df_0_16"},"booleanTermProperty":true,"dateTermProperty":"2025-03-06","dateTimeTermProperty":"2018-04-09T10:00:00.000Z","iriTermProperty":{"@id":"http://example.com"},"literalTermProperty":{"@value":"test"},"numberTermProperty":1,"stringTermProperty":"test","termProperty":{"@type":"http://www.w3.org/2001/XMLSchema#decimal","@value":"1","termType":"Literal"}}`,
     );
   });
 
