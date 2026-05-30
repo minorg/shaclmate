@@ -81,29 +81,31 @@ export class TypeFactory {
       }
     }
 
+    const discriminantProperty = astType.name.map(
+      (name) =>
+        new ObjectType.DiscriminantProperty({
+          configuration: this.configuration,
+          logger: this.logger,
+          name: `${this.configuration.syntheticNamePrefix}type`,
+          objectType: { alias: astType.name },
+          reusables: this.reusables,
+          value: name,
+        }),
+    );
+
     const identifierType = this.createIdentifierType(astType.identifierType);
 
     const objectType = new ObjectType({
       alias: astType.name.map((name) =>
         this.tsName(name, { synthetic: astType.synthetic }),
       ),
+      discriminantProperty,
       comment: astType.comment,
       configuration: this.configuration,
       extern: astType.extern,
       fromRdfType: astType.fromRdfType,
       identifierType,
       label: astType.label,
-      lazyDiscriminantProperty: (objectType: ObjectType) => {
-        // Discriminant property
-        return new ObjectType.DiscriminantProperty({
-          configuration: this.configuration,
-          logger: this.logger,
-          name: `${this.configuration.syntheticNamePrefix}type`,
-          objectType,
-          reusables: this.reusables,
-          value: objectType.discriminantValue,
-        });
-      },
       lazyProperties: (objectType: ObjectType) => {
         const properties: ObjectType.Property[] = astType.properties
           .toSorted((left, right) => {
@@ -124,7 +126,9 @@ export class TypeFactory {
             }),
           );
 
-        properties.splice(0, 0, objectType._discriminantProperty);
+        discriminantProperty.ifJust((discriminantProperty) => {
+          properties.splice(0, 0, discriminantProperty);
+        });
 
         properties.splice(
           0,

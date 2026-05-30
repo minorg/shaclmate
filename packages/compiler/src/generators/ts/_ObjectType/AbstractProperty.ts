@@ -2,7 +2,6 @@ import { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 
-import type { ObjectType } from "../ObjectType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { TsGenerator } from "../TsGenerator.js";
@@ -17,7 +16,7 @@ export abstract class AbstractProperty<
 > {
   protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
-  protected readonly objectType: ObjectType;
+  protected readonly objectType: { readonly alias: Maybe<string> };
   protected readonly reusables: Reusables;
 
   /**
@@ -105,7 +104,7 @@ export abstract class AbstractProperty<
     configuration: TsGenerator.Configuration;
     logger: Logger;
     name: string;
-    objectType: ObjectType;
+    objectType: { readonly alias: Maybe<string> };
     reusables: Reusables;
     type: TypeT;
   }) {

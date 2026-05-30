@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
-import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
+import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
@@ -38,10 +38,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
     return Maybe.of({
       key: this.jsonName,
-      schema:
-        this.type.values.length > 1
-          ? code`${this.reusables.imports.z}.enum(${arrayOf(...this.type.values)})`
-          : code`${this.reusables.imports.z}.literal(${literalOf(this.type.values[0])})`,
+      schema: code`${this.reusables.imports.z}.literal(${literalOf(this.value)})`,
     });
   }
 
@@ -58,7 +55,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   //   return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
   // }
   private get constValue(): Code {
-    return code`${literalOf(this.objectType.discriminantValue)} as const`;
+    return code`${literalOf(this.value)} as const`;
   }
 
   override constructorInitializer(): Maybe<Code> {
@@ -78,10 +75,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
-    if (this.objectType.parentObjectTypes.length > 0) {
-      return [];
-    }
-
     return [code`${variables.hasher}.update(${variables.value});`];
   }
 
@@ -90,10 +83,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
-    if (this.objectType.parentObjectTypes.length > 0) {
-      return Maybe.empty();
-    }
-
     const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
     return Maybe.of(
       code`{ rule: { condition: { schema: { const: ${this.constValue} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
@@ -124,6 +113,11 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   override toStringInitializer(): Maybe<Code> {
     return Maybe.empty();
+  }
+
+  @Memoize()
+  get values(): readonly string[] {
+    return [this.value];
   }
 }
 
