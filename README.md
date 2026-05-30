@@ -50,9 +50,7 @@ See [`examples/kitchen-sink/package.json`](examples/kitchen-sink/package.json) a
 * [JSON Forms](https://jsonforms.io/) schema 
 * GraphQL schemas and resolvers for [GraphQL.js](https://www.graphql-js.org)-compatible servers
 * [purify-ts](https://gigobyte.github.io/purify/) [`Maybe`](https://gigobyte.github.io/purify/adts/Maybe) types instead of `null`/`undefined`
-* Support for using handwritten "extern" types from generated code
 * Built on [RDF/JS](https://rdf.js.org/) standards
-* Include/exclude generated code features at node shape or ontology level
 
 ## Examples
 
