@@ -10,15 +10,15 @@
     shaclmate:tsFeatureInclude shaclmate:_TsFeature_Create, shaclmate:_TsFeature_Graphql ;
     a owl:Ontology .
 
-:Object
-    a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:IRI ;
-    sh:property :lazyObjectSetProperty, :optionalLazyObjectProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty .
-
 :NestedObject
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
+
+:RootObject
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:property :lazyObjectSetProperty, :optionalLazyObjectProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty .
 
 :Union
     a owl:Class, sh:NodeShape ;
