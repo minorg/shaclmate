@@ -4,7 +4,5 @@ import type { UnionType } from "./UnionType.js";
 
 export interface Ast {
   readonly lazyTypesCount: number;
-  readonly namedIntersectionTypes: readonly IntersectionType[];
-  readonly namedObjectTypes: readonly ObjectType[];
-  readonly namedUnionTypes: readonly UnionType[];
+  readonly namedTypes: readonly (IntersectionType | ObjectType | UnionType)[];
 }
