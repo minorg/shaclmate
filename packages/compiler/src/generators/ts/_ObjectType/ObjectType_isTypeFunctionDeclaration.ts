@@ -9,8 +9,14 @@ export function ObjectType_isTypeFunctionDeclaration(
     return Maybe.empty();
   }
 
+  const alias = this.alias.extract();
+  const discriminantProperty = this.discriminantProperty.extract();
+  if (!alias || !discriminantProperty) {
+    return Maybe.empty();
+  }
+
   return Maybe.of(code`\
-export function is${this.alias.unsafeCoerce()}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.alias.unsafeCoerce()} {
-  return ${this._discriminantProperty.name} === ${literalOf(this._discriminantProperty.value)};
+export function is${alias}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${alias} {
+  return ${discriminantProperty.name} === ${literalOf(discriminantProperty.value)};
 }`);
 }
