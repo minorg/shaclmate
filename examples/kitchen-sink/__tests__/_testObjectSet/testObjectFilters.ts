@@ -462,6 +462,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
             kitchenSink.TermProperties.createUnsafe({
+              $identifier: identifiers[i],
               stringTermProperty: `test${i}`,
             }),
           ),

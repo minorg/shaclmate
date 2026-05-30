@@ -9,9 +9,9 @@ export function testObjectCountMethods(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset(data.termPropertiesObjects),
       );
-      expect((await objectSet.termPropertieses()).unsafeCoerce()).toStrictEqual(
-        data.termPropertiesObjects.length,
-      );
+      expect(
+        (await objectSet.termPropertiesCount()).unsafeCoerce(),
+      ).toStrictEqual(data.termPropertiesObjects.length);
     });
 
     describe("union", () => {
