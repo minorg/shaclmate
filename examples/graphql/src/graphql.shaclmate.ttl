@@ -10,38 +10,18 @@
     shaclmate:tsFeatureInclude shaclmate:_TsFeature_Create, shaclmate:_TsFeature_Graphql ;
     a owl:Ontology .
 
-:Child
+:Object
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Child" ;
-    rdfs:subClassOf :Parent ;
     sh:nodeKind sh:IRI ;
-    sh:property :lazyObjectSetProperty, :optionalLazyObjectProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty, [
-        rdfs:comment "Child string property" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:path :childStringProperty
-    ] .
+    sh:property :lazyObjectSetProperty, :optionalLazyObjectProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty .
 
-:Nested
+:NestedObject
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Nested" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
 
-:Parent
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Parent" ;
-    sh:nodeKind sh:IRI ;
-    sh:property [
-        rdfs:comment "Parent string property" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:path :parentStringProperty
-    ] .
-
 :Union
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Union" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:xone (:UnionMember1
         :UnionMember2
@@ -49,25 +29,23 @@
 
 :UnionMember1
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "UnionMember1" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalNumberProperty .
 
 :UnionMember2
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "UnionMember1" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalStringProperty .
 
 :lazyObjectSetProperty
-    shaclmate:resolve :Nested ;
+    shaclmate:resolve :NestedObject ;
     a sh:PropertyShape ;
     rdfs:comment "Lazy object set property" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path :lazyObjectSetProperty .
 
 :optionalLazyObjectProperty
-    shaclmate:resolve :Nested ;
+    shaclmate:resolve :NestedObject ;
     a sh:PropertyShape ;
     rdfs:comment "Optional lazy object property" ;
     sh:maxCount 1 ;
@@ -85,7 +63,7 @@
     a sh:PropertyShape ;
     rdfs:comment "Optional object property" ;
     sh:maxCount 1 ;
-    sh:node :Nested ;
+    sh:node :NestedObject ;
     sh:path :optionalObjectProperty .
 
 :optionalStringProperty
