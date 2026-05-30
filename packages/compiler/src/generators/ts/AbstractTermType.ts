@@ -58,7 +58,6 @@ export abstract class AbstractTermType<
       jsonName: "termType",
       name: "termType",
       values: [...this.nodeKinds].map(NodeKind.toTermType),
-      type: "string" as const,
     });
   }
 

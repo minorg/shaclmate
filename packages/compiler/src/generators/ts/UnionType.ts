@@ -222,7 +222,6 @@ ${joinCode(
     switch (this.discriminant.kind) {
       case "Extrinsic":
         return Maybe.of({
-          descendantValues: [],
           jsonName: this.discriminant.jsonName,
           name: this.discriminant.name,
           values: this.discriminant.memberValues,
