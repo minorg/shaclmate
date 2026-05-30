@@ -9,6 +9,10 @@ export function ObjectType_isTypeFunctionDeclaration(
     return Maybe.empty();
   }
 
+  if (this.synthetic) {
+    return Maybe.empty();
+  }
+
   const alias = this.alias.extract();
   const discriminantProperty = this.discriminantProperty.extract();
   if (!alias || !discriminantProperty) {
