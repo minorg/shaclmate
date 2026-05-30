@@ -461,11 +461,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.ClassHierarchy3.createUnsafe({
-              classHierarchy0Property: `test${i}`,
-              $identifier: identifiers[i],
-              classHierarchy3Property: `test${i}`,
-              classHierarchy2Property: `test${i}`,
+            kitchenSink.TermProperties.createUnsafe({
+              stringTermProperty: `test${i}`,
             }),
           ),
           kitchenSink.TermProperties.createUnsafe({
@@ -476,25 +473,21 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       );
 
       for (const [id, [filter, expected]] of Object.entries({
-        childProperty: [
-          { classHierarchy3Property: { in: ["test1"] } },
-          [identifiers[1]],
-        ],
         identifier: [
           { $identifier: { in: [identifiers[1]] } },
           [identifiers[1]],
         ],
-        parentProperty: [
-          { classHierarchy2Property: { in: ["test0"] } },
-          [identifiers[0]],
+        stringProperty: [
+          { stringTermProperty: { in: ["test1"] } },
+          [identifiers[1]],
         ],
       } satisfies Record<
         string,
-        [kitchenSink.ClassHierarchy3.Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.classHierarchy3Identifiers({
+            await objectSet.termPropertiesIdentifiers({
               filter,
             })
           ).unsafeCoerce();
