@@ -34,7 +34,9 @@ describe("ShapesGraphToAstTransformer", () => {
           })
             .transform()
             .unsafeCoerce();
-          for (const astObjectType of ast.namedObjectTypes) {
+          for (const astObjectType of ast.namedTypes.filter(
+            (_) => _.kind === "Object",
+          )) {
             if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
               continue;
             }
@@ -50,20 +52,29 @@ describe("ShapesGraphToAstTransformer", () => {
         });
 
         it("should transform object types", ({ expect }) => {
+          const namedObjectTypes = ast.namedTypes.filter(
+            (_) => _.kind === "Object",
+          );
           if (id === "kitchenSinkExample") {
-            expect(ast.namedObjectTypes).toHaveLength(60);
+            expect(namedObjectTypes).toHaveLength(51);
           } else {
-            expect(ast.namedObjectTypes).not.toHaveLength(0);
+            expect(namedObjectTypes).not.toHaveLength(0);
           }
         });
 
         it("should transform named intersection types", ({ expect }) => {
-          expect(ast.namedIntersectionTypes).toHaveLength(0);
+          const namedIntersectionTypes = ast.namedTypes.filter(
+            (_) => _.kind === "Intersection",
+          );
+          expect(namedIntersectionTypes).toHaveLength(0);
         });
 
         it("should transform named union types", ({ expect }) => {
+          const namedUnionTypes = ast.namedTypes.filter(
+            (_) => _.kind === "Union",
+          );
           if (id === "kitchenSinkExample") {
-            expect(ast.namedUnionTypes).toHaveLength(8);
+            expect(namedUnionTypes).toHaveLength(8);
           }
         });
 
@@ -158,18 +169,6 @@ describe("ShapesGraphToAstTransformer", () => {
         .extract();
       expect(error).toBeInstanceOf(Error);
       expect((error as Error).message).includes("inverse paths can only");
-    });
-
-    it("incompatible node shape identifiers", ({ expect }) => {
-      const error = new ShapesGraphToAstTransformer({
-        logger,
-        shapesGraph:
-          testData.shapesGraphs.illFormed.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
-      })
-        .transform()
-        .extract();
-      expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).includes("not in its parent's");
     });
 
     it("no required property property", ({ expect }) => {

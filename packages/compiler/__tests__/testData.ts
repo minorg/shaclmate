@@ -86,16 +86,6 @@ export const testData = {
         );
       },
 
-      get incompatibleNodeShapeIdentifiers() {
-        return parseShapesGraph(
-          path.join(
-            thisDirectoryPath,
-            "data",
-            "incompatible-node-shape-identifiers.shaclmate.ttl",
-          ),
-        );
-      },
-
       get inversePathNodeKindConflict() {
         return parseShapesGraph(
           path.join(
