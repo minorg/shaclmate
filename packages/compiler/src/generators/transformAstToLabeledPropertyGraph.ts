@@ -9,69 +9,70 @@ export function transformAstToLabeledPropertyGraph(
   const nodes: LabeledPropertyGraph.Node[] = [];
   const relationships: LabeledPropertyGraph.Relationship[] = [];
 
-  for (const namedObjectType of ast.namedObjectTypes) {
-    const id = typeId(namedObjectType);
-    const properties: LabeledPropertyGraph.Node["properties"] = {
-      name: { type: "string", value: typeName(namedObjectType) },
-    };
+  for (const namedType of ast.namedTypes) {
+    if (namedType.kind === "Object") {
+      const namedObjectType = namedType;
+      const id = typeId(namedType);
+      const properties: LabeledPropertyGraph.Node["properties"] = {
+        name: { type: "string", value: typeName(namedType) },
+      };
 
-    for (const namedObjectTypeProperty of namedObjectType.properties) {
-      let itemType: ast.Type;
+      for (const namedObjectTypeProperty of namedObjectType.properties) {
+        let itemType: ast.Type;
 
-      switch (namedObjectTypeProperty.type.kind) {
-        case "DefaultValue":
-        case "List":
-        case "Option":
-        case "Set":
-          itemType = namedObjectTypeProperty.type.itemType;
-          break;
-        case "LazyObject":
-          itemType = namedObjectTypeProperty.type.resolveType;
-          break;
-        case "LazyObjectOption":
-        case "LazyObjectSet":
-          itemType = namedObjectTypeProperty.type.resolveType.itemType;
-          break;
-        default:
-          itemType = namedObjectTypeProperty.type;
-          break;
+        switch (namedObjectTypeProperty.type.kind) {
+          case "DefaultValue":
+          case "List":
+          case "Option":
+          case "Set":
+            itemType = namedObjectTypeProperty.type.itemType;
+            break;
+          case "LazyObject":
+            itemType = namedObjectTypeProperty.type.resolveType;
+            break;
+          case "LazyObjectOption":
+          case "LazyObjectSet":
+            itemType = namedObjectTypeProperty.type.resolveType.itemType;
+            break;
+          default:
+            itemType = namedObjectTypeProperty.type;
+            break;
+        }
+
+        switch (itemType.kind) {
+          case "Intersection":
+          case "Object":
+          case "Union":
+            if (itemType.name.isJust()) {
+              relationships.push({
+                id: namedObjectTypeProperty.shapeIdentifier.toString(),
+                label: Maybe.of(namedObjectTypeProperty.name),
+                properties: {},
+                sourceNodeId: id,
+                targetNodeId: typeId(itemType),
+              });
+            }
+            break;
+          default:
+            properties[namedObjectTypeProperty.name] = {
+              type: "string",
+              value: namedObjectTypeProperty.toString(),
+            };
+        }
       }
 
-      switch (itemType.kind) {
-        case "Intersection":
-        case "Object":
-        case "Union":
-          if (itemType.name.isJust()) {
-            relationships.push({
-              id: namedObjectTypeProperty.shapeIdentifier.toString(),
-              label: Maybe.of(namedObjectTypeProperty.name),
-              properties: {},
-              sourceNodeId: id,
-              targetNodeId: typeId(itemType),
-            });
-          }
-          break;
-        default:
-          properties[namedObjectTypeProperty.name] = {
-            type: "string",
-            value: namedObjectTypeProperty.toString(),
-          };
-      }
+      nodes.push({
+        id,
+        label: typeName(namedObjectType),
+        properties: properties,
+      });
+    } else if (namedType.kind === "Union") {
+      nodes.push({
+        id: typeId(namedType),
+        label: typeName(namedType),
+        properties: {},
+      });
     }
-
-    nodes.push({
-      id,
-      label: typeName(namedObjectType),
-      properties: properties,
-    });
-  }
-
-  for (const namedUnionType of ast.namedUnionTypes) {
-    nodes.push({
-      id: typeId(namedUnionType),
-      label: typeName(namedUnionType),
-      properties: {},
-    });
   }
 
   return {
