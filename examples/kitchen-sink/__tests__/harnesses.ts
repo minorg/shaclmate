@@ -3,8 +3,8 @@ import { LiteralFactory } from "@rdfx/literal";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
-import { Harness } from "./Harness.js";
 import { Maybe } from "purify-ts";
+import { Harness } from "./Harness.js";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
 const literalFactory = new LiteralFactory({ dataFactory });
@@ -69,46 +69,6 @@ export const harnesses = {
   //   }),
   //   kitchenSink.ClassProperties,
   // ),
-  classHierarchy0: new Harness(
-    kitchenSink.ClassHierarchy0.createUnsafe({
-      classHierarchy0Property: "0",
-      $identifier,
-    }),
-    kitchenSink.ClassHierarchy0,
-  ),
-  classHierarchy1: new Harness(
-    kitchenSink.ClassHierarchy1.createUnsafe({
-      classHierarchy0Property: "0",
-      // Doesn't have any own properties
-      $identifier,
-    }),
-    kitchenSink.ClassHierarchy1,
-  ),
-  classHierarchy2: new Harness(
-    kitchenSink.ClassHierarchy2.createUnsafe({
-      classHierarchy0Property: "0",
-      classHierarchy2Property: "2",
-      $identifier,
-    }),
-    kitchenSink.ClassHierarchy2,
-  ),
-  classHierarchy3: new Harness(
-    kitchenSink.ClassHierarchy3.createUnsafe({
-      classHierarchy0Property: "0",
-      classHierarchy2Property: "2",
-      classHierarchy3Property: "3",
-      $identifier,
-    }),
-    kitchenSink.ClassHierarchy3,
-  ),
-  classMultipleInheritanceChild: new Harness(
-    kitchenSink.ClassMultipleInheritanceChild.createUnsafe({
-      classMultipleInheritanceChildProperty: "child",
-      classMultipleInheritanceParent1Property: "parent1",
-      classMultipleInheritanceParent2Property: "parent2",
-    }),
-    kitchenSink.ClassMultipleInheritanceChild,
-  ),
   convertibleTypeProperties: new Harness(
     kitchenSink.ConvertibleTypeProperties.createUnsafe({
       convertibleIriNonEmptySetProperty: [
@@ -211,20 +171,10 @@ export const harnesses = {
     }),
     kitchenSink.ExplicitRdfType,
   ),
-  externProperty: new Harness(
-    kitchenSink.ExternProperty.createUnsafe({
-      externProperty: kitchenSink.Extern.create({
-        $identifier: dataFactory.blankNode(),
-        baseForExternProperty: "baseForExternPropertyValue",
-      }).unsafeCoerce(),
-      $identifier,
-    }),
-    kitchenSink.ExternProperty,
-  ),
   flattenUnionMember1: new Harness(
     kitchenSink.UnionMember1.createUnsafe({
       $identifier,
-      unionMemberCommonParentProperty: "test common parent",
+      unionMemberCommonProperty: "test common property",
       unionMember1Property: "test member 1",
     }),
     kitchenSink.FlattenUnion,
@@ -233,7 +183,7 @@ export const harnesses = {
   flattenUnionMember2: new Harness(
     kitchenSink.UnionMember2.createUnsafe({
       $identifier,
-      unionMemberCommonParentProperty: "test common parent",
+      unionMemberCommonProperty: "test common property",
       unionMember2Property: "test member 2",
     }),
     kitchenSink.FlattenUnion,
@@ -678,7 +628,7 @@ export const harnesses = {
             "http://example.com/unionMember1a",
           ),
           unionMember1Property: "test",
-          unionMemberCommonParentProperty: "test",
+          unionMemberCommonProperty: "test",
         }),
       },
       optionalIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
@@ -690,7 +640,7 @@ export const harnesses = {
             "http://example.com/unionMember1b",
           ),
           unionMember1Property: "test",
-          unionMemberCommonParentProperty: "test",
+          unionMemberCommonProperty: "test",
         }),
       },
       requiredNodeOrLiteralProperty: {
@@ -700,7 +650,7 @@ export const harnesses = {
             "http://example.com/unionMember1c",
           ),
           unionMember1Property: "test",
-          unionMemberCommonParentProperty: "test",
+          unionMemberCommonProperty: "test",
         }),
       },
       requiredIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
@@ -719,7 +669,7 @@ export const harnesses = {
             "http://example.com/unionMember2a",
           ),
           unionMember2Property: "test",
-          unionMemberCommonParentProperty: "test",
+          unionMemberCommonProperty: "test",
         }),
       },
       optionalNodeOrLiteralProperty: dataFactory.literal("test"),
@@ -745,7 +695,7 @@ export const harnesses = {
               "http://example.com/unionMember2b",
             ),
             unionMember2Property: "test",
-            unionMemberCommonParentProperty: "test",
+            unionMemberCommonProperty: "test",
           }),
         },
         {
@@ -755,7 +705,7 @@ export const harnesses = {
               "http://example.com/unionMember1b",
             ),
             unionMember1Property: "test",
-            unionMemberCommonParentProperty: "test",
+            unionMemberCommonProperty: "test",
           }),
         },
       ],
@@ -769,7 +719,7 @@ export const harnesses = {
               "http://example.com/unionMember1c",
             ),
             unionMember1Property: "test",
-            unionMemberCommonParentProperty: "test",
+            unionMemberCommonProperty: "test",
           }),
         },
       ],
@@ -787,7 +737,7 @@ export const harnesses = {
   unionMember1: new Harness(
     kitchenSink.UnionMember1.createUnsafe({
       $identifier,
-      unionMemberCommonParentProperty: "test common parent",
+      unionMemberCommonProperty: "test common parent",
       unionMember1Property: "test",
     }),
     kitchenSink.Union,
@@ -796,7 +746,7 @@ export const harnesses = {
   unionMember2: new Harness(
     kitchenSink.UnionMember2.createUnsafe({
       $identifier,
-      unionMemberCommonParentProperty: "test common parent",
+      unionMemberCommonProperty: "test common parent",
       unionMember2Property: "test",
     }),
     kitchenSink.Union,
