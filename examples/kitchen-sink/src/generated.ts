@@ -4003,15 +4003,27 @@ export interface BlankNodeIdentifier {
   readonly $identifier: () => BlankNodeIdentifier.Identifier;
 
   readonly $type: "BlankNodeIdentifier";
+
+  readonly blankNodeIdentifierProperty: Maybe<string>;
 }
 
 export namespace BlankNodeIdentifier {
   export function create(parameters?: {
     readonly $identifier?: (() => BlankNodeIdentifier.Identifier) | BlankNode;
+    readonly blankNodeIdentifierProperty?: string | Maybe<string>;
   }): Either<Error, BlankNodeIdentifier> {
     return $sequenceRecord({
       $identifier: $convertToBlankNodeIdentifierProperty(
         parameters?.$identifier,
+      ),
+      blankNodeIdentifierProperty: $convertToMaybe($identityConversionFunction)(
+        parameters?.blankNodeIdentifierProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          BlankNodeIdentifier.schema.properties.blankNodeIdentifierProperty
+            .type,
+          value,
+        ),
       ),
     })
       .map((properties) => ({
@@ -4023,6 +4035,7 @@ export namespace BlankNodeIdentifier {
 
   export function createUnsafe(parameters?: {
     readonly $identifier?: (() => BlankNodeIdentifier.Identifier) | BlankNode;
+    readonly blankNodeIdentifierProperty?: string | Maybe<string>;
   }): BlankNodeIdentifier {
     return create(parameters).unsafeCoerce();
   }
@@ -4031,15 +4044,26 @@ export namespace BlankNodeIdentifier {
     left: BlankNodeIdentifier,
     right: BlankNodeIdentifier,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-      (propertyValuesUnequal) => ({
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
         left,
         right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }),
-    );
+      }))
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          left.blankNodeIdentifierProperty,
+          right.blankNodeIdentifierProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "blankNodeIdentifierProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
   }
 
   export function hash<HasherT extends $Hasher>(
@@ -4056,6 +4080,10 @@ export namespace BlankNodeIdentifier {
     hasher: HasherT,
     _blankNodeIdentifier: BlankNodeIdentifier,
   ): HasherT {
+    $hashMaybe($hashString)(
+      hasher,
+      _blankNodeIdentifier.blankNodeIdentifierProperty,
+    );
     return hasher;
   }
 
@@ -4069,6 +4097,7 @@ export namespace BlankNodeIdentifier {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "BlankNodeIdentifier";
+    readonly blankNodeIdentifierProperty?: string;
   };
 
   export namespace Json {
@@ -4085,6 +4114,7 @@ export namespace BlankNodeIdentifier {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("BlankNodeIdentifier"),
+          blankNodeIdentifierProperty: z.string().optional().meta({}),
         })
         .meta({
           description:
@@ -4112,6 +4142,10 @@ export namespace BlankNodeIdentifier {
             scope: `${scopePrefix}/properties/@type`,
             type: "Control",
           },
+          {
+            scope: `${scopePrefix}/properties/blankNodeIdentifierProperty`,
+            type: "Control",
+          },
         ],
         label: "BlankNodeIdentifier",
         type: "Group",
@@ -4129,15 +4163,27 @@ export namespace BlankNodeIdentifier {
     ) {
       return false;
     }
+    if (
+      filter.blankNodeIdentifierProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.blankNodeIdentifierProperty,
+        value.blankNodeIdentifierProperty,
+      )
+    ) {
+      return false;
+    }
     return true;
   }
 
-  export type Filter = { readonly $identifier?: $BlankNodeFilter };
+  export type Filter = {
+    readonly $identifier?: $BlankNodeFilter;
+    readonly blankNodeIdentifierProperty?: $MaybeFilter<$StringFilter>;
+  };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     BlankNodeIdentifier.Filter
   > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
+    let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
@@ -4152,6 +4198,20 @@ export namespace BlankNodeIdentifier {
         },
       );
     }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.blankNodeIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "blankNodeIdentifierProperty",
+        propertySchema: schema.properties.blankNodeIdentifierProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema<string>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return triples;
   };
 
@@ -4214,6 +4274,21 @@ export namespace BlankNodeIdentifier {
         }),
       );
     }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.blankNodeIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "blankNodeIdentifierProperty",
+        propertySchema: schema.properties.blankNodeIdentifierProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema<string>
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return patterns;
   };
 
@@ -4224,6 +4299,11 @@ export namespace BlankNodeIdentifier {
       $identifier: Either.of<Error, BlankNode>(
         dataFactory.blankNode($json["@id"].substring(2)),
       ),
+      blankNodeIdentifierProperty: Maybe.fromNullable(
+        $json["blankNodeIdentifierProperty"],
+      )
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
     }).chain(create);
   }
 
@@ -4248,6 +4328,31 @@ export namespace BlankNodeIdentifier {
         )
           .chain((values) => values.chainMap((value) => value.toBlankNode()))
           .chain((values) => values.head()),
+        blankNodeIdentifierProperty: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.blankNodeIdentifierProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        BlankNodeIdentifier.schema.properties
+                          .blankNodeIdentifierProperty.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
       }).chain((properties) => create(properties)),
     );
   };
@@ -4281,6 +4386,16 @@ export namespace BlankNodeIdentifier {
   export const schema = {
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "BlankNode" as const } },
+      blankNodeIdentifierProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/blankNodeIdentifierProperty",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
     },
   } as const;
 
@@ -4347,6 +4462,10 @@ export namespace BlankNodeIdentifier {
       JSON.stringify({
         "@id": `_:${_blankNodeIdentifier.$identifier().value}`,
         "@type": _blankNodeIdentifier.$type,
+        blankNodeIdentifierProperty:
+          _blankNodeIdentifier.blankNodeIdentifierProperty
+            .map((item) => item)
+            .extract(),
       } satisfies BlankNodeIdentifier.Json),
     );
   }
@@ -4362,6 +4481,13 @@ export namespace BlankNodeIdentifier {
         parameters.graph,
       );
     }
+    parameters.resource.add(
+      BlankNodeIdentifier.schema.properties.blankNodeIdentifierProperty.path,
+      parameters.object.blankNodeIdentifierProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
     return parameters.resource;
   };
 
@@ -4418,6 +4544,8 @@ export interface BlankNodeOrIriIdentifier {
   readonly $identifier: () => BlankNodeOrIriIdentifier.Identifier;
 
   readonly $type: "BlankNodeOrIriIdentifier";
+
+  readonly blankNodeOrIriIdentifierProperty: Maybe<string>;
 }
 
 export namespace BlankNodeOrIriIdentifier {
@@ -4427,9 +4555,19 @@ export namespace BlankNodeOrIriIdentifier {
       | BlankNode
       | NamedNode
       | string;
+    readonly blankNodeOrIriIdentifierProperty?: string | Maybe<string>;
   }): Either<Error, BlankNodeOrIriIdentifier> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      blankNodeOrIriIdentifierProperty: $convertToMaybe(
+        $identityConversionFunction,
+      )(parameters?.blankNodeOrIriIdentifierProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          BlankNodeOrIriIdentifier.schema.properties
+            .blankNodeOrIriIdentifierProperty.type,
+          value,
+        ),
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -4444,6 +4582,7 @@ export namespace BlankNodeOrIriIdentifier {
       | BlankNode
       | NamedNode
       | string;
+    readonly blankNodeOrIriIdentifierProperty?: string | Maybe<string>;
   }): BlankNodeOrIriIdentifier {
     return create(parameters).unsafeCoerce();
   }
@@ -4452,15 +4591,26 @@ export namespace BlankNodeOrIriIdentifier {
     left: BlankNodeOrIriIdentifier,
     right: BlankNodeOrIriIdentifier,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-      (propertyValuesUnequal) => ({
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
         left,
         right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }),
-    );
+      }))
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          left.blankNodeOrIriIdentifierProperty,
+          right.blankNodeOrIriIdentifierProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "blankNodeOrIriIdentifierProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
   }
 
   export function hash<HasherT extends $Hasher>(
@@ -4480,6 +4630,10 @@ export namespace BlankNodeOrIriIdentifier {
     hasher: HasherT,
     _blankNodeOrIriIdentifier: BlankNodeOrIriIdentifier,
   ): HasherT {
+    $hashMaybe($hashString)(
+      hasher,
+      _blankNodeOrIriIdentifier.blankNodeOrIriIdentifierProperty,
+    );
     return hasher;
   }
 
@@ -4493,6 +4647,7 @@ export namespace BlankNodeOrIriIdentifier {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "BlankNodeOrIriIdentifier";
+    readonly blankNodeOrIriIdentifierProperty?: string;
   };
 
   export namespace Json {
@@ -4509,6 +4664,7 @@ export namespace BlankNodeOrIriIdentifier {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("BlankNodeOrIriIdentifier"),
+          blankNodeOrIriIdentifierProperty: z.string().optional().meta({}),
         })
         .meta({
           description:
@@ -4536,6 +4692,10 @@ export namespace BlankNodeOrIriIdentifier {
             scope: `${scopePrefix}/properties/@type`,
             type: "Control",
           },
+          {
+            scope: `${scopePrefix}/properties/blankNodeOrIriIdentifierProperty`,
+            type: "Control",
+          },
         ],
         label: "BlankNodeOrIriIdentifier",
         type: "Group",
@@ -4553,15 +4713,27 @@ export namespace BlankNodeOrIriIdentifier {
     ) {
       return false;
     }
+    if (
+      filter.blankNodeOrIriIdentifierProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.blankNodeOrIriIdentifierProperty,
+        value.blankNodeOrIriIdentifierProperty,
+      )
+    ) {
+      return false;
+    }
     return true;
   }
 
-  export type Filter = { readonly $identifier?: $IdentifierFilter };
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly blankNodeOrIriIdentifierProperty?: $MaybeFilter<$StringFilter>;
+  };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     BlankNodeOrIriIdentifier.Filter
   > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
+    let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
@@ -4576,6 +4748,20 @@ export namespace BlankNodeOrIriIdentifier {
         },
       );
     }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.blankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "blankNodeOrIriIdentifierProperty",
+        propertySchema: schema.properties.blankNodeOrIriIdentifierProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema<string>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return triples;
   };
 
@@ -4638,6 +4824,21 @@ export namespace BlankNodeOrIriIdentifier {
         }),
       );
     }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.blankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "blankNodeOrIriIdentifierProperty",
+        propertySchema: schema.properties.blankNodeOrIriIdentifierProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema<string>
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return patterns;
   };
 
@@ -4650,6 +4851,11 @@ export namespace BlankNodeOrIriIdentifier {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
+      blankNodeOrIriIdentifierProperty: Maybe.fromNullable(
+        $json["blankNodeOrIriIdentifierProperty"],
+      )
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
     }).chain(create);
   }
 
@@ -4676,6 +4882,31 @@ export namespace BlankNodeOrIriIdentifier {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
+        blankNodeOrIriIdentifierProperty: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.blankNodeOrIriIdentifierProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        BlankNodeOrIriIdentifier.schema.properties
+                          .blankNodeOrIriIdentifierProperty.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
       }).chain((properties) => create(properties)),
     );
   };
@@ -4711,6 +4942,16 @@ export namespace BlankNodeOrIriIdentifier {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      blankNodeOrIriIdentifierProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/blankNodeOrIriIdentifierProperty",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
     },
   } as const;
@@ -4785,6 +5026,10 @@ export namespace BlankNodeOrIriIdentifier {
             ? `_:${_blankNodeOrIriIdentifier.$identifier().value}`
             : _blankNodeOrIriIdentifier.$identifier().value,
         "@type": _blankNodeOrIriIdentifier.$type,
+        blankNodeOrIriIdentifierProperty:
+          _blankNodeOrIriIdentifier.blankNodeOrIriIdentifierProperty
+            .map((item) => item)
+            .extract(),
       } satisfies BlankNodeOrIriIdentifier.Json),
     );
   }
@@ -4800,6 +5045,14 @@ export namespace BlankNodeOrIriIdentifier {
         parameters.graph,
       );
     }
+    parameters.resource.add(
+      BlankNodeOrIriIdentifier.schema.properties
+        .blankNodeOrIriIdentifierProperty.path,
+      parameters.object.blankNodeOrIriIdentifierProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
     return parameters.resource;
   };
 
@@ -17996,15 +18249,26 @@ export interface IriIdentifier {
   readonly $identifier: () => IriIdentifier.Identifier;
 
   readonly $type: "IriIdentifier";
+
+  readonly iriIdentifierProperty: Maybe<string>;
 }
 
 export namespace IriIdentifier {
   export function create(parameters: {
     readonly $identifier: (() => IriIdentifier.Identifier) | string | NamedNode;
+    readonly iriIdentifierProperty?: string | Maybe<string>;
   }): Either<Error, IriIdentifier> {
     return $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
+      ),
+      iriIdentifierProperty: $convertToMaybe($identityConversionFunction)(
+        parameters.iriIdentifierProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          IriIdentifier.schema.properties.iriIdentifierProperty.type,
+          value,
+        ),
       ),
     })
       .map((properties) => ({ ...properties, $type: "IriIdentifier" as const }))
@@ -18013,6 +18277,7 @@ export namespace IriIdentifier {
 
   export function createUnsafe(parameters: {
     readonly $identifier: (() => IriIdentifier.Identifier) | string | NamedNode;
+    readonly iriIdentifierProperty?: string | Maybe<string>;
   }): IriIdentifier {
     return create(parameters).unsafeCoerce();
   }
@@ -18021,15 +18286,26 @@ export namespace IriIdentifier {
     left: IriIdentifier,
     right: IriIdentifier,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-      (propertyValuesUnequal) => ({
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
         left,
         right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }),
-    );
+      }))
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          left.iriIdentifierProperty,
+          right.iriIdentifierProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "iriIdentifierProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
   }
 
   export function hash<HasherT extends $Hasher>(
@@ -18046,6 +18322,7 @@ export namespace IriIdentifier {
     hasher: HasherT,
     _iriIdentifier: IriIdentifier,
   ): HasherT {
+    $hashMaybe($hashString)(hasher, _iriIdentifier.iriIdentifierProperty);
     return hasher;
   }
 
@@ -18059,6 +18336,7 @@ export namespace IriIdentifier {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "IriIdentifier";
+    readonly iriIdentifierProperty?: string;
   };
 
   export namespace Json {
@@ -18075,6 +18353,7 @@ export namespace IriIdentifier {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("IriIdentifier"),
+          iriIdentifierProperty: z.string().optional().meta({}),
         })
         .meta({
           description: "A node shape that only allows IRI identifiers.",
@@ -18101,6 +18380,10 @@ export namespace IriIdentifier {
             scope: `${scopePrefix}/properties/@type`,
             type: "Control",
           },
+          {
+            scope: `${scopePrefix}/properties/iriIdentifierProperty`,
+            type: "Control",
+          },
         ],
         label: "IriIdentifier",
         type: "Group",
@@ -18118,15 +18401,27 @@ export namespace IriIdentifier {
     ) {
       return false;
     }
+    if (
+      filter.iriIdentifierProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.iriIdentifierProperty,
+        value.iriIdentifierProperty,
+      )
+    ) {
+      return false;
+    }
     return true;
   }
 
-  export type Filter = { readonly $identifier?: $IriFilter };
+  export type Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly iriIdentifierProperty?: $MaybeFilter<$StringFilter>;
+  };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     IriIdentifier.Filter
   > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
+    let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
@@ -18141,6 +18436,20 @@ export namespace IriIdentifier {
         },
       );
     }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.iriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriIdentifierProperty",
+        propertySchema: schema.properties.iriIdentifierProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema<string>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return triples;
   };
 
@@ -18203,6 +18512,21 @@ export namespace IriIdentifier {
         }),
       );
     }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.iriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "iriIdentifierProperty",
+        propertySchema: schema.properties.iriIdentifierProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema<string>
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return patterns;
   };
 
@@ -18213,6 +18537,9 @@ export namespace IriIdentifier {
       $identifier: Either.of<Error, NamedNode>(
         dataFactory.namedNode($json["@id"]),
       ),
+      iriIdentifierProperty: Maybe.fromNullable($json["iriIdentifierProperty"])
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
     }).chain(create);
   }
 
@@ -18238,6 +18565,31 @@ export namespace IriIdentifier {
         )
           .chain((values) => values.chainMap((value) => value.toIri()))
           .chain((values) => values.head()),
+        iriIdentifierProperty: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.iriIdentifierProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        IriIdentifier.schema.properties.iriIdentifierProperty
+                          .path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
       }).chain((properties) => create(properties)),
     );
   };
@@ -18269,6 +18621,14 @@ export namespace IriIdentifier {
   export const schema = {
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      iriIdentifierProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/iriIdentifierProperty"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
     },
   } as const;
 
@@ -18333,6 +18693,9 @@ export namespace IriIdentifier {
       JSON.stringify({
         "@id": _iriIdentifier.$identifier().value,
         "@type": _iriIdentifier.$type,
+        iriIdentifierProperty: _iriIdentifier.iriIdentifierProperty
+          .map((item) => item)
+          .extract(),
       } satisfies IriIdentifier.Json),
     );
   }
@@ -18348,6 +18711,13 @@ export namespace IriIdentifier {
         parameters.graph,
       );
     }
+    parameters.resource.add(
+      IriIdentifier.schema.properties.iriIdentifierProperty.path,
+      parameters.object.iriIdentifierProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
     return parameters.resource;
   };
 
@@ -19879,7 +20249,7 @@ export interface LazilyResolvedBlankNodeOrIriIdentifier {
 
   readonly $type: "LazilyResolvedBlankNodeOrIriIdentifier";
 
-  readonly lazilyResolvedStringProperty: string;
+  readonly lazilyResolvedProperty: string;
 }
 
 export namespace LazilyResolvedBlankNodeOrIriIdentifier {
@@ -19889,13 +20259,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifier> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: Either.of(
-        parameters.lazilyResolvedStringProperty,
-      ),
+      lazilyResolvedProperty: Either.of(parameters.lazilyResolvedProperty),
     })
       .map((properties) => ({
         ...properties,
@@ -19910,7 +20278,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): LazilyResolvedBlankNodeOrIriIdentifier {
     return create(parameters).unsafeCoerce();
   }
@@ -19929,12 +20297,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
       }))
       .chain(() =>
         $strictEquals(
-          left.lazilyResolvedStringProperty,
-          right.lazilyResolvedStringProperty,
+          left.lazilyResolvedProperty,
+          right.lazilyResolvedProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "lazilyResolvedStringProperty",
+          propertyName: "lazilyResolvedProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -19960,7 +20328,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   ): HasherT {
     $hashString(
       hasher,
-      _lazilyResolvedBlankNodeOrIriIdentifier.lazilyResolvedStringProperty,
+      _lazilyResolvedBlankNodeOrIriIdentifier.lazilyResolvedProperty,
     );
     return hasher;
   }
@@ -19975,7 +20343,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "LazilyResolvedBlankNodeOrIriIdentifier";
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   };
 
   export namespace Json {
@@ -19992,7 +20360,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("LazilyResolvedBlankNodeOrIriIdentifier"),
-          lazilyResolvedStringProperty: z.string().meta({}),
+          lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({
           description: "Node shape resolved by LazyProperties",
@@ -20022,7 +20390,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            scope: `${scopePrefix}/properties/lazilyResolvedProperty`,
             type: "Control",
           },
         ],
@@ -20043,10 +20411,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
       return false;
     }
     if (
-      filter.lazilyResolvedStringProperty !== undefined &&
+      filter.lazilyResolvedProperty !== undefined &&
       !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
+        filter.lazilyResolvedProperty,
+        value.lazilyResolvedProperty,
       )
     ) {
       return false;
@@ -20056,7 +20424,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
+    readonly lazilyResolvedProperty?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -20079,11 +20447,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
     }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -20154,12 +20522,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -20176,8 +20544,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      lazilyResolvedStringProperty: Either.of<Error, string>(
-        $json["lazilyResolvedStringProperty"],
+      lazilyResolvedProperty: Either.of<Error, string>(
+        $json["lazilyResolvedProperty"],
       ),
     }).chain(create);
   }
@@ -20207,10 +20575,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
-        lazilyResolvedStringProperty: $shaclPropertyFromRdf({
+        lazilyResolvedProperty: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.lazilyResolvedStringProperty,
+          propertySchema: schema.properties.lazilyResolvedProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -20260,10 +20628,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      lazilyResolvedStringProperty: {
+      lazilyResolvedProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
+          "http://example.com/lazilyResolvedProperty",
         ),
         type: { kind: "String" as const },
       },
@@ -20341,8 +20709,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
             ? `_:${_lazilyResolvedBlankNodeOrIriIdentifier.$identifier().value}`
             : _lazilyResolvedBlankNodeOrIriIdentifier.$identifier().value,
         "@type": _lazilyResolvedBlankNodeOrIriIdentifier.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedBlankNodeOrIriIdentifier.lazilyResolvedStringProperty,
+        lazilyResolvedProperty:
+          _lazilyResolvedBlankNodeOrIriIdentifier.lazilyResolvedProperty,
       } satisfies LazilyResolvedBlankNodeOrIriIdentifier.Json),
     );
   }
@@ -20362,8 +20730,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
     }
     parameters.resource.add(
       LazilyResolvedBlankNodeOrIriIdentifier.schema.properties
-        .lazilyResolvedStringProperty.path,
-      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+        .lazilyResolvedProperty.path,
+      [$literalFactory.string(parameters.object.lazilyResolvedProperty)],
       parameters.graph,
     );
     return parameters.resource;
@@ -20429,7 +20797,7 @@ export interface LazilyResolvedIriIdentifier {
 
   readonly $type: "LazilyResolvedIriIdentifier";
 
-  readonly lazilyResolvedStringProperty: string;
+  readonly lazilyResolvedProperty: string;
 }
 
 export namespace LazilyResolvedIriIdentifier {
@@ -20438,15 +20806,13 @@ export namespace LazilyResolvedIriIdentifier {
       | (() => LazilyResolvedIriIdentifier.Identifier)
       | string
       | NamedNode;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): Either<Error, LazilyResolvedIriIdentifier> {
     return $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
       ),
-      lazilyResolvedStringProperty: Either.of(
-        parameters.lazilyResolvedStringProperty,
-      ),
+      lazilyResolvedProperty: Either.of(parameters.lazilyResolvedProperty),
     })
       .map((properties) => ({
         ...properties,
@@ -20460,7 +20826,7 @@ export namespace LazilyResolvedIriIdentifier {
       | (() => LazilyResolvedIriIdentifier.Identifier)
       | string
       | NamedNode;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): LazilyResolvedIriIdentifier {
     return create(parameters).unsafeCoerce();
   }
@@ -20479,12 +20845,12 @@ export namespace LazilyResolvedIriIdentifier {
       }))
       .chain(() =>
         $strictEquals(
-          left.lazilyResolvedStringProperty,
-          right.lazilyResolvedStringProperty,
+          left.lazilyResolvedProperty,
+          right.lazilyResolvedProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "lazilyResolvedStringProperty",
+          propertyName: "lazilyResolvedProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -20508,10 +20874,7 @@ export namespace LazilyResolvedIriIdentifier {
     hasher: HasherT,
     _lazilyResolvedIriIdentifier: LazilyResolvedIriIdentifier,
   ): HasherT {
-    $hashString(
-      hasher,
-      _lazilyResolvedIriIdentifier.lazilyResolvedStringProperty,
-    );
+    $hashString(hasher, _lazilyResolvedIriIdentifier.lazilyResolvedProperty);
     return hasher;
   }
 
@@ -20525,7 +20888,7 @@ export namespace LazilyResolvedIriIdentifier {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "LazilyResolvedIriIdentifier";
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   };
 
   export namespace Json {
@@ -20542,7 +20905,7 @@ export namespace LazilyResolvedIriIdentifier {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("LazilyResolvedIriIdentifier"),
-          lazilyResolvedStringProperty: z.string().meta({}),
+          lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({
           description: "Node shape resolved by LazyProperties",
@@ -20570,7 +20933,7 @@ export namespace LazilyResolvedIriIdentifier {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            scope: `${scopePrefix}/properties/lazilyResolvedProperty`,
             type: "Control",
           },
         ],
@@ -20591,10 +20954,10 @@ export namespace LazilyResolvedIriIdentifier {
       return false;
     }
     if (
-      filter.lazilyResolvedStringProperty !== undefined &&
+      filter.lazilyResolvedProperty !== undefined &&
       !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
+        filter.lazilyResolvedProperty,
+        value.lazilyResolvedProperty,
       )
     ) {
       return false;
@@ -20604,7 +20967,7 @@ export namespace LazilyResolvedIriIdentifier {
 
   export type Filter = {
     readonly $identifier?: $IriFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
+    readonly lazilyResolvedProperty?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -20613,11 +20976,11 @@ export namespace LazilyResolvedIriIdentifier {
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -20645,12 +21008,12 @@ export namespace LazilyResolvedIriIdentifier {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -20665,8 +21028,8 @@ export namespace LazilyResolvedIriIdentifier {
       $identifier: Either.of<Error, NamedNode>(
         dataFactory.namedNode($json["@id"]),
       ),
-      lazilyResolvedStringProperty: Either.of<Error, string>(
-        $json["lazilyResolvedStringProperty"],
+      lazilyResolvedProperty: Either.of<Error, string>(
+        $json["lazilyResolvedProperty"],
       ),
     }).chain(create);
   }
@@ -20685,10 +21048,10 @@ export namespace LazilyResolvedIriIdentifier {
       )
         .chain((values) => values.chainMap((value) => value.toIri()))
         .chain((values) => values.head()),
-      lazilyResolvedStringProperty: $shaclPropertyFromRdf({
+      lazilyResolvedProperty: $shaclPropertyFromRdf({
         graph: _$options.graph,
         resource: $resource,
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -20724,10 +21087,10 @@ export namespace LazilyResolvedIriIdentifier {
   export const schema = {
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
-      lazilyResolvedStringProperty: {
+      lazilyResolvedProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
+          "http://example.com/lazilyResolvedProperty",
         ),
         type: { kind: "String" as const },
       },
@@ -20801,8 +21164,8 @@ export namespace LazilyResolvedIriIdentifier {
       JSON.stringify({
         "@id": _lazilyResolvedIriIdentifier.$identifier().value,
         "@type": _lazilyResolvedIriIdentifier.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedIriIdentifier.lazilyResolvedStringProperty,
+        lazilyResolvedProperty:
+          _lazilyResolvedIriIdentifier.lazilyResolvedProperty,
       } satisfies LazilyResolvedIriIdentifier.Json),
     );
   }
@@ -20812,9 +21175,8 @@ export namespace LazilyResolvedIriIdentifier {
     LazilyResolvedIriIdentifier
   > = (parameters) => {
     parameters.resource.add(
-      LazilyResolvedIriIdentifier.schema.properties.lazilyResolvedStringProperty
-        .path,
-      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      LazilyResolvedIriIdentifier.schema.properties.lazilyResolvedProperty.path,
+      [$literalFactory.string(parameters.object.lazilyResolvedProperty)],
       parameters.graph,
     );
     return parameters.resource;
@@ -20873,7 +21235,7 @@ export interface LazilyResolvedUnionMember1 {
 
   readonly $type: "LazilyResolvedUnionMember1";
 
-  readonly lazilyResolvedStringProperty: string;
+  readonly lazilyResolvedProperty: string;
 }
 
 export namespace LazilyResolvedUnionMember1 {
@@ -20883,13 +21245,11 @@ export namespace LazilyResolvedUnionMember1 {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): Either<Error, LazilyResolvedUnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: Either.of(
-        parameters.lazilyResolvedStringProperty,
-      ),
+      lazilyResolvedProperty: Either.of(parameters.lazilyResolvedProperty),
     })
       .map((properties) => ({
         ...properties,
@@ -20904,7 +21264,7 @@ export namespace LazilyResolvedUnionMember1 {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): LazilyResolvedUnionMember1 {
     return create(parameters).unsafeCoerce();
   }
@@ -20923,12 +21283,12 @@ export namespace LazilyResolvedUnionMember1 {
       }))
       .chain(() =>
         $strictEquals(
-          left.lazilyResolvedStringProperty,
-          right.lazilyResolvedStringProperty,
+          left.lazilyResolvedProperty,
+          right.lazilyResolvedProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "lazilyResolvedStringProperty",
+          propertyName: "lazilyResolvedProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -20952,10 +21312,7 @@ export namespace LazilyResolvedUnionMember1 {
     hasher: HasherT,
     _lazilyResolvedUnionMember1: LazilyResolvedUnionMember1,
   ): HasherT {
-    $hashString(
-      hasher,
-      _lazilyResolvedUnionMember1.lazilyResolvedStringProperty,
-    );
+    $hashString(hasher, _lazilyResolvedUnionMember1.lazilyResolvedProperty);
     return hasher;
   }
 
@@ -20969,7 +21326,7 @@ export namespace LazilyResolvedUnionMember1 {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "LazilyResolvedUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   };
 
   export namespace Json {
@@ -20986,7 +21343,7 @@ export namespace LazilyResolvedUnionMember1 {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("LazilyResolvedUnionMember1"),
-          lazilyResolvedStringProperty: z.string().meta({}),
+          lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
     }
@@ -21012,7 +21369,7 @@ export namespace LazilyResolvedUnionMember1 {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            scope: `${scopePrefix}/properties/lazilyResolvedProperty`,
             type: "Control",
           },
         ],
@@ -21033,10 +21390,10 @@ export namespace LazilyResolvedUnionMember1 {
       return false;
     }
     if (
-      filter.lazilyResolvedStringProperty !== undefined &&
+      filter.lazilyResolvedProperty !== undefined &&
       !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
+        filter.lazilyResolvedProperty,
+        value.lazilyResolvedProperty,
       )
     ) {
       return false;
@@ -21046,7 +21403,7 @@ export namespace LazilyResolvedUnionMember1 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
+    readonly lazilyResolvedProperty?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -21069,11 +21426,11 @@ export namespace LazilyResolvedUnionMember1 {
     }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -21142,12 +21499,12 @@ export namespace LazilyResolvedUnionMember1 {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -21164,8 +21521,8 @@ export namespace LazilyResolvedUnionMember1 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      lazilyResolvedStringProperty: Either.of<Error, string>(
-        $json["lazilyResolvedStringProperty"],
+      lazilyResolvedProperty: Either.of<Error, string>(
+        $json["lazilyResolvedProperty"],
       ),
     }).chain(create);
   }
@@ -21193,10 +21550,10 @@ export namespace LazilyResolvedUnionMember1 {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
-        lazilyResolvedStringProperty: $shaclPropertyFromRdf({
+        lazilyResolvedProperty: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.lazilyResolvedStringProperty,
+          propertySchema: schema.properties.lazilyResolvedProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -21243,10 +21600,10 @@ export namespace LazilyResolvedUnionMember1 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      lazilyResolvedStringProperty: {
+      lazilyResolvedProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
+          "http://example.com/lazilyResolvedProperty",
         ),
         type: { kind: "String" as const },
       },
@@ -21323,8 +21680,8 @@ export namespace LazilyResolvedUnionMember1 {
             ? `_:${_lazilyResolvedUnionMember1.$identifier().value}`
             : _lazilyResolvedUnionMember1.$identifier().value,
         "@type": _lazilyResolvedUnionMember1.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedUnionMember1.lazilyResolvedStringProperty,
+        lazilyResolvedProperty:
+          _lazilyResolvedUnionMember1.lazilyResolvedProperty,
       } satisfies LazilyResolvedUnionMember1.Json),
     );
   }
@@ -21341,9 +21698,8 @@ export namespace LazilyResolvedUnionMember1 {
       );
     }
     parameters.resource.add(
-      LazilyResolvedUnionMember1.schema.properties.lazilyResolvedStringProperty
-        .path,
-      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      LazilyResolvedUnionMember1.schema.properties.lazilyResolvedProperty.path,
+      [$literalFactory.string(parameters.object.lazilyResolvedProperty)],
       parameters.graph,
     );
     return parameters.resource;
@@ -21402,7 +21758,7 @@ export interface LazilyResolvedUnionMember2 {
 
   readonly $type: "LazilyResolvedUnionMember2";
 
-  readonly lazilyResolvedStringProperty: string;
+  readonly lazilyResolvedProperty: string;
 }
 
 export namespace LazilyResolvedUnionMember2 {
@@ -21412,13 +21768,11 @@ export namespace LazilyResolvedUnionMember2 {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): Either<Error, LazilyResolvedUnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: Either.of(
-        parameters.lazilyResolvedStringProperty,
-      ),
+      lazilyResolvedProperty: Either.of(parameters.lazilyResolvedProperty),
     })
       .map((properties) => ({
         ...properties,
@@ -21433,7 +21787,7 @@ export namespace LazilyResolvedUnionMember2 {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): LazilyResolvedUnionMember2 {
     return create(parameters).unsafeCoerce();
   }
@@ -21452,12 +21806,12 @@ export namespace LazilyResolvedUnionMember2 {
       }))
       .chain(() =>
         $strictEquals(
-          left.lazilyResolvedStringProperty,
-          right.lazilyResolvedStringProperty,
+          left.lazilyResolvedProperty,
+          right.lazilyResolvedProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "lazilyResolvedStringProperty",
+          propertyName: "lazilyResolvedProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -21481,10 +21835,7 @@ export namespace LazilyResolvedUnionMember2 {
     hasher: HasherT,
     _lazilyResolvedUnionMember2: LazilyResolvedUnionMember2,
   ): HasherT {
-    $hashString(
-      hasher,
-      _lazilyResolvedUnionMember2.lazilyResolvedStringProperty,
-    );
+    $hashString(hasher, _lazilyResolvedUnionMember2.lazilyResolvedProperty);
     return hasher;
   }
 
@@ -21498,7 +21849,7 @@ export namespace LazilyResolvedUnionMember2 {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "LazilyResolvedUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   };
 
   export namespace Json {
@@ -21515,7 +21866,7 @@ export namespace LazilyResolvedUnionMember2 {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("LazilyResolvedUnionMember2"),
-          lazilyResolvedStringProperty: z.string().meta({}),
+          lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
     }
@@ -21541,7 +21892,7 @@ export namespace LazilyResolvedUnionMember2 {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            scope: `${scopePrefix}/properties/lazilyResolvedProperty`,
             type: "Control",
           },
         ],
@@ -21562,10 +21913,10 @@ export namespace LazilyResolvedUnionMember2 {
       return false;
     }
     if (
-      filter.lazilyResolvedStringProperty !== undefined &&
+      filter.lazilyResolvedProperty !== undefined &&
       !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
+        filter.lazilyResolvedProperty,
+        value.lazilyResolvedProperty,
       )
     ) {
       return false;
@@ -21575,7 +21926,7 @@ export namespace LazilyResolvedUnionMember2 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
+    readonly lazilyResolvedProperty?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -21598,11 +21949,11 @@ export namespace LazilyResolvedUnionMember2 {
     }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -21671,12 +22022,12 @@ export namespace LazilyResolvedUnionMember2 {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -21693,8 +22044,8 @@ export namespace LazilyResolvedUnionMember2 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      lazilyResolvedStringProperty: Either.of<Error, string>(
-        $json["lazilyResolvedStringProperty"],
+      lazilyResolvedProperty: Either.of<Error, string>(
+        $json["lazilyResolvedProperty"],
       ),
     }).chain(create);
   }
@@ -21722,10 +22073,10 @@ export namespace LazilyResolvedUnionMember2 {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
-        lazilyResolvedStringProperty: $shaclPropertyFromRdf({
+        lazilyResolvedProperty: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.lazilyResolvedStringProperty,
+          propertySchema: schema.properties.lazilyResolvedProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -21772,10 +22123,10 @@ export namespace LazilyResolvedUnionMember2 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      lazilyResolvedStringProperty: {
+      lazilyResolvedProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
+          "http://example.com/lazilyResolvedProperty",
         ),
         type: { kind: "String" as const },
       },
@@ -21852,8 +22203,8 @@ export namespace LazilyResolvedUnionMember2 {
             ? `_:${_lazilyResolvedUnionMember2.$identifier().value}`
             : _lazilyResolvedUnionMember2.$identifier().value,
         "@type": _lazilyResolvedUnionMember2.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedUnionMember2.lazilyResolvedStringProperty,
+        lazilyResolvedProperty:
+          _lazilyResolvedUnionMember2.lazilyResolvedProperty,
       } satisfies LazilyResolvedUnionMember2.Json),
     );
   }
@@ -21870,9 +22221,8 @@ export namespace LazilyResolvedUnionMember2 {
       );
     }
     parameters.resource.add(
-      LazilyResolvedUnionMember2.schema.properties.lazilyResolvedStringProperty
-        .path,
-      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      LazilyResolvedUnionMember2.schema.properties.lazilyResolvedProperty.path,
+      [$literalFactory.string(parameters.object.lazilyResolvedProperty)],
       parameters.graph,
     );
     return parameters.resource;
@@ -28863,6 +29213,8 @@ export interface NewName {
   readonly $identifier: () => NewName.Identifier;
 
   readonly $type: "NewName";
+
+  readonly newNameProperty: Maybe<string>;
 }
 
 export namespace NewName {
@@ -28872,9 +29224,18 @@ export namespace NewName {
       | BlankNode
       | NamedNode
       | string;
+    readonly newNameProperty?: string | Maybe<string>;
   }): Either<Error, NewName> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      newNameProperty: $convertToMaybe($identityConversionFunction)(
+        parameters?.newNameProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NewName.schema.properties.newNameProperty.type,
+          value,
+        ),
+      ),
     })
       .map((properties) => ({ ...properties, $type: "NewName" as const }))
       .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
@@ -28886,20 +29247,32 @@ export namespace NewName {
       | BlankNode
       | NamedNode
       | string;
+    readonly newNameProperty?: string | Maybe<string>;
   }): NewName {
     return create(parameters).unsafeCoerce();
   }
 
   export function equals(left: NewName, right: NewName): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-      (propertyValuesUnequal) => ({
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
         left,
         right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }),
-    );
+      }))
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          left.newNameProperty,
+          right.newNameProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "newNameProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
   }
 
   export function hash<HasherT extends $Hasher>(
@@ -28916,6 +29289,7 @@ export namespace NewName {
     hasher: HasherT,
     _newName: NewName,
   ): HasherT {
+    $hashMaybe($hashString)(hasher, _newName.newNameProperty);
     return hasher;
   }
 
@@ -28926,7 +29300,11 @@ export namespace NewName {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export type Json = { readonly "@id": string; readonly "@type": "NewName" };
+  export type Json = {
+    readonly "@id": string;
+    readonly "@type": "NewName";
+    readonly newNameProperty?: string;
+  };
 
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
@@ -28939,7 +29317,11 @@ export namespace NewName {
 
     export function schema() {
       return z
-        .object({ "@id": z.string().min(1), "@type": z.literal("NewName") })
+        .object({
+          "@id": z.string().min(1),
+          "@type": z.literal("NewName"),
+          newNameProperty: z.string().optional().meta({}),
+        })
         .meta({
           description:
             "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
@@ -28966,6 +29348,10 @@ export namespace NewName {
             scope: `${scopePrefix}/properties/@type`,
             type: "Control",
           },
+          {
+            scope: `${scopePrefix}/properties/newNameProperty`,
+            type: "Control",
+          },
         ],
         label: "NewName",
         type: "Group",
@@ -28980,15 +29366,27 @@ export namespace NewName {
     ) {
       return false;
     }
+    if (
+      filter.newNameProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.newNameProperty,
+        value.newNameProperty,
+      )
+    ) {
+      return false;
+    }
     return true;
   }
 
-  export type Filter = { readonly $identifier?: $IdentifierFilter };
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly newNameProperty?: $MaybeFilter<$StringFilter>;
+  };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     NewName.Filter
   > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
+    let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
@@ -29003,6 +29401,20 @@ export namespace NewName {
         },
       );
     }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.newNameProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "newNameProperty",
+        propertySchema: schema.properties.newNameProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema<string>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return triples;
   };
 
@@ -29065,6 +29477,21 @@ export namespace NewName {
         }),
       );
     }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.newNameProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "newNameProperty",
+        propertySchema: schema.properties.newNameProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema<string>
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return patterns;
   };
 
@@ -29075,6 +29502,9 @@ export namespace NewName {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
+      newNameProperty: Maybe.fromNullable($json["newNameProperty"])
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
     }).chain(create);
   }
 
@@ -29100,6 +29530,30 @@ export namespace NewName {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
+        newNameProperty: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.newNameProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        NewName.schema.properties.newNameProperty.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
       }).chain((properties) => create(properties)),
     );
   };
@@ -29131,6 +29585,14 @@ export namespace NewName {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      newNameProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/newNameProperty"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
       },
     },
   } as const;
@@ -29199,6 +29661,7 @@ export namespace NewName {
             ? `_:${_newName.$identifier().value}`
             : _newName.$identifier().value,
         "@type": _newName.$type,
+        newNameProperty: _newName.newNameProperty.map((item) => item).extract(),
       } satisfies NewName.Json),
     );
   }
@@ -29214,6 +29677,13 @@ export namespace NewName {
         parameters.graph,
       );
     }
+    parameters.resource.add(
+      NewName.schema.properties.newNameProperty.path,
+      parameters.object.newNameProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
     return parameters.resource;
   };
 
@@ -34582,7 +35052,7 @@ export interface Partial {
 
   readonly $type: "Partial";
 
-  readonly lazilyResolvedStringProperty: string;
+  readonly lazilyResolvedProperty: string;
 }
 
 export namespace Partial {
@@ -34592,13 +35062,11 @@ export namespace Partial {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): Either<Error, Partial> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: Either.of(
-        parameters.lazilyResolvedStringProperty,
-      ),
+      lazilyResolvedProperty: Either.of(parameters.lazilyResolvedProperty),
     })
       .map((properties) => ({ ...properties, $type: "Partial" as const }))
       .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
@@ -34610,7 +35078,7 @@ export namespace Partial {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): Partial {
     return create(parameters).unsafeCoerce();
   }
@@ -34626,12 +35094,12 @@ export namespace Partial {
       }))
       .chain(() =>
         $strictEquals(
-          left.lazilyResolvedStringProperty,
-          right.lazilyResolvedStringProperty,
+          left.lazilyResolvedProperty,
+          right.lazilyResolvedProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "lazilyResolvedStringProperty",
+          propertyName: "lazilyResolvedProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -34652,7 +35120,7 @@ export namespace Partial {
     hasher: HasherT,
     _partial: Partial,
   ): HasherT {
-    $hashString(hasher, _partial.lazilyResolvedStringProperty);
+    $hashString(hasher, _partial.lazilyResolvedProperty);
     return hasher;
   }
 
@@ -34666,7 +35134,7 @@ export namespace Partial {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "Partial";
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   };
 
   export namespace Json {
@@ -34683,7 +35151,7 @@ export namespace Partial {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("Partial"),
-          lazilyResolvedStringProperty: z.string().meta({}),
+          lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({
           description: "Node shape used as a partial by LazyProperties",
@@ -34711,7 +35179,7 @@ export namespace Partial {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            scope: `${scopePrefix}/properties/lazilyResolvedProperty`,
             type: "Control",
           },
         ],
@@ -34729,10 +35197,10 @@ export namespace Partial {
       return false;
     }
     if (
-      filter.lazilyResolvedStringProperty !== undefined &&
+      filter.lazilyResolvedProperty !== undefined &&
       !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
+        filter.lazilyResolvedProperty,
+        value.lazilyResolvedProperty,
       )
     ) {
       return false;
@@ -34742,7 +35210,7 @@ export namespace Partial {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
+    readonly lazilyResolvedProperty?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -34751,11 +35219,11 @@ export namespace Partial {
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -34782,12 +35250,12 @@ export namespace Partial {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -34802,8 +35270,8 @@ export namespace Partial {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      lazilyResolvedStringProperty: Either.of<Error, string>(
-        $json["lazilyResolvedStringProperty"],
+      lazilyResolvedProperty: Either.of<Error, string>(
+        $json["lazilyResolvedProperty"],
       ),
     }).chain(create);
   }
@@ -34823,10 +35291,10 @@ export namespace Partial {
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head()),
-      lazilyResolvedStringProperty: $shaclPropertyFromRdf({
+      lazilyResolvedProperty: $shaclPropertyFromRdf({
         graph: _$options.graph,
         resource: $resource,
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -34861,10 +35329,10 @@ export namespace Partial {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      lazilyResolvedStringProperty: {
+      lazilyResolvedProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
+          "http://example.com/lazilyResolvedProperty",
         ),
         type: { kind: "String" as const },
       },
@@ -34935,7 +35403,7 @@ export namespace Partial {
             ? `_:${_partial.$identifier().value}`
             : _partial.$identifier().value,
         "@type": _partial.$type,
-        lazilyResolvedStringProperty: _partial.lazilyResolvedStringProperty,
+        lazilyResolvedProperty: _partial.lazilyResolvedProperty,
       } satisfies Partial.Json),
     );
   }
@@ -34945,8 +35413,8 @@ export namespace Partial {
     Partial
   > = (parameters) => {
     parameters.resource.add(
-      Partial.schema.properties.lazilyResolvedStringProperty.path,
-      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      Partial.schema.properties.lazilyResolvedProperty.path,
+      [$literalFactory.string(parameters.object.lazilyResolvedProperty)],
       parameters.graph,
     );
     return parameters.resource;
@@ -35001,7 +35469,7 @@ export interface PartialUnionMember1 {
 
   readonly $type: "PartialUnionMember1";
 
-  readonly lazilyResolvedStringProperty: string;
+  readonly lazilyResolvedProperty: string;
 }
 
 export namespace PartialUnionMember1 {
@@ -35011,13 +35479,11 @@ export namespace PartialUnionMember1 {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): Either<Error, PartialUnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: Either.of(
-        parameters.lazilyResolvedStringProperty,
-      ),
+      lazilyResolvedProperty: Either.of(parameters.lazilyResolvedProperty),
     })
       .map((properties) => ({
         ...properties,
@@ -35032,7 +35498,7 @@ export namespace PartialUnionMember1 {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): PartialUnionMember1 {
     return create(parameters).unsafeCoerce();
   }
@@ -35051,12 +35517,12 @@ export namespace PartialUnionMember1 {
       }))
       .chain(() =>
         $strictEquals(
-          left.lazilyResolvedStringProperty,
-          right.lazilyResolvedStringProperty,
+          left.lazilyResolvedProperty,
+          right.lazilyResolvedProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "lazilyResolvedStringProperty",
+          propertyName: "lazilyResolvedProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -35077,7 +35543,7 @@ export namespace PartialUnionMember1 {
     hasher: HasherT,
     _partialUnionMember1: PartialUnionMember1,
   ): HasherT {
-    $hashString(hasher, _partialUnionMember1.lazilyResolvedStringProperty);
+    $hashString(hasher, _partialUnionMember1.lazilyResolvedProperty);
     return hasher;
   }
 
@@ -35091,7 +35557,7 @@ export namespace PartialUnionMember1 {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "PartialUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   };
 
   export namespace Json {
@@ -35108,7 +35574,7 @@ export namespace PartialUnionMember1 {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("PartialUnionMember1"),
-          lazilyResolvedStringProperty: z.string().meta({}),
+          lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
     }
@@ -35134,7 +35600,7 @@ export namespace PartialUnionMember1 {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            scope: `${scopePrefix}/properties/lazilyResolvedProperty`,
             type: "Control",
           },
         ],
@@ -35155,10 +35621,10 @@ export namespace PartialUnionMember1 {
       return false;
     }
     if (
-      filter.lazilyResolvedStringProperty !== undefined &&
+      filter.lazilyResolvedProperty !== undefined &&
       !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
+        filter.lazilyResolvedProperty,
+        value.lazilyResolvedProperty,
       )
     ) {
       return false;
@@ -35168,7 +35634,7 @@ export namespace PartialUnionMember1 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
+    readonly lazilyResolvedProperty?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -35191,11 +35657,11 @@ export namespace PartialUnionMember1 {
     }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -35264,12 +35730,12 @@ export namespace PartialUnionMember1 {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -35286,8 +35752,8 @@ export namespace PartialUnionMember1 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      lazilyResolvedStringProperty: Either.of<Error, string>(
-        $json["lazilyResolvedStringProperty"],
+      lazilyResolvedProperty: Either.of<Error, string>(
+        $json["lazilyResolvedProperty"],
       ),
     }).chain(create);
   }
@@ -35313,10 +35779,10 @@ export namespace PartialUnionMember1 {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
-        lazilyResolvedStringProperty: $shaclPropertyFromRdf({
+        lazilyResolvedProperty: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.lazilyResolvedStringProperty,
+          propertySchema: schema.properties.lazilyResolvedProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -35363,10 +35829,10 @@ export namespace PartialUnionMember1 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      lazilyResolvedStringProperty: {
+      lazilyResolvedProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
+          "http://example.com/lazilyResolvedProperty",
         ),
         type: { kind: "String" as const },
       },
@@ -35439,8 +35905,7 @@ export namespace PartialUnionMember1 {
             ? `_:${_partialUnionMember1.$identifier().value}`
             : _partialUnionMember1.$identifier().value,
         "@type": _partialUnionMember1.$type,
-        lazilyResolvedStringProperty:
-          _partialUnionMember1.lazilyResolvedStringProperty,
+        lazilyResolvedProperty: _partialUnionMember1.lazilyResolvedProperty,
       } satisfies PartialUnionMember1.Json),
     );
   }
@@ -35457,8 +35922,8 @@ export namespace PartialUnionMember1 {
       );
     }
     parameters.resource.add(
-      PartialUnionMember1.schema.properties.lazilyResolvedStringProperty.path,
-      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      PartialUnionMember1.schema.properties.lazilyResolvedProperty.path,
+      [$literalFactory.string(parameters.object.lazilyResolvedProperty)],
       parameters.graph,
     );
     return parameters.resource;
@@ -35515,7 +35980,7 @@ export interface PartialUnionMember2 {
 
   readonly $type: "PartialUnionMember2";
 
-  readonly lazilyResolvedStringProperty: string;
+  readonly lazilyResolvedProperty: string;
 }
 
 export namespace PartialUnionMember2 {
@@ -35525,13 +35990,11 @@ export namespace PartialUnionMember2 {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): Either<Error, PartialUnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: Either.of(
-        parameters.lazilyResolvedStringProperty,
-      ),
+      lazilyResolvedProperty: Either.of(parameters.lazilyResolvedProperty),
     })
       .map((properties) => ({
         ...properties,
@@ -35546,7 +36009,7 @@ export namespace PartialUnionMember2 {
       | BlankNode
       | NamedNode
       | string;
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   }): PartialUnionMember2 {
     return create(parameters).unsafeCoerce();
   }
@@ -35565,12 +36028,12 @@ export namespace PartialUnionMember2 {
       }))
       .chain(() =>
         $strictEquals(
-          left.lazilyResolvedStringProperty,
-          right.lazilyResolvedStringProperty,
+          left.lazilyResolvedProperty,
+          right.lazilyResolvedProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "lazilyResolvedStringProperty",
+          propertyName: "lazilyResolvedProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -35591,7 +36054,7 @@ export namespace PartialUnionMember2 {
     hasher: HasherT,
     _partialUnionMember2: PartialUnionMember2,
   ): HasherT {
-    $hashString(hasher, _partialUnionMember2.lazilyResolvedStringProperty);
+    $hashString(hasher, _partialUnionMember2.lazilyResolvedProperty);
     return hasher;
   }
 
@@ -35605,7 +36068,7 @@ export namespace PartialUnionMember2 {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "PartialUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
+    readonly lazilyResolvedProperty: string;
   };
 
   export namespace Json {
@@ -35622,7 +36085,7 @@ export namespace PartialUnionMember2 {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("PartialUnionMember2"),
-          lazilyResolvedStringProperty: z.string().meta({}),
+          lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
     }
@@ -35648,7 +36111,7 @@ export namespace PartialUnionMember2 {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            scope: `${scopePrefix}/properties/lazilyResolvedProperty`,
             type: "Control",
           },
         ],
@@ -35669,10 +36132,10 @@ export namespace PartialUnionMember2 {
       return false;
     }
     if (
-      filter.lazilyResolvedStringProperty !== undefined &&
+      filter.lazilyResolvedProperty !== undefined &&
       !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
+        filter.lazilyResolvedProperty,
+        value.lazilyResolvedProperty,
       )
     ) {
       return false;
@@ -35682,7 +36145,7 @@ export namespace PartialUnionMember2 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
+    readonly lazilyResolvedProperty?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -35705,11 +36168,11 @@ export namespace PartialUnionMember2 {
     }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -35778,12 +36241,12 @@ export namespace PartialUnionMember2 {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.lazilyResolvedStringProperty,
+        filter: parameters.filter?.lazilyResolvedProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        propertyName: "lazilyResolvedProperty",
+        propertySchema: schema.properties.lazilyResolvedProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -35800,8 +36263,8 @@ export namespace PartialUnionMember2 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      lazilyResolvedStringProperty: Either.of<Error, string>(
-        $json["lazilyResolvedStringProperty"],
+      lazilyResolvedProperty: Either.of<Error, string>(
+        $json["lazilyResolvedProperty"],
       ),
     }).chain(create);
   }
@@ -35827,10 +36290,10 @@ export namespace PartialUnionMember2 {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
-        lazilyResolvedStringProperty: $shaclPropertyFromRdf({
+        lazilyResolvedProperty: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.lazilyResolvedStringProperty,
+          propertySchema: schema.properties.lazilyResolvedProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -35877,10 +36340,10 @@ export namespace PartialUnionMember2 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      lazilyResolvedStringProperty: {
+      lazilyResolvedProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
+          "http://example.com/lazilyResolvedProperty",
         ),
         type: { kind: "String" as const },
       },
@@ -35953,8 +36416,7 @@ export namespace PartialUnionMember2 {
             ? `_:${_partialUnionMember2.$identifier().value}`
             : _partialUnionMember2.$identifier().value,
         "@type": _partialUnionMember2.$type,
-        lazilyResolvedStringProperty:
-          _partialUnionMember2.lazilyResolvedStringProperty,
+        lazilyResolvedProperty: _partialUnionMember2.lazilyResolvedProperty,
       } satisfies PartialUnionMember2.Json),
     );
   }
@@ -35971,8 +36433,8 @@ export namespace PartialUnionMember2 {
       );
     }
     parameters.resource.add(
-      PartialUnionMember2.schema.properties.lazilyResolvedStringProperty.path,
-      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      PartialUnionMember2.schema.properties.lazilyResolvedProperty.path,
+      [$literalFactory.string(parameters.object.lazilyResolvedProperty)],
       parameters.graph,
     );
     return parameters.resource;
@@ -36035,22 +36497,22 @@ export interface PropertyCardinalities {
   /**
    * Set: minCount implicitly=0, no maxCount
    */
-  readonly emptyStringSetProperty: readonly string[];
+  readonly emptySetProperty: readonly string[];
 
   /**
    * Set: minCount=1, no maxCount
    */
-  readonly nonEmptyStringSetProperty: readonly string[];
+  readonly nonEmptySetProperty: readonly string[];
 
   /**
    * Option: maxCount=1, minCount=0
    */
-  readonly optionalStringProperty: Maybe<string>;
+  readonly optionalProperty: Maybe<string>;
 
   /**
    * Required: maxCount=minCount=1
    */
-  readonly requiredStringProperty: string;
+  readonly requiredProperty: string;
 }
 
 export namespace PropertyCardinalities {
@@ -36060,41 +36522,40 @@ export namespace PropertyCardinalities {
       | BlankNode
       | NamedNode
       | string;
-    readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nonEmptyStringSetProperty: string | readonly string[];
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredStringProperty: string;
+    readonly emptySetProperty?: string | readonly string[];
+    readonly nonEmptySetProperty: string | readonly string[];
+    readonly optionalProperty?: string | Maybe<string>;
+    readonly requiredProperty: string;
   }): Either<Error, PropertyCardinalities> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      emptyStringSetProperty: $convertToScalarSet(
+      emptySetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
-      )(parameters.emptyStringSetProperty).chain((value) =>
+      )(parameters.emptySetProperty).chain((value) =>
         $validateArray($identityValidationFunction, true)(
-          PropertyCardinalities.schema.properties.emptyStringSetProperty.type,
+          PropertyCardinalities.schema.properties.emptySetProperty.type,
           value,
         ),
       ),
-      nonEmptyStringSetProperty: $convertToScalarSet(
+      nonEmptySetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
-      )(parameters.nonEmptyStringSetProperty).chain((value) =>
+      )(parameters.nonEmptySetProperty).chain((value) =>
         $validateArray($identityValidationFunction, true)(
-          PropertyCardinalities.schema.properties.nonEmptyStringSetProperty
-            .type,
+          PropertyCardinalities.schema.properties.nonEmptySetProperty.type,
           value,
         ),
       ),
-      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
-        parameters.optionalStringProperty,
+      optionalProperty: $convertToMaybe($identityConversionFunction)(
+        parameters.optionalProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          PropertyCardinalities.schema.properties.optionalStringProperty.type,
+          PropertyCardinalities.schema.properties.optionalProperty.type,
           value,
         ),
       ),
-      requiredStringProperty: Either.of(parameters.requiredStringProperty),
+      requiredProperty: Either.of(parameters.requiredProperty),
     })
       .map((properties) => ({
         ...properties,
@@ -36109,10 +36570,10 @@ export namespace PropertyCardinalities {
       | BlankNode
       | NamedNode
       | string;
-    readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nonEmptyStringSetProperty: string | readonly string[];
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredStringProperty: string;
+    readonly emptySetProperty?: string | readonly string[];
+    readonly nonEmptySetProperty: string | readonly string[];
+    readonly optionalProperty?: string | Maybe<string>;
+    readonly requiredProperty: string;
   }): PropertyCardinalities {
     return create(parameters).unsafeCoerce();
   }
@@ -36131,51 +36592,50 @@ export namespace PropertyCardinalities {
       }))
       .chain(() =>
         ((left, right) => $arrayEquals(left, right, $strictEquals))(
-          left.emptyStringSetProperty,
-          right.emptyStringSetProperty,
+          left.emptySetProperty,
+          right.emptySetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "emptyStringSetProperty",
+          propertyName: "emptySetProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
       )
       .chain(() =>
         ((left, right) => $arrayEquals(left, right, $strictEquals))(
-          left.nonEmptyStringSetProperty,
-          right.nonEmptyStringSetProperty,
+          left.nonEmptySetProperty,
+          right.nonEmptySetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "nonEmptyStringSetProperty",
+          propertyName: "nonEmptySetProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
       )
       .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.optionalStringProperty,
-          right.optionalStringProperty,
+          left.optionalProperty,
+          right.optionalProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "optionalStringProperty",
+          propertyName: "optionalProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
       )
       .chain(() =>
-        $strictEquals(
-          left.requiredStringProperty,
-          right.requiredStringProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "requiredStringProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $strictEquals(left.requiredProperty, right.requiredProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "requiredProperty",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
       );
   }
 
@@ -36193,19 +36653,10 @@ export namespace PropertyCardinalities {
     hasher: HasherT,
     _propertyCardinalities: PropertyCardinalities,
   ): HasherT {
-    $hashArray($hashString)(
-      hasher,
-      _propertyCardinalities.emptyStringSetProperty,
-    );
-    $hashArray($hashString)(
-      hasher,
-      _propertyCardinalities.nonEmptyStringSetProperty,
-    );
-    $hashMaybe($hashString)(
-      hasher,
-      _propertyCardinalities.optionalStringProperty,
-    );
-    $hashString(hasher, _propertyCardinalities.requiredStringProperty);
+    $hashArray($hashString)(hasher, _propertyCardinalities.emptySetProperty);
+    $hashArray($hashString)(hasher, _propertyCardinalities.nonEmptySetProperty);
+    $hashMaybe($hashString)(hasher, _propertyCardinalities.optionalProperty);
+    $hashString(hasher, _propertyCardinalities.requiredProperty);
     return hasher;
   }
 
@@ -36219,10 +36670,10 @@ export namespace PropertyCardinalities {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "PropertyCardinalities";
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty?: string;
-    readonly requiredStringProperty: string;
+    readonly emptySetProperty?: readonly string[];
+    readonly nonEmptySetProperty: readonly string[];
+    readonly optionalProperty?: string;
+    readonly requiredProperty: string;
   };
 
   export namespace Json {
@@ -36239,15 +36690,10 @@ export namespace PropertyCardinalities {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("PropertyCardinalities"),
-          emptyStringSetProperty: z
-            .string()
-            .array()
-            .optional()
-            .readonly()
-            .meta({
-              description: "Set: minCount implicitly=0, no maxCount",
-            }),
-          nonEmptyStringSetProperty: z
+          emptySetProperty: z.string().array().optional().readonly().meta({
+            description: "Set: minCount implicitly=0, no maxCount",
+          }),
+          nonEmptySetProperty: z
             .string()
             .array()
             .nonempty()
@@ -36256,11 +36702,11 @@ export namespace PropertyCardinalities {
             .meta({
               description: "Set: minCount=1, no maxCount",
             }),
-          optionalStringProperty: z
+          optionalProperty: z
             .string()
             .optional()
             .meta({ description: "Option: maxCount=1, minCount=0" }),
-          requiredStringProperty: z
+          requiredProperty: z
             .string()
             .meta({ description: "Required: maxCount=minCount=1" }),
         })
@@ -36291,19 +36737,19 @@ export namespace PropertyCardinalities {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/emptyStringSetProperty`,
+            scope: `${scopePrefix}/properties/emptySetProperty`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
+            scope: `${scopePrefix}/properties/nonEmptySetProperty`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/optionalStringProperty`,
+            scope: `${scopePrefix}/properties/optionalProperty`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/requiredStringProperty`,
+            scope: `${scopePrefix}/properties/requiredProperty`,
             type: "Control",
           },
         ],
@@ -36324,38 +36770,35 @@ export namespace PropertyCardinalities {
       return false;
     }
     if (
-      filter.emptyStringSetProperty !== undefined &&
+      filter.emptySetProperty !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
-        filter.emptyStringSetProperty,
-        value.emptyStringSetProperty,
+        filter.emptySetProperty,
+        value.emptySetProperty,
       )
     ) {
       return false;
     }
     if (
-      filter.nonEmptyStringSetProperty !== undefined &&
+      filter.nonEmptySetProperty !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
-        filter.nonEmptyStringSetProperty,
-        value.nonEmptyStringSetProperty,
+        filter.nonEmptySetProperty,
+        value.nonEmptySetProperty,
       )
     ) {
       return false;
     }
     if (
-      filter.optionalStringProperty !== undefined &&
+      filter.optionalProperty !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
+        filter.optionalProperty,
+        value.optionalProperty,
       )
     ) {
       return false;
     }
     if (
-      filter.requiredStringProperty !== undefined &&
-      !$filterString(
-        filter.requiredStringProperty,
-        value.requiredStringProperty,
-      )
+      filter.requiredProperty !== undefined &&
+      !$filterString(filter.requiredProperty, value.requiredProperty)
     ) {
       return false;
     }
@@ -36364,10 +36807,10 @@ export namespace PropertyCardinalities {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly emptyStringSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredStringProperty?: $StringFilter;
+    readonly emptySetProperty?: $CollectionFilter<$StringFilter>;
+    readonly nonEmptySetProperty?: $CollectionFilter<$StringFilter>;
+    readonly optionalProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredProperty?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -36376,11 +36819,11 @@ export namespace PropertyCardinalities {
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.emptyStringSetProperty,
+        filter: parameters.filter?.emptySetProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "emptyStringSetProperty",
-        propertySchema: schema.properties.emptyStringSetProperty,
+        propertyName: "emptySetProperty",
+        propertySchema: schema.properties.emptySetProperty,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -36390,11 +36833,11 @@ export namespace PropertyCardinalities {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.nonEmptyStringSetProperty,
+        filter: parameters.filter?.nonEmptySetProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "nonEmptyStringSetProperty",
-        propertySchema: schema.properties.nonEmptyStringSetProperty,
+        propertyName: "nonEmptySetProperty",
+        propertySchema: schema.properties.nonEmptySetProperty,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -36404,11 +36847,11 @@ export namespace PropertyCardinalities {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.optionalStringProperty,
+        filter: parameters.filter?.optionalProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "optionalStringProperty",
-        propertySchema: schema.properties.optionalStringProperty,
+        propertyName: "optionalProperty",
+        propertySchema: schema.properties.optionalProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -36418,11 +36861,11 @@ export namespace PropertyCardinalities {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.requiredStringProperty,
+        filter: parameters.filter?.requiredProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "requiredStringProperty",
-        propertySchema: schema.properties.requiredStringProperty,
+        propertyName: "requiredProperty",
+        propertySchema: schema.properties.requiredProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36449,12 +36892,12 @@ export namespace PropertyCardinalities {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.emptyStringSetProperty,
+        filter: parameters.filter?.emptySetProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "emptyStringSetProperty",
-        propertySchema: schema.properties.emptyStringSetProperty,
+        propertyName: "emptySetProperty",
+        propertySchema: schema.properties.emptySetProperty,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -36464,12 +36907,12 @@ export namespace PropertyCardinalities {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.nonEmptyStringSetProperty,
+        filter: parameters.filter?.nonEmptySetProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "nonEmptyStringSetProperty",
-        propertySchema: schema.properties.nonEmptyStringSetProperty,
+        propertyName: "nonEmptySetProperty",
+        propertySchema: schema.properties.nonEmptySetProperty,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -36479,12 +36922,12 @@ export namespace PropertyCardinalities {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.optionalStringProperty,
+        filter: parameters.filter?.optionalProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "optionalStringProperty",
-        propertySchema: schema.properties.optionalStringProperty,
+        propertyName: "optionalProperty",
+        propertySchema: schema.properties.optionalProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -36494,12 +36937,12 @@ export namespace PropertyCardinalities {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.requiredStringProperty,
+        filter: parameters.filter?.requiredProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "requiredStringProperty",
-        propertySchema: schema.properties.requiredStringProperty,
+        propertyName: "requiredProperty",
+        propertySchema: schema.properties.requiredProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36516,24 +36959,20 @@ export namespace PropertyCardinalities {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      emptyStringSetProperty: Either.sequence<Error, string>(
-        ($json["emptyStringSetProperty"] ?? []).map((item) =>
+      emptySetProperty: Either.sequence<Error, string>(
+        ($json["emptySetProperty"] ?? []).map((item) =>
           Either.of<Error, string>(item),
         ),
       ),
-      nonEmptyStringSetProperty: Either.sequence<Error, string>(
-        $json["nonEmptyStringSetProperty"].map((item) =>
+      nonEmptySetProperty: Either.sequence<Error, string>(
+        $json["nonEmptySetProperty"].map((item) =>
           Either.of<Error, string>(item),
         ),
       ),
-      optionalStringProperty: Maybe.fromNullable(
-        $json["optionalStringProperty"],
-      )
+      optionalProperty: Maybe.fromNullable($json["optionalProperty"])
         .map((item) => Either.of<Error, string>(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
-      requiredStringProperty: Either.of<Error, string>(
-        $json["requiredStringProperty"],
-      ),
+      requiredProperty: Either.of<Error, string>($json["requiredProperty"]),
     }).chain(create);
   }
 
@@ -36551,10 +36990,10 @@ export namespace PropertyCardinalities {
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head()),
-      emptyStringSetProperty: $shaclPropertyFromRdf({
+      emptySetProperty: $shaclPropertyFromRdf({
         graph: _$options.graph,
         resource: $resource,
-        propertySchema: schema.properties.emptyStringSetProperty,
+        propertySchema: schema.properties.emptySetProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -36566,37 +37005,36 @@ export namespace PropertyCardinalities {
               Resource.Values.fromValue({
                 focusResource: $resource,
                 propertyPath:
-                  PropertyCardinalities.schema.properties.emptyStringSetProperty
+                  PropertyCardinalities.schema.properties.emptySetProperty.path,
+                value: valuesArray,
+              }),
+            ),
+      }),
+      nonEmptySetProperty: $shaclPropertyFromRdf({
+        graph: _$options.graph,
+        resource: $resource,
+        propertySchema: schema.properties.nonEmptySetProperty,
+        typeFromRdf: (resourceValues) =>
+          resourceValues
+            .chain((values) =>
+              $fromRdfPreferredLanguages(values, _$options.preferredLanguages),
+            )
+            .chain((values) => values.chainMap((value) => value.toString()))
+            .map((values) => values.toArray())
+            .map((valuesArray) =>
+              Resource.Values.fromValue({
+                focusResource: $resource,
+                propertyPath:
+                  PropertyCardinalities.schema.properties.nonEmptySetProperty
                     .path,
                 value: valuesArray,
               }),
             ),
       }),
-      nonEmptyStringSetProperty: $shaclPropertyFromRdf({
+      optionalProperty: $shaclPropertyFromRdf({
         graph: _$options.graph,
         resource: $resource,
-        propertySchema: schema.properties.nonEmptyStringSetProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages(values, _$options.preferredLanguages),
-            )
-            .chain((values) => values.chainMap((value) => value.toString()))
-            .map((values) => values.toArray())
-            .map((valuesArray) =>
-              Resource.Values.fromValue({
-                focusResource: $resource,
-                propertyPath:
-                  PropertyCardinalities.schema.properties
-                    .nonEmptyStringSetProperty.path,
-                value: valuesArray,
-              }),
-            ),
-      }),
-      optionalStringProperty: $shaclPropertyFromRdf({
-        graph: _$options.graph,
-        resource: $resource,
-        propertySchema: schema.properties.optionalStringProperty,
+        propertySchema: schema.properties.optionalProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -36609,16 +37047,16 @@ export namespace PropertyCardinalities {
                 : Resource.Values.fromValue<Maybe<string>>({
                     focusResource: $resource,
                     propertyPath:
-                      PropertyCardinalities.schema.properties
-                        .optionalStringProperty.path,
+                      PropertyCardinalities.schema.properties.optionalProperty
+                        .path,
                     value: Maybe.empty(),
                   }),
             ),
       }),
-      requiredStringProperty: $shaclPropertyFromRdf({
+      requiredProperty: $shaclPropertyFromRdf({
         graph: _$options.graph,
         resource: $resource,
-        propertySchema: schema.properties.requiredStringProperty,
+        propertySchema: schema.properties.requiredProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -36657,39 +37095,31 @@ export namespace PropertyCardinalities {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      emptyStringSetProperty: {
+      emptySetProperty: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/emptyStringSetProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/emptySetProperty"),
         type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
-      nonEmptyStringSetProperty: {
+      nonEmptySetProperty: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/nonEmptyStringSetProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/nonEmptySetProperty"),
         type: {
           kind: "Set" as const,
           itemType: { kind: "String" as const },
           minCount: 1,
         },
       },
-      optionalStringProperty: {
+      optionalProperty: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/optionalStringProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/optionalProperty"),
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
         },
       },
-      requiredStringProperty: {
+      requiredProperty: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/requiredStringProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/requiredProperty"),
         type: { kind: "String" as const },
       },
     },
@@ -36763,14 +37193,16 @@ export namespace PropertyCardinalities {
             ? `_:${_propertyCardinalities.$identifier().value}`
             : _propertyCardinalities.$identifier().value,
         "@type": _propertyCardinalities.$type,
-        emptyStringSetProperty:
-          _propertyCardinalities.emptyStringSetProperty.map((item) => item),
-        nonEmptyStringSetProperty:
-          _propertyCardinalities.nonEmptyStringSetProperty.map((item) => item),
-        optionalStringProperty: _propertyCardinalities.optionalStringProperty
+        emptySetProperty: _propertyCardinalities.emptySetProperty.map(
+          (item) => item,
+        ),
+        nonEmptySetProperty: _propertyCardinalities.nonEmptySetProperty.map(
+          (item) => item,
+        ),
+        optionalProperty: _propertyCardinalities.optionalProperty
           .map((item) => item)
           .extract(),
-        requiredStringProperty: _propertyCardinalities.requiredStringProperty,
+        requiredProperty: _propertyCardinalities.requiredProperty,
       } satisfies PropertyCardinalities.Json),
     );
   }
@@ -36780,29 +37212,29 @@ export namespace PropertyCardinalities {
     PropertyCardinalities
   > = (parameters) => {
     parameters.resource.add(
-      PropertyCardinalities.schema.properties.emptyStringSetProperty.path,
-      parameters.object.emptyStringSetProperty.flatMap((item) => [
+      PropertyCardinalities.schema.properties.emptySetProperty.path,
+      parameters.object.emptySetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       parameters.graph,
     );
     parameters.resource.add(
-      PropertyCardinalities.schema.properties.nonEmptyStringSetProperty.path,
-      parameters.object.nonEmptyStringSetProperty.flatMap((item) => [
+      PropertyCardinalities.schema.properties.nonEmptySetProperty.path,
+      parameters.object.nonEmptySetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       parameters.graph,
     );
     parameters.resource.add(
-      PropertyCardinalities.schema.properties.optionalStringProperty.path,
-      parameters.object.optionalStringProperty
+      PropertyCardinalities.schema.properties.optionalProperty.path,
+      parameters.object.optionalProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      PropertyCardinalities.schema.properties.requiredStringProperty.path,
-      [$literalFactory.string(parameters.object.requiredStringProperty)],
+      PropertyCardinalities.schema.properties.requiredProperty.path,
+      [$literalFactory.string(parameters.object.requiredProperty)],
       parameters.graph,
     );
     return parameters.resource;
@@ -49834,10 +50266,10 @@ export namespace LazilyResolvedUnion {
       },
     },
     properties: {
-      lazilyResolvedStringProperty: {
+      lazilyResolvedProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
+          "http://example.com/lazilyResolvedProperty",
         ),
         type: { kind: "String" as const },
       },
@@ -51313,10 +51745,10 @@ export namespace PartialUnion {
       },
     },
     properties: {
-      lazilyResolvedStringProperty: {
+      lazilyResolvedProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
+          "http://example.com/lazilyResolvedProperty",
         ),
         type: { kind: "String" as const },
       },

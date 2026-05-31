@@ -9,11 +9,15 @@
 :BlankNodeIdentifier
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can only have a blank node as an identifier" ;
-    sh:nodeKind sh:BlankNode .
+    sh:nodeKind sh:BlankNode ;
+        sh:property [ sh:datatype xsd:string ; sh:maxCount 1 ; sh:path :blankNodeIdentifierProperty ]
+.
 
 :BlankNodeOrIriIdentifier
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
+    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" ;
+        sh:property [ sh:datatype xsd:string ; sh:maxCount 1 ; sh:path :blankNodeOrIriIdentifierProperty ]
+    .
 
 :ClassProperties
     a owl:Class, sh:NodeShape ;
@@ -340,7 +344,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 :IriIdentifier
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that only allows IRI identifiers." ;
-    sh:nodeKind sh:IRI .
+    sh:nodeKind sh:IRI ;
+        sh:property [ sh:datatype xsd:string ; sh:maxCount 1 ; sh:path :iriIdentifierProperty ]
+    
+    .
 
 :IriList
     a sh:NodeShape ;
@@ -418,7 +425,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
+        sh:path :lazilyResolvedProperty
     ] .
 
 :LazilyResolvedUnion
@@ -434,7 +441,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
+        sh:path :lazilyResolvedProperty
     ] .
 
 :LazilyResolvedUnionMember2
@@ -443,7 +450,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
+        sh:path :lazilyResolvedProperty
     ] .
 
 :LazilyResolvedIriIdentifier
@@ -454,7 +461,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
+        sh:path :lazilyResolvedProperty
     ] .
 
 :LazyProperties
@@ -802,7 +809,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 :OverrideName
     shaclmate:name "NewName" ;
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes" .
+    rdfs:comment "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes" ;
+    sh:property [ sh:datatype xsd:string ; sh:maxCount 1 ; sh:path :newNameProperty ].
 
 :Partial
     a sh:NodeShape ;
@@ -811,7 +819,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
+        sh:path :lazilyResolvedProperty
     ] .
 
 :PartialUnion
@@ -828,7 +836,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
+        sh:path :lazilyResolvedProperty
     ] .
 
 :PartialUnionMember2
@@ -838,7 +846,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
+        sh:path :lazilyResolvedProperty
     ] .
 
 :PropertyCardinalities
@@ -849,22 +857,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :requiredStringProperty
+        sh:path :requiredProperty
     ], [
         rdfs:comment "Option: maxCount=1, minCount=0" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:path :optionalStringProperty
+        sh:path :optionalProperty
     ], [
         rdfs:comment "Set: minCount implicitly=0, no maxCount" ;
         sh:datatype xsd:string ;
-        sh:path :emptyStringSetProperty
+        sh:path :emptySetProperty
     ], [
         rdfs:comment "Set: minCount=1, no maxCount" ;
         sh:datatype xsd:string ;
         sh:minCount 1 ;
-        sh:path :nonEmptyStringSetProperty
+        sh:path :nonEmptySetProperty
     ] .
 
 :ListSets
