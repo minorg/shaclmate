@@ -30,7 +30,7 @@ export abstract class AbstractType {
   /**
    * The range of node kinds of this type.
    *
-   * For example, an object type has blank and IRI node kinds, while a string type has a Literal node kind.
+   * For example, a struct type has blank and IRI node kinds, while a string type has a Literal node kind.
    */
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
 

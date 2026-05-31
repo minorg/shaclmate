@@ -20,6 +20,7 @@ export class StructType extends AbstractType {
    * Mutable to support cycle-handling logic in the compiler.
    */
   readonly #properties: StructType.Property[] = [];
+
   private propertyNames: Set<string> = new Set();
 
   /**
@@ -107,12 +108,12 @@ export class StructType extends AbstractType {
   addProperties(...properties: readonly StructType.Property[]): void {
     for (const property of properties) {
       invariant(
-        Object.is(property.objectType, this),
-        "property has unexpected .objectType",
+        Object.is(property.structType, this),
+        "property has unexpected .structType",
       );
       invariant(
         !this.propertyNames.has(property.name),
-        `${property.objectType.shapeIdentifier}: duplicate property name: ${property.name}`,
+        `${property.structType.shapeIdentifier}: duplicate property name: ${property.name}`,
       );
       this.#properties.push(property);
       this.propertyNames.add(property.name);
@@ -183,11 +184,6 @@ export namespace StructType {
     readonly name: string;
 
     /**
-     * Object type this property belongs to.
-     */
-    readonly objectType: StructType;
-
-    /**
      * Relative order of this property, derived from sh:order.
      */
     readonly order: number;
@@ -203,6 +199,11 @@ export namespace StructType {
     readonly shapeIdentifier: BlankNode | NamedNode;
 
     /**
+     * StructType this property belongs to.
+     */
+    readonly structType: StructType;
+
+    /**
      * Type of this property.
      */
     readonly type: Type;
@@ -214,10 +215,10 @@ export namespace StructType {
       label,
       mutable,
       name,
-      objectType,
       order,
       path,
       shapeIdentifier,
+      structType,
       type,
     }: {
       comment: Maybe<string>;
@@ -226,10 +227,10 @@ export namespace StructType {
       label: Maybe<string>;
       mutable: boolean;
       name: string;
-      objectType: StructType;
       order: number;
       path: PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
+      structType: StructType;
       type: Type;
     }) {
       this.comment = comment;
@@ -238,7 +239,7 @@ export namespace StructType {
       this.label = label;
       this.mutable = mutable;
       this.name = name;
-      this.objectType = objectType;
+      this.structType = structType;
       this.order = order;
       this.path = path;
       this.shapeIdentifier = shapeIdentifier;
@@ -256,18 +257,18 @@ export namespace StructType {
     get recursive(): boolean {
       const DEBUG = false;
 
-      const rootStructType = this.objectType;
+      const rootStructType = this.structType;
       const rootProperty = this;
 
       function helper(
         stack: {
-          objectType: StructType;
           property: StructType.Property;
           propertyType?: readonly Type[];
+          structType: StructType;
         }[],
       ): boolean {
         const currentStackFrame = stack.at(-1)!;
-        const { objectType, property, propertyType } = currentStackFrame;
+        const { property, propertyType, structType } = currentStackFrame;
 
         if (DEBUG) {
           process.stderr.write(
@@ -275,11 +276,11 @@ export namespace StructType {
               stack.length.toString(),
               rootStructType,
               rootProperty,
-              objectType,
               property,
               propertyType
                 ? `[${propertyType.map(Type.toString).join(", ")}]`
                 : "undefined",
+              structType,
             ].join(",")}\n`,
           );
         }
@@ -287,8 +288,8 @@ export namespace StructType {
         for (const lowerStackFrame of stack.slice(0, -1)) {
           if (
             !Type.equals(
-              currentStackFrame.objectType,
-              lowerStackFrame.objectType,
+              currentStackFrame.structType,
+              lowerStackFrame.structType,
             )
           ) {
             continue;
@@ -315,9 +316,9 @@ export namespace StructType {
         if (!propertyType) {
           return helper(
             stack.concat({
-              objectType,
               property,
               propertyType: [property.type],
+              structType,
             }),
           );
         }
@@ -338,11 +339,11 @@ export namespace StructType {
             if (
               helper(
                 stack.concat({
-                  objectType,
                   property,
                   propertyType: propertyType.concat(
                     currentPropertyType.partialType,
                   ),
+                  structType,
                 }),
               )
             ) {
@@ -352,11 +353,11 @@ export namespace StructType {
             if (
               helper(
                 stack.concat({
-                  objectType,
                   property,
                   propertyType: propertyType.concat(
                     currentPropertyType.resolveType,
                   ),
+                  structType,
                 }),
               )
             ) {
@@ -374,7 +375,7 @@ export namespace StructType {
               if (
                 helper(
                   stack.concat({
-                    objectType: currentPropertyType,
+                    structType: currentPropertyType,
                     property,
                   }),
                 )
@@ -394,9 +395,9 @@ export namespace StructType {
               if (
                 helper(
                   stack.concat({
-                    objectType,
                     property,
                     propertyType: propertyType.concat(member.type),
+                    structType,
                   }),
                 )
               ) {
@@ -411,15 +412,15 @@ export namespace StructType {
           case "Set":
             return helper(
               stack.concat({
-                objectType,
                 property,
                 propertyType: propertyType.concat(currentPropertyType.itemType),
+                structType,
               }),
             );
         }
       }
 
-      return helper([{ objectType: rootStructType, property: rootProperty }]);
+      return helper([{ structType: rootStructType, property: rootProperty }]);
     }
 
     toJSON() {
