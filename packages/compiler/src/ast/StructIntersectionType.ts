@@ -1,6 +1,6 @@
 import type { IntersectionType } from "./IntersectionType.js";
-import type { ObjectType } from "./ObjectType.js";
+import type { StructType } from "./StructType.js";
 
-export type ObjectIntersectionType = IntersectionType<
-  IntersectionType<ObjectType> | ObjectType
+export type StructIntersectionType = IntersectionType<
+  IntersectionType<StructType> | StructType
 >;

@@ -6,9 +6,9 @@ import { invariant } from "ts-invariant";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
-import type { ObjectIntersectionType as StructIntersectionType } from "./ObjectIntersectionType.js";
-import type { ObjectType } from "./ObjectType.js";
-import type { StructUnionType } from "./ObjectUnionType.js";
+import type { StructIntersectionType } from "./StructIntersectionType.js";
+import type { StructType } from "./StructType.js";
+import type { StructUnionType } from "./StructUnionType.js";
 
 export type StructCompoundType = StructIntersectionType | StructUnionType;
 
@@ -66,8 +66,8 @@ export namespace StructCompoundType {
 
   export function memberObjectTypes(
     objectCompoundType: StructCompoundType,
-  ): readonly ObjectType[] {
-    const memberObjectTypes_: ObjectType[] = [];
+  ): readonly StructType[] {
+    const memberObjectTypes_: StructType[] = [];
 
     for (const member of objectCompoundType.members) {
       switch (member.type.kind) {
@@ -85,7 +85,7 @@ export namespace StructCompoundType {
 
     invariant(
       memberObjectTypes_.length >= objectCompoundType.members.length,
-      "object compound type has no member ObjectType's",
+      "object compound type has no member StructType's",
     );
 
     // Member object types must have distinct RDF types or no RDF types at all.

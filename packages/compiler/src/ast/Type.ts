@@ -8,9 +8,9 @@ import type { LazyObjectSetType } from "./LazyObjectSetType.js";
 import type { LazyObjectType } from "./LazyObjectType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
+import type { StructType } from "./StructType.js";
 import type { TermType } from "./TermType.js";
 import type { UnionType } from "./UnionType.js";
 
@@ -25,7 +25,7 @@ export type Type =
   | LazyObjectType
   | ListType
   | LiteralType
-  | ObjectType
+  | StructType
   | OptionType
   | SetType
   | TermType
@@ -59,7 +59,7 @@ export namespace Type {
       case "List":
         return left.equals(right as ListType);
       case "Object":
-        return left.equals(right as ObjectType);
+        return left.equals(right as StructType);
       case "Option":
         return left.equals(right as OptionType);
       case "Term":

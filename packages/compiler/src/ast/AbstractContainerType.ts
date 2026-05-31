@@ -7,7 +7,7 @@ import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { ObjectType } from "./ObjectType.js";
+import type { StructType } from "./StructType.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
@@ -74,7 +74,7 @@ export namespace AbstractContainerType {
     | IriType
     | ListType
     | LiteralType
-    | ObjectType
+    | StructType
     | TermType
     | UnionType;
 

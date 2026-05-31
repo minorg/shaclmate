@@ -1,6 +1,6 @@
 import type { Maybe } from "purify-ts";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
-import type { StructUnionType } from "./ObjectUnionType.js";
+import type { StructUnionType } from "./StructUnionType.js";
 
 /**
  * A disjunction/union of types, corresponding to an sh:xone.

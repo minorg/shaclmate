@@ -1,5 +1,5 @@
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
-import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
+import type { StructIntersectionType } from "./StructIntersectionType.js";
 
 /**
  * A conjunction ("and") of types, corresponding to an sh:and.
@@ -12,7 +12,7 @@ export class IntersectionType<
 > {
   override readonly kind = "Intersection";
 
-  isObjectIntersectionType(): this is ObjectIntersectionType {
+  isObjectIntersectionType(): this is StructIntersectionType {
     return (
       this.members.length > 0 &&
       this.members.every(
