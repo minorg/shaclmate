@@ -379,7 +379,7 @@ ${joinCode(
   }
 
   @Memoize()
-  protected get equalsFunctionExpression(): Code {
+  private get equalsFunctionExpression(): Code {
     return code`\
 ((left: ${this.expression}, right: ${this.expression}) => {
 ${joinCode(
@@ -396,7 +396,7 @@ ${joinCode(
   }
 
   @Memoize()
-  protected get filterFunctionExpression(): Code {
+  private get filterFunctionExpression(): Code {
     const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return code`\
 ((filter: ${this.filterType}, value: ${this.expression}) => {
@@ -424,7 +424,7 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
   }
 
   @Memoize()
-  protected get filterTypeLiteral(): Code {
+  private get filterTypeLiteral(): Code {
     const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return code`\
   {
@@ -439,7 +439,7 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
   }`;
   }
 
-  protected get fromJsonFunctionExpression(): Code {
+  private get fromJsonFunctionExpression(): Code {
     return code`\
 ((value: ${this.jsonType().expression}): ${this.reusables.imports.Either}<Error, ${this.expression}> => {
 ${joinCode(
@@ -459,7 +459,7 @@ ${joinCode(
 })`;
   }
 
-  protected get fromRdfResourceValuesFunctionExpression(): Code {
+  private get fromRdfResourceValuesFunctionExpression(): Code {
     const variables: Omit<
       Parameters<
         AbstractType["fromRdfResourceValuesExpression"]
@@ -511,7 +511,7 @@ ${joinCode(
 ) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}>)`;
   }
 
-  protected get hashFunctionExpression(): Code {
+  private get hashFunctionExpression(): Code {
     return code`\
 (<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.expression}): HasherT => {
 ${joinCode(
@@ -524,7 +524,7 @@ ${joinCode(
 })`;
   }
 
-  protected get jsonSchemaExpression(): Code {
+  private get jsonSchemaExpression(): Code {
     const discriminant = this.discriminant; // To get type narrowing to work
     switch (discriminant.kind) {
       case "Extrinsic":
@@ -577,7 +577,7 @@ ${joinCode(
   }
 
   @Memoize()
-  protected get jsonTypeLiteral(): AbstractType.JsonType {
+  private get jsonTypeLiteral(): AbstractType.JsonType {
     const discriminant = this.discriminant; // To get type narrowing to work
     switch (discriminant.kind) {
       case "Extrinsic":
@@ -627,7 +627,7 @@ ${joinCode(
    * A type literal for this union.
    */
   @Memoize()
-  protected get literal(): Code {
+  private get literal(): Code {
     const discriminant = this.discriminant; // To get type narrowing to work
     switch (discriminant.kind) {
       case "Extrinsic":
@@ -763,7 +763,7 @@ export namespace Json {
     return staticModuleDeclarations;
   }
 
-  protected get toJsonFunctionExpression(): Code {
+  private get toJsonFunctionExpression(): Code {
     return code`\
 ((value: ${this.expression}): ${this.jsonType().expression} => {
 ${joinCode(
@@ -779,7 +779,7 @@ ${joinCode(
 })`;
   }
 
-  protected get toRdfResourceValuesFunctionExpression(): Code {
+  private get toRdfResourceValuesFunctionExpression(): Code {
     return code`\
 (((value, _options): (${joinCode(
       [...this.toRdfResourceValueTypes].map((toRdfResourceValueType) => {
@@ -818,7 +818,7 @@ ${joinCode(
 }) satisfies ${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}>)`;
   }
 
-  protected get toStringFunctionExpression(): Code {
+  private get toStringFunctionExpression(): Code {
     return code`\
 ((value: ${this.expression}): string => {
 ${joinCode(
@@ -835,7 +835,7 @@ ${joinCode(
   }
 
   @Memoize()
-  protected get valueSparqlConstructTriplesFunctionExpression(): Code {
+  private get valueSparqlConstructTriplesFunctionExpression(): Code {
     return code`\
 ((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
   let triples: ${this.reusables.imports.sparqljs}.Triple[] = [];
@@ -852,7 +852,7 @@ triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherP
   }
 
   @Memoize()
-  protected get valueSparqlWherePatternsFunctionExpression(): Code {
+  private get valueSparqlWherePatternsFunctionExpression(): Code {
     return code`\
 ((({ filter, schema, ...otherParameters }) => {
   const unionPatterns: ${this.reusables.imports.sparqljs}.GroupPattern[] = [];
