@@ -14,7 +14,7 @@ export abstract class AbstractLazyType<
   PartialTypeT extends AbstractLazyType.PartialTypeConstraint,
   ResolveTypeT extends AbstractLazyType.ResolveTypeConstraint,
 > extends AbstractType {
-  abstract override readonly kind: "LazyOption" | "LazySet" | "Lazy";
+  abstract override readonly kind: "Lazy" | "LazyOption" | "LazySet";
   readonly partialType: PartialTypeT;
   readonly resolveType: ResolveTypeT;
 
@@ -67,10 +67,10 @@ export abstract class AbstractLazyType<
 }
 
 export namespace AbstractLazyType {
-  export type StructTypeConstraint = StructType | StructUnionType;
+  export type ItemTypeConstraint = StructType | StructUnionType;
   export type PartialTypeConstraint =
-    | StructTypeConstraint
-    | OptionType<StructTypeConstraint>
-    | SetType<StructTypeConstraint>;
+    | ItemTypeConstraint
+    | OptionType<ItemTypeConstraint>
+    | SetType<ItemTypeConstraint>;
   export type ResolveTypeConstraint = PartialTypeConstraint;
 }
