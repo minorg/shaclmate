@@ -18,7 +18,7 @@ export class IntType extends AbstractNumericType<number> {
     );
   }
 
-  override literalExpression(literal: Literal | number): Code {
+  override literalValueExpression(literal: Literal | number): Code {
     return code`${typeof literal === "number" ? literal : LiteralDecoder.decodeIntLiteral(literal).unsafeCoerce()}`;
   }
 

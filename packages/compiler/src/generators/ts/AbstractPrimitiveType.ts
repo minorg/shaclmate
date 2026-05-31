@@ -47,7 +47,7 @@ export abstract class AbstractPrimitiveType<
     let initializers = super.schemaInitializers;
     if (this.primitiveIn.length > 0) {
       initializers = initializers.concat(
-        code`in: ${arrayOf(...this.primitiveIn.map((in_) => this.literalExpression(in_)))}`,
+        code`in: ${arrayOf(...this.primitiveIn.map((in_) => this.literalValueExpression(in_)))}`,
       );
     }
     return initializers;
@@ -70,7 +70,7 @@ export abstract class AbstractPrimitiveType<
     return new AbstractLiteralType.JsonType(this.expression);
   }
 
-  abstract override literalExpression(literal: Literal | ValueT): Code;
+  abstract override literalValueExpression(literal: Literal | ValueT): Code;
 
   override toJsonExpression({
     variables,

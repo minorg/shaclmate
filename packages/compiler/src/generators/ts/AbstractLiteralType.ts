@@ -36,7 +36,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
    *
    * For example, a string would be converted to "thestring".
    */
-  abstract literalExpression(literal: Literal): Code;
+  abstract literalValueExpression(literal: Literal): Code;
 
   protected override fromRdfResourceValuesExpressionChain({
     variables,

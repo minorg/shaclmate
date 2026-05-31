@@ -55,7 +55,7 @@ export class BigDecimalType extends AbstractLiteralType {
     return new AbstractLiteralType.JsonType(code`string`);
   }
 
-  override literalExpression(literal: Literal): Code {
+  override literalValueExpression(literal: Literal): Code {
     return code`new ${this.reusables.imports.BigDecimal}(${literalOf(literal.value)})`;
   }
 
