@@ -45,8 +45,8 @@ function synthesizePartialAstStructType({
 
 function propertyName(
   this: ShapesGraphToAstTransformer,
-  objectType: ast.StructType,
   propertyShape: input.PropertyShape,
+  structType: ast.StructType,
 ): string {
   // Explicit shaclmate:name or sh:name
   const name = propertyShape.shaclmateName.alt(propertyShape.name).extract();
@@ -65,9 +65,9 @@ function propertyName(
   const propertyShapeIdentifier = propertyShape.$identifier();
   if (
     propertyShapeIdentifier.termType === "NamedNode" &&
-    objectType.shapeIdentifier.termType === "NamedNode"
+    structType.shapeIdentifier.termType === "NamedNode"
   ) {
-    const propertyShapeIdentifierPrefix = `${objectType.shapeIdentifier.value}-`;
+    const propertyShapeIdentifierPrefix = `${structType.shapeIdentifier.value}-`;
     if (
       propertyShapeIdentifier.value.startsWith(propertyShapeIdentifierPrefix) &&
       propertyShapeIdentifier.value.length >
@@ -190,11 +190,11 @@ function transformPropertyShapeToAstType(
 export function transformPropertyShapeToAstStructTypeProperty(
   this: ShapesGraphToAstTransformer,
   {
-    objectType,
     propertyShape,
+    structType,
   }: {
-    objectType: ast.StructType;
     propertyShape: input.PropertyShape;
+    structType: ast.StructType;
   },
 ): Either<Error, ast.StructType.Property> {
   const shapeStack = new ShapeStack(); // Start a new ShapeStack per property shape
@@ -365,11 +365,11 @@ export function transformPropertyShapeToAstStructTypeProperty(
         display: propertyShape.display,
         label: propertyShape.label,
         mutable: propertyShape.mutable.orDefault(false),
-        name: propertyName.call(this, objectType, propertyShape),
-        objectType,
+        name: propertyName.call(this, propertyShape, structType),
         order: propertyShape.order.orDefault(0),
         path: propertyShape.path,
         shapeIdentifier: propertyShape.$identifier(),
+        structType,
         type: astType,
       }),
     );

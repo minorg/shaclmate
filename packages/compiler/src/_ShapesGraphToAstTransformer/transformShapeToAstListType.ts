@@ -150,7 +150,7 @@ export function transformShapeToAstListType(
           return transformPropertyShapeToAstStructTypeProperty
             .call(this, {
               // Just need a dummy ast.StructType here to get the properties transformed.
-              objectType: listPropertiesStructType,
+              structType: listPropertiesStructType,
               propertyShape: firstPropertyShape,
             })
             .chain((firstProperty) => {
@@ -167,7 +167,7 @@ export function transformShapeToAstListType(
               return transformPropertyShapeToAstStructTypeProperty
                 .call(this, {
                   // Just need a dummy ast.StructType here to get the properties transformed.
-                  objectType: listPropertiesStructType,
+                  structType: listPropertiesStructType,
                   propertyShape: restPropertyShape,
                 })
                 .chain((restProperty) => {

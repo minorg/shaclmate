@@ -158,7 +158,7 @@ export function transformShapeToAstStructType(
       // Remove the placeholder if the transformation fails.
       // If this node shape's properties (directly or indirectly) refer to the node shape itself,
       // we'll return this placeholder.
-      const objectType = new ast.StructType({
+      const structType = new ast.StructType({
         comment: nodeShape.comment,
         extern: nodeShape.extern.orDefault(false),
         fromRdfType,
@@ -173,7 +173,7 @@ export function transformShapeToAstStructType(
 
       this.cachedAstTypesByShapeIdentifier.set(
         nodeShape.$identifier(),
-        objectType,
+        structType,
       );
 
       return (() => {
@@ -181,21 +181,21 @@ export function transformShapeToAstStructType(
         for (const propertyShape of propertyShapes) {
           const propertyEither =
             transformPropertyShapeToAstStructTypeProperty.call(this, {
-              objectType,
+              structType,
               propertyShape,
             });
           if (propertyEither.isLeft()) {
             return propertyEither;
           }
           propertyEither.ifRight((property) => {
-            objectType.addProperties(property);
+            structType.addProperties(property);
           });
         }
 
         if (
-          !objectType.extern &&
-          objectType.fromRdfType.isNothing() &&
-          !objectType.properties.some(isStructTypePropertyRequired)
+          !structType.extern &&
+          structType.fromRdfType.isNothing() &&
+          !structType.properties.some(isStructTypePropertyRequired)
         ) {
           return Left(
             new Error(
@@ -204,9 +204,9 @@ export function transformShapeToAstStructType(
           );
         }
 
-        objectType.sortProperties();
+        structType.sortProperties();
 
-        return Either.of<Error, Maybe<ast.StructType>>(Maybe.of(objectType));
+        return Either.of<Error, Maybe<ast.StructType>>(Maybe.of(structType));
       })().ifLeft(() => {
         this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier());
       });

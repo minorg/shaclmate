@@ -71,7 +71,7 @@ export class TypeFactory {
     this.reusables = reusables;
   }
 
-  createObjectType(astType: ast.ObjectType): ObjectType {
+  createObjectType(astType: ast.StructType): ObjectType {
     {
       const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
         astType.shapeIdentifier,
@@ -174,15 +174,15 @@ export class TypeFactory {
       configuration: this.configuration,
       identifierType: Maybe.of(
         this.createIdentifierType(
-          ast.ObjectCompoundType.identifierType(astType),
+          ast.StructCompoundType.identifierType(astType),
         ),
       ),
       label: astType.label,
       logger: this.logger,
-      members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
-        (namedObjectType) => ({
+      members: ast.StructCompoundType.memberStructTypes(astType).map(
+        (astStructType) => ({
           discriminantValue: Maybe.empty(),
-          type: this.createObjectType(namedObjectType),
+          type: this.createObjectType(astStructType),
         }),
       ),
       name: astType.name.map((name) => this.tsName(name)),
@@ -214,22 +214,22 @@ export class TypeFactory {
         throw new Error("not implemented");
       case "Iri":
         return this.createIriType(astType);
-      case "LazyObjectOption":
-        return this.createLazyObjectOptionType(astType);
-      case "LazyObjectSet":
-        return this.createLazyObjectSetType(astType);
-      case "LazyObject":
+      case "Lazy":
         return this.createLazyObjectType(astType);
+      case "LazyOption":
+        return this.createLazyObjectOptionType(astType);
+      case "LazySet":
+        return this.createLazyObjectSetType(astType);
       case "List":
         return this.createListType(astType);
       case "Literal":
         return this.createLiteralType(astType, parameters);
-      case "Object":
-        return this.createObjectType(astType);
       case "Option":
         return this.createOptionType(astType);
       case "Set":
         return this.createSetType(astType);
+      case "Struct":
+        return this.createObjectType(astType);
       case "Term":
         return this.createTermType(astType);
       case "Union":
@@ -238,7 +238,7 @@ export class TypeFactory {
   }
 
   createUnionType(astType: ast.UnionType): ObjectUnionType | UnionType<Type> {
-    if (astType.isObjectUnionType()) {
+    if (astType.isStructUnionType()) {
       return this.createObjectUnionType(astType);
     }
 
@@ -320,7 +320,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
+  private createLazyObjectOptionType(astType: ast.LazyOptionType): Type {
     return new LazyObjectOptionType({
       comment: astType.comment,
       configuration: this.configuration,
@@ -337,7 +337,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectSetType(astType: ast.LazyObjectSetType): Type {
+  private createLazyObjectSetType(astType: ast.LazySetType): Type {
     return new LazyObjectSetType({
       comment: astType.comment,
       configuration: this.configuration,
@@ -354,7 +354,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectType(astType: ast.LazyObjectType): Type {
+  private createLazyObjectType(astType: ast.LazyType): Type {
     return new LazyObjectType({
       comment: astType.comment,
       configuration: this.configuration,
@@ -556,7 +556,7 @@ export class TypeFactory {
     astObjectTypeProperty,
     objectType,
   }: {
-    astObjectTypeProperty: ast.ObjectType.Property;
+    astObjectTypeProperty: ast.StructType.Property;
     objectType: ObjectType;
   }): ObjectType.Property {
     {
