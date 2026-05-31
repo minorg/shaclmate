@@ -10,14 +10,20 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can only have a blank node as an identifier" ;
     sh:nodeKind sh:BlankNode ;
-        sh:property [ sh:datatype xsd:string ; sh:maxCount 1 ; sh:path :blankNodeIdentifierProperty ]
-.
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :blankNodeIdentifierProperty
+    ] .
 
 :BlankNodeOrIriIdentifier
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" ;
-        sh:property [ sh:datatype xsd:string ; sh:maxCount 1 ; sh:path :blankNodeOrIriIdentifierProperty ]
-    .
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :blankNodeOrIriIdentifierProperty
+    ] .
 
 :ClassProperties
     a owl:Class, sh:NodeShape ;
@@ -52,24 +58,10 @@
         sh:path :singleClassProperty
     ] .
 
-
 :ConvertibleTypeProperties
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape with properties whose types are convertible from other types on construction e.g., string to IRI." ;
     sh:property [
-        sh:minCount 1 ;
-        sh:nodeKind sh:Literal ;
-        sh:path :convertibleLiteralNonEmptySetProperty
-    ], [
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :convertibleTermProperty
-    ], [
-        sh:maxCount 1 ;
-        sh:path :convertibleTermOptionProperty
-    ], [
-        sh:path :convertibleTermSetProperty
-    ], [
         sh:minCount 1 ;
         sh:path :convertibleTermNonEmptySetProperty
     ], [
@@ -100,6 +92,19 @@
     ], [
         sh:nodeKind sh:Literal ;
         sh:path :convertibleLiteralSetProperty
+    ], [
+        sh:minCount 1 ;
+        sh:nodeKind sh:Literal ;
+        sh:path :convertibleLiteralNonEmptySetProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :convertibleTermProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:path :convertibleTermOptionProperty
+    ], [
+        sh:path :convertibleTermSetProperty
     ] .
 
 :DateUnionProperties
@@ -345,9 +350,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that only allows IRI identifiers." ;
     sh:nodeKind sh:IRI ;
-        sh:property [ sh:datatype xsd:string ; sh:maxCount 1 ; sh:path :iriIdentifierProperty ]
-    
-    .
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :iriIdentifierProperty
+    ] .
 
 :IriList
     a sh:NodeShape ;
@@ -428,6 +435,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazilyResolvedProperty
     ] .
 
+:LazilyResolvedIriIdentifier
+    a sh:NodeShape ;
+    rdfs:comment "Node shape resolved by LazyProperties" ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedProperty
+    ] .
+
 :LazilyResolvedUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
@@ -446,17 +464,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :LazilyResolvedUnionMember2
     a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolvedProperty
-    ] .
-
-:LazilyResolvedIriIdentifier
-    a sh:NodeShape ;
-    rdfs:comment "Node shape resolved by LazyProperties" ;
-    sh:nodeKind sh:IRI ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -540,6 +547,28 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :StringListList ;
         sh:path :stringListListProperty
+    ] .
+
+:ListSets
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        rdfs:comment "Set of lists" ;
+        sh:node :StringList ;
+        sh:path :listSetProperty
+    ], [
+        rdfs:comment "Set of lists of lists" ;
+        sh:node :StringListList ;
+        sh:path :listListSetProperty
+    ], [
+        rdfs:comment "Set of typeof union that includes a list" ;
+        sh:path :listUnionSetProperty ;
+        sh:xone ([
+                sh:node :StringList
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
     ] .
 
 :MutableProperties
@@ -810,7 +839,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     shaclmate:name "NewName" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes" ;
-    sh:property [ sh:datatype xsd:string ; sh:maxCount 1 ; sh:path :newNameProperty ].
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :newNameProperty
+    ] .
 
 :Partial
     a sh:NodeShape ;
@@ -873,29 +906,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:minCount 1 ;
         sh:path :nonEmptySetProperty
-    ] .
-
-:ListSets
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        rdfs:comment "Set of lists" ;
-        sh:node :StringList ;
-        sh:path :listSetProperty
-    ], [
-        rdfs:comment "Set of lists of lists" ;
-        sh:node :StringListList ;
-        sh:path :listListSetProperty
-    ], [
-        rdfs:comment "Set of typeof union that includes a list" ;
-        sh:xone (
-            [
-                sh:node :StringList
-            ]
-            [
-                sh:datatype xsd:string ;
-            ]
-        ) ;
-        sh:path :listUnionSetProperty ;
     ] .
 
 :PropertyNames
@@ -1068,33 +1078,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         :UnionMember2
     ) .
 
-:UnionMember1
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :unionMember1Property
-    ], :UnionMember-commonProperty .
-
-:UnionMember2
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :unionMember2Property
-    ], :UnionMember-commonProperty .
-
-:UnionMember-commonProperty
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:name "unionMemberCommonProperty" ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :unionMemberCommonProperty
-.
-
 :UnionDiscriminants
     a sh:NodeShape ;
     rdfs:comment "Node shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality." ;
@@ -1239,5 +1222,31 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
                 sh:datatype xsd:string
             ]
         )
+    ] .
+
+:UnionMember-commonProperty
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "unionMemberCommonProperty" ;
+    sh:path :unionMemberCommonProperty .
+
+:UnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property :UnionMember-commonProperty, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :unionMember1Property
+    ] .
+
+:UnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property :UnionMember-commonProperty, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :unionMember2Property
     ] .
 
