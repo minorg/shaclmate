@@ -6,7 +6,7 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-:FormObject
+:FormStruct
     a sh:NodeShape ;
     sh:property [
         rdfs:label "Required string" ;
@@ -44,12 +44,12 @@
         rdfs:label "Nested object" ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "nestedObjectProperty" ;
-        sh:node :NestedObject ;
-        sh:path :nestedObjectProperty
+        sh:name "nestedStructProperty" ;
+        sh:node :NestedStruct ;
+        sh:path :nestedStructProperty
     ] .
 
-:NestedObject
+:NestedStruct
     a sh:NodeShape ;
     sh:property [
         rdfs:label "Required string" ;
