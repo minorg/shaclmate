@@ -1005,12 +1005,6 @@ export namespace $DefaultPartial {
       ),
     );
 
-  export function is$DefaultPartial(
-    object: $Object,
-  ): object is $DefaultPartial {
-    return object.$type === "DefaultPartial";
-  }
-
   export const schema = {
     properties: {
       $identifier: {
@@ -2635,18 +2629,10 @@ export namespace Union {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<Union>;
 }
-export type $Object =
-  | $DefaultPartial
-  | NestedObject
-  | RootObject
-  | UnionMember1
-  | UnionMember2;
+export type $Object = NestedObject | RootObject | UnionMember1 | UnionMember2;
 
 export namespace $Object {
   export const $toString = (value: $Object): string => {
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return $DefaultPartial.$toString(value);
-    }
     if (NestedObject.isNestedObject(value)) {
       return NestedObject.$toString(value);
     }
@@ -2669,14 +2655,6 @@ export namespace $Object {
       !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
-    }
-    if (
-      filter.on?.["DefaultPartial"] !== undefined &&
-      $DefaultPartial.is$DefaultPartial(value)
-    ) {
-      if (!$DefaultPartial.filter(filter.on["DefaultPartial"], value)) {
-        return false;
-      }
     }
     if (
       filter.on?.["NestedObject"] !== undefined &&
@@ -2717,7 +2695,6 @@ export namespace $Object {
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
-      readonly DefaultPartial?: $DefaultPartial.Filter;
       readonly NestedObject?: NestedObject.Filter;
       readonly RootObject?: RootObject.Filter;
       readonly UnionMember1?: UnionMember1.Filter;
@@ -2730,18 +2707,11 @@ export namespace $Object {
     options,
   ) =>
     (
-      $DefaultPartial.fromRdfResource(resource, {
+      NestedObject.fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
       }) as Either<Error, $Object>
     )
-      .altLazy(
-        () =>
-          NestedObject.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
       .altLazy(
         () =>
           RootObject.fromRdfResource(resource, {
@@ -2770,7 +2740,7 @@ export namespace $Object {
         values.chainMap((value) => {
           const valueAsValues = Right(value.toValues());
           return (
-            $DefaultPartial.fromRdfResourceValues(valueAsValues, {
+            NestedObject.fromRdfResourceValues(valueAsValues, {
               context: _options.context,
               graph: _options.graph,
               ignoreRdfType: false,
@@ -2780,18 +2750,6 @@ export namespace $Object {
               resource: _options.resource,
             }) as Either<Error, Resource.Values<$Object>>
           )
-            .altLazy(
-              () =>
-                NestedObject.fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
             .altLazy(
               () =>
                 RootObject.fromRdfResourceValues(valueAsValues, {
@@ -2841,10 +2799,6 @@ export namespace $Object {
   export const schema = {
     kind: "ObjectUnion" as const,
     members: {
-      DefaultPartial: {
-        discriminantValues: ["DefaultPartial"],
-        type: $DefaultPartial.schema,
-      },
       NestedObject: {
         discriminantValues: ["NestedObject"],
         type: NestedObject.schema,
@@ -2869,9 +2823,6 @@ export namespace $Object {
     object,
     options,
   ) => {
-    if ($DefaultPartial.is$DefaultPartial(object)) {
-      return $DefaultPartial.toRdfResource(object, options);
-    }
     if (NestedObject.isNestedObject(object)) {
       return NestedObject.toRdfResource(object, options);
     }
@@ -2891,14 +2842,6 @@ export namespace $Object {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return [
-        $DefaultPartial.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
     if (NestedObject.isNestedObject(value)) {
       return [
         NestedObject.toRdfResource(value, {
@@ -3510,11 +3453,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Either<Error, readonly $Object[]> {
     return this.#objectUnionsSync<$Object, $Object.Filter, $Object.Identifier>(
       [
-        {
-          filter: $Object.filter,
-          fromRdfResource: $DefaultPartial.fromRdfResource,
-          fromRdfTypes: [],
-        },
         {
           filter: $Object.filter,
           fromRdfResource: NestedObject.fromRdfResource,
