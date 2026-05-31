@@ -69,16 +69,16 @@ export class ShapesGraphToAstTransformer {
             `node shape missing name: ${nodeShapeAstType.shapeIdentifier}`,
           );
           astNamedTypes.push(nodeShapeAstType);
-          for (const property of nodeShapeAstType.fields) {
-            switch (property.type.kind) {
+          for (const field of nodeShapeAstType.fields) {
+            switch (field.type.kind) {
               case "LazyOption":
               case "LazySet":
               case "Lazy": {
                 const partialItemType =
-                  property.type.partialType.kind === "Struct" ||
-                  property.type.partialType.kind === "Union"
-                    ? property.type.partialType
-                    : property.type.partialType.itemType;
+                  field.type.partialType.kind === "Struct" ||
+                  field.type.partialType.kind === "Union"
+                    ? field.type.partialType
+                    : field.type.partialType.itemType;
 
                 if (
                   partialItemType.kind === "Struct" &&

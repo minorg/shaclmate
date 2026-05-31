@@ -12,23 +12,23 @@ import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
-function isStructTypePropertyRequired(property: {
+function isStructTypeFieldRequired(field: {
   type: ast.StructType.Field["type"];
 }): boolean {
-  switch (property.type.kind) {
+  switch (field.type.kind) {
     case "DefaultValue":
       return false;
     case "LazyOption":
       return false;
     case "LazySet":
-      return property.type.partialType.minCount > 0n;
+      return field.type.partialType.minCount > 0n;
     case "Option":
       return false;
     case "Set":
-      return property.type.minCount > 0;
+      return field.type.minCount > 0;
     case "Union":
-      return property.type.members.every((member) =>
-        isStructTypePropertyRequired({ type: member.type }),
+      return field.type.members.every((member) =>
+        isStructTypeFieldRequired({ type: member.type }),
       );
     case "BlankNode":
     case "Identifier":
@@ -42,7 +42,7 @@ function isStructTypePropertyRequired(property: {
     case "Intersection":
       throw new Error("unsupported");
     default:
-      property.type satisfies never;
+      field.type satisfies never;
       throw new Error("should never reach this point");
   }
 }
@@ -179,15 +179,17 @@ export function transformShapeToAstStructType(
       return (() => {
         // Populate properties
         for (const propertyShape of propertyShapes) {
-          const propertyEither =
-            transformPropertyShapeToAstStructTypeField.call(this, {
+          const fieldEither = transformPropertyShapeToAstStructTypeField.call(
+            this,
+            {
               propertyShape,
               structType,
-            });
-          if (propertyEither.isLeft()) {
-            return propertyEither;
+            },
+          );
+          if (fieldEither.isLeft()) {
+            return fieldEither;
           }
-          propertyEither.ifRight((property) => {
+          fieldEither.ifRight((property) => {
             structType.addFields(property);
           });
         }
@@ -195,7 +197,7 @@ export function transformShapeToAstStructType(
         if (
           !structType.extern &&
           structType.fromRdfType.isNothing() &&
-          !structType.fields.some(isStructTypePropertyRequired)
+          !structType.fields.some(isStructTypeFieldRequired)
         ) {
           return Left(
             new Error(

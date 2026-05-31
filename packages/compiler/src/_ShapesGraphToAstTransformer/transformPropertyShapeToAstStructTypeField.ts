@@ -10,40 +10,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
-function synthesizePartialAstStructType({
-  identifierType,
-}: {
-  identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
-}): ast.StructType {
-  let syntheticName: string;
-  switch (identifierType.kind) {
-    case "BlankNode":
-      throw new Error("should never happen");
-    case "Identifier":
-      syntheticName = "DefaultPartial";
-      break;
-    case "Iri":
-      syntheticName = "NamedDefaultPartial";
-      break;
-  }
-
-  return new ast.StructType({
-    comment: Maybe.empty(),
-    extern: false,
-    fromRdfType: Maybe.empty(),
-    identifierType,
-    label: Maybe.empty(),
-    name: Maybe.of(syntheticName),
-    shapeIdentifier: dataFactory.namedNode(
-      `urn:shaclmate:synthetic:${syntheticName}`,
-    ),
-    synthetic: true,
-    toRdfTypes: [],
-    tsImports: [],
-  });
-}
-
-function propertyName(
+function fieldName(
   this: ShapesGraphToAstTransformer,
   propertyShape: input.PropertyShape,
   structType: ast.StructType,
@@ -100,6 +67,39 @@ function propertyName(
   }
 
   throw new Error(`${propertyShape}: unable to infer name`);
+}
+
+function synthesizePartialAstStructType({
+  identifierType,
+}: {
+  identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
+}): ast.StructType {
+  let syntheticName: string;
+  switch (identifierType.kind) {
+    case "BlankNode":
+      throw new Error("should never happen");
+    case "Identifier":
+      syntheticName = "DefaultPartial";
+      break;
+    case "Iri":
+      syntheticName = "NamedDefaultPartial";
+      break;
+  }
+
+  return new ast.StructType({
+    comment: Maybe.empty(),
+    extern: false,
+    fromRdfType: Maybe.empty(),
+    identifierType,
+    label: Maybe.empty(),
+    name: Maybe.of(syntheticName),
+    shapeIdentifier: dataFactory.namedNode(
+      `urn:shaclmate:synthetic:${syntheticName}`,
+    ),
+    synthetic: true,
+    toRdfTypes: [],
+    tsImports: [],
+  });
 }
 
 function transformPropertyShapeToAstType(
@@ -365,7 +365,7 @@ export function transformPropertyShapeToAstStructTypeField(
         display: propertyShape.display,
         label: propertyShape.label,
         mutable: propertyShape.mutable.orDefault(false),
-        name: propertyName.call(this, propertyShape, structType),
+        name: fieldName.call(this, propertyShape, structType),
         order: propertyShape.order.orDefault(0),
         path: propertyShape.path,
         shapeIdentifier: propertyShape.$identifier(),
