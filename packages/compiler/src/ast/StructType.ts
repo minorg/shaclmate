@@ -125,7 +125,7 @@ export class StructType extends AbstractType {
     return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
 
-  sortProperties(): void {
+  sortFields(): void {
     this.#fields.sort((left, right) => {
       if (left.order < right.order) {
         return -1;
@@ -189,7 +189,7 @@ export namespace StructType {
     readonly order: number;
 
     /**
-     * SHACL field path (https://www.w3.org/TR/shacl/#field-paths)
+     * SHACL property path (https://www.w3.org/TR/shacl/#field-paths)
      */
     readonly path: PropertyPath;
 
@@ -257,8 +257,8 @@ export namespace StructType {
     get recursive(): boolean {
       const DEBUG = false;
 
+      const rootField = this;
       const rootStructType = this.structType;
-      const rootProperty = this;
 
       function helper(
         stack: {
@@ -274,8 +274,8 @@ export namespace StructType {
           process.stderr.write(
             `${[
               stack.length.toString(),
+              rootField,
               rootStructType,
-              rootProperty,
               field,
               fieldType
                 ? `[${fieldType.map(Type.toString).join(", ")}]`
@@ -324,9 +324,9 @@ export namespace StructType {
         }
 
         invariant(fieldType.length > 0);
-        const currentPropertyType = fieldType.at(-1)!;
+        const currentFieldType = fieldType.at(-1)!;
 
-        switch (currentPropertyType.kind) {
+        switch (currentFieldType.kind) {
           case "BlankNode":
           case "Identifier":
           case "Iri":
@@ -340,7 +340,7 @@ export namespace StructType {
               helper(
                 stack.concat({
                   field,
-                  fieldType: fieldType.concat(currentPropertyType.partialType),
+                  fieldType: fieldType.concat(currentFieldType.partialType),
                   structType,
                 }),
               )
@@ -352,7 +352,7 @@ export namespace StructType {
               helper(
                 stack.concat({
                   field,
-                  fieldType: fieldType.concat(currentPropertyType.resolveType),
+                  fieldType: fieldType.concat(currentFieldType.resolveType),
                   structType,
                 }),
               )
@@ -365,13 +365,13 @@ export namespace StructType {
 
           case "Struct": {
             if (DEBUG) {
-              process.stderr.write(`recurse into ${currentPropertyType}`);
+              process.stderr.write(`recurse into ${currentFieldType}`);
             }
-            for (const field of currentPropertyType.fields) {
+            for (const field of currentFieldType.fields) {
               if (
                 helper(
                   stack.concat({
-                    structType: currentPropertyType,
+                    structType: currentFieldType,
                     field,
                   }),
                 )
@@ -385,9 +385,9 @@ export namespace StructType {
           case "Intersection":
           case "Union": {
             if (DEBUG) {
-              process.stderr.write(`recurse into ${currentPropertyType}`);
+              process.stderr.write(`recurse into ${currentFieldType}`);
             }
-            for (const member of currentPropertyType.members) {
+            for (const member of currentFieldType.members) {
               if (
                 helper(
                   stack.concat({
@@ -409,14 +409,14 @@ export namespace StructType {
             return helper(
               stack.concat({
                 field,
-                fieldType: fieldType.concat(currentPropertyType.itemType),
+                fieldType: fieldType.concat(currentFieldType.itemType),
                 structType,
               }),
             );
         }
       }
 
-      return helper([{ structType: rootStructType, field: rootProperty }]);
+      return helper([{ structType: rootStructType, field: rootField }]);
     }
 
     toJSON() {

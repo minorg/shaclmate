@@ -204,7 +204,7 @@ export function transformShapeToAstStructType(
           );
         }
 
-        structType.sortProperties();
+        structType.sortFields();
 
         return Either.of<Error, Maybe<ast.StructType>>(Maybe.of(structType));
       })().ifLeft(() => {
