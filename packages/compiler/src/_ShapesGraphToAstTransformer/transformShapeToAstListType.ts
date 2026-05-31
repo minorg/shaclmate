@@ -105,10 +105,10 @@ export function transformShapeToAstListType(
           nonEmptyListShape.properties.map((propertyShapeIdentifier) =>
             this.shapesGraph.propertyShape(propertyShapeIdentifier),
           ),
-        ).chain((nonEmptyListShapeProperties) => {
+        ).chain((nonEmptyListShapePropertyShapes) => {
           let firstPropertyShape: input.PropertyShape | undefined;
           let restPropertyShape: input.PropertyShape | undefined;
-          for (const propertyShape of nonEmptyListShapeProperties) {
+          for (const propertyShape of nonEmptyListShapePropertyShapes) {
             if (propertyShape.path.termType !== "NamedNode") {
               continue;
             }
@@ -153,16 +153,16 @@ export function transformShapeToAstListType(
               propertyShape: firstPropertyShape,
               structType: listPropertiesStructType,
             })
-            .chain((firstProperty) => {
-              if (!ast.ListType.isItemType(firstProperty.type)) {
+            .chain((firstField) => {
+              if (!ast.ListType.isItemType(firstField.type)) {
                 return Left(
                   new Error(
-                    `${nodeShape}: ${firstProperty.type.kind} is not a valid list item type`,
+                    `${nodeShape}: ${firstField.type.kind} is not a valid list item type`,
                   ),
                 );
               }
 
-              listType.itemType = firstProperty.type;
+              listType.itemType = firstField.type;
 
               return transformPropertyShapeToAstStructTypeField
                 .call(this, {
@@ -170,10 +170,10 @@ export function transformShapeToAstListType(
                   propertyShape: restPropertyShape,
                   structType: listPropertiesStructType,
                 })
-                .chain((restProperty) => {
+                .chain((restField) => {
                   if (
-                    restProperty.type.kind !== "List" ||
-                    !restProperty.type.shapeIdentifier.equals(
+                    restField.type.kind !== "List" ||
+                    !restField.type.shapeIdentifier.equals(
                       nodeShape.$identifier(),
                     )
                   ) {

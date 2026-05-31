@@ -116,9 +116,9 @@ export class TypeFactory {
               this.tsName(right.name),
             );
           })
-          .map((astProperty) =>
+          .map((astField) =>
             this.createObjectTypeProperty({
-              astObjectTypeProperty: astProperty,
+              astStructField: astField,
               objectType,
             }),
           );
@@ -553,16 +553,16 @@ export class TypeFactory {
   }
 
   private createObjectTypeProperty({
-    astObjectTypeProperty,
+    astStructField,
     objectType,
   }: {
-    astObjectTypeProperty: ast.StructType.Field;
+    astStructField: ast.StructType.Field;
     objectType: ObjectType;
   }): ObjectType.Property {
     {
       const cachedProperty =
         this.cachedObjectTypePropertiesByShapeIdentifier.get(
-          astObjectTypeProperty.shapeIdentifier,
+          astStructField.shapeIdentifier,
         );
       if (cachedProperty) {
         return cachedProperty;
@@ -570,23 +570,23 @@ export class TypeFactory {
     }
 
     const property = new ObjectType.ShaclProperty({
-      comment: astObjectTypeProperty.comment,
+      comment: astStructField.comment,
       configuration: this.configuration,
-      description: astObjectTypeProperty.description,
-      display: astObjectTypeProperty.display,
-      label: astObjectTypeProperty.label,
+      description: astStructField.description,
+      display: astStructField.display,
+      label: astStructField.label,
       logger: this.logger,
-      mutable: astObjectTypeProperty.mutable,
-      name: this.tsName(astObjectTypeProperty.name),
+      mutable: astStructField.mutable,
+      name: this.tsName(astStructField.name),
       objectType,
-      path: astObjectTypeProperty.path,
-      recursive: !!astObjectTypeProperty.recursive,
+      path: astStructField.path,
+      recursive: !!astStructField.recursive,
       reusables: this.reusables,
-      type: this.createType(astObjectTypeProperty.type),
+      type: this.createType(astStructField.type),
     });
 
     this.cachedObjectTypePropertiesByShapeIdentifier.set(
-      astObjectTypeProperty.shapeIdentifier,
+      astStructField.shapeIdentifier,
       property,
     );
 
