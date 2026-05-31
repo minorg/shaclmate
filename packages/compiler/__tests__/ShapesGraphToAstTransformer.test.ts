@@ -24,7 +24,7 @@ describe("ShapesGraphToAstTransformer", () => {
 
       describe(id, () => {
         let ast: ast.Ast;
-        const astObjectTypesByShapeIdentifier: Record<string, ast.ObjectType> =
+        const astStructTypesByShapeIdentifier: Record<string, ast.StructType> =
           {};
 
         beforeAll(() => {
@@ -34,26 +34,26 @@ describe("ShapesGraphToAstTransformer", () => {
           })
             .transform()
             .unsafeCoerce();
-          for (const astObjectType of ast.namedTypes.filter(
-            (_) => _.kind === "Object",
+          for (const astStructType of ast.namedTypes.filter(
+            (_) => _.kind === "Struct",
           )) {
-            if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
+            if (astStructType.shapeIdentifier.termType !== "NamedNode") {
               continue;
             }
             invariant(
-              !astObjectTypesByShapeIdentifier[
-                astObjectType.shapeIdentifier.value
+              !astStructTypesByShapeIdentifier[
+                astStructType.shapeIdentifier.value
               ],
             );
-            astObjectTypesByShapeIdentifier[
-              astObjectType.shapeIdentifier.value
-            ] = astObjectType;
+            astStructTypesByShapeIdentifier[
+              astStructType.shapeIdentifier.value
+            ] = astStructType;
           }
         });
 
         it("should transform object types", ({ expect }) => {
           const namedObjectTypes = ast.namedTypes.filter(
-            (_) => _.kind === "Object",
+            (_) => _.kind === "Struct",
           );
           if (id === "kitchenSinkExample") {
             expect(namedObjectTypes).toHaveLength(49);
@@ -100,9 +100,9 @@ describe("ShapesGraphToAstTransformer", () => {
             it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
               expect,
             }) => {
-              const astObjectType = astObjectTypesByShapeIdentifier[classIri];
-              expect(astObjectType).toBeDefined();
-              const recursiveProperty = astObjectType.properties.find(
+              const astStructType = astStructTypesByShapeIdentifier[classIri];
+              expect(astStructType).toBeDefined();
+              const recursiveProperty = astStructType.properties.find(
                 (property) =>
                   property.path.termType === "NamedNode" &&
                   property.path.value === recursivePropertyIri,
