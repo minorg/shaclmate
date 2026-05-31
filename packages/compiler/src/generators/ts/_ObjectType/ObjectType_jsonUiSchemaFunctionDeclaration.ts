@@ -17,6 +17,6 @@ export function ObjectType_jsonUiSchemaFunctionDeclaration(
   return Maybe.of(code`\
 export function uiSchema(parameters?: { scopePrefix?: string }): any {
   const scopePrefix = parameters?.scopePrefix ?? "#";
-  return { "elements": [ ${joinCode(elements, { on: "," })} ], label: "${this.label.orDefault(this.alias.unsafeCoerce())}", type: "Group" };
+  return { "elements": [ ${joinCode(elements, { on: "," })} ], label: "${this.label.orDefault(this.name.unsafeCoerce())}", type: "Group" };
 }`);
 }

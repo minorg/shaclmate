@@ -41,6 +41,6 @@ export const GraphQL = new ${this.reusables.imports.GraphQLObjectType}<${this.ex
       },
       {} as Record<string, object>,
     )})`,
-    name: this.alias.unsafeCoerce(),
+    name: this.name.unsafeCoerce(),
   }});`);
 }

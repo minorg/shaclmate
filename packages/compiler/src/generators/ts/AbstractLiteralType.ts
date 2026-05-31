@@ -21,10 +21,6 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     this.languageIn = languageIn;
   }
 
-  override get constrained(): boolean {
-    return super.constrained || this.languageIn.length > 0;
-  }
-
   protected override get schemaInitializers(): readonly Code[] {
     let initializers = super.schemaInitializers;
     if (this.languageIn.length > 0) {

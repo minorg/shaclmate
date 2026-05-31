@@ -91,7 +91,7 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
               switch (member.type.kind) {
                 case "Object":
                 case "ObjectUnion":
-                  return code`${member.type.alias.unsafeCoerce()}.is${member.type.alias.unsafeCoerce()}(${instance})`;
+                  return code`${member.type.name.unsafeCoerce()}.is${member.type.name.unsafeCoerce()}(${instance})`;
               }
             }
 
@@ -186,8 +186,8 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
 
   @Memoize()
   get declaration(): Maybe<Code> {
-    const alias = this.alias.extract();
-    if (!alias) {
+    const name = this.name.extract();
+    if (!name) {
       return Maybe.empty();
     }
 
@@ -195,7 +195,7 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
 
     if (this.configuration.features.has("Object.type")) {
       declarations.push(
-        code`export type ${def(alias)} = ${this.inlineExpression};`,
+        code`export type ${def(name)} = ${this.inlineExpression};`,
       );
     }
 
@@ -204,7 +204,7 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
     );
     if (staticModuleDeclarations.length > 0) {
       declarations.push(code`\
-export namespace ${def(alias)} {
+export namespace ${def(name)} {
 ${joinCode(
   staticModuleDeclarations
     .sort((left, right) => left[0].localeCompare(right[0]))
@@ -247,41 +247,41 @@ ${joinCode(
 
   @Memoize()
   override get equalsFunction(): Code {
-    return this.alias
-      .map((alias) => code`${alias}.equals`)
+    return this.name
+      .map((name) => code`${name}.equals`)
       .orDefault(this.inlineEqualsFunction);
   }
 
   @Memoize()
   override get filterFunction(): Code {
-    return this.alias
-      .map((alias) => code`${alias}.filter`)
+    return this.name
+      .map((name) => code`${name}.filter`)
       .orDefault(this.inlineFilterFunction);
   }
 
   @Memoize()
   get filterType(): Code {
-    return this.alias
-      .map((alias) => code`${alias}.Filter`)
+    return this.name
+      .map((name) => code`${name}.Filter`)
       .orDefault(this.inlineFilterType);
   }
 
   @Memoize()
   override get graphqlType(): AbstractType.GraphqlType {
-    const alias = this.alias.extract();
+    const name = this.name.extract();
     if (
-      !alias ||
+      !name ||
       !this.members.every((member) => member.type.kind === "Object")
     ) {
       throw new Error("not implemented");
     }
-    return new AbstractType.GraphqlType(code`${alias}.GraphQL`, this.reusables);
+    return new AbstractType.GraphqlType(code`${name}.GraphQL`, this.reusables);
   }
 
   @Memoize()
   override get hashFunction(): Code {
-    return this.alias
-      .map((alias) => code`${alias}.hash`)
+    return this.name
+      .map((name) => code`${name}.hash`)
       .orDefault(this.inlineHashFunction);
   }
 
@@ -315,8 +315,8 @@ ${joinCode(
 
   @Memoize()
   override get expression(): Code {
-    return this.alias
-      .map((alias) => code`${alias}`)
+    return this.name
+      .map((name) => code`${name}`)
       .orDefault(this.inlineExpression);
   }
 
@@ -370,15 +370,15 @@ ${joinCode(
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return this.alias
-      .map((alias) => code`${alias}.valueSparqlConstructTriples`)
+    return this.name
+      .map((name) => code`${name}.valueSparqlConstructTriples`)
       .orDefault(this.inlineValueSparqlConstructTriplesFunction);
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return this.alias
-      .map((alias) => code`${alias}.valueSparqlWherePatterns`)
+    return this.name
+      .map((name) => code`${name}.valueSparqlWherePatterns`)
       .orDefault(this.inlineValueSparqlWherePatternsFunction);
   }
 
@@ -794,7 +794,7 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
   }
 
   protected get staticModuleDeclarations(): Record<string, Code> {
-    const alias = this.alias.unsafeCoerce();
+    const name = this.name.unsafeCoerce();
     const staticModuleDeclarations: Record<string, Code> = {};
 
     if (this.configuration.features.has("Object.equals")) {
@@ -839,7 +839,7 @@ export namespace Json {
 
     if (this.configuration.features.has("Object.fromRdf")) {
       staticModuleDeclarations[`fromRdfResourceValues`] =
-        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${alias}> = ${this.inlineFromRdfResourceValuesFunction};`;
+        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}> = ${this.inlineFromRdfResourceValuesFunction};`;
     }
 
     if (this.configuration.features.has("Object.toJson")) {
@@ -872,7 +872,7 @@ export namespace Json {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    return code`${this.alias.map((alias) => code`${alias}.fromJson`).orDefault(this.inlineFromJsonFunction)}(${variables.value})`;
+    return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(this.inlineFromJsonFunction)}(${variables.value})`;
   }
 
   override fromRdfResourceValuesExpression({
@@ -887,7 +887,7 @@ export namespace Json {
     if (!this.configuration.features.has("ObjectSet")) {
       delete fromRdfResourceValuesOptions["objectSet"];
     }
-    return code`${this.alias.map((alias) => code`${alias}.fromRdfResourceValues`).orDefault(this.inlineFromRdfResourceValuesFunction)}(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
+    return code`${this.name.map((name) => code`${name}.fromRdfResourceValues`).orDefault(this.inlineFromRdfResourceValuesFunction)}(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
   }
 
   override graphqlResolveExpression({
@@ -901,8 +901,8 @@ export namespace Json {
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    const expression = this.alias
-      .map((alias) => code`${alias}.Json.schema()`)
+    const expression = this.name
+      .map((name) => code`${name}.Json.schema()`)
       .orDefault(this.inlineJsonSchema);
     if (context === "property" && this.recursive) {
       return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.jsonType().expression}> => ${expression})`;
@@ -912,8 +912,8 @@ export namespace Json {
 
   @Memoize()
   override jsonType(): AbstractType.JsonType {
-    return this.alias
-      .map((alias) => new AbstractType.JsonType(code`${alias}.Json`))
+    return this.name
+      .map((name) => new AbstractType.JsonType(code`${name}.Json`))
       .orDefault(this.inlineJsonType);
   }
 
@@ -924,20 +924,20 @@ export namespace Json {
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return code`${this.alias.map((alias) => code`${alias}.toJson`).orDefault(this.inlineToJsonFunction)}(${variables.value})`;
+    return code`${this.name.map((name) => code`${name}.toJson`).orDefault(this.inlineToJsonFunction)}(${variables.value})`;
   }
 
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     const { value: valueVariable, ...otherVariables } = variables;
-    return code`${this.alias.map((alias) => code`${alias}.toRdfResourceValues`).orDefault(this.inlineToRdfResourceValuesFunction)}(${valueVariable}, ${otherVariables})`;
+    return code`${this.name.map((name) => code`${name}.toRdfResourceValues`).orDefault(this.inlineToRdfResourceValuesFunction)}(${valueVariable}, ${otherVariables})`;
   }
 
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.alias.map((alias) => code`${alias}.${this.configuration.syntheticNamePrefix}toString`).orDefault(this.inlineToStringFunction)}(${variables.value})`;
+    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(this.inlineToStringFunction)}(${variables.value})`;
   }
 
   private readonly lazyMembers: () => readonly AbstractUnionType.Member<MemberTypeT>[];
@@ -1082,8 +1082,8 @@ export namespace Discriminant {
           continue;
         }
         extrinsicMemberTypeCount++;
-        if (memberType.alias.isJust()) {
-          extrinsicMemberTypeAliasesSet.add(memberType.alias.extract());
+        if (memberType.name.isJust()) {
+          extrinsicMemberTypeAliasesSet.add(memberType.name.extract());
         } else {
           break;
         }
@@ -1105,7 +1105,7 @@ export namespace Discriminant {
             kind: "Extrinsic",
             values:
               extrinsicMemberTypeAliasesSet.size === extrinsicMemberTypeCount
-                ? [memberType.alias.unsafeCoerce()]
+                ? [memberType.name.unsafeCoerce()]
                 : [memberTypeI.toString()],
           };
         }),
@@ -1119,7 +1119,7 @@ export namespace Discriminant {
       {
         const memberTypeNames: readonly string[] = memberTypes.map(
           (memberType) =>
-            memberType.alias.orDefault(memberType.jsTypes[0].typeof),
+            memberType.name.orDefault(memberType.jsTypes[0].typeof),
         );
         const memberTypeNamesSet = new Set(memberTypeNames);
         if (memberTypeNamesSet.size === memberTypeNames.length) {

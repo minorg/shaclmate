@@ -21,7 +21,7 @@ import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 function compareTsNamedType(left: Type, right: Type): number {
-  return left.alias.unsafeCoerce().localeCompare(right.alias.unsafeCoerce());
+  return left.name.unsafeCoerce().localeCompare(right.name.unsafeCoerce());
 }
 
 export class TsGenerator implements Generator {
@@ -244,7 +244,7 @@ export class TsGenerator implements Generator {
     let identifierType: BlankNodeType | IdentifierType | IriType;
     if (nodeKinds.size === 2) {
       identifierType = new IdentifierType({
-        alias: Maybe.empty(),
+        name: Maybe.empty(),
         comment: Maybe.empty(),
         configuration,
         label: Maybe.empty(),
@@ -255,7 +255,7 @@ export class TsGenerator implements Generator {
       switch ([...nodeKinds][0]) {
         case "BlankNode":
           identifierType = new BlankNodeType({
-            alias: Maybe.empty(),
+            name: Maybe.empty(),
             comment: Maybe.empty(),
             configuration,
             label: Maybe.empty(),
@@ -265,7 +265,7 @@ export class TsGenerator implements Generator {
           break;
         case "IRI":
           identifierType = new IriType({
-            alias: Maybe.empty(),
+            name: Maybe.empty(),
             comment: Maybe.empty(),
             configuration,
             hasValues: [],
@@ -279,7 +279,7 @@ export class TsGenerator implements Generator {
     }
 
     return new ObjectUnionType({
-      alias: Maybe.of(`${configuration.syntheticNamePrefix}Object`),
+      name: Maybe.of(`${configuration.syntheticNamePrefix}Object`),
       comment: Maybe.empty(),
       configuration,
       identifierType: Maybe.of(identifierType),

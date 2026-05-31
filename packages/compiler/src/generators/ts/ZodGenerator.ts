@@ -34,7 +34,7 @@ export class ZodGenerator implements Generator {
         case "Object": {
           const tsNamedObjectType = typeFactory.createObjectType(astNamedType);
           declarations.push(code`\
-export namespace ${tsNamedObjectType.alias.unsafeCoerce()} {
+export namespace ${tsNamedObjectType.name.unsafeCoerce()} {
   ${joinCode(ObjectType_jsonTypeAliasDeclaration.call(tsNamedObjectType).toList())}
 
   export namespace Json {
@@ -46,7 +46,7 @@ export namespace ${tsNamedObjectType.alias.unsafeCoerce()} {
         case "Union": {
           const tsNamedUnionType = typeFactory.createUnionType(astNamedType);
           declarations.push(code`\
-export namespace ${tsNamedUnionType.alias.unsafeCoerce()} {
+export namespace ${tsNamedUnionType.name.unsafeCoerce()} {
   ${tsNamedUnionType.jsonTypeAliasDeclaration}
   export namespace Json {
     ${tsNamedUnionType.jsonSchemaFunctionDeclaration}
