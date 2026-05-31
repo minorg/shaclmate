@@ -164,11 +164,11 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const validationFunction = this.type.validationFunction.extract();
     let rhs: Code;
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.objectType.alias.unsafeCoerce()}.schema.properties.${this.name}.type, value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.type, value))`;
     } else if (conversionFunction) {
       rhs = code`${conversionFunction}(${parameterVariable})`;
     } else if (validationFunction) {
-      rhs = code`${validationFunction}(${this.objectType.alias.unsafeCoerce()}.schema.properties.${this.name}.type, ${parameterVariable})`;
+      rhs = code`${validationFunction}(${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.type, ${parameterVariable})`;
     } else {
       rhs = code`${this.reusables.imports.Either}.of(${parameterVariable})`;
     }
@@ -207,7 +207,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
             variables: {
               ...variables,
               ignoreRdfType: true,
-              propertyPath: code`${this.objectType.alias.unsafeCoerce()}.schema.properties.${this.name}.path`,
+              propertyPath: code`${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.path`,
               resourceValues: code`resourceValues`,
             },
           },
@@ -308,7 +308,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         return [];
     }
 
-    const propertyPath = code`${this.objectType.alias.unsafeCoerce()}.schema.properties.${this.name}.path`;
+    const propertyPath = code`${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.path`;
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
         {

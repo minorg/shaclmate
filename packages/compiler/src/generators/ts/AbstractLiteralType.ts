@@ -21,10 +21,6 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     this.languageIn = languageIn;
   }
 
-  override get constrained(): boolean {
-    return super.constrained || this.languageIn.length > 0;
-  }
-
   protected override get schemaInitializers(): readonly Code[] {
     let initializers = super.schemaInitializers;
     if (this.languageIn.length > 0) {
@@ -40,7 +36,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
    *
    * For example, a string would be converted to "thestring".
    */
-  abstract literalExpression(literal: Literal): Code;
+  abstract literalValueExpression(literal: Literal): Code;
 
   protected override fromRdfResourceValuesExpressionChain({
     variables,

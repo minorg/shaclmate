@@ -170,7 +170,7 @@ export abstract class AbstractLazyObjectType<
     resolveType: ObjectTypeT;
   }): Code {
     if (partialType.kind === "Object") {
-      return code`${partialType.alias.unsafeCoerce()}.createUnsafe`;
+      return code`${partialType.name.unsafeCoerce()}.createUnsafe`;
     }
 
     invariant(partialType.kind === "ObjectUnion");
@@ -180,7 +180,7 @@ export abstract class AbstractLazyObjectType<
 
     const caseBlocks = resolveType.members.map(
       ({ discriminantValues }, memberI) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialType.members[memberI].type.alias.unsafeCoerce()}.createUnsafe(resolved);`;
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialType.members[memberI].type.name.unsafeCoerce()}.createUnsafe(resolved);`;
       },
     );
 
@@ -207,7 +207,7 @@ export abstract class AbstractLazyObjectType<
 
     const caseBlocks = resolvedObjectUnionType.members.map(
       ({ discriminantValues }, memberI) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.members[memberI].type.alias.unsafeCoerce()}.create(${variables.resolvedObjectUnion});`;
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.members[memberI].type.name.unsafeCoerce()}.create(${variables.resolvedObjectUnion});`;
       },
     );
     caseBlocks.push(

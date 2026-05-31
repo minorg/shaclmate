@@ -42,7 +42,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return code`${this.reusables.imports.z}.boolean()`;
   }
 
-  override literalExpression(literal: boolean | Literal): Code {
+  override literalValueExpression(literal: boolean | Literal): Code {
     return code`${typeof literal === "boolean" ? literal : LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;
   }
 

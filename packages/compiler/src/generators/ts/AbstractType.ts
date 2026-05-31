@@ -16,11 +16,6 @@ export abstract class AbstractType {
   protected readonly reusables: Reusables;
 
   /**
-   * Alias for this type.
-   */
-  readonly alias: Maybe<string>;
-
-  /**
    * Comment from rdfs:comment.
    */
   readonly comment: Maybe<string>;
@@ -111,6 +106,11 @@ export abstract class AbstractType {
   abstract readonly mutable: boolean;
 
   /**
+   * Name for this type.
+   */
+  readonly name: Maybe<string>;
+
+  /**
    * Does this type directly or indirectly reference itself?
    */
   abstract readonly recursive: boolean;
@@ -171,25 +171,25 @@ export abstract class AbstractType {
   abstract readonly valueSparqlWherePatternsFunction: Code;
 
   constructor({
-    alias,
     comment,
     configuration,
     label,
     logger,
+    name,
     reusables,
   }: {
-    alias: Maybe<string>;
+    name: Maybe<string>;
     comment: Maybe<string>;
     configuration: TsGenerator.Configuration;
     label: Maybe<string>;
     logger: Logger;
     reusables: Reusables;
   }) {
-    this.alias = alias;
     this.comment = comment;
     this.configuration = configuration;
     this.label = label;
     this.logger = logger;
+    this.name = name;
     this.reusables = reusables;
     this.rdfjsTermExpression = rdfjsTermExpression.bind({
       imports: this.reusables.imports,

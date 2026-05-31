@@ -147,21 +147,21 @@ describe("lazyProperties", () => {
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance",
       ),
-      lazilyResolvedStringProperty: "test",
+      lazilyResolvedProperty: "test",
     });
   const expectedLazilyResolvedIriIdentifierInstance =
     kitchenSink.LazilyResolvedIriIdentifier.createUnsafe({
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedIriIdentifierInstance",
       ),
-      lazilyResolvedStringProperty: "test",
+      lazilyResolvedProperty: "test",
     });
   const expectedLazilyResolvedUnionInstance =
     kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedUnionInstance",
       ),
-      lazilyResolvedStringProperty: "test",
+      lazilyResolvedProperty: "test",
     });
 
   beforeAll(() => {

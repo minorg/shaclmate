@@ -61,7 +61,7 @@ export const harnesses = {
   //       $identifier: dataFactory.namedNode(
   //         "http://example.com/nodeClassProperty1Instance",
   //       ),
-  //       lazilyResolvedStringProperty: "test",
+  //       lazilyResolvedProperty: "test",
   //     }),
   //     singleClassProperty: dataFactory.namedNode(
   //       "http://example.com/singleClassPropertyInstance",
@@ -289,14 +289,14 @@ export const harnesses = {
           $identifier: dataFactory.namedNode(
             "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance1",
           ),
-          lazilyResolvedStringProperty: "test required empty",
+          lazilyResolvedProperty: "test required empty",
         }),
       requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
         kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance2",
           ),
-          lazilyResolvedStringProperty: "test required empty",
+          lazilyResolvedProperty: "test required empty",
         }),
     }),
     kitchenSink.LazyProperties,
@@ -309,61 +309,58 @@ export const harnesses = {
       optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
         kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance1"),
-          lazilyResolvedStringProperty:
+          lazilyResolvedProperty:
             "optionalLazyToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       optionalLazyToResolvedUnionProperty:
         kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance2"),
-          lazilyResolvedStringProperty: "optionalLazyToResolvedUnionProperty",
+          lazilyResolvedProperty: "optionalLazyToResolvedUnionProperty",
         }),
       optionalLazyToResolvedIriIdentifierProperty:
         kitchenSink.LazilyResolvedIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance3"),
-          lazilyResolvedStringProperty:
-            "optionalLazyToResolvedIriIdentifierProperty",
+          lazilyResolvedProperty: "optionalLazyToResolvedIriIdentifierProperty",
         }),
       optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
         kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance4"),
-          lazilyResolvedStringProperty:
+          lazilyResolvedProperty:
             "optionalPartialToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       optionalPartialToResolvedUnionProperty:
         kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance5"),
-          lazilyResolvedStringProperty:
-            "optionalPartialToResolvedUnionProperty",
+          lazilyResolvedProperty: "optionalPartialToResolvedUnionProperty",
         }),
       optionalPartialUnionToResolvedUnionProperty:
         kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance6"),
-          lazilyResolvedStringProperty:
-            "optionalPartialUnionToResolvedUnionProperty",
+          lazilyResolvedProperty: "optionalPartialUnionToResolvedUnionProperty",
         }),
       requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
         kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance7"),
-          lazilyResolvedStringProperty:
+          lazilyResolvedProperty:
             "requiredLazyToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
         kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance8"),
-          lazilyResolvedStringProperty:
+          lazilyResolvedProperty:
             "requiredPartialToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       setLazyToResolvedBlankNodeOrIriIdentifierProperty: [
         kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance9"),
-          lazilyResolvedStringProperty:
+          lazilyResolvedProperty:
             "setLazyToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       ],
       setPartialToResolvedBlankNodeOrIriIdentifierProperty: [
         kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance10"),
-          lazilyResolvedStringProperty:
+          lazilyResolvedProperty:
             "setPartialToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       ],
@@ -547,10 +544,10 @@ export const harnesses = {
   propertyCardinalities1: new Harness(
     kitchenSink.PropertyCardinalities.createUnsafe({
       $identifier,
-      emptyStringSetProperty: undefined,
-      nonEmptyStringSetProperty: ["test"],
-      optionalStringProperty: undefined,
-      requiredStringProperty: "test",
+      emptySetProperty: undefined,
+      nonEmptySetProperty: ["test"],
+      optionalProperty: undefined,
+      requiredProperty: "test",
     }),
     kitchenSink.PropertyCardinalities,
   ),
@@ -558,10 +555,10 @@ export const harnesses = {
   propertyCardinalities2: new Harness(
     kitchenSink.PropertyCardinalities.createUnsafe({
       $identifier,
-      emptyStringSetProperty: [],
-      nonEmptyStringSetProperty: ["test"],
-      optionalStringProperty: Maybe.of("test"),
-      requiredStringProperty: "test",
+      emptySetProperty: [],
+      nonEmptySetProperty: ["test"],
+      optionalProperty: Maybe.of("test"),
+      requiredProperty: "test",
     }),
     kitchenSink.PropertyCardinalities,
   ),
@@ -569,10 +566,10 @@ export const harnesses = {
   propertyCardinalities3: new Harness(
     kitchenSink.PropertyCardinalities.createUnsafe({
       $identifier,
-      emptyStringSetProperty: "test",
-      nonEmptyStringSetProperty: "test",
-      optionalStringProperty: "test",
-      requiredStringProperty: "test",
+      emptySetProperty: "test",
+      nonEmptySetProperty: "test",
+      optionalProperty: "test",
+      requiredProperty: "test",
     }),
     kitchenSink.PropertyCardinalities,
   ),

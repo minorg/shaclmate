@@ -9,7 +9,7 @@ import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
- * Abstract base class for IdentifierType and LiteralType.
+ * Abstract base class for all types that are terms in RDF (i.e., identifiers, literals).
  *
  * ConstantTermT is the type of sh:hasValue and sh:in.
  * RuntimeTermT is the type of values at runtime.
@@ -112,7 +112,7 @@ export abstract class AbstractTermType<
   }
 
   /**
-   * The fromRdfExpression for a term type can be decomposed into multiple sub-expressions with different purposes:
+   * The fromRdfResourceValuesExpression for a term type can be decomposed into multiple sub-expressions with different purposes:
    *
    * hasValues: test whether the values sequence has sh:hasValue values
    * languageIn: filter the values sequence to literals with the right sh:languageIn (or runtime languageIn)

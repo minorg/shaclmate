@@ -50,7 +50,7 @@ export class StringType extends AbstractPrimitiveType<string> {
     }
   }
 
-  override literalExpression(literal: Literal | string): Code {
+  override literalValueExpression(literal: Literal | string): Code {
     return code`${literalOf(typeof literal === "string" ? literal : literal.value)}`;
   }
 

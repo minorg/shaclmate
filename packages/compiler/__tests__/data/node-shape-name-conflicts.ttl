@@ -5,13 +5,16 @@
 
 :Object
     a rdfs:Class, sh:NodeShape ;
-    rdfs:comment "Conflict with the $Object synthetic union; should be no conflict because of the $ prefix" .
+    rdfs:comment "Conflict with the $Object synthetic union; should be no conflict because of the $ prefix" ;
+    sh:property [ sh:path :property ] .
 
 :ObjectSet
     a rdfs:Class, sh:NodeShape ;
-    rdfs:comment "Conflict with the $ObjectSet interface; should be no conflict because of the $ prefix" .
+    rdfs:comment "Conflict with the $ObjectSet interface; should be no conflict because of the $ prefix" ;
+    sh:property [ sh:path :property ] .
 
 :Resource
     a rdfs:Class, sh:NodeShape ;
-    rdfs:comment "Conflict with the Resource@@rdfx/resource import; the latter should be renamed" .
+    rdfs:comment "Conflict with the Resource@@rdfx/resource import; the latter should be renamed" ;
+    sh:property [ sh:path :property ] .
 

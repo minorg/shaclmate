@@ -102,7 +102,7 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   private get typeExpression(): Code {
-    return this.objectType.alias
+    return this.objectType.name
       .map((objectTypeAlias) => code`${objectTypeAlias}.Identifier`)
       .orDefault(this.type.expression);
   }
@@ -210,7 +210,7 @@ export class IdentifierProperty extends AbstractProperty<
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: this.objectType.alias
+        schema: this.objectType.name
           .map(
             (objectTypeAlias) =>
               code`${objectTypeAlias}.schema.properties.${this.name}.type`,

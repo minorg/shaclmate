@@ -19,7 +19,7 @@ export class DateTimeType extends AbstractDateType {
     return code`${this.reusables.imports.z}.iso.datetime()`;
   }
 
-  override literalExpression(literal: Date | Literal): Code {
+  override literalValueExpression(literal: Date | Literal): Code {
     return code`new Date("${(literal instanceof Date ? literal : LiteralDecoder.decodeDateTimeLiteral(literal).unsafeCoerce()).toISOString()}")`;
   }
 

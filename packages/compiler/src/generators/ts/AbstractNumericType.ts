@@ -25,7 +25,7 @@ export abstract class AbstractNumericType<
   override get expression(): Code {
     if (this.primitiveIn.length > 0) {
       return code`${joinCode(
-        this.primitiveIn.map((value) => this.literalExpression(value)),
+        this.primitiveIn.map((value) => this.literalValueExpression(value)),
         { on: " | " },
       )}`;
     }
@@ -49,12 +49,12 @@ export abstract class AbstractNumericType<
       case 0:
         return code`${this.reusables.imports.z}.${this.jsTypes[0].typeof}()`;
       case 1:
-        return code`${this.reusables.imports.z}.literal(${this.literalExpression(this.primitiveIn[0])})`;
+        return code`${this.reusables.imports.z}.literal(${this.literalValueExpression(this.primitiveIn[0])})`;
       default:
         return code`${this.reusables.imports.z}.union([${joinCode(
           this.primitiveIn.map(
             (value) =>
-              code`${this.reusables.imports.z}.literal(${this.literalExpression(value)})`,
+              code`${this.reusables.imports.z}.literal(${this.literalValueExpression(value)})`,
           ),
           { on: "," },
         )}])`;

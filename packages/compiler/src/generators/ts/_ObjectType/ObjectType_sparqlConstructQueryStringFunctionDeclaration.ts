@@ -4,7 +4,7 @@ import type { TsGenerator } from "../TsGenerator.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function ObjectType_sparqlConstructQueryStringFunctionDeclaration(this: {
-  readonly alias: string;
+  readonly name: string;
   readonly configuration: TsGenerator.Configuration;
   readonly filterType: Code;
   readonly reusables: Reusables;
@@ -14,7 +14,7 @@ export function ObjectType_sparqlConstructQueryStringFunctionDeclaration(this: {
   }
 
   return Maybe.of(code`\
-export function sparqlConstructQueryString(parameters: Parameters<typeof ${this.alias}.sparqlConstructQuery>[0] & ${this.reusables.imports.sparqljs}.GeneratorOptions): string {
-  return new ${this.reusables.imports.sparqljs}.Generator(parameters).stringify(${this.alias}.sparqlConstructQuery(parameters));
+export function sparqlConstructQueryString(parameters: Parameters<typeof ${this.name}.sparqlConstructQuery>[0] & ${this.reusables.imports.sparqljs}.GeneratorOptions): string {
+  return new ${this.reusables.imports.sparqljs}.Generator(parameters).stringify(${this.name}.sparqlConstructQuery(parameters));
 }`);
 }

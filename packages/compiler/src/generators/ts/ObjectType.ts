@@ -3,6 +3,7 @@ import { NodeKind } from "@shaclmate/shacl-ast";
 
 import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_ObjectType/DiscriminantProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
@@ -97,8 +98,8 @@ export class ObjectType extends AbstractType {
   }
 
   override get declaration(): Maybe<Code> {
-    const alias = this.alias.extract();
-    if (!alias) {
+    const name = this.name.extract();
+    if (!name) {
       return Maybe.empty();
     }
 
@@ -149,13 +150,13 @@ export class ObjectType extends AbstractType {
         ...ObjectType_isTypeFunctionDeclaration.call(this).toList(),
         ...ObjectType_schemaVariableStatement.call(this).toList(),
         ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
-          alias,
+          name,
           configuration: this.configuration,
           filterType: this.filterType,
           reusables: this.reusables,
         }).toList(),
         ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-          alias,
+          name,
           configuration: this.configuration,
           filterType: this.filterType,
           reusables: this.reusables,
@@ -173,7 +174,7 @@ export class ObjectType extends AbstractType {
 
       if (staticModuleDeclarations.length > 0) {
         declarations.push(code`\
-export namespace ${def(alias)} {
+export namespace ${def(name)} {
 ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }`);
       }
@@ -188,47 +189,47 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get equalsFunction(): Code {
-    return code`${this.alias.unsafeCoerce()}.equals`;
+    return code`${this.name.unsafeCoerce()}.equals`;
   }
 
   @Memoize()
   get expression(): Code {
-    return code`${this.alias.unsafeCoerce()}`;
+    return code`${this.name.unsafeCoerce()}`;
   }
 
   @Memoize()
   get filterFunction(): Code {
-    return code`${this.alias.unsafeCoerce()}.filter`;
+    return code`${this.name.unsafeCoerce()}.filter`;
   }
 
   @Memoize()
   get filterType(): Code {
-    return code`${this.alias.unsafeCoerce()}.Filter`;
+    return code`${this.name.unsafeCoerce()}.Filter`;
   }
 
   @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
     return this.fromRdfType.map(
-      () => code`${this.alias.unsafeCoerce()}.fromRdfType`,
+      () => code`${this.name.unsafeCoerce()}.fromRdfType`,
     );
   }
 
   @Memoize()
   get graphqlType(): AbstractType.GraphqlType {
     return new AbstractType.GraphqlType(
-      code`${this.alias.unsafeCoerce()}.GraphQL`,
+      code`${this.name.unsafeCoerce()}.GraphQL`,
       this.reusables,
     );
   }
 
   @Memoize()
   override get hashFunction(): Code {
-    return code`${this.alias.unsafeCoerce()}.hash`;
+    return code`${this.name.unsafeCoerce()}.hash`;
   }
 
   @Memoize()
   get identifierTypeAlias(): Code {
-    return code`${this.alias.unsafeCoerce()}.Identifier`;
+    return code`${this.name.unsafeCoerce()}.Identifier`;
   }
 
   @Memoize()
@@ -239,7 +240,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
     return ObjectType_objectSetMethodNames.call({
-      alias: this.alias.unsafeCoerce(),
+      name: this.name.unsafeCoerce(),
       configuration: this.configuration,
     });
   }
@@ -247,18 +248,16 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   get properties(): readonly ObjectType.Property[] {
     const properties = this.lazyProperties(this);
-    const propertyNames = new Set<string>();
-    for (const property of properties) {
-      if (propertyNames.has(property.name)) {
-        throw new Error(`duplicate property '${property.name}'`);
-      }
-    }
+    invariant(
+      properties.length > 0,
+      `${this.name.extract()}: empty properties`,
+    );
     return properties;
   }
 
   @Memoize()
   override get schema(): Code {
-    return code`${this.alias.unsafeCoerce()}.schema`;
+    return code`${this.name.unsafeCoerce()}.schema`;
   }
 
   @Memoize()
@@ -278,24 +277,24 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.alias.unsafeCoerce()}.valueSparqlConstructTriples`;
+    return code`${this.name.unsafeCoerce()}.valueSparqlConstructTriples`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.alias.unsafeCoerce()}.valueSparqlWherePatterns`;
+    return code`${this.name.unsafeCoerce()}.valueSparqlWherePatterns`;
   }
 
   @Memoize()
   protected get thisVariable(): Code {
-    return code`_${camelCase(this.alias.unsafeCoerce())}`;
+    return code`_${camelCase(this.name.unsafeCoerce())}`;
   }
 
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     // Assumes the JSON object has been recursively validated already.
-    return code`${this.alias.unsafeCoerce()}.fromJson(${variables.value})`;
+    return code`${this.name.unsafeCoerce()}.fromJson(${variables.value})`;
   }
 
   override fromRdfResourceValuesExpression({
@@ -310,7 +309,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     if (!this.configuration.features.has("ObjectSet")) {
       delete fromRdfResourceValuesOptions["objectSet"];
     }
-    return code`${this.alias.unsafeCoerce()}.fromRdfResourceValues(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
+    return code`${this.name.unsafeCoerce()}.fromRdfResourceValues(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
   }
 
   override graphqlResolveExpression({
@@ -324,45 +323,45 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    let expression = code`${this.alias.unsafeCoerce()}.Json.schema()`;
+    let expression = code`${this.name.unsafeCoerce()}.Json.schema()`;
     if (
       context === "property" &&
       this.properties.some((property) => property.recursive)
     ) {
-      expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.alias.unsafeCoerce()}.Json> => ${expression})`;
+      expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name.unsafeCoerce()}.Json> => ${expression})`;
     }
     return expression;
   }
 
   @Memoize()
   override jsonType(): AbstractType.JsonType {
-    return new AbstractType.JsonType(code`${this.alias.unsafeCoerce()}.Json`);
+    return new AbstractType.JsonType(code`${this.name.unsafeCoerce()}.Json`);
   }
 
   override jsonUiSchemaElement({
     variables,
   }: Parameters<AbstractType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.alias.unsafeCoerce()}.Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
+      code`${this.name.unsafeCoerce()}.Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
   }
 
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return code`${this.alias.unsafeCoerce()}.toJson(${variables.value})`;
+    return code`${this.name.unsafeCoerce()}.toJson(${variables.value})`;
   }
 
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    return code`[${this.alias.unsafeCoerce()}.toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+    return code`[${this.name.unsafeCoerce()}.toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
 
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.alias.unsafeCoerce()}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
+    return code`${this.name.unsafeCoerce()}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
   }
 
   private readonly lazyProperties: (

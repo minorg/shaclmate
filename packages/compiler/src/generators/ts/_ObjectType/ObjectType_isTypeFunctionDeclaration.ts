@@ -13,14 +13,14 @@ export function ObjectType_isTypeFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const alias = this.alias.extract();
+  const name = this.name.extract();
   const discriminantProperty = this.discriminantProperty.extract();
-  if (!alias || !discriminantProperty) {
+  if (!name || !discriminantProperty) {
     return Maybe.empty();
   }
 
   return Maybe.of(code`\
-export function is${alias}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${alias} {
+export function is${name}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${name} {
   return object.${discriminantProperty.name} === ${literalOf(discriminantProperty.value)};
 }`);
 }

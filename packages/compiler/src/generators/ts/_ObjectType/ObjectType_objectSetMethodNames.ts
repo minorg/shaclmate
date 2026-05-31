@@ -3,15 +3,15 @@ import plur from "plur";
 import type { TsGenerator } from "../TsGenerator.js";
 
 export function ObjectType_objectSetMethodNames(this: {
-  readonly alias: string;
+  readonly name: string;
   readonly configuration: TsGenerator.Configuration;
 }) {
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
 
-  const prefixSingular = camelCase(this.alias, {
+  const prefixSingular = camelCase(this.name, {
     prefixCharacters: syntheticNamePrefix,
   });
-  const thisNameParts = trainCase(this.alias, {
+  const thisNameParts = trainCase(this.name, {
     prefixCharacters: syntheticNamePrefix,
   }).split("-");
   let prefixPlural = camelCase(

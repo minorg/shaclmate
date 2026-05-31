@@ -636,27 +636,27 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         objectDataset([
           kitchenSink.PropertyCardinalities.createUnsafe({
             $identifier: identifiers[0],
-            emptyStringSetProperty: [value],
-            nonEmptyStringSetProperty: [value],
-            requiredStringProperty: value,
+            emptySetProperty: [value],
+            nonEmptySetProperty: [value],
+            requiredProperty: value,
           }),
         ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
-        items: [{ emptyStringSetProperty: { in: [value] } }, [identifiers[0]]],
+        items: [{ emptySetProperty: { in: [value] } }, [identifiers[0]]],
         ...(!(objectSet instanceof kitchenSink.$SparqlObjectSet)
           ? {
-              maxCount0: [{ emptyStringSetProperty: { $maxCount: 0 } }, []],
+              maxCount0: [{ emptySetProperty: { $maxCount: 0 } }, []],
               maxCount1: [
-                { emptyStringSetProperty: { $maxCount: 1 } },
+                { emptySetProperty: { $maxCount: 1 } },
                 [identifiers[0]],
               ],
               minCount1: [
-                { emptyStringSetProperty: { $minCount: 1 } },
+                { emptySetProperty: { $minCount: 1 } },
                 [identifiers[0]],
               ],
-              minCount2: [{ emptyStringSetProperty: { $minCount: 2 } }, []],
+              minCount2: [{ emptySetProperty: { $minCount: 2 } }, []],
             }
           : {}),
       } satisfies Record<

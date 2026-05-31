@@ -37,9 +37,9 @@ export abstract class AbstractObjectSetType {
 
   protected methodSignatures(
     namedObjectType: {
-      readonly alias: Maybe<string>;
       readonly filterType: Code;
       readonly identifierTypeAlias: Code;
+      readonly name: Maybe<string>;
       readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
     },
     options?: {
@@ -66,7 +66,7 @@ export abstract class AbstractObjectSetType {
       object: {
         name: methodNames.object,
         parameters: code`${parameterNamePrefix}identifier: ${namedObjectType.identifierTypeAlias}, options?: { preferredLanguages?: readonly string[]; }`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, ${namedObjectType.alias.unsafeCoerce()}>>`,
+        returnType: code`Promise<${this.reusables.imports.Either}<Error, ${namedObjectType.name.unsafeCoerce()}>>`,
       },
       objectCount: {
         name: methodNames.objectCount,
@@ -81,7 +81,7 @@ export abstract class AbstractObjectSetType {
       objects: {
         name: methodNames.objects,
         parameters: code`${parameterNamePrefix}query?: ${queryT}<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, readonly ${namedObjectType.alias.unsafeCoerce()}[]>>`,
+        returnType: code`Promise<${this.reusables.imports.Either}<Error, readonly ${namedObjectType.name.unsafeCoerce()}[]>>`,
       },
     };
   }

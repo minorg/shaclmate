@@ -24,7 +24,7 @@ export function ObjectType_toStringFunctionDeclarations(
   )}})`;
 
   const toStringReturnExpression = (propertiesToStrings: Code) =>
-    code`\`${this.alias.unsafeCoerce()}(\${JSON.stringify(${propertiesToStrings})})\``;
+    code`\`${this.name.unsafeCoerce()}(\${JSON.stringify(${propertiesToStrings})})\``;
 
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return [

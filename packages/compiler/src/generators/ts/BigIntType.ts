@@ -49,7 +49,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
     return new AbstractNumericType.JsonType(code`string`);
   }
 
-  override literalExpression(literal: bigint | Literal): Code {
+  override literalValueExpression(literal: bigint | Literal): Code {
     return code`${typeof literal === "bigint" ? literal : LiteralDecoder.decodeBigIntLiteral(literal).unsafeCoerce()}n`;
   }
 

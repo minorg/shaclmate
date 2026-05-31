@@ -14,7 +14,7 @@ export function ObjectType_hashFunctionDeclarations(
     code`\
 export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.expression}): HasherT {
   ${joinCode([
-    code`${this.alias.unsafeCoerce()}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
+    code`${this.name.unsafeCoerce()}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
     ...this.properties
       .filter((property) => property.kind !== "Shacl")
       .flatMap((property) =>

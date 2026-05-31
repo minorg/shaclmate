@@ -54,6 +54,7 @@ export function transformShapeToAstObjectType(
 ): Either<Error, Maybe<ast.Type>> {
   shapeStack.push(shape);
   try {
+    // If the shape has an sh:node itself then transform that instead
     if (shape.node.isJust()) {
       return this.shapesGraph
         .nodeShape(shape.node.unsafeCoerce())
@@ -73,6 +74,11 @@ export function transformShapeToAstObjectType(
       nodeShape.and.orDefault([]).length > 0 ||
       nodeShape.xone.orDefault([]).length > 0
     ) {
+      return Either.of(Maybe.empty());
+    }
+
+    if (nodeShape.properties.length === 0) {
+      // A node shape must have sh:property to be considered an ObjectType
       return Either.of(Maybe.empty());
     }
 
