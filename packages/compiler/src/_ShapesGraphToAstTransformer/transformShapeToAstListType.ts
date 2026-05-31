@@ -9,9 +9,9 @@ import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
-import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
+import { transformPropertyShapeToAstStructTypeProperty } from "./transformPropertyShapeToAstStructTypeProperty.js";
 
-const listPropertiesObjectType = new ast.ObjectType({
+const listPropertiesStructType = new ast.StructType({
   extern: false,
   comment: Maybe.empty(),
   label: Maybe.empty(),
@@ -39,7 +39,7 @@ const astListTypePlaceholderItemType = new ast.BlankNodeType({
 const empty = Either.of<Error, Maybe<ast.ListType>>(Maybe.empty());
 
 /**
- * Is an ast.ObjectType actually the shape of an RDF list?
+ * Is an ast.StructType actually the shape of an RDF list?
  * If so, return the type of its rdf:first.
  */
 export function transformShapeToAstListType(
@@ -147,10 +147,10 @@ export function transformShapeToAstListType(
             );
           }
 
-          return transformPropertyShapeToAstObjectTypeProperty
+          return transformPropertyShapeToAstStructTypeProperty
             .call(this, {
-              // Just need a dummy ast.ObjectType here to get the properties transformed.
-              objectType: listPropertiesObjectType,
+              // Just need a dummy ast.StructType here to get the properties transformed.
+              objectType: listPropertiesStructType,
               propertyShape: firstPropertyShape,
             })
             .chain((firstProperty) => {
@@ -164,10 +164,10 @@ export function transformShapeToAstListType(
 
               listType.itemType = firstProperty.type;
 
-              return transformPropertyShapeToAstObjectTypeProperty
+              return transformPropertyShapeToAstStructTypeProperty
                 .call(this, {
-                  // Just need a dummy ast.ObjectType here to get the properties transformed.
-                  objectType: listPropertiesObjectType,
+                  // Just need a dummy ast.StructType here to get the properties transformed.
+                  objectType: listPropertiesStructType,
                   propertyShape: restPropertyShape,
                 })
                 .chain((restProperty) => {

@@ -46,7 +46,7 @@ export class StructType extends AbstractType {
   /**
    * Type discriminant.
    */
-  readonly kind = "Object";
+  readonly kind = "Struct";
   override readonly nodeKinds = nodeKinds;
 
   /**
@@ -333,9 +333,9 @@ export namespace StructType {
           case "Literal":
           case "Term":
             return false;
-          case "LazyObjectOption":
-          case "LazyObjectSet":
-          case "LazyObject": {
+          case "LazyOption":
+          case "LazySet":
+          case "Lazy": {
             if (
               helper(
                 stack.concat({
@@ -367,7 +367,7 @@ export namespace StructType {
             return false;
           }
 
-          case "Object": {
+          case "Struct": {
             if (DEBUG) {
               process.stderr.write(`recurse into ${currentPropertyType}`);
             }

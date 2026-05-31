@@ -86,14 +86,14 @@ export namespace AbstractContainerType {
       case "Iri":
       case "List":
       case "Literal":
-      case "Object":
+      case "Struct":
       case "Term":
       case "Union":
         return true;
       case "DefaultValue":
-      case "LazyObjectOption":
-      case "LazyObjectSet":
-      case "LazyObject":
+      case "LazyOption":
+      case "LazySet":
+      case "Lazy":
       case "Option":
       case "Set":
         return false;

@@ -32,10 +32,10 @@ export class ShapesGraphToAstTransformer {
   transform(): Either<Error, ast.Ast> {
     const astNamedTypes: (
       | ast.IntersectionType
-      | ast.ObjectType
+      | ast.StructType
       | ast.UnionType
     )[] = [];
-    const syntheticAstObjectTypesByName: Record<string, ast.ObjectType> = {};
+    const syntheticAstStructTypesByName: Record<string, ast.StructType> = {};
 
     for (const nodeShape of this.shapesGraph.nodeShapes) {
       if (nodeShape.$identifier().termType !== "NamedNode") {
@@ -63,7 +63,7 @@ export class ShapesGraphToAstTransformer {
             astNamedTypes.push(nodeShapeAstType);
           }
           break;
-        case "Object": {
+        case "Struct": {
           invariant(
             nodeShapeAstType.name.isJust(),
             `node shape missing name: ${nodeShapeAstType.shapeIdentifier}`,
@@ -71,24 +71,24 @@ export class ShapesGraphToAstTransformer {
           astNamedTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
             switch (property.type.kind) {
-              case "LazyObjectOption":
-              case "LazyObjectSet":
-              case "LazyObject": {
+              case "LazyOption":
+              case "LazySet":
+              case "Lazy": {
                 const partialItemType =
-                  property.type.partialType.kind === "Object" ||
+                  property.type.partialType.kind === "Struct" ||
                   property.type.partialType.kind === "Union"
                     ? property.type.partialType
                     : property.type.partialType.itemType;
 
                 if (
-                  partialItemType.kind === "Object" &&
+                  partialItemType.kind === "Struct" &&
                   partialItemType.synthetic
                 ) {
                   const partialItemTypeName =
                     partialItemType.name.unsafeCoerce();
-                  if (!syntheticAstObjectTypesByName[partialItemTypeName]) {
-                    syntheticAstObjectTypesByName[partialItemTypeName] =
-                      partialItemType as ast.ObjectType;
+                  if (!syntheticAstStructTypesByName[partialItemTypeName]) {
+                    syntheticAstStructTypesByName[partialItemTypeName] =
+                      partialItemType as ast.StructType;
                   }
                 }
               }
@@ -106,9 +106,9 @@ export class ShapesGraphToAstTransformer {
       lazyTypesCount: [...this.cachedAstTypesByShapeIdentifier.values()].reduce(
         (acc, astType) => {
           switch (astType.kind) {
-            case "LazyObject":
-            case "LazyObjectOption":
-            case "LazyObjectSet":
+            case "Lazy":
+            case "LazyOption":
+            case "LazySet":
               return acc + 1;
             default:
               return acc;
@@ -117,7 +117,7 @@ export class ShapesGraphToAstTransformer {
         0,
       ),
       namedTypes: astNamedTypes.concat(
-        Object.values(syntheticAstObjectTypesByName),
+        Object.values(syntheticAstStructTypesByName),
       ),
     });
   }

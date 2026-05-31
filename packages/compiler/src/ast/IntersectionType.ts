@@ -12,14 +12,14 @@ export class IntersectionType<
 > {
   override readonly kind = "Intersection";
 
-  isObjectIntersectionType(): this is StructIntersectionType {
+  isStructIntersectionType(): this is StructIntersectionType {
     return (
       this.members.length > 0 &&
       this.members.every(
         (member) =>
-          member.type.kind === "Object" ||
+          member.type.kind === "Struct" ||
           (member.type.kind === "Intersection" &&
-            member.type.isObjectIntersectionType()),
+            member.type.isStructIntersectionType()),
       )
     );
   }

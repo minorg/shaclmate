@@ -10,13 +10,13 @@ export class UnionType<
 > extends AbstractCompoundType<UnionType.Member<MemberTypeT>, MemberTypeT> {
   override readonly kind = "Union";
 
-  isObjectUnionType(): this is StructUnionType {
+  isStructUnionType(): this is StructUnionType {
     return (
       this.members.length > 0 &&
       this.members.every(
         (member) =>
-          member.type.kind === "Object" ||
-          (member.type.kind === "Union" && member.type.isObjectUnionType()),
+          member.type.kind === "Struct" ||
+          (member.type.kind === "Union" && member.type.isStructUnionType()),
       )
     );
   }

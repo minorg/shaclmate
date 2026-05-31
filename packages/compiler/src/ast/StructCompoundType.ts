@@ -18,7 +18,7 @@ export namespace StructCompoundType {
   ): BlankNodeType | IdentifierType | IriType {
     const memberIdentifierTypeNodeKinds = new Set<IdentifierNodeKind>();
     const memberIdentifierTypesIn = new TermSet<NamedNode>();
-    for (const memberType of memberObjectTypes(objectCompoundType)) {
+    for (const memberType of memberStructTypes(objectCompoundType)) {
       for (const nodeKind of memberType.identifierType.nodeKinds) {
         memberIdentifierTypeNodeKinds.add(nodeKind);
       }
@@ -64,39 +64,39 @@ export namespace StructCompoundType {
     }
   }
 
-  export function memberObjectTypes(
+  export function memberStructTypes(
     objectCompoundType: StructCompoundType,
   ): readonly StructType[] {
-    const memberObjectTypes_: StructType[] = [];
+    const memberStructTypes_: StructType[] = [];
 
     for (const member of objectCompoundType.members) {
       switch (member.type.kind) {
-        case "Object":
-          memberObjectTypes_.push(member.type);
+        case "Struct":
+          memberStructTypes_.push(member.type);
           break;
         case "Intersection":
         case "Union": {
           invariant(member.type.kind === objectCompoundType.kind);
-          memberObjectTypes_.push(...memberObjectTypes(member.type));
+          memberStructTypes_.push(...memberStructTypes(member.type));
           break;
         }
       }
     }
 
     invariant(
-      memberObjectTypes_.length >= objectCompoundType.members.length,
+      memberStructTypes_.length >= objectCompoundType.members.length,
       "object compound type has no member StructType's",
     );
 
     // Member object types must have distinct RDF types or no RDF types at all.
     const fromRdfTypes = new TermSet<NamedNode>();
     let expectUniqueFromRdfTypesCount = 0;
-    for (const memberObjectType of memberObjectTypes_) {
-      if (memberObjectType.extern) {
+    for (const memberStructType of memberStructTypes_) {
+      if (memberStructType.extern) {
         continue;
       }
       expectUniqueFromRdfTypesCount++;
-      memberObjectType.fromRdfType.ifJust((fromRdfType) =>
+      memberStructType.fromRdfType.ifJust((fromRdfType) =>
         fromRdfTypes.add(fromRdfType),
       );
     }
@@ -105,10 +105,10 @@ export namespace StructCompoundType {
       fromRdfTypes.size !== expectUniqueFromRdfTypesCount
     ) {
       throw new Error(
-        `one or more ${objectCompoundType} members ([${memberObjectTypes_.map((memberType) => memberType.toString()).join(", ")}]) lack distinguishing fromRdfType's ({${[...fromRdfTypes].join(", ")}})`,
+        `one or more ${objectCompoundType} members ([${memberStructTypes_.map((memberType) => memberType.toString()).join(", ")}]) lack distinguishing fromRdfType's ({${[...fromRdfTypes].join(", ")}})`,
       );
     }
 
-    return memberObjectTypes_;
+    return memberStructTypes_;
   }
 }

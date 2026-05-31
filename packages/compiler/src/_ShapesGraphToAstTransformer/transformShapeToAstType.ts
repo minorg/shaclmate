@@ -5,13 +5,13 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import type { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstCompoundType } from "./transformShapeToAstCompoundType.js";
 import { transformShapeToAstListType } from "./transformShapeToAstListType.js";
-import { transformShapeToAstObjectType } from "./transformShapeToAstObjectType.js";
+import { transformShapeToAstStructType } from "./transformShapeToAstStructType.js";
 import { transformShapeToAstTermType } from "./transformShapeToAstTermType.js";
 
 const tryTransformShapeToAstTypeMethods = [
   transformShapeToAstListType, // List type must be before compound type since a list shape uses sh:xone
   transformShapeToAstCompoundType,
-  transformShapeToAstObjectType,
+  transformShapeToAstStructType,
 ];
 
 /**

@@ -3,9 +3,9 @@ import type { DefaultValueType } from "./DefaultValueType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
-import type { LazyObjectOptionType } from "./LazyObjectOptionType.js";
-import type { LazyObjectSetType } from "./LazyObjectSetType.js";
-import type { LazyObjectType } from "./LazyObjectType.js";
+import type { LazyOptionType } from "./LazyOptionType.js";
+import type { LazySetType } from "./LazySetType.js";
+import type { LazyType } from "./LazyType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { OptionType } from "./OptionType.js";
@@ -20,9 +20,9 @@ export type Type =
   | IdentifierType
   | IntersectionType
   | IriType
-  | LazyObjectOptionType
-  | LazyObjectSetType
-  | LazyObjectType
+  | LazyOptionType
+  | LazySetType
+  | LazyType
   | ListType
   | LiteralType
   | StructType
@@ -50,15 +50,15 @@ export namespace Type {
         return left.equals(right as IriType);
       case "Literal":
         return left.equals(right as LiteralType);
-      case "LazyObjectOption":
-        return left.equals(right as LazyObjectOptionType);
-      case "LazyObjectSet":
-        return left.equals(right as LazyObjectSetType);
-      case "LazyObject":
-        return left.equals(right as LazyObjectType);
+      case "LazyOption":
+        return left.equals(right as LazyOptionType);
+      case "LazySet":
+        return left.equals(right as LazySetType);
+      case "Lazy":
+        return left.equals(right as LazyType);
       case "List":
         return left.equals(right as ListType);
-      case "Object":
+      case "Struct":
         return left.equals(right as StructType);
       case "Option":
         return left.equals(right as OptionType);
