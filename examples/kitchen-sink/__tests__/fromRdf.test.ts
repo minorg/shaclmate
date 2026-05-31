@@ -442,8 +442,7 @@ describe("fromRdf", () => {
     });
     const instanceResource = resourceSet.resource(dataFactory.blankNode());
     instanceResource.add(
-      kitchenSink.PropertyCardinalities.schema.properties.emptyStringSetProperty
-        .path,
+      kitchenSink.PropertyCardinalities.schema.properties.emptySetProperty.path,
       dataFactory.blankNode(),
     );
     const result =
