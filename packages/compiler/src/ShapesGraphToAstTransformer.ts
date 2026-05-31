@@ -69,7 +69,7 @@ export class ShapesGraphToAstTransformer {
             `node shape missing name: ${nodeShapeAstType.shapeIdentifier}`,
           );
           astNamedTypes.push(nodeShapeAstType);
-          for (const property of nodeShapeAstType.properties) {
+          for (const property of nodeShapeAstType.fields) {
             switch (property.type.kind) {
               case "LazyOption":
               case "LazySet":

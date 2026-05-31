@@ -15,13 +15,13 @@ import { Type } from "./Type.js";
 
 export class StructType extends AbstractType {
   /**
-   * Properties of this StructType.
+   * Fields of this StructType.
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly #properties: StructType.Property[] = [];
+  readonly #fields: StructType.Field[] = [];
 
-  private propertyNames: Set<string> = new Set();
+  private fieldNames: Set<string> = new Set();
 
   /**
    * If true, the code for this StructType is defined externally and should not be generated.
@@ -97,26 +97,26 @@ export class StructType extends AbstractType {
     this.tsImports = tsImports;
   }
 
-  get properties(): readonly StructType.Property[] {
-    return this.#properties;
+  get fields(): readonly StructType.Field[] {
+    return this.#fields;
   }
 
   override get recursive(): boolean {
-    return this.properties.some((property) => property.recursive);
+    return this.fields.some((field) => field.recursive);
   }
 
-  addProperties(...properties: readonly StructType.Property[]): void {
-    for (const property of properties) {
+  addFields(...fields: readonly StructType.Field[]): void {
+    for (const field of fields) {
       invariant(
-        Object.is(property.structType, this),
-        "property has unexpected .structType",
+        Object.is(field.structType, this),
+        "field has unexpected .structType",
       );
       invariant(
-        !this.propertyNames.has(property.name),
-        `${property.structType.shapeIdentifier}: duplicate property name: ${property.name}`,
+        !this.fieldNames.has(field.name),
+        `${field.structType.shapeIdentifier}: duplicate field name: ${field.name}`,
       );
-      this.#properties.push(property);
-      this.propertyNames.add(property.name);
+      this.#fields.push(field);
+      this.fieldNames.add(field.name);
     }
   }
 
@@ -126,7 +126,7 @@ export class StructType extends AbstractType {
   }
 
   sortProperties(): void {
-    this.#properties.sort((left, right) => {
+    this.#fields.sort((left, right) => {
       if (left.order < right.order) {
         return -1;
       }
@@ -151,7 +151,7 @@ export class StructType extends AbstractType {
 const nodeKinds: ReadonlySet<NodeKind> = new Set(["BlankNode", "IRI"]);
 
 export namespace StructType {
-  export class Property {
+  export class Field {
     /**
      * Documentation comment from rdfs:comment.
      */
@@ -163,7 +163,7 @@ export namespace StructType {
     readonly description: Maybe<string>;
 
     /**
-     * Should the property and its value be displayed in a toString()-type representation?
+     * Should the field and its value be displayed in a toString()-type representation?
      */
     readonly display: boolean;
 
@@ -173,38 +173,38 @@ export namespace StructType {
     readonly label: Maybe<string>;
 
     /**
-     * The property should be mutable in generated code i.e., it should be re-assignable. The property value may or may
+     * The field should be mutable in generated code i.e., it should be re-assignable. The field value may or may
      * not be mutable.
      */
     readonly mutable: boolean;
 
     /**
-     * Name of this property, derived from sh:name or shaclmate:name.
+     * Name of this field, derived from sh:name or shaclmate:name.
      */
     readonly name: string;
 
     /**
-     * Relative order of this property, derived from sh:order.
+     * Relative order of this field, derived from sh:order.
      */
     readonly order: number;
 
     /**
-     * SHACL property path (https://www.w3.org/TR/shacl/#property-paths)
+     * SHACL field path (https://www.w3.org/TR/shacl/#field-paths)
      */
     readonly path: PropertyPath;
 
     /**
-     * Identifier of the property shape.
+     * Identifier of the field shape.
      */
     readonly shapeIdentifier: BlankNode | NamedNode;
 
     /**
-     * StructType this property belongs to.
+     * StructType this field belongs to.
      */
     readonly structType: StructType;
 
     /**
-     * Type of this property.
+     * Type of this field.
      */
     readonly type: Type;
 
@@ -246,12 +246,12 @@ export namespace StructType {
       this.type = type;
     }
 
-    equals(other: Property): boolean {
+    equals(other: Field): boolean {
       return this.shapeIdentifier.equals(other.shapeIdentifier);
     }
 
     /**
-     * Does the property directly or indirectly reference the StructType itself?
+     * Does the field directly or indirectly reference the StructType itself?
      */
     @Memoize()
     get recursive(): boolean {
@@ -262,13 +262,13 @@ export namespace StructType {
 
       function helper(
         stack: {
-          property: StructType.Property;
-          propertyType?: readonly Type[];
+          field: StructType.Field;
+          fieldType?: readonly Type[];
           structType: StructType;
         }[],
       ): boolean {
         const currentStackFrame = stack.at(-1)!;
-        const { property, propertyType, structType } = currentStackFrame;
+        const { field, fieldType, structType } = currentStackFrame;
 
         if (DEBUG) {
           process.stderr.write(
@@ -276,9 +276,9 @@ export namespace StructType {
               stack.length.toString(),
               rootStructType,
               rootProperty,
-              property,
-              propertyType
-                ? `[${propertyType.map(Type.toString).join(", ")}]`
+              field,
+              fieldType
+                ? `[${fieldType.map(Type.toString).join(", ")}]`
                 : "undefined",
               structType,
             ].join(",")}\n`,
@@ -294,13 +294,13 @@ export namespace StructType {
           ) {
             continue;
           }
-          if (!currentStackFrame.property.equals(lowerStackFrame.property)) {
+          if (!currentStackFrame.field.equals(lowerStackFrame.field)) {
             continue;
           }
           if (
             !arrayEquals(Type.equals)(
-              currentStackFrame.propertyType ?? [],
-              lowerStackFrame.propertyType ?? [],
+              currentStackFrame.fieldType ?? [],
+              lowerStackFrame.fieldType ?? [],
             )
           ) {
             continue;
@@ -313,18 +313,18 @@ export namespace StructType {
           return true;
         }
 
-        if (!propertyType) {
+        if (!fieldType) {
           return helper(
             stack.concat({
-              property,
-              propertyType: [property.type],
+              field,
+              fieldType: [field.type],
               structType,
             }),
           );
         }
 
-        invariant(propertyType.length > 0);
-        const currentPropertyType = propertyType.at(-1)!;
+        invariant(fieldType.length > 0);
+        const currentPropertyType = fieldType.at(-1)!;
 
         switch (currentPropertyType.kind) {
           case "BlankNode":
@@ -339,10 +339,8 @@ export namespace StructType {
             if (
               helper(
                 stack.concat({
-                  property,
-                  propertyType: propertyType.concat(
-                    currentPropertyType.partialType,
-                  ),
+                  field,
+                  fieldType: fieldType.concat(currentPropertyType.partialType),
                   structType,
                 }),
               )
@@ -353,10 +351,8 @@ export namespace StructType {
             if (
               helper(
                 stack.concat({
-                  property,
-                  propertyType: propertyType.concat(
-                    currentPropertyType.resolveType,
-                  ),
+                  field,
+                  fieldType: fieldType.concat(currentPropertyType.resolveType),
                   structType,
                 }),
               )
@@ -371,12 +367,12 @@ export namespace StructType {
             if (DEBUG) {
               process.stderr.write(`recurse into ${currentPropertyType}`);
             }
-            for (const property of currentPropertyType.properties) {
+            for (const field of currentPropertyType.fields) {
               if (
                 helper(
                   stack.concat({
                     structType: currentPropertyType,
-                    property,
+                    field,
                   }),
                 )
               ) {
@@ -395,8 +391,8 @@ export namespace StructType {
               if (
                 helper(
                   stack.concat({
-                    property,
-                    propertyType: propertyType.concat(member.type),
+                    field,
+                    fieldType: fieldType.concat(member.type),
                     structType,
                   }),
                 )
@@ -412,15 +408,15 @@ export namespace StructType {
           case "Set":
             return helper(
               stack.concat({
-                property,
-                propertyType: propertyType.concat(currentPropertyType.itemType),
+                field,
+                fieldType: fieldType.concat(currentPropertyType.itemType),
                 structType,
               }),
             );
         }
       }
 
-      return helper([{ structType: rootStructType, property: rootProperty }]);
+      return helper([{ structType: rootStructType, field: rootProperty }]);
     }
 
     toJSON() {

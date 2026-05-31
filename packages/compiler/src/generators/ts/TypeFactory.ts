@@ -104,7 +104,7 @@ export class TypeFactory {
       identifierType,
       label: astType.label,
       lazyProperties: (objectType: ObjectType) => {
-        const properties: ObjectType.Property[] = astType.properties
+        const properties: ObjectType.Property[] = astType.fields
           .toSorted((left, right) => {
             if (left.order < right.order) {
               return -1;
@@ -556,7 +556,7 @@ export class TypeFactory {
     astObjectTypeProperty,
     objectType,
   }: {
-    astObjectTypeProperty: ast.StructType.Property;
+    astObjectTypeProperty: ast.StructType.Field;
     objectType: ObjectType;
   }): ObjectType.Property {
     {

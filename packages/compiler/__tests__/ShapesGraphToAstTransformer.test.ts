@@ -102,10 +102,10 @@ describe("ShapesGraphToAstTransformer", () => {
             }) => {
               const astStructType = astStructTypesByShapeIdentifier[classIri];
               expect(astStructType).toBeDefined();
-              const recursiveProperty = astStructType.properties.find(
-                (property) =>
-                  property.path.termType === "NamedNode" &&
-                  property.path.value === recursivePropertyIri,
+              const recursiveProperty = astStructType.fields.find(
+                (field) =>
+                  field.path.termType === "NamedNode" &&
+                  field.path.value === recursivePropertyIri,
               );
               expect(recursiveProperty).toBeDefined();
               expect(recursiveProperty!.recursive).toStrictEqual(true);

@@ -9,7 +9,7 @@ export class AstJsonGenerator implements Generator {
           ...namedType.toJSON(),
           ...(namedType.kind === "Struct"
             ? {
-                properties: namedType.properties.map((property) =>
+                properties: namedType.fields.map((property) =>
                   property.toJSON(),
                 ),
               }

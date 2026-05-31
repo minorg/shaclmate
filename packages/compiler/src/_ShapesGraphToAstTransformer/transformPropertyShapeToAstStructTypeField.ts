@@ -187,7 +187,7 @@ function transformPropertyShapeToAstType(
     });
 }
 
-export function transformPropertyShapeToAstStructTypeProperty(
+export function transformPropertyShapeToAstStructTypeField(
   this: ShapesGraphToAstTransformer,
   {
     propertyShape,
@@ -196,7 +196,7 @@ export function transformPropertyShapeToAstStructTypeProperty(
     propertyShape: input.PropertyShape;
     structType: ast.StructType;
   },
-): Either<Error, ast.StructType.Property> {
+): Either<Error, ast.StructType.Field> {
   const shapeStack = new ShapeStack(); // Start a new ShapeStack per property shape
   return Eithers.chain2(
     propertyShape.resolve.isJust()
@@ -359,7 +359,7 @@ export function transformPropertyShapeToAstStructTypeProperty(
     }
 
     return Either.of(
-      new ast.StructType.Property({
+      new ast.StructType.Field({
         comment: propertyShape.comment,
         description: propertyShape.description,
         display: propertyShape.display,

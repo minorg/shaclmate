@@ -9,7 +9,7 @@ import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
-import { transformPropertyShapeToAstStructTypeProperty } from "./transformPropertyShapeToAstStructTypeProperty.js";
+import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
 
 const listPropertiesStructType = new ast.StructType({
   extern: false,
@@ -147,11 +147,11 @@ export function transformShapeToAstListType(
             );
           }
 
-          return transformPropertyShapeToAstStructTypeProperty
+          return transformPropertyShapeToAstStructTypeField
             .call(this, {
               // Just need a dummy ast.StructType here to get the properties transformed.
-              structType: listPropertiesStructType,
               propertyShape: firstPropertyShape,
+              structType: listPropertiesStructType,
             })
             .chain((firstProperty) => {
               if (!ast.ListType.isItemType(firstProperty.type)) {
@@ -164,11 +164,11 @@ export function transformShapeToAstListType(
 
               listType.itemType = firstProperty.type;
 
-              return transformPropertyShapeToAstStructTypeProperty
+              return transformPropertyShapeToAstStructTypeField
                 .call(this, {
                   // Just need a dummy ast.StructType here to get the properties transformed.
-                  structType: listPropertiesStructType,
                   propertyShape: restPropertyShape,
+                  structType: listPropertiesStructType,
                 })
                 .chain((restProperty) => {
                   if (

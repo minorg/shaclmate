@@ -9,11 +9,11 @@ import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
-import { transformPropertyShapeToAstStructTypeProperty } from "./transformPropertyShapeToAstStructTypeProperty.js";
+import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function isStructTypePropertyRequired(property: {
-  type: ast.StructType.Property["type"];
+  type: ast.StructType.Field["type"];
 }): boolean {
   switch (property.type.kind) {
     case "DefaultValue":
@@ -180,22 +180,22 @@ export function transformShapeToAstStructType(
         // Populate properties
         for (const propertyShape of propertyShapes) {
           const propertyEither =
-            transformPropertyShapeToAstStructTypeProperty.call(this, {
-              structType,
+            transformPropertyShapeToAstStructTypeField.call(this, {
               propertyShape,
+              structType,
             });
           if (propertyEither.isLeft()) {
             return propertyEither;
           }
           propertyEither.ifRight((property) => {
-            structType.addProperties(property);
+            structType.addFields(property);
           });
         }
 
         if (
           !structType.extern &&
           structType.fromRdfType.isNothing() &&
-          !structType.properties.some(isStructTypePropertyRequired)
+          !structType.fields.some(isStructTypePropertyRequired)
         ) {
           return Left(
             new Error(

@@ -17,7 +17,7 @@ export function transformAstToLabeledPropertyGraph(
         name: { type: "string", value: typeName(namedType) },
       };
 
-      for (const namedObjectTypeProperty of namedStructType.properties) {
+      for (const namedObjectTypeProperty of namedStructType.fields) {
         let itemType: ast.Type;
 
         switch (namedObjectTypeProperty.type.kind) {
