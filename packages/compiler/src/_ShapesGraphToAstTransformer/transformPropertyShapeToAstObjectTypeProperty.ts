@@ -206,7 +206,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       : Either.of(Maybe.empty()),
     transformPropertyShapeToAstType.call(this, propertyShape, shapeStack),
   ).chain(([propertyShapeResolve, astType]) => {
-    let astResolveItemType: ast.ObjectType | ast.ObjectUnionType | undefined;
+    let astResolveItemType: ast.ObjectType | ast.StructUnionType | undefined;
 
     if (propertyShapeResolve.isJust()) {
       const astResolveTypeEither = transformShapeToAstType
@@ -214,7 +214,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         .chain((astResolveType) => {
           switch (astResolveType.kind) {
             case "Object":
-              return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
+              return Either.of<Error, ast.ObjectType | ast.StructUnionType>(
                 astResolveType,
               );
             case "Union":
@@ -229,8 +229,8 @@ export function transformPropertyShapeToAstObjectTypeProperty(
                   ),
                 );
               }
-              return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
-                astResolveType as ast.ObjectUnionType,
+              return Either.of<Error, ast.ObjectType | ast.StructUnionType>(
+                astResolveType as ast.StructUnionType,
               );
             default:
               return Left(
@@ -267,7 +267,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
           break;
       }
 
-      let astPartialItemType: ast.ObjectType | ast.ObjectUnionType;
+      let astPartialItemType: ast.ObjectType | ast.StructUnionType;
       switch (astItemType.kind) {
         case "BlankNode":
         case "Identifier":

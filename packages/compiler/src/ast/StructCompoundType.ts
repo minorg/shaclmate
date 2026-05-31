@@ -6,15 +6,15 @@ import { invariant } from "ts-invariant";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
-import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
+import type { ObjectIntersectionType as StructIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
+import type { StructUnionType } from "./ObjectUnionType.js";
 
-export type ObjectCompoundType = ObjectIntersectionType | ObjectUnionType;
+export type StructCompoundType = StructIntersectionType | StructUnionType;
 
-export namespace ObjectCompoundType {
+export namespace StructCompoundType {
   export function identifierType(
-    objectCompoundType: ObjectCompoundType,
+    objectCompoundType: StructCompoundType,
   ): BlankNodeType | IdentifierType | IriType {
     const memberIdentifierTypeNodeKinds = new Set<IdentifierNodeKind>();
     const memberIdentifierTypesIn = new TermSet<NamedNode>();
@@ -65,7 +65,7 @@ export namespace ObjectCompoundType {
   }
 
   export function memberObjectTypes(
-    objectCompoundType: ObjectCompoundType,
+    objectCompoundType: StructCompoundType,
   ): readonly ObjectType[] {
     const memberObjectTypes_: ObjectType[] = [];
 

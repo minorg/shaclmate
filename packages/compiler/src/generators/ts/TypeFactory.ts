@@ -158,7 +158,7 @@ export class TypeFactory {
     return objectType;
   }
 
-  createObjectUnionType(astType: ast.ObjectUnionType): ObjectUnionType {
+  createObjectUnionType(astType: ast.StructUnionType): ObjectUnionType {
     {
       const cachedObjectUnionType =
         this.cachedObjectUnionTypesByShapeIdentifier.get(

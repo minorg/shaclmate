@@ -13,24 +13,24 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import { Type } from "./Type.js";
 
-export class ObjectType extends AbstractType {
+export class StructType extends AbstractType {
   /**
-   * Properties of this ObjectType.
+   * Properties of this StructType.
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly #properties: ObjectType.Property[] = [];
+  readonly #properties: StructType.Property[] = [];
   private propertyNames: Set<string> = new Set();
 
   /**
-   * If true, the code for this ObjectType is defined externally and should not be generated.
+   * If true, the code for this StructType is defined externally and should not be generated.
    *
    * Defaults to false.
    */
   readonly extern: boolean;
 
   /**
-   * The expected rdf:type of instances of this ObjectType.
+   * The expected rdf:type of instances of this StructType.
    *
    * This is usually the identifier of an sh:NodeShape that is also an rdfs:Class (i.e., a node shape with implicit
    * class targets).
@@ -64,7 +64,7 @@ export class ObjectType extends AbstractType {
   /**
    * TypeScript imports to add to generated code.
    *
-   * This is often used in conjunction with extern=true to import the extern'd ObjectType code in order for generated
+   * This is often used in conjunction with extern=true to import the extern'd StructType code in order for generated
    * code to reference it.
    *
    * import { MyType } from "./MyType.js"
@@ -96,7 +96,7 @@ export class ObjectType extends AbstractType {
     this.tsImports = tsImports;
   }
 
-  get properties(): readonly ObjectType.Property[] {
+  get properties(): readonly StructType.Property[] {
     return this.#properties;
   }
 
@@ -104,7 +104,7 @@ export class ObjectType extends AbstractType {
     return this.properties.some((property) => property.recursive);
   }
 
-  addProperties(...properties: readonly ObjectType.Property[]): void {
+  addProperties(...properties: readonly StructType.Property[]): void {
     for (const property of properties) {
       invariant(
         Object.is(property.objectType, this),
@@ -119,7 +119,7 @@ export class ObjectType extends AbstractType {
     }
   }
 
-  override equals(other: ObjectType): boolean {
+  override equals(other: StructType): boolean {
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
@@ -149,7 +149,7 @@ export class ObjectType extends AbstractType {
 
 const nodeKinds: ReadonlySet<NodeKind> = new Set(["BlankNode", "IRI"]);
 
-export namespace ObjectType {
+export namespace StructType {
   export class Property {
     /**
      * Documentation comment from rdfs:comment.
@@ -185,7 +185,7 @@ export namespace ObjectType {
     /**
      * Object type this property belongs to.
      */
-    readonly objectType: ObjectType;
+    readonly objectType: StructType;
 
     /**
      * Relative order of this property, derived from sh:order.
@@ -226,7 +226,7 @@ export namespace ObjectType {
       label: Maybe<string>;
       mutable: boolean;
       name: string;
-      objectType: ObjectType;
+      objectType: StructType;
       order: number;
       path: PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
@@ -250,19 +250,19 @@ export namespace ObjectType {
     }
 
     /**
-     * Does the property directly or indirectly reference the ObjectType itself?
+     * Does the property directly or indirectly reference the StructType itself?
      */
     @Memoize()
     get recursive(): boolean {
       const DEBUG = false;
 
-      const rootObjectType = this.objectType;
+      const rootStructType = this.objectType;
       const rootProperty = this;
 
       function helper(
         stack: {
-          objectType: ObjectType;
-          property: ObjectType.Property;
+          objectType: StructType;
+          property: StructType.Property;
           propertyType?: readonly Type[];
         }[],
       ): boolean {
@@ -273,7 +273,7 @@ export namespace ObjectType {
           process.stderr.write(
             `${[
               stack.length.toString(),
-              rootObjectType,
+              rootStructType,
               rootProperty,
               objectType,
               property,
@@ -419,7 +419,7 @@ export namespace ObjectType {
         }
       }
 
-      return helper([{ objectType: rootObjectType, property: rootProperty }]);
+      return helper([{ objectType: rootStructType, property: rootProperty }]);
     }
 
     toJSON() {
