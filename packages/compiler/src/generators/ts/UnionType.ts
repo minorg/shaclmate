@@ -194,7 +194,9 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
     const declarations: Code[] = [];
 
     if (this.configuration.features.has("Object.type")) {
-      declarations.push(code`export type ${def(name)} = ${this.literal};`);
+      declarations.push(
+        code`export type ${def(name)} = ${this.inlineExpression};`,
+      );
     }
 
     const staticModuleDeclarations = Object.entries(
@@ -252,7 +254,9 @@ ${joinCode(
 
   @Memoize()
   override get expression(): Code {
-    return this.name.map((name) => code`${name}`).orDefault(this.literal);
+    return this.name
+      .map((name) => code`${name}`)
+      .orDefault(this.inlineExpression);
   }
 
   @Memoize()
@@ -376,6 +380,97 @@ ${joinCode(
     return this.name
       .map((name) => code`${name}.valueSparqlWherePatterns`)
       .orDefault(this.valueSparqlWherePatternsFunctionExpression);
+  }
+
+  protected override get schemaInitializers(): readonly Code[] {
+    return super.schemaInitializers.concat(
+      code`members: { ${joinCode(
+        this.members.map(
+          ({ discriminantValues, type, primaryDiscriminantValue }) =>
+            code`${literalOf(primaryDiscriminantValue)}: ${{
+              discriminantValues: discriminantValues,
+              type: type.schema,
+            }}`,
+        ),
+        { on: "," },
+      )} }`,
+    );
+  }
+
+  protected get staticModuleDeclarations(): Record<string, Code> {
+    const name = this.name.unsafeCoerce();
+    const staticModuleDeclarations: Record<string, Code> = {};
+
+    if (this.configuration.features.has("Object.equals")) {
+      staticModuleDeclarations[`equals`] =
+        code`export const equals = ${this.equalsFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.filter")) {
+      staticModuleDeclarations[`Filter`] =
+        code`export type Filter = ${this.filterTypeLiteral};`;
+      staticModuleDeclarations[`filter`] =
+        code`export const filter = ${this.filterFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.hash")) {
+      staticModuleDeclarations[`hash`] =
+        code`export const hash = ${this.hashFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.JSON.type")) {
+      staticModuleDeclarations[`Json.type`] =
+        code`${this.jsonTypeAliasDeclaration}`;
+    }
+
+    if (this.configuration.features.has("Object.JSON.schema")) {
+      staticModuleDeclarations[`Json.namespace`] = code`\
+export namespace Json {
+  ${this.jsonSchemaFunctionDeclaration}
+
+  export function parse(json: unknown): ${this.reusables.imports.Either}<Error, Json> {
+    const jsonSafeParseResult = schema().safeParse(json);
+    if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
+    return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
+  }
+}`;
+    }
+
+    if (this.configuration.features.has("Object.fromJson")) {
+      staticModuleDeclarations[`fromJson`] =
+        code`export const fromJson = ${this.fromJsonFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.fromRdf")) {
+      staticModuleDeclarations[`fromRdfResourceValues`] =
+        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}> = ${this.fromRdfResourceValuesFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.toJson")) {
+      staticModuleDeclarations[`toJson`] =
+        code`export const toJson = ${this.toJsonFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.toRdf")) {
+      staticModuleDeclarations[`toRdfResourceValues`] =
+        code`export const toRdfResourceValues = ${this.toRdfResourceValuesFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.SPARQL")) {
+      staticModuleDeclarations[`valueSparqlConstructTriples`] =
+        code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.valueSparqlConstructTriplesFunctionExpression};`;
+
+      staticModuleDeclarations[`valueSparqlWherePatterns`] =
+        code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.valueSparqlWherePatternsFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.toString")) {
+      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
+        code`export const ${syntheticNamePrefix}toString = ${this.toStringFunctionExpression};`;
+    }
+
+    return staticModuleDeclarations;
   }
 
   @Memoize()
@@ -524,6 +619,55 @@ ${joinCode(
 })`;
   }
 
+  /**
+   * An inline expression of this type rather than a type reference/name.
+   */
+  @Memoize()
+  private get inlineExpression(): Code {
+    const discriminant = this.discriminant; // To get type narrowing to work
+    switch (discriminant.kind) {
+      case "Extrinsic":
+        return code`(${joinCode(
+          this.members.map(
+            ({ type, primaryDiscriminantValue }) =>
+              code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.expression} }`,
+          ),
+          { on: "|" },
+        )})`;
+      case "Hybrid":
+        return code`(${joinCode(
+          this.members.map(({ primaryDiscriminantValue, type }, memberI) => {
+            switch (discriminant.memberValues[memberI].kind) {
+              case "Extrinsic":
+                return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.expression} }`;
+              case "Intrinsic":
+                return code`${type.expression}`;
+              default:
+                throw new Error();
+            }
+          }),
+          { on: "|" },
+        )})`;
+      case "Intrinsic":
+        // If every type shares a discriminant (e.g., RDF/JS "termType" or generated ObjectType "type"),
+        // just join their names with "|"
+        return code`(${joinCode(
+          this.members.map(({ type }) => code`${type.expression}`),
+          { on: "|" },
+        )})`;
+      case "Typeof":
+        // The type.name may include literal values, but they should still be unambiguous with other member types since the typeofs
+        // of the different member types are known to be different.
+        return code`(${joinCode(
+          this.members.map(({ type }) => code`${type.expression}`),
+          { on: "|" },
+        )})`;
+      default:
+        discriminant satisfies never;
+        throw new Error("should never reach this point");
+    }
+  }
+
   private get jsonSchemaExpression(): Code {
     const discriminant = this.discriminant; // To get type narrowing to work
     switch (discriminant.kind) {
@@ -621,146 +765,6 @@ ${joinCode(
       default:
         throw discriminant satisfies never;
     }
-  }
-
-  /**
-   * A type literal for this union.
-   */
-  @Memoize()
-  private get literal(): Code {
-    const discriminant = this.discriminant; // To get type narrowing to work
-    switch (discriminant.kind) {
-      case "Extrinsic":
-        return code`(${joinCode(
-          this.members.map(
-            ({ type, primaryDiscriminantValue }) =>
-              code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.expression} }`,
-          ),
-          { on: "|" },
-        )})`;
-      case "Hybrid":
-        return code`(${joinCode(
-          this.members.map(({ primaryDiscriminantValue, type }, memberI) => {
-            switch (discriminant.memberValues[memberI].kind) {
-              case "Extrinsic":
-                return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.expression} }`;
-              case "Intrinsic":
-                return code`${type.expression}`;
-              default:
-                throw new Error();
-            }
-          }),
-          { on: "|" },
-        )})`;
-      case "Intrinsic":
-        // If every type shares a discriminant (e.g., RDF/JS "termType" or generated ObjectType "type"),
-        // just join their names with "|"
-        return code`(${joinCode(
-          this.members.map(({ type }) => code`${type.expression}`),
-          { on: "|" },
-        )})`;
-      case "Typeof":
-        // The type.name may include literal values, but they should still be unambiguous with other member types since the typeofs
-        // of the different member types are known to be different.
-        return code`(${joinCode(
-          this.members.map(({ type }) => code`${type.expression}`),
-          { on: "|" },
-        )})`;
-      default:
-        discriminant satisfies never;
-        throw new Error("should never reach this point");
-    }
-  }
-
-  protected override get schemaInitializers(): readonly Code[] {
-    return super.schemaInitializers.concat(
-      code`members: { ${joinCode(
-        this.members.map(
-          ({ discriminantValues, type, primaryDiscriminantValue }) =>
-            code`${literalOf(primaryDiscriminantValue)}: ${{
-              discriminantValues: discriminantValues,
-              type: type.schema,
-            }}`,
-        ),
-        { on: "," },
-      )} }`,
-    );
-  }
-
-  protected get staticModuleDeclarations(): Record<string, Code> {
-    const name = this.name.unsafeCoerce();
-    const staticModuleDeclarations: Record<string, Code> = {};
-
-    if (this.configuration.features.has("Object.equals")) {
-      staticModuleDeclarations[`equals`] =
-        code`export const equals = ${this.equalsFunctionExpression};`;
-    }
-
-    if (this.configuration.features.has("Object.filter")) {
-      staticModuleDeclarations[`Filter`] =
-        code`export type Filter = ${this.filterTypeLiteral};`;
-      staticModuleDeclarations[`filter`] =
-        code`export const filter = ${this.filterFunctionExpression};`;
-    }
-
-    if (this.configuration.features.has("Object.hash")) {
-      staticModuleDeclarations[`hash`] =
-        code`export const hash = ${this.hashFunctionExpression};`;
-    }
-
-    if (this.configuration.features.has("Object.JSON.type")) {
-      staticModuleDeclarations[`Json.type`] =
-        code`${this.jsonTypeAliasDeclaration}`;
-    }
-
-    if (this.configuration.features.has("Object.JSON.schema")) {
-      staticModuleDeclarations[`Json.namespace`] = code`\
-export namespace Json {
-  ${this.jsonSchemaFunctionDeclaration}
-
-  export function parse(json: unknown): ${this.reusables.imports.Either}<Error, Json> {
-    const jsonSafeParseResult = schema().safeParse(json);
-    if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
-    return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
-  }
-}`;
-    }
-
-    if (this.configuration.features.has("Object.fromJson")) {
-      staticModuleDeclarations[`fromJson`] =
-        code`export const fromJson = ${this.fromJsonFunctionExpression};`;
-    }
-
-    if (this.configuration.features.has("Object.fromRdf")) {
-      staticModuleDeclarations[`fromRdfResourceValues`] =
-        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}> = ${this.fromRdfResourceValuesFunctionExpression};`;
-    }
-
-    if (this.configuration.features.has("Object.toJson")) {
-      staticModuleDeclarations[`toJson`] =
-        code`export const toJson = ${this.toJsonFunctionExpression};`;
-    }
-
-    if (this.configuration.features.has("Object.toRdf")) {
-      staticModuleDeclarations[`toRdfResourceValues`] =
-        code`export const toRdfResourceValues = ${this.toRdfResourceValuesFunctionExpression};`;
-    }
-
-    if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations[`valueSparqlConstructTriples`] =
-        code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.valueSparqlConstructTriplesFunctionExpression};`;
-
-      staticModuleDeclarations[`valueSparqlWherePatterns`] =
-        code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.valueSparqlWherePatternsFunctionExpression};`;
-    }
-
-    if (this.configuration.features.has("Object.toString")) {
-      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
-        code`export const ${syntheticNamePrefix}toString = ${this.toStringFunctionExpression};`;
-    }
-
-    return staticModuleDeclarations;
   }
 
   private get toJsonFunctionExpression(): Code {
