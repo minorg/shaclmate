@@ -1,9 +1,11 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { PropertyPath } from "@rdfx/resource";
 import type { NodeKind } from "@shaclmate/shacl-ast";
+
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { arrayEquals } from "./equals.js";
@@ -18,6 +20,7 @@ export class ObjectType extends AbstractType {
    * Mutable to support cycle-handling logic in the compiler.
    */
   readonly #properties: ObjectType.Property[] = [];
+  private propertyNames: Set<string> = new Set();
 
   /**
    * If true, the code for this ObjectType is defined externally and should not be generated.
@@ -102,9 +105,17 @@ export class ObjectType extends AbstractType {
   }
 
   addProperties(...properties: readonly ObjectType.Property[]): void {
-    this.#properties.push(...properties);
     for (const property of properties) {
-      invariant(Object.is(property.objectType, this));
+      invariant(
+        Object.is(property.objectType, this),
+        "property has unexpected .objectType",
+      );
+      invariant(
+        !this.propertyNames.has(property.name),
+        `${property.objectType.shapeIdentifier}: duplicate property name: ${property.name}`,
+      );
+      this.#properties.push(property);
+      this.propertyNames.add(property.name);
     }
   }
 

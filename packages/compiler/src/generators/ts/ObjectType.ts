@@ -3,6 +3,7 @@ import { NodeKind } from "@shaclmate/shacl-ast";
 
 import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_ObjectType/DiscriminantProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
@@ -247,12 +248,10 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   get properties(): readonly ObjectType.Property[] {
     const properties = this.lazyProperties(this);
-    const propertyNames = new Set<string>();
-    for (const property of properties) {
-      if (propertyNames.has(property.name)) {
-        throw new Error(`duplicate property '${property.name}'`);
-      }
-    }
+    invariant(
+      properties.length > 0,
+      `${this.name.extract()}: empty properties`,
+    );
     return properties;
   }
 
