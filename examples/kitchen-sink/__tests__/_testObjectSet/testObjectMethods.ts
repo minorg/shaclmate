@@ -12,7 +12,7 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
         objectDataset(data.termPropertiesObjects),
       );
       expect(
-        await objectSet.termProperties(
+        await objectSet.termPropertiesStruct(
           dataFactory.namedNode("http://example.com/nonextant"),
         ),
       ).toBeLeft();

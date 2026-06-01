@@ -3,7 +3,7 @@ import { harnesses } from "./harnesses.js";
 
 describe("constructor", () => {
   it("construct a class instance from convertible parameters", ({ expect }) => {
-    const instance = harnesses.propertyCardinalities1.instance;
+    const instance = harnesses.propertyCardinalitiesStruct1.instance;
     expect(instance.emptySetProperty).toHaveLength(0);
     expect(instance.nonEmptySetProperty).toStrictEqual(["test"]);
     expect(instance.optionalProperty.isNothing()).toStrictEqual(true);
@@ -11,7 +11,7 @@ describe("constructor", () => {
   });
 
   it("default values", ({ expect }) => {
-    const model = harnesses.defaultValueProperties.instance;
+    const model = harnesses.defaultValuePropertiesStruct.instance;
     expect(model.falseBooleanDefaultValueProperty).toStrictEqual(false);
     expect(model.dateTimeDefaultValueProperty.getTime()).toStrictEqual(
       1523268000000,

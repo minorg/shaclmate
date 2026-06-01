@@ -5,11 +5,11 @@ import { harnesses } from "./harnesses.js";
 describe("toJson", () => {
   it("union properties", ({ expect }) => {
     {
-      const jsonObject = kitchenSink.UnionDiscriminants.toJson(
-        harnesses.unionDiscriminants1.instance,
+      const jsonObject = kitchenSink.UnionDiscriminantsStruct.toJson(
+        harnesses.unionDiscriminantsStruct1.instance,
       );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-      expect(jsonObject["@type"]).toStrictEqual("UnionDiscriminants");
+      expect(jsonObject["@type"]).toStrictEqual("UnionDiscriminantsStruct");
       expect(jsonObject.optionalNodeOrNodeOrStringProperty).toStrictEqual({
         type: "UnionMember1",
         value: {
@@ -48,8 +48,8 @@ describe("toJson", () => {
     }
 
     {
-      const jsonObject = kitchenSink.UnionDiscriminants.toJson(
-        harnesses.unionDiscriminants2.instance,
+      const jsonObject = kitchenSink.UnionDiscriminantsStruct.toJson(
+        harnesses.unionDiscriminantsStruct2.instance,
       );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.optionalNodeOrNodeOrStringProperty).toStrictEqual({
@@ -119,7 +119,9 @@ describe("toJson", () => {
   });
 
   it("toJSON", ({ expect }) => {
-    expect(JSON.stringify(harnesses.termProperties.instance)).toStrictEqual(
+    expect(
+      JSON.stringify(harnesses.termPropertiesStruct.instance),
+    ).toStrictEqual(
       `{"@id":"http://example.com/instance","@type":"TermProperties","blankNodeTermProperty":{"@id":"_:df_0_16"},"booleanTermProperty":true,"dateTermProperty":"2025-03-06","dateTimeTermProperty":"2018-04-09T10:00:00.000Z","iriTermProperty":{"@id":"http://example.com"},"literalTermProperty":{"@value":"test"},"numberTermProperty":1,"stringTermProperty":"test","termProperty":{"@type":"http://www.w3.org/2001/XMLSchema#decimal","@value":"1","termType":"Literal"}}`,
     );
   });

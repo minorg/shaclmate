@@ -39,7 +39,7 @@ export function testObjectIdentifiersMethods(
       describe("default graph", () => {
         it("no query", async ({ expect }) => {
           expect(
-            (await defaultGraphObjectSet.termPropertiesIdentifiers())
+            (await defaultGraphObjectSet.termPropertiesStructIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value)
               .sort(),
@@ -51,7 +51,7 @@ export function testObjectIdentifiersMethods(
         it("query of named graph", async ({ expect }) => {
           expect(
             (
-              await defaultGraphObjectSet.termPropertiesIdentifiers({
+              await defaultGraphObjectSet.termPropertiesStructIdentifiers({
                 graph: namedGraph1Iri,
               })
             )
@@ -64,7 +64,7 @@ export function testObjectIdentifiersMethods(
       describe("named graph", () => {
         it("no query", async ({ expect }) => {
           expect(
-            (await namedGraph1ObjectSet.termPropertiesIdentifiers())
+            (await namedGraph1ObjectSet.termPropertiesStructIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value),
           ).toStrictEqual([namedGraph1Object.$identifier().value]);
@@ -73,7 +73,7 @@ export function testObjectIdentifiersMethods(
         it("query of different named graph", async ({ expect }) => {
           expect(
             (
-              await namedGraph1ObjectSet.termPropertiesIdentifiers({
+              await namedGraph1ObjectSet.termPropertiesStructIdentifiers({
                 graph: namedGraph2Iri,
               })
             )
@@ -86,7 +86,7 @@ export function testObjectIdentifiersMethods(
       describe("union graph", () => {
         it("no query", async ({ expect }) => {
           expect(
-            (await unionGraphObjectSet.termPropertiesIdentifiers())
+            (await unionGraphObjectSet.termPropertiesStructIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value)
               .sort(),
@@ -100,7 +100,7 @@ export function testObjectIdentifiersMethods(
         it("query of default graph", async ({ expect }) => {
           expect(
             (
-              await unionGraphObjectSet.termPropertiesIdentifiers({
+              await unionGraphObjectSet.termPropertiesStructIdentifiers({
                 graph: dataFactory.defaultGraph(),
               })
             )
@@ -114,7 +114,7 @@ export function testObjectIdentifiersMethods(
         it("query of named graph 1", async ({ expect }) => {
           expect(
             (
-              await unionGraphObjectSet.termPropertiesIdentifiers({
+              await unionGraphObjectSet.termPropertiesStructIdentifiers({
                 graph: namedGraph1Iri,
               })
             )
@@ -126,7 +126,7 @@ export function testObjectIdentifiersMethods(
         it("query of named graph 2", async ({ expect }) => {
           expect(
             (
-              await unionGraphObjectSet.termPropertiesIdentifiers({
+              await unionGraphObjectSet.termPropertiesStructIdentifiers({
                 graph: namedGraph2Iri,
               })
             )
@@ -142,7 +142,7 @@ export function testObjectIdentifiersMethods(
         objectDataset(data.termPropertiesObjects),
       );
       expect(
-        (await objectSet.termPropertiesIdentifiers())
+        (await objectSet.termPropertiesStructIdentifiers())
           .unsafeCoerce()
           .map((identifier) => identifier.value),
       ).toStrictEqual(
@@ -155,7 +155,7 @@ export function testObjectIdentifiersMethods(
         objectDataset(data.termPropertiesObjects),
       );
       expect(
-        (await objectSet.termPropertiesIdentifiers({ limit: 1 }))
+        (await objectSet.termPropertiesStructIdentifiers({ limit: 1 }))
           .unsafeCoerce()
           .map((identifier) => identifier.value),
       ).toStrictEqual([data.termPropertiesObjects[0].$identifier().value]);
@@ -167,7 +167,7 @@ export function testObjectIdentifiersMethods(
       );
       expect(
         (
-          await objectSet.termPropertiesIdentifiers({
+          await objectSet.termPropertiesStructIdentifiers({
             offset: 1,
           })
         )
@@ -186,7 +186,7 @@ export function testObjectIdentifiersMethods(
       );
       expect(
         (
-          await objectSet.termPropertiesIdentifiers({
+          await objectSet.termPropertiesStructIdentifiers({
             limit: 2,
             offset: 1,
           })

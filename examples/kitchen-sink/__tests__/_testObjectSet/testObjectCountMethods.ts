@@ -10,7 +10,7 @@ export function testObjectCountMethods(createObjectSet: ObjectSetFactory) {
         objectDataset(data.termPropertiesObjects),
       );
       expect(
-        (await objectSet.termPropertiesCount()).unsafeCoerce(),
+        (await objectSet.termPropertiesStructCount()).unsafeCoerce(),
       ).toStrictEqual(data.termPropertiesObjects.length);
     });
 
