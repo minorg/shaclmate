@@ -81,11 +81,11 @@ describe("ShapesGraphToAstTransformer", () => {
         if (id === "kitchenSinkExample") {
           for (const [classIri, recursivePropertyIri] of [
             [
-              "http://example.com/DirectRecursive",
+              "http://example.com/DirectRecursiveStruct",
               "http://example.com/directRecursiveProperty",
             ],
             [
-              "http://example.com/IndirectRecursive",
+              "http://example.com/IndirectRecursiveStruct",
               "http://example.com/indirectRecursiveHelperProperty",
             ],
             [
