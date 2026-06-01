@@ -10,8 +10,9 @@ import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
 > {
-  override readonly expression =
+  protected override readonly inlineExpression =
     code`(${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode})`;
+
   override readonly conversionFunction: Maybe<AbstractIdentifierType.ConversionFunction> =
     Maybe.of({
       code: code`${this.reusables.snippets.convertToIdentifier}`,

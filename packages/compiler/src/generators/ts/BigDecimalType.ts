@@ -7,9 +7,11 @@ import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
+  protected override readonly inlineExpression =
+    code`${this.reusables.imports.BigDecimal}`;
+
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.empty();
-  override readonly expression = code`${this.reusables.imports.BigDecimal}`;
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBigDecimal}`;
   override readonly filterType =

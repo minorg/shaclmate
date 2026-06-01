@@ -3,6 +3,7 @@ import type { NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -35,20 +36,20 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }
 
   @Memoize()
-  override get expression(): Code {
-    if (this.in_.length > 0) {
-      return code`${this.reusables.imports.NamedNode}<${this.valueTypeExpression}>`;
-    }
-
-    return code`${this.reusables.imports.NamedNode}`;
-  }
-
-  @Memoize()
   get parseFunction(): Code {
     if (this.in_.length > 0) {
       return code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.expression});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
     }
     return code`${this.reusables.snippets.parseIri}`;
+  }
+
+  @Memoize()
+  protected override get inlineExpression(): Code {
+    if (this.in_.length > 0) {
+      return code`${this.reusables.imports.NamedNode}<${this.valueTypeExpression}>`;
+    }
+
+    return code`${this.reusables.imports.NamedNode}`;
   }
 
   protected override get schemaInitializers() {

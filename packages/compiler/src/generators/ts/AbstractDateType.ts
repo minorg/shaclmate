@@ -4,9 +4,10 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
+  protected override readonly inlineExpression = code`Date`;
+
   override readonly equalsFunction =
     code`${this.reusables.snippets.dateEquals}`;
-  override readonly expression = code`Date`;
   override readonly filterFunction =
     code`${this.reusables.snippets.filterDate}`;
   override readonly filterType = code`${this.reusables.snippets.DateFilter}`;
