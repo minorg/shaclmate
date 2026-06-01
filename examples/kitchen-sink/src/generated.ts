@@ -3996,7 +3996,7 @@ export namespace $NamedDefaultPartial {
       }),
     );
 } /**
- * Node shape that can only have a blank node as an identifier
+ * Struct node shape that can only have a blank node as an identifier
  */
 
 export interface BlankNodeIdentifierStruct {
@@ -4125,7 +4125,7 @@ export namespace BlankNodeIdentifierStruct {
         })
         .meta({
           description:
-            "Node shape that can only have a blank node as an identifier",
+            "Struct node shape that can only have a blank node as an identifier",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -4553,7 +4553,7 @@ export namespace BlankNodeIdentifierStruct {
       }),
     );
 } /**
- * Node shape that can have a blank node or IRI as an identifier
+ * Struct node shape that can have a blank node or IRI as an identifier
  */
 
 export interface BlankNodeOrIriIdentifierStruct {
@@ -4684,7 +4684,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
         })
         .meta({
           description:
-            "Node shape that can have a blank node or IRI as an identifier",
+            "Struct node shape that can have a blank node or IRI as an identifier",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -5123,7 +5123,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
       }),
     );
 } /**
- * Node shape with sh:class properties
+ * Struct node shape with sh:class properties
  */
 
 export interface ClassPropertiesStruct {
@@ -5415,7 +5415,7 @@ export namespace ClassPropertiesStruct {
             }),
         })
         .meta({
-          description: "Node shape with sh:class properties",
+          description: "Struct node shape with sh:class properties",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -6211,7 +6211,7 @@ export namespace ClassPropertiesStruct {
       }),
     );
 } /**
- * Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.
+ * Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI.
  */
 
 export interface ConvertibleTypePropertiesStruct {
@@ -6929,7 +6929,7 @@ export namespace ConvertibleTypePropertiesStruct {
         })
         .meta({
           description:
-            "Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.",
+            "Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -8497,7 +8497,7 @@ export namespace ConvertibleTypePropertiesStruct {
       }),
     );
 } /**
- * Node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.
+ * Struct node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.
  */
 
 export interface DateUnionPropertiesStruct {
@@ -8975,7 +8975,7 @@ export namespace DateUnionPropertiesStruct {
         })
         .meta({
           description:
-            "Node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.",
+            "Struct node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -10922,7 +10922,7 @@ export namespace DateUnionPropertiesStruct {
       }),
     );
 } /**
- * Node shape with sh:defaultValue properties.
+ * Struct node shape with sh:defaultValue properties.
  */
 
 export interface DefaultValuePropertiesStruct {
@@ -11174,7 +11174,7 @@ export namespace DefaultValuePropertiesStruct {
           trueBooleanDefaultValueProperty: z.boolean().meta({}),
         })
         .meta({
-          description: "Node shape with sh:defaultValue properties.",
+          description: "Struct node shape with sh:defaultValue properties.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -13356,7 +13356,7 @@ export namespace DisplayPropertiesStruct {
       }),
     );
 } /**
- * Node shape with custom rdf:type's.
+ * Struct node shape with custom rdf:type's.
  *
  * The shaclmate:fromRdfType is expected on deserialization.
  * shaclmate:toRdfType's are added an serialization.
@@ -13484,7 +13484,7 @@ export namespace ExplicitFromToRdfTypesStruct {
         })
         .meta({
           description:
-            "Node shape with custom rdf:type's.\n\nThe shaclmate:fromRdfType is expected on deserialization.\nshaclmate:toRdfType's are added an serialization.",
+            "Struct node shape with custom rdf:type's.\n\nThe shaclmate:fromRdfType is expected on deserialization.\nshaclmate:toRdfType's are added an serialization.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -13904,7 +13904,7 @@ export namespace ExplicitFromToRdfTypesStruct {
       }),
     );
 } /**
- * Node shape with custom rdf:type's.
+ * Struct node shape with custom rdf:type's.
  *
  * The shaclmate:rdfType is expected on deserialization and added on serialization.
  */
@@ -14023,7 +14023,7 @@ export namespace ExplicitRdfTypeStruct {
         })
         .meta({
           description:
-            "Node shape with custom rdf:type's.\n\nThe shaclmate:rdfType is expected on deserialization and added on serialization.",
+            "Struct node shape with custom rdf:type's.\n\nThe shaclmate:rdfType is expected on deserialization and added on serialization.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -14943,7 +14943,7 @@ export namespace FlattenUnionMember3 {
       }),
     );
 } /**
- * Node shape with sh:hasValue properties.
+ * Struct node shape with sh:hasValue properties.
  */
 
 export interface HasValuePropertiesStruct {
@@ -15084,7 +15084,7 @@ export namespace HasValuePropertiesStruct {
           hasLiteralValueProperty: z.string().meta({}),
         })
         .meta({
-          description: "Node shape with sh:hasValue properties.",
+          description: "Struct node shape with sh:hasValue properties.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -16605,7 +16605,7 @@ export namespace IndirectRecursiveStructHelper {
       }),
     );
 } /**
- * Node shape with sh:in constraining its identifier.
+ * Struct node shape with sh:in constraining its identifier.
  */
 
 export interface InIdentifierStruct {
@@ -16773,7 +16773,8 @@ export namespace InIdentifierStruct {
           inIdentifierProperty: z.string().optional().meta({}),
         })
         .meta({
-          description: "Node shape with sh:in constraining its identifier.",
+          description:
+            "Struct node shape with sh:in constraining its identifier.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -17215,7 +17216,7 @@ export namespace InIdentifierStruct {
       }),
     );
 } /**
- * Node shape with sh:in properties.
+ * Struct node shape with sh:in properties.
  */
 
 export interface InPropertiesStruct {
@@ -17524,7 +17525,7 @@ export namespace InPropertiesStruct {
           inStringsProperty: z.enum(["text", "html"]).optional().meta({}),
         })
         .meta({
-          description: "Node shape with sh:in properties.",
+          description: "Struct node shape with sh:in properties.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -18966,7 +18967,7 @@ export namespace IriIdentifierStruct {
       }),
     );
 } /**
- * Node shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.
+ * Struct node shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.
  */
 
 export interface JsPrimitiveUnionPropertyStruct {
@@ -19155,7 +19156,7 @@ export namespace JsPrimitiveUnionPropertyStruct {
         })
         .meta({
           description:
-            "Node shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.",
+            "Struct node shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -19920,7 +19921,7 @@ export namespace JsPrimitiveUnionPropertyStruct {
       }),
     );
 } /**
- * Node shape that uses the StringList in a property.
+ * Struct node shape that uses the StringList in a property.
  */
 
 export interface LanguageInPropertiesStruct {
@@ -20082,7 +20083,8 @@ export namespace LanguageInPropertiesStruct {
             .meta({ description: "literal property for testing languageIn" }),
         })
         .meta({
-          description: "Node shape that uses the StringList in a property.",
+          description:
+            "Struct node shape that uses the StringList in a property.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -20451,7 +20453,7 @@ export namespace LanguageInPropertiesStruct {
       }),
     );
 } /**
- * Node shape resolved by LazyPropertiesStruct
+ * Struct node shape resolved by LazyPropertiesStruct
  */
 
 export interface LazilyResolvedBlankNodeOrIriIdentifierStruct {
@@ -20575,7 +20577,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
           lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({
-          description: "Node shape resolved by LazyPropertiesStruct",
+          description: "Struct node shape resolved by LazyPropertiesStruct",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -21008,7 +21010,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       }),
     );
 } /**
- * Node shape resolved by LazyPropertiesStruct
+ * Struct node shape resolved by LazyPropertiesStruct
  */
 
 export interface LazilyResolvedIriIdentifierStruct {
@@ -21130,7 +21132,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
           lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({
-          description: "Node shape resolved by LazyPropertiesStruct",
+          description: "Struct node shape resolved by LazyPropertiesStruct",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -22505,7 +22507,7 @@ export namespace LazilyResolvedUnionMember2 {
       }),
     );
 } /**
- * Node shape that has lazy properties.
+ * Struct node shape that has lazy properties.
  */
 
 export interface LazyPropertiesStruct {
@@ -23134,7 +23136,7 @@ export namespace LazyPropertiesStruct {
             PartialStruct.Json.schema().array().optional().readonly().meta({}),
         })
         .meta({
-          description: "Node shape that has lazy properties.",
+          description: "Struct node shape that has lazy properties.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -25084,7 +25086,7 @@ export namespace LazyPropertiesStruct {
       }),
     );
 } /**
- * Node shape that uses the list shapes in properties.
+ * Struct node shape that uses the list shapes in properties.
  */
 
 export interface ListPropertiesStruct {
@@ -25343,7 +25345,8 @@ export namespace ListPropertiesStruct {
             .meta({}),
         })
         .meta({
-          description: "Node shape that uses the list shapes in properties.",
+          description:
+            "Struct node shape that uses the list shapes in properties.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -27971,7 +27974,7 @@ export namespace ListSetsStruct {
       }),
     );
 } /**
- * Node shape with shaclmate:mutable properties.
+ * Struct node shape with shaclmate:mutable properties.
  */
 
 export interface MutablePropertiesStruct {
@@ -28180,7 +28183,7 @@ export namespace MutablePropertiesStruct {
           }),
         })
         .meta({
-          description: "Node shape with shaclmate:mutable properties.",
+          description: "Struct node shape with shaclmate:mutable properties.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -29518,7 +29521,7 @@ export namespace NamedUnionPropertiesStruct {
       }),
     );
 } /**
- * Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes
+ * Struct node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes
  */
 
 export interface NewName {
@@ -29636,7 +29639,7 @@ export namespace NewName {
         })
         .meta({
           description:
-            "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
+            "Struct node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -30043,7 +30046,7 @@ export namespace NewName {
       }),
     );
 } /**
- * Node shape that has properties with different sh:nodeKind combinations
+ * Struct node shape that has properties with different sh:nodeKind combinations
  */
 
 export interface NodeKindsStruct {
@@ -30338,7 +30341,7 @@ export namespace NodeKindsStruct {
         })
         .meta({
           description:
-            "Node shape that has properties with different sh:nodeKind combinations",
+            "Struct node shape that has properties with different sh:nodeKind combinations",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -31187,7 +31190,7 @@ export namespace NodeKindsStruct {
       }),
     );
 } /**
- * Node shape that isn't an rdfs:Class.
+ * Struct node shape that isn't an rdfs:Class.
  */
 
 export interface NonClassStruct {
@@ -31302,7 +31305,7 @@ export namespace NonClassStruct {
           nonClassProperty: z.string().meta({}),
         })
         .meta({
-          description: "Node shape that isn't an rdfs:Class.",
+          description: "Struct node shape that isn't an rdfs:Class.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -32496,7 +32499,7 @@ export namespace NoRdfTypeUnionMember2 {
       }),
     );
 } /**
- * Node shape with properties that have numeric sh:datatype's
+ * Struct node shape with properties that have numeric sh:datatype's
  */
 
 export interface NumericPropertiesStruct {
@@ -33084,7 +33087,7 @@ export namespace NumericPropertiesStruct {
         })
         .meta({
           description:
-            "Node shape with properties that have numeric sh:datatype's",
+            "Struct node shape with properties that have numeric sh:datatype's",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -34858,7 +34861,7 @@ export namespace NumericPropertiesStruct {
       }),
     );
 } /**
- * Node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
+ * Struct node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
  */
 
 export interface OrderedPropertiesStruct {
@@ -35015,7 +35018,7 @@ export namespace OrderedPropertiesStruct {
         })
         .meta({
           description:
-            "Node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.",
+            "Struct node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -35450,7 +35453,7 @@ export namespace OrderedPropertiesStruct {
       }),
     );
 } /**
- * Node shape used as a partial by LazyPropertiesStruct
+ * Struct node shape used as a partial by LazyPropertiesStruct
  */
 
 export interface PartialStruct {
@@ -35563,7 +35566,8 @@ export namespace PartialStruct {
           lazilyResolvedProperty: z.string().meta({}),
         })
         .meta({
-          description: "Node shape used as a partial by LazyPropertiesStruct",
+          description:
+            "Struct node shape used as a partial by LazyPropertiesStruct",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -36904,7 +36908,7 @@ export namespace PartialUnionMember2 {
       }),
     );
 } /**
- * Node shape that has properties with different cardinalities
+ * Struct node shape that has properties with different cardinalities
  */
 
 export interface PropertyCardinalitiesStruct {
@@ -37143,7 +37147,7 @@ export namespace PropertyCardinalitiesStruct {
         })
         .meta({
           description:
-            "Node shape that has properties with different cardinalities",
+            "Struct node shape that has properties with different cardinalities",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -37722,7 +37726,7 @@ export namespace PropertyCardinalitiesStruct {
       }),
     );
 } /**
- * Node shape that uses different methods to name properties
+ * Struct node shape that uses different methods to name properties
  */
 
 export interface PropertyNamesStruct {
@@ -37948,7 +37952,7 @@ export namespace PropertyNamesStruct {
         })
         .meta({
           description:
-            "Node shape that uses different methods to name properties",
+            "Struct node shape that uses different methods to name properties",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -38593,7 +38597,7 @@ export namespace PropertyNamesStruct {
       }),
     );
 } /**
- * Node shape that uses different property path types in its properties
+ * Struct node shape that uses different property path types in its properties
  */
 
 export interface PropertyPathsStruct {
@@ -38747,7 +38751,7 @@ export namespace PropertyPathsStruct {
         })
         .meta({
           description:
-            "Node shape that uses different property path types in its properties",
+            "Struct node shape that uses different property path types in its properties",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -40362,7 +40366,7 @@ export namespace RecursiveUnionMember2 {
       }),
     );
 } /**
- * Node shape with properties that are not nested objects
+ * Struct node shape with properties that are not nested objects
  */
 
 export interface TermPropertiesStruct {
@@ -40764,7 +40768,8 @@ export namespace TermPropertiesStruct {
             .meta({}),
         })
         .meta({
-          description: "Node shape with properties that are not nested objects",
+          description:
+            "Struct node shape with properties that are not nested objects",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -41908,7 +41913,7 @@ export namespace TermPropertiesStruct {
       }),
     );
 } /**
- * Node shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.
+ * Struct node shape shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.
  */
 
 export interface UnionDiscriminantsStruct {
@@ -43341,7 +43346,7 @@ export namespace UnionDiscriminantsStruct {
         })
         .meta({
           description:
-            "Node shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.",
+            "Struct node shape shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -50724,7 +50729,7 @@ export namespace LazilyResolvedUnion {
         .readonly()
         .meta({
           description:
-            "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+            "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
         });
 
     export function parse(json: unknown): Either<Error, Json> {
@@ -51744,7 +51749,7 @@ export namespace NoRdfTypeUnion {
         .readonly()
         .meta({
           description:
-            "Node shape sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's",
+            "Node shape that sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's",
         });
 
     export function parse(json: unknown): Either<Error, Json> {
@@ -52677,7 +52682,7 @@ export namespace RecursiveUnion {
         .readonly()
         .meta({
           description:
-            "Node shape sh:xone's node shapes that have properties with the union's type",
+            "Node shape that sh:xone's node shapes that have properties with the union's type",
         });
 
     export function parse(json: unknown): Either<Error, Json> {
@@ -53127,7 +53132,7 @@ export namespace Union {
         .readonly()
         .meta({
           description:
-            "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+            "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
         });
 
     export function parse(json: unknown): Either<Error, Json> {

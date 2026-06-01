@@ -1,7 +1,7 @@
 {
   "namedTypes": [
     {
-      "comment": "Node shape that can only have a blank node as an identifier",
+      "comment": "Struct node shape that can only have a blank node as an identifier",
       "kind": "Struct",
       "name": "BlankNodeIdentifierStruct",
       "shapeIdentifier": {
@@ -72,7 +72,7 @@
       ]
     },
     {
-      "comment": "Node shape that can have a blank node or IRI as an identifier",
+      "comment": "Struct node shape that can have a blank node or IRI as an identifier",
       "kind": "Struct",
       "name": "BlankNodeOrIriIdentifierStruct",
       "shapeIdentifier": {
@@ -144,7 +144,7 @@
       ]
     },
     {
-      "comment": "Node shape with sh:class properties",
+      "comment": "Struct node shape with sh:class properties",
       "kind": "Struct",
       "name": "ClassPropertiesStruct",
       "shapeIdentifier": {
@@ -246,7 +246,7 @@
             "value": "df_0_7"
           },
           "type": {
-            "comment": "Node shape that isn't an rdfs:Class.",
+            "comment": "Struct node shape that isn't an rdfs:Class.",
             "kind": "Option",
             "name": "NonClassStruct",
             "shapeIdentifier": {
@@ -256,7 +256,7 @@
               "value": "http://example.com/NonClassStruct"
             },
             "itemType": {
-              "comment": "Node shape that isn't an rdfs:Class.",
+              "comment": "Struct node shape that isn't an rdfs:Class.",
               "kind": "Struct",
               "name": "NonClassStruct",
               "shapeIdentifier": {
@@ -291,7 +291,7 @@
             "value": "df_0_8"
           },
           "type": {
-            "comment": "Node shape used as a partial by LazyPropertiesStruct",
+            "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
             "kind": "Option",
             "name": "PartialStruct",
             "shapeIdentifier": {
@@ -301,7 +301,7 @@
               "value": "http://example.com/PartialStruct"
             },
             "itemType": {
-              "comment": "Node shape used as a partial by LazyPropertiesStruct",
+              "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
               "kind": "Struct",
               "name": "PartialStruct",
               "shapeIdentifier": {
@@ -357,7 +357,7 @@
       ]
     },
     {
-      "comment": "Node shape that isn't an rdfs:Class.",
+      "comment": "Struct node shape that isn't an rdfs:Class.",
       "kind": "Struct",
       "name": "NonClassStruct",
       "shapeIdentifier": {
@@ -408,7 +408,7 @@
       ]
     },
     {
-      "comment": "Node shape used as a partial by LazyPropertiesStruct",
+      "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
       "kind": "Struct",
       "name": "PartialStruct",
       "shapeIdentifier": {
@@ -459,7 +459,7 @@
       ]
     },
     {
-      "comment": "Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.",
+      "comment": "Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI.",
       "kind": "Struct",
       "name": "ConvertibleTypePropertiesStruct",
       "shapeIdentifier": {
@@ -497,72 +497,24 @@
       ],
       "properties": [
         {
-          "name": "convertibleLiteralNonEmptySetProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleLiteralNonEmptySetProperty)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_10"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_10"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_10"
-              },
-              "nodeKinds": [
-                "Literal"
-              ]
-            },
-            "minCount": 1
-          }
-        },
-        {
-          "name": "convertibleTermProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTermProperty)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_11"
-          },
-          "type": {
-            "kind": "Term",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_11"
-            },
-            "nodeKinds": [
-              "BlankNode",
-              "IRI",
-              "Literal"
-            ]
-          }
-        },
-        {
           "name": "convertibleTermOptionProperty",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleTermOptionProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_12"
+            "value": "df_0_10"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_12"
+              "value": "df_0_10"
             },
             "itemType": {
               "kind": "Term",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_12"
+                "value": "df_0_10"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -578,19 +530,19 @@
           "path": "PredicatePath(http://example.com/convertibleTermSetProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_13"
+            "value": "df_0_11"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_13"
+              "value": "df_0_11"
             },
             "itemType": {
               "kind": "Term",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_13"
+                "value": "df_0_11"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -607,19 +559,19 @@
           "path": "PredicatePath(http://example.com/convertibleTermNonEmptySetProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_14"
+            "value": "df_0_12"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_14"
+              "value": "df_0_12"
             },
             "itemType": {
               "kind": "Term",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_14"
+                "value": "df_0_12"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -636,13 +588,13 @@
           "path": "PredicatePath(http://example.com/convertibleIriProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_15"
+            "value": "df_0_13"
           },
           "type": {
             "kind": "Iri",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_15"
+              "value": "df_0_13"
             },
             "nodeKinds": [
               "IRI"
@@ -655,19 +607,19 @@
           "path": "PredicatePath(http://example.com/convertibleIriOptionProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_16"
+            "value": "df_0_14"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_16"
+              "value": "df_0_14"
             },
             "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_16"
+                "value": "df_0_14"
               },
               "nodeKinds": [
                 "IRI"
@@ -681,19 +633,19 @@
           "path": "PredicatePath(http://example.com/convertibleIriSetProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_17"
+            "value": "df_0_15"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_17"
+              "value": "df_0_15"
             },
             "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_17"
+                "value": "df_0_15"
               },
               "nodeKinds": [
                 "IRI"
@@ -708,19 +660,19 @@
           "path": "PredicatePath(http://example.com/convertibleIriNonEmptySetProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_18"
+            "value": "df_0_16"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_18"
+              "value": "df_0_16"
             },
             "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_18"
+                "value": "df_0_16"
               },
               "nodeKinds": [
                 "IRI"
@@ -735,13 +687,13 @@
           "path": "PredicatePath(http://example.com/convertibleLiteralProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_19"
+            "value": "df_0_17"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_19"
+              "value": "df_0_17"
             },
             "nodeKinds": [
               "Literal"
@@ -754,19 +706,19 @@
           "path": "PredicatePath(http://example.com/convertibleLiteralOptionProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_20"
+            "value": "df_0_18"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_20"
+              "value": "df_0_18"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_20"
+                "value": "df_0_18"
               },
               "nodeKinds": [
                 "Literal"
@@ -780,19 +732,19 @@
           "path": "PredicatePath(http://example.com/convertibleLiteralSetProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_21"
+            "value": "df_0_19"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_21"
+              "value": "df_0_19"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_21"
+                "value": "df_0_19"
               },
               "nodeKinds": [
                 "Literal"
@@ -800,11 +752,59 @@
             },
             "minCount": 0
           }
+        },
+        {
+          "name": "convertibleLiteralNonEmptySetProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleLiteralNonEmptySetProperty)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_20"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_20"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_20"
+              },
+              "nodeKinds": [
+                "Literal"
+              ]
+            },
+            "minCount": 1
+          }
+        },
+        {
+          "name": "convertibleTermProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleTermProperty)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_21"
+          },
+          "type": {
+            "kind": "Term",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_21"
+            },
+            "nodeKinds": [
+              "BlankNode",
+              "IRI",
+              "Literal"
+            ]
+          }
         }
       ]
     },
     {
-      "comment": "Node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.",
+      "comment": "Struct node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.",
       "kind": "Struct",
       "name": "DateUnionPropertiesStruct",
       "shapeIdentifier": {
@@ -1096,7 +1096,7 @@
       ]
     },
     {
-      "comment": "Node shape with sh:defaultValue properties.",
+      "comment": "Struct node shape with sh:defaultValue properties.",
       "kind": "Struct",
       "name": "DefaultValuePropertiesStruct",
       "shapeIdentifier": {
@@ -1551,7 +1551,7 @@
       ]
     },
     {
-      "comment": "Node shape with custom rdf:type's.\n\nThe shaclmate:fromRdfType is expected on deserialization.\nshaclmate:toRdfType's are added an serialization.",
+      "comment": "Struct node shape with custom rdf:type's.\n\nThe shaclmate:fromRdfType is expected on deserialization.\nshaclmate:toRdfType's are added an serialization.",
       "kind": "Struct",
       "name": "ExplicitFromToRdfTypesStruct",
       "shapeIdentifier": {
@@ -1622,7 +1622,7 @@
       ]
     },
     {
-      "comment": "Node shape with custom rdf:type's.\n\nThe shaclmate:rdfType is expected on deserialization and added on serialization.",
+      "comment": "Struct node shape with custom rdf:type's.\n\nThe shaclmate:rdfType is expected on deserialization and added on serialization.",
       "kind": "Struct",
       "name": "ExplicitRdfTypeStruct",
       "shapeIdentifier": {
@@ -1699,7 +1699,7 @@
       "members": [
         {
           "type": {
-            "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+            "comment": "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
             "kind": "Union",
             "name": "Union",
             "shapeIdentifier": {
@@ -1832,7 +1832,7 @@
       ]
     },
     {
-      "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+      "comment": "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
       "kind": "Union",
       "name": "Union",
       "shapeIdentifier": {
@@ -1987,7 +1987,7 @@
       ]
     },
     {
-      "comment": "Node shape with sh:hasValue properties.",
+      "comment": "Struct node shape with sh:hasValue properties.",
       "kind": "Struct",
       "name": "HasValuePropertiesStruct",
       "shapeIdentifier": {
@@ -2068,7 +2068,7 @@
       ]
     },
     {
-      "comment": "Node shape with sh:in constraining its identifier.",
+      "comment": "Struct node shape with sh:in constraining its identifier.",
       "kind": "Struct",
       "name": "InIdentifierStruct",
       "shapeIdentifier": {
@@ -2153,7 +2153,7 @@
       ]
     },
     {
-      "comment": "Node shape with sh:in properties.",
+      "comment": "Struct node shape with sh:in properties.",
       "kind": "Struct",
       "name": "InPropertiesStruct",
       "shapeIdentifier": {
@@ -2698,7 +2698,7 @@
       ]
     },
     {
-      "comment": "Node shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.",
+      "comment": "Struct node shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.",
       "kind": "Struct",
       "name": "JsPrimitiveUnionPropertyStruct",
       "shapeIdentifier": {
@@ -2818,7 +2818,7 @@
       ]
     },
     {
-      "comment": "Node shape that uses the StringList in a property.",
+      "comment": "Struct node shape that uses the StringList in a property.",
       "kind": "Struct",
       "name": "LanguageInPropertiesStruct",
       "shapeIdentifier": {
@@ -2876,7 +2876,7 @@
       ]
     },
     {
-      "comment": "Node shape resolved by LazyPropertiesStruct",
+      "comment": "Struct node shape resolved by LazyPropertiesStruct",
       "kind": "Struct",
       "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
       "shapeIdentifier": {
@@ -2941,7 +2941,7 @@
       ]
     },
     {
-      "comment": "Node shape resolved by LazyPropertiesStruct",
+      "comment": "Struct node shape resolved by LazyPropertiesStruct",
       "kind": "Struct",
       "name": "LazilyResolvedIriIdentifierStruct",
       "shapeIdentifier": {
@@ -2991,7 +2991,7 @@
       ]
     },
     {
-      "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+      "comment": "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
       "kind": "Union",
       "name": "LazilyResolvedUnion",
       "shapeIdentifier": {
@@ -3210,7 +3210,7 @@
       ]
     },
     {
-      "comment": "Node shape that has lazy properties.",
+      "comment": "Struct node shape that has lazy properties.",
       "kind": "Struct",
       "name": "LazyPropertiesStruct",
       "shapeIdentifier": {
@@ -3268,7 +3268,7 @@
               "synthetic": true
             },
             "resolveType": {
-              "comment": "Node shape resolved by LazyPropertiesStruct",
+              "comment": "Struct node shape resolved by LazyPropertiesStruct",
               "kind": "Struct",
               "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
               "shapeIdentifier": {
@@ -3349,7 +3349,7 @@
               }
             },
             "resolveType": {
-              "comment": "Node shape resolved by LazyPropertiesStruct",
+              "comment": "Struct node shape resolved by LazyPropertiesStruct",
               "kind": "Option",
               "name": "LazilyResolvedIriIdentifierStruct",
               "shapeIdentifier": {
@@ -3359,7 +3359,7 @@
                 "value": "http://example.com/LazilyResolvedIriIdentifierStruct"
               },
               "itemType": {
-                "comment": "Node shape resolved by LazyPropertiesStruct",
+                "comment": "Struct node shape resolved by LazyPropertiesStruct",
                 "kind": "Struct",
                 "name": "LazilyResolvedIriIdentifierStruct",
                 "shapeIdentifier": {
@@ -3427,7 +3427,7 @@
               }
             },
             "resolveType": {
-              "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+              "comment": "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
               "kind": "Option",
               "name": "LazilyResolvedUnion",
               "shapeIdentifier": {
@@ -3437,7 +3437,7 @@
                 "value": "http://example.com/LazilyResolvedUnion"
               },
               "itemType": {
-                "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+                "comment": "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
                 "kind": "Union",
                 "name": "LazilyResolvedUnion",
                 "shapeIdentifier": {
@@ -3545,7 +3545,7 @@
               "value": "df_0_112"
             },
             "partialType": {
-              "comment": "Node shape used as a partial by LazyPropertiesStruct",
+              "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
               "kind": "Option",
               "name": "PartialStruct",
               "shapeIdentifier": {
@@ -3555,7 +3555,7 @@
                 "value": "http://example.com/PartialStruct"
               },
               "itemType": {
-                "comment": "Node shape used as a partial by LazyPropertiesStruct",
+                "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
                 "kind": "Struct",
                 "name": "PartialStruct",
                 "shapeIdentifier": {
@@ -3580,7 +3580,7 @@
               }
             },
             "resolveType": {
-              "comment": "Node shape resolved by LazyPropertiesStruct",
+              "comment": "Struct node shape resolved by LazyPropertiesStruct",
               "kind": "Option",
               "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
               "shapeIdentifier": {
@@ -3590,7 +3590,7 @@
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
               },
               "itemType": {
-                "comment": "Node shape resolved by LazyPropertiesStruct",
+                "comment": "Struct node shape resolved by LazyPropertiesStruct",
                 "kind": "Struct",
                 "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
                 "shapeIdentifier": {
@@ -3645,7 +3645,7 @@
               "value": "df_0_113"
             },
             "partialType": {
-              "comment": "Node shape used as a partial by LazyPropertiesStruct",
+              "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
               "kind": "Set",
               "name": "PartialStruct",
               "shapeIdentifier": {
@@ -3655,7 +3655,7 @@
                 "value": "http://example.com/PartialStruct"
               },
               "itemType": {
-                "comment": "Node shape used as a partial by LazyPropertiesStruct",
+                "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
                 "kind": "Struct",
                 "name": "PartialStruct",
                 "shapeIdentifier": {
@@ -3681,7 +3681,7 @@
               "minCount": 0
             },
             "resolveType": {
-              "comment": "Node shape resolved by LazyPropertiesStruct",
+              "comment": "Struct node shape resolved by LazyPropertiesStruct",
               "kind": "Set",
               "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
               "shapeIdentifier": {
@@ -3691,7 +3691,7 @@
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
               },
               "itemType": {
-                "comment": "Node shape resolved by LazyPropertiesStruct",
+                "comment": "Struct node shape resolved by LazyPropertiesStruct",
                 "kind": "Struct",
                 "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
                 "shapeIdentifier": {
@@ -3747,7 +3747,7 @@
               "value": "df_0_114"
             },
             "partialType": {
-              "comment": "Node shape used as a partial by LazyPropertiesStruct",
+              "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
               "kind": "Struct",
               "name": "PartialStruct",
               "shapeIdentifier": {
@@ -3771,7 +3771,7 @@
               }
             },
             "resolveType": {
-              "comment": "Node shape resolved by LazyPropertiesStruct",
+              "comment": "Struct node shape resolved by LazyPropertiesStruct",
               "kind": "Struct",
               "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
               "shapeIdentifier": {
@@ -3825,7 +3825,7 @@
               "value": "df_0_115"
             },
             "partialType": {
-              "comment": "Node shape used as a partial by LazyPropertiesStruct",
+              "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
               "kind": "Option",
               "name": "PartialStruct",
               "shapeIdentifier": {
@@ -3835,7 +3835,7 @@
                 "value": "http://example.com/PartialStruct"
               },
               "itemType": {
-                "comment": "Node shape used as a partial by LazyPropertiesStruct",
+                "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
                 "kind": "Struct",
                 "name": "PartialStruct",
                 "shapeIdentifier": {
@@ -3860,7 +3860,7 @@
               }
             },
             "resolveType": {
-              "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+              "comment": "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
               "kind": "Option",
               "name": "LazilyResolvedUnion",
               "shapeIdentifier": {
@@ -3870,7 +3870,7 @@
                 "value": "http://example.com/LazilyResolvedUnion"
               },
               "itemType": {
-                "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+                "comment": "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
                 "kind": "Union",
                 "name": "LazilyResolvedUnion",
                 "shapeIdentifier": {
@@ -4080,7 +4080,7 @@
               }
             },
             "resolveType": {
-              "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+              "comment": "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
               "kind": "Option",
               "name": "LazilyResolvedUnion",
               "shapeIdentifier": {
@@ -4090,7 +4090,7 @@
                 "value": "http://example.com/LazilyResolvedUnion"
               },
               "itemType": {
-                "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+                "comment": "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
                 "kind": "Union",
                 "name": "LazilyResolvedUnion",
                 "shapeIdentifier": {
@@ -4226,7 +4226,7 @@
               }
             },
             "resolveType": {
-              "comment": "Node shape resolved by LazyPropertiesStruct",
+              "comment": "Struct node shape resolved by LazyPropertiesStruct",
               "kind": "Option",
               "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
               "shapeIdentifier": {
@@ -4236,7 +4236,7 @@
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
               },
               "itemType": {
-                "comment": "Node shape resolved by LazyPropertiesStruct",
+                "comment": "Struct node shape resolved by LazyPropertiesStruct",
                 "kind": "Struct",
                 "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
                 "shapeIdentifier": {
@@ -4320,7 +4320,7 @@
               "minCount": 0
             },
             "resolveType": {
-              "comment": "Node shape resolved by LazyPropertiesStruct",
+              "comment": "Struct node shape resolved by LazyPropertiesStruct",
               "kind": "Set",
               "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
               "shapeIdentifier": {
@@ -4330,7 +4330,7 @@
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
               },
               "itemType": {
-                "comment": "Node shape resolved by LazyPropertiesStruct",
+                "comment": "Struct node shape resolved by LazyPropertiesStruct",
                 "kind": "Struct",
                 "name": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
                 "shapeIdentifier": {
@@ -4465,7 +4465,7 @@
       ]
     },
     {
-      "comment": "Node shape that uses the list shapes in properties.",
+      "comment": "Struct node shape that uses the list shapes in properties.",
       "kind": "Struct",
       "name": "ListPropertiesStruct",
       "shapeIdentifier": {
@@ -4531,7 +4531,7 @@
                 "value": "http://example.com/StructList"
               },
               "itemType": {
-                "comment": "Node shape that isn't an rdfs:Class.",
+                "comment": "Struct node shape that isn't an rdfs:Class.",
                 "kind": "Struct",
                 "name": "NonClassStruct",
                 "shapeIdentifier": {
@@ -4930,7 +4930,7 @@
       ]
     },
     {
-      "comment": "Node shape with shaclmate:mutable properties.",
+      "comment": "Struct node shape with shaclmate:mutable properties.",
       "kind": "Struct",
       "name": "MutablePropertiesStruct",
       "shapeIdentifier": {
@@ -5334,7 +5334,7 @@
       ]
     },
     {
-      "comment": "Node shape sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's",
+      "comment": "Node shape that sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's",
       "kind": "Union",
       "name": "NoRdfTypeUnion",
       "shapeIdentifier": {
@@ -5497,7 +5497,7 @@
       ]
     },
     {
-      "comment": "Node shape that has properties with different sh:nodeKind combinations",
+      "comment": "Struct node shape that has properties with different sh:nodeKind combinations",
       "kind": "Struct",
       "name": "NodeKindsStruct",
       "shapeIdentifier": {
@@ -5654,7 +5654,7 @@
       ]
     },
     {
-      "comment": "Node shape with properties that have numeric sh:datatype's",
+      "comment": "Struct node shape with properties that have numeric sh:datatype's",
       "kind": "Struct",
       "name": "NumericPropertiesStruct",
       "shapeIdentifier": {
@@ -6206,7 +6206,7 @@
       ]
     },
     {
-      "comment": "Node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.",
+      "comment": "Struct node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.",
       "kind": "Struct",
       "name": "OrderedPropertiesStruct",
       "shapeIdentifier": {
@@ -6307,7 +6307,7 @@
       ]
     },
     {
-      "comment": "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
+      "comment": "Struct node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
       "kind": "Struct",
       "name": "NewName",
       "shapeIdentifier": {
@@ -6693,7 +6693,7 @@
       ]
     },
     {
-      "comment": "Node shape that has properties with different cardinalities",
+      "comment": "Struct node shape that has properties with different cardinalities",
       "kind": "Struct",
       "name": "PropertyCardinalitiesStruct",
       "shapeIdentifier": {
@@ -6846,7 +6846,7 @@
       ]
     },
     {
-      "comment": "Node shape that uses different methods to name properties",
+      "comment": "Struct node shape that uses different methods to name properties",
       "kind": "Struct",
       "name": "PropertyNamesStruct",
       "shapeIdentifier": {
@@ -7022,7 +7022,7 @@
       ]
     },
     {
-      "comment": "Node shape that uses different property path types in its properties",
+      "comment": "Struct node shape that uses different property path types in its properties",
       "kind": "Struct",
       "name": "PropertyPathsStruct",
       "shapeIdentifier": {
@@ -7120,7 +7120,7 @@
       ]
     },
     {
-      "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
+      "comment": "Node shape that sh:xone's node shapes that have properties with the union's type",
       "kind": "Union",
       "name": "RecursiveUnion",
       "recursive": true,
@@ -7179,7 +7179,7 @@
             "value": "df_0_198"
           },
           "type": {
-            "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
+            "comment": "Node shape that sh:xone's node shapes that have properties with the union's type",
             "kind": "Option",
             "name": "RecursiveUnion",
             "recursive": true,
@@ -7190,7 +7190,7 @@
               "value": "http://example.com/RecursiveUnion"
             },
             "itemType": {
-              "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
+              "comment": "Node shape that sh:xone's node shapes that have properties with the union's type",
               "kind": "Union",
               "name": "RecursiveUnion",
               "recursive": true,
@@ -7253,7 +7253,7 @@
             "value": "df_0_199"
           },
           "type": {
-            "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
+            "comment": "Node shape that sh:xone's node shapes that have properties with the union's type",
             "kind": "Option",
             "name": "RecursiveUnion",
             "recursive": true,
@@ -7264,7 +7264,7 @@
               "value": "http://example.com/RecursiveUnion"
             },
             "itemType": {
-              "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
+              "comment": "Node shape that sh:xone's node shapes that have properties with the union's type",
               "kind": "Union",
               "name": "RecursiveUnion",
               "recursive": true,
@@ -7280,7 +7280,7 @@
       ]
     },
     {
-      "comment": "Node shape with properties that are not nested objects",
+      "comment": "Struct node shape with properties that are not nested objects",
       "kind": "Struct",
       "name": "TermPropertiesStruct",
       "shapeIdentifier": {
@@ -7586,7 +7586,7 @@
       ]
     },
     {
-      "comment": "Node shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.",
+      "comment": "Struct node shape shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.",
       "kind": "Struct",
       "name": "UnionDiscriminantsStruct",
       "shapeIdentifier": {
