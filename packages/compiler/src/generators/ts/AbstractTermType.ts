@@ -23,7 +23,8 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  override readonly declaration: Maybe<Code> = Maybe.empty();
+  protected abstract readonly inlineExpression: Code;
+
   readonly equalsFunction = code`${this.reusables.snippets.booleanEquals}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
@@ -49,12 +50,28 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
+  get declaration(): Maybe<Code> {
+    return this.name.map(
+      (name) => code`export type ${name} = ${this.inlineExpression};`,
+    );
+  }
+
+  @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
       jsonName: "termType",
       name: "termType",
       values: [...this.nodeKinds].map(NodeKind.toTermType),
     });
+  }
+
+  @Memoize()
+  override get expression(): Code {
+    const name = this.name.extract();
+    if (name) {
+      return code`${name}`;
+    }
+    return this.inlineExpression;
   }
 
   @Memoize()

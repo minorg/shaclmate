@@ -25,16 +25,16 @@ export class StringType extends AbstractPrimitiveType<string> {
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
 
   @Memoize()
-  override get expression(): Code {
+  override get schemaType(): Code {
+    return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
+  }
+
+  @Memoize()
+  protected override get inlineExpression(): Code {
     if (this.primitiveIn.length > 0) {
       return code`${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
     }
     return code`string`;
-  }
-
-  @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
   }
 
   override jsonSchema(

@@ -1,3 +1,4 @@
+import { Maybe } from "purify-ts";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 
 /**
@@ -26,7 +27,7 @@ export class SetType<
       comment: itemType.comment,
       itemType,
       label: itemType.label,
-      name: itemType.name,
+      name: Maybe.empty(),
       shapeIdentifier: itemType.shapeIdentifier,
     });
     this.minCount = minCount;

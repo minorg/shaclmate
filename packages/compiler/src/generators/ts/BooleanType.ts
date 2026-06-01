@@ -21,16 +21,16 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
 
   @Memoize()
-  override get expression(): Code {
+  override get schemaType(): Code {
+    return code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
+  }
+
+  @Memoize()
+  protected override get inlineExpression(): Code {
     if (this.primitiveIn.length > 0) {
       return code`${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;
     }
     return code`boolean`;
-  }
-
-  @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
   }
 
   override jsonSchema(

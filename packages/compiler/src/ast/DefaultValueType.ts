@@ -1,4 +1,5 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
+import { Maybe } from "purify-ts";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { termEquals } from "./equals.js";
@@ -29,7 +30,7 @@ export class DefaultValueType<
       comment: itemType.comment,
       itemType,
       label: itemType.label,
-      name: itemType.name,
+      name: Maybe.empty(),
       shapeIdentifier: itemType.shapeIdentifier,
     });
     this.defaultValue = defaultValue;

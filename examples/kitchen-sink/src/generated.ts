@@ -16827,6 +16827,8 @@ export interface InPropertiesStruct {
   >;
 
   readonly inStrings: Maybe<"text" | "html">;
+
+  readonly reusableIn: Maybe<ReusableIn>;
 }
 
 export namespace InPropertiesStruct {
@@ -16847,6 +16849,7 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
+    readonly reusableIn?: ReusableIn | Maybe<ReusableIn>;
   }): Either<Error, InPropertiesStruct> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
@@ -16900,6 +16903,14 @@ export namespace InPropertiesStruct {
           value,
         ),
       ),
+      reusableIn: $convertToMaybe($identityConversionFunction)(
+        parameters?.reusableIn,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          InPropertiesStruct.schema.properties.reusableIn.type,
+          value,
+        ),
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -16925,6 +16936,7 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
+    readonly reusableIn?: ReusableIn | Maybe<ReusableIn>;
   }): InPropertiesStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -17012,6 +17024,18 @@ export namespace InPropertiesStruct {
           propertyValuesUnequal,
           type: "property" as const,
         })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          left.reusableIn,
+          right.reusableIn,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "reusableIn",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
       );
   }
 
@@ -17035,6 +17059,7 @@ export namespace InPropertiesStruct {
     $hashMaybe($hashNumeric)(hasher, _inPropertiesStruct.inIntegers);
     $hashMaybe($hashTerm)(hasher, _inPropertiesStruct.inIris);
     $hashMaybe($hashString)(hasher, _inPropertiesStruct.inStrings);
+    $hashMaybe($hashString)(hasher, _inPropertiesStruct.reusableIn);
     return hasher;
   }
 
@@ -17056,6 +17081,7 @@ export namespace InPropertiesStruct {
       readonly "@id": "http://example.com/InIri1" | "http://example.com/InIri2";
     };
     readonly inStrings?: "text" | "html";
+    readonly reusableIn?: ReusableIn;
   };
 
   export namespace Json {
@@ -17089,6 +17115,7 @@ export namespace InPropertiesStruct {
             .optional()
             .meta({}),
           inStrings: z.enum(["text", "html"]).optional().meta({}),
+          reusableIn: z.enum(["cat", "dog"]).optional().meta({}),
         })
         .meta({
           description: "Struct node shape with sh:in properties.",
@@ -17121,6 +17148,7 @@ export namespace InPropertiesStruct {
           { scope: `${scopePrefix}/properties/inIntegers`, type: "Control" },
           { scope: `${scopePrefix}/properties/inIris`, type: "Control" },
           { scope: `${scopePrefix}/properties/inStrings`, type: "Control" },
+          { scope: `${scopePrefix}/properties/reusableIn`, type: "Control" },
         ],
         label: "InPropertiesStruct",
         type: "Group",
@@ -17192,6 +17220,15 @@ export namespace InPropertiesStruct {
     ) {
       return false;
     }
+    if (
+      filter.reusableIn !== undefined &&
+      !$filterMaybe<ReusableIn, $StringFilter>($filterString)(
+        filter.reusableIn,
+        value.reusableIn,
+      )
+    ) {
+      return false;
+    }
     return true;
   }
 
@@ -17203,6 +17240,7 @@ export namespace InPropertiesStruct {
     readonly inIntegers?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly inIris?: $MaybeFilter<$IriFilter>;
     readonly inStrings?: $MaybeFilter<$StringFilter>;
+    readonly reusableIn?: $MaybeFilter<$StringFilter>;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -17303,6 +17341,20 @@ export namespace InPropertiesStruct {
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<"text" | "html">
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.reusableIn,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "reusableIn",
+        propertySchema: schema.properties.reusableIn,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema<ReusableIn>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -17459,6 +17511,21 @@ export namespace InPropertiesStruct {
         variablePrefix: parameters.variablePrefix,
       }),
     );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.reusableIn,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "reusableIn",
+        propertySchema: schema.properties.reusableIn,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema<ReusableIn>
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return patterns;
   };
 
@@ -17497,6 +17564,9 @@ export namespace InPropertiesStruct {
         .orDefault(Either.of(Maybe.empty())),
       inStrings: Maybe.fromNullable($json["inStrings"])
         .map((item) => Either.of<Error, "text" | "html">(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      reusableIn: Maybe.fromNullable($json["reusableIn"])
+        .map((item) => Either.of<Error, ReusableIn>(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
     }).chain(create);
   }
@@ -17664,6 +17734,34 @@ export namespace InPropertiesStruct {
                     }),
               ),
         }),
+        reusableIn: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.reusableIn,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toString(["cat", "dog"] as const),
+                ),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<ReusableIn>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        InPropertiesStruct.schema.properties.reusableIn.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
       }).chain((properties) => create(properties)),
     );
   };
@@ -17757,6 +17855,14 @@ export namespace InPropertiesStruct {
           itemType: { kind: "String" as const, in: ["text", "html"] },
         },
       },
+      reusableIn: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/reusableIn"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const, in: ["cat", "dog"] },
+        },
+      },
     },
   } as const;
 
@@ -17840,6 +17946,9 @@ export namespace InPropertiesStruct {
           .map((item) => ({ "@id": item.value }))
           .extract(),
         inStrings: _inPropertiesStruct.inStrings.map((item) => item).extract(),
+        reusableIn: _inPropertiesStruct.reusableIn
+          .map((item) => item)
+          .extract(),
       } satisfies InPropertiesStruct.Json),
     );
   }
@@ -17899,6 +18008,13 @@ export namespace InPropertiesStruct {
     parameters.resource.add(
       InPropertiesStruct.schema.properties.inStrings.path,
       parameters.object.inStrings
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      InPropertiesStruct.schema.properties.reusableIn.path,
+      parameters.object.reusableIn
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
@@ -38212,7 +38328,8 @@ export namespace RecursiveUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+export type ReusableIn = "cat" | "dog"; /**
  * Struct node shape with properties that are not nested objects
  */
 

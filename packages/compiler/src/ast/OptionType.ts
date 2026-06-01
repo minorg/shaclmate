@@ -1,3 +1,4 @@
+import { Maybe } from "purify-ts";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 
 /**
@@ -18,7 +19,7 @@ export class OptionType<
       comment: itemType.comment,
       itemType,
       label: itemType.label,
-      name: itemType.name,
+      name: Maybe.empty(),
       shapeIdentifier: itemType.shapeIdentifier,
     });
   }

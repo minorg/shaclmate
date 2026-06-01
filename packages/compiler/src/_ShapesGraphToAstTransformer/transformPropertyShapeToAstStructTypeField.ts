@@ -69,11 +69,14 @@ function fieldName(
   throw new Error(`${propertyShape}: unable to infer name`);
 }
 
-function synthesizePartialAstStructType({
-  identifierType,
-}: {
-  identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
-}): ast.StructType {
+function synthesizePartialAstStructType(
+  this: ShapesGraphToAstTransformer,
+  {
+    identifierType,
+  }: {
+    identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
+  },
+): ast.StructType {
   let syntheticName: string;
   switch (identifierType.kind) {
     case "BlankNode":
@@ -86,7 +89,13 @@ function synthesizePartialAstStructType({
       break;
   }
 
-  return new ast.StructType({
+  let partialAstStructType =
+    this.syntheticAstStructTypesByName.get(syntheticName);
+  if (partialAstStructType) {
+    return partialAstStructType;
+  }
+
+  partialAstStructType = new ast.StructType({
     comment: Maybe.empty(),
     extern: false,
     fromRdfType: Maybe.empty(),
@@ -100,6 +109,10 @@ function synthesizePartialAstStructType({
     toRdfTypes: [],
     tsImports: [],
   });
+
+  this.syntheticAstStructTypesByName.set(syntheticName, partialAstStructType);
+
+  return partialAstStructType;
 }
 
 function transformPropertyShapeToAstType(
@@ -272,7 +285,7 @@ export function transformPropertyShapeToAstStructTypeField(
         case "BlankNode":
         case "Identifier":
         case "Iri":
-          astPartialItemType = synthesizePartialAstStructType({
+          astPartialItemType = synthesizePartialAstStructType.call(this, {
             identifierType: astItemType,
           });
           break;

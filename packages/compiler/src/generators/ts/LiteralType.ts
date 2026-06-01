@@ -8,7 +8,9 @@ import type { Typeof } from "./Typeof.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class LiteralType extends AbstractLiteralType {
-  override readonly expression = code`${this.reusables.imports.Literal}`;
+  protected override readonly inlineExpression =
+    code`${this.reusables.imports.Literal}`;
+
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.of({
       code: code`${this.reusables.snippets.convertToLiteral}`,

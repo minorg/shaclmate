@@ -21,12 +21,12 @@ export class TermType<
   override readonly filterFunction =
     code`${this.reusables.snippets.filterTerm}`;
   override readonly filterType = code`${this.reusables.snippets.TermFilter}`;
-  override readonly kind = "Term";
-  override readonly nodeKinds: ReadonlySet<NodeKind>;
-  override readonly schemaType = code`${this.reusables.snippets.TermSchema}`;
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
+  override readonly kind = "Term";
+  override readonly nodeKinds: ReadonlySet<NodeKind>;
+  override readonly schemaType = code`${this.reusables.snippets.TermSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.termSparqlWherePatterns}`;
 
@@ -47,8 +47,12 @@ export class TermType<
     );
   }
 
+  override get graphqlType(): AbstractTermType.GraphqlType {
+    throw new Error("not implemented");
+  }
+
   @Memoize()
-  override get expression(): Code {
+  protected override get inlineExpression(): Code {
     return code`(${joinCode(
       [...this.nodeKinds]
         .map((nodeKind) => {
@@ -67,10 +71,6 @@ export class TermType<
         .map((import_) => code`${import_}`),
       { on: " | " },
     )})`;
-  }
-
-  override get graphqlType(): AbstractTermType.GraphqlType {
-    throw new Error("not implemented");
   }
 
   override fromJsonExpression({

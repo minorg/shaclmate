@@ -1,4 +1,5 @@
 import { Memoize } from "typescript-memoize";
+
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -22,17 +23,6 @@ export abstract class AbstractNumericType<
   }
 
   @Memoize()
-  override get expression(): Code {
-    if (this.primitiveIn.length > 0) {
-      return code`${joinCode(
-        this.primitiveIn.map((value) => this.literalValueExpression(value)),
-        { on: " | " },
-      )}`;
-    }
-    return code`${this.jsTypes[0].typeof}`;
-  }
-
-  @Memoize()
   override get schemaType(): Code {
     return code`${this.reusables.snippets.NumericSchema}<${this.jsTypes[0].typeof}>`;
   }
@@ -40,6 +30,17 @@ export abstract class AbstractNumericType<
   @Memoize()
   override get valueSparqlWherePatternsFunction() {
     return code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.jsTypes[0].typeof}>`;
+  }
+
+  @Memoize()
+  protected override get inlineExpression(): Code {
+    if (this.primitiveIn.length > 0) {
+      return code`${joinCode(
+        this.primitiveIn.map((value) => this.literalValueExpression(value)),
+        { on: " | " },
+      )}`;
+    }
+    return code`${this.jsTypes[0].typeof}`;
   }
 
   override jsonSchema(
@@ -69,6 +70,12 @@ export abstract class AbstractNumericType<
     return code`[${this.reusables.snippets.literalFactory}.${this.jsTypes[0].typeof}(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
 
+  protected abstract fromRdfResourceValueExpression(variables: {
+    variables: {
+      value: Code;
+    };
+  }): Code;
+
   protected override fromRdfResourceValuesExpressionChain({
     variables,
   }: Parameters<
@@ -87,12 +94,6 @@ export abstract class AbstractNumericType<
       )}))`,
     };
   }
-
-  protected abstract fromRdfResourceValueExpression(variables: {
-    variables: {
-      value: Code;
-    };
-  }): Code;
 }
 
 export namespace AbstractNumericType {
