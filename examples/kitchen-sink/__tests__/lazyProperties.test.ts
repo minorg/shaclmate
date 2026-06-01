@@ -9,9 +9,7 @@ async function expectEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,
   PartialT extends { $identifier: () => ObjectIdentifierT },
   ResolvedT extends { $identifier: () => ObjectIdentifierT },
->(
-  actual: kitchenSink.$LazyOption<ObjectIdentifierT, PartialT, ResolvedT>,
-): Promise<void> {
+>(actual: kitchenSink.$LazyOption<PartialT, ResolvedT>): Promise<void> {
   expect(actual.partial.isNothing()).toStrictEqual(true);
   const resolvedObject = (await actual.resolve()).unsafeCoerce();
   expect(resolvedObject.isNothing()).toStrictEqual(true);
@@ -21,9 +19,7 @@ async function expectEmptySet<
   ObjectIdentifierT extends BlankNode | NamedNode,
   PartialT extends { $identifier: () => ObjectIdentifierT },
   ResolvedT extends { $identifier: () => ObjectIdentifierT },
->(
-  actual: kitchenSink.$LazySet<ObjectIdentifierT, ResolvedT, PartialT>,
-): Promise<void> {
+>(actual: kitchenSink.$LazySet<ResolvedT, PartialT>): Promise<void> {
   expect(actual.partials).toHaveLength(0);
   const resolvedObjects = (await actual.resolve()).unsafeCoerce();
   expect(resolvedObjects).toHaveLength(0);
@@ -38,7 +34,7 @@ async function expectRequired<
   equals,
   expected,
 }: {
-  actual: kitchenSink.$Lazy<ObjectIdentifierT, PartialT, ResolvedT>;
+  actual: kitchenSink.$Lazy<PartialT, ResolvedT>;
   equals: (left: ResolvedT, right: ResolvedT) => kitchenSink.$EqualsResult;
   expected: ResolvedT;
 }): Promise<void> {
@@ -59,7 +55,7 @@ async function expectSet<
   equals,
   expected,
 }: {
-  actual: kitchenSink.$LazySet<ObjectIdentifierT, PartialT, ResolvedT>;
+  actual: kitchenSink.$LazySet<PartialT, ResolvedT>;
   equals: (left: ResolvedT, right: ResolvedT) => kitchenSink.$EqualsResult;
   expected: readonly ResolvedT[];
 }): Promise<void> {
@@ -97,7 +93,7 @@ async function expectedNonEmptyOptional<
   equals,
   expected,
 }: {
-  actual: kitchenSink.$LazyOption<ObjectIdentifierT, PartialT, ResolvedT>;
+  actual: kitchenSink.$LazyOption<PartialT, ResolvedT>;
   equals: (left: ResolvedT, right: ResolvedT) => kitchenSink.$EqualsResult;
   expected: ResolvedT;
 }): Promise<void> {

@@ -425,25 +425,18 @@ function $convertToIriIdentifierProperty<IriT extends string = string>(
   }
 }
 
-function $convertToLazyObject<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
->(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+function $convertToLazy<PartialT, ResolvedT>(
+  resolvedToPartial: (resolved: ResolvedT) => PartialT,
+) {
   return (
-    value:
-      | $LazyObject<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-      | ResolvedObjectT,
-  ): Either<
-    Error,
-    $LazyObject<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-  > => {
-    if (value instanceof $LazyObject) {
+    value: $Lazy<PartialT, ResolvedT> | ResolvedT,
+  ): Either<Error, $Lazy<PartialT, ResolvedT>> => {
+    if (value instanceof $Lazy) {
       return Either.of(value);
     }
 
     return Either.of(
-      new $LazyObject({
+      new $Lazy({
         partial: resolvedToPartial(value),
         resolver: async () => Right(value),
       }),
@@ -451,58 +444,36 @@ function $convertToLazyObject<
   };
 }
 
-function $convertToLazyObjectOption<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
->(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+function $convertToLazyOption<PartialT, ResolvedT>(
+  resolvedToPartial: (resolved: ResolvedT) => PartialT,
+) {
   return (
     value:
-      | $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-      | Maybe<ResolvedObjectT>
-      | ResolvedObjectT
+      | $LazyOption<PartialT, ResolvedT>
+      | Maybe<ResolvedT>
+      | ResolvedT
       | undefined,
-  ): Either<
-    Error,
-    $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-  > => {
+  ): Either<Error, $LazyOption<PartialT, ResolvedT>> => {
     switch (typeof value) {
       case "object": {
-        if (value instanceof $LazyObjectOption) {
+        if (value instanceof $LazyOption) {
           return Either.of(value);
         }
 
         if (Maybe.isMaybe(value)) {
           return Either.of(
-            new $LazyObjectOption<
-              ObjectIdentifierT,
-              PartialObjectT,
-              ResolvedObjectT
-            >({
+            new $LazyOption<PartialT, ResolvedT>({
               partial: value.map(resolvedToPartial),
               resolver: async () => Right(value.unsafeCoerce()),
             }),
           );
         }
 
-        return Either.of(
-          new $LazyObjectOption<
-            ObjectIdentifierT,
-            PartialObjectT,
-            ResolvedObjectT
-          >({
-            partial: Maybe.of(resolvedToPartial(value)),
-            resolver: async () => Right(value),
-          }),
-        );
+        break;
       }
       case "undefined":
         return Either.of(
-          new $LazyObjectOption<
-            ObjectIdentifierT,
-            PartialObjectT,
-            ResolvedObjectT
-          >({
+          new $LazyOption<PartialT, ResolvedT>({
             partial: Maybe.empty(),
             resolver: async () => {
               throw new Error("should never be called");
@@ -510,53 +481,46 @@ function $convertToLazyObjectOption<
           }),
         );
     }
+
+    return Either.of(
+      new $LazyOption<PartialT, ResolvedT>({
+        partial: Maybe.of(resolvedToPartial(value)),
+        resolver: async () => Right(value),
+      }),
+    );
   };
 }
 
-function $convertToLazyObjectSet<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
->(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+function $convertToLazySet<PartialT, ResolvedT>(
+  resolvedToPartial: (resolved: ResolvedT) => PartialT,
+) {
   return (
-    value:
-      | $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-      | readonly ResolvedObjectT[]
-      | undefined,
-  ): Either<
-    Error,
-    $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-  > => {
+    value: $LazySet<PartialT, ResolvedT> | readonly ResolvedT[] | undefined,
+  ): Either<Error, $LazySet<PartialT, ResolvedT>> => {
     switch (typeof value) {
       case "object": {
-        if (value instanceof $LazyObjectSet) {
+        if (value instanceof $LazySet) {
           return Either.of(value);
         }
 
-        const captureValue = value;
-        return Either.of(
-          new $LazyObjectSet<
-            ObjectIdentifierT,
-            PartialObjectT,
-            ResolvedObjectT
-          >({
-            partials: value.map(resolvedToPartial),
-            resolver: async () => Right(captureValue),
-          }),
-        );
+        break;
       }
       case "undefined":
         return Either.of(
-          new $LazyObjectSet<
-            ObjectIdentifierT,
-            PartialObjectT,
-            ResolvedObjectT
-          >({
+          new $LazySet<PartialT, ResolvedT>({
             partials: [],
             resolver: async () => Right([]),
           }),
         );
     }
+
+    const captureValue = value;
+    return Either.of(
+      new $LazySet<PartialT, ResolvedT>({
+        partials: value.map(resolvedToPartial),
+        resolver: async () => Right(captureValue),
+      }),
+    );
   };
 }
 
@@ -1473,28 +1437,24 @@ const $iriSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
 };
 
 /**
- * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ * Type of lazy properties that return a single required value. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class $LazyObject<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
-> {
-  readonly partial: PartialObjectT;
+export class $Lazy<PartialT, ResolvedT> {
+  readonly partial: PartialT;
   private readonly resolver: (
-    identifier: ObjectIdentifierT,
+    partial: PartialT,
     options?: { preferredLanguages?: readonly string[] },
-  ) => Promise<Either<Error, ResolvedObjectT>>;
+  ) => Promise<Either<Error, ResolvedT>>;
 
   constructor({
     partial,
     resolver,
   }: {
-    partial: PartialObjectT;
+    partial: PartialT;
     resolver: (
-      identifier: ObjectIdentifierT,
+      partial: PartialT,
       options?: { preferredLanguages?: readonly string[] },
-    ) => Promise<Either<Error, ResolvedObjectT>>;
+    ) => Promise<Either<Error, ResolvedT>>;
   }) {
     this.partial = partial;
     this.resolver = resolver;
@@ -1502,34 +1462,30 @@ export class $LazyObject<
 
   resolve(options?: {
     preferredLanguages?: readonly string[];
-  }): Promise<Either<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.$identifier(), options);
+  }): Promise<Either<Error, ResolvedT>> {
+    return this.resolver(this.partial, options);
   }
 }
 
 /**
- * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ * Type of lazy properties that return a single optional value. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class $LazyObjectOption<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
-> {
-  readonly partial: Maybe<PartialObjectT>;
+export class $LazyOption<PartialT, ResolvedT> {
+  readonly partial: Maybe<PartialT>;
   private readonly resolver: (
-    identifier: ObjectIdentifierT,
+    partial: PartialT,
     options?: { preferredLanguages?: readonly string[] },
-  ) => Promise<Either<Error, ResolvedObjectT>>;
+  ) => Promise<Either<Error, ResolvedT>>;
 
   constructor({
     partial,
     resolver,
   }: {
-    partial: Maybe<PartialObjectT>;
+    partial: Maybe<PartialT>;
     resolver: (
-      identifier: ObjectIdentifierT,
+      partial: PartialT,
       options?: { preferredLanguages?: readonly string[] },
-    ) => Promise<Either<Error, ResolvedObjectT>>;
+    ) => Promise<Either<Error, ResolvedT>>;
   }) {
     this.partial = partial;
     this.resolver = resolver;
@@ -1537,39 +1493,35 @@ export class $LazyObjectOption<
 
   async resolve(options?: {
     preferredLanguages?: readonly string[];
-  }): Promise<Either<Error, Maybe<ResolvedObjectT>>> {
+  }): Promise<Either<Error, Maybe<ResolvedT>>> {
     if (this.partial.isNothing()) {
       return Right(Maybe.empty());
     }
-    return (
-      await this.resolver(this.partial.unsafeCoerce().$identifier(), options)
-    ).map(Maybe.of);
+    return (await this.resolver(this.partial.unsafeCoerce(), options)).map(
+      Maybe.of,
+    );
   }
 }
 
 /**
- * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ * Type of lazy properties that return a set of values. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class $LazyObjectSet<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
-> {
-  readonly partials: readonly PartialObjectT[];
+export class $LazySet<PartialT, ResolvedT> {
+  readonly partials: readonly PartialT[];
   private readonly resolver: (
-    identifiers: readonly ObjectIdentifierT[],
+    partials: readonly PartialT[],
     options?: { preferredLanguages?: readonly string[] },
-  ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
+  ) => Promise<Either<Error, readonly ResolvedT[]>>;
 
   constructor({
     partials,
     resolver,
   }: {
-    partials: readonly PartialObjectT[];
+    partials: readonly PartialT[];
     resolver: (
-      identifiers: readonly ObjectIdentifierT[],
+      partials: readonly PartialT[],
       options?: { preferredLanguages?: readonly string[] },
-    ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
+    ) => Promise<Either<Error, readonly ResolvedT[]>>;
   }) {
     this.partials = partials;
     this.resolver = resolver;
@@ -1583,7 +1535,7 @@ export class $LazyObjectSet<
     limit?: number;
     offset?: number;
     preferredLanguages?: readonly string[];
-  }): Promise<Either<Error, readonly ResolvedObjectT[]>> {
+  }): Promise<Either<Error, readonly ResolvedT[]>> {
     if (this.partials.length === 0) {
       return Right([]);
     }
@@ -1598,14 +1550,9 @@ export class $LazyObjectSet<
       offset = 0;
     }
 
-    return await this.resolver(
-      this.partials
-        .slice(offset, offset + limit)
-        .map((partial) => partial.$identifier()),
-      {
-        preferredLanguages: options?.preferredLanguages,
-      },
-    );
+    return await this.resolver(this.partials.slice(offset, offset + limit), {
+      preferredLanguages: options?.preferredLanguages,
+    });
   }
 }
 
@@ -22515,62 +22462,52 @@ export interface LazyPropertiesStruct {
 
   readonly $type: "LazyPropertiesStruct";
 
-  readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectOption<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+  readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyOption<
     $DefaultPartial,
     LazilyResolvedBlankNodeOrIriIdentifierStruct
   >;
 
-  readonly optionalLazyToResolvedIriIdentifierProperty: $LazyObjectOption<
-    LazilyResolvedIriIdentifierStruct.Identifier,
+  readonly optionalLazyToResolvedIriIdentifierProperty: $LazyOption<
     $NamedDefaultPartial,
     LazilyResolvedIriIdentifierStruct
   >;
 
-  readonly optionalLazyToResolvedUnionProperty: $LazyObjectOption<
-    LazilyResolvedUnion.Identifier,
+  readonly optionalLazyToResolvedUnionProperty: $LazyOption<
     $DefaultPartial,
     LazilyResolvedUnion
   >;
 
-  readonly optionalPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectOption<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+  readonly optionalPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyOption<
     PartialStruct,
     LazilyResolvedBlankNodeOrIriIdentifierStruct
   >;
 
-  readonly optionalPartialToResolvedUnionProperty: $LazyObjectOption<
-    LazilyResolvedUnion.Identifier,
+  readonly optionalPartialToResolvedUnionProperty: $LazyOption<
     PartialStruct,
     LazilyResolvedUnion
   >;
 
-  readonly optionalPartialUnionToResolvedUnionProperty: $LazyObjectOption<
-    LazilyResolvedUnion.Identifier,
+  readonly optionalPartialUnionToResolvedUnionProperty: $LazyOption<
     PartialUnion,
     LazilyResolvedUnion
   >;
 
-  readonly requiredLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyObject<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+  readonly requiredLazyToResolvedBlankNodeOrIriIdentifierProperty: $Lazy<
     $DefaultPartial,
     LazilyResolvedBlankNodeOrIriIdentifierStruct
   >;
 
-  readonly requiredPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyObject<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+  readonly requiredPartialToResolvedBlankNodeOrIriIdentifierProperty: $Lazy<
     PartialStruct,
     LazilyResolvedBlankNodeOrIriIdentifierStruct
   >;
 
-  readonly setLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectSet<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+  readonly setLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazySet<
     $DefaultPartial,
     LazilyResolvedBlankNodeOrIriIdentifierStruct
   >;
 
-  readonly setPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectSet<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+  readonly setPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazySet<
     PartialStruct,
     LazilyResolvedBlankNodeOrIriIdentifierStruct
   >;
@@ -22584,123 +22521,80 @@ export namespace LazyPropertiesStruct {
       | NamedNode
       | string;
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+      | $LazyOption<
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalLazyToResolvedIriIdentifierProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedIriIdentifierStruct.Identifier,
-          $NamedDefaultPartial,
-          LazilyResolvedIriIdentifierStruct
-        >
+      | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
       | Maybe<LazilyResolvedIriIdentifierStruct>
       | LazilyResolvedIriIdentifierStruct;
     readonly optionalLazyToResolvedUnionProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedUnion.Identifier,
-          $DefaultPartial,
-          LazilyResolvedUnion
-        >
+      | $LazyOption<$DefaultPartial, LazilyResolvedUnion>
       | Maybe<LazilyResolvedUnion>
       | LazilyResolvedUnion;
     readonly optionalPartialToResolvedBlankNodeOrIriIdentifierProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          PartialStruct,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalPartialToResolvedUnionProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedUnion.Identifier,
-          PartialStruct,
-          LazilyResolvedUnion
-        >
+      | $LazyOption<PartialStruct, LazilyResolvedUnion>
       | Maybe<LazilyResolvedUnion>
       | LazilyResolvedUnion;
     readonly optionalPartialUnionToResolvedUnionProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedUnion.Identifier,
-          PartialUnion,
-          LazilyResolvedUnion
-        >
+      | $LazyOption<PartialUnion, LazilyResolvedUnion>
       | Maybe<LazilyResolvedUnion>
       | LazilyResolvedUnion;
     readonly requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
-      | $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
-      | $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          PartialStruct,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setLazyToResolvedBlankNodeOrIriIdentifierProperty?:
-      | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
     readonly setPartialToResolvedBlankNodeOrIriIdentifierProperty?:
-      | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          PartialStruct,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
   }): Either<Error, LazyPropertiesStruct> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
-        $convertToLazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        $convertToLazyOption<
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >($DefaultPartial.createUnsafe)(
           parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
         ),
-      optionalLazyToResolvedIriIdentifierProperty: $convertToLazyObjectOption<
-        LazilyResolvedIriIdentifierStruct.Identifier,
+      optionalLazyToResolvedIriIdentifierProperty: $convertToLazyOption<
         $NamedDefaultPartial,
         LazilyResolvedIriIdentifierStruct
       >($NamedDefaultPartial.createUnsafe)(
         parameters.optionalLazyToResolvedIriIdentifierProperty,
       ),
-      optionalLazyToResolvedUnionProperty: $convertToLazyObjectOption<
-        LazilyResolvedUnion.Identifier,
+      optionalLazyToResolvedUnionProperty: $convertToLazyOption<
         $DefaultPartial,
         LazilyResolvedUnion
       >($DefaultPartial.createUnsafe)(
         parameters.optionalLazyToResolvedUnionProperty,
       ),
       optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
-        $convertToLazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        $convertToLazyOption<
           PartialStruct,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >(PartialStruct.createUnsafe)(
           parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
         ),
-      optionalPartialToResolvedUnionProperty: $convertToLazyObjectOption<
-        LazilyResolvedUnion.Identifier,
+      optionalPartialToResolvedUnionProperty: $convertToLazyOption<
         PartialStruct,
         LazilyResolvedUnion
       >(PartialStruct.createUnsafe)(
         parameters.optionalPartialToResolvedUnionProperty,
       ),
-      optionalPartialUnionToResolvedUnionProperty: $convertToLazyObjectOption<
-        LazilyResolvedUnion.Identifier,
+      optionalPartialUnionToResolvedUnionProperty: $convertToLazyOption<
         PartialUnion,
         LazilyResolvedUnion
       >((resolved: LazilyResolvedUnion) => {
@@ -22714,38 +22608,30 @@ export namespace LazyPropertiesStruct {
             throw new Error("unrecognized type");
         }
       })(parameters.optionalPartialUnionToResolvedUnionProperty),
-      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
-        $convertToLazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >($DefaultPartial.createUnsafe)(
-          parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
-        ),
-      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
-        $convertToLazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          PartialStruct,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >(PartialStruct.createUnsafe)(
-          parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
-        ),
-      setLazyToResolvedBlankNodeOrIriIdentifierProperty:
-        $convertToLazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >($DefaultPartial.createUnsafe)(
-          parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
-        ),
-      setPartialToResolvedBlankNodeOrIriIdentifierProperty:
-        $convertToLazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          PartialStruct,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >(PartialStruct.createUnsafe)(
-          parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
-        ),
+      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty: $convertToLazy<
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriIdentifierStruct
+      >($DefaultPartial.createUnsafe)(
+        parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
+      ),
+      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty: $convertToLazy<
+        PartialStruct,
+        LazilyResolvedBlankNodeOrIriIdentifierStruct
+      >(PartialStruct.createUnsafe)(
+        parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
+      ),
+      setLazyToResolvedBlankNodeOrIriIdentifierProperty: $convertToLazySet<
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriIdentifierStruct
+      >($DefaultPartial.createUnsafe)(
+        parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
+      ),
+      setPartialToResolvedBlankNodeOrIriIdentifierProperty: $convertToLazySet<
+        PartialStruct,
+        LazilyResolvedBlankNodeOrIriIdentifierStruct
+      >(PartialStruct.createUnsafe)(
+        parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -22761,80 +22647,43 @@ export namespace LazyPropertiesStruct {
       | NamedNode
       | string;
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+      | $LazyOption<
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalLazyToResolvedIriIdentifierProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedIriIdentifierStruct.Identifier,
-          $NamedDefaultPartial,
-          LazilyResolvedIriIdentifierStruct
-        >
+      | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
       | Maybe<LazilyResolvedIriIdentifierStruct>
       | LazilyResolvedIriIdentifierStruct;
     readonly optionalLazyToResolvedUnionProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedUnion.Identifier,
-          $DefaultPartial,
-          LazilyResolvedUnion
-        >
+      | $LazyOption<$DefaultPartial, LazilyResolvedUnion>
       | Maybe<LazilyResolvedUnion>
       | LazilyResolvedUnion;
     readonly optionalPartialToResolvedBlankNodeOrIriIdentifierProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          PartialStruct,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalPartialToResolvedUnionProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedUnion.Identifier,
-          PartialStruct,
-          LazilyResolvedUnion
-        >
+      | $LazyOption<PartialStruct, LazilyResolvedUnion>
       | Maybe<LazilyResolvedUnion>
       | LazilyResolvedUnion;
     readonly optionalPartialUnionToResolvedUnionProperty?:
-      | $LazyObjectOption<
-          LazilyResolvedUnion.Identifier,
-          PartialUnion,
-          LazilyResolvedUnion
-        >
+      | $LazyOption<PartialUnion, LazilyResolvedUnion>
       | Maybe<LazilyResolvedUnion>
       | LazilyResolvedUnion;
     readonly requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
-      | $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
-      | $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          PartialStruct,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setLazyToResolvedBlankNodeOrIriIdentifierProperty?:
-      | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
     readonly setPartialToResolvedBlankNodeOrIriIdentifierProperty?:
-      | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
-          PartialStruct,
-          LazilyResolvedBlankNodeOrIriIdentifierStruct
-        >
+      | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
       | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
   }): LazyPropertiesStruct {
     return create(parameters).unsafeCoerce();
@@ -23213,8 +23062,7 @@ export namespace LazyPropertiesStruct {
         undefined &&
       !((
         filter: $MaybeFilter<$DefaultPartial.Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        value: $LazyOption<
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >,
@@ -23232,8 +23080,7 @@ export namespace LazyPropertiesStruct {
       filter.optionalLazyToResolvedIriIdentifierProperty !== undefined &&
       !((
         filter: $MaybeFilter<$NamedDefaultPartial.Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedIriIdentifierStruct.Identifier,
+        value: $LazyOption<
           $NamedDefaultPartial,
           LazilyResolvedIriIdentifierStruct
         >,
@@ -23251,11 +23098,7 @@ export namespace LazyPropertiesStruct {
       filter.optionalLazyToResolvedUnionProperty !== undefined &&
       !((
         filter: $MaybeFilter<$DefaultPartial.Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedUnion.Identifier,
-          $DefaultPartial,
-          LazilyResolvedUnion
-        >,
+        value: $LazyOption<$DefaultPartial, LazilyResolvedUnion>,
       ) =>
         $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
           $DefaultPartial.filter,
@@ -23271,8 +23114,7 @@ export namespace LazyPropertiesStruct {
         undefined &&
       !((
         filter: $MaybeFilter<PartialStruct.Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        value: $LazyOption<
           PartialStruct,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >,
@@ -23291,11 +23133,7 @@ export namespace LazyPropertiesStruct {
       filter.optionalPartialToResolvedUnionProperty !== undefined &&
       !((
         filter: $MaybeFilter<PartialStruct.Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedUnion.Identifier,
-          PartialStruct,
-          LazilyResolvedUnion
-        >,
+        value: $LazyOption<PartialStruct, LazilyResolvedUnion>,
       ) =>
         $filterMaybe<PartialStruct, PartialStruct.Filter>(PartialStruct.filter)(
           filter,
@@ -23311,11 +23149,7 @@ export namespace LazyPropertiesStruct {
       filter.optionalPartialUnionToResolvedUnionProperty !== undefined &&
       !((
         filter: $MaybeFilter<PartialUnion.Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedUnion.Identifier,
-          PartialUnion,
-          LazilyResolvedUnion
-        >,
+        value: $LazyOption<PartialUnion, LazilyResolvedUnion>,
       ) =>
         $filterMaybe<PartialUnion, PartialUnion.Filter>(PartialUnion.filter)(
           filter,
@@ -23332,8 +23166,7 @@ export namespace LazyPropertiesStruct {
         undefined &&
       !((
         filter: $DefaultPartial.Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        value: $Lazy<
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >,
@@ -23349,8 +23182,7 @@ export namespace LazyPropertiesStruct {
         undefined &&
       !((
         filter: PartialStruct.Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        value: $Lazy<
           PartialStruct,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >,
@@ -23365,8 +23197,7 @@ export namespace LazyPropertiesStruct {
       filter.setLazyToResolvedBlankNodeOrIriIdentifierProperty !== undefined &&
       !((
         filter: $CollectionFilter<$DefaultPartial.Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        value: $LazySet<
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >,
@@ -23385,8 +23216,7 @@ export namespace LazyPropertiesStruct {
         undefined &&
       !((
         filter: $CollectionFilter<PartialStruct.Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        value: $LazySet<
           PartialStruct,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >,
@@ -23874,17 +23704,16 @@ export namespace LazyPropertiesStruct {
           .orDefault(Either.of(Maybe.empty()))
           .map(
             (partial) =>
-              new $LazyObjectOption<
-                LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+              new $LazyOption<
                 $DefaultPartial,
                 LazilyResolvedBlankNodeOrIriIdentifierStruct
               >({
                 partial: partial,
-                resolver: (identifier) =>
+                resolver: (partial) =>
                   Promise.resolve(
                     Left(
                       new Error(
-                        `unable to resolve identifier ${identifier} deserialized from JSON`,
+                        `unable to resolve ${partial} deserialized from JSON`,
                       ),
                     ),
                   ),
@@ -23897,17 +23726,16 @@ export namespace LazyPropertiesStruct {
         .orDefault(Either.of(Maybe.empty()))
         .map(
           (partial) =>
-            new $LazyObjectOption<
-              LazilyResolvedIriIdentifierStruct.Identifier,
+            new $LazyOption<
               $NamedDefaultPartial,
               LazilyResolvedIriIdentifierStruct
             >({
               partial: partial,
-              resolver: (identifier) =>
+              resolver: (partial) =>
                 Promise.resolve(
                   Left(
                     new Error(
-                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                      `unable to resolve ${partial} deserialized from JSON`,
                     ),
                   ),
                 ),
@@ -23920,17 +23748,13 @@ export namespace LazyPropertiesStruct {
         .orDefault(Either.of(Maybe.empty()))
         .map(
           (partial) =>
-            new $LazyObjectOption<
-              LazilyResolvedUnion.Identifier,
-              $DefaultPartial,
-              LazilyResolvedUnion
-            >({
+            new $LazyOption<$DefaultPartial, LazilyResolvedUnion>({
               partial: partial,
-              resolver: (identifier) =>
+              resolver: (partial) =>
                 Promise.resolve(
                   Left(
                     new Error(
-                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                      `unable to resolve ${partial} deserialized from JSON`,
                     ),
                   ),
                 ),
@@ -23944,17 +23768,16 @@ export namespace LazyPropertiesStruct {
           .orDefault(Either.of(Maybe.empty()))
           .map(
             (partial) =>
-              new $LazyObjectOption<
-                LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+              new $LazyOption<
                 PartialStruct,
                 LazilyResolvedBlankNodeOrIriIdentifierStruct
               >({
                 partial: partial,
-                resolver: (identifier) =>
+                resolver: (partial) =>
                   Promise.resolve(
                     Left(
                       new Error(
-                        `unable to resolve identifier ${identifier} deserialized from JSON`,
+                        `unable to resolve ${partial} deserialized from JSON`,
                       ),
                     ),
                   ),
@@ -23967,17 +23790,13 @@ export namespace LazyPropertiesStruct {
         .orDefault(Either.of(Maybe.empty()))
         .map(
           (partial) =>
-            new $LazyObjectOption<
-              LazilyResolvedUnion.Identifier,
-              PartialStruct,
-              LazilyResolvedUnion
-            >({
+            new $LazyOption<PartialStruct, LazilyResolvedUnion>({
               partial: partial,
-              resolver: (identifier) =>
+              resolver: (partial) =>
                 Promise.resolve(
                   Left(
                     new Error(
-                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                      `unable to resolve ${partial} deserialized from JSON`,
                     ),
                   ),
                 ),
@@ -23990,17 +23809,13 @@ export namespace LazyPropertiesStruct {
         .orDefault(Either.of(Maybe.empty()))
         .map(
           (partial) =>
-            new $LazyObjectOption<
-              LazilyResolvedUnion.Identifier,
-              PartialUnion,
-              LazilyResolvedUnion
-            >({
+            new $LazyOption<PartialUnion, LazilyResolvedUnion>({
               partial: partial,
-              resolver: (identifier) =>
+              resolver: (partial) =>
                 Promise.resolve(
                   Left(
                     new Error(
-                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                      `unable to resolve ${partial} deserialized from JSON`,
                     ),
                   ),
                 ),
@@ -24012,17 +23827,16 @@ export namespace LazyPropertiesStruct {
         )
         .map(
           (partial) =>
-            new $LazyObject<
-              LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+            new $Lazy<
               $DefaultPartial,
               LazilyResolvedBlankNodeOrIriIdentifierStruct
             >({
               partial: partial,
-              resolver: (identifier) =>
+              resolver: (partial) =>
                 Promise.resolve(
                   Left(
                     new Error(
-                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                      `unable to resolve ${partial} deserialized from JSON`,
                     ),
                   ),
                 ),
@@ -24033,17 +23847,16 @@ export namespace LazyPropertiesStruct {
           $json["requiredPartialToResolvedBlankNodeOrIriIdentifierProperty"],
         ).map(
           (partial) =>
-            new $LazyObject<
-              LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+            new $Lazy<
               PartialStruct,
               LazilyResolvedBlankNodeOrIriIdentifierStruct
             >({
               partial: partial,
-              resolver: (identifier) =>
+              resolver: (partial) =>
                 Promise.resolve(
                   Left(
                     new Error(
-                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                      `unable to resolve ${partial} deserialized from JSON`,
                     ),
                   ),
                 ),
@@ -24057,18 +23870,17 @@ export namespace LazyPropertiesStruct {
           (item) => $DefaultPartial.fromJson(item),
         ),
       ).map(
-        (partial) =>
-          new $LazyObjectSet<
-            LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        (partials) =>
+          new $LazySet<
             $DefaultPartial,
             LazilyResolvedBlankNodeOrIriIdentifierStruct
           >({
-            partials: partial,
+            partials: partials,
             resolver: () =>
               Promise.resolve(
                 Left(
                   new Error(
-                    "unable to resolve identifiers deserialized from JSON",
+                    "unable to resolve partials deserialized from JSON",
                   ),
                 ),
               ),
@@ -24082,18 +23894,17 @@ export namespace LazyPropertiesStruct {
           $json["setPartialToResolvedBlankNodeOrIriIdentifierProperty"] ?? []
         ).map((item) => PartialStruct.fromJson(item)),
       ).map(
-        (partial) =>
-          new $LazyObjectSet<
-            LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+        (partials) =>
+          new $LazySet<
             PartialStruct,
             LazilyResolvedBlankNodeOrIriIdentifierStruct
           >({
-            partials: partial,
+            partials: partials,
             resolver: () =>
               Promise.resolve(
                 Left(
                   new Error(
-                    "unable to resolve identifiers deserialized from JSON",
+                    "unable to resolve partials deserialized from JSON",
                   ),
                 ),
               ),
@@ -24152,15 +23963,14 @@ export namespace LazyPropertiesStruct {
               .map((values) =>
                 values.map(
                   (partial) =>
-                    new $LazyObjectOption<
-                      LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+                    new $LazyOption<
                       $DefaultPartial,
                       LazilyResolvedBlankNodeOrIriIdentifierStruct
                     >({
                       partial,
-                      resolver: (identifier, options) =>
+                      resolver: (partial, options) =>
                         _$options.objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
-                          identifier,
+                          partial.$identifier(),
                           options,
                         ),
                     }),
@@ -24199,15 +24009,14 @@ export namespace LazyPropertiesStruct {
             .map((values) =>
               values.map(
                 (partial) =>
-                  new $LazyObjectOption<
-                    LazilyResolvedIriIdentifierStruct.Identifier,
+                  new $LazyOption<
                     $NamedDefaultPartial,
                     LazilyResolvedIriIdentifierStruct
                   >({
                     partial,
-                    resolver: (identifier, options) =>
+                    resolver: (partial, options) =>
                       _$options.objectSet.lazilyResolvedIriIdentifierStruct(
-                        identifier,
+                        partial.$identifier(),
                         options,
                       ),
                   }),
@@ -24245,15 +24054,11 @@ export namespace LazyPropertiesStruct {
             .map((values) =>
               values.map(
                 (partial) =>
-                  new $LazyObjectOption<
-                    LazilyResolvedUnion.Identifier,
-                    $DefaultPartial,
-                    LazilyResolvedUnion
-                  >({
+                  new $LazyOption<$DefaultPartial, LazilyResolvedUnion>({
                     partial,
-                    resolver: (identifier, options) =>
+                    resolver: (partial, options) =>
                       _$options.objectSet.lazilyResolvedUnion(
-                        identifier,
+                        partial.$identifier(),
                         options,
                       ),
                   }),
@@ -24295,15 +24100,14 @@ export namespace LazyPropertiesStruct {
               .map((values) =>
                 values.map(
                   (partial) =>
-                    new $LazyObjectOption<
-                      LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+                    new $LazyOption<
                       PartialStruct,
                       LazilyResolvedBlankNodeOrIriIdentifierStruct
                     >({
                       partial,
-                      resolver: (identifier, options) =>
+                      resolver: (partial, options) =>
                         _$options.objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
-                          identifier,
+                          partial.$identifier(),
                           options,
                         ),
                     }),
@@ -24341,15 +24145,11 @@ export namespace LazyPropertiesStruct {
             .map((values) =>
               values.map(
                 (partial) =>
-                  new $LazyObjectOption<
-                    LazilyResolvedUnion.Identifier,
-                    PartialStruct,
-                    LazilyResolvedUnion
-                  >({
+                  new $LazyOption<PartialStruct, LazilyResolvedUnion>({
                     partial,
-                    resolver: (identifier, options) =>
+                    resolver: (partial, options) =>
                       _$options.objectSet.lazilyResolvedUnion(
-                        identifier,
+                        partial.$identifier(),
                         options,
                       ),
                   }),
@@ -24387,15 +24187,11 @@ export namespace LazyPropertiesStruct {
             .map((values) =>
               values.map(
                 (partial) =>
-                  new $LazyObjectOption<
-                    LazilyResolvedUnion.Identifier,
-                    PartialUnion,
-                    LazilyResolvedUnion
-                  >({
+                  new $LazyOption<PartialUnion, LazilyResolvedUnion>({
                     partial,
-                    resolver: (identifier, options) =>
+                    resolver: (partial, options) =>
                       _$options.objectSet.lazilyResolvedUnion(
-                        identifier,
+                        partial.$identifier(),
                         options,
                       ),
                   }),
@@ -24426,15 +24222,14 @@ export namespace LazyPropertiesStruct {
               .map((values) =>
                 values.map(
                   (partial) =>
-                    new $LazyObject<
-                      LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+                    new $Lazy<
                       $DefaultPartial,
                       LazilyResolvedBlankNodeOrIriIdentifierStruct
                     >({
                       partial,
-                      resolver: (identifier, options) =>
+                      resolver: (partial, options) =>
                         _$options.objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
-                          identifier,
+                          partial.$identifier(),
                           options,
                         ),
                     }),
@@ -24463,15 +24258,14 @@ export namespace LazyPropertiesStruct {
             }).map((values) =>
               values.map(
                 (partial) =>
-                  new $LazyObject<
-                    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+                  new $Lazy<
                     PartialStruct,
                     LazilyResolvedBlankNodeOrIriIdentifierStruct
                   >({
                     partial,
-                    resolver: (identifier, options) =>
+                    resolver: (partial, options) =>
                       _$options.objectSet.lazilyResolvedBlankNodeOrIriIdentifierStruct(
-                        identifier,
+                        partial.$identifier(),
                         options,
                       ),
                   }),
@@ -24509,15 +24303,19 @@ export namespace LazyPropertiesStruct {
             .map((values) =>
               values.map(
                 (partials) =>
-                  new $LazyObjectSet<
-                    LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+                  new $LazySet<
                     $DefaultPartial,
                     LazilyResolvedBlankNodeOrIriIdentifierStruct
                   >({
                     partials,
-                    resolver: (identifiers, options) =>
+                    resolver: (partials, options) =>
                       _$options.objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs(
-                        { identifiers, ...options },
+                        {
+                          identifiers: partials.map((partial) =>
+                            partial.$identifier(),
+                          ),
+                          ...options,
+                        },
                       ),
                   }),
               ),
@@ -24556,15 +24354,19 @@ export namespace LazyPropertiesStruct {
               .map((values) =>
                 values.map(
                   (partials) =>
-                    new $LazyObjectSet<
-                      LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier,
+                    new $LazySet<
                       PartialStruct,
                       LazilyResolvedBlankNodeOrIriIdentifierStruct
                     >({
                       partials,
-                      resolver: (identifiers, options) =>
+                      resolver: (partials, options) =>
                         _$options.objectSet.lazilyResolvedBlankNodeOrIriIdentifierStructs(
-                          { identifiers, ...options },
+                          {
+                            identifiers: partials.map((partial) =>
+                              partial.$identifier(),
+                            ),
+                            ...options,
+                          },
                         ),
                     }),
                 ),
@@ -24608,7 +24410,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObjectOption" as const,
+            kind: "LazyOption" as const,
             get partialType() {
               return {
                 kind: "Option" as const,
@@ -24627,7 +24429,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObjectOption" as const,
+            kind: "LazyOption" as const,
             get partialType() {
               return {
                 kind: "Option" as const,
@@ -24646,7 +24448,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObjectOption" as const,
+            kind: "LazyOption" as const,
             get partialType() {
               return {
                 kind: "Option" as const,
@@ -24665,7 +24467,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObjectOption" as const,
+            kind: "LazyOption" as const,
             get partialType() {
               return {
                 kind: "Option" as const,
@@ -24684,7 +24486,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObjectOption" as const,
+            kind: "LazyOption" as const,
             get partialType() {
               return {
                 kind: "Option" as const,
@@ -24703,7 +24505,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObjectOption" as const,
+            kind: "LazyOption" as const,
             get partialType() {
               return {
                 kind: "Option" as const,
@@ -24722,7 +24524,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObject" as const,
+            kind: "Lazy" as const,
             get partialType() {
               return $DefaultPartial.schema;
             },
@@ -24736,7 +24538,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObject" as const,
+            kind: "Lazy" as const,
             get partialType() {
               return PartialStruct.schema;
             },
@@ -24750,7 +24552,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObjectSet" as const,
+            kind: "LazySet" as const,
             get partialType() {
               return {
                 kind: "Set" as const,
@@ -24769,7 +24571,7 @@ export namespace LazyPropertiesStruct {
         ),
         get type() {
           return {
-            kind: "LazyObjectSet" as const,
+            kind: "LazySet" as const,
             get partialType() {
               return {
                 kind: "Set" as const,
