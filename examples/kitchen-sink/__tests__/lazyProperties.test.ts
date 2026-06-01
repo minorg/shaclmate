@@ -114,21 +114,21 @@ describe("lazyProperties", () => {
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance",
       ),
-      lazilyResolvedProperty: "test",
+      lazilyResolved: "test",
     });
   const expectedLazilyResolvedIriIdentifierInstance =
     kitchenSink.LazilyResolvedIriIdentifierStruct.createUnsafe({
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedIriIdentifierInstance",
       ),
-      lazilyResolvedProperty: "test",
+      lazilyResolved: "test",
     });
   const expectedLazilyResolvedUnionInstance =
     kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedUnionInstance",
       ),
-      lazilyResolvedProperty: "test",
+      lazilyResolved: "test",
     });
 
   beforeAll(() => {
@@ -157,9 +157,9 @@ describe("lazyProperties", () => {
       kitchenSink.LazyPropertiesStruct.fromRdfResource(
         kitchenSink.LazyPropertiesStruct.toRdfResource(
           kitchenSink.LazyPropertiesStruct.createUnsafe({
-            requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
+            requiredLazyToResolvedBlankNodeOrIriIdentifier:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
-            requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
+            requiredPartialToResolvedBlankNodeOrIriIdentifier:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
           }),
           { resourceSet },
@@ -170,26 +170,24 @@ describe("lazyProperties", () => {
       kitchenSink.LazyPropertiesStruct.fromRdfResource(
         kitchenSink.LazyPropertiesStruct.toRdfResource(
           kitchenSink.LazyPropertiesStruct.createUnsafe({
-            optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
+            optionalLazyToResolvedBlankNodeOrIriIdentifier:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
-            optionalLazyToResolvedUnionProperty:
-              expectedLazilyResolvedUnionInstance,
-            optionalLazyToResolvedIriIdentifierProperty:
+            optionalLazyToResolvedUnion: expectedLazilyResolvedUnionInstance,
+            optionalLazyToResolvedIriIdentifier:
               expectedLazilyResolvedIriIdentifierInstance,
-            optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
+            optionalPartialToResolvedBlankNodeOrIriIdentifier:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
-            optionalPartialToResolvedUnionProperty:
+            optionalPartialToResolvedUnion: expectedLazilyResolvedUnionInstance,
+            optionalPartialUnionToResolvedUnion:
               expectedLazilyResolvedUnionInstance,
-            optionalPartialUnionToResolvedUnionProperty:
-              expectedLazilyResolvedUnionInstance,
-            requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
+            requiredLazyToResolvedBlankNodeOrIriIdentifier:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
-            requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
+            requiredPartialToResolvedBlankNodeOrIriIdentifier:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
-            setLazyToResolvedBlankNodeOrIriIdentifierProperty: [
+            setLazyToResolvedBlankNodeOrIriIdentifier: [
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
             ],
-            setPartialToResolvedBlankNodeOrIriIdentifierProperty: [
+            setPartialToResolvedBlankNodeOrIriIdentifier: [
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
             ],
           }),
@@ -207,15 +205,15 @@ describe("lazyProperties", () => {
     for (const empty of [false, true]) {
       it(`${propertyName} ${empty ? "empty" : "non-empty"}`, async () => {
         switch (propertyName) {
-          case "optionalLazyToResolvedBlankNodeOrIriIdentifierProperty": {
+          case "optionalLazyToResolvedBlankNodeOrIriIdentifier": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInstance.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
+                emptyLazyPropertiesInstance.optionalLazyToResolvedBlankNodeOrIriIdentifier,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInstance.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
+                  nonEmptyLazyPropertiesInstance.optionalLazyToResolvedBlankNodeOrIriIdentifier,
                 equals:
                   kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
                     .equals,
@@ -225,45 +223,45 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "optionalLazyToResolvedUnionProperty": {
+          case "optionalLazyToResolvedUnion": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInstance.optionalLazyToResolvedUnionProperty,
+                emptyLazyPropertiesInstance.optionalLazyToResolvedUnion,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInstance.optionalLazyToResolvedUnionProperty,
+                  nonEmptyLazyPropertiesInstance.optionalLazyToResolvedUnion,
                 equals: kitchenSink.LazilyResolvedUnion.equals,
                 expected: expectedLazilyResolvedUnionInstance,
               });
             }
             break;
           }
-          case "optionalLazyToResolvedIriIdentifierProperty": {
+          case "optionalLazyToResolvedIriIdentifier": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInstance.optionalLazyToResolvedIriIdentifierProperty,
+                emptyLazyPropertiesInstance.optionalLazyToResolvedIriIdentifier,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInstance.optionalLazyToResolvedIriIdentifierProperty,
+                  nonEmptyLazyPropertiesInstance.optionalLazyToResolvedIriIdentifier,
                 equals: kitchenSink.LazilyResolvedIriIdentifierStruct.equals,
                 expected: expectedLazilyResolvedIriIdentifierInstance,
               });
             }
             break;
           }
-          case "optionalPartialToResolvedBlankNodeOrIriIdentifierProperty": {
+          case "optionalPartialToResolvedBlankNodeOrIriIdentifier": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInstance.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
+                emptyLazyPropertiesInstance.optionalPartialToResolvedBlankNodeOrIriIdentifier,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInstance.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
+                  nonEmptyLazyPropertiesInstance.optionalPartialToResolvedBlankNodeOrIriIdentifier,
                 equals:
                   kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
                     .equals,
@@ -273,42 +271,42 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "optionalPartialToResolvedUnionProperty": {
+          case "optionalPartialToResolvedUnion": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInstance.optionalPartialToResolvedUnionProperty,
+                emptyLazyPropertiesInstance.optionalPartialToResolvedUnion,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInstance.optionalPartialToResolvedUnionProperty,
+                  nonEmptyLazyPropertiesInstance.optionalPartialToResolvedUnion,
                 equals: kitchenSink.LazilyResolvedUnion.equals,
                 expected: expectedLazilyResolvedUnionInstance,
               });
             }
             break;
           }
-          case "optionalPartialUnionToResolvedUnionProperty": {
+          case "optionalPartialUnionToResolvedUnion": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInstance.optionalPartialUnionToResolvedUnionProperty,
+                emptyLazyPropertiesInstance.optionalPartialUnionToResolvedUnion,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInstance.optionalPartialUnionToResolvedUnionProperty,
+                  nonEmptyLazyPropertiesInstance.optionalPartialUnionToResolvedUnion,
                 equals: kitchenSink.LazilyResolvedUnion.equals,
                 expected: expectedLazilyResolvedUnionInstance,
               });
             }
             break;
           }
-          case "requiredLazyToResolvedBlankNodeOrIriIdentifierProperty": {
+          case "requiredLazyToResolvedBlankNodeOrIriIdentifier": {
             if (empty) {
             } else {
               await expectRequired({
                 actual:
-                  nonEmptyLazyPropertiesInstance.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
+                  nonEmptyLazyPropertiesInstance.requiredLazyToResolvedBlankNodeOrIriIdentifier,
                 equals:
                   kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
                     .equals,
@@ -318,12 +316,12 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "requiredPartialToResolvedBlankNodeOrIriIdentifierProperty": {
+          case "requiredPartialToResolvedBlankNodeOrIriIdentifier": {
             if (empty) {
             } else {
               await expectRequired({
                 actual:
-                  nonEmptyLazyPropertiesInstance.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
+                  nonEmptyLazyPropertiesInstance.requiredPartialToResolvedBlankNodeOrIriIdentifier,
                 equals:
                   kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
                     .equals,
@@ -333,15 +331,15 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "setLazyToResolvedBlankNodeOrIriIdentifierProperty": {
+          case "setLazyToResolvedBlankNodeOrIriIdentifier": {
             if (empty) {
               await expectEmptySet(
-                emptyLazyPropertiesInstance.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
+                emptyLazyPropertiesInstance.setLazyToResolvedBlankNodeOrIriIdentifier,
               );
             } else {
               await expectSet({
                 actual:
-                  nonEmptyLazyPropertiesInstance.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
+                  nonEmptyLazyPropertiesInstance.setLazyToResolvedBlankNodeOrIriIdentifier,
                 equals:
                   kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
                     .equals,
@@ -352,16 +350,16 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "setPartialToResolvedBlankNodeOrIriIdentifierProperty":
+          case "setPartialToResolvedBlankNodeOrIriIdentifier":
             {
               if (empty) {
                 await expectEmptySet(
-                  emptyLazyPropertiesInstance.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+                  emptyLazyPropertiesInstance.setPartialToResolvedBlankNodeOrIriIdentifier,
                 );
               } else {
                 await expectSet({
                   actual:
-                    nonEmptyLazyPropertiesInstance.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+                    nonEmptyLazyPropertiesInstance.setPartialToResolvedBlankNodeOrIriIdentifier,
                   equals:
                     kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct
                       .equals,

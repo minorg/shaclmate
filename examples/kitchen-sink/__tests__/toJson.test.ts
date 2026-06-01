@@ -10,41 +10,41 @@ describe("toJson", () => {
       );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject["@type"]).toStrictEqual("UnionDiscriminantsStruct");
-      expect(jsonObject.optionalNodeOrNodeOrStringProperty).toStrictEqual({
+      expect(jsonObject.optionalNodeOrNodeOrString).toStrictEqual({
         type: "UnionMember1",
         value: {
           "@type": "UnionMember1",
           "@id": "http://example.com/unionMember1a",
-          unionMember1Property: "test",
-          unionMemberCommonProperty: "test",
+          unionMember1String: "test",
+          unionMemberCommon: "test",
         },
       });
-      expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
+      expect(jsonObject.optionalIriOrLiteral).toStrictEqual({
         "@id": "http://example.com",
         termType: "NamedNode",
       });
-      expect(jsonObject.optionalIriOrStringProperty).toStrictEqual({
+      expect(jsonObject.optionalIriOrString).toStrictEqual({
         "@id": "http://example.com",
       });
-      expect(jsonObject.requiredNodeOrNodeOrStringProperty).toStrictEqual({
+      expect(jsonObject.requiredNodeOrNodeOrString).toStrictEqual({
         type: "UnionMember1",
         value: {
           "@type": "UnionMember1",
           "@id": "http://example.com/unionMember1b",
-          unionMember1Property: "test",
-          unionMemberCommonProperty: "test",
+          unionMember1String: "test",
+          unionMemberCommon: "test",
         },
       });
-      expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
+      expect(jsonObject.requiredIriOrLiteral).toStrictEqual({
         "@id": "http://example.com",
         termType: "NamedNode",
       });
-      expect(jsonObject.requiredIriOrStringProperty).toStrictEqual({
+      expect(jsonObject.requiredIriOrString).toStrictEqual({
         "@id": "http://example.com",
       });
-      expect(jsonObject.setNodeOrNodeOrStringProperty).toHaveLength(0);
-      expect(jsonObject.setIriOrLiteralProperty).toHaveLength(0);
-      expect(jsonObject.setIriOrStringProperty).toHaveLength(0);
+      expect(jsonObject.setNodeOrNodeOrString).toHaveLength(0);
+      expect(jsonObject.setIriOrLiteral).toHaveLength(0);
+      expect(jsonObject.setIriOrString).toHaveLength(0);
     }
 
     {
@@ -52,30 +52,30 @@ describe("toJson", () => {
         harnesses.unionDiscriminantsStruct2.instance,
       );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-      expect(jsonObject.optionalNodeOrNodeOrStringProperty).toStrictEqual({
+      expect(jsonObject.optionalNodeOrNodeOrString).toStrictEqual({
         type: "UnionMember2",
         value: {
           "@type": "UnionMember2",
           "@id": "http://example.com/unionMember2a",
-          unionMember2Property: "test",
-          unionMemberCommonProperty: "test",
+          unionMember2String: "test",
+          unionMemberCommon: "test",
         },
       });
-      expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
+      expect(jsonObject.optionalIriOrLiteral).toStrictEqual({
         termType: "Literal",
         "@value": "test",
       });
-      expect(jsonObject.optionalIriOrStringProperty).toStrictEqual("test");
-      expect(jsonObject.requiredNodeOrNodeOrStringProperty).toStrictEqual({
+      expect(jsonObject.optionalIriOrString).toStrictEqual("test");
+      expect(jsonObject.requiredNodeOrNodeOrString).toStrictEqual({
         type: "string",
         value: "test",
       });
-      expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
+      expect(jsonObject.requiredIriOrLiteral).toStrictEqual({
         termType: "Literal",
         "@value": "test",
       });
-      expect(jsonObject.requiredIriOrStringProperty).toStrictEqual("test");
-      expect(jsonObject.setNodeOrNodeOrStringProperty).toStrictEqual([
+      expect(jsonObject.requiredIriOrString).toStrictEqual("test");
+      expect(jsonObject.setNodeOrNodeOrString).toStrictEqual([
         {
           type: "string",
           value: "test",
@@ -85,8 +85,8 @@ describe("toJson", () => {
           value: {
             "@type": "UnionMember2",
             "@id": "http://example.com/unionMember2b",
-            unionMember2Property: "test",
-            unionMemberCommonProperty: "test",
+            unionMember2String: "test",
+            unionMemberCommon: "test",
           },
         },
         {
@@ -94,12 +94,12 @@ describe("toJson", () => {
           value: {
             "@type": "UnionMember1",
             "@id": "http://example.com/unionMember1b",
-            unionMember1Property: "test",
-            unionMemberCommonProperty: "test",
+            unionMember1String: "test",
+            unionMemberCommon: "test",
           },
         },
       ]);
-      expect(jsonObject.setIriOrLiteralProperty).toStrictEqual([
+      expect(jsonObject.setIriOrLiteral).toStrictEqual([
         {
           "@value": "test",
           termType: "Literal",
@@ -109,7 +109,7 @@ describe("toJson", () => {
           termType: "NamedNode",
         },
       ]);
-      expect(jsonObject.setIriOrStringProperty).toStrictEqual([
+      expect(jsonObject.setIriOrString).toStrictEqual([
         "test",
         {
           "@id": "http://example.com",
@@ -119,10 +119,8 @@ describe("toJson", () => {
   });
 
   it("toJSON", ({ expect }) => {
-    expect(
-      JSON.stringify(harnesses.termPropertiesStruct.instance),
-    ).toStrictEqual(
-      `{"@id":"http://example.com/instance","@type":"TermPropertiesStruct","blankNodeTermProperty":{"@id":"_:df_0_16"},"booleanTermProperty":true,"dateTermProperty":"2025-03-06","dateTimeTermProperty":"2018-04-09T10:00:00.000Z","iriTermProperty":{"@id":"http://example.com"},"literalTermProperty":{"@value":"test"},"numberTermProperty":1,"stringTermProperty":"test","termProperty":{"@type":"http://www.w3.org/2001/XMLSchema#decimal","@value":"1","termType":"Literal"}}`,
+    expect(JSON.stringify(harnesses.termsStruct.instance)).toStrictEqual(
+      `{"@id":"http://example.com/instance","@type":"TermsStruct","blankNodeTerm":{"@id":"_:df_0_16"},"booleanTerm":true,"dateTerm":"2025-03-06","dateTimeTerm":"2018-04-09T10:00:00.000Z","iriTerm":{"@id":"http://example.com"},"literalTerm":{"@value":"test"},"numberTerm":1,"stringTerm":"test","term":{"@type":"http://www.w3.org/2001/XMLSchema#decimal","@value":"1","termType":"Literal"}}`,
     );
   });
 

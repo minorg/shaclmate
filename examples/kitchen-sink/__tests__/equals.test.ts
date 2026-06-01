@@ -24,11 +24,11 @@ describe("equals", () => {
       kitchenSink.NonClassStruct.equals(
         kitchenSink.NonClassStruct.createUnsafe({
           $identifier: dataFactory.blankNode(),
-          nonClassProperty: "Test",
+          nonClassString: "Test",
         }),
         kitchenSink.NonClassStruct.createUnsafe({
           $identifier: dataFactory.blankNode(),
-          nonClassProperty: "Test2",
+          nonClassString: "Test2",
         }),
       ).extract(),
     ).not.toStrictEqual(true);
@@ -40,27 +40,27 @@ describe("equals", () => {
       kitchenSink.UnionDiscriminantsStruct.equals(
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "test",
+          requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "test",
+          requiredIriOrString: "test",
         }),
       ).extract(),
     ).toStrictEqual(true);
@@ -69,25 +69,25 @@ describe("equals", () => {
       kitchenSink.UnionDiscriminantsStruct.equals(
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "test",
+          requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrStringProperty: "test",
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.literal("test"),
+          requiredIriOrString: "test",
         }),
       ).extract(),
     ).not.toStrictEqual(true);
@@ -99,27 +99,27 @@ describe("equals", () => {
       kitchenSink.UnionDiscriminantsStruct.equals(
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "test",
+          requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "test",
+          requiredIriOrString: "test",
         }),
       ).extract(),
     ).toStrictEqual(true);
@@ -128,33 +128,33 @@ describe("equals", () => {
       kitchenSink.UnionDiscriminantsStruct.equals(
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "test",
+          requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "UnionMember1",
             value: kitchenSink.UnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
                 "http://example.com/unionMember1",
               ),
-              unionMember1Property: "test",
-              unionMemberCommonProperty: "test",
+              unionMember1String: "test",
+              unionMemberCommon: "test",
             }),
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "test",
+          requiredIriOrString: "test",
         }),
       ).extract(),
     ).not.toStrictEqual(true);
@@ -166,27 +166,27 @@ describe("equals", () => {
       kitchenSink.UnionDiscriminantsStruct.equals(
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "test",
+          requiredIriOrString: "test",
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "test",
+          requiredIriOrString: "test",
         }),
       ).extract(),
     ).toStrictEqual(true);
@@ -195,34 +195,33 @@ describe("equals", () => {
       kitchenSink.UnionDiscriminantsStruct.equals(
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "string",
             value: "test",
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty:
-            dataFactory.namedNode("http://example.com"),
+          requiredIriOrString: dataFactory.namedNode("http://example.com"),
         }),
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
-          requiredNodeOrNodeOrStringProperty: {
+          requiredNodeOrNodeOrString: {
             type: "UnionMember1",
             value: kitchenSink.UnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
                 "http://example.com/unionMember1",
               ),
-              unionMember1Property: "test",
-              unionMemberCommonProperty: "test",
+              unionMember1: "test",
+              unionMemberCommon: "test",
             }),
           },
-          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
+          requiredNodeOrLiteral: dataFactory.literal("test"),
+          requiredIriOrLiteral: dataFactory.namedNode(
             "http://example.com/term",
           ),
-          requiredIriOrStringProperty: "http://example.com",
+          requiredIriOrString: "http://example.com",
         }),
       ).extract(),
     ).not.toStrictEqual(true);
