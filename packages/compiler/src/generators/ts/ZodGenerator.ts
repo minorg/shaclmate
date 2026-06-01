@@ -54,6 +54,12 @@ export namespace ${tsNamedUnionType.name.unsafeCoerce()} {
 }`);
           break;
         }
+        default: {
+          const type = typeFactory.createType(astNamedType);
+          type.declaration.ifJust((declaration) => {
+            declarations.push(declaration);
+          });
+        }
       }
     }
 

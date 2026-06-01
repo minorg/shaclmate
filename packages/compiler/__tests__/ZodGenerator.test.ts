@@ -32,10 +32,6 @@ describe("ZodGenerator", () => {
     }
 
     it(id, () => {
-      if (id !== "kitchenSinkExample") {
-        return;
-      }
-
       let sourceDirectoryPath: string | undefined;
       switch (id) {
         case "kitchenSinkExample":
@@ -62,7 +58,7 @@ describe("ZodGenerator", () => {
       expect(source).not.toHaveLength(0);
       const diagnostics = compileTs(source, sourceDirectoryPath);
       if (diagnostics.length > 0) {
-        // biome-ignore lint/suspicious/noDebugger: <explanation>
+        // biome-ignore lint/suspicious/noDebugger: It's a test, it's fine.
         debugger;
       }
       expect(diagnostics).toHaveLength(0);
