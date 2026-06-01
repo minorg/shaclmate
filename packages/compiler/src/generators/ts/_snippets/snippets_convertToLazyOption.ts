@@ -24,10 +24,7 @@ function ${syntheticNamePrefix}convertToLazyOption<PartialT, ResolvedT>(resolved
           }));
         }
 
-        return ${imports.Either}.of(new ${snippets.LazyOption}<PartialT, ResolvedT>({
-          partial: ${imports.Maybe}.of(resolvedToPartial(value)),
-          resolver: async () => ${imports.Right}(value)
-        }));
+        break;
       }
       case "undefined":
         return ${imports.Either}.of(new ${snippets.LazyOption}<PartialT, ResolvedT>({
@@ -35,6 +32,11 @@ function ${syntheticNamePrefix}convertToLazyOption<PartialT, ResolvedT>(resolved
           resolver: async () => { throw new Error("should never be called"); }
         }));
     }
+
+    return ${imports.Either}.of(new ${snippets.LazyOption}<PartialT, ResolvedT>({
+      partial: ${imports.Maybe}.of(resolvedToPartial(value)),
+      resolver: async () => ${imports.Right}(value)
+    }));
   };
 }`,
   );

@@ -17,7 +17,7 @@ export class ${syntheticNamePrefix}LazySet<PartialT, ResolvedT> {
 
   constructor({ partials, resolver }: {
     partials: readonly PartialT[]
-    resolver: (partials: readonly PartialT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedT[]>>,
+    resolver: (partials: readonly PartialT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedT[]>>,
   }) {
     this.partials = partials;
     this.resolver = resolver;

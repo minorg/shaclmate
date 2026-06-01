@@ -17,11 +17,7 @@ function ${syntheticNamePrefix}convertToLazySet<PartialT, ResolvedT>(resolvedToP
           return ${imports.Either}.of(value);
         }
 
-        const captureValue = value;
-        return ${imports.Either}.of(new ${snippets.LazySet}<PartialT, ResolvedT>({
-          partials: value.map(resolvedToPartial),
-          resolver: async () => ${imports.Right}(captureValue)
-        }));
+        break;
       }
       case "undefined":
         return ${imports.Either}.of(new ${snippets.LazySet}<PartialT, ResolvedT>({
@@ -29,6 +25,12 @@ function ${syntheticNamePrefix}convertToLazySet<PartialT, ResolvedT>(resolvedToP
           resolver: async () => ${imports.Right}([])
         }));
     }
+
+    const captureValue = value;
+    return ${imports.Either}.of(new ${snippets.LazySet}<PartialT, ResolvedT>({
+      partials: value.map(resolvedToPartial),
+      resolver: async () => ${imports.Right}(captureValue)
+    }));
   };
 }`,
   );

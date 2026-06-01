@@ -17,7 +17,7 @@ export class LazyType extends AbstractLazyType<
     invariant(this.resolveType.jsTypes.length === 1);
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToLazy}<${this.resolveType.identifierTypeAlias}, ${this.partialType.expression}, ${this.resolveType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
+      code: code`${this.reusables.snippets.convertToLazy}<${this.partialType.expression}, ${this.resolveType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
       sourceTypes: [
         {
           expression: this.expression,
@@ -34,7 +34,7 @@ export class LazyType extends AbstractLazyType<
   @Memoize()
   protected override get runtimeClass() {
     return {
-      name: code`${this.reusables.snippets.Lazy}<${this.resolveType.identifierTypeAlias}, ${this.partialType.expression}, ${this.resolveType.expression}>`,
+      name: code`${this.reusables.snippets.Lazy}<${this.partialType.expression}, ${this.resolveType.expression}>`,
       partialPropertyName: "partial",
       rawName: code`${this.reusables.snippets.Lazy}`,
     };
@@ -43,14 +43,14 @@ export class LazyType extends AbstractLazyType<
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`${this.partialType.fromJsonExpression(parameters)}.map(partial => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partial, resolver: (identifier) => Promise.resolve(${this.reusables.imports.Left}(new Error(\`unable to resolve identifier \${identifier} deserialized from JSON\`))) }))`;
+    return code`${this.partialType.fromJsonExpression(parameters)}.map(partial => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partial, resolver: (partial) => Promise.resolve(${this.reusables.imports.Left}(new Error(\`unable to resolve \${partial} deserialized from JSON\`))) }))`;
   }
 
   override fromRdfResourceValuesExpression(
     parameters: Parameters<Super["fromRdfResourceValuesExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.partialType.fromRdfResourceValuesExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier, options) => ${variables.objectSet}.${this.resolveType.objectSetMethodNames.object}(identifier, options) })))`;
+    return code`${this.partialType.fromRdfResourceValuesExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => ${variables.objectSet}.${this.resolveType.objectSetMethodNames.object}(partial.${this.configuration.syntheticNamePrefix}identifier(), options) })))`;
   }
 
   override graphqlResolveExpression({

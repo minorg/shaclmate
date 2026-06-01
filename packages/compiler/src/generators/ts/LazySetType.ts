@@ -25,7 +25,7 @@ export class LazySetType extends AbstractLazyType<
     invariant(this.resolveType.jsTypes.length === 1);
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToLazySet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
+      code: code`${this.reusables.snippets.convertToLazySet}<${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
       sourceTypes: [
         {
           expression: this.expression,
@@ -46,7 +46,7 @@ export class LazySetType extends AbstractLazyType<
   @Memoize()
   protected override get runtimeClass() {
     return {
-      name: code`${this.reusables.snippets.LazySet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>`,
+      name: code`${this.reusables.snippets.LazySet}<${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>`,
       partialPropertyName: "partials",
       rawName: code`${this.reusables.snippets.LazySet}`,
     };
@@ -55,14 +55,14 @@ export class LazySetType extends AbstractLazyType<
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`${this.partialType.fromJsonExpression(parameters)}.map(partial => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partial, resolver: () => Promise.resolve(${this.reusables.imports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) }))`;
+    return code`${this.partialType.fromJsonExpression(parameters)}.map(partials => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partials, resolver: (partials) => Promise.resolve(${this.reusables.imports.Left}(new Error("unable to resolve partials deserialized from JSON"))) }))`;
   }
 
   override fromRdfResourceValuesExpression(
     parameters: Parameters<Super["fromRdfResourceValuesExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.partialType.fromRdfResourceValuesExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers, options) => ${variables.objectSet}.${this.resolveType.itemType.objectSetMethodNames.objects}({ identifiers, ...options }) })))`;
+    return code`${this.partialType.fromRdfResourceValuesExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partials, options) => ${variables.objectSet}.${this.resolveType.itemType.objectSetMethodNames.objects}({ identifiers: partials.map(partial => partial.${this.configuration.syntheticNamePrefix}identifier()), ...options }) })))`;
   }
 
   override graphqlResolveExpression({
