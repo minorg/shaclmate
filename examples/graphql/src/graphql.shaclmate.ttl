@@ -14,7 +14,7 @@
 :RootObject
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:IRI ;
-    sh:property :lazyObjectSetProperty, :optionalLazyObjectProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty .
+    sh:property :lazyObjectSetProperty, :optionalLazyProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty .
 
 :Union
     a owl:Class, sh:NodeShape ;
@@ -40,13 +40,13 @@
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path :lazyObjectSetProperty .
 
-:optionalLazyObjectProperty
+:optionalLazyProperty
     shaclmate:resolve :NestedObject ;
     a sh:PropertyShape ;
     rdfs:comment "Optional lazy object property" ;
     sh:maxCount 1 ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:path :optionalLazyObjectProperty .
+    sh:path :optionalLazyProperty .
 
 :optionalNumberProperty
     a sh:PropertyShape ;

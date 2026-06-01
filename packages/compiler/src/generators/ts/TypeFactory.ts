@@ -23,9 +23,9 @@ import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IntType } from "./IntType.js";
 import { IriType } from "./IriType.js";
-import { LazyObjectOptionType } from "./LazyObjectOptionType.js";
-import { LazyObjectSetType } from "./LazyObjectSetType.js";
-import { LazyObjectType } from "./LazyObjectType.js";
+import { LazyOptionType } from "./LazyOptionType.js";
+import { LazySetType } from "./LazySetType.js";
+import { LazyType } from "./LazyType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
 import { ObjectType } from "./ObjectType.js";
@@ -215,11 +215,11 @@ export class TypeFactory {
       case "Iri":
         return this.createIriType(astType);
       case "Lazy":
-        return this.createLazyObjectType(astType);
+        return this.createLazyType(astType);
       case "LazyOption":
-        return this.createLazyObjectOptionType(astType);
+        return this.createLazyOptionType(astType);
       case "LazySet":
-        return this.createLazyObjectSetType(astType);
+        return this.createLazySetType(astType);
       case "List":
         return this.createListType(astType);
       case "Literal":
@@ -320,8 +320,8 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectOptionType(astType: ast.LazyOptionType): Type {
-    return new LazyObjectOptionType({
+  private createLazyOptionType(astType: ast.LazyOptionType): Type {
+    return new LazyOptionType({
       comment: astType.comment,
       configuration: this.configuration,
       label: astType.label,
@@ -337,8 +337,8 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectSetType(astType: ast.LazySetType): Type {
-    return new LazyObjectSetType({
+  private createLazySetType(astType: ast.LazySetType): Type {
+    return new LazySetType({
       comment: astType.comment,
       configuration: this.configuration,
       label: astType.label,
@@ -354,8 +354,8 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectType(astType: ast.LazyType): Type {
-    return new LazyObjectType({
+  private createLazyType(astType: ast.LazyType): Type {
+    return new LazyType({
       comment: astType.comment,
       configuration: this.configuration,
       label: astType.label,

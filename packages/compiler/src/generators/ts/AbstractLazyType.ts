@@ -9,9 +9,9 @@ import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
-export abstract class AbstractLazyObjectType<
-  PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
-  ResolveTypeT extends AbstractLazyObjectType.ResolveTypeConstraint,
+export abstract class AbstractLazyType<
+  PartialTypeT extends AbstractLazyType.PartialTypeConstraint,
+  ResolveTypeT extends AbstractLazyType.ResolveTypeConstraint,
 > extends AbstractType {
   protected readonly partialType: PartialTypeT;
   protected readonly resolveType: ResolveTypeT;
@@ -161,7 +161,7 @@ export abstract class AbstractLazyObjectType<
   }
 
   protected resolveToPartialFunction<
-    ObjectTypeT extends AbstractLazyObjectType.ObjectTypeConstraint,
+    ObjectTypeT extends AbstractLazyType.ItemTypeConstraint,
   >({
     partialType,
     resolveType,
@@ -217,12 +217,12 @@ export abstract class AbstractLazyObjectType<
   }
 }
 
-export namespace AbstractLazyObjectType {
-  export type ObjectTypeConstraint = ObjectType | ObjectUnionType;
+export namespace AbstractLazyType {
+  export type ItemTypeConstraint = ObjectType | ObjectUnionType;
   export type PartialTypeConstraint =
-    | ObjectTypeConstraint
-    | OptionType<ObjectTypeConstraint>
-    | SetType<ObjectTypeConstraint>;
+    | ItemTypeConstraint
+    | OptionType<ItemTypeConstraint>
+    | SetType<ItemTypeConstraint>;
   export type ResolveTypeConstraint = PartialTypeConstraint;
 
   export type ConversionFunction = AbstractType.ConversionFunction;

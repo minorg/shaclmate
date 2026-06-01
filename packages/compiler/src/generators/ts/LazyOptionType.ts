@@ -1,32 +1,32 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
+import { AbstractLazyType } from "./AbstractLazyType.js";
 import type { OptionType } from "./OptionType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
-type Super = AbstractLazyObjectType<
-  OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
-  OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
+type Super = AbstractLazyType<
+  OptionType<AbstractLazyType.ItemTypeConstraint>,
+  OptionType<AbstractLazyType.ItemTypeConstraint>
 >;
 
-const Super = AbstractLazyObjectType<
-  OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
-  OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
+const Super = AbstractLazyType<
+  OptionType<AbstractLazyType.ItemTypeConstraint>,
+  OptionType<AbstractLazyType.ItemTypeConstraint>
 >;
 
-export class LazyObjectOptionType extends Super {
+export class LazyOptionType extends Super {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
-  override readonly kind = "LazyObjectOption";
+  override readonly kind = "LazyOption";
 
   @Memoize()
-  override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
+  override get conversionFunction(): Maybe<AbstractLazyType.ConversionFunction> {
     invariant(this.jsTypes.length === 1);
     invariant(this.resolveType.jsTypes.length === 1);
     invariant(this.resolveType.itemType.jsTypes.length === 1);
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToLazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
+      code: code`${this.reusables.snippets.convertToLazyOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
       sourceTypes: [
         {
           expression: this.expression,
@@ -51,9 +51,9 @@ export class LazyObjectOptionType extends Super {
   @Memoize()
   protected override get runtimeClass() {
     return {
-      name: code`${this.reusables.snippets.LazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>`,
+      name: code`${this.reusables.snippets.LazyOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>`,
       partialPropertyName: "partial",
-      rawName: code`${this.reusables.snippets.LazyObjectOption}`,
+      rawName: code`${this.reusables.snippets.LazyOption}`,
     };
   }
 

@@ -28,7 +28,7 @@ for (let i = 0; i < 4; i++) {
     RootObject.createUnsafe({
       $identifier: dataFactory.namedNode(`http://example.com/rootObject${i}`),
       lazyObjectSetProperty: [lazyObject],
-      optionalLazyObjectProperty: lazyObject,
+      optionalLazyProperty: lazyObject,
       optionalObjectProperty: NestedObject.createUnsafe({
         $identifier: dataFactory.namedNode(
           `http://example.com/rootObject${i}/nestedObject`,

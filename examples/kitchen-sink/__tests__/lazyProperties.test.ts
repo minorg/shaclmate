@@ -10,7 +10,7 @@ async function expectEmptyOptional<
   PartialObjectT extends { $identifier: () => ObjectIdentifierT },
   ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >(
-  actual: kitchenSink.$LazyObjectOption<
+  actual: kitchenSink.$LazyOption<
     ObjectIdentifierT,
     PartialObjectT,
     ResolvedObjectT
@@ -26,7 +26,7 @@ async function expectEmptySet<
   PartialObjectT extends { $identifier: () => ObjectIdentifierT },
   ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >(
-  actual: kitchenSink.$LazyObjectSet<
+  actual: kitchenSink.$LazySet<
     ObjectIdentifierT,
     ResolvedObjectT,
     PartialObjectT
@@ -46,11 +46,7 @@ async function expectRequired<
   equals,
   expected,
 }: {
-  actual: kitchenSink.$LazyObject<
-    ObjectIdentifierT,
-    PartialObjectT,
-    ResolvedObjectT
-  >;
+  actual: kitchenSink.$Lazy<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>;
   equals: (
     left: ResolvedObjectT,
     right: ResolvedObjectT,
@@ -74,7 +70,7 @@ async function expectSet<
   equals,
   expected,
 }: {
-  actual: kitchenSink.$LazyObjectSet<
+  actual: kitchenSink.$LazySet<
     ObjectIdentifierT,
     PartialObjectT,
     ResolvedObjectT
@@ -119,7 +115,7 @@ async function expectedNonEmptyOptional<
   equals,
   expected,
 }: {
-  actual: kitchenSink.$LazyObjectOption<
+  actual: kitchenSink.$LazyOption<
     ObjectIdentifierT,
     PartialObjectT,
     ResolvedObjectT

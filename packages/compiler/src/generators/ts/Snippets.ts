@@ -25,9 +25,9 @@ import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIden
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
 import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
-import { snippets_convertToLazyObject } from "./_snippets/snippets_convertToLazyObject.js";
-import { snippets_convertToLazyObjectOption } from "./_snippets/snippets_convertToLazyObjectOption.js";
-import { snippets_convertToLazyObjectSet } from "./_snippets/snippets_convertToLazyObjectSet.js";
+import { snippets_convertToLazy } from "./_snippets/snippets_convertToLazy.js";
+import { snippets_convertToLazyOption } from "./_snippets/snippets_convertToLazyOption.js";
+import { snippets_convertToLazySet } from "./_snippets/snippets_convertToLazySet.js";
 import { snippets_convertToList } from "./_snippets/snippets_convertToList.js";
 import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
 import { snippets_convertToMaybe } from "./_snippets/snippets_convertToMaybe.js";
@@ -81,9 +81,9 @@ import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_ide
 import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
 import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
-import { snippets_LazyObject } from "./_snippets/snippets_LazyObject.js";
-import { snippets_LazyObjectOption } from "./_snippets/snippets_LazyObjectOption.js";
-import { snippets_LazyObjectSet } from "./_snippets/snippets_LazyObjectSet.js";
+import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
+import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
+import { snippets_LazySet } from "./_snippets/snippets_LazySet.js";
 import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
 import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
@@ -278,18 +278,18 @@ export class Snippets {
   }
 
   @Memoize()
-  get LazyObject(): Snippet {
-    return this.snippet(snippets_LazyObject);
+  get Lazy(): Snippet {
+    return this.snippet(snippets_Lazy);
   }
 
   @Memoize()
-  get LazyObjectOption(): Snippet {
-    return this.snippet(snippets_LazyObjectOption);
+  get LazyOption(): Snippet {
+    return this.snippet(snippets_LazyOption);
   }
 
   @Memoize()
-  get LazyObjectSet(): Snippet {
-    return this.snippet(snippets_LazyObjectSet);
+  get LazySet(): Snippet {
+    return this.snippet(snippets_LazySet);
   }
 
   @Memoize()
@@ -488,18 +488,18 @@ export class Snippets {
   }
 
   @Memoize()
-  get convertToLazyObject(): Snippet {
-    return this.snippet(snippets_convertToLazyObject);
+  get convertToLazy(): Snippet {
+    return this.snippet(snippets_convertToLazy);
   }
 
   @Memoize()
-  get convertToLazyObjectOption(): Snippet {
-    return this.snippet(snippets_convertToLazyObjectOption);
+  get convertToLazyOption(): Snippet {
+    return this.snippet(snippets_convertToLazyOption);
   }
 
   @Memoize()
-  get convertToLazyObjectSet(): Snippet {
-    return this.snippet(snippets_convertToLazyObjectSet);
+  get convertToLazySet(): Snippet {
+    return this.snippet(snippets_convertToLazySet);
   }
 
   @Memoize()

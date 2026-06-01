@@ -1,13 +1,13 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
+import { AbstractLazyType } from "./AbstractLazyType.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
-export class LazyObjectSetType extends AbstractLazyObjectType<
-  SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
-  SetType<AbstractLazyObjectType.ObjectTypeConstraint>
+export class LazySetType extends AbstractLazyType<
+  SetType<AbstractLazyType.ItemTypeConstraint>,
+  SetType<AbstractLazyType.ItemTypeConstraint>
 > {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.of({
     limit: {
@@ -17,15 +17,15 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
       type: code`${this.reusables.imports.GraphQLInt}`,
     },
   });
-  override readonly kind = "LazyObjectSet";
+  override readonly kind = "LazySet";
 
   @Memoize()
-  override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
+  override get conversionFunction(): Maybe<AbstractLazyType.ConversionFunction> {
     invariant(this.jsTypes.length === 1);
     invariant(this.resolveType.jsTypes.length === 1);
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToLazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
+      code: code`${this.reusables.snippets.convertToLazySet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
       sourceTypes: [
         {
           expression: this.expression,
@@ -46,9 +46,9 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   @Memoize()
   protected override get runtimeClass() {
     return {
-      name: code`${this.reusables.snippets.LazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>`,
+      name: code`${this.reusables.snippets.LazySet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>`,
       partialPropertyName: "partials",
-      rawName: code`${this.reusables.snippets.LazyObjectSet}`,
+      rawName: code`${this.reusables.snippets.LazySet}`,
     };
   }
 
@@ -72,7 +72,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   }
 }
 
-type Super = AbstractLazyObjectType<
-  SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
-  SetType<AbstractLazyObjectType.ObjectTypeConstraint>
+type Super = AbstractLazyType<
+  SetType<AbstractLazyType.ItemTypeConstraint>,
+  SetType<AbstractLazyType.ItemTypeConstraint>
 >;

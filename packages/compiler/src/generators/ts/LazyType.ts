@@ -1,23 +1,23 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
+import { AbstractLazyType } from "./AbstractLazyType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
-export class LazyObjectType extends AbstractLazyObjectType<
-  AbstractLazyObjectType.ObjectTypeConstraint,
-  AbstractLazyObjectType.ObjectTypeConstraint
+export class LazyType extends AbstractLazyType<
+  AbstractLazyType.ItemTypeConstraint,
+  AbstractLazyType.ItemTypeConstraint
 > {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
-  override readonly kind = "LazyObject";
+  override readonly kind = "Lazy";
 
   @Memoize()
-  override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
+  override get conversionFunction(): Maybe<AbstractLazyType.ConversionFunction> {
     invariant(this.jsTypes.length === 1);
     invariant(this.resolveType.jsTypes.length === 1);
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToLazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.expression}, ${this.resolveType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
+      code: code`${this.reusables.snippets.convertToLazy}<${this.resolveType.identifierTypeAlias}, ${this.partialType.expression}, ${this.resolveType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
       sourceTypes: [
         {
           expression: this.expression,
@@ -34,9 +34,9 @@ export class LazyObjectType extends AbstractLazyObjectType<
   @Memoize()
   protected override get runtimeClass() {
     return {
-      name: code`${this.reusables.snippets.LazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.expression}, ${this.resolveType.expression}>`,
+      name: code`${this.reusables.snippets.Lazy}<${this.resolveType.identifierTypeAlias}, ${this.partialType.expression}, ${this.resolveType.expression}>`,
       partialPropertyName: "partial",
-      rawName: code`${this.reusables.snippets.LazyObject}`,
+      rawName: code`${this.reusables.snippets.Lazy}`,
     };
   }
 
@@ -60,7 +60,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
   }
 }
 
-type Super = AbstractLazyObjectType<
-  AbstractLazyObjectType.ObjectTypeConstraint,
-  AbstractLazyObjectType.ObjectTypeConstraint
+type Super = AbstractLazyType<
+  AbstractLazyType.ItemTypeConstraint,
+  AbstractLazyType.ItemTypeConstraint
 >;
