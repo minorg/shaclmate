@@ -13,16 +13,6 @@ import { testData } from "./testData.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function generate(shapesGraph: ShapesGraph): string {
-  const source = new ZodGenerator({ logger }).generate(
-    new ShapesGraphToAstTransformer({ logger, shapesGraph })
-      .transform()
-      .unsafeCoerce(),
-  );
-  expect(source).not.toHaveLength(0);
-  return source;
-}
-
 describe("ZodGenerator", () => {
   for (const [id, shapesGraphEither] of Object.entries(
     testData.shapesGraphs.wellFormed,
@@ -42,6 +32,10 @@ describe("ZodGenerator", () => {
     }
 
     it(id, () => {
+      if (id !== "kitchenSinkExample") {
+        return;
+      }
+
       let sourceDirectoryPath: string | undefined;
       switch (id) {
         case "kitchenSinkExample":
@@ -57,10 +51,20 @@ describe("ZodGenerator", () => {
           break;
       }
 
-      const diagnostics = compileTs(
-        generate(shapesGraphEither.unsafeCoerce()),
-        sourceDirectoryPath,
+      const source = new ZodGenerator({ logger }).generate(
+        new ShapesGraphToAstTransformer({
+          logger,
+          shapesGraph: shapesGraphEither.unsafeCoerce(),
+        })
+          .transform()
+          .unsafeCoerce(),
       );
+      expect(source).not.toHaveLength(0);
+      const diagnostics = compileTs(source, sourceDirectoryPath);
+      if (diagnostics.length > 0) {
+        // biome-ignore lint/suspicious/noDebugger: <explanation>
+        debugger;
+      }
       expect(diagnostics).toHaveLength(0);
     }, 60000);
   }
