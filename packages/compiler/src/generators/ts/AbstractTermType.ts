@@ -25,7 +25,6 @@ export abstract class AbstractTermType<
 > extends AbstractType {
   protected abstract readonly inlineExpression: Code;
 
-  override readonly declaration: Maybe<Code> = Maybe.empty();
   readonly equalsFunction = code`${this.reusables.snippets.booleanEquals}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
@@ -48,6 +47,13 @@ export abstract class AbstractTermType<
     super(superParameters);
     this.hasValues = hasValues;
     this.in_ = in_;
+  }
+
+  @Memoize()
+  get declaration(): Maybe<Code> {
+    return this.name.map(
+      (name) => code`export type ${name} = ${this.inlineExpression};`,
+    );
   }
 
   @Memoize()
