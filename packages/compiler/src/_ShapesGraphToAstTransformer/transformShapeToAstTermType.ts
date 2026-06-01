@@ -4,6 +4,7 @@ import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { ShapeStack } from "./ShapeStack.js";
+import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 
 type AstTermType =
@@ -32,7 +33,7 @@ export function transformShapeToAstTermType(
 
       const astAbstractTypeProperties = {
         comment: Maybe.empty(),
-        name: Maybe.empty(),
+        name: shapeAstTypeName(shape),
         label: Maybe.empty(),
         shapeIdentifier: shape.$identifier(),
       };
