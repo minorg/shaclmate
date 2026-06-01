@@ -62,6 +62,13 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI." ;
     sh:property [
+        sh:maxCount 1 ;
+        sh:nodeKind sh:Literal ;
+        sh:path :convertibleLiteralOption
+    ], [
+        sh:nodeKind sh:Literal ;
+        sh:path :convertibleLiteralSet
+    ], [
         sh:minCount 1 ;
         sh:nodeKind sh:Literal ;
         sh:path :convertibleLiteralNonEmptySet
@@ -98,13 +105,6 @@
         sh:minCount 1 ;
         sh:nodeKind sh:Literal ;
         sh:path :convertibleLiteral
-    ], [
-        sh:maxCount 1 ;
-        sh:nodeKind sh:Literal ;
-        sh:path :convertibleLiteralOption
-    ], [
-        sh:nodeKind sh:Literal ;
-        sh:path :convertibleLiteralSet
     ] .
 
 :DateUnionsStruct
@@ -956,7 +956,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Reusable sh:in with a name to use in lieu of inline types." ;
     sh:in ("cat"
-        "dog "
+        "dog"
     ) .
 
 :StringList

@@ -16828,7 +16828,7 @@ export interface InPropertiesStruct {
 
   readonly inStrings: Maybe<"text" | "html">;
 
-  readonly reusableIn: Maybe<"cat" | "dog ">;
+  readonly reusableIn: Maybe<"cat" | "dog">;
 }
 
 export namespace InPropertiesStruct {
@@ -16849,7 +16849,7 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-    readonly reusableIn?: "cat" | "dog " | Maybe<"cat" | "dog ">;
+    readonly reusableIn?: "cat" | "dog" | Maybe<"cat" | "dog">;
   }): Either<Error, InPropertiesStruct> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
@@ -16936,7 +16936,7 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-    readonly reusableIn?: "cat" | "dog " | Maybe<"cat" | "dog ">;
+    readonly reusableIn?: "cat" | "dog" | Maybe<"cat" | "dog">;
   }): InPropertiesStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -17081,7 +17081,7 @@ export namespace InPropertiesStruct {
       readonly "@id": "http://example.com/InIri1" | "http://example.com/InIri2";
     };
     readonly inStrings?: "text" | "html";
-    readonly reusableIn?: "cat" | "dog ";
+    readonly reusableIn?: "cat" | "dog";
   };
 
   export namespace Json {
@@ -17115,7 +17115,7 @@ export namespace InPropertiesStruct {
             .optional()
             .meta({}),
           inStrings: z.enum(["text", "html"]).optional().meta({}),
-          reusableIn: z.enum(["cat", "dog "]).optional().meta({}),
+          reusableIn: z.enum(["cat", "dog"]).optional().meta({}),
         })
         .meta({
           description: "Struct node shape with sh:in properties.",
@@ -17222,7 +17222,7 @@ export namespace InPropertiesStruct {
     }
     if (
       filter.reusableIn !== undefined &&
-      !$filterMaybe<"cat" | "dog ", $StringFilter>($filterString)(
+      !$filterMaybe<"cat" | "dog", $StringFilter>($filterString)(
         filter.reusableIn,
         value.reusableIn,
       )
@@ -17354,7 +17354,7 @@ export namespace InPropertiesStruct {
         propertySchema: schema.properties.reusableIn,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
-          $StringSchema<"cat" | "dog ">
+          $StringSchema<"cat" | "dog">
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -17521,7 +17521,7 @@ export namespace InPropertiesStruct {
         propertySchema: schema.properties.reusableIn,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
-          $StringSchema<"cat" | "dog ">
+          $StringSchema<"cat" | "dog">
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -17566,7 +17566,7 @@ export namespace InPropertiesStruct {
         .map((item) => Either.of<Error, "text" | "html">(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
       reusableIn: Maybe.fromNullable($json["reusableIn"])
-        .map((item) => Either.of<Error, "cat" | "dog ">(item).map(Maybe.of))
+        .map((item) => Either.of<Error, "cat" | "dog">(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
     }).chain(create);
   }
@@ -17748,13 +17748,13 @@ export namespace InPropertiesStruct {
               )
               .chain((values) =>
                 values.chainMap((value) =>
-                  value.toString(["cat", "dog "] as const),
+                  value.toString(["cat", "dog"] as const),
                 ),
               )
               .map((values) =>
                 values.length > 0
                   ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<"cat" | "dog ">>({
+                  : Resource.Values.fromValue<Maybe<"cat" | "dog">>({
                       focusResource: $resource,
                       propertyPath:
                         InPropertiesStruct.schema.properties.reusableIn.path,
@@ -17860,7 +17860,7 @@ export namespace InPropertiesStruct {
         path: dataFactory.namedNode("http://example.com/reusableIn"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const, in: ["cat", "dog "] },
+          itemType: { kind: "String" as const, in: ["cat", "dog"] },
         },
       },
     },
