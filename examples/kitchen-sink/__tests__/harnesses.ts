@@ -161,7 +161,7 @@ export const harnesses = {
     kitchenSink.UnionMember1.createUnsafe({
       $identifier,
       unionMemberCommon: "test common property",
-      unionMember1String: "test member 1",
+      unionMember1Distinct: "test member 1",
     }),
     kitchenSink.FlattenUnion,
     "FlattenUnion",
@@ -170,7 +170,7 @@ export const harnesses = {
     kitchenSink.UnionMember2.createUnsafe({
       $identifier,
       unionMemberCommon: "test common property",
-      unionMember2String: "test member 2",
+      unionMember2Distinct: "test member 2",
     }),
     kitchenSink.FlattenUnion,
     "FlattenUnion",
@@ -577,7 +577,7 @@ export const harnesses = {
           $identifier: dataFactory.namedNode(
             "http://example.com/unionMember1a",
           ),
-          unionMember1String: "test",
+          unionMember1Distinct: "test",
           unionMemberCommon: "test",
         }),
       },
@@ -589,7 +589,7 @@ export const harnesses = {
           $identifier: dataFactory.namedNode(
             "http://example.com/unionMember1b",
           ),
-          unionMember1String: "test",
+          unionMember1Distinct: "test",
           unionMemberCommon: "test",
         }),
       },
@@ -599,7 +599,7 @@ export const harnesses = {
           $identifier: dataFactory.namedNode(
             "http://example.com/unionMember1c",
           ),
-          unionMember1String: "test",
+          unionMember1Distinct: "test",
           unionMemberCommon: "test",
         }),
       },
@@ -618,7 +618,7 @@ export const harnesses = {
           $identifier: dataFactory.namedNode(
             "http://example.com/unionMember2a",
           ),
-          unionMember2String: "test",
+          unionMember2Distinct: "test",
           unionMemberCommon: "test",
         }),
       },
@@ -644,7 +644,7 @@ export const harnesses = {
             $identifier: dataFactory.namedNode(
               "http://example.com/unionMember2b",
             ),
-            unionMember2String: "test",
+            unionMember2Distinct: "test",
             unionMemberCommon: "test",
           }),
         },
@@ -654,7 +654,7 @@ export const harnesses = {
             $identifier: dataFactory.namedNode(
               "http://example.com/unionMember1b",
             ),
-            unionMember1String: "test",
+            unionMember1Distinct: "test",
             unionMemberCommon: "test",
           }),
         },
@@ -668,7 +668,7 @@ export const harnesses = {
             $identifier: dataFactory.namedNode(
               "http://example.com/unionMember1c",
             ),
-            unionMember1String: "test",
+            unionMember1Distinct: "test",
             unionMemberCommon: "test",
           }),
         },
@@ -685,7 +685,7 @@ export const harnesses = {
     kitchenSink.UnionMember1.createUnsafe({
       $identifier,
       unionMemberCommon: "test common parent",
-      unionMember1String: "test",
+      unionMember1Distinct: "test",
     }),
     kitchenSink.Union,
     "Union",
@@ -694,7 +694,7 @@ export const harnesses = {
     kitchenSink.UnionMember2.createUnsafe({
       $identifier,
       unionMemberCommon: "test common parent",
-      unionMember2String: "test",
+      unionMember2Distinct: "test",
     }),
     kitchenSink.Union,
     "Union",

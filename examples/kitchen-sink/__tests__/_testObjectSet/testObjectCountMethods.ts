@@ -6,12 +6,10 @@ import { objectDataset } from "./objectDataset.js";
 export function testObjectCountMethods(createObjectSet: ObjectSetFactory) {
   describe("object count methods", () => {
     it("class", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.termPropertiesObjects),
+      const objectSet = createObjectSet(objectDataset(data.termObjects));
+      expect((await objectSet.termsStructCount()).unsafeCoerce()).toStrictEqual(
+        data.termObjects.length,
       );
-      expect(
-        (await objectSet.termPropertiesStructCount()).unsafeCoerce(),
-      ).toStrictEqual(data.termPropertiesObjects.length);
     });
 
     describe("union", () => {

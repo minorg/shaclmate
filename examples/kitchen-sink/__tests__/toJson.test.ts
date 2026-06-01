@@ -15,7 +15,7 @@ describe("toJson", () => {
         value: {
           "@type": "UnionMember1",
           "@id": "http://example.com/unionMember1a",
-          unionMember1String: "test",
+          unionMember1Distinct: "test",
           unionMemberCommon: "test",
         },
       });
@@ -31,7 +31,7 @@ describe("toJson", () => {
         value: {
           "@type": "UnionMember1",
           "@id": "http://example.com/unionMember1b",
-          unionMember1String: "test",
+          unionMember1Distinct: "test",
           unionMemberCommon: "test",
         },
       });
@@ -57,7 +57,7 @@ describe("toJson", () => {
         value: {
           "@type": "UnionMember2",
           "@id": "http://example.com/unionMember2a",
-          unionMember2String: "test",
+          unionMember2Distinct: "test",
           unionMemberCommon: "test",
         },
       });
@@ -85,7 +85,7 @@ describe("toJson", () => {
           value: {
             "@type": "UnionMember2",
             "@id": "http://example.com/unionMember2b",
-            unionMember2String: "test",
+            unionMember2Distinct: "test",
             unionMemberCommon: "test",
           },
         },
@@ -94,7 +94,7 @@ describe("toJson", () => {
           value: {
             "@type": "UnionMember1",
             "@id": "http://example.com/unionMember1b",
-            unionMember1String: "test",
+            unionMember1Distinct: "test",
             unionMemberCommon: "test",
           },
         },

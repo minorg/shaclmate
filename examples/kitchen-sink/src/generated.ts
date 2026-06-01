@@ -46410,7 +46410,7 @@ export interface UnionMember1 {
 
   readonly $type: "UnionMember1";
 
-  readonly unionMember1String: string;
+  readonly unionMember1Distinct: string;
 
   readonly unionMemberCommon: string;
 }
@@ -46422,12 +46422,12 @@ export namespace UnionMember1 {
       | BlankNode
       | NamedNode
       | string;
-    readonly unionMember1String: string;
+    readonly unionMember1Distinct: string;
     readonly unionMemberCommon: string;
   }): Either<Error, UnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      unionMember1String: Either.of(parameters.unionMember1String),
+      unionMember1Distinct: Either.of(parameters.unionMember1Distinct),
       unionMemberCommon: Either.of(parameters.unionMemberCommon),
     })
       .map((properties) => ({ ...properties, $type: "UnionMember1" as const }))
@@ -46440,7 +46440,7 @@ export namespace UnionMember1 {
       | BlankNode
       | NamedNode
       | string;
-    readonly unionMember1String: string;
+    readonly unionMember1Distinct: string;
     readonly unionMemberCommon: string;
   }): UnionMember1 {
     return create(parameters).unsafeCoerce();
@@ -46460,12 +46460,12 @@ export namespace UnionMember1 {
       }))
       .chain(() =>
         $strictEquals(
-          left.unionMember1String,
-          right.unionMember1String,
+          left.unionMember1Distinct,
+          right.unionMember1Distinct,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "unionMember1String",
+          propertyName: "unionMember1Distinct",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -46497,7 +46497,7 @@ export namespace UnionMember1 {
     hasher: HasherT,
     _unionMember1: UnionMember1,
   ): HasherT {
-    $hashString(hasher, _unionMember1.unionMember1String);
+    $hashString(hasher, _unionMember1.unionMember1Distinct);
     $hashString(hasher, _unionMember1.unionMemberCommon);
     return hasher;
   }
@@ -46512,7 +46512,7 @@ export namespace UnionMember1 {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "UnionMember1";
-    readonly unionMember1String: string;
+    readonly unionMember1Distinct: string;
     readonly unionMemberCommon: string;
   };
 
@@ -46530,7 +46530,7 @@ export namespace UnionMember1 {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("UnionMember1"),
-          unionMember1String: z.string().meta({}),
+          unionMember1Distinct: z.string().meta({}),
           unionMemberCommon: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
@@ -46557,7 +46557,7 @@ export namespace UnionMember1 {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/unionMember1String`,
+            scope: `${scopePrefix}/properties/unionMember1Distinct`,
             type: "Control",
           },
           {
@@ -46582,8 +46582,8 @@ export namespace UnionMember1 {
       return false;
     }
     if (
-      filter.unionMember1String !== undefined &&
-      !$filterString(filter.unionMember1String, value.unionMember1String)
+      filter.unionMember1Distinct !== undefined &&
+      !$filterString(filter.unionMember1Distinct, value.unionMember1Distinct)
     ) {
       return false;
     }
@@ -46598,7 +46598,7 @@ export namespace UnionMember1 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly unionMember1String?: $StringFilter;
+    readonly unionMember1Distinct?: $StringFilter;
     readonly unionMemberCommon?: $StringFilter;
   };
 
@@ -46622,11 +46622,11 @@ export namespace UnionMember1 {
     }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.unionMember1String,
+        filter: parameters.filter?.unionMember1Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "unionMember1String",
-        propertySchema: schema.properties.unionMember1String,
+        propertyName: "unionMember1Distinct",
+        propertySchema: schema.properties.unionMember1Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -46706,12 +46706,12 @@ export namespace UnionMember1 {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.unionMember1String,
+        filter: parameters.filter?.unionMember1Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "unionMember1String",
-        propertySchema: schema.properties.unionMember1String,
+        propertyName: "unionMember1Distinct",
+        propertySchema: schema.properties.unionMember1Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -46740,7 +46740,9 @@ export namespace UnionMember1 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      unionMember1String: Either.of<Error, string>($json["unionMember1String"]),
+      unionMember1Distinct: Either.of<Error, string>(
+        $json["unionMember1Distinct"],
+      ),
       unionMemberCommon: Either.of<Error, string>($json["unionMemberCommon"]),
     }).chain(create);
   }
@@ -46767,10 +46769,10 @@ export namespace UnionMember1 {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
-        unionMember1String: $shaclPropertyFromRdf({
+        unionMember1Distinct: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.unionMember1String,
+          propertySchema: schema.properties.unionMember1Distinct,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -46827,9 +46829,9 @@ export namespace UnionMember1 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      unionMember1String: {
+      unionMember1Distinct: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/unionMember1String"),
+        path: dataFactory.namedNode("http://example.com/unionMember1Distinct"),
         type: { kind: "String" as const },
       },
       unionMemberCommon: {
@@ -46904,7 +46906,7 @@ export namespace UnionMember1 {
             ? `_:${_unionMember1.$identifier().value}`
             : _unionMember1.$identifier().value,
         "@type": _unionMember1.$type,
-        unionMember1String: _unionMember1.unionMember1String,
+        unionMember1Distinct: _unionMember1.unionMember1Distinct,
         unionMemberCommon: _unionMember1.unionMemberCommon,
       } satisfies UnionMember1.Json),
     );
@@ -46922,8 +46924,8 @@ export namespace UnionMember1 {
       );
     }
     parameters.resource.add(
-      UnionMember1.schema.properties.unionMember1String.path,
-      [$literalFactory.string(parameters.object.unionMember1String)],
+      UnionMember1.schema.properties.unionMember1Distinct.path,
+      [$literalFactory.string(parameters.object.unionMember1Distinct)],
       parameters.graph,
     );
     parameters.resource.add(
@@ -46985,7 +46987,7 @@ export interface UnionMember2 {
 
   readonly $type: "UnionMember2";
 
-  readonly unionMember2String: string;
+  readonly unionMember2Distinct: string;
 
   readonly unionMemberCommon: string;
 }
@@ -46997,12 +46999,12 @@ export namespace UnionMember2 {
       | BlankNode
       | NamedNode
       | string;
-    readonly unionMember2String: string;
+    readonly unionMember2Distinct: string;
     readonly unionMemberCommon: string;
   }): Either<Error, UnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      unionMember2String: Either.of(parameters.unionMember2String),
+      unionMember2Distinct: Either.of(parameters.unionMember2Distinct),
       unionMemberCommon: Either.of(parameters.unionMemberCommon),
     })
       .map((properties) => ({ ...properties, $type: "UnionMember2" as const }))
@@ -47015,7 +47017,7 @@ export namespace UnionMember2 {
       | BlankNode
       | NamedNode
       | string;
-    readonly unionMember2String: string;
+    readonly unionMember2Distinct: string;
     readonly unionMemberCommon: string;
   }): UnionMember2 {
     return create(parameters).unsafeCoerce();
@@ -47035,12 +47037,12 @@ export namespace UnionMember2 {
       }))
       .chain(() =>
         $strictEquals(
-          left.unionMember2String,
-          right.unionMember2String,
+          left.unionMember2Distinct,
+          right.unionMember2Distinct,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
-          propertyName: "unionMember2String",
+          propertyName: "unionMember2Distinct",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -47072,7 +47074,7 @@ export namespace UnionMember2 {
     hasher: HasherT,
     _unionMember2: UnionMember2,
   ): HasherT {
-    $hashString(hasher, _unionMember2.unionMember2String);
+    $hashString(hasher, _unionMember2.unionMember2Distinct);
     $hashString(hasher, _unionMember2.unionMemberCommon);
     return hasher;
   }
@@ -47087,7 +47089,7 @@ export namespace UnionMember2 {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "UnionMember2";
-    readonly unionMember2String: string;
+    readonly unionMember2Distinct: string;
     readonly unionMemberCommon: string;
   };
 
@@ -47105,7 +47107,7 @@ export namespace UnionMember2 {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("UnionMember2"),
-          unionMember2String: z.string().meta({}),
+          unionMember2Distinct: z.string().meta({}),
           unionMemberCommon: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
@@ -47132,7 +47134,7 @@ export namespace UnionMember2 {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/unionMember2String`,
+            scope: `${scopePrefix}/properties/unionMember2Distinct`,
             type: "Control",
           },
           {
@@ -47157,8 +47159,8 @@ export namespace UnionMember2 {
       return false;
     }
     if (
-      filter.unionMember2String !== undefined &&
-      !$filterString(filter.unionMember2String, value.unionMember2String)
+      filter.unionMember2Distinct !== undefined &&
+      !$filterString(filter.unionMember2Distinct, value.unionMember2Distinct)
     ) {
       return false;
     }
@@ -47173,7 +47175,7 @@ export namespace UnionMember2 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly unionMember2String?: $StringFilter;
+    readonly unionMember2Distinct?: $StringFilter;
     readonly unionMemberCommon?: $StringFilter;
   };
 
@@ -47197,11 +47199,11 @@ export namespace UnionMember2 {
     }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.unionMember2String,
+        filter: parameters.filter?.unionMember2Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "unionMember2String",
-        propertySchema: schema.properties.unionMember2String,
+        propertyName: "unionMember2Distinct",
+        propertySchema: schema.properties.unionMember2Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47281,12 +47283,12 @@ export namespace UnionMember2 {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.unionMember2String,
+        filter: parameters.filter?.unionMember2Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "unionMember2String",
-        propertySchema: schema.properties.unionMember2String,
+        propertyName: "unionMember2Distinct",
+        propertySchema: schema.properties.unionMember2Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47315,7 +47317,9 @@ export namespace UnionMember2 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      unionMember2String: Either.of<Error, string>($json["unionMember2String"]),
+      unionMember2Distinct: Either.of<Error, string>(
+        $json["unionMember2Distinct"],
+      ),
       unionMemberCommon: Either.of<Error, string>($json["unionMemberCommon"]),
     }).chain(create);
   }
@@ -47342,10 +47346,10 @@ export namespace UnionMember2 {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
-        unionMember2String: $shaclPropertyFromRdf({
+        unionMember2Distinct: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.unionMember2String,
+          propertySchema: schema.properties.unionMember2Distinct,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -47402,9 +47406,9 @@ export namespace UnionMember2 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      unionMember2String: {
+      unionMember2Distinct: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/unionMember2String"),
+        path: dataFactory.namedNode("http://example.com/unionMember2Distinct"),
         type: { kind: "String" as const },
       },
       unionMemberCommon: {
@@ -47479,7 +47483,7 @@ export namespace UnionMember2 {
             ? `_:${_unionMember2.$identifier().value}`
             : _unionMember2.$identifier().value,
         "@type": _unionMember2.$type,
-        unionMember2String: _unionMember2.unionMember2String,
+        unionMember2Distinct: _unionMember2.unionMember2Distinct,
         unionMemberCommon: _unionMember2.unionMemberCommon,
       } satisfies UnionMember2.Json),
     );
@@ -47497,8 +47501,8 @@ export namespace UnionMember2 {
       );
     }
     parameters.resource.add(
-      UnionMember2.schema.properties.unionMember2String.path,
-      [$literalFactory.string(parameters.object.unionMember2String)],
+      UnionMember2.schema.properties.unionMember2Distinct.path,
+      [$literalFactory.string(parameters.object.unionMember2Distinct)],
       parameters.graph,
     );
     parameters.resource.add(

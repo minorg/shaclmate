@@ -146,7 +146,7 @@ describe("equals", () => {
               $identifier: dataFactory.namedNode(
                 "http://example.com/unionMember1",
               ),
-              unionMember1String: "test",
+              unionMember1Distinct: "test",
               unionMemberCommon: "test",
             }),
           },
@@ -213,7 +213,7 @@ describe("equals", () => {
               $identifier: dataFactory.namedNode(
                 "http://example.com/unionMember1",
               ),
-              unionMember1: "test",
+              unionMember1Distinct: "test",
               unionMemberCommon: "test",
             }),
           },

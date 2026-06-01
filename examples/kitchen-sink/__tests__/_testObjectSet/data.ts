@@ -16,7 +16,7 @@ export const data = {
   // directRecursivees: [...new Array(4)].map(
   //   (_, i) =>
   //     kitchenSink.DirectRecursive.createUnsafe({
-  //       directRecursiveProperty: kitchenSink.DirectRecursive.createUnsafe({
+  //       directRecursive: kitchenSink.DirectRecursive.createUnsafe({
   //         $identifier: dataFactory.namedNode(
   //           `http://example.com/directRecursive${i}/directRecursiveProperty/value`,
   //         ),
@@ -34,26 +34,26 @@ export const data = {
           $identifier: dataFactory.namedNode(
             `http://example.com/noRdfTypeUnion${i}`,
           ),
-          noRdfTypeUnionMember1Property: `member ${i}`,
+          noRdfTypeUnionMember1String: `member ${i}`,
         });
       case 1:
         return kitchenSink.NoRdfTypeUnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(
             `http://example.com/noRdfTypeUnion${i}`,
           ),
-          noRdfTypeUnionMember2Property: `member ${i}`,
+          noRdfTypeUnionMember2String: `member ${i}`,
         });
       default:
         throw new RangeError(i.toString());
     }
   }) as readonly kitchenSink.NoRdfTypeUnion[],
 
-  termPropertiesObjects: [...new Array(4)].map((_, i) =>
-    kitchenSink.TermPropertiesStruct.createUnsafe({
+  termObjects: [...new Array(4)].map((_, i) =>
+    kitchenSink.TermsStruct.createUnsafe({
       $identifier: dataFactory.namedNode(
         `http://example.com/termProperties${i}`,
       ),
-      stringTermProperty: `string ${i}`,
+      stringTerm: `string ${i}`,
     }),
   ),
 
@@ -62,14 +62,14 @@ export const data = {
       case 0:
         return kitchenSink.UnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
-          unionMemberCommonProperty: `common parent ${i}`,
-          unionMember1Property: `member ${i}`,
+          unionMemberCommon: `common parent ${i}`,
+          unionMember1Distinct: `member ${i}`,
         });
       case 1:
         return kitchenSink.UnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
-          unionMemberCommonProperty: `common parent ${i}`,
-          unionMember2Property: `member ${i}`,
+          unionMemberCommon: `common parent ${i}`,
+          unionMember2Distinct: `member ${i}`,
         });
       default:
         throw new RangeError(i.toString());

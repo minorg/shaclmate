@@ -8,13 +8,11 @@ import { objectDataset } from "./objectDataset.js";
 export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
   describe("objects methods", () => {
     describe("identifiers", () => {
-      const objectSet = createObjectSet(
-        objectDataset(data.termPropertiesObjects),
-      );
+      const objectSet = createObjectSet(objectDataset(data.termObjects));
 
       it("empty", async ({ expect }) => {
         const actual = (
-          await objectSet.termPropertiesStructs({
+          await objectSet.termsStructs({
             identifiers: [],
           })
         ).unsafeCoerce();
@@ -22,47 +20,41 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
       });
 
       it("all", async ({ expect }) => {
-        const expected = data.termPropertiesObjects;
+        const expected = data.termObjects;
         const actual = (
-          await objectSet.termPropertiesStructs({
+          await objectSet.termsStructs({
             identifiers: expected.map((_) => _.$identifier()),
           })
         ).unsafeCoerce();
         expect(actual).toHaveLength(expected.length);
         for (let i = 0; i < expected.length; i++) {
           expect(
-            kitchenSink.TermPropertiesStruct.equals(
-              actual[i],
-              expected[i],
-            ).isRight(),
+            kitchenSink.TermsStruct.equals(actual[i], expected[i]).isRight(),
           ).toStrictEqual(true);
         }
       });
 
       it("subset", async ({ expect }) => {
-        const expected = data.termPropertiesObjects.slice(2);
+        const expected = data.termObjects.slice(2);
         const actual = (
-          await objectSet.termPropertiesStructs({
+          await objectSet.termsStructs({
             identifiers: expected.map((_) => _.$identifier()),
           })
         ).unsafeCoerce();
         expect(actual).toHaveLength(expected.length);
         for (let i = 0; i < expected.length; i++) {
           expect(
-            kitchenSink.TermPropertiesStruct.equals(
-              actual[i],
-              expected[i],
-            ).isRight(),
+            kitchenSink.TermsStruct.equals(actual[i], expected[i]).isRight(),
           ).toStrictEqual(true);
         }
       });
 
       it("missing", async ({ expect }) => {
         expect(
-          await objectSet.termPropertiesStructs({
+          await objectSet.termsStructs({
             identifiers: [
               dataFactory.namedNode("http://example.com/nonextant"),
-              data.termPropertiesObjects[0].$identifier(),
+              data.termObjects[0].$identifier(),
             ],
           }),
         ).toBeLeft();
