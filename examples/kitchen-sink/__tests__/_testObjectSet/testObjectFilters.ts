@@ -16,10 +16,10 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("blank node", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             blankNodeTermProperty: dataFactory.blankNode(),
           }),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[1],
             stringTermProperty: "test",
           }),
@@ -30,7 +30,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         present: [{ blankNodeTermProperty: {} }, [identifiers[0]]],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           if (objectSet instanceof kitchenSink.$SparqlObjectSet) {
@@ -38,7 +38,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           }
 
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -54,12 +54,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.NumericProperties.createUnsafe({
+            kitchenSink.NumericPropertiesStruct.createUnsafe({
               $identifier: identifiers[i],
               decimalNumericProperty: new Decimal(i),
             }),
           ),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -89,11 +89,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.NumericProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.NumericPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.numericPropertiesIdentifiers({
+            await objectSet.numericPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -109,12 +109,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.NumericProperties.createUnsafe({
+            kitchenSink.NumericPropertiesStruct.createUnsafe({
               $identifier: identifiers[i],
               integerNumericProperty: BigInt(i),
             }),
           ),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -141,11 +141,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.NumericProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.NumericPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.numericPropertiesIdentifiers({
+            await objectSet.numericPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -161,12 +161,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.createUnsafe({
+            kitchenSink.TermPropertiesStruct.createUnsafe({
               $identifier: identifiers[i],
               booleanTermProperty: i === 0,
             }),
           ),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -181,11 +181,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         valueTrue: [{ booleanTermProperty: { value: true } }, [identifiers[0]]],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -203,12 +203,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.createUnsafe({
+            kitchenSink.TermPropertiesStruct.createUnsafe({
               $identifier: identifiers[i],
               dateTimeTermProperty: new Date(baseValue.getTime() + i * 1000),
             }),
           ),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -239,11 +239,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -261,11 +261,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
 
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: blankNodeIdentifier,
             stringTermProperty: "ignored",
           }),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: namedNodeIdentifier,
             stringTermProperty: "ignored",
           }),
@@ -287,7 +287,10 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly (BlankNode | NamedNode)[]]
+        [
+          kitchenSink.TermPropertiesStruct.Filter,
+          readonly (BlankNode | NamedNode)[],
+        ]
       >)) {
         it(id, async ({ expect }) => {
           if (
@@ -297,7 +300,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
             return;
           }
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -314,15 +317,15 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("literal", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[0],
             literalTermProperty: dataFactory.literal("test"),
           }),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[1],
             literalTermProperty: dataFactory.literal("test", "en"),
           }),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             literalTermProperty: dataFactory.literal("1", xsd.integer),
           }),
@@ -344,11 +347,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -364,14 +367,14 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.createUnsafe({
+            kitchenSink.TermPropertiesStruct.createUnsafe({
               $identifier: identifiers[i],
               iriTermProperty: dataFactory.namedNode(
                 `http://example.com/prop${i}`,
               ),
             }),
           ),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -389,11 +392,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -409,12 +412,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.createUnsafe({
+            kitchenSink.TermPropertiesStruct.createUnsafe({
               $identifier: identifiers[i],
               numberTermProperty: i,
             }),
           ),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -441,11 +444,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -461,12 +464,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.createUnsafe({
+            kitchenSink.TermPropertiesStruct.createUnsafe({
               $identifier: identifiers[i],
               stringTermProperty: `test${i}`,
             }),
           ),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             numberTermProperty: 0,
           }),
@@ -484,11 +487,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -516,7 +519,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
                   unionMemberCommonProperty: `test${i}`,
                 }),
           ),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             numberTermProperty: 0,
           }),
@@ -601,7 +604,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     });
 
     describe("option", () => {
-      const instance = kitchenSink.TermProperties.createUnsafe({
+      const instance = kitchenSink.TermPropertiesStruct.createUnsafe({
         booleanTermProperty: true,
         $identifier: identifiers[0],
       });
@@ -614,11 +617,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         nonNull2: [{ stringTermProperty: {} }, []],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -634,7 +637,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const value = "test";
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.PropertyCardinalities.createUnsafe({
+          kitchenSink.PropertyCardinalitiesStruct.createUnsafe({
             $identifier: identifiers[0],
             emptySetProperty: [value],
             nonEmptySetProperty: [value],
@@ -661,11 +664,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           : {}),
       } satisfies Record<
         string,
-        [kitchenSink.PropertyCardinalities.Filter, readonly NamedNode[]]
+        [kitchenSink.PropertyCardinalitiesStruct.Filter, readonly NamedNode[]]
       >))
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.propertyCardinalitiesIdentifiers({
+            await objectSet.propertyCardinalitiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -680,12 +683,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.createUnsafe({
+            kitchenSink.TermPropertiesStruct.createUnsafe({
               $identifier: identifiers[i],
               stringTermProperty: "x".repeat(i + 1),
             }),
           ),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             numberTermProperty: 0,
           }),
@@ -698,11 +701,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         minLength: [{ stringTermProperty: { maxLength: 1 } }, [identifiers[1]]],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -717,23 +720,23 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("term", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[0],
             termProperty: dataFactory.literal("test"),
           }),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[1],
             termProperty: dataFactory.literal("test", "en"),
           }),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[2],
             termProperty: dataFactory.literal("1", xsd.integer),
           }),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[3],
             termProperty: dataFactory.namedNode("http://example.com"),
           }),
-          kitchenSink.TermProperties.createUnsafe({
+          kitchenSink.TermPropertiesStruct.createUnsafe({
             $identifier: identifiers[4],
             stringTermProperty: "test",
           }),
@@ -756,11 +759,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         typeIn: [{ termProperty: { typeIn: ["NamedNode"] } }, [identifiers[3]]],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
+        [kitchenSink.TermPropertiesStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.termPropertiesIdentifiers({
+            await objectSet.termPropertiesStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();
@@ -775,7 +778,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("union", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.UnionDiscriminants.createUnsafe({
+          kitchenSink.UnionDiscriminantsStruct.createUnsafe({
             $identifier: identifiers[0],
             requiredNodeOrNodeOrStringProperty: {
               type: "UnionMember1",
@@ -804,7 +807,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
               "http://example.com/test0",
             ),
           }),
-          kitchenSink.UnionDiscriminants.createUnsafe({
+          kitchenSink.UnionDiscriminantsStruct.createUnsafe({
             $identifier: identifiers[1],
             requiredNodeOrNodeOrStringProperty: {
               type: "string",
@@ -954,7 +957,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.UnionDiscriminants.Filter, readonly NamedNode[]]
+        [kitchenSink.UnionDiscriminantsStruct.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           // if (id.endsWith("Negative")) {
@@ -962,7 +965,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           // }
 
           const actual = (
-            await objectSet.unionDiscriminantsIdentifiers({
+            await objectSet.unionDiscriminantsStructIdentifiers({
               filter,
             })
           ).unsafeCoerce();

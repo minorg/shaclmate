@@ -9,9 +9,9 @@ import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
-import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
+import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
 
-const listPropertiesObjectType = new ast.ObjectType({
+const listPropertiesStructType = new ast.StructType({
   extern: false,
   comment: Maybe.empty(),
   label: Maybe.empty(),
@@ -39,7 +39,7 @@ const astListTypePlaceholderItemType = new ast.BlankNodeType({
 const empty = Either.of<Error, Maybe<ast.ListType>>(Maybe.empty());
 
 /**
- * Is an ast.ObjectType actually the shape of an RDF list?
+ * Is an ast.StructType actually the shape of an RDF list?
  * If so, return the type of its rdf:first.
  */
 export function transformShapeToAstListType(
@@ -105,10 +105,10 @@ export function transformShapeToAstListType(
           nonEmptyListShape.properties.map((propertyShapeIdentifier) =>
             this.shapesGraph.propertyShape(propertyShapeIdentifier),
           ),
-        ).chain((nonEmptyListShapeProperties) => {
+        ).chain((nonEmptyListShapePropertyShapes) => {
           let firstPropertyShape: input.PropertyShape | undefined;
           let restPropertyShape: input.PropertyShape | undefined;
-          for (const propertyShape of nonEmptyListShapeProperties) {
+          for (const propertyShape of nonEmptyListShapePropertyShapes) {
             if (propertyShape.path.termType !== "NamedNode") {
               continue;
             }
@@ -147,33 +147,33 @@ export function transformShapeToAstListType(
             );
           }
 
-          return transformPropertyShapeToAstObjectTypeProperty
+          return transformPropertyShapeToAstStructTypeField
             .call(this, {
-              // Just need a dummy ast.ObjectType here to get the properties transformed.
-              objectType: listPropertiesObjectType,
+              // Just need a dummy ast.StructType here to get the properties transformed.
               propertyShape: firstPropertyShape,
+              structType: listPropertiesStructType,
             })
-            .chain((firstProperty) => {
-              if (!ast.ListType.isItemType(firstProperty.type)) {
+            .chain((firstField) => {
+              if (!ast.ListType.isItemType(firstField.type)) {
                 return Left(
                   new Error(
-                    `${nodeShape}: ${firstProperty.type.kind} is not a valid list item type`,
+                    `${nodeShape}: ${firstField.type.kind} is not a valid list item type`,
                   ),
                 );
               }
 
-              listType.itemType = firstProperty.type;
+              listType.itemType = firstField.type;
 
-              return transformPropertyShapeToAstObjectTypeProperty
+              return transformPropertyShapeToAstStructTypeField
                 .call(this, {
-                  // Just need a dummy ast.ObjectType here to get the properties transformed.
-                  objectType: listPropertiesObjectType,
+                  // Just need a dummy ast.StructType here to get the properties transformed.
                   propertyShape: restPropertyShape,
+                  structType: listPropertiesStructType,
                 })
-                .chain((restProperty) => {
+                .chain((restField) => {
                   if (
-                    restProperty.type.kind !== "List" ||
-                    !restProperty.type.shapeIdentifier.equals(
+                    restField.type.kind !== "List" ||
+                    !restField.type.shapeIdentifier.equals(
                       nodeShape.$identifier(),
                     )
                   ) {

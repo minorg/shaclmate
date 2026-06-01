@@ -61,7 +61,7 @@ export class TsGenerator implements Generator {
       const tsNamedType = typeFactory.createType(astNamedType);
       tsNamedTypes.push(tsNamedType);
 
-      if (astNamedType.kind === "Object") {
+      if (astNamedType.kind === "Struct") {
         for (const tsImport of astNamedType.tsImports) {
           declarations.push(code`${tsImport}`);
         }

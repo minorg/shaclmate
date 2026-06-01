@@ -10,43 +10,10 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
-function synthesizePartialAstObjectType({
-  identifierType,
-}: {
-  identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
-}): ast.ObjectType {
-  let syntheticName: string;
-  switch (identifierType.kind) {
-    case "BlankNode":
-      throw new Error("should never happen");
-    case "Identifier":
-      syntheticName = "DefaultPartial";
-      break;
-    case "Iri":
-      syntheticName = "NamedDefaultPartial";
-      break;
-  }
-
-  return new ast.ObjectType({
-    comment: Maybe.empty(),
-    extern: false,
-    fromRdfType: Maybe.empty(),
-    identifierType,
-    label: Maybe.empty(),
-    name: Maybe.of(syntheticName),
-    shapeIdentifier: dataFactory.namedNode(
-      `urn:shaclmate:synthetic:${syntheticName}`,
-    ),
-    synthetic: true,
-    toRdfTypes: [],
-    tsImports: [],
-  });
-}
-
-function propertyName(
+function fieldName(
   this: ShapesGraphToAstTransformer,
-  objectType: ast.ObjectType,
   propertyShape: input.PropertyShape,
+  structType: ast.StructType,
 ): string {
   // Explicit shaclmate:name or sh:name
   const name = propertyShape.shaclmateName.alt(propertyShape.name).extract();
@@ -65,9 +32,9 @@ function propertyName(
   const propertyShapeIdentifier = propertyShape.$identifier();
   if (
     propertyShapeIdentifier.termType === "NamedNode" &&
-    objectType.shapeIdentifier.termType === "NamedNode"
+    structType.shapeIdentifier.termType === "NamedNode"
   ) {
-    const propertyShapeIdentifierPrefix = `${objectType.shapeIdentifier.value}-`;
+    const propertyShapeIdentifierPrefix = `${structType.shapeIdentifier.value}-`;
     if (
       propertyShapeIdentifier.value.startsWith(propertyShapeIdentifierPrefix) &&
       propertyShapeIdentifier.value.length >
@@ -100,6 +67,39 @@ function propertyName(
   }
 
   throw new Error(`${propertyShape}: unable to infer name`);
+}
+
+function synthesizePartialAstStructType({
+  identifierType,
+}: {
+  identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
+}): ast.StructType {
+  let syntheticName: string;
+  switch (identifierType.kind) {
+    case "BlankNode":
+      throw new Error("should never happen");
+    case "Identifier":
+      syntheticName = "DefaultPartial";
+      break;
+    case "Iri":
+      syntheticName = "NamedDefaultPartial";
+      break;
+  }
+
+  return new ast.StructType({
+    comment: Maybe.empty(),
+    extern: false,
+    fromRdfType: Maybe.empty(),
+    identifierType,
+    label: Maybe.empty(),
+    name: Maybe.of(syntheticName),
+    shapeIdentifier: dataFactory.namedNode(
+      `urn:shaclmate:synthetic:${syntheticName}`,
+    ),
+    synthetic: true,
+    toRdfTypes: [],
+    tsImports: [],
+  });
 }
 
 function transformPropertyShapeToAstType(
@@ -187,16 +187,16 @@ function transformPropertyShapeToAstType(
     });
 }
 
-export function transformPropertyShapeToAstObjectTypeProperty(
+export function transformPropertyShapeToAstStructTypeField(
   this: ShapesGraphToAstTransformer,
   {
-    objectType,
     propertyShape,
+    structType,
   }: {
-    objectType: ast.ObjectType;
     propertyShape: input.PropertyShape;
+    structType: ast.StructType;
   },
-): Either<Error, ast.ObjectType.Property> {
+): Either<Error, ast.StructType.Field> {
   const shapeStack = new ShapeStack(); // Start a new ShapeStack per property shape
   return Eithers.chain2(
     propertyShape.resolve.isJust()
@@ -206,31 +206,31 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       : Either.of(Maybe.empty()),
     transformPropertyShapeToAstType.call(this, propertyShape, shapeStack),
   ).chain(([propertyShapeResolve, astType]) => {
-    let astResolveItemType: ast.ObjectType | ast.ObjectUnionType | undefined;
+    let astResolveItemType: ast.StructType | ast.StructUnionType | undefined;
 
     if (propertyShapeResolve.isJust()) {
       const astResolveTypeEither = transformShapeToAstType
         .call(this, propertyShapeResolve.unsafeCoerce(), shapeStack)
         .chain((astResolveType) => {
           switch (astResolveType.kind) {
-            case "Object":
-              return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
+            case "Struct":
+              return Either.of<Error, ast.StructType | ast.StructUnionType>(
                 astResolveType,
               );
             case "Union":
               if (
                 // This check relies on .members being populated, which may not happen in cycles
                 astResolveType.members.length > 0 &&
-                !astResolveType.isObjectUnionType()
+                !astResolveType.isStructUnionType()
               ) {
                 return Left(
                   new Error(
-                    `${propertyShape} resolve cannot refer to a ${astResolveType.kind} with non-ObjectType members`,
+                    `${propertyShape} resolve cannot refer to a ${astResolveType.kind} with non-StructType members`,
                   ),
                 );
               }
-              return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
-                astResolveType as ast.ObjectUnionType,
+              return Either.of<Error, ast.StructType | ast.StructUnionType>(
+                astResolveType as ast.StructUnionType,
               );
             default:
               return Left(
@@ -254,10 +254,10 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         case "Set":
           astItemType = astType.itemType;
           break;
-        case "LazyObjectOption":
-        case "LazyObjectSet":
+        case "LazyOption":
+        case "LazySet":
         // biome-ignore lint/suspicious/noFallthroughSwitchClause: break is unreachable
-        case "LazyObject":
+        case "Lazy":
           invariant(
             false,
             `lazy types should not appear here: ${astType.kind}`,
@@ -267,23 +267,23 @@ export function transformPropertyShapeToAstObjectTypeProperty(
           break;
       }
 
-      let astPartialItemType: ast.ObjectType | ast.ObjectUnionType;
+      let astPartialItemType: ast.StructType | ast.StructUnionType;
       switch (astItemType.kind) {
         case "BlankNode":
         case "Identifier":
         case "Iri":
-          astPartialItemType = synthesizePartialAstObjectType({
+          astPartialItemType = synthesizePartialAstStructType({
             identifierType: astItemType,
           });
           break;
-        case "Object":
+        case "Struct":
           astPartialItemType = astItemType;
           break;
         case "Union":
-          if (!astItemType.isObjectUnionType()) {
+          if (!astItemType.isStructUnionType()) {
             return Left(
               new Error(
-                `${propertyShape} partial type cannot be a ${astItemType.kind} with non-ObjectType members`,
+                `${propertyShape} partial type cannot be a ${astItemType.kind} with non-StructType members`,
               ),
             );
           }
@@ -308,16 +308,16 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         case "BlankNode":
         case "Identifier":
         case "Iri":
-        case "Object":
+        case "Struct":
         case "Union":
-          astType = new ast.LazyObjectType({
+          astType = new ast.LazyType({
             ...astAbstractTypeProperties,
             partialType: astPartialItemType,
             resolveType: astResolveItemType,
           });
           break;
         case "Option":
-          astType = new ast.LazyObjectOptionType({
+          astType = new ast.LazyOptionType({
             ...astAbstractTypeProperties,
             partialType: new ast.OptionType({
               itemType: astPartialItemType,
@@ -328,7 +328,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
           });
           break;
         case "Set":
-          astType = new ast.LazyObjectSetType({
+          astType = new ast.LazySetType({
             ...astAbstractTypeProperties,
             partialType: new ast.SetType({
               itemType: astPartialItemType,
@@ -359,17 +359,17 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     }
 
     return Either.of(
-      new ast.ObjectType.Property({
+      new ast.StructType.Field({
         comment: propertyShape.comment,
         description: propertyShape.description,
         display: propertyShape.display,
         label: propertyShape.label,
         mutable: propertyShape.mutable.orDefault(false),
-        name: propertyName.call(this, objectType, propertyShape),
-        objectType,
+        name: fieldName.call(this, propertyShape, structType),
         order: propertyShape.order.orDefault(0),
         path: propertyShape.path,
         shapeIdentifier: propertyShape.$identifier(),
+        structType,
         type: astType,
       }),
     );

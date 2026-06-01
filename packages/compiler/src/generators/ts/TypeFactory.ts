@@ -71,7 +71,7 @@ export class TypeFactory {
     this.reusables = reusables;
   }
 
-  createObjectType(astType: ast.ObjectType): ObjectType {
+  createObjectType(astType: ast.StructType): ObjectType {
     {
       const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
         astType.shapeIdentifier,
@@ -104,7 +104,7 @@ export class TypeFactory {
       identifierType,
       label: astType.label,
       lazyProperties: (objectType: ObjectType) => {
-        const properties: ObjectType.Property[] = astType.properties
+        const properties: ObjectType.Property[] = astType.fields
           .toSorted((left, right) => {
             if (left.order < right.order) {
               return -1;
@@ -116,9 +116,9 @@ export class TypeFactory {
               this.tsName(right.name),
             );
           })
-          .map((astProperty) =>
+          .map((astField) =>
             this.createObjectTypeProperty({
-              astObjectTypeProperty: astProperty,
+              astStructField: astField,
               objectType,
             }),
           );
@@ -158,7 +158,7 @@ export class TypeFactory {
     return objectType;
   }
 
-  createObjectUnionType(astType: ast.ObjectUnionType): ObjectUnionType {
+  createObjectUnionType(astType: ast.StructUnionType): ObjectUnionType {
     {
       const cachedObjectUnionType =
         this.cachedObjectUnionTypesByShapeIdentifier.get(
@@ -174,15 +174,15 @@ export class TypeFactory {
       configuration: this.configuration,
       identifierType: Maybe.of(
         this.createIdentifierType(
-          ast.ObjectCompoundType.identifierType(astType),
+          ast.StructCompoundType.identifierType(astType),
         ),
       ),
       label: astType.label,
       logger: this.logger,
-      members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
-        (namedObjectType) => ({
+      members: ast.StructCompoundType.memberStructTypes(astType).map(
+        (astStructType) => ({
           discriminantValue: Maybe.empty(),
-          type: this.createObjectType(namedObjectType),
+          type: this.createObjectType(astStructType),
         }),
       ),
       name: astType.name.map((name) => this.tsName(name)),
@@ -214,22 +214,22 @@ export class TypeFactory {
         throw new Error("not implemented");
       case "Iri":
         return this.createIriType(astType);
-      case "LazyObjectOption":
-        return this.createLazyObjectOptionType(astType);
-      case "LazyObjectSet":
-        return this.createLazyObjectSetType(astType);
-      case "LazyObject":
+      case "Lazy":
         return this.createLazyObjectType(astType);
+      case "LazyOption":
+        return this.createLazyObjectOptionType(astType);
+      case "LazySet":
+        return this.createLazyObjectSetType(astType);
       case "List":
         return this.createListType(astType);
       case "Literal":
         return this.createLiteralType(astType, parameters);
-      case "Object":
-        return this.createObjectType(astType);
       case "Option":
         return this.createOptionType(astType);
       case "Set":
         return this.createSetType(astType);
+      case "Struct":
+        return this.createObjectType(astType);
       case "Term":
         return this.createTermType(astType);
       case "Union":
@@ -238,7 +238,7 @@ export class TypeFactory {
   }
 
   createUnionType(astType: ast.UnionType): ObjectUnionType | UnionType<Type> {
-    if (astType.isObjectUnionType()) {
+    if (astType.isStructUnionType()) {
       return this.createObjectUnionType(astType);
     }
 
@@ -320,7 +320,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
+  private createLazyObjectOptionType(astType: ast.LazyOptionType): Type {
     return new LazyObjectOptionType({
       comment: astType.comment,
       configuration: this.configuration,
@@ -337,7 +337,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectSetType(astType: ast.LazyObjectSetType): Type {
+  private createLazyObjectSetType(astType: ast.LazySetType): Type {
     return new LazyObjectSetType({
       comment: astType.comment,
       configuration: this.configuration,
@@ -354,7 +354,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectType(astType: ast.LazyObjectType): Type {
+  private createLazyObjectType(astType: ast.LazyType): Type {
     return new LazyObjectType({
       comment: astType.comment,
       configuration: this.configuration,
@@ -553,16 +553,16 @@ export class TypeFactory {
   }
 
   private createObjectTypeProperty({
-    astObjectTypeProperty,
+    astStructField,
     objectType,
   }: {
-    astObjectTypeProperty: ast.ObjectType.Property;
+    astStructField: ast.StructType.Field;
     objectType: ObjectType;
   }): ObjectType.Property {
     {
       const cachedProperty =
         this.cachedObjectTypePropertiesByShapeIdentifier.get(
-          astObjectTypeProperty.shapeIdentifier,
+          astStructField.shapeIdentifier,
         );
       if (cachedProperty) {
         return cachedProperty;
@@ -570,23 +570,23 @@ export class TypeFactory {
     }
 
     const property = new ObjectType.ShaclProperty({
-      comment: astObjectTypeProperty.comment,
+      comment: astStructField.comment,
       configuration: this.configuration,
-      description: astObjectTypeProperty.description,
-      display: astObjectTypeProperty.display,
-      label: astObjectTypeProperty.label,
+      description: astStructField.description,
+      display: astStructField.display,
+      label: astStructField.label,
       logger: this.logger,
-      mutable: astObjectTypeProperty.mutable,
-      name: this.tsName(astObjectTypeProperty.name),
+      mutable: astStructField.mutable,
+      name: this.tsName(astStructField.name),
       objectType,
-      path: astObjectTypeProperty.path,
-      recursive: !!astObjectTypeProperty.recursive,
+      path: astStructField.path,
+      recursive: !!astStructField.recursive,
       reusables: this.reusables,
-      type: this.createType(astObjectTypeProperty.type),
+      type: this.createType(astStructField.type),
     });
 
     this.cachedObjectTypePropertiesByShapeIdentifier.set(
-      astObjectTypeProperty.shapeIdentifier,
+      astStructField.shapeIdentifier,
       property,
     );
 

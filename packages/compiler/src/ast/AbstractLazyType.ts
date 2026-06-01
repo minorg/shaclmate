@@ -1,23 +1,20 @@
 import type { NodeKind } from "@shaclmate/shacl-ast";
 
 import { AbstractType } from "./AbstractType.js";
-import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
+import type { StructType } from "./StructType.js";
+import type { StructUnionType } from "./StructUnionType.js";
 import { Type } from "./Type.js";
 
 /**
- * Abstract base class of LazyObjectOptionType, LazyObjectSetType, and LazyObjectType.
+ * Abstract base class of LazyOptionType, LazySetType, and LazyType.
  */
-export abstract class AbstractLazyObjectType<
-  PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
-  ResolveTypeT extends AbstractLazyObjectType.ResolveTypeConstraint,
+export abstract class AbstractLazyType<
+  PartialTypeT extends AbstractLazyType.PartialTypeConstraint,
+  ResolveTypeT extends AbstractLazyType.ResolveTypeConstraint,
 > extends AbstractType {
-  abstract override readonly kind:
-    | "LazyObjectOption"
-    | "LazyObjectSet"
-    | "LazyObject";
+  abstract override readonly kind: "Lazy" | "LazyOption" | "LazySet";
   readonly partialType: PartialTypeT;
   readonly resolveType: ResolveTypeT;
 
@@ -43,7 +40,7 @@ export abstract class AbstractLazyObjectType<
   }
 
   override equals(
-    other: AbstractLazyObjectType<PartialTypeT, ResolveTypeT>,
+    other: AbstractLazyType<PartialTypeT, ResolveTypeT>,
   ): boolean {
     if (!super.equals(other)) {
       return false;
@@ -69,11 +66,11 @@ export abstract class AbstractLazyObjectType<
   }
 }
 
-export namespace AbstractLazyObjectType {
-  export type ObjectTypeConstraint = ObjectType | ObjectUnionType;
+export namespace AbstractLazyType {
+  export type ItemTypeConstraint = StructType | StructUnionType;
   export type PartialTypeConstraint =
-    | ObjectTypeConstraint
-    | OptionType<ObjectTypeConstraint>
-    | SetType<ObjectTypeConstraint>;
+    | ItemTypeConstraint
+    | OptionType<ItemTypeConstraint>
+    | SetType<ItemTypeConstraint>;
   export type ResolveTypeConstraint = PartialTypeConstraint;
 }

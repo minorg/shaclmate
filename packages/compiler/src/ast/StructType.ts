@@ -13,24 +13,25 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import { Type } from "./Type.js";
 
-export class ObjectType extends AbstractType {
+export class StructType extends AbstractType {
   /**
-   * Properties of this ObjectType.
+   * Fields of this StructType.
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly #properties: ObjectType.Property[] = [];
-  private propertyNames: Set<string> = new Set();
+  readonly #fields: StructType.Field[] = [];
+
+  private fieldNames: Set<string> = new Set();
 
   /**
-   * If true, the code for this ObjectType is defined externally and should not be generated.
+   * If true, the code for this StructType is defined externally and should not be generated.
    *
    * Defaults to false.
    */
   readonly extern: boolean;
 
   /**
-   * The expected rdf:type of instances of this ObjectType.
+   * The expected rdf:type of instances of this StructType.
    *
    * This is usually the identifier of an sh:NodeShape that is also an rdfs:Class (i.e., a node shape with implicit
    * class targets).
@@ -45,7 +46,7 @@ export class ObjectType extends AbstractType {
   /**
    * Type discriminant.
    */
-  readonly kind = "Object";
+  readonly kind = "Struct";
   override readonly nodeKinds = nodeKinds;
 
   /**
@@ -64,7 +65,7 @@ export class ObjectType extends AbstractType {
   /**
    * TypeScript imports to add to generated code.
    *
-   * This is often used in conjunction with extern=true to import the extern'd ObjectType code in order for generated
+   * This is often used in conjunction with extern=true to import the extern'd StructType code in order for generated
    * code to reference it.
    *
    * import { MyType } from "./MyType.js"
@@ -96,36 +97,36 @@ export class ObjectType extends AbstractType {
     this.tsImports = tsImports;
   }
 
-  get properties(): readonly ObjectType.Property[] {
-    return this.#properties;
+  get fields(): readonly StructType.Field[] {
+    return this.#fields;
   }
 
   override get recursive(): boolean {
-    return this.properties.some((property) => property.recursive);
+    return this.fields.some((field) => field.recursive);
   }
 
-  addProperties(...properties: readonly ObjectType.Property[]): void {
-    for (const property of properties) {
+  addFields(...fields: readonly StructType.Field[]): void {
+    for (const field of fields) {
       invariant(
-        Object.is(property.objectType, this),
-        "property has unexpected .objectType",
+        Object.is(field.structType, this),
+        "field has unexpected .structType",
       );
       invariant(
-        !this.propertyNames.has(property.name),
-        `${property.objectType.shapeIdentifier}: duplicate property name: ${property.name}`,
+        !this.fieldNames.has(field.name),
+        `${field.structType.shapeIdentifier}: duplicate field name: ${field.name}`,
       );
-      this.#properties.push(property);
-      this.propertyNames.add(property.name);
+      this.#fields.push(field);
+      this.fieldNames.add(field.name);
     }
   }
 
-  override equals(other: ObjectType): boolean {
+  override equals(other: StructType): boolean {
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
 
-  sortProperties(): void {
-    this.#properties.sort((left, right) => {
+  sortFields(): void {
+    this.#fields.sort((left, right) => {
       if (left.order < right.order) {
         return -1;
       }
@@ -149,8 +150,8 @@ export class ObjectType extends AbstractType {
 
 const nodeKinds: ReadonlySet<NodeKind> = new Set(["BlankNode", "IRI"]);
 
-export namespace ObjectType {
-  export class Property {
+export namespace StructType {
+  export class Field {
     /**
      * Documentation comment from rdfs:comment.
      */
@@ -162,7 +163,7 @@ export namespace ObjectType {
     readonly description: Maybe<string>;
 
     /**
-     * Should the property and its value be displayed in a toString()-type representation?
+     * Should the field and its value be displayed in a toString()-type representation?
      */
     readonly display: boolean;
 
@@ -172,38 +173,38 @@ export namespace ObjectType {
     readonly label: Maybe<string>;
 
     /**
-     * The property should be mutable in generated code i.e., it should be re-assignable. The property value may or may
+     * The field should be mutable in generated code i.e., it should be re-assignable. The field value may or may
      * not be mutable.
      */
     readonly mutable: boolean;
 
     /**
-     * Name of this property, derived from sh:name or shaclmate:name.
+     * Name of this field, derived from sh:name or shaclmate:name.
      */
     readonly name: string;
 
     /**
-     * Object type this property belongs to.
-     */
-    readonly objectType: ObjectType;
-
-    /**
-     * Relative order of this property, derived from sh:order.
+     * Relative order of this field, derived from sh:order.
      */
     readonly order: number;
 
     /**
-     * SHACL property path (https://www.w3.org/TR/shacl/#property-paths)
+     * SHACL property path (https://www.w3.org/TR/shacl/#field-paths)
      */
     readonly path: PropertyPath;
 
     /**
-     * Identifier of the property shape.
+     * Identifier of the field shape.
      */
     readonly shapeIdentifier: BlankNode | NamedNode;
 
     /**
-     * Type of this property.
+     * StructType this field belongs to.
+     */
+    readonly structType: StructType;
+
+    /**
+     * Type of this field.
      */
     readonly type: Type;
 
@@ -214,10 +215,10 @@ export namespace ObjectType {
       label,
       mutable,
       name,
-      objectType,
       order,
       path,
       shapeIdentifier,
+      structType,
       type,
     }: {
       comment: Maybe<string>;
@@ -226,10 +227,10 @@ export namespace ObjectType {
       label: Maybe<string>;
       mutable: boolean;
       name: string;
-      objectType: ObjectType;
       order: number;
       path: PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
+      structType: StructType;
       type: Type;
     }) {
       this.comment = comment;
@@ -238,48 +239,48 @@ export namespace ObjectType {
       this.label = label;
       this.mutable = mutable;
       this.name = name;
-      this.objectType = objectType;
+      this.structType = structType;
       this.order = order;
       this.path = path;
       this.shapeIdentifier = shapeIdentifier;
       this.type = type;
     }
 
-    equals(other: Property): boolean {
+    equals(other: Field): boolean {
       return this.shapeIdentifier.equals(other.shapeIdentifier);
     }
 
     /**
-     * Does the property directly or indirectly reference the ObjectType itself?
+     * Does the field directly or indirectly reference the StructType itself?
      */
     @Memoize()
     get recursive(): boolean {
       const DEBUG = false;
 
-      const rootObjectType = this.objectType;
-      const rootProperty = this;
+      const rootField = this;
+      const rootStructType = this.structType;
 
       function helper(
         stack: {
-          objectType: ObjectType;
-          property: ObjectType.Property;
-          propertyType?: readonly Type[];
+          field: StructType.Field;
+          fieldType?: readonly Type[];
+          structType: StructType;
         }[],
       ): boolean {
         const currentStackFrame = stack.at(-1)!;
-        const { objectType, property, propertyType } = currentStackFrame;
+        const { field, fieldType, structType } = currentStackFrame;
 
         if (DEBUG) {
           process.stderr.write(
             `${[
               stack.length.toString(),
-              rootObjectType,
-              rootProperty,
-              objectType,
-              property,
-              propertyType
-                ? `[${propertyType.map(Type.toString).join(", ")}]`
+              rootField,
+              rootStructType,
+              field,
+              fieldType
+                ? `[${fieldType.map(Type.toString).join(", ")}]`
                 : "undefined",
+              structType,
             ].join(",")}\n`,
           );
         }
@@ -287,19 +288,19 @@ export namespace ObjectType {
         for (const lowerStackFrame of stack.slice(0, -1)) {
           if (
             !Type.equals(
-              currentStackFrame.objectType,
-              lowerStackFrame.objectType,
+              currentStackFrame.structType,
+              lowerStackFrame.structType,
             )
           ) {
             continue;
           }
-          if (!currentStackFrame.property.equals(lowerStackFrame.property)) {
+          if (!currentStackFrame.field.equals(lowerStackFrame.field)) {
             continue;
           }
           if (
             !arrayEquals(Type.equals)(
-              currentStackFrame.propertyType ?? [],
-              lowerStackFrame.propertyType ?? [],
+              currentStackFrame.fieldType ?? [],
+              lowerStackFrame.fieldType ?? [],
             )
           ) {
             continue;
@@ -312,37 +313,35 @@ export namespace ObjectType {
           return true;
         }
 
-        if (!propertyType) {
+        if (!fieldType) {
           return helper(
             stack.concat({
-              objectType,
-              property,
-              propertyType: [property.type],
+              field,
+              fieldType: [field.type],
+              structType,
             }),
           );
         }
 
-        invariant(propertyType.length > 0);
-        const currentPropertyType = propertyType.at(-1)!;
+        invariant(fieldType.length > 0);
+        const currentFieldType = fieldType.at(-1)!;
 
-        switch (currentPropertyType.kind) {
+        switch (currentFieldType.kind) {
           case "BlankNode":
           case "Identifier":
           case "Iri":
           case "Literal":
           case "Term":
             return false;
-          case "LazyObjectOption":
-          case "LazyObjectSet":
-          case "LazyObject": {
+          case "LazyOption":
+          case "LazySet":
+          case "Lazy": {
             if (
               helper(
                 stack.concat({
-                  objectType,
-                  property,
-                  propertyType: propertyType.concat(
-                    currentPropertyType.partialType,
-                  ),
+                  field,
+                  fieldType: fieldType.concat(currentFieldType.partialType),
+                  structType,
                 }),
               )
             ) {
@@ -352,11 +351,9 @@ export namespace ObjectType {
             if (
               helper(
                 stack.concat({
-                  objectType,
-                  property,
-                  propertyType: propertyType.concat(
-                    currentPropertyType.resolveType,
-                  ),
+                  field,
+                  fieldType: fieldType.concat(currentFieldType.resolveType),
+                  structType,
                 }),
               )
             ) {
@@ -366,16 +363,16 @@ export namespace ObjectType {
             return false;
           }
 
-          case "Object": {
+          case "Struct": {
             if (DEBUG) {
-              process.stderr.write(`recurse into ${currentPropertyType}`);
+              process.stderr.write(`recurse into ${currentFieldType}`);
             }
-            for (const property of currentPropertyType.properties) {
+            for (const field of currentFieldType.fields) {
               if (
                 helper(
                   stack.concat({
-                    objectType: currentPropertyType,
-                    property,
+                    structType: currentFieldType,
+                    field,
                   }),
                 )
               ) {
@@ -388,15 +385,15 @@ export namespace ObjectType {
           case "Intersection":
           case "Union": {
             if (DEBUG) {
-              process.stderr.write(`recurse into ${currentPropertyType}`);
+              process.stderr.write(`recurse into ${currentFieldType}`);
             }
-            for (const member of currentPropertyType.members) {
+            for (const member of currentFieldType.members) {
               if (
                 helper(
                   stack.concat({
-                    objectType,
-                    property,
-                    propertyType: propertyType.concat(member.type),
+                    field,
+                    fieldType: fieldType.concat(member.type),
+                    structType,
                   }),
                 )
               ) {
@@ -411,15 +408,15 @@ export namespace ObjectType {
           case "Set":
             return helper(
               stack.concat({
-                objectType,
-                property,
-                propertyType: propertyType.concat(currentPropertyType.itemType),
+                field,
+                fieldType: fieldType.concat(currentFieldType.itemType),
+                structType,
               }),
             );
         }
       }
 
-      return helper([{ objectType: rootObjectType, property: rootProperty }]);
+      return helper([{ structType: rootStructType, field: rootField }]);
     }
 
     toJSON() {

@@ -3,7 +3,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 
 export const data = {
   blankNodeOrIriIdentifierObjects: [...new Array(4)].map((_, i) =>
-    kitchenSink.BlankNodeOrIriIdentifier.createUnsafe({
+    kitchenSink.BlankNodeOrIriIdentifierStruct.createUnsafe({
       $identifier:
         i % 2 === 0
           ? dataFactory.blankNode()
@@ -49,7 +49,7 @@ export const data = {
   }) as readonly kitchenSink.NoRdfTypeUnion[],
 
   termPropertiesObjects: [...new Array(4)].map((_, i) =>
-    kitchenSink.TermProperties.createUnsafe({
+    kitchenSink.TermPropertiesStruct.createUnsafe({
       $identifier: dataFactory.namedNode(
         `http://example.com/termProperties${i}`,
       ),

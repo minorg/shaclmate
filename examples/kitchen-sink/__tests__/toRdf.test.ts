@@ -28,8 +28,8 @@ describe("toRdf", async () => {
   );
 
   it("should produce serializable RDF", ({ expect }) => {
-    const resource = kitchenSink.NonClass.toRdfResource(
-      harnesses.nonClass.instance,
+    const resource = kitchenSink.NonClassStruct.toRdfResource(
+      harnesses.nonClassStruct.instance,
     );
     const ttl = new Writer({ format: "text/turtle" }).quadsToString([
       ...resource.dataset,
@@ -38,8 +38,8 @@ describe("toRdf", async () => {
   });
 
   it("explicit rdfType", ({ expect }) => {
-    const resource = kitchenSink.ExplicitRdfType.toRdfResource(
-      harnesses.explicitRdfType.instance,
+    const resource = kitchenSink.ExplicitRdfTypeStruct.toRdfResource(
+      harnesses.explicitRdfTypeStruct.instance,
     );
     expect(resource.dataset.size).toStrictEqual(2); // One rdf:type and the property
     expect(
@@ -50,8 +50,8 @@ describe("toRdf", async () => {
     expect(
       resource
         .value(
-          kitchenSink.ExplicitRdfType.schema.properties.explicitRdfTypeProperty
-            .path,
+          kitchenSink.ExplicitRdfTypeStruct.schema.properties
+            .explicitRdfTypeProperty.path,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
@@ -59,8 +59,8 @@ describe("toRdf", async () => {
   });
 
   it("explicit toRdfType", ({ expect }) => {
-    const resource = kitchenSink.ExplicitFromToRdfTypes.toRdfResource(
-      harnesses.explicitFromToRdfTypes.instance,
+    const resource = kitchenSink.ExplicitFromToRdfTypesStruct.toRdfResource(
+      harnesses.explicitFromToRdfTypesStruct.instance,
     );
     expect(resource.dataset.size).toStrictEqual(3); // Two RDF types and the property
     expect(
@@ -76,7 +76,7 @@ describe("toRdf", async () => {
     expect(
       resource
         .value(
-          kitchenSink.ExplicitFromToRdfTypes.schema.properties
+          kitchenSink.ExplicitFromToRdfTypesStruct.schema.properties
             .explicitFromToRdfTypesProperty.path,
         )
         .chain((value) => value.toString())
@@ -85,21 +85,21 @@ describe("toRdf", async () => {
   });
 
   it("should not serialize default values", ({ expect }) => {
-    const resource = kitchenSink.DefaultValueProperties.toRdfResource(
-      harnesses.defaultValueProperties.instance,
+    const resource = kitchenSink.DefaultValuePropertiesStruct.toRdfResource(
+      harnesses.defaultValuePropertiesStruct.instance,
     );
     expect(resource.dataset.size).toStrictEqual(1); // Only the rdf:type
   });
 
   it("should serialize non-default values", ({ expect }) => {
-    const resource = kitchenSink.DefaultValueProperties.toRdfResource(
-      harnesses.defaultValuePropertiesOverriddenDifferent.instance,
+    const resource = kitchenSink.DefaultValuePropertiesStruct.toRdfResource(
+      harnesses.defaultValuePropertiesStructOverriddenDifferent.instance,
     );
     expect(resource.dataset.size).toStrictEqual(5); // Properties + the rdf:type
     expect(
       resource
         .value(
-          kitchenSink.DefaultValueProperties.schema.properties
+          kitchenSink.DefaultValuePropertiesStruct.schema.properties
             .falseBooleanDefaultValueProperty.path,
         )
         .chain((value) => value.toBoolean())
@@ -108,12 +108,12 @@ describe("toRdf", async () => {
   });
 
   it("should not serialize empty lists", ({ expect }) => {
-    const instance = kitchenSink.ListProperties.createUnsafe();
+    const instance = kitchenSink.ListPropertiesStruct.createUnsafe();
     expect(instance.iriListProperty.extract()).toBeUndefined();
-    expect(instance.objectListProperty.extract()).toBeUndefined();
     expect(instance.stringListProperty.extract()).toBeUndefined();
+    expect(instance.structListProperty.extract()).toBeUndefined();
 
-    const resource = kitchenSink.ListProperties.toRdfResource(instance);
+    const resource = kitchenSink.ListPropertiesStruct.toRdfResource(instance);
     expect(resource.dataset.size).toStrictEqual(1); // The rdf:type statement
   });
 

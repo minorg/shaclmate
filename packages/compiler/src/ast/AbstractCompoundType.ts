@@ -9,7 +9,7 @@ import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { ObjectType } from "./ObjectType.js";
+import type { StructType } from "./StructType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
@@ -93,7 +93,7 @@ export namespace AbstractCompoundType {
     | IriType
     | ListType
     | LiteralType
-    | ObjectType
+    | StructType
     | TermType
     | UnionType;
 
@@ -105,14 +105,14 @@ export namespace AbstractCompoundType {
       case "Iri":
       case "List":
       case "Literal":
-      case "Object":
+      case "Struct":
       case "Term":
       case "Union":
         return true;
       case "DefaultValue":
-      case "LazyObjectOption":
-      case "LazyObjectSet":
-      case "LazyObject":
+      case "LazyOption":
+      case "LazySet":
+      case "Lazy":
       case "Option":
       case "Set":
         return false;

@@ -31,7 +31,7 @@ export class ZodGenerator implements Generator {
 
     for (const astNamedType of ast_.namedTypes) {
       switch (astNamedType.kind) {
-        case "Object": {
+        case "Struct": {
           const tsNamedObjectType = typeFactory.createObjectType(astNamedType);
           declarations.push(code`\
 export namespace ${tsNamedObjectType.name.unsafeCoerce()} {

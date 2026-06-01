@@ -14,7 +14,7 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
 
       it("empty", async ({ expect }) => {
         const actual = (
-          await objectSet.termPropertieses({
+          await objectSet.termPropertiesStructs({
             identifiers: [],
           })
         ).unsafeCoerce();
@@ -24,14 +24,17 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
       it("all", async ({ expect }) => {
         const expected = data.termPropertiesObjects;
         const actual = (
-          await objectSet.termPropertieses({
+          await objectSet.termPropertiesStructs({
             identifiers: expected.map((_) => _.$identifier()),
           })
         ).unsafeCoerce();
         expect(actual).toHaveLength(expected.length);
         for (let i = 0; i < expected.length; i++) {
           expect(
-            kitchenSink.TermProperties.equals(actual[i], expected[i]).isRight(),
+            kitchenSink.TermPropertiesStruct.equals(
+              actual[i],
+              expected[i],
+            ).isRight(),
           ).toStrictEqual(true);
         }
       });
@@ -39,21 +42,24 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
       it("subset", async ({ expect }) => {
         const expected = data.termPropertiesObjects.slice(2);
         const actual = (
-          await objectSet.termPropertieses({
+          await objectSet.termPropertiesStructs({
             identifiers: expected.map((_) => _.$identifier()),
           })
         ).unsafeCoerce();
         expect(actual).toHaveLength(expected.length);
         for (let i = 0; i < expected.length; i++) {
           expect(
-            kitchenSink.TermProperties.equals(actual[i], expected[i]).isRight(),
+            kitchenSink.TermPropertiesStruct.equals(
+              actual[i],
+              expected[i],
+            ).isRight(),
           ).toStrictEqual(true);
         }
       });
 
       it("missing", async ({ expect }) => {
         expect(
-          await objectSet.termPropertieses({
+          await objectSet.termPropertiesStructs({
             identifiers: [
               dataFactory.namedNode("http://example.com/nonextant"),
               data.termPropertiesObjects[0].$identifier(),

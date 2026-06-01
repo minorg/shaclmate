@@ -9,45 +9,45 @@ import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
-import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
+import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
-function isObjectTypePropertyRequired(property: {
-  type: ast.ObjectType.Property["type"];
+function isStructTypeFieldRequired(field: {
+  type: ast.StructType.Field["type"];
 }): boolean {
-  switch (property.type.kind) {
+  switch (field.type.kind) {
     case "DefaultValue":
       return false;
-    case "LazyObjectOption":
+    case "LazyOption":
       return false;
-    case "LazyObjectSet":
-      return property.type.partialType.minCount > 0n;
+    case "LazySet":
+      return field.type.partialType.minCount > 0n;
     case "Option":
       return false;
     case "Set":
-      return property.type.minCount > 0;
+      return field.type.minCount > 0;
     case "Union":
-      return property.type.members.every((member) =>
-        isObjectTypePropertyRequired({ type: member.type }),
+      return field.type.members.every((member) =>
+        isStructTypeFieldRequired({ type: member.type }),
       );
     case "BlankNode":
     case "Identifier":
     case "Iri":
-    case "LazyObject":
+    case "Lazy":
     case "List":
     case "Literal":
-    case "Object":
+    case "Struct":
     case "Term":
       return true;
     case "Intersection":
       throw new Error("unsupported");
     default:
-      property.type satisfies never;
+      field.type satisfies never;
       throw new Error("should never reach this point");
   }
 }
 
-export function transformShapeToAstObjectType(
+export function transformShapeToAstStructType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
@@ -78,7 +78,7 @@ export function transformShapeToAstObjectType(
     }
 
     if (nodeShape.properties.length === 0) {
-      // A node shape must have sh:property to be considered an ObjectType
+      // A node shape must have sh:property to be considered a StructType
       return Either.of(Maybe.empty());
     }
 
@@ -93,7 +93,7 @@ export function transformShapeToAstObjectType(
           this.shapesGraph.propertyShape(propertyShapeIdentifier),
         ),
       ),
-    ).chain<Error, Maybe<ast.ObjectType>>(([nodeKinds, propertyShapes]) => {
+    ).chain<Error, Maybe<ast.StructType>>(([nodeKinds, propertyShapes]) => {
       const nodeShapeIdentifier = nodeShape.$identifier();
 
       const isClass =
@@ -158,7 +158,7 @@ export function transformShapeToAstObjectType(
       // Remove the placeholder if the transformation fails.
       // If this node shape's properties (directly or indirectly) refer to the node shape itself,
       // we'll return this placeholder.
-      const objectType = new ast.ObjectType({
+      const structType = new ast.StructType({
         comment: nodeShape.comment,
         extern: nodeShape.extern.orDefault(false),
         fromRdfType,
@@ -173,29 +173,31 @@ export function transformShapeToAstObjectType(
 
       this.cachedAstTypesByShapeIdentifier.set(
         nodeShape.$identifier(),
-        objectType,
+        structType,
       );
 
       return (() => {
         // Populate properties
         for (const propertyShape of propertyShapes) {
-          const propertyEither =
-            transformPropertyShapeToAstObjectTypeProperty.call(this, {
-              objectType,
+          const fieldEither = transformPropertyShapeToAstStructTypeField.call(
+            this,
+            {
               propertyShape,
-            });
-          if (propertyEither.isLeft()) {
-            return propertyEither;
+              structType,
+            },
+          );
+          if (fieldEither.isLeft()) {
+            return fieldEither;
           }
-          propertyEither.ifRight((property) => {
-            objectType.addProperties(property);
+          fieldEither.ifRight((property) => {
+            structType.addFields(property);
           });
         }
 
         if (
-          !objectType.extern &&
-          objectType.fromRdfType.isNothing() &&
-          !objectType.properties.some(isObjectTypePropertyRequired)
+          !structType.extern &&
+          structType.fromRdfType.isNothing() &&
+          !structType.fields.some(isStructTypeFieldRequired)
         ) {
           return Left(
             new Error(
@@ -204,9 +206,9 @@ export function transformShapeToAstObjectType(
           );
         }
 
-        objectType.sortProperties();
+        structType.sortFields();
 
-        return Either.of<Error, Maybe<ast.ObjectType>>(Maybe.of(objectType));
+        return Either.of<Error, Maybe<ast.StructType>>(Maybe.of(structType));
       })().ifLeft(() => {
         this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier());
       });

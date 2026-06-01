@@ -7,9 +7,9 @@ export class AstJsonGenerator implements Generator {
       {
         namedTypes: ast.namedTypes.map((namedType) => ({
           ...namedType.toJSON(),
-          ...(namedType.kind === "Object"
+          ...(namedType.kind === "Struct"
             ? {
-                properties: namedType.properties.map((property) =>
+                properties: namedType.fields.map((property) =>
                   property.toJSON(),
                 ),
               }

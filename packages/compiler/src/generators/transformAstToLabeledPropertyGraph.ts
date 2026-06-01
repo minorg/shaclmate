@@ -10,14 +10,14 @@ export function transformAstToLabeledPropertyGraph(
   const relationships: LabeledPropertyGraph.Relationship[] = [];
 
   for (const namedType of ast.namedTypes) {
-    if (namedType.kind === "Object") {
-      const namedObjectType = namedType;
+    if (namedType.kind === "Struct") {
+      const namedStructType = namedType;
       const id = typeId(namedType);
       const properties: LabeledPropertyGraph.Node["properties"] = {
         name: { type: "string", value: typeName(namedType) },
       };
 
-      for (const namedObjectTypeProperty of namedObjectType.properties) {
+      for (const namedObjectTypeProperty of namedStructType.fields) {
         let itemType: ast.Type;
 
         switch (namedObjectTypeProperty.type.kind) {
@@ -27,11 +27,11 @@ export function transformAstToLabeledPropertyGraph(
           case "Set":
             itemType = namedObjectTypeProperty.type.itemType;
             break;
-          case "LazyObject":
+          case "Lazy":
             itemType = namedObjectTypeProperty.type.resolveType;
             break;
-          case "LazyObjectOption":
-          case "LazyObjectSet":
+          case "LazyOption":
+          case "LazySet":
             itemType = namedObjectTypeProperty.type.resolveType.itemType;
             break;
           default:
@@ -41,7 +41,7 @@ export function transformAstToLabeledPropertyGraph(
 
         switch (itemType.kind) {
           case "Intersection":
-          case "Object":
+          case "Struct":
           case "Union":
             if (itemType.name.isJust()) {
               relationships.push({
@@ -63,7 +63,7 @@ export function transformAstToLabeledPropertyGraph(
 
       nodes.push({
         id,
-        label: typeName(namedObjectType),
+        label: typeName(namedStructType),
         properties: properties,
       });
     } else if (namedType.kind === "Union") {
