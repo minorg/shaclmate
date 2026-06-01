@@ -9,15 +9,15 @@ export const snippets_LazySet: SnippetFactory = ({
     `${syntheticNamePrefix}LazySet`,
     code`\
 /**
- * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ * Type of lazy properties that return a set of values. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazySet<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }> {
-  readonly partials: readonly PartialObjectT[];
-  private readonly resolver: (identifiers: readonly ObjectIdentifierT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>;
+export class ${syntheticNamePrefix}LazySet<PartialT, ResolvedT> {
+  readonly partials: readonly PartialT[];
+  private readonly resolver: (partials: readonly PartialT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedT[]>>;
 
   constructor({ partials, resolver }: {
-    partials: readonly PartialObjectT[]
-    resolver: (identifiers: readonly ObjectIdentifierT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>,
+    partials: readonly PartialT[]
+    resolver: (partials: readonly PartialT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedT[]>>,
   }) {
     this.partials = partials;
     this.resolver = resolver;
@@ -27,7 +27,7 @@ export class ${syntheticNamePrefix}LazySet<ObjectIdentifierT extends ${imports.B
     return this.partials.length;
   }
 
-  async resolve(options?: { limit?: number; offset?: number; preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>> {
+  async resolve(options?: { limit?: number; offset?: number; preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, readonly ResolvedT[]>> {
     if (this.partials.length === 0) {
       return ${imports.Right}([]);
     }
@@ -42,7 +42,7 @@ export class ${syntheticNamePrefix}LazySet<ObjectIdentifierT extends ${imports.B
       offset = 0;
     }
 
-    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier()), { preferredLanguages: options?.preferredLanguages });
+    return await this.resolver(this.partials.slice(offset, offset + limit), { preferredLanguages: options?.preferredLanguages });
   }
 }`,
   );

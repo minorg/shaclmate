@@ -9,25 +9,25 @@ export const snippets_LazyOption: SnippetFactory = ({
     `${syntheticNamePrefix}LazyOption`,
     code`\
 /**
- * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ * Type of lazy properties that return a single optional value. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyOption<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }> {
-  readonly partial: ${imports.Maybe}<PartialObjectT>;
-  private readonly resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
+export class ${syntheticNamePrefix}LazyOption<PartialT, ResolvedT> {
+  readonly partial: ${imports.Maybe}<PartialT>;
+  private readonly resolver: (partial: PartialT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedT>>;
 
   constructor({ partial, resolver }: {
-    partial: ${imports.Maybe}<PartialObjectT>
-    resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
+    partial: ${imports.Maybe}<PartialT>
+    resolver: (partial: PartialT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedT>>,
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  async resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ${imports.Maybe}<ResolvedObjectT>>> {
+  async resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ${imports.Maybe}<ResolvedT>>> {
     if (this.partial.isNothing()) {
       return ${imports.Right}(${imports.Maybe}.empty());
     }
-    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier(), options)).map(${imports.Maybe}.of);
+    return (await this.resolver(this.partial.unsafeCoerce(), options)).map(${imports.Maybe}.of);
   }
 }`,
   );

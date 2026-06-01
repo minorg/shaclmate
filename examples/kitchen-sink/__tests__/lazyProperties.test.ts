@@ -7,14 +7,10 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 async function expectEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+  PartialT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedT extends { $identifier: () => ObjectIdentifierT },
 >(
-  actual: kitchenSink.$LazyOption<
-    ObjectIdentifierT,
-    PartialObjectT,
-    ResolvedObjectT
-  >,
+  actual: kitchenSink.$LazyOption<ObjectIdentifierT, PartialT, ResolvedT>,
 ): Promise<void> {
   expect(actual.partial.isNothing()).toStrictEqual(true);
   const resolvedObject = (await actual.resolve()).unsafeCoerce();
@@ -23,14 +19,10 @@ async function expectEmptyOptional<
 
 async function expectEmptySet<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+  PartialT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedT extends { $identifier: () => ObjectIdentifierT },
 >(
-  actual: kitchenSink.$LazySet<
-    ObjectIdentifierT,
-    ResolvedObjectT,
-    PartialObjectT
-  >,
+  actual: kitchenSink.$LazySet<ObjectIdentifierT, ResolvedT, PartialT>,
 ): Promise<void> {
   expect(actual.partials).toHaveLength(0);
   const resolvedObjects = (await actual.resolve()).unsafeCoerce();
@@ -39,19 +31,16 @@ async function expectEmptySet<
 
 async function expectRequired<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+  PartialT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedT extends { $identifier: () => ObjectIdentifierT },
 >({
   actual,
   equals,
   expected,
 }: {
-  actual: kitchenSink.$Lazy<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>;
-  equals: (
-    left: ResolvedObjectT,
-    right: ResolvedObjectT,
-  ) => kitchenSink.$EqualsResult;
-  expected: ResolvedObjectT;
+  actual: kitchenSink.$Lazy<ObjectIdentifierT, PartialT, ResolvedT>;
+  equals: (left: ResolvedT, right: ResolvedT) => kitchenSink.$EqualsResult;
+  expected: ResolvedT;
 }): Promise<void> {
   expect(
     actual.partial.$identifier().equals(expected.$identifier()),
@@ -63,23 +52,16 @@ async function expectRequired<
 
 async function expectSet<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+  PartialT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedT extends { $identifier: () => ObjectIdentifierT },
 >({
   actual,
   equals,
   expected,
 }: {
-  actual: kitchenSink.$LazySet<
-    ObjectIdentifierT,
-    PartialObjectT,
-    ResolvedObjectT
-  >;
-  equals: (
-    left: ResolvedObjectT,
-    right: ResolvedObjectT,
-  ) => kitchenSink.$EqualsResult;
-  expected: readonly ResolvedObjectT[];
+  actual: kitchenSink.$LazySet<ObjectIdentifierT, PartialT, ResolvedT>;
+  equals: (left: ResolvedT, right: ResolvedT) => kitchenSink.$EqualsResult;
+  expected: readonly ResolvedT[];
 }): Promise<void> {
   expect(actual.partials).toHaveLength(expected.length);
   actual.partials.forEach((actualPartial, partialI) => {
@@ -108,23 +90,16 @@ async function expectSet<
 
 async function expectedNonEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+  PartialT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedT extends { $identifier: () => ObjectIdentifierT },
 >({
   actual,
   equals,
   expected,
 }: {
-  actual: kitchenSink.$LazyOption<
-    ObjectIdentifierT,
-    PartialObjectT,
-    ResolvedObjectT
-  >;
-  equals: (
-    left: ResolvedObjectT,
-    right: ResolvedObjectT,
-  ) => kitchenSink.$EqualsResult;
-  expected: ResolvedObjectT;
+  actual: kitchenSink.$LazyOption<ObjectIdentifierT, PartialT, ResolvedT>;
+  equals: (left: ResolvedT, right: ResolvedT) => kitchenSink.$EqualsResult;
+  expected: ResolvedT;
 }): Promise<void> {
   expect(
     actual.partial.unsafeCoerce().$identifier().equals(expected.$identifier()),

@@ -9,22 +9,22 @@ export const snippets_Lazy: SnippetFactory = ({
     `${syntheticNamePrefix}Lazy`,
     code`\
 /**
- * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ * Type of lazy properties that return a single required value. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}Lazy<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }> {
-  readonly partial: PartialObjectT;
-  private readonly resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
+export class ${syntheticNamePrefix}Lazy<PartialT, ResolvedT> {
+  readonly partial: PartialT;
+  private readonly resolver: (partial: PartialT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedT>>;
 
   constructor({ partial, resolver }: {
-    partial: PartialObjectT
-    resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
+    partial: PartialT
+    resolver: (partial: PartialT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedT>>,
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.${syntheticNamePrefix}identifier(), options);
+  resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ResolvedT>> {
+    return this.resolver(this.partial, options);
   }
 }`,
   );

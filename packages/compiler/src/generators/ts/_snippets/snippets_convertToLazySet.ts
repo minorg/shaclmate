@@ -9,8 +9,8 @@ export const snippets_convertToLazySet: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToLazySet`,
     code`\
-function ${syntheticNamePrefix}convertToLazySet<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
-  return (value: ${snippets.LazySet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> | readonly ResolvedObjectT[] | undefined): ${imports.Either}<Error, ${snippets.LazySet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>> => {
+function ${syntheticNamePrefix}convertToLazySet<PartialT, ResolvedT>(resolvedToPartial: (resolved: ResolvedT) => PartialT) {
+  return (value: ${snippets.LazySet}<PartialT, ResolvedT> | readonly ResolvedT[] | undefined): ${imports.Either}<Error, ${snippets.LazySet}<PartialT, ResolvedT>> => {
     switch (typeof value) {
       case "object": {
         if (value instanceof ${snippets.LazySet}) {
@@ -18,13 +18,13 @@ function ${syntheticNamePrefix}convertToLazySet<ObjectIdentifierT extends ${impo
         }
 
         const captureValue = value;
-        return ${imports.Either}.of(new ${snippets.LazySet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>({
+        return ${imports.Either}.of(new ${snippets.LazySet}<PartialT, ResolvedT>({
           partials: value.map(resolvedToPartial),
           resolver: async () => ${imports.Right}(captureValue)
         }));
       }
       case "undefined":
-        return ${imports.Either}.of(new ${snippets.LazySet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>({
+        return ${imports.Either}.of(new ${snippets.LazySet}<PartialT, ResolvedT>({
           partials: [],
           resolver: async () => ${imports.Right}([])
         }));
