@@ -16828,7 +16828,7 @@ export interface InPropertiesStruct {
 
   readonly inStrings: Maybe<"text" | "html">;
 
-  readonly reusableIn: Maybe<"cat" | "dog">;
+  readonly reusableIn: Maybe<ReusableIn>;
 }
 
 export namespace InPropertiesStruct {
@@ -16849,7 +16849,7 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-    readonly reusableIn?: "cat" | "dog" | Maybe<"cat" | "dog">;
+    readonly reusableIn?: ReusableIn | Maybe<ReusableIn>;
   }): Either<Error, InPropertiesStruct> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
@@ -16936,7 +16936,7 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-    readonly reusableIn?: "cat" | "dog" | Maybe<"cat" | "dog">;
+    readonly reusableIn?: ReusableIn | Maybe<ReusableIn>;
   }): InPropertiesStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -17081,7 +17081,7 @@ export namespace InPropertiesStruct {
       readonly "@id": "http://example.com/InIri1" | "http://example.com/InIri2";
     };
     readonly inStrings?: "text" | "html";
-    readonly reusableIn?: "cat" | "dog";
+    readonly reusableIn?: ReusableIn;
   };
 
   export namespace Json {
@@ -17222,7 +17222,7 @@ export namespace InPropertiesStruct {
     }
     if (
       filter.reusableIn !== undefined &&
-      !$filterMaybe<"cat" | "dog", $StringFilter>($filterString)(
+      !$filterMaybe<ReusableIn, $StringFilter>($filterString)(
         filter.reusableIn,
         value.reusableIn,
       )
@@ -17354,7 +17354,7 @@ export namespace InPropertiesStruct {
         propertySchema: schema.properties.reusableIn,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
-          $StringSchema<"cat" | "dog">
+          $StringSchema<ReusableIn>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -17521,7 +17521,7 @@ export namespace InPropertiesStruct {
         propertySchema: schema.properties.reusableIn,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
-          $StringSchema<"cat" | "dog">
+          $StringSchema<ReusableIn>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -17566,7 +17566,7 @@ export namespace InPropertiesStruct {
         .map((item) => Either.of<Error, "text" | "html">(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
       reusableIn: Maybe.fromNullable($json["reusableIn"])
-        .map((item) => Either.of<Error, "cat" | "dog">(item).map(Maybe.of))
+        .map((item) => Either.of<Error, ReusableIn>(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
     }).chain(create);
   }
@@ -17754,7 +17754,7 @@ export namespace InPropertiesStruct {
               .map((values) =>
                 values.length > 0
                   ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<"cat" | "dog">>({
+                  : Resource.Values.fromValue<Maybe<ReusableIn>>({
                       focusResource: $resource,
                       propertyPath:
                         InPropertiesStruct.schema.properties.reusableIn.path,
@@ -38328,7 +38328,8 @@ export namespace RecursiveUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+export type ReusableIn = "cat" | "dog"; /**
  * Struct node shape with properties that are not nested objects
  */
 

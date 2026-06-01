@@ -221,6 +221,7 @@ export const harnesses = {
       inDoubles: 1,
       inIris: dataFactory.namedNode("http://example.com/InIri1"),
       inStrings: "text",
+      reusableIn: "cat",
     }),
     kitchenSink.InPropertiesStruct,
   ),
