@@ -14,13 +14,13 @@ describe("graphqlSchema", () => {
 
   it("optional lazy object", async ({ expect }) => {
     const result = await execute(
-      `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier optionalLazyObjectProperty { _identifier } } }`,
+      `query { rootObject(identifier: "<http://example.com/rootObject0>") { _identifier optionalLazyProperty { _identifier } } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       rootObject: {
         _identifier: "<http://example.com/rootObject0>",
-        optionalLazyObjectProperty: {
+        optionalLazyProperty: {
           _identifier: "<http://example.com/rootObject0/lazyObject>",
         },
       },

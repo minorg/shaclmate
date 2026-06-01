@@ -13,8 +13,8 @@ describe("toString", () => {
   it("explicitly and implicitly exclude and include properties in toString()", ({
     expect,
   }) => {
-    expect(harnesses.displayPropertiesStruct.instance.toString()).toStrictEqual(
-      `DisplayPropertiesStruct({"$identifier":"<http://example.com/instance>","explicitTrueDisplayProperty":"explicitTrueDisplayValue"})`,
+    expect(harnesses.displaysStruct.instance.toString()).toStrictEqual(
+      `DisplayStruct({"$identifier":"<http://example.com/instance>","explicitTrueDisplay":"explicitTrueDisplayValue"})`,
     );
   });
 });

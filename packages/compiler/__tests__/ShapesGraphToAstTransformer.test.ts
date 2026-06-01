@@ -56,7 +56,7 @@ describe("ShapesGraphToAstTransformer", () => {
             (_) => _.kind === "Struct",
           );
           if (id === "kitchenSinkExample") {
-            expect(namedObjectTypes).toHaveLength(49);
+            expect(namedObjectTypes).toHaveLength(48);
           } else {
             expect(namedObjectTypes).not.toHaveLength(0);
           }
@@ -82,11 +82,11 @@ describe("ShapesGraphToAstTransformer", () => {
           for (const [classIri, recursivePropertyIri] of [
             [
               "http://example.com/DirectRecursiveStruct",
-              "http://example.com/directRecursiveProperty",
+              "http://example.com/directRecursive",
             ],
             [
               "http://example.com/IndirectRecursiveStruct",
-              "http://example.com/indirectRecursiveHelperProperty",
+              "http://example.com/indirectRecursiveHelper",
             ],
             [
               "http://example.com/RecursiveUnionMember1",

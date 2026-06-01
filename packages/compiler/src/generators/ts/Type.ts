@@ -9,9 +9,9 @@ import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
-import type { LazyObjectOptionType } from "./LazyObjectOptionType.js";
-import type { LazyObjectSetType } from "./LazyObjectSetType.js";
-import type { LazyObjectType } from "./LazyObjectType.js";
+import type { LazyOptionType } from "./LazyOptionType.js";
+import type { LazySetType } from "./LazySetType.js";
+import type { LazyType } from "./LazyType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -34,9 +34,9 @@ export type Type =
   | IdentifierType
   | IntType
   | IriType
-  | LazyObjectOptionType
-  | LazyObjectSetType
-  | LazyObjectType
+  | LazyOptionType
+  | LazySetType
+  | LazyType
   | ListType<ListType.ItemType>
   | LiteralType
   | ObjectUnionType

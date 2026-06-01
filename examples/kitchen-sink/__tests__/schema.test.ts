@@ -7,14 +7,13 @@ describe("schema", () => {
       expect,
     }) => {
       expect(
-        kitchenSink.Union.schema.properties.unionMemberCommonProperty.path
-          .value,
-      ).toStrictEqual("http://example.com/unionMemberCommonProperty");
+        kitchenSink.Union.schema.properties.unionMemberCommon.path.value,
+      ).toStrictEqual("http://example.com/unionMemberCommon");
     });
 
     it("object union common properties", ({ expect }) => {
       expect(kitchenSink.Union.schema.properties).toHaveProperty(
-        "unionMemberCommonProperty",
+        "unionMemberCommon",
       );
     });
   });

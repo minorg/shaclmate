@@ -119,58 +119,36 @@ function $convertToIriIdentifierProperty<IriT extends string = string>(
   }
 }
 
-function $convertToLazyObjectOption<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
->(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+function $convertToLazyOption<PartialT, ResolvedT>(
+  resolvedToPartial: (resolved: ResolvedT) => PartialT,
+) {
   return (
     value:
-      | $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-      | Maybe<ResolvedObjectT>
-      | ResolvedObjectT
+      | $LazyOption<PartialT, ResolvedT>
+      | Maybe<ResolvedT>
+      | ResolvedT
       | undefined,
-  ): Either<
-    Error,
-    $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-  > => {
+  ): Either<Error, $LazyOption<PartialT, ResolvedT>> => {
     switch (typeof value) {
       case "object": {
-        if (value instanceof $LazyObjectOption) {
+        if (value instanceof $LazyOption) {
           return Either.of(value);
         }
 
         if (Maybe.isMaybe(value)) {
           return Either.of(
-            new $LazyObjectOption<
-              ObjectIdentifierT,
-              PartialObjectT,
-              ResolvedObjectT
-            >({
+            new $LazyOption<PartialT, ResolvedT>({
               partial: value.map(resolvedToPartial),
               resolver: async () => Right(value.unsafeCoerce()),
             }),
           );
         }
 
-        return Either.of(
-          new $LazyObjectOption<
-            ObjectIdentifierT,
-            PartialObjectT,
-            ResolvedObjectT
-          >({
-            partial: Maybe.of(resolvedToPartial(value)),
-            resolver: async () => Right(value),
-          }),
-        );
+        break;
       }
       case "undefined":
         return Either.of(
-          new $LazyObjectOption<
-            ObjectIdentifierT,
-            PartialObjectT,
-            ResolvedObjectT
-          >({
+          new $LazyOption<PartialT, ResolvedT>({
             partial: Maybe.empty(),
             resolver: async () => {
               throw new Error("should never be called");
@@ -178,53 +156,46 @@ function $convertToLazyObjectOption<
           }),
         );
     }
+
+    return Either.of(
+      new $LazyOption<PartialT, ResolvedT>({
+        partial: Maybe.of(resolvedToPartial(value)),
+        resolver: async () => Right(value),
+      }),
+    );
   };
 }
 
-function $convertToLazyObjectSet<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
->(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+function $convertToLazySet<PartialT, ResolvedT>(
+  resolvedToPartial: (resolved: ResolvedT) => PartialT,
+) {
   return (
-    value:
-      | $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-      | readonly ResolvedObjectT[]
-      | undefined,
-  ): Either<
-    Error,
-    $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
-  > => {
+    value: $LazySet<PartialT, ResolvedT> | readonly ResolvedT[] | undefined,
+  ): Either<Error, $LazySet<PartialT, ResolvedT>> => {
     switch (typeof value) {
       case "object": {
-        if (value instanceof $LazyObjectSet) {
+        if (value instanceof $LazySet) {
           return Either.of(value);
         }
 
-        const captureValue = value;
-        return Either.of(
-          new $LazyObjectSet<
-            ObjectIdentifierT,
-            PartialObjectT,
-            ResolvedObjectT
-          >({
-            partials: value.map(resolvedToPartial),
-            resolver: async () => Right(captureValue),
-          }),
-        );
+        break;
       }
       case "undefined":
         return Either.of(
-          new $LazyObjectSet<
-            ObjectIdentifierT,
-            PartialObjectT,
-            ResolvedObjectT
-          >({
+          new $LazySet<PartialT, ResolvedT>({
             partials: [],
             resolver: async () => Right([]),
           }),
         );
     }
+
+    const captureValue = value;
+    return Either.of(
+      new $LazySet<PartialT, ResolvedT>({
+        partials: value.map(resolvedToPartial),
+        resolver: async () => Right(captureValue),
+      }),
+    );
   };
 }
 
@@ -498,28 +469,24 @@ interface $IriFilter {
 }
 
 /**
- * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ * Type of lazy properties that return a single optional value. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class $LazyObjectOption<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
-> {
-  readonly partial: Maybe<PartialObjectT>;
+export class $LazyOption<PartialT, ResolvedT> {
+  readonly partial: Maybe<PartialT>;
   private readonly resolver: (
-    identifier: ObjectIdentifierT,
+    partial: PartialT,
     options?: { preferredLanguages?: readonly string[] },
-  ) => Promise<Either<Error, ResolvedObjectT>>;
+  ) => Promise<Either<Error, ResolvedT>>;
 
   constructor({
     partial,
     resolver,
   }: {
-    partial: Maybe<PartialObjectT>;
+    partial: Maybe<PartialT>;
     resolver: (
-      identifier: ObjectIdentifierT,
+      partial: PartialT,
       options?: { preferredLanguages?: readonly string[] },
-    ) => Promise<Either<Error, ResolvedObjectT>>;
+    ) => Promise<Either<Error, ResolvedT>>;
   }) {
     this.partial = partial;
     this.resolver = resolver;
@@ -527,39 +494,35 @@ export class $LazyObjectOption<
 
   async resolve(options?: {
     preferredLanguages?: readonly string[];
-  }): Promise<Either<Error, Maybe<ResolvedObjectT>>> {
+  }): Promise<Either<Error, Maybe<ResolvedT>>> {
     if (this.partial.isNothing()) {
       return Right(Maybe.empty());
     }
-    return (
-      await this.resolver(this.partial.unsafeCoerce().$identifier(), options)
-    ).map(Maybe.of);
+    return (await this.resolver(this.partial.unsafeCoerce(), options)).map(
+      Maybe.of,
+    );
   }
 }
 
 /**
- * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ * Type of lazy properties that return a set of values. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class $LazyObjectSet<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
-> {
-  readonly partials: readonly PartialObjectT[];
+export class $LazySet<PartialT, ResolvedT> {
+  readonly partials: readonly PartialT[];
   private readonly resolver: (
-    identifiers: readonly ObjectIdentifierT[],
+    partials: readonly PartialT[],
     options?: { preferredLanguages?: readonly string[] },
-  ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
+  ) => Promise<Either<Error, readonly ResolvedT[]>>;
 
   constructor({
     partials,
     resolver,
   }: {
-    partials: readonly PartialObjectT[];
+    partials: readonly PartialT[];
     resolver: (
-      identifiers: readonly ObjectIdentifierT[],
+      partials: readonly PartialT[],
       options?: { preferredLanguages?: readonly string[] },
-    ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
+    ) => Promise<Either<Error, readonly ResolvedT[]>>;
   }) {
     this.partials = partials;
     this.resolver = resolver;
@@ -573,7 +536,7 @@ export class $LazyObjectSet<
     limit?: number;
     offset?: number;
     preferredLanguages?: readonly string[];
-  }): Promise<Either<Error, readonly ResolvedObjectT[]>> {
+  }): Promise<Either<Error, readonly ResolvedT[]>> {
     if (this.partials.length === 0) {
       return Right([]);
     }
@@ -588,14 +551,9 @@ export class $LazyObjectSet<
       offset = 0;
     }
 
-    return await this.resolver(
-      this.partials
-        .slice(offset, offset + limit)
-        .map((partial) => partial.$identifier()),
-      {
-        preferredLanguages: options?.preferredLanguages,
-      },
-    );
+    return await this.resolver(this.partials.slice(offset, offset + limit), {
+      preferredLanguages: options?.preferredLanguages,
+    });
   }
 }
 
@@ -1395,20 +1353,12 @@ export interface RootObject {
   /**
    * Lazy object set property
    */
-  readonly lazyObjectSetProperty: $LazyObjectSet<
-    NestedObject.Identifier,
-    $DefaultPartial,
-    NestedObject
-  >;
+  readonly lazyObjectSetProperty: $LazySet<$DefaultPartial, NestedObject>;
 
   /**
    * Optional lazy object property
    */
-  readonly optionalLazyObjectProperty: $LazyObjectOption<
-    NestedObject.Identifier,
-    $DefaultPartial,
-    NestedObject
-  >;
+  readonly optionalLazyProperty: $LazyOption<$DefaultPartial, NestedObject>;
 
   /**
    * Optional object property
@@ -1430,14 +1380,10 @@ export namespace RootObject {
   export function create(parameters: {
     readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
     readonly lazyObjectSetProperty?:
-      | $LazyObjectSet<NestedObject.Identifier, $DefaultPartial, NestedObject>
+      | $LazySet<$DefaultPartial, NestedObject>
       | readonly NestedObject[];
-    readonly optionalLazyObjectProperty?:
-      | $LazyObjectOption<
-          NestedObject.Identifier,
-          $DefaultPartial,
-          NestedObject
-        >
+    readonly optionalLazyProperty?:
+      | $LazyOption<$DefaultPartial, NestedObject>
       | Maybe<NestedObject>
       | NestedObject;
     readonly optionalObjectProperty?: NestedObject | Maybe<NestedObject>;
@@ -1448,16 +1394,12 @@ export namespace RootObject {
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
       ),
-      lazyObjectSetProperty: $convertToLazyObjectSet<
-        NestedObject.Identifier,
-        $DefaultPartial,
-        NestedObject
-      >($DefaultPartial.createUnsafe)(parameters.lazyObjectSetProperty),
-      optionalLazyObjectProperty: $convertToLazyObjectOption<
-        NestedObject.Identifier,
-        $DefaultPartial,
-        NestedObject
-      >($DefaultPartial.createUnsafe)(parameters.optionalLazyObjectProperty),
+      lazyObjectSetProperty: $convertToLazySet<$DefaultPartial, NestedObject>(
+        $DefaultPartial.createUnsafe,
+      )(parameters.lazyObjectSetProperty),
+      optionalLazyProperty: $convertToLazyOption<$DefaultPartial, NestedObject>(
+        $DefaultPartial.createUnsafe,
+      )(parameters.optionalLazyProperty),
       optionalObjectProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalObjectProperty,
       ).chain((value) =>
@@ -1483,14 +1425,10 @@ export namespace RootObject {
   export function createUnsafe(parameters: {
     readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
     readonly lazyObjectSetProperty?:
-      | $LazyObjectSet<NestedObject.Identifier, $DefaultPartial, NestedObject>
+      | $LazySet<$DefaultPartial, NestedObject>
       | readonly NestedObject[];
-    readonly optionalLazyObjectProperty?:
-      | $LazyObjectOption<
-          NestedObject.Identifier,
-          $DefaultPartial,
-          NestedObject
-        >
+    readonly optionalLazyProperty?:
+      | $LazyOption<$DefaultPartial, NestedObject>
       | Maybe<NestedObject>
       | NestedObject;
     readonly optionalObjectProperty?: NestedObject | Maybe<NestedObject>;
@@ -1526,12 +1464,12 @@ export namespace RootObject {
           new GraphQLList(new GraphQLNonNull(NestedObject.GraphQL)),
         ),
       },
-      optionalLazyObjectProperty: {
+      optionalLazyProperty: {
         args: undefined,
         description: '"Optional lazy object property"',
-        name: "optionalLazyObjectProperty",
+        name: "optionalLazyProperty",
         resolve: (source, _args) =>
-          source.optionalLazyObjectProperty
+          source.optionalLazyProperty
             .resolve()
             .then((either) => either.unsafeCoerce().extractNullable()),
         type: new GraphQLNonNull(NestedObject.GraphQL),
@@ -1584,11 +1522,7 @@ export namespace RootObject {
       filter.lazyObjectSetProperty !== undefined &&
       !((
         filter: $CollectionFilter<$DefaultPartial.Filter>,
-        value: $LazyObjectSet<
-          NestedObject.Identifier,
-          $DefaultPartial,
-          NestedObject
-        >,
+        value: $LazySet<$DefaultPartial, NestedObject>,
       ) =>
         $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
           $DefaultPartial.filter,
@@ -1600,20 +1534,16 @@ export namespace RootObject {
       return false;
     }
     if (
-      filter.optionalLazyObjectProperty !== undefined &&
+      filter.optionalLazyProperty !== undefined &&
       !((
         filter: $MaybeFilter<$DefaultPartial.Filter>,
-        value: $LazyObjectOption<
-          NestedObject.Identifier,
-          $DefaultPartial,
-          NestedObject
-        >,
+        value: $LazyOption<$DefaultPartial, NestedObject>,
       ) =>
         $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
           $DefaultPartial.filter,
         )(filter, value.partial))(
-        filter.optionalLazyObjectProperty,
-        value.optionalLazyObjectProperty,
+        filter.optionalLazyProperty,
+        value.optionalLazyProperty,
       )
     ) {
       return false;
@@ -1651,7 +1581,7 @@ export namespace RootObject {
   export type Filter = {
     readonly $identifier?: $IriFilter;
     readonly lazyObjectSetProperty?: $CollectionFilter<$DefaultPartial.Filter>;
-    readonly optionalLazyObjectProperty?: $MaybeFilter<$DefaultPartial.Filter>;
+    readonly optionalLazyProperty?: $MaybeFilter<$DefaultPartial.Filter>;
     readonly optionalObjectProperty?: $MaybeFilter<NestedObject.Filter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
     readonly requiredStringProperty?: $StringFilter;
@@ -1707,25 +1637,23 @@ export namespace RootObject {
               .map((values) =>
                 values.map(
                   (partials) =>
-                    new $LazyObjectSet<
-                      NestedObject.Identifier,
-                      $DefaultPartial,
-                      NestedObject
-                    >({
+                    new $LazySet<$DefaultPartial, NestedObject>({
                       partials,
-                      resolver: (identifiers, options) =>
+                      resolver: (partials, options) =>
                         _$options.objectSet.nestedObjects({
-                          identifiers,
+                          identifiers: partials.map((partial) =>
+                            partial.$identifier(),
+                          ),
                           ...options,
                         }),
                     }),
                 ),
               ),
         }),
-        optionalLazyObjectProperty: $shaclPropertyFromRdf({
+        optionalLazyProperty: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
-          propertySchema: schema.properties.optionalLazyObjectProperty,
+          propertySchema: schema.properties.optionalLazyProperty,
           typeFromRdf: (resourceValues) =>
             $DefaultPartial
               .fromRdfResourceValues(resourceValues, {
@@ -1736,7 +1664,7 @@ export namespace RootObject {
                 resource: $resource,
                 ignoreRdfType: true,
                 propertyPath:
-                  RootObject.schema.properties.optionalLazyObjectProperty.path,
+                  RootObject.schema.properties.optionalLazyProperty.path,
               })
               .map((values) =>
                 values.length > 0
@@ -1744,22 +1672,20 @@ export namespace RootObject {
                   : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
                       focusResource: $resource,
                       propertyPath:
-                        RootObject.schema.properties.optionalLazyObjectProperty
-                          .path,
+                        RootObject.schema.properties.optionalLazyProperty.path,
                       value: Maybe.empty(),
                     }),
               )
               .map((values) =>
                 values.map(
                   (partial) =>
-                    new $LazyObjectOption<
-                      NestedObject.Identifier,
-                      $DefaultPartial,
-                      NestedObject
-                    >({
+                    new $LazyOption<$DefaultPartial, NestedObject>({
                       partial,
-                      resolver: (identifier, options) =>
-                        _$options.objectSet.nestedObject(identifier, options),
+                      resolver: (partial, options) =>
+                        _$options.objectSet.nestedObject(
+                          partial.$identifier(),
+                          options,
+                        ),
                     }),
                 ),
               ),
@@ -1862,7 +1788,7 @@ export namespace RootObject {
         path: dataFactory.namedNode("http://example.com/lazyObjectSetProperty"),
         get type() {
           return {
-            kind: "LazyObjectSet" as const,
+            kind: "LazySet" as const,
             get partialType() {
               return {
                 kind: "Set" as const,
@@ -1874,14 +1800,12 @@ export namespace RootObject {
           };
         },
       },
-      optionalLazyObjectProperty: {
+      optionalLazyProperty: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/optionalLazyObjectProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/optionalLazyProperty"),
         get type() {
           return {
-            kind: "LazyObjectOption" as const,
+            kind: "LazyOption" as const,
             get partialType() {
               return {
                 kind: "Option" as const,
@@ -1949,8 +1873,8 @@ export namespace RootObject {
       parameters.graph,
     );
     parameters.resource.add(
-      RootObject.schema.properties.optionalLazyObjectProperty.path,
-      parameters.object.optionalLazyObjectProperty.partial
+      RootObject.schema.properties.optionalLazyProperty.path,
+      parameters.object.optionalLazyProperty.partial
         .toList()
         .flatMap((value) => [
           $DefaultPartial.toRdfResource(value, {

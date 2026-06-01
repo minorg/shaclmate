@@ -17,7 +17,7 @@ describe("sparql", () => {
     const languageInSubject = oxigraph.blankNode();
     for (const language of ["", "ar", "en", "fr"]) {
       for (const property of Object.values(
-        kitchenSink.LanguageInPropertiesStruct.schema.properties,
+        kitchenSink.LanguageInStruct.schema.properties,
       )) {
         if (property.kind !== "Shacl") {
           continue;
@@ -118,7 +118,7 @@ describe("sparql", () => {
 
   it("preferredLanguages: unspecified", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInPropertiesStruct.sparqlConstructQueryString({
+      kitchenSink.LanguageInStruct.sparqlConstructQueryString({
         subject: dataFactory.variable("object"),
       }),
     );
@@ -127,7 +127,7 @@ describe("sparql", () => {
 
   it("preferredLanguages: []", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInPropertiesStruct.sparqlConstructQueryString({
+      kitchenSink.LanguageInStruct.sparqlConstructQueryString({
         preferredLanguages: [],
         subject: dataFactory.variable("object"),
       }),
@@ -137,7 +137,7 @@ describe("sparql", () => {
 
   it("preferredLanguages: ['en']", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInPropertiesStruct.sparqlConstructQueryString({
+      kitchenSink.LanguageInStruct.sparqlConstructQueryString({
         preferredLanguages: ["en"],
         subject: dataFactory.variable("object"),
       }),

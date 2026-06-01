@@ -8,11 +8,9 @@ import { objectDataset } from "./objectDataset.js";
 export function testObjectMethods(createObjectSet: ObjectSetFactory) {
   describe("object methods", () => {
     it("missing", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.termPropertiesObjects),
-      );
+      const objectSet = createObjectSet(objectDataset(data.termObjects));
       expect(
-        await objectSet.termPropertiesStruct(
+        await objectSet.termsStruct(
           dataFactory.namedNode("http://example.com/nonextant"),
         ),
       ).toBeLeft();

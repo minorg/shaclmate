@@ -11,13 +11,10 @@ export function testObjectIdentifiersMethods(
 ) {
   describe("object identifiers methods", () => {
     describe("graphs", () => {
-      const defaultGraphObjects = [
-        data.termPropertiesObjects[0],
-        data.termPropertiesObjects[1],
-      ];
-      const namedGraph1Object = data.termPropertiesObjects[2];
+      const defaultGraphObjects = [data.termObjects[0], data.termObjects[1]];
+      const namedGraph1Object = data.termObjects[2];
       const namedGraph1Iri = namedGraph1Object.$identifier() as NamedNode;
-      const namedGraph2Object = data.termPropertiesObjects[3];
+      const namedGraph2Object = data.termObjects[3];
       const namedGraph2Iri = namedGraph2Object.$identifier() as NamedNode;
       const datasetObjects: Record<string, readonly kitchenSink.$Object[]> = {
         "": defaultGraphObjects,
@@ -39,7 +36,7 @@ export function testObjectIdentifiersMethods(
       describe("default graph", () => {
         it("no query", async ({ expect }) => {
           expect(
-            (await defaultGraphObjectSet.termPropertiesStructIdentifiers())
+            (await defaultGraphObjectSet.termsStructIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value)
               .sort(),
@@ -51,7 +48,7 @@ export function testObjectIdentifiersMethods(
         it("query of named graph", async ({ expect }) => {
           expect(
             (
-              await defaultGraphObjectSet.termPropertiesStructIdentifiers({
+              await defaultGraphObjectSet.termsStructIdentifiers({
                 graph: namedGraph1Iri,
               })
             )
@@ -64,7 +61,7 @@ export function testObjectIdentifiersMethods(
       describe("named graph", () => {
         it("no query", async ({ expect }) => {
           expect(
-            (await namedGraph1ObjectSet.termPropertiesStructIdentifiers())
+            (await namedGraph1ObjectSet.termsStructIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value),
           ).toStrictEqual([namedGraph1Object.$identifier().value]);
@@ -73,7 +70,7 @@ export function testObjectIdentifiersMethods(
         it("query of different named graph", async ({ expect }) => {
           expect(
             (
-              await namedGraph1ObjectSet.termPropertiesStructIdentifiers({
+              await namedGraph1ObjectSet.termsStructIdentifiers({
                 graph: namedGraph2Iri,
               })
             )
@@ -86,7 +83,7 @@ export function testObjectIdentifiersMethods(
       describe("union graph", () => {
         it("no query", async ({ expect }) => {
           expect(
-            (await unionGraphObjectSet.termPropertiesStructIdentifiers())
+            (await unionGraphObjectSet.termsStructIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value)
               .sort(),
@@ -100,7 +97,7 @@ export function testObjectIdentifiersMethods(
         it("query of default graph", async ({ expect }) => {
           expect(
             (
-              await unionGraphObjectSet.termPropertiesStructIdentifiers({
+              await unionGraphObjectSet.termsStructIdentifiers({
                 graph: dataFactory.defaultGraph(),
               })
             )
@@ -114,7 +111,7 @@ export function testObjectIdentifiersMethods(
         it("query of named graph 1", async ({ expect }) => {
           expect(
             (
-              await unionGraphObjectSet.termPropertiesStructIdentifiers({
+              await unionGraphObjectSet.termsStructIdentifiers({
                 graph: namedGraph1Iri,
               })
             )
@@ -126,7 +123,7 @@ export function testObjectIdentifiersMethods(
         it("query of named graph 2", async ({ expect }) => {
           expect(
             (
-              await unionGraphObjectSet.termPropertiesStructIdentifiers({
+              await unionGraphObjectSet.termsStructIdentifiers({
                 graph: namedGraph2Iri,
               })
             )
@@ -138,55 +135,45 @@ export function testObjectIdentifiersMethods(
     });
 
     it("no options", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.termPropertiesObjects),
-      );
+      const objectSet = createObjectSet(objectDataset(data.termObjects));
       expect(
-        (await objectSet.termPropertiesStructIdentifiers())
+        (await objectSet.termsStructIdentifiers())
           .unsafeCoerce()
           .map((identifier) => identifier.value),
       ).toStrictEqual(
-        data.termPropertiesObjects.map((object) => object.$identifier().value),
+        data.termObjects.map((object) => object.$identifier().value),
       );
     });
 
     it("limit 1", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.termPropertiesObjects),
-      );
+      const objectSet = createObjectSet(objectDataset(data.termObjects));
       expect(
-        (await objectSet.termPropertiesStructIdentifiers({ limit: 1 }))
+        (await objectSet.termsStructIdentifiers({ limit: 1 }))
           .unsafeCoerce()
           .map((identifier) => identifier.value),
-      ).toStrictEqual([data.termPropertiesObjects[0].$identifier().value]);
+      ).toStrictEqual([data.termObjects[0].$identifier().value]);
     });
 
     it("offset 1", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.termPropertiesObjects),
-      );
+      const objectSet = createObjectSet(objectDataset(data.termObjects));
       expect(
         (
-          await objectSet.termPropertiesStructIdentifiers({
+          await objectSet.termsStructIdentifiers({
             offset: 1,
           })
         )
           .unsafeCoerce()
           .map((identifier) => identifier.value),
       ).toStrictEqual(
-        data.termPropertiesObjects
-          .slice(1)
-          .map((object) => object.$identifier().value),
+        data.termObjects.slice(1).map((object) => object.$identifier().value),
       );
     });
 
     it("limit 2 offset 1", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.termPropertiesObjects),
-      );
+      const objectSet = createObjectSet(objectDataset(data.termObjects));
       expect(
         (
-          await objectSet.termPropertiesStructIdentifiers({
+          await objectSet.termsStructIdentifiers({
             limit: 2,
             offset: 1,
           })
@@ -195,8 +182,8 @@ export function testObjectIdentifiersMethods(
           .map((identifier) => identifier.value)
           .sort(),
       ).toStrictEqual([
-        data.termPropertiesObjects[1].$identifier().value,
-        data.termPropertiesObjects[2].$identifier().value,
+        data.termObjects[1].$identifier().value,
+        data.termObjects[2].$identifier().value,
       ]);
     });
 
