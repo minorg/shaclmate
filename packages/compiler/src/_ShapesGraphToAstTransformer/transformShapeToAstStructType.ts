@@ -77,7 +77,7 @@ export function transformShapeToAstStructType(
       return Either.of(Maybe.empty());
     }
 
-    if (!nodeShape.extern) {
+    if (!nodeShape.extern.orDefault(false)) {
       if (nodeShape.properties.length === 0) {
         // A node shape must have sh:property to be considered a StructType
         return Either.of(Maybe.empty());
