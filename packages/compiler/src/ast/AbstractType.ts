@@ -70,6 +70,10 @@ export abstract class AbstractType {
       return false;
     }
 
+    if (!maybeEquals(strictEquals)(this.name, other.name)) {
+      return false;
+    }
+
     return true;
   }
 
