@@ -508,27 +508,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :setLazyToResolvedBlankNodeOrIriIdentifier
     ] .
 
-:ListPropertiesStruct
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Struct node shape that uses the list shapes in properties." ;
-    sh:property [
-        sh:maxCount 1 ;
-        sh:node :StructList ;
-        sh:path :structList
-    ], [
-        sh:maxCount 1 ;
-        sh:node :IriList ;
-        sh:path :iriList
-    ], [
-        sh:maxCount 1 ;
-        sh:node :StringList ;
-        sh:path :stringList
-    ], [
-        sh:maxCount 1 ;
-        sh:node :StringListList ;
-        sh:path :stringListList
-    ] .
-
 :ListSetsStruct
     a owl:Class, sh:NodeShape ;
     sh:property [
@@ -549,6 +528,27 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
                 sh:datatype xsd:string
             ]
         )
+    ] .
+
+:ListsStruct
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Struct node shape that uses the list shapes in properties." ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:node :StructList ;
+        sh:path :structList
+    ], [
+        sh:maxCount 1 ;
+        sh:node :IriList ;
+        sh:path :iriList
+    ], [
+        sh:maxCount 1 ;
+        sh:node :StringList ;
+        sh:path :stringList
+    ], [
+        sh:maxCount 1 ;
+        sh:node :StringListList ;
+        sh:path :stringListList
     ] .
 
 :MutablePropertiesStruct

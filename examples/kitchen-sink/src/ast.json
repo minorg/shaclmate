@@ -4345,247 +4345,6 @@
       ]
     },
     {
-      "comment": "Struct node shape that uses the list shapes in properties.",
-      "kind": "Struct",
-      "name": "ListPropertiesStruct",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "ListPropertiesStruct",
-        "termType": "NamedNode",
-        "value": "http://example.com/ListPropertiesStruct"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "ListPropertiesStruct",
-        "termType": "NamedNode",
-        "value": "http://example.com/ListPropertiesStruct"
-      },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "ListPropertiesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/ListPropertiesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "ListPropertiesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/ListPropertiesStruct"
-        }
-      ],
-      "properties": [
-        {
-          "name": "structList",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/structList)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_112"
-          },
-          "type": {
-            "comment": "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property.",
-            "kind": "Option",
-            "name": "StructList",
-            "shapeIdentifier": {
-              "prefix": "",
-              "reference": "StructList",
-              "termType": "NamedNode",
-              "value": "http://example.com/StructList"
-            },
-            "itemType": {
-              "comment": "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property.",
-              "kind": "List",
-              "name": "StructList",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "StructList",
-                "termType": "NamedNode",
-                "value": "http://example.com/StructList"
-              },
-              "itemType": {
-                "comment": "Struct node shape that isn't an rdfs:Class.",
-                "kind": "Struct",
-                "name": "NonClassStruct",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "NonClassStruct",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/NonClassStruct"
-                },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "NonClassStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/NonClassStruct"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "iriList",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/iriList)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_113"
-          },
-          "type": {
-            "comment": "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.",
-            "kind": "Option",
-            "name": "IriList",
-            "shapeIdentifier": {
-              "prefix": "",
-              "reference": "IriList",
-              "termType": "NamedNode",
-              "value": "http://example.com/IriList"
-            },
-            "itemType": {
-              "comment": "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.",
-              "kind": "List",
-              "name": "IriList",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "IriList",
-                "termType": "NamedNode",
-                "value": "http://example.com/IriList"
-              },
-              "itemType": {
-                "kind": "Iri",
-                "shapeIdentifier": {
-                  "termType": "BlankNode",
-                  "value": "df_0_85"
-                },
-                "nodeKinds": [
-                  "IRI"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "name": "stringList",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/stringList)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_114"
-          },
-          "type": {
-            "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
-            "kind": "Option",
-            "name": "StringList",
-            "shapeIdentifier": {
-              "prefix": "",
-              "reference": "StringList",
-              "termType": "NamedNode",
-              "value": "http://example.com/StringList"
-            },
-            "itemType": {
-              "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
-              "kind": "List",
-              "name": "StringList",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "StringList",
-                "termType": "NamedNode",
-                "value": "http://example.com/StringList"
-              },
-              "itemType": {
-                "kind": "Literal",
-                "shapeIdentifier": {
-                  "termType": "BlankNode",
-                  "value": "df_0_197"
-                },
-                "nodeKinds": [
-                  "Literal"
-                ],
-                "datatype": {
-                  "prefix": "xsd",
-                  "reference": "string",
-                  "termType": "NamedNode",
-                  "value": "http://www.w3.org/2001/XMLSchema#string"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "stringListList",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/stringListList)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_115"
-          },
-          "type": {
-            "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
-            "kind": "Option",
-            "name": "StringListList",
-            "shapeIdentifier": {
-              "prefix": "",
-              "reference": "StringListList",
-              "termType": "NamedNode",
-              "value": "http://example.com/StringListList"
-            },
-            "itemType": {
-              "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
-              "kind": "List",
-              "name": "StringListList",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "StringListList",
-                "termType": "NamedNode",
-                "value": "http://example.com/StringListList"
-              },
-              "itemType": {
-                "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
-                "kind": "List",
-                "name": "StringList",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "StringList",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/StringList"
-                },
-                "itemType": {
-                  "kind": "Literal",
-                  "shapeIdentifier": {
-                    "termType": "BlankNode",
-                    "value": "df_0_197"
-                  },
-                  "nodeKinds": [
-                    "Literal"
-                  ],
-                  "datatype": {
-                    "prefix": "xsd",
-                    "reference": "string",
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
       "kind": "Struct",
       "name": "ListSetsStruct",
       "shapeIdentifier": {
@@ -4629,7 +4388,7 @@
           "path": "PredicatePath(http://example.com/listSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_116"
+            "value": "df_0_112"
           },
           "type": {
             "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
@@ -4678,7 +4437,7 @@
           "path": "PredicatePath(http://example.com/listListSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_117"
+            "value": "df_0_113"
           },
           "type": {
             "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
@@ -4738,21 +4497,21 @@
           "path": "PredicatePath(http://example.com/listUnionSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_118"
+            "value": "df_0_114"
           },
           "type": {
             "comment": "Set of typeof union that includes a list",
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_118"
+              "value": "df_0_114"
             },
             "itemType": {
               "comment": "Set of typeof union that includes a list",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_118"
+                "value": "df_0_114"
               },
               "members": [
                 {
@@ -4789,7 +4548,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_122"
+                      "value": "df_0_118"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -4805,6 +4564,247 @@
               ]
             },
             "minCount": 0
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Struct node shape that uses the list shapes in properties.",
+      "kind": "Struct",
+      "name": "ListsStruct",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "ListsStruct",
+        "termType": "NamedNode",
+        "value": "http://example.com/ListsStruct"
+      },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "ListsStruct",
+        "termType": "NamedNode",
+        "value": "http://example.com/ListsStruct"
+      },
+      "identifierType": {
+        "kind": "Identifier",
+        "shapeIdentifier": {
+          "prefix": "",
+          "reference": "ListsStruct",
+          "termType": "NamedNode",
+          "value": "http://example.com/ListsStruct"
+        },
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "ListsStruct",
+          "termType": "NamedNode",
+          "value": "http://example.com/ListsStruct"
+        }
+      ],
+      "properties": [
+        {
+          "name": "structList",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/structList)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_119"
+          },
+          "type": {
+            "comment": "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property.",
+            "kind": "Option",
+            "name": "StructList",
+            "shapeIdentifier": {
+              "prefix": "",
+              "reference": "StructList",
+              "termType": "NamedNode",
+              "value": "http://example.com/StructList"
+            },
+            "itemType": {
+              "comment": "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property.",
+              "kind": "List",
+              "name": "StructList",
+              "shapeIdentifier": {
+                "prefix": "",
+                "reference": "StructList",
+                "termType": "NamedNode",
+                "value": "http://example.com/StructList"
+              },
+              "itemType": {
+                "comment": "Struct node shape that isn't an rdfs:Class.",
+                "kind": "Struct",
+                "name": "NonClassStruct",
+                "shapeIdentifier": {
+                  "prefix": "",
+                  "reference": "NonClassStruct",
+                  "termType": "NamedNode",
+                  "value": "http://example.com/NonClassStruct"
+                },
+                "identifierType": {
+                  "kind": "Identifier",
+                  "shapeIdentifier": {
+                    "prefix": "",
+                    "reference": "NonClassStruct",
+                    "termType": "NamedNode",
+                    "value": "http://example.com/NonClassStruct"
+                  },
+                  "nodeKinds": [
+                    "BlankNode",
+                    "IRI"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "iriList",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/iriList)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_120"
+          },
+          "type": {
+            "comment": "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.",
+            "kind": "Option",
+            "name": "IriList",
+            "shapeIdentifier": {
+              "prefix": "",
+              "reference": "IriList",
+              "termType": "NamedNode",
+              "value": "http://example.com/IriList"
+            },
+            "itemType": {
+              "comment": "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.",
+              "kind": "List",
+              "name": "IriList",
+              "shapeIdentifier": {
+                "prefix": "",
+                "reference": "IriList",
+                "termType": "NamedNode",
+                "value": "http://example.com/IriList"
+              },
+              "itemType": {
+                "kind": "Iri",
+                "shapeIdentifier": {
+                  "termType": "BlankNode",
+                  "value": "df_0_85"
+                },
+                "nodeKinds": [
+                  "IRI"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "name": "stringList",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/stringList)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_121"
+          },
+          "type": {
+            "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
+            "kind": "Option",
+            "name": "StringList",
+            "shapeIdentifier": {
+              "prefix": "",
+              "reference": "StringList",
+              "termType": "NamedNode",
+              "value": "http://example.com/StringList"
+            },
+            "itemType": {
+              "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
+              "kind": "List",
+              "name": "StringList",
+              "shapeIdentifier": {
+                "prefix": "",
+                "reference": "StringList",
+                "termType": "NamedNode",
+                "value": "http://example.com/StringList"
+              },
+              "itemType": {
+                "kind": "Literal",
+                "shapeIdentifier": {
+                  "termType": "BlankNode",
+                  "value": "df_0_197"
+                },
+                "nodeKinds": [
+                  "Literal"
+                ],
+                "datatype": {
+                  "prefix": "xsd",
+                  "reference": "string",
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "stringListList",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/stringListList)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_122"
+          },
+          "type": {
+            "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
+            "kind": "Option",
+            "name": "StringListList",
+            "shapeIdentifier": {
+              "prefix": "",
+              "reference": "StringListList",
+              "termType": "NamedNode",
+              "value": "http://example.com/StringListList"
+            },
+            "itemType": {
+              "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
+              "kind": "List",
+              "name": "StringListList",
+              "shapeIdentifier": {
+                "prefix": "",
+                "reference": "StringListList",
+                "termType": "NamedNode",
+                "value": "http://example.com/StringListList"
+              },
+              "itemType": {
+                "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
+                "kind": "List",
+                "name": "StringList",
+                "shapeIdentifier": {
+                  "prefix": "",
+                  "reference": "StringList",
+                  "termType": "NamedNode",
+                  "value": "http://example.com/StringList"
+                },
+                "itemType": {
+                  "kind": "Literal",
+                  "shapeIdentifier": {
+                    "termType": "BlankNode",
+                    "value": "df_0_197"
+                  },
+                  "nodeKinds": [
+                    "Literal"
+                  ],
+                  "datatype": {
+                    "prefix": "xsd",
+                    "reference": "string",
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  }
+                }
+              }
+            }
           }
         }
       ]

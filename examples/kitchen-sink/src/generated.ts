@@ -23381,1400 +23381,6 @@ export namespace LazyPropertiesStruct {
         variablePrefix,
       }),
     );
-} /**
- * Struct node shape that uses the list shapes in properties.
- */
-
-export interface ListPropertiesStruct {
-  readonly $identifier: () => ListPropertiesStruct.Identifier;
-
-  readonly $type: "ListPropertiesStruct";
-
-  readonly iriList: Maybe<readonly NamedNode[]>;
-
-  readonly stringList: Maybe<readonly string[]>;
-
-  readonly stringListList: Maybe<readonly (readonly string[])[]>;
-
-  readonly structList: Maybe<readonly NonClassStruct[]>;
-}
-
-export namespace ListPropertiesStruct {
-  export function create(parameters?: {
-    readonly $identifier?:
-      | (() => ListPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly iriList?:
-      | readonly (string | NamedNode)[]
-      | Maybe<readonly NamedNode[]>;
-    readonly stringList?: readonly string[] | Maybe<readonly string[]>;
-    readonly stringListList?:
-      | readonly (readonly string[])[]
-      | Maybe<readonly (readonly string[])[]>;
-    readonly structList?:
-      | readonly NonClassStruct[]
-      | Maybe<readonly NonClassStruct[]>;
-  }): Either<Error, ListPropertiesStruct> {
-    return $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      iriList: $convertToMaybe($convertToList($convertToIri<string>, true))(
-        parameters?.iriList,
-      ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
-          ListPropertiesStruct.schema.properties.iriList.type,
-          value,
-        ),
-      ),
-      stringList: $convertToMaybe(
-        $convertToList($identityConversionFunction, true),
-      )(parameters?.stringList).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
-          ListPropertiesStruct.schema.properties.stringList.type,
-          value,
-        ),
-      ),
-      stringListList: $convertToMaybe(
-        $convertToList($convertToList($identityConversionFunction, true), true),
-      )(parameters?.stringListList).chain((value) =>
-        $validateMaybe(
-          $validateArray(
-            $validateArray($identityValidationFunction, true),
-            true,
-          ),
-        )(ListPropertiesStruct.schema.properties.stringListList.type, value),
-      ),
-      structList: $convertToMaybe(
-        $convertToList($identityConversionFunction, true),
-      )(parameters?.structList).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
-          ListPropertiesStruct.schema.properties.structList.type,
-          value,
-        ),
-      ),
-    })
-      .map((properties) => ({
-        ...properties,
-        $type: "ListPropertiesStruct" as const,
-      }))
-      .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
-  }
-
-  export function createUnsafe(parameters?: {
-    readonly $identifier?:
-      | (() => ListPropertiesStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly iriList?:
-      | readonly (string | NamedNode)[]
-      | Maybe<readonly NamedNode[]>;
-    readonly stringList?: readonly string[] | Maybe<readonly string[]>;
-    readonly stringListList?:
-      | readonly (readonly string[])[]
-      | Maybe<readonly (readonly string[])[]>;
-    readonly structList?:
-      | readonly NonClassStruct[]
-      | Maybe<readonly NonClassStruct[]>;
-  }): ListPropertiesStruct {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export function equals(
-    left: ListPropertiesStruct,
-    right: ListPropertiesStruct,
-  ): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, $booleanEquals),
-          ))(left.iriList, right.iriList).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "iriList",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, $strictEquals),
-          ))(left.stringList, right.stringList).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "stringList",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, (left, right) =>
-              $arrayEquals(left, right, $strictEquals),
-            ),
-          ))(left.stringListList, right.stringListList).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "stringListList",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, NonClassStruct.equals),
-          ))(left.structList, right.structList).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "structList",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
-  }
-
-  export function hash<HasherT extends $Hasher>(
-    hasher: HasherT,
-    _listPropertiesStruct: ListPropertiesStruct,
-  ): HasherT {
-    ListPropertiesStruct.hashShaclProperties(hasher, _listPropertiesStruct);
-    hasher.update(_listPropertiesStruct.$identifier().value);
-    hasher.update(_listPropertiesStruct.$type);
-    return hasher;
-  }
-
-  export function hashShaclProperties<HasherT extends $Hasher>(
-    hasher: HasherT,
-    _listPropertiesStruct: ListPropertiesStruct,
-  ): HasherT {
-    $hashMaybe($hashArray($hashTerm))(hasher, _listPropertiesStruct.iriList);
-    $hashMaybe($hashArray($hashString))(
-      hasher,
-      _listPropertiesStruct.stringList,
-    );
-    $hashMaybe($hashArray($hashArray($hashString)))(
-      hasher,
-      _listPropertiesStruct.stringListList,
-    );
-    $hashMaybe($hashArray(NonClassStruct.hash))(
-      hasher,
-      _listPropertiesStruct.structList,
-    );
-    return hasher;
-  }
-
-  export type Identifier = BlankNode | NamedNode;
-
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly "@type": "ListPropertiesStruct";
-    readonly iriList?: readonly { readonly "@id": string }[];
-    readonly stringList?: readonly string[];
-    readonly stringListList?: readonly (readonly string[])[];
-    readonly structList?: readonly NonClassStruct.Json[];
-  };
-
-  export namespace Json {
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("ListPropertiesStruct"),
-          iriList: z
-            .object({ "@id": z.string().min(1) })
-            .array()
-            .readonly()
-            .optional()
-            .meta({}),
-          stringList: z.string().array().readonly().optional().meta({}),
-          stringListList: z
-            .string()
-            .array()
-            .readonly()
-            .array()
-            .readonly()
-            .optional()
-            .meta({}),
-          structList: NonClassStruct.Json.schema()
-            .array()
-            .readonly()
-            .optional()
-            .meta({}),
-        })
-        .meta({
-          description:
-            "Struct node shape that uses the list shapes in properties.",
-        }) satisfies z.ZodType<Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "ListPropertiesStruct" as const },
-                scope: `${scopePrefix}/properties/@type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/@type`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/iriList`, type: "Control" },
-          { scope: `${scopePrefix}/properties/stringList`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/stringListList`,
-            type: "Control",
-          },
-          NonClassStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/structList`,
-          }),
-        ],
-        label: "ListPropertiesStruct",
-        type: "Group",
-      };
-    }
-  }
-
-  export function filter(
-    filter: ListPropertiesStruct.Filter,
-    value: ListPropertiesStruct,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.iriList !== undefined &&
-      !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
-        $filterArray<NamedNode, $IriFilter>($filterIri),
-      )(filter.iriList, value.iriList)
-    ) {
-      return false;
-    }
-    if (
-      filter.stringList !== undefined &&
-      !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
-      )(filter.stringList, value.stringList)
-    ) {
-      return false;
-    }
-    if (
-      filter.stringListList !== undefined &&
-      !$filterMaybe<
-        readonly (readonly string[])[],
-        $CollectionFilter<$CollectionFilter<$StringFilter>>
-      >(
-        $filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
-          $filterArray<string, $StringFilter>($filterString),
-        ),
-      )(filter.stringListList, value.stringListList)
-    ) {
-      return false;
-    }
-    if (
-      filter.structList !== undefined &&
-      !$filterMaybe<
-        readonly NonClassStruct[],
-        $CollectionFilter<NonClassStruct.Filter>
-      >(
-        $filterArray<NonClassStruct, NonClassStruct.Filter>(
-          NonClassStruct.filter,
-        ),
-      )(filter.structList, value.structList)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly iriList?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
-    readonly stringList?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
-    readonly stringListList?: $MaybeFilter<
-      $CollectionFilter<$CollectionFilter<$StringFilter>>
-    >;
-    readonly structList?: $MaybeFilter<
-      $CollectionFilter<NonClassStruct.Filter>
-    >;
-  };
-
-  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    ListPropertiesStruct.Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.iriList,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "iriList",
-        propertySchema: schema.properties.iriList,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $CollectionFilter<$IriFilter>,
-          $CollectionSchema<$IriSchema<string>>
-        >(
-          $listSparqlConstructTriples<$IriFilter, $IriSchema<string>>(
-            (_: object) => [],
-          ),
-        ),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.stringList,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "stringList",
-        propertySchema: schema.properties.stringList,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $CollectionFilter<$StringFilter>,
-          $CollectionSchema<$StringSchema<string>>
-        >(
-          $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
-            (_: object) => [],
-          ),
-        ),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.stringListList,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "stringListList",
-        propertySchema: schema.properties.stringListList,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $CollectionFilter<$CollectionFilter<$StringFilter>>,
-          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
-        >(
-          $listSparqlConstructTriples<
-            $CollectionFilter<$StringFilter>,
-            $CollectionSchema<$StringSchema<string>>
-          >(
-            $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
-              (_: object) => [],
-            ),
-          ),
-        ),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.structList,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "structList",
-        propertySchema: schema.properties.structList,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $CollectionFilter<NonClassStruct.Filter>,
-          $CollectionSchema<typeof NonClassStruct.schema>
-        >(
-          $listSparqlConstructTriples<
-            NonClassStruct.Filter,
-            typeof NonClassStruct.schema
-          >(NonClassStruct.valueSparqlConstructTriples),
-        ),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    ListPropertiesStruct.Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: ListPropertiesStruct.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: ListPropertiesStruct.schema.properties.$identifier.type,
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.iriList,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "iriList",
-        propertySchema: schema.properties.iriList,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $CollectionFilter<$IriFilter>,
-          $CollectionSchema<$IriSchema<string>>
-        >(
-          $listSparqlWherePatterns<$IriFilter, $IriSchema<string>>(
-            $iriSparqlWherePatterns,
-          ),
-        ),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.stringList,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "stringList",
-        propertySchema: schema.properties.stringList,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $CollectionFilter<$StringFilter>,
-          $CollectionSchema<$StringSchema<string>>
-        >(
-          $listSparqlWherePatterns<$StringFilter, $StringSchema<string>>(
-            $stringSparqlWherePatterns,
-          ),
-        ),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.stringListList,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "stringListList",
-        propertySchema: schema.properties.stringListList,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $CollectionFilter<$CollectionFilter<$StringFilter>>,
-          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
-        >(
-          $listSparqlWherePatterns<
-            $CollectionFilter<$StringFilter>,
-            $CollectionSchema<$StringSchema<string>>
-          >(
-            $listSparqlWherePatterns<$StringFilter, $StringSchema<string>>(
-              $stringSparqlWherePatterns,
-            ),
-          ),
-        ),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.structList,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "structList",
-        propertySchema: schema.properties.structList,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $CollectionFilter<NonClassStruct.Filter>,
-          $CollectionSchema<typeof NonClassStruct.schema>
-        >(
-          $listSparqlWherePatterns<
-            NonClassStruct.Filter,
-            typeof NonClassStruct.schema
-          >(NonClassStruct.valueSparqlWherePatterns),
-        ),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function fromJson(
-    $json: ListPropertiesStruct.Json,
-  ): Either<Error, ListPropertiesStruct> {
-    return $sequenceRecord({
-      $identifier: Either.of<Error, BlankNode | NamedNode>(
-        $json["@id"].startsWith("_:")
-          ? dataFactory.blankNode($json["@id"].substring(2))
-          : dataFactory.namedNode($json["@id"]),
-      ),
-      iriList: Maybe.fromNullable($json["iriList"])
-        .map((item) =>
-          Either.sequence<Error, NamedNode>(
-            item.map((item) =>
-              Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
-            ),
-          ).map(Maybe.of),
-        )
-        .orDefault(Either.of(Maybe.empty())),
-      stringList: Maybe.fromNullable($json["stringList"])
-        .map((item) =>
-          Either.sequence<Error, string>(
-            item.map((item) => Either.of<Error, string>(item)),
-          ).map(Maybe.of),
-        )
-        .orDefault(Either.of(Maybe.empty())),
-      stringListList: Maybe.fromNullable($json["stringListList"])
-        .map((item) =>
-          Either.sequence<Error, readonly string[]>(
-            item.map((item) =>
-              Either.sequence<Error, string>(
-                item.map((item) => Either.of<Error, string>(item)),
-              ),
-            ),
-          ).map(Maybe.of),
-        )
-        .orDefault(Either.of(Maybe.empty())),
-      structList: Maybe.fromNullable($json["structList"])
-        .map((item) =>
-          Either.sequence<Error, NonClassStruct>(
-            item.map((item) => NonClassStruct.fromJson(item)),
-          ).map(Maybe.of),
-        )
-        .orDefault(Either.of(Maybe.empty())),
-    }).chain(create);
-  }
-
-  export const _fromRdfResource: $_FromRdfResourceFunction<
-    ListPropertiesStruct
-  > = ($resource, _$options) => {
-    return (
-      !_$options.ignoreRdfType
-        ? $ensureRdfResourceType(
-            $resource,
-            [ListPropertiesStruct.fromRdfType],
-            { graph: _$options.graph },
-          )
-        : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head()),
-        iriList: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.iriList,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath:
-                        ListPropertiesStruct.schema.properties.iriList.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) => value.toIri()),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<readonly NamedNode[]>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        ListPropertiesStruct.schema.properties.iriList.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }),
-        stringList: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.stringList,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath:
-                        ListPropertiesStruct.schema.properties.stringList.path,
-                      values: valueList.toArray(),
-                    }),
-                  )
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
-                      ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<readonly string[]>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        ListPropertiesStruct.schema.properties.stringList.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }),
-        stringListList: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.stringListList,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath:
-                        ListPropertiesStruct.schema.properties.stringListList
-                          .path,
-                      values: valueList.toArray(),
-                    }),
-                  )
-                    .chain((values) =>
-                      values.chainMap((value) =>
-                        value.toList({ graph: _$options.graph }),
-                      ),
-                    )
-                    .chain((valueLists) =>
-                      valueLists.chainMap((valueList) =>
-                        Right(
-                          Resource.Values.fromArray({
-                            focusResource: $resource,
-                            propertyPath:
-                              ListPropertiesStruct.schema.properties
-                                .stringListList.path,
-                            values: valueList.toArray(),
-                          }),
-                        )
-                          .chain((values) =>
-                            $fromRdfPreferredLanguages(
-                              values,
-                              _$options.preferredLanguages,
-                            ),
-                          )
-                          .chain((values) =>
-                            values.chainMap((value) => value.toString()),
-                          ),
-                      ),
-                    )
-                    .map((valueLists) =>
-                      valueLists.map((valueList) => valueList.toArray()),
-                    ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<readonly (readonly string[])[]>
-                    >({
-                      focusResource: $resource,
-                      propertyPath:
-                        ListPropertiesStruct.schema.properties.stringListList
-                          .path,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }),
-        structList: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.structList,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  NonClassStruct.fromRdfResourceValues(
-                    Right(
-                      Resource.Values.fromArray({
-                        focusResource: $resource,
-                        propertyPath:
-                          ListPropertiesStruct.schema.properties.structList
-                            .path,
-                        values: valueList.toArray(),
-                      }),
-                    ),
-                    {
-                      context: _$options.context,
-                      graph: _$options.graph,
-                      objectSet: _$options.objectSet,
-                      preferredLanguages: _$options.preferredLanguages,
-                      resource: $resource,
-                      ignoreRdfType: true,
-                      propertyPath:
-                        ListPropertiesStruct.schema.properties.structList.path,
-                    },
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<readonly NonClassStruct[]>>(
-                      {
-                        focusResource: $resource,
-                        propertyPath:
-                          ListPropertiesStruct.schema.properties.structList
-                            .path,
-                        value: Maybe.empty(),
-                      },
-                    ),
-              ),
-        }),
-      }).chain((properties) => create(properties)),
-    );
-  };
-
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    ListPropertiesStruct
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            ListPropertiesStruct.fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ListPropertiesStruct",
-  );
-
-  export function isListPropertiesStruct(
-    object: $Object,
-  ): object is ListPropertiesStruct {
-    return object.$type === "ListPropertiesStruct";
-  }
-
-  export const schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
-      iriList: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/iriList"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "List" as const,
-            itemType: { kind: "Iri" as const },
-          },
-        },
-      },
-      stringList: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/stringList"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "List" as const,
-            itemType: { kind: "String" as const },
-          },
-        },
-      },
-      stringListList: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/stringListList"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "List" as const,
-            itemType: {
-              kind: "List" as const,
-              itemType: { kind: "String" as const },
-            },
-          },
-        },
-      },
-      structList: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/structList"),
-        get type() {
-          return {
-            kind: "Option" as const,
-            get itemType() {
-              return {
-                kind: "List" as const,
-                get itemType() {
-                  return NonClassStruct.schema;
-                },
-              };
-            },
-          };
-        },
-      },
-    },
-  } as const;
-
-  export function sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: ListPropertiesStruct.Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "listPropertiesStruct";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ListPropertiesStruct.focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          ListPropertiesStruct.focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof ListPropertiesStruct.sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ListPropertiesStruct.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function toJson(
-    _listPropertiesStruct: ListPropertiesStruct,
-  ): ListPropertiesStruct.Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _listPropertiesStruct.$identifier().termType === "BlankNode"
-            ? `_:${_listPropertiesStruct.$identifier().value}`
-            : _listPropertiesStruct.$identifier().value,
-        "@type": _listPropertiesStruct.$type,
-        iriList: _listPropertiesStruct.iriList
-          .map((item) => item.map((item) => ({ "@id": item.value })))
-          .extract(),
-        stringList: _listPropertiesStruct.stringList
-          .map((item) => item.map((item) => item))
-          .extract(),
-        stringListList: _listPropertiesStruct.stringListList
-          .map((item) => item.map((item) => item.map((item) => item)))
-          .extract(),
-        structList: _listPropertiesStruct.structList
-          .map((item) => item.map((item) => NonClassStruct.toJson(item)))
-          .extract(),
-      } satisfies ListPropertiesStruct.Json),
-    );
-  }
-
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    ListPropertiesStruct.Identifier,
-    ListPropertiesStruct
-  > = (parameters) => {
-    if (!parameters.ignoreRdfType) {
-      parameters.resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ListPropertiesStruct"),
-        parameters.graph,
-      );
-    }
-    parameters.resource.add(
-      ListPropertiesStruct.schema.properties.iriList.path,
-      parameters.object.iriList.toList().flatMap((value) => [
-        value.length > 0
-          ? value.reduce(
-              (
-                { currentSubListResource, listResource },
-                item,
-                itemIndex,
-                list,
-              ) => {
-                if (itemIndex === 0) {
-                  currentSubListResource = listResource;
-                } else {
-                  const newSubListResource = parameters.resourceSet.resource(
-                    (() => dataFactory.blankNode())(),
-                  );
-                  currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
-                    newSubListResource.identifier,
-                    parameters.graph,
-                  );
-                  currentSubListResource = newSubListResource;
-                }
-
-                currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
-                  [item],
-                  parameters.graph,
-                );
-
-                if (itemIndex + 1 === list.length) {
-                  currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
-                    parameters.graph,
-                  );
-                }
-
-                return { currentSubListResource, listResource };
-              },
-              {
-                currentSubListResource: null,
-                listResource: parameters.resourceSet.resource(
-                  (() => dataFactory.blankNode())(),
-                ),
-              } as {
-                currentSubListResource: Resource<BlankNode> | null;
-                listResource: Resource<BlankNode>;
-              },
-            ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
-      ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      ListPropertiesStruct.schema.properties.stringList.path,
-      parameters.object.stringList.toList().flatMap((value) => [
-        value.length > 0
-          ? value.reduce(
-              (
-                { currentSubListResource, listResource },
-                item,
-                itemIndex,
-                list,
-              ) => {
-                if (itemIndex === 0) {
-                  currentSubListResource = listResource;
-                } else {
-                  const newSubListResource = parameters.resourceSet.resource(
-                    (() => dataFactory.blankNode())(),
-                  );
-                  currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
-                    newSubListResource.identifier,
-                    parameters.graph,
-                  );
-                  currentSubListResource = newSubListResource;
-                }
-
-                currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
-                  [$literalFactory.string(item)],
-                  parameters.graph,
-                );
-
-                if (itemIndex + 1 === list.length) {
-                  currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
-                    parameters.graph,
-                  );
-                }
-
-                return { currentSubListResource, listResource };
-              },
-              {
-                currentSubListResource: null,
-                listResource: parameters.resourceSet.resource(
-                  (() => dataFactory.blankNode())(),
-                ),
-              } as {
-                currentSubListResource: Resource<BlankNode> | null;
-                listResource: Resource<BlankNode>;
-              },
-            ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
-      ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      ListPropertiesStruct.schema.properties.stringListList.path,
-      parameters.object.stringListList.toList().flatMap((value) => [
-        value.length > 0
-          ? value.reduce(
-              (
-                { currentSubListResource, listResource },
-                item,
-                itemIndex,
-                list,
-              ) => {
-                if (itemIndex === 0) {
-                  currentSubListResource = listResource;
-                } else {
-                  const newSubListResource = parameters.resourceSet.resource(
-                    (() => dataFactory.blankNode())(),
-                  );
-                  currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
-                    newSubListResource.identifier,
-                    parameters.graph,
-                  );
-                  currentSubListResource = newSubListResource;
-                }
-
-                currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
-                  [
-                    item.length > 0
-                      ? item.reduce(
-                          (
-                            { currentSubListResource, listResource },
-                            item,
-                            itemIndex,
-                            list,
-                          ) => {
-                            if (itemIndex === 0) {
-                              currentSubListResource = listResource;
-                            } else {
-                              const newSubListResource =
-                                parameters.resourceSet.resource(
-                                  (() => dataFactory.blankNode())(),
-                                );
-                              currentSubListResource!.add(
-                                $RdfVocabularies.rdf.rest,
-                                newSubListResource.identifier,
-                                parameters.graph,
-                              );
-                              currentSubListResource = newSubListResource;
-                            }
-
-                            currentSubListResource.add(
-                              $RdfVocabularies.rdf.first,
-                              [$literalFactory.string(item)],
-                              parameters.graph,
-                            );
-
-                            if (itemIndex + 1 === list.length) {
-                              currentSubListResource.add(
-                                $RdfVocabularies.rdf.rest,
-                                $RdfVocabularies.rdf.nil,
-                                parameters.graph,
-                              );
-                            }
-
-                            return { currentSubListResource, listResource };
-                          },
-                          {
-                            currentSubListResource: null,
-                            listResource: parameters.resourceSet.resource(
-                              (() => dataFactory.blankNode())(),
-                            ),
-                          } as {
-                            currentSubListResource: Resource<BlankNode> | null;
-                            listResource: Resource<BlankNode>;
-                          },
-                        ).listResource.identifier
-                      : $RdfVocabularies.rdf.nil,
-                  ],
-                  parameters.graph,
-                );
-
-                if (itemIndex + 1 === list.length) {
-                  currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
-                    parameters.graph,
-                  );
-                }
-
-                return { currentSubListResource, listResource };
-              },
-              {
-                currentSubListResource: null,
-                listResource: parameters.resourceSet.resource(
-                  (() => dataFactory.blankNode())(),
-                ),
-              } as {
-                currentSubListResource: Resource<BlankNode> | null;
-                listResource: Resource<BlankNode>;
-              },
-            ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
-      ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      ListPropertiesStruct.schema.properties.structList.path,
-      parameters.object.structList.toList().flatMap((value) => [
-        value.length > 0
-          ? value.reduce(
-              (
-                { currentSubListResource, listResource },
-                item,
-                itemIndex,
-                list,
-              ) => {
-                if (itemIndex === 0) {
-                  currentSubListResource = listResource;
-                } else {
-                  const newSubListResource = parameters.resourceSet.resource(
-                    (() => dataFactory.blankNode())(),
-                  );
-                  currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
-                    newSubListResource.identifier,
-                    parameters.graph,
-                  );
-                  currentSubListResource = newSubListResource;
-                }
-
-                currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
-                  [
-                    NonClassStruct.toRdfResource(item, {
-                      graph: parameters.graph,
-                      resourceSet: parameters.resourceSet,
-                    }).identifier,
-                  ],
-                  parameters.graph,
-                );
-
-                if (itemIndex + 1 === list.length) {
-                  currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
-                    parameters.graph,
-                  );
-                }
-
-                return { currentSubListResource, listResource };
-              },
-              {
-                currentSubListResource: null,
-                listResource: parameters.resourceSet.resource(
-                  (() => dataFactory.blankNode())(),
-                ),
-              } as {
-                currentSubListResource: Resource<BlankNode> | null;
-                listResource: Resource<BlankNode>;
-              },
-            ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
-      ]),
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export function _propertiesToStrings(
-    _listPropertiesStruct: ListPropertiesStruct,
-  ): Record<string, string> {
-    return $compactRecord({
-      $identifier: _listPropertiesStruct.$identifier().toString(),
-    });
-  }
-
-  export function $toString(
-    _listPropertiesStruct: ListPropertiesStruct,
-  ): string {
-    return `ListPropertiesStruct(${JSON.stringify(_propertiesToStrings(_listPropertiesStruct))})`;
-  }
-
-  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    ListPropertiesStruct.Filter,
-    typeof ListPropertiesStruct.schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    ListPropertiesStruct.focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    ListPropertiesStruct.Filter,
-    typeof ListPropertiesStruct.schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      ListPropertiesStruct.focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
 }
 export interface ListSetsStruct {
   readonly $identifier: () => ListSetsStruct.Identifier;
@@ -26211,6 +24817,1373 @@ export namespace ListSetsStruct {
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
       ListSetsStruct.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+} /**
+ * Struct node shape that uses the list shapes in properties.
+ */
+
+export interface ListsStruct {
+  readonly $identifier: () => ListsStruct.Identifier;
+
+  readonly $type: "ListsStruct";
+
+  readonly iriList: Maybe<readonly NamedNode[]>;
+
+  readonly stringList: Maybe<readonly string[]>;
+
+  readonly stringListList: Maybe<readonly (readonly string[])[]>;
+
+  readonly structList: Maybe<readonly NonClassStruct[]>;
+}
+
+export namespace ListsStruct {
+  export function create(parameters?: {
+    readonly $identifier?:
+      | (() => ListsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly iriList?:
+      | readonly (string | NamedNode)[]
+      | Maybe<readonly NamedNode[]>;
+    readonly stringList?: readonly string[] | Maybe<readonly string[]>;
+    readonly stringListList?:
+      | readonly (readonly string[])[]
+      | Maybe<readonly (readonly string[])[]>;
+    readonly structList?:
+      | readonly NonClassStruct[]
+      | Maybe<readonly NonClassStruct[]>;
+  }): Either<Error, ListsStruct> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      iriList: $convertToMaybe($convertToList($convertToIri<string>, true))(
+        parameters?.iriList,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          ListsStruct.schema.properties.iriList.type,
+          value,
+        ),
+      ),
+      stringList: $convertToMaybe(
+        $convertToList($identityConversionFunction, true),
+      )(parameters?.stringList).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          ListsStruct.schema.properties.stringList.type,
+          value,
+        ),
+      ),
+      stringListList: $convertToMaybe(
+        $convertToList($convertToList($identityConversionFunction, true), true),
+      )(parameters?.stringListList).chain((value) =>
+        $validateMaybe(
+          $validateArray(
+            $validateArray($identityValidationFunction, true),
+            true,
+          ),
+        )(ListsStruct.schema.properties.stringListList.type, value),
+      ),
+      structList: $convertToMaybe(
+        $convertToList($identityConversionFunction, true),
+      )(parameters?.structList).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          ListsStruct.schema.properties.structList.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({ ...properties, $type: "ListsStruct" as const }))
+      .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => ListsStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly iriList?:
+      | readonly (string | NamedNode)[]
+      | Maybe<readonly NamedNode[]>;
+    readonly stringList?: readonly string[] | Maybe<readonly string[]>;
+    readonly stringListList?:
+      | readonly (readonly string[])[]
+      | Maybe<readonly (readonly string[])[]>;
+    readonly structList?:
+      | readonly NonClassStruct[]
+      | Maybe<readonly NonClassStruct[]>;
+  }): ListsStruct {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export function equals(left: ListsStruct, right: ListsStruct): $EqualsResult {
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
+        left,
+        right,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, $booleanEquals),
+          ))(left.iriList, right.iriList).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "iriList",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, $strictEquals),
+          ))(left.stringList, right.stringList).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "stringList",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, (left, right) =>
+              $arrayEquals(left, right, $strictEquals),
+            ),
+          ))(left.stringListList, right.stringListList).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "stringListList",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, NonClassStruct.equals),
+          ))(left.structList, right.structList).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "structList",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      );
+  }
+
+  export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
+    _listsStruct: ListsStruct,
+  ): HasherT {
+    ListsStruct.hashShaclProperties(hasher, _listsStruct);
+    hasher.update(_listsStruct.$identifier().value);
+    hasher.update(_listsStruct.$type);
+    return hasher;
+  }
+
+  export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
+    _listsStruct: ListsStruct,
+  ): HasherT {
+    $hashMaybe($hashArray($hashTerm))(hasher, _listsStruct.iriList);
+    $hashMaybe($hashArray($hashString))(hasher, _listsStruct.stringList);
+    $hashMaybe($hashArray($hashArray($hashString)))(
+      hasher,
+      _listsStruct.stringListList,
+    );
+    $hashMaybe($hashArray(NonClassStruct.hash))(
+      hasher,
+      _listsStruct.structList,
+    );
+    return hasher;
+  }
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly "@type": "ListsStruct";
+    readonly iriList?: readonly { readonly "@id": string }[];
+    readonly stringList?: readonly string[];
+    readonly stringListList?: readonly (readonly string[])[];
+    readonly structList?: readonly NonClassStruct.Json[];
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          "@type": z.literal("ListsStruct"),
+          iriList: z
+            .object({ "@id": z.string().min(1) })
+            .array()
+            .readonly()
+            .optional()
+            .meta({}),
+          stringList: z.string().array().readonly().optional().meta({}),
+          stringListList: z
+            .string()
+            .array()
+            .readonly()
+            .array()
+            .readonly()
+            .optional()
+            .meta({}),
+          structList: NonClassStruct.Json.schema()
+            .array()
+            .readonly()
+            .optional()
+            .meta({}),
+        })
+        .meta({
+          description:
+            "Struct node shape that uses the list shapes in properties.",
+        }) satisfies z.ZodType<Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ListsStruct" as const },
+                scope: `${scopePrefix}/properties/@type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/@type`,
+            type: "Control",
+          },
+          { scope: `${scopePrefix}/properties/iriList`, type: "Control" },
+          { scope: `${scopePrefix}/properties/stringList`, type: "Control" },
+          {
+            scope: `${scopePrefix}/properties/stringListList`,
+            type: "Control",
+          },
+          NonClassStruct.Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/structList`,
+          }),
+        ],
+        label: "ListsStruct",
+        type: "Group",
+      };
+    }
+  }
+
+  export function filter(
+    filter: ListsStruct.Filter,
+    value: ListsStruct,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.iriList !== undefined &&
+      !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
+        $filterArray<NamedNode, $IriFilter>($filterIri),
+      )(filter.iriList, value.iriList)
+    ) {
+      return false;
+    }
+    if (
+      filter.stringList !== undefined &&
+      !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
+        $filterArray<string, $StringFilter>($filterString),
+      )(filter.stringList, value.stringList)
+    ) {
+      return false;
+    }
+    if (
+      filter.stringListList !== undefined &&
+      !$filterMaybe<
+        readonly (readonly string[])[],
+        $CollectionFilter<$CollectionFilter<$StringFilter>>
+      >(
+        $filterArray<readonly string[], $CollectionFilter<$StringFilter>>(
+          $filterArray<string, $StringFilter>($filterString),
+        ),
+      )(filter.stringListList, value.stringListList)
+    ) {
+      return false;
+    }
+    if (
+      filter.structList !== undefined &&
+      !$filterMaybe<
+        readonly NonClassStruct[],
+        $CollectionFilter<NonClassStruct.Filter>
+      >(
+        $filterArray<NonClassStruct, NonClassStruct.Filter>(
+          NonClassStruct.filter,
+        ),
+      )(filter.structList, value.structList)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly iriList?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
+    readonly stringList?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
+    readonly stringListList?: $MaybeFilter<
+      $CollectionFilter<$CollectionFilter<$StringFilter>>
+    >;
+    readonly structList?: $MaybeFilter<
+      $CollectionFilter<NonClassStruct.Filter>
+    >;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ListsStruct.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.iriList,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriList",
+        propertySchema: schema.properties.iriList,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$IriFilter>,
+          $CollectionSchema<$IriSchema<string>>
+        >(
+          $listSparqlConstructTriples<$IriFilter, $IriSchema<string>>(
+            (_: object) => [],
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringList,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringList",
+        propertySchema: schema.properties.stringList,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema<string>>
+        >(
+          $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
+            (_: object) => [],
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringListList,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringListList",
+        propertySchema: schema.properties.stringListList,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$CollectionFilter<$StringFilter>>,
+          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+        >(
+          $listSparqlConstructTriples<
+            $CollectionFilter<$StringFilter>,
+            $CollectionSchema<$StringSchema<string>>
+          >(
+            $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
+              (_: object) => [],
+            ),
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.structList,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "structList",
+        propertySchema: schema.properties.structList,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<NonClassStruct.Filter>,
+          $CollectionSchema<typeof NonClassStruct.schema>
+        >(
+          $listSparqlConstructTriples<
+            NonClassStruct.Filter,
+            typeof NonClassStruct.schema
+          >(NonClassStruct.valueSparqlConstructTriples),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ListsStruct.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ListsStruct.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ListsStruct.schema.properties.$identifier.type,
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.iriList,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "iriList",
+        propertySchema: schema.properties.iriList,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$IriFilter>,
+          $CollectionSchema<$IriSchema<string>>
+        >(
+          $listSparqlWherePatterns<$IriFilter, $IriSchema<string>>(
+            $iriSparqlWherePatterns,
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringList,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringList",
+        propertySchema: schema.properties.stringList,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema<string>>
+        >(
+          $listSparqlWherePatterns<$StringFilter, $StringSchema<string>>(
+            $stringSparqlWherePatterns,
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringListList,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringListList",
+        propertySchema: schema.properties.stringListList,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$CollectionFilter<$StringFilter>>,
+          $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
+        >(
+          $listSparqlWherePatterns<
+            $CollectionFilter<$StringFilter>,
+            $CollectionSchema<$StringSchema<string>>
+          >(
+            $listSparqlWherePatterns<$StringFilter, $StringSchema<string>>(
+              $stringSparqlWherePatterns,
+            ),
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.structList,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "structList",
+        propertySchema: schema.properties.structList,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<NonClassStruct.Filter>,
+          $CollectionSchema<typeof NonClassStruct.schema>
+        >(
+          $listSparqlWherePatterns<
+            NonClassStruct.Filter,
+            typeof NonClassStruct.schema
+          >(NonClassStruct.valueSparqlWherePatterns),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export function fromJson(
+    $json: ListsStruct.Json,
+  ): Either<Error, ListsStruct> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      iriList: Maybe.fromNullable($json["iriList"])
+        .map((item) =>
+          Either.sequence<Error, NamedNode>(
+            item.map((item) =>
+              Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
+            ),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      stringList: Maybe.fromNullable($json["stringList"])
+        .map((item) =>
+          Either.sequence<Error, string>(
+            item.map((item) => Either.of<Error, string>(item)),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      stringListList: Maybe.fromNullable($json["stringListList"])
+        .map((item) =>
+          Either.sequence<Error, readonly string[]>(
+            item.map((item) =>
+              Either.sequence<Error, string>(
+                item.map((item) => Either.of<Error, string>(item)),
+              ),
+            ),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      structList: Maybe.fromNullable($json["structList"])
+        .map((item) =>
+          Either.sequence<Error, NonClassStruct>(
+            item.map((item) => NonClassStruct.fromJson(item)),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
+  }
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<ListsStruct> = (
+    $resource,
+    _$options,
+  ) => {
+    return (
+      !_$options.ignoreRdfType
+        ? $ensureRdfResourceType($resource, [ListsStruct.fromRdfType], {
+            graph: _$options.graph,
+          })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head()),
+        iriList: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.iriList,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toList({ graph: _$options.graph }),
+                ),
+              )
+              .chain((valueLists) =>
+                valueLists.chainMap((valueList) =>
+                  Right(
+                    Resource.Values.fromArray({
+                      focusResource: $resource,
+                      propertyPath: ListsStruct.schema.properties.iriList.path,
+                      values: valueList.toArray(),
+                    }),
+                  ).chain((values) =>
+                    values.chainMap((value) => value.toIri()),
+                  ),
+                ),
+              )
+              .map((valueLists) =>
+                valueLists.map((valueList) => valueList.toArray()),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<readonly NamedNode[]>>({
+                      focusResource: $resource,
+                      propertyPath: ListsStruct.schema.properties.iriList.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
+        stringList: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.stringList,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toList({ graph: _$options.graph }),
+                ),
+              )
+              .chain((valueLists) =>
+                valueLists.chainMap((valueList) =>
+                  Right(
+                    Resource.Values.fromArray({
+                      focusResource: $resource,
+                      propertyPath:
+                        ListsStruct.schema.properties.stringList.path,
+                      values: valueList.toArray(),
+                    }),
+                  )
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages(
+                        values,
+                        _$options.preferredLanguages,
+                      ),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+                ),
+              )
+              .map((valueLists) =>
+                valueLists.map((valueList) => valueList.toArray()),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<readonly string[]>>({
+                      focusResource: $resource,
+                      propertyPath:
+                        ListsStruct.schema.properties.stringList.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
+        stringListList: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.stringListList,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toList({ graph: _$options.graph }),
+                ),
+              )
+              .chain((valueLists) =>
+                valueLists.chainMap((valueList) =>
+                  Right(
+                    Resource.Values.fromArray({
+                      focusResource: $resource,
+                      propertyPath:
+                        ListsStruct.schema.properties.stringListList.path,
+                      values: valueList.toArray(),
+                    }),
+                  )
+                    .chain((values) =>
+                      values.chainMap((value) =>
+                        value.toList({ graph: _$options.graph }),
+                      ),
+                    )
+                    .chain((valueLists) =>
+                      valueLists.chainMap((valueList) =>
+                        Right(
+                          Resource.Values.fromArray({
+                            focusResource: $resource,
+                            propertyPath:
+                              ListsStruct.schema.properties.stringListList.path,
+                            values: valueList.toArray(),
+                          }),
+                        )
+                          .chain((values) =>
+                            $fromRdfPreferredLanguages(
+                              values,
+                              _$options.preferredLanguages,
+                            ),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) => value.toString()),
+                          ),
+                      ),
+                    )
+                    .map((valueLists) =>
+                      valueLists.map((valueList) => valueList.toArray()),
+                    ),
+                ),
+              )
+              .map((valueLists) =>
+                valueLists.map((valueList) => valueList.toArray()),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<
+                      Maybe<readonly (readonly string[])[]>
+                    >({
+                      focusResource: $resource,
+                      propertyPath:
+                        ListsStruct.schema.properties.stringListList.path,
+                      value: Maybe.empty(),
+                    }),
+              ),
+        }),
+        structList: $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.structList,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toList({ graph: _$options.graph }),
+                ),
+              )
+              .chain((valueLists) =>
+                valueLists.chainMap((valueList) =>
+                  NonClassStruct.fromRdfResourceValues(
+                    Right(
+                      Resource.Values.fromArray({
+                        focusResource: $resource,
+                        propertyPath:
+                          ListsStruct.schema.properties.structList.path,
+                        values: valueList.toArray(),
+                      }),
+                    ),
+                    {
+                      context: _$options.context,
+                      graph: _$options.graph,
+                      objectSet: _$options.objectSet,
+                      preferredLanguages: _$options.preferredLanguages,
+                      resource: $resource,
+                      ignoreRdfType: true,
+                      propertyPath:
+                        ListsStruct.schema.properties.structList.path,
+                    },
+                  ),
+                ),
+              )
+              .map((valueLists) =>
+                valueLists.map((valueList) => valueList.toArray()),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<readonly NonClassStruct[]>>(
+                      {
+                        focusResource: $resource,
+                        propertyPath:
+                          ListsStruct.schema.properties.structList.path,
+                        value: Maybe.empty(),
+                      },
+                    ),
+              ),
+        }),
+      }).chain((properties) => create(properties)),
+    );
+  };
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ListsStruct
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) => ListsStruct.fromRdfResource(resource, options)),
+      ),
+    );
+
+  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ListsStruct",
+  );
+
+  export function isListsStruct(object: $Object): object is ListsStruct {
+    return object.$type === "ListsStruct";
+  }
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      iriList: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/iriList"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "List" as const,
+            itemType: { kind: "Iri" as const },
+          },
+        },
+      },
+      stringList: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/stringList"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "List" as const,
+            itemType: { kind: "String" as const },
+          },
+        },
+      },
+      stringListList: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/stringListList"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "List" as const,
+            itemType: {
+              kind: "List" as const,
+              itemType: { kind: "String" as const },
+            },
+          },
+        },
+      },
+      structList: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/structList"),
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return {
+                kind: "List" as const,
+                get itemType() {
+                  return NonClassStruct.schema;
+                },
+              };
+            },
+          };
+        },
+      },
+    },
+  } as const;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ListsStruct.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "listsStruct";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ListsStruct.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ListsStruct.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ListsStruct.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ListsStruct.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function toJson(_listsStruct: ListsStruct): ListsStruct.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _listsStruct.$identifier().termType === "BlankNode"
+            ? `_:${_listsStruct.$identifier().value}`
+            : _listsStruct.$identifier().value,
+        "@type": _listsStruct.$type,
+        iriList: _listsStruct.iriList
+          .map((item) => item.map((item) => ({ "@id": item.value })))
+          .extract(),
+        stringList: _listsStruct.stringList
+          .map((item) => item.map((item) => item))
+          .extract(),
+        stringListList: _listsStruct.stringListList
+          .map((item) => item.map((item) => item.map((item) => item)))
+          .extract(),
+        structList: _listsStruct.structList
+          .map((item) => item.map((item) => NonClassStruct.toJson(item)))
+          .extract(),
+      } satisfies ListsStruct.Json),
+    );
+  }
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ListsStruct.Identifier,
+    ListsStruct
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/ListsStruct"),
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      ListsStruct.schema.properties.iriList.path,
+      parameters.object.iriList.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = parameters.resourceSet.resource(
+                    (() => dataFactory.blankNode())(),
+                  );
+                  currentSubListResource!.add(
+                    $RdfVocabularies.rdf.rest,
+                    newSubListResource.identifier,
+                    parameters.graph,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  [item],
+                  parameters.graph,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
+                    parameters.graph,
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: parameters.resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
+              } as {
+                currentSubListResource: Resource<BlankNode> | null;
+                listResource: Resource<BlankNode>;
+              },
+            ).listResource.identifier
+          : $RdfVocabularies.rdf.nil,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ListsStruct.schema.properties.stringList.path,
+      parameters.object.stringList.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = parameters.resourceSet.resource(
+                    (() => dataFactory.blankNode())(),
+                  );
+                  currentSubListResource!.add(
+                    $RdfVocabularies.rdf.rest,
+                    newSubListResource.identifier,
+                    parameters.graph,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  [$literalFactory.string(item)],
+                  parameters.graph,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
+                    parameters.graph,
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: parameters.resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
+              } as {
+                currentSubListResource: Resource<BlankNode> | null;
+                listResource: Resource<BlankNode>;
+              },
+            ).listResource.identifier
+          : $RdfVocabularies.rdf.nil,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ListsStruct.schema.properties.stringListList.path,
+      parameters.object.stringListList.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = parameters.resourceSet.resource(
+                    (() => dataFactory.blankNode())(),
+                  );
+                  currentSubListResource!.add(
+                    $RdfVocabularies.rdf.rest,
+                    newSubListResource.identifier,
+                    parameters.graph,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  [
+                    item.length > 0
+                      ? item.reduce(
+                          (
+                            { currentSubListResource, listResource },
+                            item,
+                            itemIndex,
+                            list,
+                          ) => {
+                            if (itemIndex === 0) {
+                              currentSubListResource = listResource;
+                            } else {
+                              const newSubListResource =
+                                parameters.resourceSet.resource(
+                                  (() => dataFactory.blankNode())(),
+                                );
+                              currentSubListResource!.add(
+                                $RdfVocabularies.rdf.rest,
+                                newSubListResource.identifier,
+                                parameters.graph,
+                              );
+                              currentSubListResource = newSubListResource;
+                            }
+
+                            currentSubListResource.add(
+                              $RdfVocabularies.rdf.first,
+                              [$literalFactory.string(item)],
+                              parameters.graph,
+                            );
+
+                            if (itemIndex + 1 === list.length) {
+                              currentSubListResource.add(
+                                $RdfVocabularies.rdf.rest,
+                                $RdfVocabularies.rdf.nil,
+                                parameters.graph,
+                              );
+                            }
+
+                            return { currentSubListResource, listResource };
+                          },
+                          {
+                            currentSubListResource: null,
+                            listResource: parameters.resourceSet.resource(
+                              (() => dataFactory.blankNode())(),
+                            ),
+                          } as {
+                            currentSubListResource: Resource<BlankNode> | null;
+                            listResource: Resource<BlankNode>;
+                          },
+                        ).listResource.identifier
+                      : $RdfVocabularies.rdf.nil,
+                  ],
+                  parameters.graph,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
+                    parameters.graph,
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: parameters.resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
+              } as {
+                currentSubListResource: Resource<BlankNode> | null;
+                listResource: Resource<BlankNode>;
+              },
+            ).listResource.identifier
+          : $RdfVocabularies.rdf.nil,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ListsStruct.schema.properties.structList.path,
+      parameters.object.structList.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = parameters.resourceSet.resource(
+                    (() => dataFactory.blankNode())(),
+                  );
+                  currentSubListResource!.add(
+                    $RdfVocabularies.rdf.rest,
+                    newSubListResource.identifier,
+                    parameters.graph,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  [
+                    NonClassStruct.toRdfResource(item, {
+                      graph: parameters.graph,
+                      resourceSet: parameters.resourceSet,
+                    }).identifier,
+                  ],
+                  parameters.graph,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
+                    parameters.graph,
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: parameters.resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
+              } as {
+                currentSubListResource: Resource<BlankNode> | null;
+                listResource: Resource<BlankNode>;
+              },
+            ).listResource.identifier
+          : $RdfVocabularies.rdf.nil,
+      ]),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export function _propertiesToStrings(
+    _listsStruct: ListsStruct,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _listsStruct.$identifier().toString(),
+    });
+  }
+
+  export function $toString(_listsStruct: ListsStruct): string {
+    return `ListsStruct(${JSON.stringify(_propertiesToStrings(_listsStruct))})`;
+  }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ListsStruct.Filter,
+    typeof ListsStruct.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ListsStruct.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ListsStruct.Filter,
+    typeof ListsStruct.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ListsStruct.focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -51048,8 +51021,8 @@ export type $Object =
   | LazilyResolvedUnionMember1
   | LazilyResolvedUnionMember2
   | LazyPropertiesStruct
-  | ListPropertiesStruct
   | ListSetsStruct
+  | ListsStruct
   | MutablePropertiesStruct
   | NamedUnionsStruct
   | NewName
@@ -51153,11 +51126,11 @@ export namespace $Object {
     if (LazyPropertiesStruct.isLazyPropertiesStruct(value)) {
       return LazyPropertiesStruct.$toString(value);
     }
-    if (ListPropertiesStruct.isListPropertiesStruct(value)) {
-      return ListPropertiesStruct.$toString(value);
-    }
     if (ListSetsStruct.isListSetsStruct(value)) {
       return ListSetsStruct.$toString(value);
+    }
+    if (ListsStruct.isListsStruct(value)) {
+      return ListsStruct.$toString(value);
     }
     if (MutablePropertiesStruct.isMutablePropertiesStruct(value)) {
       return MutablePropertiesStruct.$toString(value);
@@ -51443,15 +51416,6 @@ export namespace $Object {
       );
     }
     if (
-      ListPropertiesStruct.isListPropertiesStruct(left) &&
-      ListPropertiesStruct.isListPropertiesStruct(right)
-    ) {
-      return ListPropertiesStruct.equals(
-        left as ListPropertiesStruct,
-        right as ListPropertiesStruct,
-      );
-    }
-    if (
       ListSetsStruct.isListSetsStruct(left) &&
       ListSetsStruct.isListSetsStruct(right)
     ) {
@@ -51459,6 +51423,9 @@ export namespace $Object {
         left as ListSetsStruct,
         right as ListSetsStruct,
       );
+    }
+    if (ListsStruct.isListsStruct(left) && ListsStruct.isListsStruct(right)) {
+      return ListsStruct.equals(left as ListsStruct, right as ListsStruct);
     }
     if (
       MutablePropertiesStruct.isMutablePropertiesStruct(left) &&
@@ -51909,20 +51876,18 @@ export namespace $Object {
       }
     }
     if (
-      filter.on?.["ListPropertiesStruct"] !== undefined &&
-      ListPropertiesStruct.isListPropertiesStruct(value)
-    ) {
-      if (
-        !ListPropertiesStruct.filter(filter.on["ListPropertiesStruct"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
       filter.on?.["ListSetsStruct"] !== undefined &&
       ListSetsStruct.isListSetsStruct(value)
     ) {
       if (!ListSetsStruct.filter(filter.on["ListSetsStruct"], value)) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["ListsStruct"] !== undefined &&
+      ListsStruct.isListsStruct(value)
+    ) {
+      if (!ListsStruct.filter(filter.on["ListsStruct"], value)) {
         return false;
       }
     }
@@ -52152,8 +52117,8 @@ export namespace $Object {
       readonly LazilyResolvedUnionMember1?: LazilyResolvedUnionMember1.Filter;
       readonly LazilyResolvedUnionMember2?: LazilyResolvedUnionMember2.Filter;
       readonly LazyPropertiesStruct?: LazyPropertiesStruct.Filter;
-      readonly ListPropertiesStruct?: ListPropertiesStruct.Filter;
       readonly ListSetsStruct?: ListSetsStruct.Filter;
+      readonly ListsStruct?: ListsStruct.Filter;
       readonly MutablePropertiesStruct?: MutablePropertiesStruct.Filter;
       readonly NamedUnionsStruct?: NamedUnionsStruct.Filter;
       readonly NewName?: NewName.Filter;
@@ -52329,17 +52294,17 @@ export namespace $Object {
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}LazyPropertiesStruct`,
       }).concat(),
-      ...ListPropertiesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.ListPropertiesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ListPropertiesStruct`,
-      }).concat(),
       ...ListSetsStruct.focusSparqlConstructTriples({
         filter: filter?.on?.ListSetsStruct,
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}ListSetsStruct`,
+      }).concat(),
+      ...ListsStruct.focusSparqlConstructTriples({
+        filter: filter?.on?.ListsStruct,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ListsStruct`,
       }).concat(),
       ...MutablePropertiesStruct.focusSparqlConstructTriples({
         filter: filter?.on?.MutablePropertiesStruct,
@@ -52733,22 +52698,22 @@ export namespace $Object {
           type: "group",
         },
         {
-          patterns: ListPropertiesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.ListPropertiesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ListPropertiesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
           patterns: ListSetsStruct.focusSparqlWherePatterns({
             filter: filter?.on?.ListSetsStruct,
             focusIdentifier,
             ignoreRdfType: false,
             preferredLanguages,
             variablePrefix: `${variablePrefix}ListSetsStruct`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ListsStruct.focusSparqlWherePatterns({
+            filter: filter?.on?.ListsStruct,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ListsStruct`,
           }).concat(),
           type: "group",
         },
@@ -53084,13 +53049,13 @@ export namespace $Object {
         value as LazyPropertiesStruct.Json,
       ).map((value) => value);
     }
-    if (value["@type"] === "ListPropertiesStruct") {
-      return ListPropertiesStruct.fromJson(
-        value as ListPropertiesStruct.Json,
-      ).map((value) => value);
-    }
     if (value["@type"] === "ListSetsStruct") {
       return ListSetsStruct.fromJson(value as ListSetsStruct.Json).map(
+        (value) => value,
+      );
+    }
+    if (value["@type"] === "ListsStruct") {
+      return ListsStruct.fromJson(value as ListsStruct.Json).map(
         (value) => value,
       );
     }
@@ -53370,14 +53335,14 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          ListPropertiesStruct.fromRdfResource(resource, {
+          ListSetsStruct.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
       )
       .altLazy(
         () =>
-          ListSetsStruct.fromRdfResource(resource, {
+          ListsStruct.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -53833,7 +53798,7 @@ export namespace $Object {
             )
             .altLazy(
               () =>
-                ListPropertiesStruct.fromRdfResourceValues(valueAsValues, {
+                ListSetsStruct.fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -53845,7 +53810,7 @@ export namespace $Object {
             )
             .altLazy(
               () =>
-                ListSetsStruct.fromRdfResourceValues(valueAsValues, {
+                ListsStruct.fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -54197,11 +54162,11 @@ export namespace $Object {
     if (LazyPropertiesStruct.isLazyPropertiesStruct(value)) {
       return LazyPropertiesStruct.hash(hasher, value);
     }
-    if (ListPropertiesStruct.isListPropertiesStruct(value)) {
-      return ListPropertiesStruct.hash(hasher, value);
-    }
     if (ListSetsStruct.isListSetsStruct(value)) {
       return ListSetsStruct.hash(hasher, value);
+    }
+    if (ListsStruct.isListsStruct(value)) {
+      return ListsStruct.hash(hasher, value);
     }
     if (MutablePropertiesStruct.isMutablePropertiesStruct(value)) {
       return MutablePropertiesStruct.hash(hasher, value);
@@ -54302,8 +54267,8 @@ export namespace $Object {
           LazilyResolvedUnionMember1.Json.schema(),
           LazilyResolvedUnionMember2.Json.schema(),
           LazyPropertiesStruct.Json.schema(),
-          ListPropertiesStruct.Json.schema(),
           ListSetsStruct.Json.schema(),
+          ListsStruct.Json.schema(),
           MutablePropertiesStruct.Json.schema(),
           NamedUnionsStruct.Json.schema(),
           NewName.Json.schema(),
@@ -54362,8 +54327,8 @@ export namespace $Object {
     | LazilyResolvedUnionMember1.Json
     | LazilyResolvedUnionMember2.Json
     | LazyPropertiesStruct.Json
-    | ListPropertiesStruct.Json
     | ListSetsStruct.Json
+    | ListsStruct.Json
     | MutablePropertiesStruct.Json
     | NamedUnionsStruct.Json
     | NewName.Json
@@ -54481,13 +54446,13 @@ export namespace $Object {
         discriminantValues: ["LazyPropertiesStruct"],
         type: LazyPropertiesStruct.schema,
       },
-      ListPropertiesStruct: {
-        discriminantValues: ["ListPropertiesStruct"],
-        type: ListPropertiesStruct.schema,
-      },
       ListSetsStruct: {
         discriminantValues: ["ListSetsStruct"],
         type: ListSetsStruct.schema,
+      },
+      ListsStruct: {
+        discriminantValues: ["ListsStruct"],
+        type: ListsStruct.schema,
       },
       MutablePropertiesStruct: {
         discriminantValues: ["MutablePropertiesStruct"],
@@ -54710,11 +54675,11 @@ export namespace $Object {
     if (LazyPropertiesStruct.isLazyPropertiesStruct(value)) {
       return LazyPropertiesStruct.toJson(value);
     }
-    if (ListPropertiesStruct.isListPropertiesStruct(value)) {
-      return ListPropertiesStruct.toJson(value);
-    }
     if (ListSetsStruct.isListSetsStruct(value)) {
       return ListSetsStruct.toJson(value);
+    }
+    if (ListsStruct.isListsStruct(value)) {
+      return ListsStruct.toJson(value);
     }
     if (MutablePropertiesStruct.isMutablePropertiesStruct(value)) {
       return MutablePropertiesStruct.toJson(value);
@@ -54869,11 +54834,11 @@ export namespace $Object {
     if (LazyPropertiesStruct.isLazyPropertiesStruct(object)) {
       return LazyPropertiesStruct.toRdfResource(object, options);
     }
-    if (ListPropertiesStruct.isListPropertiesStruct(object)) {
-      return ListPropertiesStruct.toRdfResource(object, options);
-    }
     if (ListSetsStruct.isListSetsStruct(object)) {
       return ListSetsStruct.toRdfResource(object, options);
+    }
+    if (ListsStruct.isListsStruct(object)) {
+      return ListsStruct.toRdfResource(object, options);
     }
     if (MutablePropertiesStruct.isMutablePropertiesStruct(object)) {
       return MutablePropertiesStruct.toRdfResource(object, options);
@@ -55139,17 +55104,17 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (ListPropertiesStruct.isListPropertiesStruct(value)) {
+    if (ListSetsStruct.isListSetsStruct(value)) {
       return [
-        ListPropertiesStruct.toRdfResource(value, {
+        ListSetsStruct.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
-    if (ListSetsStruct.isListSetsStruct(value)) {
+    if (ListsStruct.isListsStruct(value)) {
       return [
-        ListSetsStruct.toRdfResource(value, {
+        ListsStruct.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -55519,19 +55484,19 @@ export namespace $Object {
       }),
     );
     triples = triples.concat(
-      ListPropertiesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["ListPropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ListPropertiesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
       ListSetsStruct.valueSparqlConstructTriples({
         ...otherParameters,
         filter: filter?.on?.["ListSetsStruct"],
         ignoreRdfType: false,
         schema: schema.members["ListSetsStruct"].type,
+      }),
+    );
+    triples = triples.concat(
+      ListsStruct.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ListsStruct"],
+        ignoreRdfType: false,
+        schema: schema.members["ListsStruct"].type,
       }),
     );
     triples = triples.concat(
@@ -55925,20 +55890,20 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
-      patterns: ListPropertiesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["ListPropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ListPropertiesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
       patterns: ListSetsStruct.valueSparqlWherePatterns({
         ...otherParameters,
         filter: filter?.on?.["ListSetsStruct"],
         ignoreRdfType: false,
         schema: schema.members["ListSetsStruct"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ListsStruct.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ListsStruct"],
+        ignoreRdfType: false,
+        schema: schema.members["ListsStruct"].type,
       }).concat(),
       type: "group",
     });
@@ -56801,35 +56766,6 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly LazyPropertiesStruct[]>>;
 
-  listPropertiesStruct(
-    identifier: ListPropertiesStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListPropertiesStruct>>;
-
-  listPropertiesStructCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        ListPropertiesStruct.Filter,
-        ListPropertiesStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  listPropertiesStructIdentifiers(
-    query?: $ObjectSet.Query<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly ListPropertiesStruct.Identifier[]>>;
-
-  listPropertiesStructs(
-    query?: $ObjectSet.Query<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly ListPropertiesStruct[]>>;
-
   listSetsStruct(
     identifier: ListSetsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -56849,6 +56785,26 @@ export interface $ObjectSet {
   listSetsStructs(
     query?: $ObjectSet.Query<ListSetsStruct.Filter, ListSetsStruct.Identifier>,
   ): Promise<Either<Error, readonly ListSetsStruct[]>>;
+
+  listsStruct(
+    identifier: ListsStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ListsStruct>>;
+
+  listsStructCount(
+    query?: Pick<
+      $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  listsStructIdentifiers(
+    query?: $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+  ): Promise<Either<Error, readonly ListsStruct.Identifier[]>>;
+
+  listsStructs(
+    query?: $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+  ): Promise<Either<Error, readonly ListsStruct[]>>;
 
   mutablePropertiesStruct(
     identifier: MutablePropertiesStruct.Identifier,
@@ -59661,98 +59617,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async listPropertiesStruct(
-    identifier: ListPropertiesStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListPropertiesStruct>> {
-    return this.listPropertiesStructSync(identifier, options);
-  }
-
-  listPropertiesStructSync(
-    identifier: ListPropertiesStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ListPropertiesStruct> {
-    return this.listPropertiesStructsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async listPropertiesStructCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        ListPropertiesStruct.Filter,
-        ListPropertiesStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.listPropertiesStructCountSync(query);
-  }
-
-  listPropertiesStructCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        ListPropertiesStruct.Filter,
-        ListPropertiesStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.listPropertiesStructsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async listPropertiesStructIdentifiers(
-    query?: $ObjectSet.Query<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly ListPropertiesStruct.Identifier[]>> {
-    return this.listPropertiesStructIdentifiersSync(query);
-  }
-
-  listPropertiesStructIdentifiersSync(
-    query?: $ObjectSet.Query<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >,
-  ): Either<Error, readonly ListPropertiesStruct.Identifier[]> {
-    return this.listPropertiesStructsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async listPropertiesStructs(
-    query?: $ObjectSet.Query<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly ListPropertiesStruct[]>> {
-    return this.listPropertiesStructsSync(query);
-  }
-
-  listPropertiesStructsSync(
-    query?: $ObjectSet.Query<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >,
-  ): Either<Error, readonly ListPropertiesStruct[]> {
-    return this.#objectsSync<
-      ListPropertiesStruct,
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >(
-      {
-        filter: ListPropertiesStruct.filter,
-        fromRdfResource: ListPropertiesStruct.fromRdfResource,
-        fromRdfTypes: [ListPropertiesStruct.fromRdfType],
-      },
-      query,
-    );
-  }
-
   async listSetsStruct(
     identifier: ListSetsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -59820,6 +59684,78 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         filter: ListSetsStruct.filter,
         fromRdfResource: ListSetsStruct.fromRdfResource,
         fromRdfTypes: [ListSetsStruct.fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async listsStruct(
+    identifier: ListsStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ListsStruct>> {
+    return this.listsStructSync(identifier, options);
+  }
+
+  listsStructSync(
+    identifier: ListsStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, ListsStruct> {
+    return this.listsStructsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async listsStructCount(
+    query?: Pick<
+      $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.listsStructCountSync(query);
+  }
+
+  listsStructCountSync(
+    query?: Pick<
+      $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.listsStructsSync(query).map((objects) => objects.length);
+  }
+
+  async listsStructIdentifiers(
+    query?: $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+  ): Promise<Either<Error, readonly ListsStruct.Identifier[]>> {
+    return this.listsStructIdentifiersSync(query);
+  }
+
+  listsStructIdentifiersSync(
+    query?: $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+  ): Either<Error, readonly ListsStruct.Identifier[]> {
+    return this.listsStructsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async listsStructs(
+    query?: $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+  ): Promise<Either<Error, readonly ListsStruct[]>> {
+    return this.listsStructsSync(query);
+  }
+
+  listsStructsSync(
+    query?: $ObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+  ): Either<Error, readonly ListsStruct[]> {
+    return this.#objectsSync<
+      ListsStruct,
+      ListsStruct.Filter,
+      ListsStruct.Identifier
+    >(
+      {
+        filter: ListsStruct.filter,
+        fromRdfResource: ListsStruct.fromRdfResource,
+        fromRdfTypes: [ListsStruct.fromRdfType],
       },
       query,
     );
@@ -62246,13 +62182,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           filter: $Object.filter,
-          fromRdfResource: ListPropertiesStruct.fromRdfResource,
-          fromRdfTypes: [ListPropertiesStruct.fromRdfType],
+          fromRdfResource: ListSetsStruct.fromRdfResource,
+          fromRdfTypes: [ListSetsStruct.fromRdfType],
         },
         {
           filter: $Object.filter,
-          fromRdfResource: ListSetsStruct.fromRdfResource,
-          fromRdfTypes: [ListSetsStruct.fromRdfType],
+          fromRdfResource: ListsStruct.fromRdfResource,
+          fromRdfTypes: [ListsStruct.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -63880,58 +63816,6 @@ export class $SparqlObjectSet implements $ObjectSet {
     >(LazyPropertiesStruct, query);
   }
 
-  async listPropertiesStruct(
-    identifier: ListPropertiesStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListPropertiesStruct>> {
-    return (
-      await this.listPropertiesStructs({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async listPropertiesStructCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        ListPropertiesStruct.Filter,
-        ListPropertiesStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >(ListPropertiesStruct, query);
-  }
-
-  async listPropertiesStructIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly ListPropertiesStruct.Identifier[]>> {
-    return this.#objectIdentifiers<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >(ListPropertiesStruct, query);
-  }
-
-  async listPropertiesStructs(
-    query?: $SparqlObjectSet.Query<
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly ListPropertiesStruct[]>> {
-    return this.#objects<
-      ListPropertiesStruct,
-      ListPropertiesStruct.Filter,
-      ListPropertiesStruct.Identifier
-    >(ListPropertiesStruct, query);
-  }
-
   async listSetsStruct(
     identifier: ListSetsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -63979,6 +63863,49 @@ export class $SparqlObjectSet implements $ObjectSet {
       ListSetsStruct.Filter,
       ListSetsStruct.Identifier
     >(ListSetsStruct, query);
+  }
+
+  async listsStruct(
+    identifier: ListsStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ListsStruct>> {
+    return (
+      await this.listsStructs({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async listsStructCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<ListsStruct.Filter, ListsStruct.Identifier>(
+      ListsStruct,
+      query,
+    );
+  }
+
+  async listsStructIdentifiers(
+    query?: $SparqlObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+  ): Promise<Either<Error, readonly ListsStruct.Identifier[]>> {
+    return this.#objectIdentifiers<ListsStruct.Filter, ListsStruct.Identifier>(
+      ListsStruct,
+      query,
+    );
+  }
+
+  async listsStructs(
+    query?: $SparqlObjectSet.Query<ListsStruct.Filter, ListsStruct.Identifier>,
+  ): Promise<Either<Error, readonly ListsStruct[]>> {
+    return this.#objects<
+      ListsStruct,
+      ListsStruct.Filter,
+      ListsStruct.Identifier
+    >(ListsStruct, query);
   }
 
   async mutablePropertiesStruct(
