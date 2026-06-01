@@ -377,7 +377,9 @@ describe("fromRdf", () => {
       kitchenSink.InIdentifierStruct.fromRdfResource(
         new ResourceSet({ dataFactory, dataset: datasetFactory.dataset() })
           .resource(
-            dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
+            dataFactory.namedNode(
+              "http://example.com/InIdentifierStructInstance1",
+            ),
           )
           .add(rdf.type, kitchenSink.InIdentifierStruct.fromRdfType),
       ).isRight(),

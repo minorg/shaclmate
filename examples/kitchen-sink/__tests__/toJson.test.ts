@@ -122,7 +122,7 @@ describe("toJson", () => {
     expect(
       JSON.stringify(harnesses.termPropertiesStruct.instance),
     ).toStrictEqual(
-      `{"@id":"http://example.com/instance","@type":"TermProperties","blankNodeTermProperty":{"@id":"_:df_0_16"},"booleanTermProperty":true,"dateTermProperty":"2025-03-06","dateTimeTermProperty":"2018-04-09T10:00:00.000Z","iriTermProperty":{"@id":"http://example.com"},"literalTermProperty":{"@value":"test"},"numberTermProperty":1,"stringTermProperty":"test","termProperty":{"@type":"http://www.w3.org/2001/XMLSchema#decimal","@value":"1","termType":"Literal"}}`,
+      `{"@id":"http://example.com/instance","@type":"TermPropertiesStruct","blankNodeTermProperty":{"@id":"_:df_0_16"},"booleanTermProperty":true,"dateTermProperty":"2025-03-06","dateTimeTermProperty":"2018-04-09T10:00:00.000Z","iriTermProperty":{"@id":"http://example.com"},"literalTermProperty":{"@value":"test"},"numberTermProperty":1,"stringTermProperty":"test","termProperty":{"@type":"http://www.w3.org/2001/XMLSchema#decimal","@value":"1","termType":"Literal"}}`,
     );
   });
 

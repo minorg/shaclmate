@@ -539,7 +539,7 @@ export const harnesses = {
       $identifier,
     }),
     kitchenSink.NewName,
-    "OverrideName",
+    "OverrideNameStruct",
   ),
   // Undefineds
   propertyCardinalitiesStruct1: new Harness(

@@ -14,7 +14,7 @@ describe("toString", () => {
     expect,
   }) => {
     expect(harnesses.displayPropertiesStruct.instance.toString()).toStrictEqual(
-      `DisplayProperties({"$identifier":"<http://example.com/instance>","explicitTrueDisplayProperty":"explicitTrueDisplayValue"})`,
+      `DisplayPropertiesStruct({"$identifier":"<http://example.com/instance>","explicitTrueDisplayProperty":"explicitTrueDisplayValue"})`,
     );
   });
 });
