@@ -588,7 +588,7 @@ ${joinCode(
       const valueAsValues = ${this.reusables.imports.Right}(value.toValues());
       return ${this.members.reduce(
         (expression, { type, primaryDiscriminantValue }, memberI) => {
-          let typeExpression: Code = code`${type.fromRdfResourceValuesFunction}(valueAsValues, options)`;
+          let typeExpression: Code = code`${type.fromRdfResourceValuesFunction}(valueAsValues, { ...options, schema: options.schema.members[${literalOf(primaryDiscriminantValue)}] })`;
           if (
             this.discriminant.kind === "Extrinsic" ||
             (this.discriminant.kind === "Hybrid" &&

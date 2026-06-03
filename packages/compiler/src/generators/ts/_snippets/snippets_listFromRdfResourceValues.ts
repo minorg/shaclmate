@@ -15,8 +15,8 @@ function ${syntheticNamePrefix}listFromRdfResourceValues<ItemT, ItemSchemaT>(ite
       .chainMap(value => value.toList({ graph: options.graph }))\ // Resource.Values<Resource.Value> to Resource.Values<Resource.Values>;
       .chain(valueLists => valueLists.chainMap(valueList =>
         itemFromRdfResourceValues(
-          ${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: options.focusResource, propertyPath: options.propertySchema.path, values: valueList.toArray() })),
-          options
+          ${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: options.focusResource, propertyPath: options.propertyPath, values: valueList.toArray() })),
+          { ...options, schema: options.schema.itemType }
         )
       ))\ // Resource.Values<Resource.Values> to Resource.Values<item type arrays>
       .map(valueLists => valueLists.map(valueList => valueList.toArray())); // Convert inner Resource.Values to arrays

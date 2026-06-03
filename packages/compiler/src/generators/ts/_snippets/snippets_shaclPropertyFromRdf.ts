@@ -11,7 +11,7 @@ export const snippets_shaclPropertyFromRdf: SnippetFactory = ({
 function ${syntheticNamePrefix}shaclPropertyFromRdf<TypeT, TypeSchemaT>(typeFromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<TypeT, TypeSchemaT>): ${snippets.FromRdfResourceValuesFunction}<TypeT, TypeSchemaT> {
   return ({ focusResource, graph, propertySchema, ...otherParameters }) =>
     focusResource.values(propertySchema.path, { graph, unique: true }))\
-        .chain(resourceValues => typeFromRdfResourceValues(resourceValues, { focusResource, graph, propertySchema, ...otherParameters })\
+        .chain(resourceValues => typeFromRdfResourceValues(resourceValues, { focusResource, graph, propertyPath: propertySchema.path, schema: propertySchema.type, ...otherParameters })\
         .chain(resourceValues => resourceValues.head());
 }`,
   );

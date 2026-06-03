@@ -19,7 +19,8 @@ export type ${syntheticNamePrefix}FromRdfResourceValuesFunction<ValueT, ValueSch
     ignoreRdfType?: boolean;
     ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
     preferredLanguages?: readonly string[];
-    propertySchema: ${snippets.ShaclPropertySchema}<ValueSchemaT>;
+    propertyPath: ${snippets.PropertyPath};
+    schema: ValueSchemaT;
   }
 ) => ${imports.Either}<Error, ${imports.Resource}.Values<ValueT>>;`,
   );
