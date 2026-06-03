@@ -274,6 +274,13 @@ ${joinCode(
   }
 
   @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return this.name
+      .map((name) => code`${name}.fromRdfResourceValues`)
+      .orDefault(this.fromRdfResourceValuesFunctionExpression);
+  }
+
+  @Memoize()
   override get graphqlType(): AbstractType.GraphqlType {
     const name = this.name.extract();
     if (
