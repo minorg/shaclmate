@@ -13,10 +13,10 @@ export class OptionType<
     Maybe.empty();
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  override readonly kind = "Option";
   override readonly jsTypes = [
     { instanceof: "Maybe", typeof: "object" },
   ] as const;
+  override readonly kind = "Option";
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractContainerType.ConversionFunction> {
@@ -58,6 +58,11 @@ export class OptionType<
   @Memoize()
   get filterType(): Code {
     return code`${this.reusables.snippets.MaybeFilter}<${this.itemType.filterType}>`;
+  }
+
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
   }
 
   @Memoize()

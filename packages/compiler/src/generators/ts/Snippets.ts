@@ -95,6 +95,7 @@ import { snippets_literalSparqlWherePatterns } from "./_snippets/snippets_litera
 import { snippets_MaybeFilter } from "./_snippets/snippets_MaybeFilter.js";
 import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
 import { snippets_maybeEquals } from "./_snippets/snippets_maybeEquals.js";
+import { snippets_maybeFromRdfResourceValues } from "./_snippets/snippets_maybeFromRdfResourceValues.js";
 import { snippets_maybeSparqlConstructTriples } from "./_snippets/snippets_maybeSparqlConstructTriples.js";
 import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSparqlWherePatterns.js";
 import { snippets_monkeyPatchObject } from "./_snippets/snippets_monkeyPatchObject.js";
@@ -754,6 +755,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get maybeFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_maybeFromRdfResourceValues);
+  }
+
+  @Memoize()
   get maybeSparqlConstructTriples(): Snippet {
     return this.snippet(snippets_maybeSparqlConstructTriples);
   }
@@ -798,6 +804,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get setFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_setFromRdfResourceValues);
+  }
+
+  @Memoize()
   get setSparqlConstructTriples(): Snippet {
     return this.snippet(snippets_setSparqlConstructTriples);
   }
@@ -805,11 +816,6 @@ export class Snippets {
   @Memoize()
   get setSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_setSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get setFromRdfResourceValues(): Snippet {
-    return this.snippet(snippets_setFromRdfResourceValues);
   }
 
   @Memoize()
