@@ -198,20 +198,14 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     // subject of any statements.
 
     return Maybe.of(
-      code`${this.name}: ${this.reusables.snippets.shaclPropertyFromRdf}(${{
+      code`${this.name}: ${this.reusables.snippets.shaclPropertyFromRdf}(${this.type.fromRdfResourceValuesFunction})(${{
+        context: variables.context,
         graph: variables.graph,
-        resource: variables.resource,
+        focusResource: variables.focusResource,
+        ignoreRdfType: true,
+        objectSet: variables.objectSet,
+        preferredLanguages: variables.preferredLanguages,
         propertySchema: code`schema.properties.${this.name}`,
-        typeFromRdf: code`((resourceValues) => ${this.type.fromRdfResourceValuesExpression(
-          {
-            variables: {
-              ...variables,
-              ignoreRdfType: true,
-              propertyPath: code`${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.path`,
-              resourceValues: code`resourceValues`,
-            },
-          },
-        )})`,
       }})`,
     );
   }

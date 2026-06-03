@@ -167,10 +167,10 @@ export abstract class AbstractProperty<
   abstract fromRdfResourceValuesInitializer(parameters: {
     variables: {
       context: Code;
+      focusResource: Code;
       graph: Code;
       objectSet: Code;
       preferredLanguages: Code;
-      resource: Code;
     };
   }): Maybe<Code>;
 

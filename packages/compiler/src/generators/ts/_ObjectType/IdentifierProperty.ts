@@ -166,13 +166,12 @@ export class IdentifierProperty extends AbstractProperty<
     AbstractProperty<IdentifierType>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.fromRdfResourceValuesExpression({
-        variables: {
+      code`${this.name}: ${this.type.fromRdfResourceValuesFunction}(
+        ${this.reusables.imports.Right}(new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.focusResource, propertyPath: this.rdfjsTermExpression(rdf.subject), term: code`${variables.focusResource}.identifier` }}).toValues()),
+        ${{
           ...variables,
-          propertyPath: this.rdfjsTermExpression(rdf.subject),
-          resourceValues: code`${this.reusables.imports.Right}(new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.resource, propertyPath: this.rdfjsTermExpression(rdf.subject), term: code`${variables.resource}.identifier` }}).toValues())`,
-        },
-      })}.chain(values => values.head())`,
+          ignoreRdfType: true,
+        }}).chain(values => values.head())`,
     );
   }
 
