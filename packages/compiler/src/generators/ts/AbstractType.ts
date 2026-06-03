@@ -225,6 +225,11 @@ export abstract class AbstractType {
    */
   @Memoize()
   get schema(): Code {
+    return this.schemaExpression;
+  }
+
+  @Memoize()
+  protected get schemaExpression(): Code {
     return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
   }
 

@@ -341,20 +341,18 @@ ${joinCode(
     return this.members.some((member) => member.type.referencesObjectType);
   }
 
+  @Memoize()
+  override get schema() {
+    return this.name
+      .map((name) => code`${name}.schema`)
+      .orDefault(this.schemaExpression);
+  }
+
+  @Memoize()
   override get schemaType(): Code {
-    return code`${{
-      kind: this.kind,
-      members: code`{ ${joinCode(
-        this.members.map(
-          ({ type, primaryDiscriminantValue }) =>
-            code`readonly ${literalOf(primaryDiscriminantValue)}: ${{
-              discriminantValues: code`readonly (number | string)[]`,
-              type: type.schemaType,
-            }}`,
-        ),
-        { on: ";" },
-      )} }`,
-    }}`;
+    return this.name
+      .map(() => code`typeof ${this.schema}`)
+      .orDefault(this.schemaTypeExpression);
   }
 
   @Memoize()
@@ -395,6 +393,23 @@ ${joinCode(
         { on: "," },
       )} }`,
     );
+  }
+
+  @Memoize()
+  protected get schemaTypeExpression(): Code {
+    return code`${{
+      kind: this.kind,
+      members: code`{ ${joinCode(
+        this.members.map(
+          ({ type, primaryDiscriminantValue }) =>
+            code`readonly ${literalOf(primaryDiscriminantValue)}: ${{
+              discriminantValues: code`readonly (number | string)[]`,
+              type: type.schemaType,
+            }}`,
+        ),
+        { on: ";" },
+      )} }`,
+    }}`;
   }
 
   protected get staticModuleDeclarations(): Record<string, Code> {
@@ -443,7 +458,12 @@ export namespace Json {
 
     if (this.configuration.features.has("Object.fromRdf")) {
       staticModuleDeclarations[`fromRdfResourceValues`] =
-        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}> = ${this.fromRdfResourceValuesFunctionExpression};`;
+        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}, ${this.schemaType}> = ${this.fromRdfResourceValuesFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.schema")) {
+      staticModuleDeclarations["schema"] =
+        code`export const schema = ${this.schemaExpression}`;
     }
 
     if (this.configuration.features.has("Object.toJson")) {
