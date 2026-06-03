@@ -121,25 +121,25 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     return code`{ "@id": ${variables.value}.value${discriminantProperty} }`;
   }
 
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<NamedNode>["fromRdfResourceValuesExpressionChain"]
-  >[0]): ReturnType<
-    AbstractIdentifierType<NamedNode>["fromRdfResourceValuesExpressionChain"]
-  > {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toIri(${
-        this.in_.length > 0
-          ? code`[${joinCode(
-              this.in_.map((in_) => this.rdfjsTermExpression(in_)),
-              { on: ", " },
-            )}]`
-          : ""
-      })))`,
-    };
-  }
+  // protected override fromRdfResourceValuesExpressionChain({
+  //   variables,
+  // }: Parameters<
+  //   AbstractIdentifierType<NamedNode>["fromRdfResourceValuesExpressionChain"]
+  // >[0]): ReturnType<
+  //   AbstractIdentifierType<NamedNode>["fromRdfResourceValuesExpressionChain"]
+  // > {
+  //   return {
+  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
+  //     valueTo: code`chain(values => values.chainMap(value => value.toIri(${
+  //       this.in_.length > 0
+  //         ? code`[${joinCode(
+  //             this.in_.map((in_) => this.rdfjsTermExpression(in_)),
+  //             { on: ", " },
+  //           )}]`
+  //         : ""
+  //     })))`,
+  //   };
+  // }
 }
 
 const nodeKinds: ReadonlySet<"IRI"> = new Set(["IRI"]);

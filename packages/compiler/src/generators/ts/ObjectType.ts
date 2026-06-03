@@ -302,20 +302,20 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return code`${this.name.unsafeCoerce()}.fromJson(${variables.value})`;
   }
 
-  override fromRdfResourceValuesExpression({
-    variables,
-  }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
-    const {
-      resourceValues: resourceValuesVariable,
-      ...fromRdfResourceValuesOptionsTemp
-    } = variables;
-    const fromRdfResourceValuesOptions: Record<string, boolean | Code> =
-      fromRdfResourceValuesOptionsTemp;
-    if (!this.configuration.features.has("ObjectSet")) {
-      delete fromRdfResourceValuesOptions["objectSet"];
-    }
-    return code`${this.name.unsafeCoerce()}.fromRdfResourceValues(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
-  }
+  // override fromRdfResourceValuesExpression({
+  //   variables,
+  // }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
+  //   const {
+  //     resourceValues: resourceValuesVariable,
+  //     ...fromRdfResourceValuesOptionsTemp
+  //   } = variables;
+  //   const fromRdfResourceValuesOptions: Record<string, boolean | Code> =
+  //     fromRdfResourceValuesOptionsTemp;
+  //   if (!this.configuration.features.has("ObjectSet")) {
+  //     delete fromRdfResourceValuesOptions["objectSet"];
+  //   }
+  //   return code`${this.name.unsafeCoerce()}.fromRdfResourceValues(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
+  // }
 
   override graphqlResolveExpression({
     variables,

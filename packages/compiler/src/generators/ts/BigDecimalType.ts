@@ -75,16 +75,16 @@ export class BigDecimalType extends AbstractLiteralType {
     return code`[${this.reusables.snippets.bigDecimalLiteral}(${variables.value})]`;
   }
 
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractLiteralType["fromRdfResourceValuesExpressionChain"]
-  >[0]): ReturnType<
-    AbstractLiteralType["fromRdfResourceValuesExpressionChain"]
-  > {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toLiteral().chain(${this.reusables.snippets.decodeBigDecimalLiteral})))`,
-    };
-  }
+  // protected override fromRdfResourceValuesExpressionChain({
+  //   variables,
+  // }: Parameters<
+  //   AbstractLiteralType["fromRdfResourceValuesExpressionChain"]
+  // >[0]): ReturnType<
+  //   AbstractLiteralType["fromRdfResourceValuesExpressionChain"]
+  // > {
+  //   return {
+  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
+  //     valueTo: code`chain(values => values.chainMap(value => value.toLiteral().chain(${this.reusables.snippets.decodeBigDecimalLiteral})))`,
+  //   };
+  // }
 }

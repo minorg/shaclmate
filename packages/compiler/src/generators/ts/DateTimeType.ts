@@ -29,9 +29,9 @@ export class DateTimeType extends AbstractDateType {
     return code`${variables.value}.toISOString()`;
   }
 
-  protected override fromRdfResourceValueExpression({
-    variables,
-  }: Parameters<AbstractDateType["fromRdfResourceValueExpression"]>[0]): Code {
-    return code`${variables.value}.toDateTime(${this.primitiveIn.length > 0 ? `[${this.primitiveIn.map((_) => `new Date(${_.getTime()})`).join(", ")}]` : ""})`;
-  }
+  // protected override fromRdfResourceValueExpression({
+  //   variables,
+  // }: Parameters<AbstractDateType["fromRdfResourceValueExpression"]>[0]): Code {
+  //   return code`${variables.value}.toDateTime(${this.primitiveIn.length > 0 ? `[${this.primitiveIn.map((_) => `new Date(${_.getTime()})`).join(", ")}]` : ""})`;
+  // }
 }

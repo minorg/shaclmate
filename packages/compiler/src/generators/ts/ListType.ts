@@ -103,29 +103,29 @@ export class ListType<
     )})))`;
   }
 
-  override fromRdfResourceValuesExpression({
-    variables,
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["fromRdfResourceValuesExpression"]
-  >[0]): Code {
-    return joinCode(
-      [
-        variables.resourceValues,
-        code`chain(values => values.chainMap(value => value.toList(${{ graph: variables.graph }})))`, // Resource.Values<Resource.Value> to Resource.Values<Resource.Values>
-        code`chain(valueLists =>
-        valueLists.chainMap(
-          valueList => ${this.itemType.fromRdfResourceValuesExpression({
-            variables: {
-              ...variables,
-              resourceValues: code`${this.reusables.imports.Right}(${this.reusables.imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, values: valueList.toArray() }))`,
-            },
-          })}
-      ))`, // Resource.Values<Resource.Values> to Resource.Values<item type arrays>
-        code`map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
-      ],
-      { on: "." },
-    );
-  }
+  // override fromRdfResourceValuesExpression({
+  //   variables,
+  // }: Parameters<
+  //   AbstractCollectionType<ItemTypeT>["fromRdfResourceValuesExpression"]
+  // >[0]): Code {
+  //   return joinCode(
+  //     [
+  //       variables.resourceValues,
+  //       code`chain(values => values.chainMap(value => value.toList(${{ graph: variables.graph }})))`, // Resource.Values<Resource.Value> to Resource.Values<Resource.Values>
+  //       code`chain(valueLists =>
+  //       valueLists.chainMap(
+  //         valueList => ${this.itemType.fromRdfResourceValuesExpression({
+  //           variables: {
+  //             ...variables,
+  //             resourceValues: code`${this.reusables.imports.Right}(${this.reusables.imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, values: valueList.toArray() }))`,
+  //           },
+  //         })}
+  //     ))`, // Resource.Values<Resource.Values> to Resource.Values<item type arrays>
+  //       code`map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
+  //     ],
+  //     { on: "." },
+  //   );
+  // }
 
   override jsonSchema(
     parameters: Parameters<AbstractCollectionType<ItemTypeT>["jsonSchema"]>[0],

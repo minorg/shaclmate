@@ -22,11 +22,11 @@ export class FloatType extends AbstractNumericType<number> {
     return code`${typeof literal === "number" ? literal : LiteralDecoder.decodeFloatLiteral(literal).unsafeCoerce()}`;
   }
 
-  protected override fromRdfResourceValueExpression({
-    variables,
-  }: Parameters<
-    AbstractNumericType<number>["fromRdfResourceValueExpression"]
-  >[0]): Code {
-    return code`${variables.value}.toFloat(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})`;
-  }
+  // protected override fromRdfResourceValueExpression({
+  //   variables,
+  // }: Parameters<
+  //   AbstractNumericType<number>["fromRdfResourceValueExpression"]
+  // >[0]): Code {
+  //   return code`${variables.value}.toFloat(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})`;
+  // }
 }

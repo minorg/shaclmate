@@ -93,16 +93,16 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     return code`{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
   }
 
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<BlankNode>["fromRdfResourceValuesExpressionChain"]
-  >[0]) {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toBlankNode()))`,
-    };
-  }
+  // protected override fromRdfResourceValuesExpressionChain({
+  //   variables,
+  // }: Parameters<
+  //   AbstractIdentifierType<BlankNode>["fromRdfResourceValuesExpressionChain"]
+  // >[0]) {
+  //   return {
+  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
+  //     valueTo: code`chain(values => values.chainMap(value => value.toBlankNode()))`,
+  //   };
+  // }
 }
 
 const nodeKinds: ReadonlySet<"BlankNode"> = new Set(["BlankNode"]);

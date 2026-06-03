@@ -70,30 +70,24 @@ export abstract class AbstractNumericType<
     return code`[${this.reusables.snippets.literalFactory}.${this.jsTypes[0].typeof}(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
 
-  protected abstract fromRdfResourceValueExpression(variables: {
-    variables: {
-      value: Code;
-    };
-  }): Code;
-
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<ValueT>["fromRdfResourceValuesExpressionChain"]
-  >[0]): ReturnType<
-    AbstractPrimitiveType<ValueT>["fromRdfResourceValuesExpressionChain"]
-  > {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      languageIn: undefined,
-      preferredLanguages: undefined,
-      valueTo: code`chain(values => values.chainMap(value => ${this.fromRdfResourceValueExpression(
-        {
-          variables: { value: code`value` },
-        },
-      )}))`,
-    };
-  }
+  // protected override fromRdfResourceValuesExpressionChain({
+  //   variables,
+  // }: Parameters<
+  //   AbstractPrimitiveType<ValueT>["fromRdfResourceValuesExpressionChain"]
+  // >[0]): ReturnType<
+  //   AbstractPrimitiveType<ValueT>["fromRdfResourceValuesExpressionChain"]
+  // > {
+  //   return {
+  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
+  //     languageIn: undefined,
+  //     preferredLanguages: undefined,
+  //     valueTo: code`chain(values => values.chainMap(value => ${this.fromRdfResourceValueExpression(
+  //       {
+  //         variables: { value: code`value` },
+  //       },
+  //     )}))`,
+  //   };
+  // }
 }
 
 export namespace AbstractNumericType {

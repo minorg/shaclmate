@@ -67,16 +67,16 @@ export class StringType extends AbstractPrimitiveType<string> {
     return code`[${this.reusables.snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${this.rdfjsTermExpression(this.datatype)}` : ""})]`;
   }
 
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<string>["fromRdfResourceValuesExpressionChain"]
-  >[0]): ReturnType<
-    AbstractPrimitiveType<string>["fromRdfResourceValuesExpressionChain"]
-  > {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toString(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})))`,
-    };
-  }
+  // protected override fromRdfResourceValuesExpressionChain({
+  //   variables,
+  // }: Parameters<
+  //   AbstractPrimitiveType<string>["fromRdfResourceValuesExpressionChain"]
+  // >[0]): ReturnType<
+  //   AbstractPrimitiveType<string>["fromRdfResourceValuesExpressionChain"]
+  // > {
+  //   return {
+  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
+  //     valueTo: code`chain(values => values.chainMap(value => value.toString(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})))`,
+  //   };
+  // }
 }

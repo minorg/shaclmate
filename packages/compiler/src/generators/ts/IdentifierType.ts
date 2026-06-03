@@ -114,22 +114,22 @@ export class IdentifierType extends AbstractIdentifierType<
     return code`(${variables.value}.termType === "BlankNode" ? ${valueToBlankNode} : ${valueToNamedNode})`;
   }
 
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractIdentifierType<
-      BlankNode | NamedNode
-    >["fromRdfResourceValuesExpressionChain"]
-  >[0]): ReturnType<
-    AbstractIdentifierType<
-      BlankNode | NamedNode
-    >["fromRdfResourceValuesExpressionChain"]
-  > {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toIdentifier()))`,
-    };
-  }
+  // protected override fromRdfResourceValuesExpressionChain({
+  //   variables,
+  // }: Parameters<
+  //   AbstractIdentifierType<
+  //     BlankNode | NamedNode
+  //   >["fromRdfResourceValuesExpressionChain"]
+  // >[0]): ReturnType<
+  //   AbstractIdentifierType<
+  //     BlankNode | NamedNode
+  //   >["fromRdfResourceValuesExpressionChain"]
+  // > {
+  //   return {
+  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
+  //     valueTo: code`chain(values => values.chainMap(value => value.toIdentifier()))`,
+  //   };
+  // }
 }
 
 const nodeKinds: ReadonlySet<IdentifierNodeKind> = new Set([

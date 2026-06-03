@@ -46,12 +46,12 @@ export class LazyType extends AbstractLazyType<
     return code`${this.partialType.fromJsonExpression(parameters)}.map(partial => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partial, resolver: (partial) => Promise.resolve(${this.reusables.imports.Left}(new Error(\`unable to resolve \${partial} deserialized from JSON\`))) }))`;
   }
 
-  override fromRdfResourceValuesExpression(
-    parameters: Parameters<Super["fromRdfResourceValuesExpression"]>[0],
-  ): Code {
-    const { variables } = parameters;
-    return code`${this.partialType.fromRdfResourceValuesExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => ${variables.objectSet}.${this.resolveType.objectSetMethodNames.object}(partial.${this.configuration.syntheticNamePrefix}identifier(), options) })))`;
-  }
+  // override fromRdfResourceValuesExpression(
+  //   parameters: Parameters<Super["fromRdfResourceValuesExpression"]>[0],
+  // ): Code {
+  //   const { variables } = parameters;
+  //   return code`${this.partialType.fromRdfResourceValuesExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => ${variables.objectSet}.${this.resolveType.objectSetMethodNames.object}(partial.${this.configuration.syntheticNamePrefix}identifier(), options) })))`;
+  // }
 
   override graphqlResolveExpression({
     variables,
