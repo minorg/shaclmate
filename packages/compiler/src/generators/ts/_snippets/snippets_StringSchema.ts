@@ -9,6 +9,7 @@ export const snippets_StringSchema: SnippetFactory = ({
     code`\
 interface ${syntheticNamePrefix}StringSchema<T extends string> {
   readonly in?: readonly T[];
+  readonly languageIn?: readonly string[];
   readonly kind: "String";
 }`,
   );

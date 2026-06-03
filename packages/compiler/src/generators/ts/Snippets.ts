@@ -124,6 +124,7 @@ import { snippets_sparqlInstancesOfPattern } from "./_snippets/snippets_sparqlIn
 import { snippets_sparqlPropertyPath } from "./_snippets/snippets_sparqlPropertyPath.js";
 import { snippets_sparqlValueInPattern } from "./_snippets/snippets_sparqlValueInPattern.js";
 import { snippets_strictEquals } from "./_snippets/snippets_strictEquals.js";
+import { snippets_stringFromRdfResourceValues } from "./_snippets/snippets_stringFromRdfResourceValues.js";
 import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringSparqlWherePatterns.js";
 import { snippets_TermFilter } from "./_snippets/snippets_TermFilter.js";
 import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
@@ -843,6 +844,11 @@ export class Snippets {
   @Memoize()
   get strictEquals(): Snippet {
     return this.snippet(snippets_strictEquals);
+  }
+
+  @Memoize()
+  get stringFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_stringFromRdfResourceValues);
   }
 
   @Memoize()

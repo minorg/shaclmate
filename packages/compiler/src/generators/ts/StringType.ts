@@ -25,6 +25,11 @@ export class StringType extends AbstractPrimitiveType<string> {
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
 
   @Memoize()
+  get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+  }
+
+  @Memoize()
   override get schemaType(): Code {
     return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
   }
