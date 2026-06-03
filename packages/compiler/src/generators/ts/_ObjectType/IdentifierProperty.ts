@@ -168,10 +168,7 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(
       code`${this.name}: ${this.type.fromRdfResourceValuesFunction}(
         ${this.reusables.imports.Right}(new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.focusResource, propertyPath: this.rdfjsTermExpression(rdf.subject), term: code`${variables.focusResource}.identifier` }}).toValues()),
-        ${{
-          ...variables,
-          ignoreRdfType: true,
-        }}).chain(values => values.head())`,
+        ${variables}).chain(values => values.head())`,
     );
   }
 
