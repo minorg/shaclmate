@@ -208,6 +208,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.name.unsafeCoerce()}.fromRdfResourceValues`;
+  }
+
+  @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
     return this.fromRdfType.map(
       () => code`${this.name.unsafeCoerce()}.fromRdfType`,
@@ -323,7 +328,10 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    let expression = code`${this.name.unsafeCoerce()}.Json.schema()`;
+    let expression = code`;
+    $;
+    this.name.unsafeCoerce();
+    .Json.schema()`;
     if (
       context === "property" &&
       this.properties.some((property) => property.recursive)
