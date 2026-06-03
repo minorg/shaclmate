@@ -59,8 +59,6 @@ import { snippets_filterMaybe } from "./_snippets/snippets_filterMaybe.js";
 import { snippets_filterNumeric } from "./_snippets/snippets_filterNumeric.js";
 import { snippets_filterString } from "./_snippets/snippets_filterString.js";
 import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
-import { snippets_fromRdfLanguageIn } from "./_snippets/snippets_fromRdfLanguageIn.js";
-import { snippets_fromRdfPreferredLanguages } from "./_snippets/snippets_fromRdfPreferredLanguages.js";
 import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
 import { snippets_HashFunction } from "./_snippets/snippets_HashFunction.js";
 import { snippets_hashArray } from "./_snippets/snippets_hashArray.js";
@@ -134,6 +132,7 @@ import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
 import { snippets_ToRdfResourceFunction } from "./_snippets/snippets_ToRdfResourceFunction.js";
 import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdfResourceValuesFunction.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
+import { snippets_termLikeFromRdfResourceValues } from "./_snippets/snippets_termLikeFromRdfResourceValues.js";
 import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSchemaSparqlPatterns.js";
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
 import { snippets_toIsoDateString } from "./_snippets/snippets_toIsoDateString.js";
@@ -622,16 +621,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get fromRdfLanguageIn(): Snippet {
-    return this.snippet(snippets_fromRdfLanguageIn);
-  }
-
-  @Memoize()
-  get fromRdfPreferredLanguages(): Snippet {
-    return this.snippet(snippets_fromRdfPreferredLanguages);
-  }
-
-  @Memoize()
   get hashArray(): Snippet {
     return this.snippet(snippets_hashArray);
   }
@@ -878,6 +867,11 @@ export class Snippets {
   @Memoize()
   get termFilterSparqlPatterns(): Snippet {
     return this.snippet(snippets_termFilterSparqlPatterns);
+  }
+
+  @Memoize()
+  get termLikeFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_termLikeFromRdfResourceValues);
   }
 
   @Memoize()
