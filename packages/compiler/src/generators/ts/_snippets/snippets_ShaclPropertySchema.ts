@@ -8,7 +8,7 @@ export const snippets_ShaclPropertySchema: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}ShaclPropertySchema`,
     code`\
-export interface ${syntheticNamePrefix}ShaclPropertySchema<TypeSchemaT = object> {
+export interface ${syntheticNamePrefix}ShaclPropertySchema<TypeSchemaT> {
   readonly kind: "Shacl";
   readonly path: ${snippets.PropertyPath};
   readonly type: TypeSchemaT;
