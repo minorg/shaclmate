@@ -87,6 +87,7 @@ import { snippets_LazySet } from "./_snippets/snippets_LazySet.js";
 import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
 import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
+import { snippets_listFromRdfResourceValues } from "./_snippets/snippets_listFromRdfResourceValues.js";
 import { snippets_listSparqlConstructTriples } from "./_snippets/snippets_listSparqlConstructTriples.js";
 import { snippets_listSparqlWherePatterns } from "./_snippets/snippets_listSparqlWherePatterns.js";
 import { snippets_literalFactory } from "./_snippets/snippets_literalFactory.js";
@@ -725,6 +726,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get listFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_listFromRdfResourceValues);
+  }
+
+  @Memoize()
   get listSparqlConstructTriples(): Snippet {
     return this.snippet(snippets_listSparqlConstructTriples);
   }
@@ -799,7 +805,8 @@ export class Snippets {
     return this.snippet(snippets_parseIri);
   }
 
-  @Memoize() get sequenceRecord(): Snippet {
+  @Memoize()
+  get sequenceRecord(): Snippet {
     return this.snippet(snippets_sequenceRecord);
   }
 

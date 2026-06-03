@@ -72,6 +72,11 @@ export class ListType<
   }
 
   @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  }
+
+  @Memoize()
   override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
     return new Set(["BlankNode", "NamedNode"]); // List or rdf:nil
   }
