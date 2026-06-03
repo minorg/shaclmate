@@ -5,8 +5,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-import type { Type } from "./Type.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for all types that are terms in RDF (i.e., identifiers, literals).
