@@ -114,6 +114,7 @@ import { snippets_SparqlPattern_isSolutionGenerating } from "./_snippets/snippet
 import { snippets_StringFilter } from "./_snippets/snippets_StringFilter.js";
 import { snippets_StringSchema } from "./_snippets/snippets_StringSchema.js";
 import { snippets_sequenceRecord } from "./_snippets/snippets_sequenceRecord.js";
+import { snippets_setFromRdfResourceValues } from "./_snippets/snippets_setFromRdfResourceValues.js";
 import { snippets_setSparqlConstructTriples } from "./_snippets/snippets_setSparqlConstructTriples.js";
 import { snippets_setSparqlWherePatterns } from "./_snippets/snippets_setSparqlWherePatterns.js";
 import { snippets_shaclPropertyFromRdf } from "./_snippets/snippets_shaclPropertyFromRdf.js";
@@ -804,6 +805,11 @@ export class Snippets {
   @Memoize()
   get setSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_setSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get setFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_setFromRdfResourceValues);
   }
 
   @Memoize()

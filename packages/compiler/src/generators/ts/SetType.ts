@@ -12,11 +12,11 @@ export class SetType<
 > extends AbstractCollectionType<ItemTypeT> {
   override readonly graphqlArgs: AbstractCollectionType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  override readonly kind = "Set";
-  readonly minCount: bigint;
   override readonly jsTypes = [
     { instanceof: "Array", typeof: "object" },
   ] as const;
+  override readonly kind = "Set";
+  readonly minCount: bigint;
 
   constructor({
     minCount,
@@ -79,6 +79,11 @@ export class SetType<
       code: code`${conversionFunction}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
       sourceTypes,
     });
+  }
+
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
   }
 
   override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
