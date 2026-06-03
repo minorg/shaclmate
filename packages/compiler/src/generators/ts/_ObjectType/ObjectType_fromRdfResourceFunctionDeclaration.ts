@@ -23,12 +23,12 @@ export function ObjectType_fromRdfResourceFunctionDeclaration(
     resource: code`${syntheticNamePrefix}resource`,
   };
 
-  const propertyFromRdfResourceValuesExpressionVariable = {
+  const propertyFromRdfResourceValuesVariables = {
     context: variables.context,
+    focusResource: variables.resource,
     graph: variables.graph,
     objectSet: variables.objectSet,
     preferredLanguages: variables.preferredLanguages,
-    resource: variables.resource,
   };
 
   const chains: { expression: Code; variable: string }[] = [];
@@ -44,7 +44,7 @@ export function ObjectType_fromRdfResourceFunctionDeclaration(
     this.properties.flatMap((property) =>
       property
         .fromRdfResourceValuesInitializer({
-          variables: propertyFromRdfResourceValuesExpressionVariable,
+          variables: propertyFromRdfResourceValuesVariables,
         })
         .toList(),
     );
