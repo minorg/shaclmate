@@ -21,6 +21,11 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
 
   @Memoize()
+  get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+  }
+
+  @Memoize()
   override get schemaType(): Code {
     return code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
   }
@@ -53,19 +58,4 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.boolean(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
-
-  // protected override fromRdfResourceValuesExpressionChain({
-  //   variables,
-  // }: Parameters<
-  //   AbstractPrimitiveType<boolean>["fromRdfResourceValuesExpressionChain"]
-  // >[0]): ReturnType<
-  //   AbstractPrimitiveType<boolean>["fromRdfResourceValuesExpressionChain"]
-  // > {
-  //   return {
-  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
-  //     languageIn: undefined,
-  //     preferredLanguages: undefined,
-  //     valueTo: code`chain(values => values.chainMap(value => value.toBoolean(${this.primitiveIn.length === 1 ? `[${this.primitiveIn[0]}] as const` : ""})))`,
-  //   };
-  // }
 }

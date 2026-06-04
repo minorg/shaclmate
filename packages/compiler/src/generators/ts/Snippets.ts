@@ -13,6 +13,7 @@ import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiter
 import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
 import { snippets_blankNodeSparqlWherePatterns } from "./_snippets/snippets_blankNodeSparqlWherePatterns.js";
 import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
+import { snippets_booleanFromRdfResourceValues } from "./_snippets/snippets_booleanFromRdfResourceValues.js";
 import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_booleanSparqlWherePatterns.js";
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
@@ -446,6 +447,11 @@ export class Snippets {
   @Memoize()
   get booleanEquals(): Snippet {
     return this.snippet(snippets_booleanEquals);
+  }
+
+  @Memoize()
+  get booleanFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_booleanFromRdfResourceValues);
   }
 
   @Memoize()
