@@ -16,6 +16,8 @@ export class BigDecimalType extends AbstractLiteralType {
     code`${this.reusables.snippets.filterBigDecimal}`;
   override readonly filterType =
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
+  override readonly fromRdfResourceValuesFunction =
+    code`${this.reusables.snippets.bigDecimalFromRdfResourceValues}`;
   override readonly hashFunction =
     code`${this.reusables.snippets.hashBigDecimal}`;
   override readonly jsTypes = [
@@ -26,11 +28,6 @@ export class BigDecimalType extends AbstractLiteralType {
     code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.bigDecimalSparqlWherePatterns}`;
-
-  @Memoize()
-  get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.bigDecimalFromRdfResourceValues}`;
-  }
 
   @Memoize()
   override get graphqlType() {
