@@ -9,6 +9,7 @@ import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.j
 import { snippets_BlankNodeSchema } from "./_snippets/snippets_BlankNodeSchema.js";
 import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
 import { snippets_BooleanSchema } from "./_snippets/snippets_BooleanSchema.js";
+import { snippets_bigDecimalFromRdfResourceValues } from "./_snippets/snippets_bigDecimalFromRdfResourceValues.js";
 import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiteral.js";
 import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
 import { snippets_bigIntFromRdfResourceValues } from "./_snippets/snippets_bigIntFromRdfResourceValues.js";
@@ -430,6 +431,11 @@ export class Snippets {
   @Memoize()
   get arrayIntersection(): Snippet {
     return this.snippet(snippets_arrayIntersection);
+  }
+
+  @Memoize()
+  get bigDecimalFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_bigDecimalFromRdfResourceValues);
   }
 
   @Memoize()

@@ -28,6 +28,11 @@ export class BigDecimalType extends AbstractLiteralType {
     code`${this.reusables.snippets.bigDecimalSparqlWherePatterns}`;
 
   @Memoize()
+  get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.bigDecimalFromRdfResourceValues}`;
+  }
+
+  @Memoize()
   override get graphqlType() {
     return new AbstractLiteralType.GraphqlType(
       code`${this.reusables.imports.GraphQLString}`,
@@ -74,17 +79,4 @@ export class BigDecimalType extends AbstractLiteralType {
   >[0]): Code {
     return code`[${this.reusables.snippets.bigDecimalLiteral}(${variables.value})]`;
   }
-
-  // protected override fromRdfResourceValuesExpressionChain({
-  //   variables,
-  // }: Parameters<
-  //   AbstractLiteralType["fromRdfResourceValuesExpressionChain"]
-  // >[0]): ReturnType<
-  //   AbstractLiteralType["fromRdfResourceValuesExpressionChain"]
-  // > {
-  //   return {
-  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
-  //     valueTo: code`chain(values => values.chainMap(value => value.toLiteral().chain(${this.reusables.snippets.decodeBigDecimalLiteral})))`,
-  //   };
-  // }
 }
