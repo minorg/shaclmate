@@ -79,6 +79,7 @@ import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
 import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
 import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
+import { snippets_intFromRdfResourceValues } from "./_snippets/snippets_intFromRdfResourceValues.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
 import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
 import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
@@ -708,6 +709,11 @@ export class Snippets {
         left.usageSiteName.localeCompare(right.usageSiteName),
       )
       .map((snippet) => code`${snippet.ifUsed}`);
+  }
+
+  @Memoize()
+  get intFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_intFromRdfResourceValues);
   }
 
   @Memoize()
