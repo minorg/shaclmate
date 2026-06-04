@@ -36,6 +36,8 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     code`${this.reusables.snippets.BlankNodeSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.blankNodeSparqlWherePatterns}`;
+  override readonly fromRdfResourceValuesFunction =
+    code`${this.reusables.snippets.blankNodeFromRdfResourceValues}`;
 
   constructor(
     superParameters: Omit<
