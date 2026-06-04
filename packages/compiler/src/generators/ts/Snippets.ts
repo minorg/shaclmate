@@ -39,6 +39,7 @@ import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
 import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
 import { snippets_dateEquals } from "./_snippets/snippets_dateEquals.js";
 import { snippets_dateSparqlWherePatterns } from "./_snippets/snippets_dateSparqlWherePatterns.js";
+import { snippets_dateTimeFromRdfResourceValues } from "./_snippets/snippets_dateTimeFromRdfResourceValues.js";
 import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBigDecimalLiteral.js";
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueFromRdfResourceValues } from "./_snippets/snippets_defaultValueFromRdfResourceValues.js";
@@ -547,6 +548,11 @@ export class Snippets {
   @Memoize()
   get dateSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_dateSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get dateTimeFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_dateTimeFromRdfResourceValues);
   }
 
   @Memoize()
