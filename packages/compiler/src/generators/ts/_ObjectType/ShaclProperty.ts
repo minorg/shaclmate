@@ -193,20 +193,24 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<
     AbstractProperty<TypeT>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
-    // Assume the property has the correct range and ignore the object's RDF type.
-    // This also accommodates the case where the object of a property is a dangling identifier that's not the
-    // subject of any statements.
+    const parameters: Record<string, Code | true> = {
+      context: variables.context,
+      graph: variables.graph,
+      focusResource: variables.focusResource,
+      // Assume the property has the correct range and ignore the object's RDF type.
+      // This also accommodates the case where the object of a property is a dangling identifier that's not the
+      // subject of any statements.
+      ignoreRdfType: true,
+      preferredLanguages: variables.preferredLanguages,
+      propertySchema: code`schema.properties.${this.name}`,
+      typeFromRdfResourceValues: this.type.fromRdfResourceValuesFunction,
+    };
+    if (this.configuration.features.has("ObjectSet")) {
+      parameters["objectSet"] = variables.objectSet;
+    }
 
     return Maybe.of(
-      code`${this.name}: ${this.reusables.snippets.shaclPropertyFromRdf}(${this.type.fromRdfResourceValuesFunction})(${{
-        context: variables.context,
-        graph: variables.graph,
-        focusResource: variables.focusResource,
-        ignoreRdfType: true,
-        objectSet: variables.objectSet,
-        preferredLanguages: variables.preferredLanguages,
-        propertySchema: code`schema.properties.${this.name}`,
-      }})`,
+      code`${this.name}: ${this.reusables.snippets.shaclPropertyFromRdf}<${this.type.expression}, ${this.type.schemaType}>(${parameters})`,
     );
   }
 

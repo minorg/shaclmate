@@ -328,10 +328,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    let expression = code`;
-    $;
-    this.name.unsafeCoerce();
-    .Json.schema()`;
+    let expression = code`${this.name.unsafeCoerce()}.Json.schema()`;
     if (
       context === "property" &&
       this.properties.some((property) => property.recursive)
