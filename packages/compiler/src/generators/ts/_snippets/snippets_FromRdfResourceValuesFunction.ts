@@ -16,7 +16,7 @@ export type ${syntheticNamePrefix}FromRdfResourceValuesFunction<ValueT, ValueSch
     graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
     focusResource: ${imports.Resource};
     ignoreRdfType?: boolean;
-    ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
+    ${configuration.features.has("ObjectSet") ? code`objectSet: ${syntheticNamePrefix}ObjectSet;` : ""}
     preferredLanguages?: readonly string[];
     propertyPath: ${syntheticNamePrefix}PropertyPath;
     schema: ValueSchemaT;
