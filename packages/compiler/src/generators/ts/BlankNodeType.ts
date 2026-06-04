@@ -28,6 +28,8 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     code`${this.reusables.snippets.filterBlankNode}`;
   override readonly filterType =
     code`${this.reusables.snippets.BlankNodeFilter}`;
+  override readonly fromRdfResourceValuesFunction =
+    code`${this.reusables.snippets.blankNodeFromRdfResourceValues}`;
   override readonly kind = "BlankNode";
   override readonly nodeKinds = nodeKinds;
   override readonly parseFunction =
@@ -36,8 +38,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     code`${this.reusables.snippets.BlankNodeSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.blankNodeSparqlWherePatterns}`;
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.blankNodeFromRdfResourceValues}`;
 
   constructor(
     superParameters: Omit<
@@ -94,17 +94,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       : "";
     return code`{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
   }
-
-  // protected override fromRdfResourceValuesExpressionChain({
-  //   variables,
-  // }: Parameters<
-  //   AbstractIdentifierType<BlankNode>["fromRdfResourceValuesExpressionChain"]
-  // >[0]) {
-  //   return {
-  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
-  //     valueTo: code`chain(values => values.chainMap(value => value.toBlankNode()))`,
-  //   };
-  // }
 }
 
 const nodeKinds: ReadonlySet<"BlankNode"> = new Set(["BlankNode"]);
