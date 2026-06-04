@@ -12,7 +12,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}>`;
   }
 
   @Memoize()

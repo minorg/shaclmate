@@ -12,7 +12,7 @@ export class FloatType extends AbstractNumericType<number> {
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.floatFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.floatFromRdfResourceValues}<${this.expression}>`;
   }
 
   @Memoize()

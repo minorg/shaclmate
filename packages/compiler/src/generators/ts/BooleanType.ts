@@ -22,7 +22,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`;
   }
 
   @Memoize()

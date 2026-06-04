@@ -12,7 +12,7 @@ export class IntType extends AbstractNumericType<number> {
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.intFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.intFromRdfResourceValues}<${this.expression}>`;
   }
 
   @Memoize()

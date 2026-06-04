@@ -26,7 +26,7 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+    return code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}>`;
   }
 
   @Memoize()
