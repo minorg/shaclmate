@@ -142,7 +142,7 @@ function $identifierFromRdfResourceValues(
 }
 
 interface $IdentifierSchema {
-  readonly hasValues?: readonly (BlankNode | NamedNode)[];
+  readonly hasValues?: readonly NamedNode[];
   readonly kind: "Identifier";
 }
 

@@ -9,7 +9,7 @@ export const snippets_IdentifierSchema: SnippetFactory = ({
     `${syntheticNamePrefix}IdentifierSchema`,
     code`\
 interface ${syntheticNamePrefix}IdentifierSchema {
-  readonly hasValues?: readonly (${imports.BlankNode} | ${imports.NamedNode})[];
+  readonly hasValues?: readonly ${imports.NamedNode}[];
   readonly kind: "Identifier";
 }`,
   );
