@@ -10,6 +10,6 @@ export const snippets_dateTimeFromRdfResourceValues: SnippetFactory = ({
     `${syntheticNamePrefix}dateTimeFromRdfResourceValues`,
     code`\
 function ${syntheticNamePrefix}dateTimeFromRdfResourceValues(values: ${imports.Resource}.Values, options: Parameters<${snippets.FromRdfResourceValuesFunction}<Date, ${snippets.DateSchema}>>[1]): ${imports.Either}<Error, ${imports.Resource}.Values<Date>> {
-  return ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => value.toDateTime(options.schema.in)));
+  return ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => options.schema.in ? value.toDateTime(options.schema.in) : value.toDateTime()));
 }`,
   );

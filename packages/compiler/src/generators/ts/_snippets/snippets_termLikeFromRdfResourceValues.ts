@@ -13,8 +13,8 @@ const ${syntheticNamePrefix}termLikeFromRdfResourceValues:
   ${snippets.FromRdfResourceValuesFunction}<${imports.Resource}.Value, {
     readonly hasValues?: readonly (${imports.Literal} | ${imports.NamedNode})[];
     readonly languageIn?: readonly string[];
-  }> = (values, { preferredLanguages, propertySchema: { type: { hasValues, languageIn }} }) => {
-    let chain = ${imports.Right}.of(values);
+  }> = (values, { preferredLanguages, schema: { hasValues, languageIn } }) => {
+    let chain = ${imports.Either}.of<Error, ${imports.Resource}.Values>(values);
 
     if (hasValues && hasValues.length > 0) {
       chain = chain.chain(values => ${imports.Either}.sequence(hasValues.map(hasValue => values.find(value => value.term.equals(hasValue)))).map(() => values));
@@ -37,7 +37,7 @@ const ${syntheticNamePrefix}termLikeFromRdfResourceValues:
       chain = chain.chain(values => {
         // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
         // Within a preferredLanguage the literals may be in any order.
-        let filteredValues: ${imports.Resource}.Value[] = [];
+        const filteredValues: ${imports.Resource}.Value[] = [];
         for (const preferredLanguage of preferredLanguages) {
           for (const value of values) {
             value.toLiteral().ifRight(literal => {

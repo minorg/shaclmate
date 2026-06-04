@@ -10,6 +10,6 @@ export const snippets_floatFromRdfResourceValues: SnippetFactory = ({
     `${syntheticNamePrefix}floatFromRdfResourceValues`,
     code`\
 function ${syntheticNamePrefix}floatFromRdfResourceValues<T extends number>(values: ${imports.Resource}.Values, options: Parameters<${snippets.FromRdfResourceValuesFunction}<T, ${snippets.NumericSchema}<T>>>[1]): ${imports.Either}<Error, ${imports.Resource}.Values<T>> {
-  return ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => value.toFloat(options.schema.in)));
+  return ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => options.schema.in ? value.toFloat(options.schema.in) : value.toFloat() as ${imports.Either}<Error, T>));
 }`,
   );

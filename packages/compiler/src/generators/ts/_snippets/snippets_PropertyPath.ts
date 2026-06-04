@@ -39,13 +39,11 @@ export function filter(_filter: Filter, _value: ${syntheticNamePrefix}PropertyPa
       code`\
 export const fromRdfResource: ${snippets.FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;`,
       code`\
-export const fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
-  values.chain((values) =>
-    values.chainMap((value) =>
-      value
-        .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
-    ),
+export const fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath, object> = (values, options) =>
+  values.chainMap((value) =>
+    value
+      .toResource()
+      .chain((resource) => fromRdfResource(resource, options)),
   );`,
     );
   }

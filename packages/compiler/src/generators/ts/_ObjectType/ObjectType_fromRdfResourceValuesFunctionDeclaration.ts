@@ -10,10 +10,6 @@ export function ObjectType_fromRdfResourceValuesFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.name.unsafeCoerce()}, ${this.schemaType}> = (values, options) => 
-  values.chain(
-    values => values.chainMap(
-      value => value.toResource().chain(resource => ${this.name.unsafeCoerce()}.fromRdfResource(resource, options))
-    )
-  );`);
+export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}> = (values, options) => 
+  values.chainMap(value => value.toResource().chain(resource => ${this.name.unsafeCoerce()}.fromRdfResource(resource, options)));`);
 }
