@@ -38,6 +38,7 @@ import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
 import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
 import { snippets_dateEquals } from "./_snippets/snippets_dateEquals.js";
+import { snippets_dateFromRdfResourceValues } from "./_snippets/snippets_dateFromRdfResourceValues.js";
 import { snippets_dateSparqlWherePatterns } from "./_snippets/snippets_dateSparqlWherePatterns.js";
 import { snippets_dateTimeFromRdfResourceValues } from "./_snippets/snippets_dateTimeFromRdfResourceValues.js";
 import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBigDecimalLiteral.js";
@@ -543,6 +544,11 @@ export class Snippets {
   @Memoize()
   get dateEquals(): Snippet {
     return this.snippet(snippets_dateEquals);
+  }
+
+  @Memoize()
+  get dateFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_dateFromRdfResourceValues);
   }
 
   @Memoize()

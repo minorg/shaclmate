@@ -1,6 +1,8 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
 
+import { Memoize } from "typescript-memoize";
+
 import { AbstractDateType } from "./AbstractDateType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -12,6 +14,11 @@ export class DateType extends AbstractDateType {
   );
   override readonly hashFunction = code`${this.reusables.snippets.hashDate}`;
   override readonly kind = "Date";
+
+  @Memoize()
+  get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.dateFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+  }
 
   override jsonSchema(
     _parameters: Parameters<DateTimeType["jsonSchema"]>[0],
@@ -28,10 +35,4 @@ export class DateType extends AbstractDateType {
   }: Parameters<AbstractDateType["toJsonExpression"]>[0]): Code {
     return code`${this.reusables.snippets.toIsoDateString}(${variables.value})`;
   }
-
-  // protected override fromRdfResourceValueExpression({
-  //   variables,
-  // }: Parameters<AbstractDateType["fromRdfResourceValueExpression"]>[0]): Code {
-  //   return code`${variables.value}.toDate(${this.primitiveIn.length > 0 ? `[${this.primitiveIn.map((_) => `new Date(${_.getTime()})`).join(", ")}]` : ""})`;
-  // }
 }
