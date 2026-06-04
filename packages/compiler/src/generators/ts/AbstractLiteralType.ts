@@ -1,7 +1,7 @@
 import type { Literal } from "@rdfjs/types";
 
 import { AbstractTermType } from "./AbstractTermType.js";
-import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
+import type { Code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
@@ -19,16 +19,6 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   >[0]) {
     super(superParameters);
     this.languageIn = languageIn;
-  }
-
-  protected override get schemaInitializers(): readonly Code[] {
-    let initializers = super.schemaInitializers;
-    if (this.languageIn.length > 0) {
-      initializers = initializers.concat(
-        code`languageIn: ${arrayOf(...this.languageIn)}`,
-      );
-    }
-    return initializers;
   }
 
   /**

@@ -55,6 +55,11 @@ export class LiteralType extends AbstractLiteralType {
         code`in: ${arrayOf(...this.in_.map((in_) => this.rdfjsTermExpression(in_)))}`,
       );
     }
+    if (this.languageIn.length > 0) {
+      initializers = initializers.concat(
+        code`languageIn: ${arrayOf(...this.languageIn)}`,
+      );
+    }
     return initializers;
   }
 
