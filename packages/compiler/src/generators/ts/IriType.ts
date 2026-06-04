@@ -36,6 +36,11 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }
 
   @Memoize()
+  get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.iriFromRdfResourceValues}<${this.valueTypeExpression}>`;
+  }
+
+  @Memoize()
   get parseFunction(): Code {
     if (this.in_.length > 0) {
       return code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.expression});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
@@ -120,26 +125,6 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
       : "";
     return code`{ "@id": ${variables.value}.value${discriminantProperty} }`;
   }
-
-  // protected override fromRdfResourceValuesExpressionChain({
-  //   variables,
-  // }: Parameters<
-  //   AbstractIdentifierType<NamedNode>["fromRdfResourceValuesExpressionChain"]
-  // >[0]): ReturnType<
-  //   AbstractIdentifierType<NamedNode>["fromRdfResourceValuesExpressionChain"]
-  // > {
-  //   return {
-  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
-  //     valueTo: code`chain(values => values.chainMap(value => value.toIri(${
-  //       this.in_.length > 0
-  //         ? code`[${joinCode(
-  //             this.in_.map((in_) => this.rdfjsTermExpression(in_)),
-  //             { on: ", " },
-  //           )}]`
-  //         : ""
-  //     })))`,
-  //   };
-  // }
 }
 
 const nodeKinds: ReadonlySet<"IRI"> = new Set(["IRI"]);

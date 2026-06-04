@@ -87,6 +87,7 @@ import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_ide
 import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
 import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
 import { snippets_intFromRdfResourceValues } from "./_snippets/snippets_intFromRdfResourceValues.js";
+import { snippets_iriFromRdfResourceValues } from "./_snippets/snippets_iriFromRdfResourceValues.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
 import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
 import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
@@ -756,6 +757,11 @@ export class Snippets {
   @Memoize()
   get intFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_intFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get iriFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_iriFromRdfResourceValues);
   }
 
   @Memoize()
