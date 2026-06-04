@@ -144,6 +144,7 @@ import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
 import { snippets_ToRdfResourceFunction } from "./_snippets/snippets_ToRdfResourceFunction.js";
 import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdfResourceValuesFunction.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
+import { snippets_termFromRdfResourceValues } from "./_snippets/snippets_termFromRdfResourceValues.js";
 import { snippets_termLikeFromRdfResourceValues } from "./_snippets/snippets_termLikeFromRdfResourceValues.js";
 import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSchemaSparqlPatterns.js";
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
@@ -939,6 +940,11 @@ export class Snippets {
   @Memoize()
   get termFilterSparqlPatterns(): Snippet {
     return this.snippet(snippets_termFilterSparqlPatterns);
+  }
+
+  @Memoize()
+  get termFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_termFromRdfResourceValues);
   }
 
   @Memoize()
