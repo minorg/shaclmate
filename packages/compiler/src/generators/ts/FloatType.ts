@@ -11,6 +11,11 @@ export class FloatType extends AbstractNumericType<number> {
   override readonly kind = "Float";
 
   @Memoize()
+  get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.floatFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+  }
+
+  @Memoize()
   override get graphqlType() {
     return new AbstractNumericType.GraphqlType(
       code`${this.reusables.imports.GraphQLFloat}`,

@@ -60,6 +60,7 @@ import { snippets_filterMaybe } from "./_snippets/snippets_filterMaybe.js";
 import { snippets_filterNumeric } from "./_snippets/snippets_filterNumeric.js";
 import { snippets_filterString } from "./_snippets/snippets_filterString.js";
 import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
+import { snippets_floatFromRdfResourceValues } from "./_snippets/snippets_floatFromRdfResourceValues.js";
 import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
 import { snippets_HashFunction } from "./_snippets/snippets_HashFunction.js";
 import { snippets_hashArray } from "./_snippets/snippets_hashArray.js";
@@ -625,6 +626,11 @@ export class Snippets {
   @Memoize()
   get filterTerm(): Snippet {
     return this.snippet(snippets_filterTerm);
+  }
+
+  @Memoize()
+  get floatFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_floatFromRdfResourceValues);
   }
 
   @Memoize()
