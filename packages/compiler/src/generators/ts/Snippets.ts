@@ -100,6 +100,7 @@ import { snippets_listFromRdfResourceValues } from "./_snippets/snippets_listFro
 import { snippets_listSparqlConstructTriples } from "./_snippets/snippets_listSparqlConstructTriples.js";
 import { snippets_listSparqlWherePatterns } from "./_snippets/snippets_listSparqlWherePatterns.js";
 import { snippets_literalFactory } from "./_snippets/snippets_literalFactory.js";
+import { snippets_literalFromRdfResourceValues } from "./_snippets/snippets_literalFromRdfResourceValues.js";
 import { snippets_literalSchemaSparqlPatterns } from "./_snippets/snippets_literalSchemaSparqlPatterns.js";
 import { snippets_literalSparqlWherePatterns } from "./_snippets/snippets_literalSparqlWherePatterns.js";
 import { snippets_MaybeFilter } from "./_snippets/snippets_MaybeFilter.js";
@@ -798,6 +799,11 @@ export class Snippets {
   @Memoize()
   get literalFactory(): Snippet {
     return this.snippet(snippets_literalFactory);
+  }
+
+  @Memoize()
+  get literalFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_literalFromRdfResourceValues);
   }
 
   @Memoize()

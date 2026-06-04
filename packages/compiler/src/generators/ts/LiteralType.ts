@@ -34,6 +34,8 @@ export class LiteralType extends AbstractLiteralType {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterLiteral}`;
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
+  override readonly fromRdfResourceValuesFunction =
+    code`${this.reusables.snippets.literalFromRdfResourceValues}`;
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
