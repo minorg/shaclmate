@@ -41,6 +41,8 @@ export class IdentifierType extends AbstractIdentifierType<
     code`${this.reusables.snippets.filterIdentifier}`;
   override readonly filterType =
     code`${this.reusables.snippets.IdentifierFilter}`;
+  override readonly fromRdfResourceValuesFunction =
+    code`${this.reusables.snippets.identifierFromRdfResourceValues}`;
   override readonly kind = "Identifier";
   override readonly nodeKinds = nodeKinds;
   override readonly parseFunction =
@@ -113,23 +115,6 @@ export class IdentifierType extends AbstractIdentifierType<
     const valueToNamedNode = code`{ "@id": ${variables.value}.value${discriminantProperty} }`;
     return code`(${variables.value}.termType === "BlankNode" ? ${valueToBlankNode} : ${valueToNamedNode})`;
   }
-
-  // protected override fromRdfResourceValuesExpressionChain({
-  //   variables,
-  // }: Parameters<
-  //   AbstractIdentifierType<
-  //     BlankNode | NamedNode
-  //   >["fromRdfResourceValuesExpressionChain"]
-  // >[0]): ReturnType<
-  //   AbstractIdentifierType<
-  //     BlankNode | NamedNode
-  //   >["fromRdfResourceValuesExpressionChain"]
-  // > {
-  //   return {
-  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
-  //     valueTo: code`chain(values => values.chainMap(value => value.toIdentifier()))`,
-  //   };
-  // }
 }
 
 const nodeKinds: ReadonlySet<IdentifierNodeKind> = new Set([

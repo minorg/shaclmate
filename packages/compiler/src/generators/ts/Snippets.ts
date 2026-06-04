@@ -83,6 +83,7 @@ import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema
 import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
 import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
 import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
+import { snippets_identifierFromRdfResourceValues } from "./_snippets/snippets_identifierFromRdfResourceValues.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
 import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
 import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
@@ -713,6 +714,11 @@ export class Snippets {
   @Memoize()
   get hashTerm(): Snippet {
     return this.snippet(snippets_hashTerm);
+  }
+
+  @Memoize()
+  get identifierFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_identifierFromRdfResourceValues);
   }
 
   @Memoize()
