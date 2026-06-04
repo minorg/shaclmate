@@ -11,6 +11,11 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override readonly kind = "BigInt";
 
   @Memoize()
+  get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}, ${this.schemaType}>`;
+  }
+
+  @Memoize()
   override get graphqlType() {
     return new AbstractNumericType.GraphqlType(
       code`${this.reusables.imports.GraphQLBigInt}`,
@@ -58,12 +63,4 @@ export class BigIntType extends AbstractNumericType<bigint> {
   }: Parameters<AbstractNumericType<bigint>["toJsonExpression"]>[0]): Code {
     return code`${variables.value}.toString()`;
   }
-
-  // protected override fromRdfResourceValueExpression({
-  //   variables,
-  // }: Parameters<
-  //   AbstractNumericType<bigint>["fromRdfResourceValueExpression"]
-  // >[0]): Code {
-  //   return code`${variables.value}.toBigInt(${this.primitiveIn.length > 0 ? `[${this.primitiveIn.map((_) => `${_}n`).join(", ")}] as const` : ""})`;
-  // }
 }
