@@ -71,7 +71,7 @@ describe("sparql", () => {
 
       const oxigraphStore = new oxigraph.Store();
       for (const quad of toRdfDataset) {
-        oxigraphStore.add(quad);
+        oxigraphStore.add(quad as oxigraph.Quad);
         toRdfQuads.push(quad);
       }
 
