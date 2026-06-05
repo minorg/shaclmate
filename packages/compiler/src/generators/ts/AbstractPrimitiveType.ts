@@ -47,7 +47,7 @@ export abstract class AbstractPrimitiveType<
     let initializers = super.schemaInitializers;
     if (this.primitiveIn.length > 0) {
       initializers = initializers.concat(
-        code`in: ${arrayOf(...this.primitiveIn.map((in_) => this.literalValueExpression(in_)))}`,
+        code`in: ${arrayOf(...this.primitiveIn.map((in_) => this.literalValueExpression(in_)))} as const`,
       );
     }
     return initializers;

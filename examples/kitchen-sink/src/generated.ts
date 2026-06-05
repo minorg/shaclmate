@@ -18108,7 +18108,7 @@ export namespace InPropertiesStruct {
         path: dataFactory.namedNode("http://example.com/inBooleans"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Boolean" as const, in: [true] },
+          itemType: { kind: "Boolean" as const, in: [true] as const },
         },
       },
       inDateTimes: {
@@ -18118,7 +18118,7 @@ export namespace InPropertiesStruct {
           kind: "Option" as const,
           itemType: {
             kind: "DateTime" as const,
-            in: [new Date("2018-04-09T10:00:00.000Z")],
+            in: [new Date("2018-04-09T10:00:00.000Z")] as const,
           },
         },
       },
@@ -18127,7 +18127,7 @@ export namespace InPropertiesStruct {
         path: dataFactory.namedNode("http://example.com/inDoubles"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Float" as const, in: [1, 2] },
+          itemType: { kind: "Float" as const, in: [1, 2] as const },
         },
       },
       inIntegers: {
@@ -18135,7 +18135,7 @@ export namespace InPropertiesStruct {
         path: dataFactory.namedNode("http://example.com/inIntegers"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "BigInt" as const, in: [1n, 2n] },
+          itemType: { kind: "BigInt" as const, in: [1n, 2n] as const },
         },
       },
       inIris: {
@@ -18157,7 +18157,7 @@ export namespace InPropertiesStruct {
         path: dataFactory.namedNode("http://example.com/inStrings"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "String" as const, in: ["text", "html"] },
+          itemType: { kind: "String" as const, in: ["text", "html"] as const },
         },
       },
       reusableIn: {
@@ -18167,7 +18167,7 @@ export namespace InPropertiesStruct {
           return {
             kind: "Option" as const,
             get itemType() {
-              return { kind: "String" as const, in: ["cat", "dog"] };
+              return { kind: "String" as const, in: ["cat", "dog"] as const };
             },
           };
         },
