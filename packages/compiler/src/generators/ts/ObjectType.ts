@@ -17,7 +17,6 @@ import { ObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_Objec
 import { ObjectType_fromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_fromJsonFunctionDeclaration.js";
 import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceFunctionDeclaration.js";
 import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
-import { ObjectType_fromRdfTypeVariableStatement } from "./_ObjectType/ObjectType_fromRdfTypeVariableStatement.js";
 import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectType_graphqlTypeVariableStatement.js";
 import { ObjectType_hashFunctionDeclarations } from "./_ObjectType/ObjectType_hashFunctionDeclarations.js";
 import { ObjectType_interfaceDeclaration } from "./_ObjectType/ObjectType_interfaceDeclaration.js";
@@ -161,7 +160,6 @@ export class ObjectType extends AbstractType {
         ...ObjectType_fromRdfResourceValuesFunctionDeclaration.call(
           this,
         ).toList(),
-        ...ObjectType_fromRdfTypeVariableStatement.call(this).toList(),
         ...ObjectType_isTypeFunctionDeclaration.call(this).toList(),
         ...ObjectType_schemaVariableStatement.call(this).toList(),
         ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
@@ -230,7 +228,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
     return this.fromRdfType.map(
-      () => code`${this.name.unsafeCoerce()}.fromRdfType`,
+      () => code`${this.name.unsafeCoerce()}.schema.fromRdfType`,
     );
   }
 

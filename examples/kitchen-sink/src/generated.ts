@@ -4546,7 +4546,7 @@ export namespace BlankNodeIdentifierStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: BlankNodeIdentifierStruct.fromRdfType,
+          rdfType: BlankNodeIdentifierStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -4635,7 +4635,7 @@ export namespace BlankNodeIdentifierStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [BlankNodeIdentifierStruct.fromRdfType],
+            [BlankNodeIdentifierStruct.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -4693,10 +4693,6 @@ export namespace BlankNodeIdentifierStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeIdentifierStruct",
-  );
-
   export function isBlankNodeIdentifierStruct(
     object: $Object,
   ): object is BlankNodeIdentifierStruct {
@@ -4704,6 +4700,9 @@ export namespace BlankNodeIdentifierStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/BlankNodeIdentifierStruct",
+    ),
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "BlankNode" as const } },
       blankNodeIdentifierString: {
@@ -5102,7 +5101,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: BlankNodeOrIriIdentifierStruct.fromRdfType,
+          rdfType: BlankNodeOrIriIdentifierStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -5194,8 +5193,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [BlankNodeOrIriIdentifierStruct.fromRdfType],
-            { graph: _$options.graph },
+            [BlankNodeOrIriIdentifierStruct.schema.fromRdfType],
+            {
+              graph: _$options.graph,
+            },
           )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -5252,10 +5253,6 @@ export namespace BlankNodeOrIriIdentifierStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeOrIriIdentifierStruct",
-  );
-
   export function isBlankNodeOrIriIdentifierStruct(
     object: $Object,
   ): object is BlankNodeOrIriIdentifierStruct {
@@ -5263,6 +5260,9 @@ export namespace BlankNodeOrIriIdentifierStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/BlankNodeOrIriIdentifierStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -5922,7 +5922,7 @@ export namespace ClassConstraintsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: ClassConstraintsStruct.fromRdfType,
+          rdfType: ClassConstraintsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -6099,7 +6099,7 @@ export namespace ClassConstraintsStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [ClassConstraintsStruct.fromRdfType],
+            [ClassConstraintsStruct.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -6221,10 +6221,6 @@ export namespace ClassConstraintsStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassConstraintsStruct",
-  );
-
   export function isClassConstraintsStruct(
     object: $Object,
   ): object is ClassConstraintsStruct {
@@ -6232,6 +6228,9 @@ export namespace ClassConstraintsStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/ClassConstraintsStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -7561,7 +7560,7 @@ export namespace ConvertibleTypesStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: ConvertibleTypesStruct.fromRdfType,
+          rdfType: ConvertibleTypesStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -7953,7 +7952,7 @@ export namespace ConvertibleTypesStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [ConvertibleTypesStruct.fromRdfType],
+            [ConvertibleTypesStruct.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -8174,10 +8173,6 @@ export namespace ConvertibleTypesStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConvertibleTypesStruct",
-  );
-
   export function isConvertibleTypesStruct(
     object: $Object,
   ): object is ConvertibleTypesStruct {
@@ -8185,6 +8180,9 @@ export namespace ConvertibleTypesStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/ConvertibleTypesStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -9665,7 +9663,7 @@ export namespace DateUnionsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: DateUnionsStruct.fromRdfType,
+          rdfType: DateUnionsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -10159,9 +10157,11 @@ export namespace DateUnionsStruct {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [DateUnionsStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [DateUnionsStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -10625,10 +10625,6 @@ export namespace DateUnionsStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/DateUnionsStruct",
-  );
-
   export function isDateUnionsStruct(
     object: $Object,
   ): object is DateUnionsStruct {
@@ -10636,6 +10632,7 @@ export namespace DateUnionsStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/DateUnionsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -11523,7 +11520,7 @@ export namespace DefaultValuesStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: DefaultValuesStruct.fromRdfType,
+          rdfType: DefaultValuesStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -11696,9 +11693,11 @@ export namespace DefaultValuesStruct {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [DefaultValuesStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [DefaultValuesStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -11834,10 +11833,6 @@ export namespace DefaultValuesStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/DefaultValuesStruct",
-  );
-
   export function isDefaultValuesStruct(
     object: $Object,
   ): object is DefaultValuesStruct {
@@ -11845,6 +11840,9 @@ export namespace DefaultValuesStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/DefaultValuesStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -12361,7 +12359,7 @@ export namespace DirectRecursiveStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: DirectRecursiveStruct.fromRdfType,
+          rdfType: DirectRecursiveStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -12435,7 +12433,7 @@ export namespace DirectRecursiveStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [DirectRecursiveStruct.fromRdfType],
+            [DirectRecursiveStruct.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -12493,10 +12491,6 @@ export namespace DirectRecursiveStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/DirectRecursiveStruct",
-  );
-
   export function isDirectRecursiveStruct(
     object: $Object,
   ): object is DirectRecursiveStruct {
@@ -12504,6 +12498,9 @@ export namespace DirectRecursiveStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/DirectRecursiveStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -12985,7 +12982,7 @@ export namespace DisplayStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: DisplayStruct.fromRdfType,
+          rdfType: DisplayStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -13100,9 +13097,11 @@ export namespace DisplayStruct {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [DisplayStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [DisplayStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -13179,15 +13178,12 @@ export namespace DisplayStruct {
         .chain((resource) => DisplayStruct.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/DisplayStruct",
-  );
-
   export function isDisplayStruct(object: $Object): object is DisplayStruct {
     return object.$type === "DisplayStruct";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/DisplayStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -13590,7 +13586,7 @@ export namespace ExplicitFromToRdfTypesStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: ExplicitFromToRdfTypesStruct.fromRdfType,
+          rdfType: ExplicitFromToRdfTypesStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -13677,8 +13673,10 @@ export namespace ExplicitFromToRdfTypesStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [ExplicitFromToRdfTypesStruct.fromRdfType],
-            { graph: _$options.graph },
+            [ExplicitFromToRdfTypesStruct.schema.fromRdfType],
+            {
+              graph: _$options.graph,
+            },
           )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -13732,10 +13730,6 @@ export namespace ExplicitFromToRdfTypesStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/FromRdfType",
-  );
-
   export function isExplicitFromToRdfTypesStruct(
     object: $Object,
   ): object is ExplicitFromToRdfTypesStruct {
@@ -13743,6 +13737,7 @@ export namespace ExplicitFromToRdfTypesStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/FromRdfType"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -14127,7 +14122,7 @@ export namespace ExplicitRdfTypeStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: ExplicitRdfTypeStruct.fromRdfType,
+          rdfType: ExplicitRdfTypeStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -14213,7 +14208,7 @@ export namespace ExplicitRdfTypeStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [ExplicitRdfTypeStruct.fromRdfType],
+            [ExplicitRdfTypeStruct.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -14268,10 +14263,6 @@ export namespace ExplicitRdfTypeStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RdfType",
-  );
-
   export function isExplicitRdfTypeStruct(
     object: $Object,
   ): object is ExplicitRdfTypeStruct {
@@ -14279,6 +14270,7 @@ export namespace ExplicitRdfTypeStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/RdfType"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -14649,7 +14641,7 @@ export namespace FlattenUnionMember3 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: FlattenUnionMember3.fromRdfType,
+          rdfType: FlattenUnionMember3.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -14733,9 +14725,11 @@ export namespace FlattenUnionMember3 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [FlattenUnionMember3.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [FlattenUnionMember3.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -14788,10 +14782,6 @@ export namespace FlattenUnionMember3 {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/FlattenUnionMember3",
-  );
-
   export function isFlattenUnionMember3(
     object: $Object,
   ): object is FlattenUnionMember3 {
@@ -14799,6 +14789,9 @@ export namespace FlattenUnionMember3 {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/FlattenUnionMember3",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -15700,7 +15693,7 @@ export namespace IndirectRecursiveStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: IndirectRecursiveStruct.fromRdfType,
+          rdfType: IndirectRecursiveStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -15778,7 +15771,7 @@ export namespace IndirectRecursiveStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [IndirectRecursiveStruct.fromRdfType],
+            [IndirectRecursiveStruct.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -15836,10 +15829,6 @@ export namespace IndirectRecursiveStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IndirectRecursiveStruct",
-  );
-
   export function isIndirectRecursiveStruct(
     object: $Object,
   ): object is IndirectRecursiveStruct {
@@ -15847,6 +15836,9 @@ export namespace IndirectRecursiveStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/IndirectRecursiveStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -16246,7 +16238,7 @@ export namespace IndirectRecursiveStructHelper {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: IndirectRecursiveStructHelper.fromRdfType,
+          rdfType: IndirectRecursiveStructHelper.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -16321,8 +16313,10 @@ export namespace IndirectRecursiveStructHelper {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [IndirectRecursiveStructHelper.fromRdfType],
-            { graph: _$options.graph },
+            [IndirectRecursiveStructHelper.schema.fromRdfType],
+            {
+              graph: _$options.graph,
+            },
           )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -16379,10 +16373,6 @@ export namespace IndirectRecursiveStructHelper {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IndirectRecursiveStructHelper",
-  );
-
   export function isIndirectRecursiveStructHelper(
     object: $Object,
   ): object is IndirectRecursiveStructHelper {
@@ -16390,6 +16380,9 @@ export namespace IndirectRecursiveStructHelper {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/IndirectRecursiveStructHelper",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -16837,7 +16830,7 @@ export namespace InIdentifierStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: InIdentifierStruct.fromRdfType,
+          rdfType: InIdentifierStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -16926,9 +16919,11 @@ export namespace InIdentifierStruct {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [InIdentifierStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [InIdentifierStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -16987,10 +16982,6 @@ export namespace InIdentifierStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InIdentifierStruct",
-  );
-
   export function isInIdentifierStruct(
     object: $Object,
   ): object is InIdentifierStruct {
@@ -16998,6 +16989,7 @@ export namespace InIdentifierStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/InIdentifierStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -17727,7 +17719,7 @@ export namespace InPropertiesStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: InPropertiesStruct.fromRdfType,
+          rdfType: InPropertiesStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -17931,9 +17923,11 @@ export namespace InPropertiesStruct {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [InPropertiesStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [InPropertiesStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -18099,10 +18093,6 @@ export namespace InPropertiesStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InPropertiesStruct",
-  );
-
   export function isInPropertiesStruct(
     object: $Object,
   ): object is InPropertiesStruct {
@@ -18110,6 +18100,7 @@ export namespace InPropertiesStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/InPropertiesStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -18619,7 +18610,7 @@ export namespace IriIdentifierStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: IriIdentifierStruct.fromRdfType,
+          rdfType: IriIdentifierStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -18704,9 +18695,11 @@ export namespace IriIdentifierStruct {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [IriIdentifierStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [IriIdentifierStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -18762,10 +18755,6 @@ export namespace IriIdentifierStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IriIdentifierStruct",
-  );
-
   export function isIriIdentifierStruct(
     object: $Object,
   ): object is IriIdentifierStruct {
@@ -18773,6 +18762,9 @@ export namespace IriIdentifierStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/IriIdentifierStruct",
+    ),
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
       iriIdentifierString: {
@@ -19666,7 +19658,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfType,
+          rdfType:
+            LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -19752,7 +19745,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfType],
+            [LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.fromRdfType],
             {
               graph: _$options.graph,
             },
@@ -19809,10 +19802,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
-  );
-
   export function isLazilyResolvedBlankNodeOrIriIdentifierStruct(
     object: $Object,
   ): object is LazilyResolvedBlankNodeOrIriIdentifierStruct {
@@ -19820,6 +19809,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -20644,7 +20636,7 @@ export namespace LazilyResolvedUnionMember1 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: LazilyResolvedUnionMember1.fromRdfType,
+          rdfType: LazilyResolvedUnionMember1.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -20728,7 +20720,7 @@ export namespace LazilyResolvedUnionMember1 {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [LazilyResolvedUnionMember1.fromRdfType],
+            [LazilyResolvedUnionMember1.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -20780,10 +20772,6 @@ export namespace LazilyResolvedUnionMember1 {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedUnionMember1",
-  );
-
   export function isLazilyResolvedUnionMember1(
     object: $Object,
   ): object is LazilyResolvedUnionMember1 {
@@ -20791,6 +20779,9 @@ export namespace LazilyResolvedUnionMember1 {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/LazilyResolvedUnionMember1",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -21160,7 +21151,7 @@ export namespace LazilyResolvedUnionMember2 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: LazilyResolvedUnionMember2.fromRdfType,
+          rdfType: LazilyResolvedUnionMember2.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -21244,7 +21235,7 @@ export namespace LazilyResolvedUnionMember2 {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [LazilyResolvedUnionMember2.fromRdfType],
+            [LazilyResolvedUnionMember2.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -21296,10 +21287,6 @@ export namespace LazilyResolvedUnionMember2 {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedUnionMember2",
-  );
-
   export function isLazilyResolvedUnionMember2(
     object: $Object,
   ): object is LazilyResolvedUnionMember2 {
@@ -21307,6 +21294,9 @@ export namespace LazilyResolvedUnionMember2 {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/LazilyResolvedUnionMember2",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -24421,7 +24411,7 @@ export namespace ListSetsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: ListSetsStruct.fromRdfType,
+          rdfType: ListSetsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -24652,9 +24642,11 @@ export namespace ListSetsStruct {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [ListSetsStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [ListSetsStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -24816,15 +24808,12 @@ export namespace ListSetsStruct {
         .chain((resource) => ListSetsStruct.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ListSetsStruct",
-  );
-
   export function isListSetsStruct(object: $Object): object is ListSetsStruct {
     return object.$type === "ListSetsStruct";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/ListSetsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -25721,7 +25710,7 @@ export namespace ListsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: ListsStruct.fromRdfType,
+          rdfType: ListsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -25907,7 +25896,7 @@ export namespace ListsStruct {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [ListsStruct.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [ListsStruct.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -26035,15 +26024,12 @@ export namespace ListsStruct {
         .chain((resource) => ListsStruct.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ListsStruct",
-  );
-
   export function isListsStruct(object: $Object): object is ListsStruct {
     return object.$type === "ListsStruct";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/ListsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -26881,7 +26867,7 @@ export namespace MutablePropertiesStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: MutablePropertiesStruct.fromRdfType,
+          rdfType: MutablePropertiesStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -27016,7 +27002,7 @@ export namespace MutablePropertiesStruct {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [MutablePropertiesStruct.fromRdfType],
+            [MutablePropertiesStruct.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -27110,10 +27096,6 @@ export namespace MutablePropertiesStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/MutablePropertiesStruct",
-  );
-
   export function isMutablePropertiesStruct(
     object: $Object,
   ): object is MutablePropertiesStruct {
@@ -27121,6 +27103,9 @@ export namespace MutablePropertiesStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/MutablePropertiesStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -27611,7 +27596,7 @@ export namespace NamedUnionsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: NamedUnionsStruct.fromRdfType,
+          rdfType: NamedUnionsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -27706,9 +27691,11 @@ export namespace NamedUnionsStruct {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [NamedUnionsStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [NamedUnionsStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -27774,10 +27761,6 @@ export namespace NamedUnionsStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/NamedUnionsStruct",
-  );
-
   export function isNamedUnionsStruct(
     object: $Object,
   ): object is NamedUnionsStruct {
@@ -27785,6 +27768,7 @@ export namespace NamedUnionsStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/NamedUnionsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -28178,7 +28162,7 @@ export namespace NewName {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: NewName.fromRdfType,
+          rdfType: NewName.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -28264,7 +28248,7 @@ export namespace NewName {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [NewName.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [NewName.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -28320,15 +28304,12 @@ export namespace NewName {
         .chain((resource) => NewName.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/OverrideNameStruct",
-  );
-
   export function isNewName(object: $Object): object is NewName {
     return object.$type === "NewName";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/OverrideNameStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -28972,7 +28953,7 @@ export namespace NodeKindsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: NodeKindsStruct.fromRdfType,
+          rdfType: NodeKindsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -29167,9 +29148,11 @@ export namespace NodeKindsStruct {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [NodeKindsStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [NodeKindsStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -29282,10 +29265,6 @@ export namespace NodeKindsStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/NodeKindsStruct",
-  );
-
   export function isNodeKindsStruct(
     object: $Object,
   ): object is NodeKindsStruct {
@@ -29293,6 +29272,7 @@ export namespace NodeKindsStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/NodeKindsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -31916,7 +31896,7 @@ export namespace NumericsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: NumericsStruct.fromRdfType,
+          rdfType: NumericsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -32300,9 +32280,11 @@ export namespace NumericsStruct {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [NumericsStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [NumericsStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -32596,15 +32578,12 @@ export namespace NumericsStruct {
         .chain((resource) => NumericsStruct.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/NumericsStruct",
-  );
-
   export function isNumericsStruct(object: $Object): object is NumericsStruct {
     return object.$type === "NumericsStruct";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/NumericsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -34253,7 +34232,7 @@ export namespace PartialUnionMember1 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: PartialUnionMember1.fromRdfType,
+          rdfType: PartialUnionMember1.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -34335,9 +34314,11 @@ export namespace PartialUnionMember1 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [PartialUnionMember1.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [PartialUnionMember1.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -34387,10 +34368,6 @@ export namespace PartialUnionMember1 {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember1",
-  );
-
   export function isPartialUnionMember1(
     object: $Object,
   ): object is PartialUnionMember1 {
@@ -34398,6 +34375,7 @@ export namespace PartialUnionMember1 {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember1"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -34758,7 +34736,7 @@ export namespace PartialUnionMember2 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: PartialUnionMember2.fromRdfType,
+          rdfType: PartialUnionMember2.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -34840,9 +34818,11 @@ export namespace PartialUnionMember2 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [PartialUnionMember2.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [PartialUnionMember2.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -34892,10 +34872,6 @@ export namespace PartialUnionMember2 {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember2",
-  );
-
   export function isPartialUnionMember2(
     object: $Object,
   ): object is PartialUnionMember2 {
@@ -34903,6 +34879,7 @@ export namespace PartialUnionMember2 {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember2"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -36229,7 +36206,7 @@ export namespace PropertyNamesStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: PropertyNamesStruct.fromRdfType,
+          rdfType: PropertyNamesStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -36363,9 +36340,11 @@ export namespace PropertyNamesStruct {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [PropertyNamesStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [PropertyNamesStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -36455,10 +36434,6 @@ export namespace PropertyNamesStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PropertyNamesStruct",
-  );
-
   export function isPropertyNamesStruct(
     object: $Object,
   ): object is PropertyNamesStruct {
@@ -36466,6 +36441,9 @@ export namespace PropertyNamesStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/PropertyNamesStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -36942,7 +36920,7 @@ export namespace PropertyPathsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: PropertyPathsStruct.fromRdfType,
+          rdfType: PropertyPathsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -37051,9 +37029,11 @@ export namespace PropertyPathsStruct {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [PropertyPathsStruct.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [PropertyPathsStruct.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -37125,10 +37105,6 @@ export namespace PropertyPathsStruct {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PropertyPathsStruct",
-  );
-
   export function isPropertyPathsStruct(
     object: $Object,
   ): object is PropertyPathsStruct {
@@ -37136,6 +37112,9 @@ export namespace PropertyPathsStruct {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/PropertyPathsStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -37535,7 +37514,7 @@ export namespace RecursiveUnionMember1 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: RecursiveUnionMember1.fromRdfType,
+          rdfType: RecursiveUnionMember1.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -37611,7 +37590,7 @@ export namespace RecursiveUnionMember1 {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [RecursiveUnionMember1.fromRdfType],
+            [RecursiveUnionMember1.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -37669,10 +37648,6 @@ export namespace RecursiveUnionMember1 {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RecursiveUnionMember1",
-  );
-
   export function isRecursiveUnionMember1(
     object: $Object,
   ): object is RecursiveUnionMember1 {
@@ -37680,6 +37655,9 @@ export namespace RecursiveUnionMember1 {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/RecursiveUnionMember1",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -38084,7 +38062,7 @@ export namespace RecursiveUnionMember2 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: RecursiveUnionMember2.fromRdfType,
+          rdfType: RecursiveUnionMember2.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -38160,7 +38138,7 @@ export namespace RecursiveUnionMember2 {
       !_$options.ignoreRdfType
         ? $ensureRdfResourceType(
             $resource,
-            [RecursiveUnionMember2.fromRdfType],
+            [RecursiveUnionMember2.schema.fromRdfType],
             { graph: _$options.graph },
           )
         : Right(true as const)
@@ -38218,10 +38196,6 @@ export namespace RecursiveUnionMember2 {
         ),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RecursiveUnionMember2",
-  );
-
   export function isRecursiveUnionMember2(
     object: $Object,
   ): object is RecursiveUnionMember2 {
@@ -38229,6 +38203,9 @@ export namespace RecursiveUnionMember2 {
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/RecursiveUnionMember2",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -39105,7 +39082,7 @@ export namespace TermsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: TermsStruct.fromRdfType,
+          rdfType: TermsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -39371,7 +39348,7 @@ export namespace TermsStruct {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [TermsStruct.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [TermsStruct.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -39554,15 +39531,12 @@ export namespace TermsStruct {
         .chain((resource) => TermsStruct.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/TermsStruct",
-  );
-
   export function isTermsStruct(object: $Object): object is TermsStruct {
     return object.$type === "TermsStruct";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/TermsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -46986,7 +46960,7 @@ export namespace UnionMember1 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: UnionMember1.fromRdfType,
+          rdfType: UnionMember1.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -47084,7 +47058,7 @@ export namespace UnionMember1 {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [UnionMember1.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [UnionMember1.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -47149,15 +47123,12 @@ export namespace UnionMember1 {
         .chain((resource) => UnionMember1.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember1",
-  );
-
   export function isUnionMember1(object: $Object): object is UnionMember1 {
     return object.$type === "UnionMember1";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember1"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -47566,7 +47537,7 @@ export namespace UnionMember2 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: UnionMember2.fromRdfType,
+          rdfType: UnionMember2.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -47664,7 +47635,7 @@ export namespace UnionMember2 {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [UnionMember2.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [UnionMember2.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -47729,15 +47700,12 @@ export namespace UnionMember2 {
         .chain((resource) => UnionMember2.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember2",
-  );
-
   export function isUnionMember2(object: $Object): object is UnionMember2 {
     return object.$type === "UnionMember2";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember2"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -57592,7 +57560,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: BlankNodeIdentifierStruct.filter,
         fromRdfResource: BlankNodeIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [BlankNodeIdentifierStruct.fromRdfType],
+        fromRdfTypes: [BlankNodeIdentifierStruct.schema.fromRdfType],
       },
       query,
     );
@@ -57686,7 +57654,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: BlankNodeOrIriIdentifierStruct.filter,
         fromRdfResource: BlankNodeOrIriIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [BlankNodeOrIriIdentifierStruct.fromRdfType],
+        fromRdfTypes: [BlankNodeOrIriIdentifierStruct.schema.fromRdfType],
       },
       query,
     );
@@ -57778,7 +57746,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ClassConstraintsStruct.filter,
         fromRdfResource: ClassConstraintsStruct.fromRdfResource,
-        fromRdfTypes: [ClassConstraintsStruct.fromRdfType],
+        fromRdfTypes: [ClassConstraintsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -57870,7 +57838,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ConvertibleTypesStruct.filter,
         fromRdfResource: ConvertibleTypesStruct.fromRdfResource,
-        fromRdfTypes: [ConvertibleTypesStruct.fromRdfType],
+        fromRdfTypes: [ConvertibleTypesStruct.schema.fromRdfType],
       },
       query,
     );
@@ -57954,7 +57922,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DateUnionsStruct.filter,
         fromRdfResource: DateUnionsStruct.fromRdfResource,
-        fromRdfTypes: [DateUnionsStruct.fromRdfType],
+        fromRdfTypes: [DateUnionsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -58046,7 +58014,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DefaultValuesStruct.filter,
         fromRdfResource: DefaultValuesStruct.fromRdfResource,
-        fromRdfTypes: [DefaultValuesStruct.fromRdfType],
+        fromRdfTypes: [DefaultValuesStruct.schema.fromRdfType],
       },
       query,
     );
@@ -58138,7 +58106,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DirectRecursiveStruct.filter,
         fromRdfResource: DirectRecursiveStruct.fromRdfResource,
-        fromRdfTypes: [DirectRecursiveStruct.fromRdfType],
+        fromRdfTypes: [DirectRecursiveStruct.schema.fromRdfType],
       },
       query,
     );
@@ -58210,7 +58178,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DisplayStruct.filter,
         fromRdfResource: DisplayStruct.fromRdfResource,
-        fromRdfTypes: [DisplayStruct.fromRdfType],
+        fromRdfTypes: [DisplayStruct.schema.fromRdfType],
       },
       query,
     );
@@ -58304,7 +58272,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ExplicitFromToRdfTypesStruct.filter,
         fromRdfResource: ExplicitFromToRdfTypesStruct.fromRdfResource,
-        fromRdfTypes: [ExplicitFromToRdfTypesStruct.fromRdfType],
+        fromRdfTypes: [ExplicitFromToRdfTypesStruct.schema.fromRdfType],
       },
       query,
     );
@@ -58396,7 +58364,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ExplicitRdfTypeStruct.filter,
         fromRdfResource: ExplicitRdfTypeStruct.fromRdfResource,
-        fromRdfTypes: [ExplicitRdfTypeStruct.fromRdfType],
+        fromRdfTypes: [ExplicitRdfTypeStruct.schema.fromRdfType],
       },
       query,
     );
@@ -58488,7 +58456,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: FlattenUnionMember3.filter,
         fromRdfResource: FlattenUnionMember3.fromRdfResource,
-        fromRdfTypes: [FlattenUnionMember3.fromRdfType],
+        fromRdfTypes: [FlattenUnionMember3.schema.fromRdfType],
       },
       query,
     );
@@ -58664,7 +58632,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: IndirectRecursiveStruct.filter,
         fromRdfResource: IndirectRecursiveStruct.fromRdfResource,
-        fromRdfTypes: [IndirectRecursiveStruct.fromRdfType],
+        fromRdfTypes: [IndirectRecursiveStruct.schema.fromRdfType],
       },
       query,
     );
@@ -58758,7 +58726,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: IndirectRecursiveStructHelper.filter,
         fromRdfResource: IndirectRecursiveStructHelper.fromRdfResource,
-        fromRdfTypes: [IndirectRecursiveStructHelper.fromRdfType],
+        fromRdfTypes: [IndirectRecursiveStructHelper.schema.fromRdfType],
       },
       query,
     );
@@ -58848,7 +58816,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: InIdentifierStruct.filter,
         fromRdfResource: InIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [InIdentifierStruct.fromRdfType],
+        fromRdfTypes: [InIdentifierStruct.schema.fromRdfType],
       },
       query,
     );
@@ -58938,7 +58906,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: InPropertiesStruct.filter,
         fromRdfResource: InPropertiesStruct.fromRdfResource,
-        fromRdfTypes: [InPropertiesStruct.fromRdfType],
+        fromRdfTypes: [InPropertiesStruct.schema.fromRdfType],
       },
       query,
     );
@@ -59030,7 +58998,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: IriIdentifierStruct.filter,
         fromRdfResource: IriIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [IriIdentifierStruct.fromRdfType],
+        fromRdfTypes: [IriIdentifierStruct.schema.fromRdfType],
       },
       query,
     );
@@ -59223,7 +59191,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         fromRdfResource:
           LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfResource,
         fromRdfTypes: [
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfType,
+          LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.fromRdfType,
         ],
       },
       query,
@@ -59410,7 +59378,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: LazilyResolvedUnionMember1.filter,
         fromRdfResource: LazilyResolvedUnionMember1.fromRdfResource,
-        fromRdfTypes: [LazilyResolvedUnionMember1.fromRdfType],
+        fromRdfTypes: [LazilyResolvedUnionMember1.schema.fromRdfType],
       },
       query,
     );
@@ -59502,7 +59470,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: LazilyResolvedUnionMember2.filter,
         fromRdfResource: LazilyResolvedUnionMember2.fromRdfResource,
-        fromRdfTypes: [LazilyResolvedUnionMember2.fromRdfType],
+        fromRdfTypes: [LazilyResolvedUnionMember2.schema.fromRdfType],
       },
       query,
     );
@@ -59666,7 +59634,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ListSetsStruct.filter,
         fromRdfResource: ListSetsStruct.fromRdfResource,
-        fromRdfTypes: [ListSetsStruct.fromRdfType],
+        fromRdfTypes: [ListSetsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -59738,7 +59706,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ListsStruct.filter,
         fromRdfResource: ListsStruct.fromRdfResource,
-        fromRdfTypes: [ListsStruct.fromRdfType],
+        fromRdfTypes: [ListsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -59830,7 +59798,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: MutablePropertiesStruct.filter,
         fromRdfResource: MutablePropertiesStruct.fromRdfResource,
-        fromRdfTypes: [MutablePropertiesStruct.fromRdfType],
+        fromRdfTypes: [MutablePropertiesStruct.schema.fromRdfType],
       },
       query,
     );
@@ -59914,7 +59882,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: NamedUnionsStruct.filter,
         fromRdfResource: NamedUnionsStruct.fromRdfResource,
-        fromRdfTypes: [NamedUnionsStruct.fromRdfType],
+        fromRdfTypes: [NamedUnionsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -59982,7 +59950,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: NewName.filter,
         fromRdfResource: NewName.fromRdfResource,
-        fromRdfTypes: [NewName.fromRdfType],
+        fromRdfTypes: [NewName.schema.fromRdfType],
       },
       query,
     );
@@ -60066,7 +60034,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: NodeKindsStruct.filter,
         fromRdfResource: NodeKindsStruct.fromRdfResource,
-        fromRdfTypes: [NodeKindsStruct.fromRdfType],
+        fromRdfTypes: [NodeKindsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -60394,7 +60362,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: NumericsStruct.filter,
         fromRdfResource: NumericsStruct.fromRdfResource,
-        fromRdfTypes: [NumericsStruct.fromRdfType],
+        fromRdfTypes: [NumericsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -60630,7 +60598,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: PartialUnionMember1.filter,
         fromRdfResource: PartialUnionMember1.fromRdfResource,
-        fromRdfTypes: [PartialUnionMember1.fromRdfType],
+        fromRdfTypes: [PartialUnionMember1.schema.fromRdfType],
       },
       query,
     );
@@ -60722,7 +60690,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: PartialUnionMember2.filter,
         fromRdfResource: PartialUnionMember2.fromRdfResource,
-        fromRdfTypes: [PartialUnionMember2.fromRdfType],
+        fromRdfTypes: [PartialUnionMember2.schema.fromRdfType],
       },
       query,
     );
@@ -60906,7 +60874,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: PropertyNamesStruct.filter,
         fromRdfResource: PropertyNamesStruct.fromRdfResource,
-        fromRdfTypes: [PropertyNamesStruct.fromRdfType],
+        fromRdfTypes: [PropertyNamesStruct.schema.fromRdfType],
       },
       query,
     );
@@ -60998,7 +60966,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: PropertyPathsStruct.filter,
         fromRdfResource: PropertyPathsStruct.fromRdfResource,
-        fromRdfTypes: [PropertyPathsStruct.fromRdfType],
+        fromRdfTypes: [PropertyPathsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -61090,7 +61058,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: RecursiveUnionMember1.filter,
         fromRdfResource: RecursiveUnionMember1.fromRdfResource,
-        fromRdfTypes: [RecursiveUnionMember1.fromRdfType],
+        fromRdfTypes: [RecursiveUnionMember1.schema.fromRdfType],
       },
       query,
     );
@@ -61182,7 +61150,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: RecursiveUnionMember2.filter,
         fromRdfResource: RecursiveUnionMember2.fromRdfResource,
-        fromRdfTypes: [RecursiveUnionMember2.fromRdfType],
+        fromRdfTypes: [RecursiveUnionMember2.schema.fromRdfType],
       },
       query,
     );
@@ -61254,7 +61222,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: TermsStruct.filter,
         fromRdfResource: TermsStruct.fromRdfResource,
-        fromRdfTypes: [TermsStruct.fromRdfType],
+        fromRdfTypes: [TermsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -61418,7 +61386,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: UnionMember1.filter,
         fromRdfResource: UnionMember1.fromRdfResource,
-        fromRdfTypes: [UnionMember1.fromRdfType],
+        fromRdfTypes: [UnionMember1.schema.fromRdfType],
       },
       query,
     );
@@ -61490,7 +61458,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: UnionMember2.filter,
         fromRdfResource: UnionMember2.fromRdfResource,
-        fromRdfTypes: [UnionMember2.fromRdfType],
+        fromRdfTypes: [UnionMember2.schema.fromRdfType],
       },
       query,
     );
@@ -61563,17 +61531,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: FlattenUnion.filter,
           fromRdfResource: UnionMember1.fromRdfResource,
-          fromRdfTypes: [UnionMember1.fromRdfType],
+          fromRdfTypes: [UnionMember1.schema.fromRdfType],
         },
         {
           filter: FlattenUnion.filter,
           fromRdfResource: UnionMember2.fromRdfResource,
-          fromRdfTypes: [UnionMember2.fromRdfType],
+          fromRdfTypes: [UnionMember2.schema.fromRdfType],
         },
         {
           filter: FlattenUnion.filter,
           fromRdfResource: FlattenUnionMember3.fromRdfResource,
-          fromRdfTypes: [FlattenUnionMember3.fromRdfType],
+          fromRdfTypes: [FlattenUnionMember3.schema.fromRdfType],
         },
       ],
       query,
@@ -61667,12 +61635,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: LazilyResolvedUnion.filter,
           fromRdfResource: LazilyResolvedUnionMember1.fromRdfResource,
-          fromRdfTypes: [LazilyResolvedUnionMember1.fromRdfType],
+          fromRdfTypes: [LazilyResolvedUnionMember1.schema.fromRdfType],
         },
         {
           filter: LazilyResolvedUnion.filter,
           fromRdfResource: LazilyResolvedUnionMember2.fromRdfResource,
-          fromRdfTypes: [LazilyResolvedUnionMember2.fromRdfType],
+          fromRdfTypes: [LazilyResolvedUnionMember2.schema.fromRdfType],
         },
       ],
       query,
@@ -61825,12 +61793,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: PartialUnion.filter,
           fromRdfResource: PartialUnionMember1.fromRdfResource,
-          fromRdfTypes: [PartialUnionMember1.fromRdfType],
+          fromRdfTypes: [PartialUnionMember1.schema.fromRdfType],
         },
         {
           filter: PartialUnion.filter,
           fromRdfResource: PartialUnionMember2.fromRdfResource,
-          fromRdfTypes: [PartialUnionMember2.fromRdfType],
+          fromRdfTypes: [PartialUnionMember2.schema.fromRdfType],
         },
       ],
       query,
@@ -61904,12 +61872,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: RecursiveUnion.filter,
           fromRdfResource: RecursiveUnionMember1.fromRdfResource,
-          fromRdfTypes: [RecursiveUnionMember1.fromRdfType],
+          fromRdfTypes: [RecursiveUnionMember1.schema.fromRdfType],
         },
         {
           filter: RecursiveUnion.filter,
           fromRdfResource: RecursiveUnionMember2.fromRdfResource,
-          fromRdfTypes: [RecursiveUnionMember2.fromRdfType],
+          fromRdfTypes: [RecursiveUnionMember2.schema.fromRdfType],
         },
       ],
       query,
@@ -61973,12 +61941,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: Union.filter,
           fromRdfResource: UnionMember1.fromRdfResource,
-          fromRdfTypes: [UnionMember1.fromRdfType],
+          fromRdfTypes: [UnionMember1.schema.fromRdfType],
         },
         {
           filter: Union.filter,
           fromRdfResource: UnionMember2.fromRdfResource,
-          fromRdfTypes: [UnionMember2.fromRdfType],
+          fromRdfTypes: [UnionMember2.schema.fromRdfType],
         },
       ],
       query,
@@ -62048,57 +62016,57 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: $Object.filter,
           fromRdfResource: BlankNodeIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [BlankNodeIdentifierStruct.fromRdfType],
+          fromRdfTypes: [BlankNodeIdentifierStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: BlankNodeOrIriIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [BlankNodeOrIriIdentifierStruct.fromRdfType],
+          fromRdfTypes: [BlankNodeOrIriIdentifierStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: ClassConstraintsStruct.fromRdfResource,
-          fromRdfTypes: [ClassConstraintsStruct.fromRdfType],
+          fromRdfTypes: [ClassConstraintsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: ConvertibleTypesStruct.fromRdfResource,
-          fromRdfTypes: [ConvertibleTypesStruct.fromRdfType],
+          fromRdfTypes: [ConvertibleTypesStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: DateUnionsStruct.fromRdfResource,
-          fromRdfTypes: [DateUnionsStruct.fromRdfType],
+          fromRdfTypes: [DateUnionsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: DefaultValuesStruct.fromRdfResource,
-          fromRdfTypes: [DefaultValuesStruct.fromRdfType],
+          fromRdfTypes: [DefaultValuesStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: DirectRecursiveStruct.fromRdfResource,
-          fromRdfTypes: [DirectRecursiveStruct.fromRdfType],
+          fromRdfTypes: [DirectRecursiveStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: DisplayStruct.fromRdfResource,
-          fromRdfTypes: [DisplayStruct.fromRdfType],
+          fromRdfTypes: [DisplayStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: ExplicitFromToRdfTypesStruct.fromRdfResource,
-          fromRdfTypes: [ExplicitFromToRdfTypesStruct.fromRdfType],
+          fromRdfTypes: [ExplicitFromToRdfTypesStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: ExplicitRdfTypeStruct.fromRdfResource,
-          fromRdfTypes: [ExplicitRdfTypeStruct.fromRdfType],
+          fromRdfTypes: [ExplicitRdfTypeStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: FlattenUnionMember3.fromRdfResource,
-          fromRdfTypes: [FlattenUnionMember3.fromRdfType],
+          fromRdfTypes: [FlattenUnionMember3.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -62108,27 +62076,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: $Object.filter,
           fromRdfResource: IndirectRecursiveStruct.fromRdfResource,
-          fromRdfTypes: [IndirectRecursiveStruct.fromRdfType],
+          fromRdfTypes: [IndirectRecursiveStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: IndirectRecursiveStructHelper.fromRdfResource,
-          fromRdfTypes: [IndirectRecursiveStructHelper.fromRdfType],
+          fromRdfTypes: [IndirectRecursiveStructHelper.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: InIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [InIdentifierStruct.fromRdfType],
+          fromRdfTypes: [InIdentifierStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: InPropertiesStruct.fromRdfResource,
-          fromRdfTypes: [InPropertiesStruct.fromRdfType],
+          fromRdfTypes: [InPropertiesStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: IriIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [IriIdentifierStruct.fromRdfType],
+          fromRdfTypes: [IriIdentifierStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -62140,7 +62108,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           fromRdfResource:
             LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfResource,
           fromRdfTypes: [
-            LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfType,
+            LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.fromRdfType,
           ],
         },
         {
@@ -62151,12 +62119,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: $Object.filter,
           fromRdfResource: LazilyResolvedUnionMember1.fromRdfResource,
-          fromRdfTypes: [LazilyResolvedUnionMember1.fromRdfType],
+          fromRdfTypes: [LazilyResolvedUnionMember1.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: LazilyResolvedUnionMember2.fromRdfResource,
-          fromRdfTypes: [LazilyResolvedUnionMember2.fromRdfType],
+          fromRdfTypes: [LazilyResolvedUnionMember2.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -62166,32 +62134,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: $Object.filter,
           fromRdfResource: ListSetsStruct.fromRdfResource,
-          fromRdfTypes: [ListSetsStruct.fromRdfType],
+          fromRdfTypes: [ListSetsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: ListsStruct.fromRdfResource,
-          fromRdfTypes: [ListsStruct.fromRdfType],
+          fromRdfTypes: [ListsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: MutablePropertiesStruct.fromRdfResource,
-          fromRdfTypes: [MutablePropertiesStruct.fromRdfType],
+          fromRdfTypes: [MutablePropertiesStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: NamedUnionsStruct.fromRdfResource,
-          fromRdfTypes: [NamedUnionsStruct.fromRdfType],
+          fromRdfTypes: [NamedUnionsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: NewName.fromRdfResource,
-          fromRdfTypes: [NewName.fromRdfType],
+          fromRdfTypes: [NewName.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: NodeKindsStruct.fromRdfResource,
-          fromRdfTypes: [NodeKindsStruct.fromRdfType],
+          fromRdfTypes: [NodeKindsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -62211,7 +62179,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: $Object.filter,
           fromRdfResource: NumericsStruct.fromRdfResource,
-          fromRdfTypes: [NumericsStruct.fromRdfType],
+          fromRdfTypes: [NumericsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -62226,12 +62194,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: $Object.filter,
           fromRdfResource: PartialUnionMember1.fromRdfResource,
-          fromRdfTypes: [PartialUnionMember1.fromRdfType],
+          fromRdfTypes: [PartialUnionMember1.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: PartialUnionMember2.fromRdfResource,
-          fromRdfTypes: [PartialUnionMember2.fromRdfType],
+          fromRdfTypes: [PartialUnionMember2.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -62241,27 +62209,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: $Object.filter,
           fromRdfResource: PropertyNamesStruct.fromRdfResource,
-          fromRdfTypes: [PropertyNamesStruct.fromRdfType],
+          fromRdfTypes: [PropertyNamesStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: PropertyPathsStruct.fromRdfResource,
-          fromRdfTypes: [PropertyPathsStruct.fromRdfType],
+          fromRdfTypes: [PropertyPathsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: RecursiveUnionMember1.fromRdfResource,
-          fromRdfTypes: [RecursiveUnionMember1.fromRdfType],
+          fromRdfTypes: [RecursiveUnionMember1.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: RecursiveUnionMember2.fromRdfResource,
-          fromRdfTypes: [RecursiveUnionMember2.fromRdfType],
+          fromRdfTypes: [RecursiveUnionMember2.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: TermsStruct.fromRdfResource,
-          fromRdfTypes: [TermsStruct.fromRdfType],
+          fromRdfTypes: [TermsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -62271,12 +62239,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: $Object.filter,
           fromRdfResource: UnionMember1.fromRdfResource,
-          fromRdfTypes: [UnionMember1.fromRdfType],
+          fromRdfTypes: [UnionMember1.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: UnionMember2.fromRdfResource,
-          fromRdfTypes: [UnionMember2.fromRdfType],
+          fromRdfTypes: [UnionMember2.schema.fromRdfType],
         },
       ],
       query,
