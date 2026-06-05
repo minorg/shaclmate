@@ -38,6 +38,42 @@ export type $_ToRdfResourceFunction<
   resourceSet: ResourceSet;
 }) => void;
 
+function $bigIntFromRdfResourceValues<BigintT extends bigint>(
+  values: Resource.Values,
+  options: Parameters<
+    $FromRdfResourceValuesFunction<BigintT, $NumericSchema<BigintT>>
+  >[1],
+): Either<Error, Resource.Values<BigintT>> {
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) =>
+      options.schema.in
+        ? value.toBigInt(options.schema.in)
+        : (value.toBigInt() as Either<Error, BigintT>),
+    ),
+  );
+}
+
+function $booleanFromRdfResourceValues<BooleanT extends boolean>(
+  values: Resource.Values,
+  options: Parameters<
+    $FromRdfResourceValuesFunction<BooleanT, $BooleanSchema<BooleanT>>
+  >[1],
+): Either<Error, Resource.Values<BooleanT>> {
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) =>
+      options.schema.in
+        ? value.toBoolean(options.schema.in)
+        : (value.toBoolean() as Either<Error, BooleanT>),
+    ),
+  );
+}
+
+interface $BooleanSchema<BooleanT extends boolean> {
+  readonly hasValues?: readonly Literal[];
+  readonly in?: readonly BooleanT[];
+  readonly kind: "Boolean";
+}
+
 interface $CollectionSchema<ItemSchemaT> {
   readonly itemType: ItemSchemaT;
   readonly kind: "List" | "Set";
@@ -218,33 +254,18 @@ function $ensureRdfResourceType(
     });
 }
 
-function $fromRdfPreferredLanguages(
+function $floatFromRdfResourceValues<FloatT extends number>(
   values: Resource.Values,
-  preferredLanguages?: readonly string[],
-): Either<Error, Resource.Values> {
-  if (!preferredLanguages || preferredLanguages.length === 0) {
-    return Right(values);
-  }
-
-  // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-  // Within a preferredLanguage the literals may be in any order.
-  const filteredValues: Resource.Value[] = [];
-  for (const preferredLanguage of preferredLanguages) {
-    for (const value of values) {
-      value.toLiteral().ifRight((literal) => {
-        if (literal.language === preferredLanguage) {
-          filteredValues.push(value);
-        }
-      });
-    }
-  }
-
-  return Right(
-    Resource.Values.fromArray({
-      focusResource: values.focusResource,
-      propertyPath: values.propertyPath,
-      values: filteredValues,
-    }),
+  options: Parameters<
+    $FromRdfResourceValuesFunction<FloatT, $NumericSchema<FloatT>>
+  >[1],
+): Either<Error, Resource.Values<FloatT>> {
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) =>
+      options.schema.in
+        ? value.toFloat(options.schema.in)
+        : (value.toFloat() as Either<Error, FloatT>),
+    ),
   );
 }
 
@@ -259,18 +280,35 @@ export type $FromRdfResourceFunction<T> = (
   },
 ) => Either<Error, T>;
 
-export type $FromRdfResourceValuesFunction<T> = (
-  resourceValues: Either<Error, Resource.Values>,
+export type $FromRdfResourceValuesFunction<ValueT, ValueSchemaT> = (
+  resourceValues: Resource.Values,
   options: {
     context?: unknown;
     graph?: Exclude<Quad_Graph, Variable>;
+    focusResource: Resource;
     ignoreRdfType?: boolean;
 
     preferredLanguages?: readonly string[];
     propertyPath: $PropertyPath;
-    resource: Resource;
+    schema: ValueSchemaT;
   },
-) => Either<Error, Resource.Values<T>>;
+) => Either<Error, Resource.Values<ValueT>>;
+
+function $identifierFromRdfResourceValues(
+  values: Resource.Values,
+  options: Parameters<
+    $FromRdfResourceValuesFunction<BlankNode | NamedNode, $IdentifierSchema>
+  >[1],
+): Either<Error, Resource.Values<BlankNode | NamedNode>> {
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) => value.toIdentifier()),
+  );
+}
+
+interface $IdentifierSchema {
+  readonly hasValues?: readonly NamedNode[];
+  readonly kind: "Identifier";
+}
 
 function $identityConversionFunction<T>(value: T): Either<Error, T> {
   return Either.of(value);
@@ -283,7 +321,88 @@ function $identityValidationFunction<T>(
   return Either.of(value);
 }
 
+function $iriFromRdfResourceValues<IriT extends string = string>(
+  values: Resource.Values,
+  options: Parameters<
+    $FromRdfResourceValuesFunction<NamedNode<IriT>, $IriSchema<IriT>>
+  >[1],
+): Either<Error, Resource.Values<NamedNode<IriT>>> {
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) =>
+      options.schema.in
+        ? value.toIri(options.schema.in)
+        : (value.toIri() as Either<Error, NamedNode<IriT>>),
+    ),
+  );
+}
+
+interface $IriSchema<IriT extends string = string> {
+  readonly hasValues?: readonly NamedNode[];
+  readonly in?: readonly NamedNode<IriT>[];
+  readonly kind: "Iri";
+}
+
+function $listFromRdfResourceValues<ItemT, ItemSchemaT>(
+  itemFromRdfResourceValues: $FromRdfResourceValuesFunction<ItemT, ItemSchemaT>,
+): $FromRdfResourceValuesFunction<
+  readonly ItemT[],
+  $CollectionSchema<ItemSchemaT>
+> {
+  return (values, options) =>
+    values
+      .chainMap((value) => value.toList({ graph: options.graph })) // Resource.Values<Resource.Value> to Resource.Values<Resource.Values>;
+      .chain((valueLists) =>
+        valueLists.chainMap((valueList) =>
+          itemFromRdfResourceValues(
+            Resource.Values.fromArray({
+              focusResource: options.focusResource,
+              propertyPath: options.propertyPath,
+              values: valueList.toArray(),
+            }),
+            { ...options, schema: options.schema.itemType },
+          ),
+        ),
+      ) // Resource.Values<Resource.Values> to Resource.Values<item type arrays>
+      .map((valueLists) => valueLists.map((valueList) => valueList.toArray())); // Convert inner Resource.Values to arrays
+}
+
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
+
+function $literalFromRdfResourceValues(
+  values: Resource.Values,
+  options: Parameters<
+    $FromRdfResourceValuesFunction<Literal, $LiteralSchema>
+  >[1],
+): Either<Error, Resource.Values<Literal>> {
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) => value.toLiteral()),
+  );
+}
+
+interface $LiteralSchema {
+  readonly hasValues?: readonly Literal[];
+  readonly in?: readonly Literal[];
+  readonly kind: "Literal";
+  readonly languageIn?: readonly string[];
+}
+
+function $maybeFromRdfResourceValues<ItemT, ItemSchemaT>(
+  itemFromRdfResourceValues: $FromRdfResourceValuesFunction<ItemT, ItemSchemaT>,
+): $FromRdfResourceValuesFunction<Maybe<ItemT>, $MaybeSchema<ItemSchemaT>> {
+  return (values, options) =>
+    itemFromRdfResourceValues(values, {
+      ...options,
+      schema: options.schema.itemType,
+    }).map((values) =>
+      values.length > 0
+        ? values.map((value) => Maybe.of(value))
+        : Resource.Values.fromValue<Maybe<ItemT>>({
+            focusResource: options.focusResource,
+            propertyPath: options.propertyPath,
+            value: Maybe.empty(),
+          }),
+    );
+}
 
 interface $MaybeSchema<ItemSchemaT> {
   readonly itemType: ItemSchemaT;
@@ -319,6 +438,12 @@ function $monkeyPatchObject<T extends object>(
   return obj;
 }
 
+interface $NumericSchema<T> {
+  readonly hasValues?: readonly Literal[];
+  readonly in?: readonly T[];
+  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
+}
+
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 export type $PropertyPath = RdfxResourcePropertyPath;
@@ -328,14 +453,13 @@ export namespace $PropertyPath {
     RdfxResourcePropertyPath.fromResource;
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    $PropertyPath
+    $PropertyPath,
+    object
   > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) => fromRdfResource(resource, options)),
-      ),
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
     );
 
   export const schema: Readonly<object> = {};
@@ -451,28 +575,207 @@ function $sequenceRecord<T extends Record<string, unknown>>(
   return Right(result as T);
 }
 
-function $shaclPropertyFromRdf<T>({
+function $setFromRdfResourceValues<ItemT, ItemSchemaT>(
+  itemFromRdfResourceValues: $FromRdfResourceValuesFunction<ItemT, ItemSchemaT>,
+): $FromRdfResourceValuesFunction<
+  readonly ItemT[],
+  $CollectionSchema<ItemSchemaT>
+> {
+  return (values, options) =>
+    itemFromRdfResourceValues(values, {
+      ...options,
+      schema: options.schema.itemType,
+    })
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        Resource.Values.fromValue({
+          focusResource: options.focusResource,
+          propertyPath: options.propertyPath,
+          value: valuesArray,
+        }),
+      );
+}
+
+function $shaclPropertyFromRdf<TypeT, TypeSchemaT>({
+  focusResource,
   graph,
   propertySchema,
-  resource,
-  typeFromRdf,
+  typeFromRdfResourceValues,
+  ...otherParameters
 }: {
-  graph?: Exclude<Quad_Graph, Variable>;
-  propertySchema: $ShaclPropertySchema;
-  resource: Resource;
-  typeFromRdf: (
-    resourceValues: Either<Error, Resource.Values>,
-  ) => Either<Error, Resource.Values<T>>;
-}): Either<Error, T> {
-  return typeFromRdf(
-    Right(resource.values(propertySchema.path, { graph, unique: true })),
+  propertySchema: $ShaclPropertySchema<TypeSchemaT>;
+  typeFromRdfResourceValues: $FromRdfResourceValuesFunction<TypeT, TypeSchemaT>;
+} & Omit<
+  Parameters<$FromRdfResourceValuesFunction<TypeT, TypeSchemaT>>[1],
+  "propertyPath" | "schema"
+>): Either<Error, TypeT> {
+  return typeFromRdfResourceValues(
+    focusResource.values(propertySchema.path, { graph, unique: true }),
+    {
+      ...otherParameters,
+      focusResource,
+      graph,
+      propertyPath: propertySchema.path,
+      schema: propertySchema.type,
+    },
   ).chain((values) => values.head());
 }
 
-export interface $ShaclPropertySchema<TypeSchemaT = object> {
+export interface $ShaclPropertySchema<TypeSchemaT> {
   readonly kind: "Shacl";
   readonly path: $PropertyPath;
   readonly type: TypeSchemaT;
+}
+
+function $stringFromRdfResourceValues<StringT extends string>(
+  values: Resource.Values,
+  options: Parameters<
+    $FromRdfResourceValuesFunction<StringT, $StringSchema<StringT>>
+  >[1],
+): Either<Error, Resource.Values<StringT>> {
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) =>
+      options.schema.in
+        ? value.toString(options.schema.in)
+        : (value.toString() as Either<Error, StringT>),
+    ),
+  );
+}
+
+interface $StringSchema<StringT extends string> {
+  readonly hasValues?: readonly Literal[];
+  readonly in?: readonly StringT[];
+  readonly languageIn?: readonly string[];
+  readonly kind: "String";
+}
+
+function $termFromRdfResourceValues<
+  TermT extends BlankNode | Literal | NamedNode,
+>(
+  values: Resource.Values,
+  options: Parameters<
+    $FromRdfResourceValuesFunction<TermT, $TermSchema<TermT>>
+  >[1],
+): Either<Error, Resource.Values<TermT>> {
+  const { focusResource, propertyPath, schema } = options;
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) =>
+      value.toTerm().chain((term) => {
+        if (
+          schema.in &&
+          schema.in.length > 0 &&
+          !schema.in.some((in_) => in_.equals(term))
+        ) {
+          return Left(
+            new Resource.MistypedTermValueError({
+              actualValue: term,
+              expectedValueType: "Term in",
+              focusResource,
+              propertyPath,
+            }),
+          );
+        }
+
+        if (!schema.types.some((type) => term.termType === type)) {
+          return Left(
+            new Resource.MistypedTermValueError({
+              actualValue: term,
+              expectedValueType: "Term types",
+              focusResource,
+              propertyPath,
+            }),
+          );
+        }
+
+        return Right(term as TermT);
+      }),
+    ),
+  );
+}
+
+const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
+  Resource.Value,
+  {
+    readonly hasValues?: readonly (Literal | NamedNode)[];
+    readonly languageIn?: readonly string[];
+  }
+> = (values, { preferredLanguages, schema: { hasValues, languageIn } }) => {
+  let chain = Either.of<Error, Resource.Values>(values);
+
+  if (hasValues && hasValues.length > 0) {
+    chain = chain.chain((values) =>
+      Either.sequence(
+        hasValues.map((hasValue) =>
+          values.find((value) => value.term.equals(hasValue)),
+        ),
+      ).map(() => values),
+    );
+  }
+
+  if (languageIn && languageIn.length > 0) {
+    chain = chain.chain((values) =>
+      values.chainMap((value) =>
+        value.toLiteral().chain((literal) =>
+          languageIn.includes(literal.language)
+            ? Right(value)
+            : Left(
+                new Resource.MistypedTermValueError({
+                  actualValue: literal,
+                  expectedValueType: "Literal",
+                  focusResource: value.focusResource,
+                  propertyPath: value.propertyPath,
+                }),
+              ),
+        ),
+      ),
+    );
+  }
+
+  if (preferredLanguages && preferredLanguages.length > 0) {
+    chain = chain.chain((values) => {
+      const literals: Literal[] = [];
+      const literalValues: Resource.Value[] = [];
+      const nonLiteralValues: Resource.Value[] = [];
+
+      for (const value of values) {
+        const term = value.toTerm().unsafeCoerce();
+        if (term.termType === "Literal") {
+          literals.push(term);
+          literalValues.push(value);
+        } else {
+          nonLiteralValues.push(value);
+        }
+      }
+
+      // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+      // Within a preferredLanguage the literals may be in any order.
+      const preferredLanguageLiteralValues: Resource.Value[] = [];
+      for (const preferredLanguage of preferredLanguages) {
+        for (let literalI = 0; literalI < literals.length; literalI++) {
+          if (literals[literalI].language === preferredLanguage) {
+            preferredLanguageLiteralValues.push(literalValues[literalI]);
+          }
+        }
+      }
+
+      return Right(
+        Resource.Values.fromArray({
+          focusResource: values.focusResource,
+          propertyPath: values.propertyPath,
+          values: nonLiteralValues.concat(preferredLanguageLiteralValues),
+        }),
+      );
+    });
+  }
+
+  return chain;
+};
+
+interface $TermSchema<TermT extends BlankNode | Literal | NamedNode> {
+  readonly hasValues?: readonly Exclude<TermT, BlankNode>[];
+  readonly in?: readonly Exclude<TermT, BlankNode>[];
+  readonly kind: "Term";
+  readonly types: readonly TermT["termType"][];
 }
 
 export type $ToRdfResourceFunction<
@@ -1305,896 +1608,626 @@ export namespace NodeShape {
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
-        $identifier: Right(
+        $identifier: $identifierFromRdfResourceValues(
           new Resource.Value({
             dataFactory: dataFactory,
             focusResource: $resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             term: $resource.identifier,
           }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head()),
-        and: $shaclPropertyFromRdf({
+          {
+            context: _$options.context,
+            graph: _$options.graph,
+            focusResource: $resource,
+            preferredLanguages: _$options.preferredLanguages,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        and: $shaclPropertyFromRdf<
+          Maybe<readonly (BlankNode | NamedNode)[]>,
+          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.and,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.and.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<readonly (BlankNode | NamedNode)[]>
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.and.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly (BlankNode | NamedNode)[],
+            $CollectionSchema<$IdentifierSchema>
+          >(
+            $listFromRdfResourceValues<
+              BlankNode | NamedNode,
+              $IdentifierSchema
+            >($identifierFromRdfResourceValues),
+          ),
         }),
-        classes: $shaclPropertyFromRdf({
+        classes: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.classes,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.classes.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        closed: $shaclPropertyFromRdf({
+        closed: $shaclPropertyFromRdf<
+          Maybe<boolean>,
+          $MaybeSchema<$BooleanSchema<boolean>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.closed,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBoolean()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<boolean>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.closed.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            boolean,
+            $BooleanSchema<boolean>
+          >($booleanFromRdfResourceValues<boolean>),
         }),
-        comment: $shaclPropertyFromRdf({
+        comment: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.comment,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.comment.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        datatype: $shaclPropertyFromRdf({
+        datatype: $shaclPropertyFromRdf<
+          Maybe<NamedNode>,
+          $MaybeSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.datatype,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<NamedNode>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.datatype.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        deactivated: $shaclPropertyFromRdf({
+        deactivated: $shaclPropertyFromRdf<
+          Maybe<boolean>,
+          $MaybeSchema<$BooleanSchema<boolean>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.deactivated,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBoolean()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<boolean>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.deactivated.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            boolean,
+            $BooleanSchema<boolean>
+          >($booleanFromRdfResourceValues<boolean>),
         }),
-        flags: $shaclPropertyFromRdf({
+        flags: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.flags,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.flags.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        hasValues: $shaclPropertyFromRdf({
+        hasValues: $shaclPropertyFromRdf<
+          readonly (NamedNode | Literal)[],
+          $CollectionSchema<$TermSchema<NamedNode | Literal>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.hasValues,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toTerm().chain((term) => {
-                    switch (term.termType) {
-                      case "NamedNode":
-                      case "Literal":
-                        return Either.of<Error, NamedNode | Literal>(term);
-                      default:
-                        return Left<Error, NamedNode | Literal>(
-                          new Resource.MistypedTermValueError({
-                            actualValue: term,
-                            expectedValueType: "(NamedNode | Literal)",
-                            focusResource: $resource,
-                            propertyPath:
-                              NodeShape.schema.properties.hasValues.path,
-                          }),
-                        );
-                    }
-                  }),
-                ),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.hasValues.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode | Literal,
+            $TermSchema<NamedNode | Literal>
+          >($termFromRdfResourceValues<NamedNode | Literal>),
         }),
-        ignoredProperties: $shaclPropertyFromRdf({
+        ignoredProperties: $shaclPropertyFromRdf<
+          Maybe<readonly NamedNode[]>,
+          $MaybeSchema<$CollectionSchema<$IriSchema<string>>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.ignoredProperties,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.ignoredProperties.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) => value.toIri()),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<readonly NamedNode[]>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.ignoredProperties.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly NamedNode[],
+            $CollectionSchema<$IriSchema<string>>
+          >(
+            $listFromRdfResourceValues<NamedNode, $IriSchema<string>>(
+              $iriFromRdfResourceValues<string>,
+            ),
+          ),
         }),
-        in_: $shaclPropertyFromRdf({
+        in_: $shaclPropertyFromRdf<
+          Maybe<readonly (NamedNode | Literal)[]>,
+          $MaybeSchema<$CollectionSchema<$TermSchema<NamedNode | Literal>>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.in_,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.in_.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) =>
-                      value.toTerm().chain((term) => {
-                        switch (term.termType) {
-                          case "NamedNode":
-                          case "Literal":
-                            return Either.of<Error, NamedNode | Literal>(term);
-                          default:
-                            return Left<Error, NamedNode | Literal>(
-                              new Resource.MistypedTermValueError({
-                                actualValue: term,
-                                expectedValueType: "(NamedNode | Literal)",
-                                focusResource: $resource,
-                                propertyPath:
-                                  NodeShape.schema.properties.in_.path,
-                              }),
-                            );
-                        }
-                      }),
-                    ),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<readonly (NamedNode | Literal)[]>
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.in_.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly (NamedNode | Literal)[],
+            $CollectionSchema<$TermSchema<NamedNode | Literal>>
+          >(
+            $listFromRdfResourceValues<
+              NamedNode | Literal,
+              $TermSchema<NamedNode | Literal>
+            >($termFromRdfResourceValues<NamedNode | Literal>),
+          ),
         }),
-        isDefinedBy: $shaclPropertyFromRdf({
+        isDefinedBy: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode>,
+          $MaybeSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.isDefinedBy,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<BlankNode | NamedNode>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.isDefinedBy.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
         }),
-        label: $shaclPropertyFromRdf({
+        label: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.label,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.label.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        languageIn: $shaclPropertyFromRdf({
+        languageIn: $shaclPropertyFromRdf<
+          Maybe<readonly string[]>,
+          $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.languageIn,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.languageIn.path,
-                      values: valueList.toArray(),
-                    }),
-                  )
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
-                      ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<readonly string[]>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.languageIn.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly string[],
+            $CollectionSchema<$StringSchema<string>>
+          >(
+            $listFromRdfResourceValues<string, $StringSchema<string>>(
+              $stringFromRdfResourceValues<string>,
+            ),
+          ),
         }),
-        maxExclusive: $shaclPropertyFromRdf({
+        maxExclusive: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LiteralSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.maxExclusive,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toLiteral()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<Literal>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.maxExclusive.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LiteralSchema
+          >($literalFromRdfResourceValues),
         }),
-        maxInclusive: $shaclPropertyFromRdf({
+        maxInclusive: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LiteralSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.maxInclusive,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toLiteral()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<Literal>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.maxInclusive.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LiteralSchema
+          >($literalFromRdfResourceValues),
         }),
-        maxLength: $shaclPropertyFromRdf({
+        maxLength: $shaclPropertyFromRdf<
+          Maybe<bigint>,
+          $MaybeSchema<$NumericSchema<bigint>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.maxLength,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.maxLength.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            bigint,
+            $NumericSchema<bigint>
+          >($bigIntFromRdfResourceValues<bigint>),
         }),
-        message: $shaclPropertyFromRdf({
+        message: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.message,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.message.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        minExclusive: $shaclPropertyFromRdf({
+        minExclusive: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LiteralSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.minExclusive,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toLiteral()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<Literal>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.minExclusive.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LiteralSchema
+          >($literalFromRdfResourceValues),
         }),
-        minInclusive: $shaclPropertyFromRdf({
+        minInclusive: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LiteralSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.minInclusive,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toLiteral()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<Literal>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.minInclusive.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LiteralSchema
+          >($literalFromRdfResourceValues),
         }),
-        minLength: $shaclPropertyFromRdf({
+        minLength: $shaclPropertyFromRdf<
+          Maybe<bigint>,
+          $MaybeSchema<$NumericSchema<bigint>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.minLength,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.minLength.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            bigint,
+            $NumericSchema<bigint>
+          >($bigIntFromRdfResourceValues<bigint>),
         }),
-        node: $shaclPropertyFromRdf({
+        node: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode>,
+          $MaybeSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.node,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<BlankNode | NamedNode>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.node.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
         }),
-        nodeKind: $shaclPropertyFromRdf({
+        nodeKind: $shaclPropertyFromRdf<
+          Maybe<
+            NamedNode<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >
+          >,
+          $MaybeSchema<
+            $IriSchema<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >
+          >
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.nodeKind,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toIri([
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#BlankNode",
-                    ),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#BlankNodeOrIRI",
-                    ),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#BlankNodeOrLiteral",
-                    ),
-                    dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#IRIOrLiteral",
-                    ),
-                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
-                  ]),
-                ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<
-                        NamedNode<
-                          | "http://www.w3.org/ns/shacl#BlankNode"
-                          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                          | "http://www.w3.org/ns/shacl#IRI"
-                          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                          | "http://www.w3.org/ns/shacl#Literal"
-                        >
-                      >
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.nodeKind.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            NamedNode<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >,
+            $IriSchema<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >
+          >(
+            $iriFromRdfResourceValues<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >,
+          ),
         }),
-        not: $shaclPropertyFromRdf({
+        not: $shaclPropertyFromRdf<
+          readonly (BlankNode | NamedNode)[],
+          $CollectionSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.not,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.not.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
         }),
-        or: $shaclPropertyFromRdf({
+        or: $shaclPropertyFromRdf<
+          Maybe<readonly (BlankNode | NamedNode)[]>,
+          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.or,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.or.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<readonly (BlankNode | NamedNode)[]>
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.or.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly (BlankNode | NamedNode)[],
+            $CollectionSchema<$IdentifierSchema>
+          >(
+            $listFromRdfResourceValues<
+              BlankNode | NamedNode,
+              $IdentifierSchema
+            >($identifierFromRdfResourceValues),
+          ),
         }),
-        pattern: $shaclPropertyFromRdf({
+        pattern: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.pattern,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.pattern.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        properties: $shaclPropertyFromRdf({
+        properties: $shaclPropertyFromRdf<
+          readonly (BlankNode | NamedNode)[],
+          $CollectionSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.properties,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.properties.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
         }),
-        severity: $shaclPropertyFromRdf({
+        severity: $shaclPropertyFromRdf<
+          Maybe<
+            NamedNode<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >
+          >,
+          $MaybeSchema<
+            $IriSchema<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >
+          >
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.severity,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toIri([
-                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
-                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#Violation",
-                    ),
-                  ]),
-                ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<
-                        NamedNode<
-                          | "http://www.w3.org/ns/shacl#Info"
-                          | "http://www.w3.org/ns/shacl#Warning"
-                          | "http://www.w3.org/ns/shacl#Violation"
-                        >
-                      >
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.severity.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            NamedNode<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >,
+            $IriSchema<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >
+          >(
+            $iriFromRdfResourceValues<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >,
+          ),
         }),
-        subClassOf: $shaclPropertyFromRdf({
+        subClassOf: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.subClassOf,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.subClassOf.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        targetClasses: $shaclPropertyFromRdf({
+        targetClasses: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.targetClasses,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.targetClasses.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        targetNodes: $shaclPropertyFromRdf({
+        targetNodes: $shaclPropertyFromRdf<
+          readonly (NamedNode | Literal)[],
+          $CollectionSchema<$TermSchema<NamedNode | Literal>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.targetNodes,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toTerm().chain((term) => {
-                    switch (term.termType) {
-                      case "NamedNode":
-                      case "Literal":
-                        return Either.of<Error, NamedNode | Literal>(term);
-                      default:
-                        return Left<Error, NamedNode | Literal>(
-                          new Resource.MistypedTermValueError({
-                            actualValue: term,
-                            expectedValueType: "(NamedNode | Literal)",
-                            focusResource: $resource,
-                            propertyPath:
-                              NodeShape.schema.properties.targetNodes.path,
-                          }),
-                        );
-                    }
-                  }),
-                ),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.targetNodes.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode | Literal,
+            $TermSchema<NamedNode | Literal>
+          >($termFromRdfResourceValues<NamedNode | Literal>),
         }),
-        targetObjectsOf: $shaclPropertyFromRdf({
+        targetObjectsOf: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.targetObjectsOf,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath:
-                    NodeShape.schema.properties.targetObjectsOf.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        targetSubjectsOf: $shaclPropertyFromRdf({
+        targetSubjectsOf: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.targetSubjectsOf,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath:
-                    NodeShape.schema.properties.targetSubjectsOf.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        types: $shaclPropertyFromRdf({
+        types: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.types,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.types.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        xone: $shaclPropertyFromRdf({
+        xone: $shaclPropertyFromRdf<
+          Maybe<readonly (BlankNode | NamedNode)[]>,
+          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.xone,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.xone.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<readonly (BlankNode | NamedNode)[]>
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.xone.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly (BlankNode | NamedNode)[],
+            $CollectionSchema<$IdentifierSchema>
+          >(
+            $listFromRdfResourceValues<
+              BlankNode | NamedNode,
+              $IdentifierSchema
+            >($identifierFromRdfResourceValues),
+          ),
         }),
       }).chain((properties) => create(properties)),
     );
@@ -2204,14 +2237,13 @@ export namespace NodeShape {
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    NodeShape
+    NodeShape,
+    typeof NodeShape.schema
   > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) => NodeShape.fromRdfResource(resource, options)),
-      ),
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => NodeShape.fromRdfResource(resource, options)),
     );
 
   export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -2286,7 +2318,10 @@ export namespace NodeShape {
       hasValues: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
-        type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
+        },
       },
       ignoredProperties: {
         kind: "Shacl",
@@ -2308,7 +2343,10 @@ export namespace NodeShape {
           kind: "Option" as const,
           itemType: {
             kind: "List" as const,
-            itemType: { kind: "Term" as const },
+            itemType: {
+              kind: "Term" as const,
+              types: ["NamedNode", "Literal"],
+            },
           },
         },
       },
@@ -2492,7 +2530,10 @@ export namespace NodeShape {
       targetNodes: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetNode"),
-        type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
+        },
       },
       targetObjectsOf: {
         kind: "Shacl",
@@ -3126,61 +3167,51 @@ export namespace Ontology {
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
-        $identifier: Right(
+        $identifier: $identifierFromRdfResourceValues(
           new Resource.Value({
             dataFactory: dataFactory,
             focusResource: $resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             term: $resource.identifier,
           }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head()),
-        comment: $shaclPropertyFromRdf({
+          {
+            context: _$options.context,
+            graph: _$options.graph,
+            focusResource: $resource,
+            preferredLanguages: _$options.preferredLanguages,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        comment: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.comment,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.comment.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        label: $shaclPropertyFromRdf({
+        label: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.label,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.label.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
       }).chain((properties) => create(properties)),
     );
@@ -3190,14 +3221,13 @@ export namespace Ontology {
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    Ontology
+    Ontology,
+    typeof Ontology.schema
   > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) => Ontology.fromRdfResource(resource, options)),
-      ),
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => Ontology.fromRdfResource(resource, options)),
     );
 
   export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -3354,61 +3384,51 @@ export namespace PropertyGroup {
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
-        $identifier: Right(
+        $identifier: $identifierFromRdfResourceValues(
           new Resource.Value({
             dataFactory: dataFactory,
             focusResource: $resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             term: $resource.identifier,
           }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head()),
-        comment: $shaclPropertyFromRdf({
+          {
+            context: _$options.context,
+            graph: _$options.graph,
+            focusResource: $resource,
+            preferredLanguages: _$options.preferredLanguages,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        comment: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.comment,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.comment.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        label: $shaclPropertyFromRdf({
+        label: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.label,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.label.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
       }).chain((properties) => create(properties)),
     );
@@ -3418,16 +3438,13 @@ export namespace PropertyGroup {
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    PropertyGroup
+    PropertyGroup,
+    typeof PropertyGroup.schema
   > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            PropertyGroup.fromRdfResource(resource, options),
-          ),
-      ),
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => PropertyGroup.fromRdfResource(resource, options)),
     );
 
   export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -4371,1119 +4388,798 @@ export namespace PropertyShape {
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
-        $identifier: Right(
+        $identifier: $identifierFromRdfResourceValues(
           new Resource.Value({
             dataFactory: dataFactory,
             focusResource: $resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             term: $resource.identifier,
           }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head()),
-        and: $shaclPropertyFromRdf({
+          {
+            context: _$options.context,
+            graph: _$options.graph,
+            focusResource: $resource,
+            preferredLanguages: _$options.preferredLanguages,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        and: $shaclPropertyFromRdf<
+          Maybe<readonly (BlankNode | NamedNode)[]>,
+          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.and,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.and.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<readonly (BlankNode | NamedNode)[]>
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.and.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly (BlankNode | NamedNode)[],
+            $CollectionSchema<$IdentifierSchema>
+          >(
+            $listFromRdfResourceValues<
+              BlankNode | NamedNode,
+              $IdentifierSchema
+            >($identifierFromRdfResourceValues),
+          ),
         }),
-        classes: $shaclPropertyFromRdf({
+        classes: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.classes,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.classes.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        comment: $shaclPropertyFromRdf({
+        comment: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.comment,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.comment.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        datatype: $shaclPropertyFromRdf({
+        datatype: $shaclPropertyFromRdf<
+          Maybe<NamedNode>,
+          $MaybeSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.datatype,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<NamedNode>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.datatype.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        deactivated: $shaclPropertyFromRdf({
+        deactivated: $shaclPropertyFromRdf<
+          Maybe<boolean>,
+          $MaybeSchema<$BooleanSchema<boolean>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.deactivated,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBoolean()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<boolean>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.deactivated.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            boolean,
+            $BooleanSchema<boolean>
+          >($booleanFromRdfResourceValues<boolean>),
         }),
-        defaultValue: $shaclPropertyFromRdf({
+        defaultValue: $shaclPropertyFromRdf<
+          Maybe<NamedNode | Literal>,
+          $MaybeSchema<$TermSchema<NamedNode | Literal>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.defaultValue,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toTerm().chain((term) => {
-                    switch (term.termType) {
-                      case "NamedNode":
-                      case "Literal":
-                        return Either.of<Error, NamedNode | Literal>(term);
-                      default:
-                        return Left<Error, NamedNode | Literal>(
-                          new Resource.MistypedTermValueError({
-                            actualValue: term,
-                            expectedValueType: "(NamedNode | Literal)",
-                            focusResource: $resource,
-                            propertyPath:
-                              PropertyShape.schema.properties.defaultValue.path,
-                          }),
-                        );
-                    }
-                  }),
-                ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<NamedNode | Literal>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.defaultValue.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            NamedNode | Literal,
+            $TermSchema<NamedNode | Literal>
+          >($termFromRdfResourceValues<NamedNode | Literal>),
         }),
-        description: $shaclPropertyFromRdf({
+        description: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.description,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.description.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        disjoint: $shaclPropertyFromRdf({
+        disjoint: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.disjoint,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.disjoint.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        equals: $shaclPropertyFromRdf({
+        equals: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.equals,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.equals.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        flags: $shaclPropertyFromRdf({
+        flags: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.flags,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.flags.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        groups: $shaclPropertyFromRdf({
+        groups: $shaclPropertyFromRdf<
+          readonly (BlankNode | NamedNode)[],
+          $CollectionSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.groups,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.groups.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
         }),
-        hasValues: $shaclPropertyFromRdf({
+        hasValues: $shaclPropertyFromRdf<
+          readonly (NamedNode | Literal)[],
+          $CollectionSchema<$TermSchema<NamedNode | Literal>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.hasValues,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toTerm().chain((term) => {
-                    switch (term.termType) {
-                      case "NamedNode":
-                      case "Literal":
-                        return Either.of<Error, NamedNode | Literal>(term);
-                      default:
-                        return Left<Error, NamedNode | Literal>(
-                          new Resource.MistypedTermValueError({
-                            actualValue: term,
-                            expectedValueType: "(NamedNode | Literal)",
-                            focusResource: $resource,
-                            propertyPath:
-                              NodeShape.schema.properties.hasValues.path,
-                          }),
-                        );
-                    }
-                  }),
-                ),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.hasValues.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode | Literal,
+            $TermSchema<NamedNode | Literal>
+          >($termFromRdfResourceValues<NamedNode | Literal>),
         }),
-        in_: $shaclPropertyFromRdf({
+        in_: $shaclPropertyFromRdf<
+          Maybe<readonly (NamedNode | Literal)[]>,
+          $MaybeSchema<$CollectionSchema<$TermSchema<NamedNode | Literal>>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.in_,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.in_.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) =>
-                      value.toTerm().chain((term) => {
-                        switch (term.termType) {
-                          case "NamedNode":
-                          case "Literal":
-                            return Either.of<Error, NamedNode | Literal>(term);
-                          default:
-                            return Left<Error, NamedNode | Literal>(
-                              new Resource.MistypedTermValueError({
-                                actualValue: term,
-                                expectedValueType: "(NamedNode | Literal)",
-                                focusResource: $resource,
-                                propertyPath:
-                                  NodeShape.schema.properties.in_.path,
-                              }),
-                            );
-                        }
-                      }),
-                    ),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<readonly (NamedNode | Literal)[]>
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.in_.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly (NamedNode | Literal)[],
+            $CollectionSchema<$TermSchema<NamedNode | Literal>>
+          >(
+            $listFromRdfResourceValues<
+              NamedNode | Literal,
+              $TermSchema<NamedNode | Literal>
+            >($termFromRdfResourceValues<NamedNode | Literal>),
+          ),
         }),
-        isDefinedBy: $shaclPropertyFromRdf({
+        isDefinedBy: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode>,
+          $MaybeSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.isDefinedBy,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<BlankNode | NamedNode>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.isDefinedBy.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
         }),
-        label: $shaclPropertyFromRdf({
+        label: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.label,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.label.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        languageIn: $shaclPropertyFromRdf({
+        languageIn: $shaclPropertyFromRdf<
+          Maybe<readonly string[]>,
+          $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.languageIn,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.languageIn.path,
-                      values: valueList.toArray(),
-                    }),
-                  )
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
-                      ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<readonly string[]>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.languageIn.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly string[],
+            $CollectionSchema<$StringSchema<string>>
+          >(
+            $listFromRdfResourceValues<string, $StringSchema<string>>(
+              $stringFromRdfResourceValues<string>,
+            ),
+          ),
         }),
-        lessThan: $shaclPropertyFromRdf({
+        lessThan: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.lessThan,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: PropertyShape.schema.properties.lessThan.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        lessThanOrEquals: $shaclPropertyFromRdf({
+        lessThanOrEquals: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.lessThanOrEquals,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath:
-                    PropertyShape.schema.properties.lessThanOrEquals.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        maxCount: $shaclPropertyFromRdf({
+        maxCount: $shaclPropertyFromRdf<
+          Maybe<bigint>,
+          $MaybeSchema<$NumericSchema<bigint>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.maxCount,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.maxCount.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            bigint,
+            $NumericSchema<bigint>
+          >($bigIntFromRdfResourceValues<bigint>),
         }),
-        maxExclusive: $shaclPropertyFromRdf({
+        maxExclusive: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LiteralSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.maxExclusive,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toLiteral()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<Literal>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.maxExclusive.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LiteralSchema
+          >($literalFromRdfResourceValues),
         }),
-        maxInclusive: $shaclPropertyFromRdf({
+        maxInclusive: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LiteralSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.maxInclusive,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toLiteral()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<Literal>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.maxInclusive.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LiteralSchema
+          >($literalFromRdfResourceValues),
         }),
-        maxLength: $shaclPropertyFromRdf({
+        maxLength: $shaclPropertyFromRdf<
+          Maybe<bigint>,
+          $MaybeSchema<$NumericSchema<bigint>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.maxLength,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.maxLength.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            bigint,
+            $NumericSchema<bigint>
+          >($bigIntFromRdfResourceValues<bigint>),
         }),
-        message: $shaclPropertyFromRdf({
+        message: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.message,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.message.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        minCount: $shaclPropertyFromRdf({
+        minCount: $shaclPropertyFromRdf<
+          Maybe<bigint>,
+          $MaybeSchema<$NumericSchema<bigint>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.minCount,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.minCount.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            bigint,
+            $NumericSchema<bigint>
+          >($bigIntFromRdfResourceValues<bigint>),
         }),
-        minExclusive: $shaclPropertyFromRdf({
+        minExclusive: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LiteralSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.minExclusive,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toLiteral()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<Literal>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.minExclusive.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LiteralSchema
+          >($literalFromRdfResourceValues),
         }),
-        minInclusive: $shaclPropertyFromRdf({
+        minInclusive: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LiteralSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.minInclusive,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toLiteral()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<Literal>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        NodeShape.schema.properties.minInclusive.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LiteralSchema
+          >($literalFromRdfResourceValues),
         }),
-        minLength: $shaclPropertyFromRdf({
+        minLength: $shaclPropertyFromRdf<
+          Maybe<bigint>,
+          $MaybeSchema<$NumericSchema<bigint>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.minLength,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.minLength.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            bigint,
+            $NumericSchema<bigint>
+          >($bigIntFromRdfResourceValues<bigint>),
         }),
-        name: $shaclPropertyFromRdf({
+        name: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.name,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: PropertyShape.schema.properties.name.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        node: $shaclPropertyFromRdf({
+        node: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode>,
+          $MaybeSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.node,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<BlankNode | NamedNode>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.node.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
         }),
-        nodeKind: $shaclPropertyFromRdf({
+        nodeKind: $shaclPropertyFromRdf<
+          Maybe<
+            NamedNode<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >
+          >,
+          $MaybeSchema<
+            $IriSchema<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >
+          >
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.nodeKind,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toIri([
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#BlankNode",
-                    ),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#BlankNodeOrIRI",
-                    ),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#BlankNodeOrLiteral",
-                    ),
-                    dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#IRIOrLiteral",
-                    ),
-                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
-                  ]),
-                ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<
-                        NamedNode<
-                          | "http://www.w3.org/ns/shacl#BlankNode"
-                          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                          | "http://www.w3.org/ns/shacl#IRI"
-                          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                          | "http://www.w3.org/ns/shacl#Literal"
-                        >
-                      >
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.nodeKind.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            NamedNode<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >,
+            $IriSchema<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >
+          >(
+            $iriFromRdfResourceValues<
+              | "http://www.w3.org/ns/shacl#BlankNode"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+              | "http://www.w3.org/ns/shacl#IRI"
+              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+              | "http://www.w3.org/ns/shacl#Literal"
+            >,
+          ),
         }),
-        not: $shaclPropertyFromRdf({
+        not: $shaclPropertyFromRdf<
+          readonly (BlankNode | NamedNode)[],
+          $CollectionSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.not,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.not.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
         }),
-        or: $shaclPropertyFromRdf({
+        or: $shaclPropertyFromRdf<
+          Maybe<readonly (BlankNode | NamedNode)[]>,
+          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.or,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.or.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<readonly (BlankNode | NamedNode)[]>
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.or.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly (BlankNode | NamedNode)[],
+            $CollectionSchema<$IdentifierSchema>
+          >(
+            $listFromRdfResourceValues<
+              BlankNode | NamedNode,
+              $IdentifierSchema
+            >($identifierFromRdfResourceValues),
+          ),
         }),
-        order: $shaclPropertyFromRdf({
+        order: $shaclPropertyFromRdf<
+          Maybe<number>,
+          $MaybeSchema<$NumericSchema<number>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.order,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toFloat()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<number>>({
-                      focusResource: $resource,
-                      propertyPath: PropertyShape.schema.properties.order.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            number,
+            $NumericSchema<number>
+          >($floatFromRdfResourceValues<number>),
         }),
-        path: $shaclPropertyFromRdf({
+        path: $shaclPropertyFromRdf<$PropertyPath, typeof $PropertyPath.schema>(
+          {
+            context: _$options.context,
+            graph: _$options.graph,
+            focusResource: $resource,
+            ignoreRdfType: true,
+            preferredLanguages: _$options.preferredLanguages,
+            propertySchema: schema.properties.path,
+            typeFromRdfResourceValues: $PropertyPath.fromRdfResourceValues,
+          },
+        ),
+        pattern: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.path,
-          typeFromRdf: (resourceValues) =>
-            $PropertyPath.fromRdfResourceValues(resourceValues, {
-              context: _$options.context,
-              graph: _$options.graph,
-              preferredLanguages: _$options.preferredLanguages,
-              resource: $resource,
-              ignoreRdfType: true,
-              propertyPath: PropertyShape.schema.properties.path.path,
-            }),
-        }),
-        pattern: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.pattern,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.pattern.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
         }),
-        qualifiedMaxCount: $shaclPropertyFromRdf({
+        qualifiedMaxCount: $shaclPropertyFromRdf<
+          Maybe<bigint>,
+          $MaybeSchema<$NumericSchema<bigint>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.qualifiedMaxCount,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.qualifiedMaxCount.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            bigint,
+            $NumericSchema<bigint>
+          >($bigIntFromRdfResourceValues<bigint>),
         }),
-        qualifiedMinCount: $shaclPropertyFromRdf({
+        qualifiedMinCount: $shaclPropertyFromRdf<
+          Maybe<bigint>,
+          $MaybeSchema<$NumericSchema<bigint>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.qualifiedMinCount,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBigInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<bigint>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.qualifiedMinCount.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            bigint,
+            $NumericSchema<bigint>
+          >($bigIntFromRdfResourceValues<bigint>),
         }),
-        qualifiedValueShape: $shaclPropertyFromRdf({
+        qualifiedValueShape: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode>,
+          $MaybeSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.qualifiedValueShape,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<BlankNode | NamedNode>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.qualifiedValueShape
-                          .path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
         }),
-        qualifiedValueShapesDisjoint: $shaclPropertyFromRdf({
+        qualifiedValueShapesDisjoint: $shaclPropertyFromRdf<
+          Maybe<boolean>,
+          $MaybeSchema<$BooleanSchema<boolean>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.qualifiedValueShapesDisjoint,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBoolean()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<boolean>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties
-                          .qualifiedValueShapesDisjoint.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            boolean,
+            $BooleanSchema<boolean>
+          >($booleanFromRdfResourceValues<boolean>),
         }),
-        severity: $shaclPropertyFromRdf({
+        severity: $shaclPropertyFromRdf<
+          Maybe<
+            NamedNode<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >
+          >,
+          $MaybeSchema<
+            $IriSchema<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >
+          >
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.severity,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toIri([
-                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
-                    dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/ns/shacl#Violation",
-                    ),
-                  ]),
-                ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<
-                        NamedNode<
-                          | "http://www.w3.org/ns/shacl#Info"
-                          | "http://www.w3.org/ns/shacl#Warning"
-                          | "http://www.w3.org/ns/shacl#Violation"
-                        >
-                      >
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.severity.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            NamedNode<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >,
+            $IriSchema<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >
+          >(
+            $iriFromRdfResourceValues<
+              | "http://www.w3.org/ns/shacl#Info"
+              | "http://www.w3.org/ns/shacl#Warning"
+              | "http://www.w3.org/ns/shacl#Violation"
+            >,
+          ),
         }),
-        targetClasses: $shaclPropertyFromRdf({
+        targetClasses: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.targetClasses,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.targetClasses.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        targetNodes: $shaclPropertyFromRdf({
+        targetNodes: $shaclPropertyFromRdf<
+          readonly (NamedNode | Literal)[],
+          $CollectionSchema<$TermSchema<NamedNode | Literal>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.targetNodes,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toTerm().chain((term) => {
-                    switch (term.termType) {
-                      case "NamedNode":
-                      case "Literal":
-                        return Either.of<Error, NamedNode | Literal>(term);
-                      default:
-                        return Left<Error, NamedNode | Literal>(
-                          new Resource.MistypedTermValueError({
-                            actualValue: term,
-                            expectedValueType: "(NamedNode | Literal)",
-                            focusResource: $resource,
-                            propertyPath:
-                              NodeShape.schema.properties.targetNodes.path,
-                          }),
-                        );
-                    }
-                  }),
-                ),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: NodeShape.schema.properties.targetNodes.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode | Literal,
+            $TermSchema<NamedNode | Literal>
+          >($termFromRdfResourceValues<NamedNode | Literal>),
         }),
-        targetObjectsOf: $shaclPropertyFromRdf({
+        targetObjectsOf: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.targetObjectsOf,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath:
-                    NodeShape.schema.properties.targetObjectsOf.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        targetSubjectsOf: $shaclPropertyFromRdf({
+        targetSubjectsOf: $shaclPropertyFromRdf<
+          readonly NamedNode[],
+          $CollectionSchema<$IriSchema<string>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.targetSubjectsOf,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath:
-                    NodeShape.schema.properties.targetSubjectsOf.path,
-                  value: valuesArray,
-                }),
-              ),
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
         }),
-        uniqueLang: $shaclPropertyFromRdf({
+        uniqueLang: $shaclPropertyFromRdf<
+          Maybe<boolean>,
+          $MaybeSchema<$BooleanSchema<boolean>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.uniqueLang,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toBoolean()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<boolean>>({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyShape.schema.properties.uniqueLang.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            boolean,
+            $BooleanSchema<boolean>
+          >($booleanFromRdfResourceValues<boolean>),
         }),
-        xone: $shaclPropertyFromRdf({
+        xone: $shaclPropertyFromRdf<
+          Maybe<readonly (BlankNode | NamedNode)[]>,
+          $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
+        >({
+          context: _$options.context,
           graph: _$options.graph,
-          resource: $resource,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.xone,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: _$options.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Right(
-                    Resource.Values.fromArray({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.xone.path,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<readonly (BlankNode | NamedNode)[]>
-                    >({
-                      focusResource: $resource,
-                      propertyPath: NodeShape.schema.properties.xone.path,
-                      value: Maybe.empty(),
-                    }),
-              ),
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            readonly (BlankNode | NamedNode)[],
+            $CollectionSchema<$IdentifierSchema>
+          >(
+            $listFromRdfResourceValues<
+              BlankNode | NamedNode,
+              $IdentifierSchema
+            >($identifierFromRdfResourceValues),
+          ),
         }),
       }).chain((properties) => create(properties)),
     );
@@ -5493,16 +5189,13 @@ export namespace PropertyShape {
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    PropertyShape
+    PropertyShape,
+    typeof PropertyShape.schema
   > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            PropertyShape.fromRdfResource(resource, options),
-          ),
-      ),
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => PropertyShape.fromRdfResource(resource, options)),
     );
 
   export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -5561,7 +5254,10 @@ export namespace PropertyShape {
       defaultValue: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#defaultValue"),
-        type: { kind: "Option" as const, itemType: { kind: "Term" as const } },
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
+        },
       },
       description: {
         kind: "Shacl",
@@ -5600,7 +5296,10 @@ export namespace PropertyShape {
       hasValues: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
-        type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
+        },
       },
       in_: {
         kind: "Shacl",
@@ -5609,7 +5308,10 @@ export namespace PropertyShape {
           kind: "Option" as const,
           itemType: {
             kind: "List" as const,
-            itemType: { kind: "Term" as const },
+            itemType: {
+              kind: "Term" as const,
+              types: ["NamedNode", "Literal"],
+            },
           },
         },
       },
@@ -5868,7 +5570,10 @@ export namespace PropertyShape {
       targetNodes: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetNode"),
-        type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
+        },
       },
       targetObjectsOf: {
         kind: "Shacl",
@@ -6507,37 +6212,27 @@ export namespace Shape {
         }) as Either<Error, Shape>,
     );
 
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<Shape> = ((
-    values,
-    _options,
-  ) =>
-    values.chain((values) =>
-      values.chainMap((value) => {
-        const valueAsValues = Right(value.toValues());
-        return (
-          NodeShape.fromRdfResourceValues(valueAsValues, {
-            context: _options.context,
-            graph: _options.graph,
-            ignoreRdfType: false,
-            preferredLanguages: _options.preferredLanguages,
-            propertyPath: _options.propertyPath,
-            resource: _options.resource,
-          }) as Either<Error, Resource.Values<Shape>>
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    Shape,
+    typeof Shape.schema
+  > = ((values, options) =>
+    values.chainMap((value) => {
+      const valueAsValues = value.toValues();
+      return (
+        NodeShape.fromRdfResourceValues(valueAsValues, {
+          ...options,
+          schema: options.schema.members["NodeShape"].type,
+        }) as Either<Error, Resource.Values<Shape>>
+      )
+        .altLazy(
+          () =>
+            PropertyShape.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["PropertyShape"].type,
+            }) as Either<Error, Resource.Values<Shape>>,
         )
-          .altLazy(
-            () =>
-              PropertyShape.fromRdfResourceValues(valueAsValues, {
-                context: _options.context,
-                graph: _options.graph,
-                ignoreRdfType: false,
-                preferredLanguages: _options.preferredLanguages,
-                propertyPath: _options.propertyPath,
-                resource: _options.resource,
-              }) as Either<Error, Resource.Values<Shape>>,
-          )
-          .chain((values) => values.head());
-      }),
-    )) satisfies $FromRdfResourceValuesFunction<Shape>;
+        .chain((values) => values.head());
+    })) satisfies $FromRdfResourceValuesFunction<Shape, typeof Shape.schema>;
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
@@ -6611,7 +6306,10 @@ export namespace Shape {
       hasValues: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
-        type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
+        },
       },
       in_: {
         kind: "Shacl",
@@ -6620,7 +6318,10 @@ export namespace Shape {
           kind: "Option" as const,
           itemType: {
             kind: "List" as const,
-            itemType: { kind: "Term" as const },
+            itemType: {
+              kind: "Term" as const,
+              types: ["NamedNode", "Literal"],
+            },
           },
         },
       },
@@ -6791,7 +6492,10 @@ export namespace Shape {
       targetNodes: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#targetNode"),
-        type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
+        type: {
+          kind: "Set" as const,
+          itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
+        },
       },
       targetObjectsOf: {
         kind: "Shacl",
@@ -6910,57 +6614,44 @@ export namespace $Object {
           }) as Either<Error, $Object>,
       );
 
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<$Object> =
-    ((values, _options) =>
-      values.chain((values) =>
-        values.chainMap((value) => {
-          const valueAsValues = Right(value.toValues());
-          return (
-            NodeShape.fromRdfResourceValues(valueAsValues, {
-              context: _options.context,
-              graph: _options.graph,
-              ignoreRdfType: false,
-              preferredLanguages: _options.preferredLanguages,
-              propertyPath: _options.propertyPath,
-              resource: _options.resource,
-            }) as Either<Error, Resource.Values<$Object>>
-          )
-            .altLazy(
-              () =>
-                Ontology.fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                PropertyGroup.fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                PropertyShape.fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .chain((values) => values.head());
-        }),
-      )) satisfies $FromRdfResourceValuesFunction<$Object>;
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    $Object,
+    typeof $Object.schema
+  > = ((values, options) =>
+    values.chainMap((value) => {
+      const valueAsValues = value.toValues();
+      return (
+        NodeShape.fromRdfResourceValues(valueAsValues, {
+          ...options,
+          schema: options.schema.members["NodeShape"].type,
+        }) as Either<Error, Resource.Values<$Object>>
+      )
+        .altLazy(
+          () =>
+            Ontology.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["Ontology"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
+        .altLazy(
+          () =>
+            PropertyGroup.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["PropertyGroup"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
+        .altLazy(
+          () =>
+            PropertyShape.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["PropertyShape"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
+        .chain((values) => values.head());
+    })) satisfies $FromRdfResourceValuesFunction<
+    $Object,
+    typeof $Object.schema
+  >;
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
