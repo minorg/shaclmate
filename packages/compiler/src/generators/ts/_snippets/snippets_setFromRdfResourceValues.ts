@@ -9,10 +9,10 @@ export const snippets_setFromRdfResourceValues: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}setFromRdfResourceValues`,
     code`\
-function ${syntheticNamePrefix}setFromRdfResourceValues<ItemT, ItemSchemaT>(itemFromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<ItemT, ItemSchemaT>): ${snippets.FromRdfResourceValuesFunction}<ItemT[], ${snippets.CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}setFromRdfResourceValues<ItemT, ItemSchemaT>(itemFromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<ItemT, ItemSchemaT>): ${snippets.FromRdfResourceValuesFunction}<readonly ItemT[], ${snippets.CollectionSchema}<ItemSchemaT>> {
   return (values, options) =>
     itemFromRdfResourceValues(values, { ...options, schema: options.schema.itemType })\
-    .map(values => values.toArray().concat())\
+    .map(values => values.toArray())\
     .map(valuesArray => ${imports.Resource}.Values.fromValue({ focusResource: options.focusResource, propertyPath: options.propertyPath, value: valuesArray }));
 }`,
   );
