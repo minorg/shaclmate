@@ -95,7 +95,7 @@ export class DefaultValueType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.expression}, ${this.itemType.schemaType}>`;
+    return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schemaType}>`;
   }
 
   override get toRdfResourceValueTypes(): AbstractContainerType<ItemTypeT>["toRdfResourceValueTypes"] {
@@ -114,7 +114,7 @@ export class DefaultValueType<
 
   protected override get schemaInitializers() {
     return super.schemaInitializers.concat(
-      code`defaultValue: ${this.defaultValueExpression}`,
+      code`defaultValue: ${this.rdfjsTermExpression(this.defaultValue)}`,
     );
   }
 

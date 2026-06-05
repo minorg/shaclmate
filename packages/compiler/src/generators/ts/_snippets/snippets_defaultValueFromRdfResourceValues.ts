@@ -10,6 +10,10 @@ export const snippets_defaultValueFromRdfResourceValues: SnippetFactory = ({
     `${syntheticNamePrefix}defaultValueFromRdfResourceValues`,
     code`\
 function ${syntheticNamePrefix}defaultValueFromRdfResourceValues<ItemT, ItemSchemaT>(itemFromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<ItemT, ItemSchemaT>): ${snippets.FromRdfResourceValuesFunction}<ItemT, ${snippets.DefaultValueSchema}<ItemSchemaT>> {
-  return (values, { ...options, schema: options.schema.itemType }) => itemFromRdfResourceValues(values.map(values => values.length > 0 ? values : new ${imports.Resource}.Value({ dataFactory: ${imports.dataFactory}, focusResource: options.focusResource, propertyPath: options.propertyPath, term: options.schema.type.defaultValue }}).toValues()));
+  return (values, options) =>
+    itemFromRdfResourceValues(
+      values.length > 0 ? values : new ${imports.Resource}.Value({ dataFactory: ${imports.dataFactory}, focusResource: options.focusResource, propertyPath: options.propertyPath, term: options.schema.defaultValue }).toValues(),
+      { ...options, schema: options.schema.itemType }
+    );
 }`,
   );
