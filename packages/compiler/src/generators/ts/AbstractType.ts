@@ -140,7 +140,7 @@ export abstract class AbstractType {
   /**
    * Is this type an ObjectType or does it reference an object type?
    */
-  abstract readonly referencesObjectType: boolean;
+  abstract readonly referencesNamedType: boolean;
 
   /**
    * TypeScript type describing .schema.

@@ -145,7 +145,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       initializers.push(code`path: ${this.propertyPathToCode(this.path)}`);
     }
     // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
-    if (this.recursive || this.type.referencesObjectType) {
+    if (this.recursive || this.type.referencesNamedType) {
       initializers.push(code`get type() { return ${this.type.schema}; }`);
     } else {
       initializers.push(code`type: ${this.type.schema}`);

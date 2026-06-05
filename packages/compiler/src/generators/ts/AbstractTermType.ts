@@ -32,7 +32,6 @@ export abstract class AbstractTermType<
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
-  override readonly referencesObjectType = false;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
@@ -71,6 +70,10 @@ export abstract class AbstractTermType<
       return code`${name}`;
     }
     return this.inlineExpression;
+  }
+
+  get referencesNamedType(): boolean {
+    return this.name.isJust();
   }
 
   @Memoize()
@@ -120,7 +123,6 @@ export abstract class AbstractTermType<
   //     { on: "." },
   //   );
   // }
-
   override jsonUiSchemaElement(): Maybe<Code> {
     return Maybe.empty();
   }
@@ -136,55 +138,6 @@ export abstract class AbstractTermType<
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
     return code`${variables.value}.toString()`;
   }
-
-  //   /**
-  //    * The fromRdfResourceValuesExpression for a term type can be decomposed into multiple sub-expressions with different purposes:
-  //    *
-  //    * hasValues: test whether the values sequence has sh:hasValue values
-  //    * languageIn: filter the values sequence to literals with the right sh:languageIn (or runtime languageIn)
-  //    * valueTo: convert values in the values sequence to the appropriate term type/sub-type (literal, string, etc.)
-  //    *
-  //    * Considering the sub-expressions as a record instead of an array allows them to be selectively overridden by subclasses.
-  //    */
-  //   protected fromRdfResourceValuesExpressionChain({
-  //     variables,
-  //   }: Parameters<Type["fromRdfResourceValuesExpression"]>[0]): {
-  //     hasValues?: Code;
-  //     languageIn?: Code;
-  //     preferredLanguages?: Code;
-  //     valueTo: Code;
-  //   } {
-  //     let valueToExpression: Code;
-  //     if (this.in_.length > 0) {
-  //       valueToExpression = code`value.toTerm([${joinCode(
-  //         this.in_.map((in_) => this.rdfjsTermExpression(in_)),
-  //         { on: ", " },
-  //       )}])`;
-  //     } else if (this.nodeKinds.size < 3) {
-  //       const eitherTypeParameters = code`<Error, ${this.expression}>`;
-  //       valueToExpression = code`value.toTerm().chain(term => {
-  //   switch (term.termType) {
-  //   ${[...this.nodeKinds].map((nodeKind) => `case "${NodeKind.toTermType(nodeKind)}":`).join("\n")} return ${this.reusables.imports.Either}.of${eitherTypeParameters}(term);
-  //   default: return ${this.reusables.imports.Left}${eitherTypeParameters}(new ${this.reusables.imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.expression}`.toCodeString([]), focusResource: variables.resource, propertyPath: variables.propertyPath }}));
-  //   }})`;
-  //     } else {
-  //       valueToExpression = code`value.toTerm()`;
-  //     }
-
-  //     return {
-  //       hasValues:
-  //         this.hasValues.length > 0
-  //           ? code`\
-  // chain(values => ${this.reusables.imports.Either}.sequence([${joinCode(
-  //               this.hasValues.map((hasValue) =>
-  //                 this.rdfjsTermExpression(hasValue),
-  //               ),
-  //               { on: ", " },
-  //             )}].map(hasValue => values.find(value => value.term.equals(hasValue)))).map(() => values))`
-  //           : undefined,
-  //       valueTo: code`chain(values => values.chainMap(value => ${valueToExpression}))`,
-  //     };
-  //   }
 }
 
 export namespace AbstractTermType {

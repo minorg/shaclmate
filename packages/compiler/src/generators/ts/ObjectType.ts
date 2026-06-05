@@ -59,7 +59,6 @@ export class ObjectType extends AbstractType {
   ] as const;
   override readonly kind = "Object";
   override readonly recursive: boolean;
-  override readonly referencesObjectType = true;
   readonly synthetic: boolean;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
@@ -95,6 +94,22 @@ export class ObjectType extends AbstractType {
     this.recursive = recursive;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
+  }
+
+  @Memoize()
+  get referencesNamedType(): boolean {
+    return (
+      this.name.isJust() ||
+      this.properties.some((property) => {
+        switch (property.kind) {
+          case "Identifier":
+          case "Shacl":
+            return property.type.referencesNamedType;
+          default:
+            return false;
+        }
+      })
+    );
   }
 
   override get declaration(): Maybe<Code> {

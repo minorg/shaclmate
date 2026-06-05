@@ -344,8 +344,11 @@ ${joinCode(
     return this.members.some((member) => member.type.mutable);
   }
 
-  get referencesObjectType(): boolean {
-    return this.members.some((member) => member.type.referencesObjectType);
+  get referencesNamedType(): boolean {
+    return (
+      this.name.isJust() ||
+      this.members.some((member) => member.type.referencesNamedType)
+    );
   }
 
   @Memoize()
