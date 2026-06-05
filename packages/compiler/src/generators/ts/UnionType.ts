@@ -882,21 +882,6 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
     return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(this.fromJsonFunctionExpression)}(${variables.value})`;
   }
 
-  // override fromRdfResourceValuesExpression({
-  //   variables,
-  // }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
-  //   const {
-  //     resourceValues: resourceValuesVariable,
-  //     ...fromRdfResourceValuesOptionsTemp
-  //   } = variables;
-  //   const fromRdfResourceValuesOptions: Record<string, boolean | Code> =
-  //     fromRdfResourceValuesOptionsTemp;
-  //   if (!this.configuration.features.has("ObjectSet")) {
-  //     delete fromRdfResourceValuesOptions["objectSet"];
-  //   }
-  //   return code`${this.name.map((name) => code`${name}.fromRdfResourceValues`).orDefault(this.fromRdfResourceValuesFunctionExpression)}(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
-  // }
-
   override graphqlResolveExpression({
     variables,
   }: {
