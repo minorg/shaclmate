@@ -326,9 +326,9 @@ function $filterMaybe<ItemT, ItemFilterT>(
   };
 }
 
-function $filterNumeric<T extends bigint | number>(
-  filter: $NumericFilter<T>,
-  value: T,
+function $filterNumeric<NumericT extends bigint | number>(
+  filter: $NumericFilter<NumericT>,
+  value: NumericT,
 ) {
   if (
     filter.in !== undefined &&
@@ -375,15 +375,17 @@ function $filterString(filter: $StringFilter, value: string) {
   return true;
 }
 
-function $floatFromRdfResourceValues<T extends number>(
+function $floatFromRdfResourceValues<FloatT extends number>(
   values: Resource.Values,
-  options: Parameters<$FromRdfResourceValuesFunction<T, $NumericSchema<T>>>[1],
-): Either<Error, Resource.Values<T>> {
+  options: Parameters<
+    $FromRdfResourceValuesFunction<FloatT, $NumericSchema<FloatT>>
+  >[1],
+): Either<Error, Resource.Values<FloatT>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) =>
       options.schema.in
         ? value.toFloat(options.schema.in)
-        : (value.toFloat() as Either<Error, T>),
+        : (value.toFloat() as Either<Error, FloatT>),
     ),
   );
 }
@@ -854,22 +856,24 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
-function $stringFromRdfResourceValues<T extends string>(
+function $stringFromRdfResourceValues<StringT extends string>(
   values: Resource.Values,
-  options: Parameters<$FromRdfResourceValuesFunction<T, $StringSchema<T>>>[1],
-): Either<Error, Resource.Values<T>> {
+  options: Parameters<
+    $FromRdfResourceValuesFunction<StringT, $StringSchema<StringT>>
+  >[1],
+): Either<Error, Resource.Values<StringT>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) =>
       options.schema.in
         ? value.toString(options.schema.in)
-        : (value.toString() as Either<Error, T>),
+        : (value.toString() as Either<Error, StringT>),
     ),
   );
 }
 
-interface $StringSchema<T extends string> {
+interface $StringSchema<StringT extends string> {
   readonly hasValues?: readonly Literal[];
-  readonly in?: readonly T[];
+  readonly in?: readonly StringT[];
   readonly languageIn?: readonly string[];
   readonly kind: "String";
 }
