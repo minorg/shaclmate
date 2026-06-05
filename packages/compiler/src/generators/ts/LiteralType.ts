@@ -34,6 +34,8 @@ export class LiteralType extends AbstractLiteralType {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterLiteral}`;
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
+  override readonly fromRdfResourceValuesFunction =
+    code`${this.reusables.snippets.literalFromRdfResourceValues}`;
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
@@ -51,6 +53,11 @@ export class LiteralType extends AbstractLiteralType {
     if (this.in_.length > 0) {
       initializers = initializers.concat(
         code`in: ${arrayOf(...this.in_.map((in_) => this.rdfjsTermExpression(in_)))}`,
+      );
+    }
+    if (this.languageIn.length > 0) {
+      initializers = initializers.concat(
+        code`languageIn: ${arrayOf(...this.languageIn)}`,
       );
     }
     return initializers;

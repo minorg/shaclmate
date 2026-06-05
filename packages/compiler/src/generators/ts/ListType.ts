@@ -72,6 +72,11 @@ export class ListType<
   }
 
   @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  }
+
+  @Memoize()
   override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
     return new Set(["BlankNode", "NamedNode"]); // List or rdf:nil
   }
@@ -96,30 +101,6 @@ export class ListType<
         variables: { value: code`item` },
       },
     )})))`;
-  }
-
-  override fromRdfResourceValuesExpression({
-    variables,
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["fromRdfResourceValuesExpression"]
-  >[0]): Code {
-    return joinCode(
-      [
-        variables.resourceValues,
-        code`chain(values => values.chainMap(value => value.toList(${{ graph: variables.graph }})))`, // Resource.Values<Resource.Value> to Resource.Values<Resource.Values>
-        code`chain(valueLists =>
-        valueLists.chainMap(
-          valueList => ${this.itemType.fromRdfResourceValuesExpression({
-            variables: {
-              ...variables,
-              resourceValues: code`${this.reusables.imports.Right}(${this.reusables.imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, values: valueList.toArray() }))`,
-            },
-          })}
-      ))`, // Resource.Values<Resource.Values> to Resource.Values<item type arrays>
-        code`map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
-      ],
-      { on: "." },
-    );
   }
 
   override jsonSchema(

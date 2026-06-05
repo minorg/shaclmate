@@ -13,10 +13,10 @@ export class OptionType<
     Maybe.empty();
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  override readonly kind = "Option";
   override readonly jsTypes = [
     { instanceof: "Maybe", typeof: "object" },
   ] as const;
+  override readonly kind = "Option";
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractContainerType.ConversionFunction> {
@@ -58,6 +58,11 @@ export class OptionType<
   @Memoize()
   get filterType(): Code {
     return code`${this.reusables.snippets.MaybeFilter}<${this.itemType.filterType}>`;
+  }
+
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
   }
 
   @Memoize()
@@ -119,15 +124,6 @@ export class OptionType<
       variables: { value: code`item` },
     });
     return code`${expression}.map(item => (${itemFromJsonExpression}).map(${this.reusables.imports.Maybe}.of)).orDefault(${this.reusables.imports.Either}.of(${this.reusables.imports.Maybe}.empty()))`;
-  }
-
-  override fromRdfResourceValuesExpression(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["fromRdfResourceValuesExpression"]
-    >[0],
-  ): Code {
-    const { variables } = parameters;
-    return code`${this.itemType.fromRdfResourceValuesExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${this.reusables.imports.Maybe}.of(value)) : ${this.reusables.imports.Resource}.Values.fromValue<${this.reusables.imports.Maybe}<${this.itemType.expression}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${this.reusables.imports.Maybe}.empty() }))`;
   }
 
   override graphqlResolveExpression(

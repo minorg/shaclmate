@@ -16,6 +16,8 @@ export class BigDecimalType extends AbstractLiteralType {
     code`${this.reusables.snippets.filterBigDecimal}`;
   override readonly filterType =
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
+  override readonly fromRdfResourceValuesFunction =
+    code`${this.reusables.snippets.bigDecimalFromRdfResourceValues}`;
   override readonly hashFunction =
     code`${this.reusables.snippets.hashBigDecimal}`;
   override readonly jsTypes = [
@@ -73,18 +75,5 @@ export class BigDecimalType extends AbstractLiteralType {
     AbstractLiteralType["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.bigDecimalLiteral}(${variables.value})]`;
-  }
-
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractLiteralType["fromRdfResourceValuesExpressionChain"]
-  >[0]): ReturnType<
-    AbstractLiteralType["fromRdfResourceValuesExpressionChain"]
-  > {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toLiteral().chain(${this.reusables.snippets.decodeBigDecimalLiteral})))`,
-    };
   }
 }

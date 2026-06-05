@@ -9,7 +9,7 @@ export const snippets_termFilterSparqlPatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}termFilterSparqlPatterns`,
     code`\
-function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${snippets.TermFilter}; valueVariable: ${imports.Variable} }): readonly ${snippets.SparqlFilterPattern}[] {
+function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${snippets.TermFilter}<${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>; valueVariable: ${imports.Variable} }): readonly ${snippets.SparqlFilterPattern}[] {
   if (!filter) {
     return [];
   }

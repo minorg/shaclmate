@@ -274,6 +274,13 @@ ${joinCode(
   }
 
   @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return this.name
+      .map((name) => code`${name}.fromRdfResourceValues`)
+      .orDefault(this.fromRdfResourceValuesFunctionExpression);
+  }
+
+  @Memoize()
   override get graphqlType(): AbstractType.GraphqlType {
     const name = this.name.extract();
     if (
@@ -337,24 +344,25 @@ ${joinCode(
     return this.members.some((member) => member.type.mutable);
   }
 
-  get referencesObjectType(): boolean {
-    return this.members.some((member) => member.type.referencesObjectType);
+  get referencesNamedType(): boolean {
+    return (
+      this.name.isJust() ||
+      this.members.some((member) => member.type.referencesNamedType)
+    );
   }
 
+  @Memoize()
+  override get schema() {
+    return this.name
+      .map((name) => code`${name}.schema`)
+      .orDefault(this.schemaExpression);
+  }
+
+  @Memoize()
   override get schemaType(): Code {
-    return code`${{
-      kind: this.kind,
-      members: code`{ ${joinCode(
-        this.members.map(
-          ({ type, primaryDiscriminantValue }) =>
-            code`readonly ${literalOf(primaryDiscriminantValue)}: ${{
-              discriminantValues: code`readonly (number | string)[]`,
-              type: type.schemaType,
-            }}`,
-        ),
-        { on: ";" },
-      )} }`,
-    }}`;
+    return this.name
+      .map(() => code`typeof ${this.schema}`)
+      .orDefault(this.schemaTypeExpression);
   }
 
   @Memoize()
@@ -395,6 +403,23 @@ ${joinCode(
         { on: "," },
       )} }`,
     );
+  }
+
+  @Memoize()
+  protected get schemaTypeExpression(): Code {
+    return code`${{
+      kind: this.kind,
+      members: code`{ ${joinCode(
+        this.members.map(
+          ({ type, primaryDiscriminantValue }) =>
+            code`readonly ${literalOf(primaryDiscriminantValue)}: ${{
+              discriminantValues: code`readonly (number | string)[]`,
+              type: type.schemaType,
+            }}`,
+        ),
+        { on: ";" },
+      )} }`,
+    }}`;
   }
 
   protected get staticModuleDeclarations(): Record<string, Code> {
@@ -443,7 +468,12 @@ export namespace Json {
 
     if (this.configuration.features.has("Object.fromRdf")) {
       staticModuleDeclarations[`fromRdfResourceValues`] =
-        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}> = ${this.fromRdfResourceValuesFunctionExpression};`;
+        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}, ${this.schemaType}> = ${this.fromRdfResourceValuesFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.schema")) {
+      staticModuleDeclarations["schema"] =
+        code`export const schema = ${this.schemaExpression}`;
     }
 
     if (this.configuration.features.has("Object.toJson")) {
@@ -555,55 +585,29 @@ ${joinCode(
   }
 
   private get fromRdfResourceValuesFunctionExpression(): Code {
-    const variables: Omit<
-      Parameters<
-        AbstractType["fromRdfResourceValuesExpression"]
-      >[0]["variables"],
-      "resourceValues"
-    > = {
-      context: code`_options.context`,
-      graph: code`_options.graph`,
-      ignoreRdfType: false,
-      objectSet: code`_options.objectSet`,
-      preferredLanguages: code`_options.preferredLanguages`,
-      propertyPath: code`_options.propertyPath`,
-      resource: code`_options.resource`,
-    };
-
     return code`\
-(((values, _options) =>
-    values.chain(values => values.chainMap(value => {
-      const valueAsValues = ${this.reusables.imports.Right}(value.toValues());
-      return ${this.members.reduce(
-        (expression, { type, primaryDiscriminantValue }, memberI) => {
-          let typeExpression: Code = type.fromRdfResourceValuesExpression({
-            variables: {
-              context: variables.context,
-              graph: variables.graph,
-              ignoreRdfType: false,
-              objectSet: variables.objectSet,
-              preferredLanguages: variables.preferredLanguages,
-              propertyPath: variables.propertyPath,
-              resource: variables.resource,
-              resourceValues: code`valueAsValues`,
-            },
-          });
-          if (
-            this.discriminant.kind === "Extrinsic" ||
-            (this.discriminant.kind === "Hybrid" &&
-              this.discriminant.memberValues[memberI].kind === "Extrinsic")
-          ) {
-            typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: ${literalOf(primaryDiscriminantValue)} as const, value }) as (${this.expression})))`;
-          }
-          typeExpression = code`(${typeExpression} as ${this.reusables.imports.Either}<Error, ${this.reusables.imports.Resource}.Values<${this.expression}>>)`;
-          return expression !== null
-            ? code`${expression}.altLazy(() => ${typeExpression})`
-            : typeExpression;
-        },
-        null as Code | null,
-      )!}.chain(values => values.head());
-    }))
-) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}>)`;
+(((values, options) =>
+  values.chainMap(value => {
+    const valueAsValues = value.toValues();
+    return ${this.members.reduce(
+      (expression, { type, primaryDiscriminantValue }, memberI) => {
+        let typeExpression: Code = code`${type.fromRdfResourceValuesFunction}(valueAsValues, { ...options, schema: options.schema.members[${literalOf(primaryDiscriminantValue)}].type })`;
+        if (
+          this.discriminant.kind === "Extrinsic" ||
+          (this.discriminant.kind === "Hybrid" &&
+            this.discriminant.memberValues[memberI].kind === "Extrinsic")
+        ) {
+          typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: ${literalOf(primaryDiscriminantValue)} as const, value }) as (${this.expression})))`;
+        }
+        typeExpression = code`(${typeExpression} as ${this.reusables.imports.Either}<Error, ${this.reusables.imports.Resource}.Values<${this.expression}>>)`;
+        return expression !== null
+          ? code`${expression}.altLazy(() => ${typeExpression})`
+          : typeExpression;
+      },
+      null as Code | null,
+    )!}.chain(values => values.head());
+  })
+) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>)`;
   }
 
   private get hashFunctionExpression(): Code {
@@ -876,21 +880,6 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(this.fromJsonFunctionExpression)}(${variables.value})`;
-  }
-
-  override fromRdfResourceValuesExpression({
-    variables,
-  }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
-    const {
-      resourceValues: resourceValuesVariable,
-      ...fromRdfResourceValuesOptionsTemp
-    } = variables;
-    const fromRdfResourceValuesOptions: Record<string, boolean | Code> =
-      fromRdfResourceValuesOptionsTemp;
-    if (!this.configuration.features.has("ObjectSet")) {
-      delete fromRdfResourceValuesOptions["objectSet"];
-    }
-    return code`${this.name.map((name) => code`${name}.fromRdfResourceValues`).orDefault(this.fromRdfResourceValuesFunctionExpression)}(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
   }
 
   override graphqlResolveExpression({

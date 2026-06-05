@@ -165,14 +165,23 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
+    const options: Record<string, Code> = {
+      context: variables.context,
+      graph: variables.graph,
+      focusResource: variables.focusResource,
+      preferredLanguages: variables.preferredLanguages,
+      propertyPath: this.rdfjsTermExpression(rdf.subject),
+      schema: code`schema.properties.${this.name}.type`,
+    };
+    if (this.configuration.features.has("ObjectSet")) {
+      options["objectSet"] = variables.objectSet;
+    }
+
     return Maybe.of(
-      code`${this.name}: ${this.type.fromRdfResourceValuesExpression({
-        variables: {
-          ...variables,
-          propertyPath: this.rdfjsTermExpression(rdf.subject),
-          resourceValues: code`${this.reusables.imports.Right}(new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.resource, propertyPath: this.rdfjsTermExpression(rdf.subject), term: code`${variables.resource}.identifier` }}).toValues())`,
-        },
-      })}.chain(values => values.head())`,
+      code`${this.name}: ${this.type.fromRdfResourceValuesFunction}(
+          new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.focusResource, propertyPath: this.rdfjsTermExpression(rdf.subject), term: code`${variables.focusResource}.identifier` }}).toValues(),
+          ${options}
+        ).chain(values => values.head())`,
     );
   }
 

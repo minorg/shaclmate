@@ -7,7 +7,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -20,13 +20,11 @@ export class TermType<
     Maybe.empty();
   override readonly filterFunction =
     code`${this.reusables.snippets.filterTerm}`;
-  override readonly filterType = code`${this.reusables.snippets.TermFilter}`;
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
   override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
-  override readonly schemaType = code`${this.reusables.snippets.TermSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.termSparqlWherePatterns}`;
 
@@ -47,8 +45,23 @@ export class TermType<
     );
   }
 
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.termFromRdfResourceValues}<${this.expression}>`;
+  }
+
+  @Memoize()
+  override get filterType(): Code {
+    return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
+  }
+
   override get graphqlType(): AbstractTermType.GraphqlType {
     throw new Error("not implemented");
+  }
+
+  @Memoize()
+  override get schemaType(): Code {
+    return code`${this.reusables.snippets.TermSchema}<${this.expression}>`;
   }
 
   @Memoize()
@@ -71,6 +84,12 @@ export class TermType<
         .map((import_) => code`${import_}`),
       { on: " | " },
     )})`;
+  }
+
+  protected override get schemaInitializers() {
+    return super.schemaInitializers.concat(
+      code`types: ${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))}`,
+    );
   }
 
   override fromJsonExpression({

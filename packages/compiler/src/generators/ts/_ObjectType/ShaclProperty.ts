@@ -145,7 +145,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       initializers.push(code`path: ${this.propertyPathToCode(this.path)}`);
     }
     // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
-    if (this.recursive || this.type.referencesObjectType) {
+    if (this.recursive || this.type.referencesNamedType) {
       initializers.push(code`get type() { return ${this.type.schema}; }`);
     } else {
       initializers.push(code`type: ${this.type.schema}`);
@@ -193,26 +193,24 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<
     AbstractProperty<TypeT>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
-    // Assume the property has the correct range and ignore the object's RDF type.
-    // This also accommodates the case where the object of a property is a dangling identifier that's not the
-    // subject of any statements.
+    const parameters: Record<string, Code | true> = {
+      context: variables.context,
+      graph: variables.graph,
+      focusResource: variables.focusResource,
+      // Assume the property has the correct range and ignore the object's RDF type.
+      // This also accommodates the case where the object of a property is a dangling identifier that's not the
+      // subject of any statements.
+      ignoreRdfType: true,
+      preferredLanguages: variables.preferredLanguages,
+      propertySchema: code`schema.properties.${this.name}`,
+      typeFromRdfResourceValues: this.type.fromRdfResourceValuesFunction,
+    };
+    if (this.configuration.features.has("ObjectSet")) {
+      parameters["objectSet"] = variables.objectSet;
+    }
 
     return Maybe.of(
-      code`${this.name}: ${this.reusables.snippets.shaclPropertyFromRdf}(${{
-        graph: variables.graph,
-        resource: variables.resource,
-        propertySchema: code`schema.properties.${this.name}`,
-        typeFromRdf: code`((resourceValues) => ${this.type.fromRdfResourceValuesExpression(
-          {
-            variables: {
-              ...variables,
-              ignoreRdfType: true,
-              propertyPath: code`${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.path`,
-              resourceValues: code`resourceValues`,
-            },
-          },
-        )})`,
-      }})`,
+      code`${this.name}: ${this.reusables.snippets.shaclPropertyFromRdf}<${this.type.expression}, ${this.type.schemaType}>(${parameters})`,
     );
   }
 

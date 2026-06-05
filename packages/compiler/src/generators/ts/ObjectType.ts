@@ -59,7 +59,6 @@ export class ObjectType extends AbstractType {
   ] as const;
   override readonly kind = "Object";
   override readonly recursive: boolean;
-  override readonly referencesObjectType = true;
   readonly synthetic: boolean;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
@@ -95,6 +94,22 @@ export class ObjectType extends AbstractType {
     this.recursive = recursive;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
+  }
+
+  @Memoize()
+  get referencesNamedType(): boolean {
+    return (
+      this.name.isJust() ||
+      this.properties.some((property) => {
+        switch (property.kind) {
+          case "Identifier":
+          case "Shacl":
+            return property.type.referencesNamedType;
+          default:
+            return false;
+        }
+      })
+    );
   }
 
   override get declaration(): Maybe<Code> {
@@ -208,6 +223,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.name.unsafeCoerce()}.fromRdfResourceValues`;
+  }
+
+  @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
     return this.fromRdfType.map(
       () => code`${this.name.unsafeCoerce()}.fromRdfType`,
@@ -295,21 +315,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     // Assumes the JSON object has been recursively validated already.
     return code`${this.name.unsafeCoerce()}.fromJson(${variables.value})`;
-  }
-
-  override fromRdfResourceValuesExpression({
-    variables,
-  }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
-    const {
-      resourceValues: resourceValuesVariable,
-      ...fromRdfResourceValuesOptionsTemp
-    } = variables;
-    const fromRdfResourceValuesOptions: Record<string, boolean | Code> =
-      fromRdfResourceValuesOptionsTemp;
-    if (!this.configuration.features.has("ObjectSet")) {
-      delete fromRdfResourceValuesOptions["objectSet"];
-    }
-    return code`${this.name.unsafeCoerce()}.fromRdfResourceValues(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
   }
 
   override graphqlResolveExpression({

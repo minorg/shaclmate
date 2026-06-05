@@ -25,6 +25,11 @@ export class StringType extends AbstractPrimitiveType<string> {
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
 
   @Memoize()
+  get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}>`;
+  }
+
+  @Memoize()
   override get schemaType(): Code {
     return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
   }
@@ -35,6 +40,16 @@ export class StringType extends AbstractPrimitiveType<string> {
       return code`${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
     }
     return code`string`;
+  }
+
+  protected override get schemaInitializers(): readonly Code[] {
+    let initializers = super.schemaInitializers;
+    if (this.languageIn.length > 0) {
+      initializers = initializers.concat(
+        code`languageIn: ${arrayOf(...this.languageIn)}`,
+      );
+    }
+    return initializers;
   }
 
   override jsonSchema(
@@ -60,18 +75,5 @@ export class StringType extends AbstractPrimitiveType<string> {
     AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${this.rdfjsTermExpression(this.datatype)}` : ""})]`;
-  }
-
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<string>["fromRdfResourceValuesExpressionChain"]
-  >[0]): ReturnType<
-    AbstractPrimitiveType<string>["fromRdfResourceValuesExpressionChain"]
-  > {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toString(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})))`,
-    };
   }
 }

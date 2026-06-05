@@ -52,8 +52,8 @@ export abstract class AbstractContainerType<
     return this.itemType.recursive;
   }
 
-  get referencesObjectType(): boolean {
-    return this.itemType.referencesObjectType;
+  get referencesNamedType(): boolean {
+    return this.name.isJust() || this.itemType.referencesNamedType;
   }
 
   @Memoize()
@@ -76,7 +76,7 @@ export abstract class AbstractContainerType<
 
   protected override get schemaInitializers(): readonly Code[] {
     const initializers = super.schemaInitializers.concat();
-    if (this.recursive || this.itemType.referencesObjectType) {
+    if (this.recursive || this.referencesNamedType) {
       initializers.push(
         code`get itemType() { return ${this.itemType.schema}; }`,
       );

@@ -14,22 +14,22 @@ export abstract class AbstractNumericType<
 
   @Memoize()
   override get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterNumeric}<${this.jsTypes[0].typeof}>`;
+    return code`${this.reusables.snippets.filterNumeric}<${this.expression}>`;
   }
 
   @Memoize()
   override get filterType(): Code {
-    return code`${this.reusables.snippets.NumericFilter}<${this.jsTypes[0].typeof}>`;
+    return code`${this.reusables.snippets.NumericFilter}<${this.expression}>`;
   }
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.reusables.snippets.NumericSchema}<${this.jsTypes[0].typeof}>`;
+    return code`${this.reusables.snippets.NumericSchema}<${this.expression}>`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction() {
-    return code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.jsTypes[0].typeof}>`;
+    return code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.expression}>`;
   }
 
   @Memoize()
@@ -68,31 +68,6 @@ export abstract class AbstractNumericType<
     AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.${this.jsTypes[0].typeof}(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
-  }
-
-  protected abstract fromRdfResourceValueExpression(variables: {
-    variables: {
-      value: Code;
-    };
-  }): Code;
-
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<ValueT>["fromRdfResourceValuesExpressionChain"]
-  >[0]): ReturnType<
-    AbstractPrimitiveType<ValueT>["fromRdfResourceValuesExpressionChain"]
-  > {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      languageIn: undefined,
-      preferredLanguages: undefined,
-      valueTo: code`chain(values => values.chainMap(value => ${this.fromRdfResourceValueExpression(
-        {
-          variables: { value: code`value` },
-        },
-      )}))`,
-    };
   }
 }
 

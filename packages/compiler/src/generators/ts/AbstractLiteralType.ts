@@ -1,7 +1,7 @@
 import type { Literal } from "@rdfjs/types";
 
 import { AbstractTermType } from "./AbstractTermType.js";
-import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
+import type { Code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
@@ -21,40 +21,12 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     this.languageIn = languageIn;
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    let initializers = super.schemaInitializers;
-    if (this.languageIn.length > 0) {
-      initializers = initializers.concat(
-        code`languageIn: ${arrayOf(...this.languageIn)}`,
-      );
-    }
-    return initializers;
-  }
-
   /**
    * An expression that converts a compile-time RDF/JS Literal into a runtime TypeScript literal.
    *
    * For example, a string would be converted to "thestring".
    */
   abstract literalValueExpression(literal: Literal): Code;
-
-  protected override fromRdfResourceValuesExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractTermType<Literal, Literal>["fromRdfResourceValuesExpressionChain"]
-  >[0]): ReturnType<
-    AbstractTermType<Literal, Literal>["fromRdfResourceValuesExpressionChain"]
-  > {
-    return {
-      ...super.fromRdfResourceValuesExpressionChain({ variables }),
-      languageIn:
-        this.languageIn.length > 0
-          ? code`chain(values => ${this.reusables.snippets.fromRdfLanguageIn}(values, ${JSON.stringify(this.languageIn)}))`
-          : undefined,
-      preferredLanguages: code`chain(values => ${this.reusables.snippets.fromRdfPreferredLanguages}(values, ${variables.preferredLanguages}))`,
-      valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,
-    };
-  }
 }
 
 export namespace AbstractLiteralType {

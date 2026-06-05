@@ -17,8 +17,8 @@ export class DefaultValueType<
   override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  override readonly kind = "DefaultValue";
   override readonly jsTypes = this.itemType.jsTypes;
+  override readonly kind = "DefaultValue";
   override readonly validationFunction: Maybe<Code> =
     this.itemType.validationFunction;
 
@@ -64,6 +64,11 @@ export class DefaultValueType<
     return this.itemType.filterType;
   }
 
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  }
+
   override get graphqlType(): AbstractContainerType.GraphqlType {
     return this.itemType.graphqlType;
   }
@@ -78,7 +83,7 @@ export class DefaultValueType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.expression}, ${this.itemType.schemaType}>`;
+    return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.schemaType}>`;
   }
 
   override get toRdfResourceValueTypes(): AbstractContainerType<ItemTypeT>["toRdfResourceValueTypes"] {
@@ -97,7 +102,7 @@ export class DefaultValueType<
 
   protected override get schemaInitializers() {
     return super.schemaInitializers.concat(
-      code`defaultValue: ${this.defaultValueExpression}`,
+      code`defaultValue: ${this.rdfjsTermExpression(this.defaultValue)}`,
     );
   }
 
@@ -124,19 +129,6 @@ export class DefaultValueType<
     parameters: Parameters<AbstractType["fromJsonExpression"]>[0],
   ): Code {
     return this.itemType.fromJsonExpression(parameters);
-  }
-
-  override fromRdfResourceValuesExpression({
-    variables,
-  }: Parameters<
-    AbstractContainerType<ItemTypeT>["fromRdfResourceValuesExpression"]
-  >[0]): Code {
-    return this.itemType.fromRdfResourceValuesExpression({
-      variables: {
-        ...variables,
-        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.resource, propertyPath: variables.propertyPath, term: this.rdfjsTermExpression(this.defaultValue) }}).toValues())`,
-      },
-    });
   }
 
   override graphqlResolveExpression(

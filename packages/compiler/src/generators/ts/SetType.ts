@@ -12,11 +12,11 @@ export class SetType<
 > extends AbstractCollectionType<ItemTypeT> {
   override readonly graphqlArgs: AbstractCollectionType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  override readonly kind = "Set";
-  readonly minCount: bigint;
   override readonly jsTypes = [
     { instanceof: "Array", typeof: "object" },
   ] as const;
+  override readonly kind = "Set";
+  readonly minCount: bigint;
 
   constructor({
     minCount,
@@ -81,6 +81,11 @@ export class SetType<
     });
   }
 
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  }
+
   override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
     return this.itemType.toRdfResourceValueTypes;
   }
@@ -119,22 +124,6 @@ export class SetType<
         variables: { value: code`item` },
       },
     )})))`;
-  }
-
-  override fromRdfResourceValuesExpression(
-    parameters: Parameters<
-      AbstractCollectionType<ItemTypeT>["fromRdfResourceValuesExpression"]
-    >[0],
-  ): Code {
-    const { variables } = parameters;
-    return joinCode(
-      [
-        this.itemType.fromRdfResourceValuesExpression(parameters),
-        code`map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,
-        code`map(valuesArray => ${this.reusables.imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: valuesArray }))`,
-      ],
-      { on: "." },
-    );
   }
 
   override jsonSchema(

@@ -11,6 +11,11 @@ export class IntType extends AbstractNumericType<number> {
   override readonly kind = "Int";
 
   @Memoize()
+  get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.intFromRdfResourceValues}<${this.expression}>`;
+  }
+
+  @Memoize()
   override get graphqlType() {
     return new AbstractNumericType.GraphqlType(
       code`${this.reusables.imports.GraphQLInt}`,
@@ -20,13 +25,5 @@ export class IntType extends AbstractNumericType<number> {
 
   override literalValueExpression(literal: Literal | number): Code {
     return code`${typeof literal === "number" ? literal : LiteralDecoder.decodeIntLiteral(literal).unsafeCoerce()}`;
-  }
-
-  protected override fromRdfResourceValueExpression({
-    variables,
-  }: Parameters<
-    AbstractNumericType<number>["fromRdfResourceValueExpression"]
-  >[0]): Code {
-    return code`${variables.value}.toInt(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})`;
   }
 }

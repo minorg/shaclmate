@@ -495,9 +495,9 @@
       ],
       "properties": [
         {
-          "name": "convertibleIriOption",
+          "name": "convertibleTermOption",
           "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleIriOption)",
+          "path": "PredicatePath(http://example.com/convertibleTermOption)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_10"
@@ -509,210 +509,10 @@
               "value": "df_0_10"
             },
             "itemType": {
-              "kind": "Iri",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_10"
-              },
-              "nodeKinds": [
-                "IRI"
-              ]
-            }
-          }
-        },
-        {
-          "name": "convertibleIriSet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleIriSet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_11"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_11"
-            },
-            "itemType": {
-              "kind": "Iri",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_11"
-              },
-              "nodeKinds": [
-                "IRI"
-              ]
-            },
-            "minCount": 0
-          }
-        },
-        {
-          "name": "convertibleIriNonEmptySet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleIriNonEmptySet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_12"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_12"
-            },
-            "itemType": {
-              "kind": "Iri",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_12"
-              },
-              "nodeKinds": [
-                "IRI"
-              ]
-            },
-            "minCount": 1
-          }
-        },
-        {
-          "name": "convertibleLiteral",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleLiteral)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_13"
-          },
-          "type": {
-            "kind": "Literal",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_13"
-            },
-            "nodeKinds": [
-              "Literal"
-            ]
-          }
-        },
-        {
-          "name": "convertibleLiteralOption",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleLiteralOption)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_14"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_14"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_14"
-              },
-              "nodeKinds": [
-                "Literal"
-              ]
-            }
-          }
-        },
-        {
-          "name": "convertibleLiteralSet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleLiteralSet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_15"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_15"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_15"
-              },
-              "nodeKinds": [
-                "Literal"
-              ]
-            },
-            "minCount": 0
-          }
-        },
-        {
-          "name": "convertibleLiteralNonEmptySet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleLiteralNonEmptySet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_16"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_16"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_16"
-              },
-              "nodeKinds": [
-                "Literal"
-              ]
-            },
-            "minCount": 1
-          }
-        },
-        {
-          "name": "convertibleTerm",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTerm)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_17"
-          },
-          "type": {
-            "kind": "Term",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_17"
-            },
-            "nodeKinds": [
-              "BlankNode",
-              "IRI",
-              "Literal"
-            ]
-          }
-        },
-        {
-          "name": "convertibleTermOption",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTermOption)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_18"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_18"
-            },
-            "itemType": {
               "kind": "Term",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_18"
+                "value": "df_0_10"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -728,19 +528,19 @@
           "path": "PredicatePath(http://example.com/convertibleTermSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_19"
+            "value": "df_0_11"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_19"
+              "value": "df_0_11"
             },
             "itemType": {
               "kind": "Term",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_19"
+                "value": "df_0_11"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -757,19 +557,19 @@
           "path": "PredicatePath(http://example.com/convertibleTermNonEmptySet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_20"
+            "value": "df_0_12"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_20"
+              "value": "df_0_12"
             },
             "itemType": {
               "kind": "Term",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_20"
+                "value": "df_0_12"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -786,16 +586,216 @@
           "path": "PredicatePath(http://example.com/convertibleIri)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_21"
+            "value": "df_0_13"
           },
           "type": {
             "kind": "Iri",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_21"
+              "value": "df_0_13"
             },
             "nodeKinds": [
               "IRI"
+            ]
+          }
+        },
+        {
+          "name": "convertibleIriOption",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleIriOption)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_14"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_14"
+            },
+            "itemType": {
+              "kind": "Iri",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_14"
+              },
+              "nodeKinds": [
+                "IRI"
+              ]
+            }
+          }
+        },
+        {
+          "name": "convertibleIriSet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleIriSet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_15"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_15"
+            },
+            "itemType": {
+              "kind": "Iri",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_15"
+              },
+              "nodeKinds": [
+                "IRI"
+              ]
+            },
+            "minCount": 0
+          }
+        },
+        {
+          "name": "convertibleIriNonEmptySet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleIriNonEmptySet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_16"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_16"
+            },
+            "itemType": {
+              "kind": "Iri",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_16"
+              },
+              "nodeKinds": [
+                "IRI"
+              ]
+            },
+            "minCount": 1
+          }
+        },
+        {
+          "name": "convertibleLiteral",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleLiteral)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_17"
+          },
+          "type": {
+            "kind": "Literal",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_17"
+            },
+            "nodeKinds": [
+              "Literal"
+            ]
+          }
+        },
+        {
+          "name": "convertibleLiteralOption",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleLiteralOption)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_18"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_18"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_18"
+              },
+              "nodeKinds": [
+                "Literal"
+              ]
+            }
+          }
+        },
+        {
+          "name": "convertibleLiteralSet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleLiteralSet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_19"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_19"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_19"
+              },
+              "nodeKinds": [
+                "Literal"
+              ]
+            },
+            "minCount": 0
+          }
+        },
+        {
+          "name": "convertibleLiteralNonEmptySet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleLiteralNonEmptySet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_20"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_20"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_20"
+              },
+              "nodeKinds": [
+                "Literal"
+              ]
+            },
+            "minCount": 1
+          }
+        },
+        {
+          "name": "convertibleTerm",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleTerm)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_21"
+          },
+          "type": {
+            "kind": "Term",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_21"
+            },
+            "nodeKinds": [
+              "BlankNode",
+              "IRI",
+              "Literal"
             ]
           }
         }
@@ -2769,27 +2769,6 @@
       ]
     },
     {
-      "comment": "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.",
-      "kind": "List",
-      "name": "IriList",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "IriList",
-        "termType": "NamedNode",
-        "value": "http://example.com/IriList"
-      },
-      "itemType": {
-        "kind": "Iri",
-        "shapeIdentifier": {
-          "termType": "BlankNode",
-          "value": "df_0_86"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      }
-    },
-    {
       "comment": "Struct node shape that uses the StringList in a property.",
       "kind": "Struct",
       "name": "LanguageInStruct",
@@ -4478,7 +4457,6 @@
             "itemType": {
               "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
               "kind": "List",
-              "name": "StringList",
               "shapeIdentifier": {
                 "prefix": "",
                 "reference": "StringList",
@@ -4526,7 +4504,6 @@
             "itemType": {
               "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
               "kind": "List",
-              "name": "StringListList",
               "shapeIdentifier": {
                 "prefix": "",
                 "reference": "StringListList",
@@ -4536,7 +4513,6 @@
               "itemType": {
                 "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
                 "kind": "List",
-                "name": "StringList",
                 "shapeIdentifier": {
                   "prefix": "",
                   "reference": "StringList",
@@ -4592,7 +4568,6 @@
                   "type": {
                     "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
                     "kind": "List",
-                    "name": "StringList",
                     "shapeIdentifier": {
                       "prefix": "",
                       "reference": "StringList",
@@ -4641,71 +4616,6 @@
           }
         }
       ]
-    },
-    {
-      "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
-      "kind": "List",
-      "name": "StringList",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "StringList",
-        "termType": "NamedNode",
-        "value": "http://example.com/StringList"
-      },
-      "itemType": {
-        "kind": "Literal",
-        "shapeIdentifier": {
-          "termType": "BlankNode",
-          "value": "df_0_200"
-        },
-        "nodeKinds": [
-          "Literal"
-        ],
-        "datatype": {
-          "prefix": "xsd",
-          "reference": "string",
-          "termType": "NamedNode",
-          "value": "http://www.w3.org/2001/XMLSchema#string"
-        }
-      }
-    },
-    {
-      "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
-      "kind": "List",
-      "name": "StringListList",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "StringListList",
-        "termType": "NamedNode",
-        "value": "http://example.com/StringListList"
-      },
-      "itemType": {
-        "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
-        "kind": "List",
-        "name": "StringList",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "StringList",
-          "termType": "NamedNode",
-          "value": "http://example.com/StringList"
-        },
-        "itemType": {
-          "kind": "Literal",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_200"
-          },
-          "nodeKinds": [
-            "Literal"
-          ],
-          "datatype": {
-            "prefix": "xsd",
-            "reference": "string",
-            "termType": "NamedNode",
-            "value": "http://www.w3.org/2001/XMLSchema#string"
-          }
-        }
-      }
     },
     {
       "comment": "Struct node shape that uses the list shapes in properties.",
@@ -4765,7 +4675,6 @@
             "itemType": {
               "comment": "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property.",
               "kind": "List",
-              "name": "StructList",
               "shapeIdentifier": {
                 "prefix": "",
                 "reference": "StructList",
@@ -4819,7 +4728,6 @@
             "itemType": {
               "comment": "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.",
               "kind": "List",
-              "name": "IriList",
               "shapeIdentifier": {
                 "prefix": "",
                 "reference": "IriList",
@@ -4859,7 +4767,6 @@
             "itemType": {
               "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
               "kind": "List",
-              "name": "StringList",
               "shapeIdentifier": {
                 "prefix": "",
                 "reference": "StringList",
@@ -4905,7 +4812,6 @@
             "itemType": {
               "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
               "kind": "List",
-              "name": "StringListList",
               "shapeIdentifier": {
                 "prefix": "",
                 "reference": "StringListList",
@@ -4915,7 +4821,6 @@
               "itemType": {
                 "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
                 "kind": "List",
-                "name": "StringList",
                 "shapeIdentifier": {
                   "prefix": "",
                   "reference": "StringList",
@@ -4943,41 +4848,6 @@
           }
         }
       ]
-    },
-    {
-      "comment": "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property.",
-      "kind": "List",
-      "name": "StructList",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "StructList",
-        "termType": "NamedNode",
-        "value": "http://example.com/StructList"
-      },
-      "itemType": {
-        "comment": "Struct node shape that isn't an rdfs:Class.",
-        "kind": "Struct",
-        "name": "NonClassStruct",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "NonClassStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/NonClassStruct"
-        },
-        "identifierType": {
-          "kind": "Identifier",
-          "shapeIdentifier": {
-            "prefix": "",
-            "reference": "NonClassStruct",
-            "termType": "NamedNode",
-            "value": "http://example.com/NonClassStruct"
-          },
-          "nodeKinds": [
-            "BlankNode",
-            "IRI"
-          ]
-        }
-      }
     },
     {
       "comment": "Struct node shape with shaclmate:mutable properties.",
@@ -5072,7 +4942,6 @@
             "itemType": {
               "comment": "A node shape that models an RDF list of strings. Should be transformed into a mutable list data structure when used as a property.",
               "kind": "List",
-              "name": "MutableStringList",
               "shapeIdentifier": {
                 "prefix": "",
                 "reference": "MutableStringList",
@@ -5136,34 +5005,6 @@
           }
         }
       ]
-    },
-    {
-      "comment": "A node shape that models an RDF list of strings. Should be transformed into a mutable list data structure when used as a property.",
-      "kind": "List",
-      "name": "MutableStringList",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "MutableStringList",
-        "termType": "NamedNode",
-        "value": "http://example.com/MutableStringList"
-      },
-      "itemType": {
-        "kind": "Literal",
-        "shapeIdentifier": {
-          "termType": "BlankNode",
-          "value": "df_0_131"
-        },
-        "nodeKinds": [
-          "Literal"
-        ],
-        "datatype": {
-          "prefix": "xsd",
-          "reference": "string",
-          "termType": "NamedNode",
-          "value": "http://www.w3.org/2001/XMLSchema#string"
-        }
-      },
-      "mutable": true
     },
     {
       "comment": "Named union of IRI and string",

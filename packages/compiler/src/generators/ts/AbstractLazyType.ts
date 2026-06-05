@@ -25,7 +25,6 @@ export abstract class AbstractLazyType<
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
-  override readonly referencesObjectType = true;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
@@ -81,6 +80,10 @@ export abstract class AbstractLazyType<
 
   get recursive(): boolean {
     return this.partialType.recursive;
+  }
+
+  get referencesNamedType(): boolean {
+    return this.partialType.referencesNamedType;
   }
 
   @Memoize()

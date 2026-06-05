@@ -42,7 +42,7 @@ export abstract class AbstractType {
   abstract readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty>;
 
   /**
-   * A function (reference or declaration) that compares two property values of this type, returning a
+   * A function (reference or literal) that compares two property values of this type, returning a
    * $EqualsResult.
    */
   abstract readonly equalsFunction: Code;
@@ -53,7 +53,7 @@ export abstract class AbstractType {
   abstract readonly expression: Code;
 
   /**
-   * A function (reference or declaration) that takes a filter of filterType (below) and a value of this type
+   * A function (reference or literal) that takes a filter of filterType (below) and a value of this type
    * and returns true if the value passes the filter.
    */
   abstract readonly filterFunction: Code;
@@ -62,6 +62,28 @@ export abstract class AbstractType {
    * Composite type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.
    */
   abstract readonly filterType: Code;
+
+  /**
+   * A FromRdfResourceValuesFunction (reference or literal) that converts a Either<Error, rdfjsResource.Resource.Values> to a
+   * Either<Error, rdfjsResource.Resource.Values<this type>>.
+   *
+   * These functions are used to deserialize property values in an ObjectType, either directly (a property with this type) or indirectly (a property with a type like OptionType
+   * that has a type parameter of this type).
+   *
+   * Some types need to filter on the set of all objects/values of a (subject, predicate). For example, all sh:hasValue values must be present in the set for any values
+   * to be considered valid. Similarly, values may also need to be sorted. For example, specifying preferredLanguages should sort the values in the order of the specified languages so that the first value
+   * (if it exists) is always of the first preferred language.
+   *
+   * The function takes two parameters, a rdfjsResource.Resource.Values and a parameters object with the following parameters:
+   *   context: unanticipated properties (...) passed to Object.fromRdf
+   *   focusResource: the Resource passed to Object.fromRdf
+   *   graph: DefaultGraph | NamedNode | undefined to match (subject, predicate, object) triples in; if undefined, match triples in all graphs
+   *   ignoreRdfType: whether the RDF type of objects/object unions should be ignored
+   *   objectSet: the ObjectSet passed to Object.fromRdf
+   *   preferredLanguages: the preferred languages array (e.g., ["en"]) passed to Object.fromRdf
+   *   propertyPath: the PropertyPath of the object's property
+   */
+  abstract readonly fromRdfResourceValuesFunction: Code;
 
   /**
    * Declarations for GraphQL arguments to pass to this the graphqlResolveExpression.
@@ -81,7 +103,7 @@ export abstract class AbstractType {
   abstract readonly graphqlType: AbstractType.GraphqlType;
 
   /**
-   * A function (reference or declaration) that takes a  Hasher and a value of this type, calls hasher.update on the value, and returns the Hasher.
+   * A function (reference or literal) that takes a  Hasher and a value of this type, calls hasher.update on the value, and returns the Hasher.
    */
   abstract readonly hashFunction: Code;
 
@@ -118,7 +140,7 @@ export abstract class AbstractType {
   /**
    * Is this type an ObjectType or does it reference an object type?
    */
-  abstract readonly referencesObjectType: boolean;
+  abstract readonly referencesNamedType: boolean;
 
   /**
    * TypeScript type describing .schema.
@@ -146,7 +168,7 @@ export abstract class AbstractType {
   abstract readonly validationFunction: Maybe<Code>;
 
   /**
-   * A ValueSparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property value of this type.
+   * A ValueSparqlConstructTriplesFunction (reference or literal) that returns an array of sparqljs.Triple's for a property value of this type.
    *
    * The function takes a parameters object with the following parameters:
    * - filter: an instance of filterType | undefined
@@ -158,7 +180,7 @@ export abstract class AbstractType {
   abstract readonly valueSparqlConstructTriplesFunction: Code;
 
   /**
-   * A ValueSparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property value of this type.
+   * A ValueSparqlWherePatternsFunction (reference or literal) that returns an array of SparqlPattern's for a property value of this type.
    *
    * The function takes a parameters object with the following parameters:
    * - filter: an instance of filterType | undefined
@@ -203,6 +225,11 @@ export abstract class AbstractType {
    */
   @Memoize()
   get schema(): Code {
+    return this.schemaExpression;
+  }
+
+  @Memoize()
+  protected get schemaExpression(): Code {
     return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
   }
 
@@ -219,42 +246,6 @@ export abstract class AbstractType {
   abstract fromJsonExpression(parameters: {
     variables: {
       value: Code;
-    };
-  }): Code;
-
-  /**
-   * An expression that converts a Either<Error, rdfjsResource.Resource.Values> to a
-   * Either<Error, rdfjsResource.Resource.Values<this type>>.
-   *
-   * These expressions are used to deserialize property values in an ObjectType, either directly (a property with this Type) or indirectly (a property with a Type like OptionType
-   * that has a type parameter of this Type).
-   *
-   * Some types need to filter on the set of all objects/values of a (subject, predicate). For example, all sh:hasValue values must be present in the set for any values
-   * to be considered valid. Similar
-   *
-   * Values may also need to be sorted. For example, specifying preferredLanguages should sort the values in the order of the specified languages so that the first value
-   * (if it exists) is always of the first preferred language.
-   *
-   * variables are runtime variables, most derived from the parameters of the ObjectType's fromRdf function:
-   *   context: unanticipated properties (...) passed to Object.fromRdf
-   *   graph: DefaultGraph | NamedNode | undefined to match (subject, predicate, object) triples in; if undefined, match triples in all graphs
-   *   ignoreRdfType: whether the RDF type of objects/object unions should be ignored
-   *   objectSet: the ObjectSet passed to Object.fromRdf
-   *   preferredLanguages: the preferred languages array (e.g., ["en"]) passed to Object.fromRdf
-   *   propertyPath: the PropertyPath of the object's property
-   *   resource: the Resource passed to Object.fromRdf
-   *   resourceValues: the Either<Error, rdfjsResource.Resource.Values> to be converted to values of this type
-   */
-  abstract fromRdfResourceValuesExpression(parameters: {
-    variables: {
-      context: Code;
-      graph: Code;
-      ignoreRdfType?: boolean;
-      objectSet: Code;
-      preferredLanguages: Code;
-      propertyPath: Code;
-      resource: Code;
-      resourceValues: Code;
     };
   }): Code;
 

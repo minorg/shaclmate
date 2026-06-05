@@ -7,7 +7,6 @@ import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 import type { ShapeStack } from "./ShapeStack.js";
-import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyShapeToAstStructTypeField.js";
 
@@ -70,7 +69,9 @@ export function transformShapeToAstListType(
         itemType: astListTypePlaceholderItemType,
         label: nodeShape.label,
         mutable: nodeShape.mutable.orDefault(false),
-        name: shapeAstTypeName(nodeShape),
+        // name: shapeAstTypeName(nodeShape),
+        // List types don't need names currently
+        name: Maybe.empty(),
         shapeIdentifier: nodeShape.$identifier(),
         toRdfTypes: nodeShape.toRdfTypes,
       });
