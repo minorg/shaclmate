@@ -8,10 +8,10 @@ export const snippets_TermSchema: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}TermSchema`,
     code`\
-interface ${syntheticNamePrefix}TermSchema<T extends ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}> {
-  readonly hasValues?: readonly Exclude<T, ${imports.BlankNode}>[];
-  readonly in?: readonly Exclude<T, ${imports.BlankNode}>[];
+interface ${syntheticNamePrefix}TermSchema<TermT extends ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}> {
+  readonly hasValues?: readonly Exclude<TermT, ${imports.BlankNode}>[];
+  readonly in?: readonly Exclude<TermT, ${imports.BlankNode}>[];
   readonly kind: "Term";
-  readonly types: readonly T["termType"][];
+  readonly types: readonly TermT["termType"][];
 }`,
   );

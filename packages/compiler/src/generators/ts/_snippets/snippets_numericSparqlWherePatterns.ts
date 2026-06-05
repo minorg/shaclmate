@@ -8,7 +8,7 @@ export const snippets_numericSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}numericSparqlWherePatterns`,
     code`\
-function $numericSparqlWherePatterns<T extends bigint | number>({ filter, valueVariable, ...otherParameters }: Parameters<${snippets.ValueSparqlWherePatternsFunction}<${snippets.NumericFilter}<T>, ${snippets.NumericSchema}<T>>>[0]): ReturnType<${snippets.ValueSparqlWherePatternsFunction}<${snippets.NumericFilter}<T>, ${snippets.NumericSchema}<T>>> {
+function $numericSparqlWherePatterns<NumericT extends bigint | number>({ filter, valueVariable, ...otherParameters }: Parameters<${snippets.ValueSparqlWherePatternsFunction}<${snippets.NumericFilter}<NumericT>, ${snippets.NumericSchema}<NumericT>>>[0]): ReturnType<${snippets.ValueSparqlWherePatternsFunction}<${snippets.NumericFilter}<NumericT>, ${snippets.NumericSchema}<NumericT>>> {
   const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
   if (filter) {

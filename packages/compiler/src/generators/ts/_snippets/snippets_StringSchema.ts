@@ -8,9 +8,9 @@ export const snippets_StringSchema: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}StringSchema`,
     code`\
-interface ${syntheticNamePrefix}StringSchema<T extends string> {
+interface ${syntheticNamePrefix}StringSchema<StringT extends string> {
   readonly hasValues?: readonly ${imports.Literal}[];
-  readonly in?: readonly T[];
+  readonly in?: readonly StringT[];
   readonly languageIn?: readonly string[];
   readonly kind: "String";
 }`,

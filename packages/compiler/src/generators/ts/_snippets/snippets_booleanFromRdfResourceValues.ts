@@ -9,7 +9,7 @@ export const snippets_booleanFromRdfResourceValues: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}booleanFromRdfResourceValues`,
     code`\
-function ${syntheticNamePrefix}booleanFromRdfResourceValues<T extends boolean>(values: ${imports.Resource}.Values, options: Parameters<${snippets.FromRdfResourceValuesFunction}<T, ${snippets.BooleanSchema}<T>>>[1]): ${imports.Either}<Error, ${imports.Resource}.Values<T>> {
-  return ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => options.schema.in ? value.toBoolean(options.schema.in) : value.toBoolean() as ${imports.Either}<Error, T>));
+function ${syntheticNamePrefix}booleanFromRdfResourceValues<BooleanT extends boolean>(values: ${imports.Resource}.Values, options: Parameters<${snippets.FromRdfResourceValuesFunction}<BooleanT, ${snippets.BooleanSchema}<BooleanT>>>[1]): ${imports.Either}<Error, ${imports.Resource}.Values<BooleanT>> {
+  return ${snippets.termLikeFromRdfResourceValues}(values, options).chain(values => values.chainMap(value => options.schema.in ? value.toBoolean(options.schema.in) : value.toBoolean() as ${imports.Either}<Error, BooleanT>));
 }`,
   );
