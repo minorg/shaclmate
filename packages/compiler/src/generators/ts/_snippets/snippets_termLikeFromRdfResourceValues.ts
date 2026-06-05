@@ -35,20 +35,32 @@ const ${syntheticNamePrefix}termLikeFromRdfResourceValues:
 
     if (preferredLanguages && preferredLanguages.length > 0) {
       chain = chain.chain(values => {
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        const filteredValues: ${imports.Resource}.Value[] = [];
-        for (const preferredLanguage of preferredLanguages) {
-          for (const value of values) {
-            value.toLiteral().ifRight(literal => {
-              if (literal.language === preferredLanguage) {
-                filteredValues.push(value);
-              }
-            });
+        const literals: ${imports.Literal}[] = [];
+        const literalValues: ${imports.Resource}.Value[] = [];
+        const nonLiteralValues: ${imports.Resource}.Value[] = [];
+
+        for (const value of values) {
+          const term = value.toTerm().unsafeCoerce();
+          if (term.termType === "Literal") {
+            literals.push(term);
+            literalValues.push(value);
+          } else {
+            nonLiteralValues.push(value);
           }
         }
 
-        return ${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: values.focusResource, propertyPath: values.propertyPath, values: filteredValues }));
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        const preferredLanguageLiteralValues: ${imports.Resource}.Value[] = [];
+        for (const preferredLanguage of preferredLanguages) {
+          for (let literalI = 0; literalI < literals.length; literalI++) {
+            if (literals[literalI].language === preferredLanguage) {
+              preferredLanguageLiteralValues.push(literalValues[literalI]);
+            }
+          }
+        }
+
+        return ${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: values.focusResource, propertyPath: values.propertyPath, values: nonLiteralValues.concat(preferredLanguageLiteralValues) }));
       });
     }
 

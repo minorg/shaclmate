@@ -3394,16 +3394,28 @@ const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
 
   if (preferredLanguages && preferredLanguages.length > 0) {
     chain = chain.chain((values) => {
+      const literals: Literal[] = [];
+      const literalValues: Resource.Value[] = [];
+      const nonLiteralValues: Resource.Value[] = [];
+
+      for (const value of values) {
+        const term = value.toTerm().unsafeCoerce();
+        if (term.termType === "Literal") {
+          literals.push(term);
+          literalValues.push(value);
+        } else {
+          nonLiteralValues.push(value);
+        }
+      }
+
       // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
       // Within a preferredLanguage the literals may be in any order.
-      const filteredValues: Resource.Value[] = [];
+      const preferredLanguageLiteralValues: Resource.Value[] = [];
       for (const preferredLanguage of preferredLanguages) {
-        for (const value of values) {
-          value.toLiteral().ifRight((literal) => {
-            if (literal.language === preferredLanguage) {
-              filteredValues.push(value);
-            }
-          });
+        for (let literalI = 0; literalI < literals.length; literalI++) {
+          if (literals[literalI].language === preferredLanguage) {
+            preferredLanguageLiteralValues.push(literalValues[literalI]);
+          }
         }
       }
 
@@ -3411,7 +3423,7 @@ const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
         Resource.Values.fromArray({
           focusResource: values.focusResource,
           propertyPath: values.propertyPath,
-          values: filteredValues,
+          values: nonLiteralValues.concat(preferredLanguageLiteralValues),
         }),
       );
     });
