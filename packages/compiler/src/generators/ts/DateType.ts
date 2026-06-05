@@ -17,7 +17,7 @@ export class DateType extends AbstractDateType {
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.dateFromRdfResourceValues}<${this.expression}>`;
+    return code`${this.reusables.snippets.dateFromRdfResourceValues}`;
   }
 
   override jsonSchema(

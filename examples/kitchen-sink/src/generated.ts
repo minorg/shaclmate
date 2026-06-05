@@ -1200,8 +1200,8 @@ function $filterString(filter: $StringFilter, value: string) {
   return true;
 }
 
-function $filterTerm(
-  filter: $TermFilter,
+function $filterTerm<TermT extends BlankNode | Literal | NamedNode>(
+  filter: $TermFilter<TermT>,
   value: BlankNode | Literal | NamedNode,
 ): boolean {
   if (
@@ -3161,18 +3161,18 @@ const $stringSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
   });
 };
 
-interface $TermFilter<T extends BlankNode | Literal | NamedNode> {
+interface $TermFilter<TermT extends BlankNode | Literal | NamedNode> {
   readonly datatypeIn?: readonly NamedNode[];
-  readonly in?: readonly Exclude<T, BlankNode>[];
+  readonly in?: readonly Exclude<TermT, BlankNode>[];
   readonly languageIn?: readonly string[];
-  readonly typeIn?: readonly T["termType"][];
+  readonly typeIn?: readonly TermT["termType"][];
 }
 
 function $termFilterSparqlPatterns({
   filter,
   valueVariable,
 }: {
-  filter?: $TermFilter;
+  filter?: $TermFilter<BlankNode | Literal | NamedNode>;
   valueVariable: Variable;
 }): readonly $SparqlFilterPattern[] {
   if (!filter) {
@@ -3268,8 +3268,39 @@ function $termFromRdfResourceValues<T extends BlankNode | Literal | NamedNode>(
   values: Resource.Values,
   options: Parameters<$FromRdfResourceValuesFunction<T, $TermSchema<T>>>[1],
 ): Either<Error, Resource.Values<T>> {
+  const { focusResource, propertyPath, schema } = options;
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) => value.toTerm()),
+    values.chainMap((value) =>
+      value.toTerm().chain((term) => {
+        if (
+          schema.in &&
+          schema.in.length > 0 &&
+          !schema.in.some((in_) => in_.equals(term))
+        ) {
+          return Left(
+            new Resource.MistypedTermValueError({
+              actualValue: term,
+              expectedValueType: "Term in",
+              focusResource,
+              propertyPath,
+            }),
+          );
+        }
+
+        if (!schema.types.some((type) => term.termType === type)) {
+          return Left(
+            new Resource.MistypedTermValueError({
+              actualValue: term,
+              expectedValueType: "Term types",
+              focusResource,
+              propertyPath,
+            }),
+          );
+        }
+
+        return Right(term as T);
+      }),
+    ),
   );
 }
 
@@ -3377,8 +3408,8 @@ function $termSchemaSparqlPatterns({
 }
 
 const $termSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-  $TermFilter,
-  $TermSchema
+  $TermFilter<BlankNode | Literal | NamedNode>,
+  $TermSchema<BlankNode | Literal | NamedNode>
 > = (parameters) =>
   $termSchemaSparqlPatterns({
     filterPatterns: $termFilterSparqlPatterns(parameters),
@@ -10132,7 +10163,7 @@ export namespace DateUnionsStruct {
             values.chainMap((value) => {
               const valueAsValues = value.toValues();
               return (
-                $dateFromRdfResourceValues<Date>(valueAsValues, {
+                $dateFromRdfResourceValues(valueAsValues, {
                   ...options,
                   schema: options.schema.members["date"].type,
                 }).map((values) =>
@@ -10155,7 +10186,7 @@ export namespace DateUnionsStruct {
               )
                 .altLazy(
                   () =>
-                    $dateTimeFromRdfResourceValues<Date>(valueAsValues, {
+                    $dateTimeFromRdfResourceValues(valueAsValues, {
                       ...options,
                       schema: options.schema.members["dateTime"].type,
                     }).map((values) =>
@@ -10238,7 +10269,7 @@ export namespace DateUnionsStruct {
             values.chainMap((value) => {
               const valueAsValues = value.toValues();
               return (
-                $dateFromRdfResourceValues<Date>(valueAsValues, {
+                $dateFromRdfResourceValues(valueAsValues, {
                   ...options,
                   schema: options.schema.members["date"].type,
                 }).map((values) =>
@@ -10344,7 +10375,7 @@ export namespace DateUnionsStruct {
             values.chainMap((value) => {
               const valueAsValues = value.toValues();
               return (
-                $dateTimeFromRdfResourceValues<Date>(valueAsValues, {
+                $dateTimeFromRdfResourceValues(valueAsValues, {
                   ...options,
                   schema: options.schema.members["dateTime"].type,
                 }).map((values) =>
@@ -10367,7 +10398,7 @@ export namespace DateUnionsStruct {
               )
                 .altLazy(
                   () =>
-                    $dateFromRdfResourceValues<Date>(valueAsValues, {
+                    $dateFromRdfResourceValues(valueAsValues, {
                       ...options,
                       schema: options.schema.members["date"].type,
                     }).map((values) =>
@@ -10473,7 +10504,7 @@ export namespace DateUnionsStruct {
               )
                 .altLazy(
                   () =>
-                    $dateFromRdfResourceValues<Date>(valueAsValues, {
+                    $dateFromRdfResourceValues(valueAsValues, {
                       ...options,
                       schema: options.schema.members["date"].type,
                     }).map((values) =>
@@ -11639,7 +11670,7 @@ export namespace DefaultValuesStruct {
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             Date,
             $DateSchema
-          >($dateFromRdfResourceValues<Date>),
+          >($dateFromRdfResourceValues),
           objectSet: _$options.objectSet,
         }),
         dateTimeDefaultValue: $shaclPropertyFromRdf<
@@ -11655,7 +11686,7 @@ export namespace DefaultValuesStruct {
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             Date,
             $DateSchema
-          >($dateTimeFromRdfResourceValues<Date>),
+          >($dateTimeFromRdfResourceValues),
           objectSet: _$options.objectSet,
         }),
         falseBooleanDefaultValue: $shaclPropertyFromRdf<
@@ -17890,7 +17921,7 @@ export namespace InPropertiesStruct {
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Date,
             $DateSchema
-          >($dateTimeFromRdfResourceValues<Date>),
+          >($dateTimeFromRdfResourceValues),
           objectSet: _$options.objectSet,
         }),
         inDoubles: $shaclPropertyFromRdf<
@@ -39336,7 +39367,7 @@ export namespace TermsStruct {
             typeFromRdfResourceValues: $maybeFromRdfResourceValues<
               Date,
               $DateSchema
-            >($dateFromRdfResourceValues<Date>),
+            >($dateFromRdfResourceValues),
             objectSet: _$options.objectSet,
           },
         ),
@@ -39353,7 +39384,7 @@ export namespace TermsStruct {
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Date,
             $DateSchema
-          >($dateTimeFromRdfResourceValues<Date>),
+          >($dateTimeFromRdfResourceValues),
           objectSet: _$options.objectSet,
         }),
         iriTerm: $shaclPropertyFromRdf<
@@ -49138,7 +49169,7 @@ export namespace NamedUnion2 {
     values.chainMap((value) => {
       const valueAsValues = value.toValues();
       return (
-        $dateFromRdfResourceValues<Date>(valueAsValues, {
+        $dateFromRdfResourceValues(valueAsValues, {
           ...options,
           schema: options.schema.members["date"].type,
         }).map((values) =>
@@ -49149,7 +49180,7 @@ export namespace NamedUnion2 {
       )
         .altLazy(
           () =>
-            $dateTimeFromRdfResourceValues<Date>(valueAsValues, {
+            $dateTimeFromRdfResourceValues(valueAsValues, {
               ...options,
               schema: options.schema.members["dateTime"].type,
             }).map((values) =>

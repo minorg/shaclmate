@@ -8,10 +8,10 @@ export const snippets_TermFilter: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}TermFilter`,
     code`\
-interface ${syntheticNamePrefix}TermFilter<T extends ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}> {
+interface ${syntheticNamePrefix}TermFilter<TermT extends ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}> {
   readonly datatypeIn?: readonly ${imports.NamedNode}[];
-  readonly in?: readonly Exclude<T, ${imports.BlankNode}>[];
+  readonly in?: readonly Exclude<TermT, ${imports.BlankNode}>[];
   readonly languageIn?: readonly string[];
-  readonly typeIn?: readonly T["termType"][];
+  readonly typeIn?: readonly TermT["termType"][];
 }`,
   );
