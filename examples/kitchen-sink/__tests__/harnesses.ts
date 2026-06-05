@@ -196,13 +196,22 @@ export const harnesses = {
   ),
   hasValuesStruct: new Harness(
     kitchenSink.HasValuesStruct.createUnsafe({
+      $identifier,
       hasIriValue: dataFactory.namedNode(
         "http://example.com/HasValuesStructIri1",
       ),
       hasLiteralValue: "test",
-      $identifier,
     }),
     kitchenSink.HasValuesStruct,
+  ),
+  ignoredPropertiesStruct: new Harness(
+    kitchenSink.IgnoredPropertiesStruct.createUnsafe({
+      $identifier,
+      severityDefaultProperty: "severity default",
+      severityViolationProperty: "severity violation",
+      shaclmateIgnoreFalseProperty: "shaclmate:ignore false",
+    }),
+    kitchenSink.IgnoredPropertiesStruct,
   ),
   inIdentifierStruct: new Harness(
     kitchenSink.InIdentifierStruct.createUnsafe({

@@ -62,14 +62,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI." ;
     sh:property [
-        sh:minCount 1 ;
-        sh:path :convertibleTermNonEmptySet
-    ], [
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:path :convertibleIri
-    ], [
         sh:maxCount 1 ;
         sh:nodeKind sh:IRI ;
         sh:path :convertibleIriOption
@@ -105,6 +97,14 @@
         sh:path :convertibleTermOption
     ], [
         sh:path :convertibleTermSet
+    ], [
+        sh:minCount 1 ;
+        sh:path :convertibleTermNonEmptySet
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :convertibleIri
     ] .
 
 :DateUnionsStruct
@@ -277,6 +277,52 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:hasValue "test" ;
         sh:maxCount 1 ;
         sh:path :hasLiteralValue
+    ] .
+
+:IgnoredPropertiesStruct
+    a sh:NodeShape ;
+    rdfs:comment "Struct node shape that uses different methods to make SHACLmate ignore properties." ;
+    sh:property [
+        rdfs:comment "A property without an sh:severity defaults to sh:Violation severity and is not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :severityDefaultProperty
+    ], [
+        rdfs:comment "A property with an explicit sh:severity sh:Violation is not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :severityViolationProperty ;
+        sh:severity sh:Violation
+    ], [
+        rdfs:comment "A property with an explicit sh:severity sh:Info is ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :severityInfoProperty ;
+        sh:severity sh:Info
+    ], [
+        rdfs:comment "A property with an explicit sh:severity sh:Warning is ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :severityWarningProperty ;
+        sh:severity sh:Info
+    ], [
+        shaclmate:ignore false ;
+        rdfs:comment "A property with shaclmate:ignore set to false (the default) is not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :shaclmateIgnoreFalseProperty
+    ], [
+        shaclmate:ignore true ;
+        rdfs:comment "A property with shaclmate:ignore set to true not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :shaclmateIgnoreTrueProperty
     ] .
 
 :InIdentifierStruct

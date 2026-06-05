@@ -384,13 +384,13 @@
           "path": "PredicatePath(http://example.com/nonClassString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_153"
+            "value": "df_0_159"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_153"
+              "value": "df_0_159"
             },
             "nodeKinds": [
               "Literal"
@@ -435,13 +435,13 @@
           "path": "PredicatePath(http://example.com/lazilyResolved)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_174"
+            "value": "df_0_180"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_174"
+              "value": "df_0_180"
             },
             "nodeKinds": [
               "Literal"
@@ -495,24 +495,281 @@
       ],
       "properties": [
         {
-          "name": "convertibleTermNonEmptySet",
+          "name": "convertibleIriOption",
           "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTermNonEmptySet)",
+          "path": "PredicatePath(http://example.com/convertibleIriOption)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_10"
           },
           "type": {
-            "kind": "Set",
+            "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
               "value": "df_0_10"
             },
             "itemType": {
-              "kind": "Term",
+              "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
                 "value": "df_0_10"
+              },
+              "nodeKinds": [
+                "IRI"
+              ]
+            }
+          }
+        },
+        {
+          "name": "convertibleIriSet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleIriSet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_11"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_11"
+            },
+            "itemType": {
+              "kind": "Iri",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_11"
+              },
+              "nodeKinds": [
+                "IRI"
+              ]
+            },
+            "minCount": 0
+          }
+        },
+        {
+          "name": "convertibleIriNonEmptySet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleIriNonEmptySet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_12"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_12"
+            },
+            "itemType": {
+              "kind": "Iri",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_12"
+              },
+              "nodeKinds": [
+                "IRI"
+              ]
+            },
+            "minCount": 1
+          }
+        },
+        {
+          "name": "convertibleLiteral",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleLiteral)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_13"
+          },
+          "type": {
+            "kind": "Literal",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_13"
+            },
+            "nodeKinds": [
+              "Literal"
+            ]
+          }
+        },
+        {
+          "name": "convertibleLiteralOption",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleLiteralOption)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_14"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_14"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_14"
+              },
+              "nodeKinds": [
+                "Literal"
+              ]
+            }
+          }
+        },
+        {
+          "name": "convertibleLiteralSet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleLiteralSet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_15"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_15"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_15"
+              },
+              "nodeKinds": [
+                "Literal"
+              ]
+            },
+            "minCount": 0
+          }
+        },
+        {
+          "name": "convertibleLiteralNonEmptySet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleLiteralNonEmptySet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_16"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_16"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_16"
+              },
+              "nodeKinds": [
+                "Literal"
+              ]
+            },
+            "minCount": 1
+          }
+        },
+        {
+          "name": "convertibleTerm",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleTerm)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_17"
+          },
+          "type": {
+            "kind": "Term",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_17"
+            },
+            "nodeKinds": [
+              "BlankNode",
+              "IRI",
+              "Literal"
+            ]
+          }
+        },
+        {
+          "name": "convertibleTermOption",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleTermOption)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_18"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_18"
+            },
+            "itemType": {
+              "kind": "Term",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_18"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI",
+                "Literal"
+              ]
+            }
+          }
+        },
+        {
+          "name": "convertibleTermSet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleTermSet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_19"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_19"
+            },
+            "itemType": {
+              "kind": "Term",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_19"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI",
+                "Literal"
+              ]
+            },
+            "minCount": 0
+          }
+        },
+        {
+          "name": "convertibleTermNonEmptySet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleTermNonEmptySet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_20"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_20"
+            },
+            "itemType": {
+              "kind": "Term",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_20"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -529,274 +786,17 @@
           "path": "PredicatePath(http://example.com/convertibleIri)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_11"
+            "value": "df_0_21"
           },
           "type": {
             "kind": "Iri",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_11"
+              "value": "df_0_21"
             },
             "nodeKinds": [
               "IRI"
             ]
-          }
-        },
-        {
-          "name": "convertibleIriOption",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleIriOption)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_12"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_12"
-            },
-            "itemType": {
-              "kind": "Iri",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_12"
-              },
-              "nodeKinds": [
-                "IRI"
-              ]
-            }
-          }
-        },
-        {
-          "name": "convertibleIriSet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleIriSet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_13"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_13"
-            },
-            "itemType": {
-              "kind": "Iri",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_13"
-              },
-              "nodeKinds": [
-                "IRI"
-              ]
-            },
-            "minCount": 0
-          }
-        },
-        {
-          "name": "convertibleIriNonEmptySet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleIriNonEmptySet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_14"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_14"
-            },
-            "itemType": {
-              "kind": "Iri",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_14"
-              },
-              "nodeKinds": [
-                "IRI"
-              ]
-            },
-            "minCount": 1
-          }
-        },
-        {
-          "name": "convertibleLiteral",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleLiteral)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_15"
-          },
-          "type": {
-            "kind": "Literal",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_15"
-            },
-            "nodeKinds": [
-              "Literal"
-            ]
-          }
-        },
-        {
-          "name": "convertibleLiteralOption",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleLiteralOption)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_16"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_16"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_16"
-              },
-              "nodeKinds": [
-                "Literal"
-              ]
-            }
-          }
-        },
-        {
-          "name": "convertibleLiteralSet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleLiteralSet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_17"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_17"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_17"
-              },
-              "nodeKinds": [
-                "Literal"
-              ]
-            },
-            "minCount": 0
-          }
-        },
-        {
-          "name": "convertibleLiteralNonEmptySet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleLiteralNonEmptySet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_18"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_18"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_18"
-              },
-              "nodeKinds": [
-                "Literal"
-              ]
-            },
-            "minCount": 1
-          }
-        },
-        {
-          "name": "convertibleTerm",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTerm)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_19"
-          },
-          "type": {
-            "kind": "Term",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_19"
-            },
-            "nodeKinds": [
-              "BlankNode",
-              "IRI",
-              "Literal"
-            ]
-          }
-        },
-        {
-          "name": "convertibleTermOption",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTermOption)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_20"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_20"
-            },
-            "itemType": {
-              "kind": "Term",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_20"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI",
-                "Literal"
-              ]
-            }
-          }
-        },
-        {
-          "name": "convertibleTermSet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTermSet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_21"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_21"
-            },
-            "itemType": {
-              "kind": "Term",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_21"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI",
-                "Literal"
-              ]
-            },
-            "minCount": 0
           }
         }
       ]
@@ -2065,6 +2065,188 @@
       ]
     },
     {
+      "comment": "Struct node shape that uses different methods to make SHACLmate ignore properties",
+      "kind": "Struct",
+      "name": "IgnoredPropertiesStruct",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "IgnoredPropertiesStruct",
+        "termType": "NamedNode",
+        "value": "http://example.com/IgnoredPropertiesStruct"
+      },
+      "identifierType": {
+        "kind": "Identifier",
+        "shapeIdentifier": {
+          "prefix": "",
+          "reference": "IgnoredPropertiesStruct",
+          "termType": "NamedNode",
+          "value": "http://example.com/IgnoredPropertiesStruct"
+        },
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "properties": [
+        {
+          "comment": "A property without an sh:severity defaults to sh:Violation severity and is not ignored",
+          "name": "severityDefaultProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/severityDefaultProperty)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_59"
+          },
+          "type": {
+            "kind": "Literal",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_59"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        },
+        {
+          "comment": "A property with an explicit sh:severity sh:Violation is not ignored",
+          "name": "severityViolationProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/severityViolationProperty)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_60"
+          },
+          "type": {
+            "kind": "Literal",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_60"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        },
+        {
+          "comment": "A property with an explicit sh:severity sh:Info is ignored",
+          "name": "severityInfoProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/severityInfoProperty)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_61"
+          },
+          "type": {
+            "kind": "Literal",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_61"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        },
+        {
+          "comment": "A property with an explicit sh:severity sh:Warning is ignored",
+          "name": "severityWarningProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/severityWarningProperty)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_62"
+          },
+          "type": {
+            "kind": "Literal",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_62"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        },
+        {
+          "comment": "A property with shaclmate:ignore set to false (the default) is not ignored",
+          "name": "shaclmateIgnoreFalseProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/shaclmateIgnoreFalseProperty)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_63"
+          },
+          "type": {
+            "kind": "Literal",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_63"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        },
+        {
+          "comment": "A property with shaclmate:ignore set to true not ignored",
+          "name": "shaclmateIgnoreTrueProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/shaclmateIgnoreTrueProperty)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_64"
+          },
+          "type": {
+            "kind": "Literal",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_64"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        }
+      ]
+    },
+    {
       "comment": "Struct node shape with sh:in constraining its identifier.",
       "kind": "Struct",
       "name": "InIdentifierStruct",
@@ -2121,19 +2303,19 @@
           "path": "PredicatePath(http://example.com/inIdentifierString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_61"
+            "value": "df_0_67"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_61"
+              "value": "df_0_67"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_61"
+                "value": "df_0_67"
               },
               "nodeKinds": [
                 "Literal"
@@ -2193,19 +2375,19 @@
           "path": "PredicatePath(http://example.com/inDoubles)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_62"
+            "value": "df_0_68"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_62"
+              "value": "df_0_68"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_62"
+                "value": "df_0_68"
               },
               "in": [
                 {
@@ -2235,19 +2417,19 @@
           "path": "PredicatePath(http://example.com/inStrings)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_65"
+            "value": "df_0_71"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_65"
+              "value": "df_0_71"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_65"
+                "value": "df_0_71"
               },
               "in": [
                 {
@@ -2277,19 +2459,19 @@
           "path": "PredicatePath(http://example.com/inBooleans)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_68"
+            "value": "df_0_74"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_68"
+              "value": "df_0_74"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_68"
+                "value": "df_0_74"
               },
               "in": [
                 {
@@ -2312,19 +2494,19 @@
           "path": "PredicatePath(http://example.com/inDateTimes)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_70"
+            "value": "df_0_76"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_70"
+              "value": "df_0_76"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_70"
+                "value": "df_0_76"
               },
               "in": [
                 {
@@ -2347,19 +2529,19 @@
           "path": "PredicatePath(http://example.com/inIntegers)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_72"
+            "value": "df_0_78"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_72"
+              "value": "df_0_78"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_72"
+                "value": "df_0_78"
               },
               "in": [
                 {
@@ -2389,19 +2571,19 @@
           "path": "PredicatePath(http://example.com/inIris)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_75"
+            "value": "df_0_81"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_75"
+              "value": "df_0_81"
             },
             "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_75"
+                "value": "df_0_81"
               },
               "in": [
                 {
@@ -2429,7 +2611,7 @@
           "path": "PredicatePath(http://example.com/reusableIn)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_78"
+            "value": "df_0_84"
           },
           "type": {
             "kind": "Option",
@@ -2546,7 +2728,7 @@
           "recursive": true,
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_79"
+            "value": "df_0_85"
           },
           "type": {
             "kind": "Option",
@@ -2644,7 +2826,7 @@
           "recursive": true,
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_80"
+            "value": "df_0_86"
           },
           "type": {
             "kind": "Option",
@@ -2740,19 +2922,19 @@
           "path": "PredicatePath(http://example.com/iriIdentifierString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_81"
+            "value": "df_0_87"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_81"
+              "value": "df_0_87"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_81"
+                "value": "df_0_87"
               },
               "nodeKinds": [
                 "Literal"
@@ -2799,19 +2981,19 @@
           "path": "PredicatePath(http://example.com/languageInLiteral)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_94"
+            "value": "df_0_100"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_94"
+              "value": "df_0_100"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_94"
+                "value": "df_0_100"
               },
               "nodeKinds": [
                 "Literal"
@@ -2870,13 +3052,13 @@
           "path": "PredicatePath(http://example.com/lazilyResolved)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_97"
+            "value": "df_0_103"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_97"
+              "value": "df_0_103"
             },
             "nodeKinds": [
               "Literal"
@@ -2920,13 +3102,13 @@
           "path": "PredicatePath(http://example.com/lazilyResolved)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_98"
+            "value": "df_0_104"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_98"
+              "value": "df_0_104"
             },
             "nodeKinds": [
               "Literal"
@@ -3075,13 +3257,13 @@
           "path": "PredicatePath(http://example.com/lazilyResolved)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_101"
+            "value": "df_0_107"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_101"
+              "value": "df_0_107"
             },
             "nodeKinds": [
               "Literal"
@@ -3139,13 +3321,13 @@
           "path": "PredicatePath(http://example.com/lazilyResolved)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_102"
+            "value": "df_0_108"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_102"
+              "value": "df_0_108"
             },
             "nodeKinds": [
               "Literal"
@@ -3190,13 +3372,13 @@
           "path": "PredicatePath(http://example.com/requiredLazyToResolvedBlankNodeOrIriIdentifier)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_103"
+            "value": "df_0_109"
           },
           "type": {
             "kind": "Lazy",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_103"
+              "value": "df_0_109"
             },
             "partialType": {
               "kind": "Struct",
@@ -3209,7 +3391,7 @@
                 "kind": "Identifier",
                 "shapeIdentifier": {
                   "termType": "BlankNode",
-                  "value": "df_0_103"
+                  "value": "df_0_109"
                 },
                 "nodeKinds": [
                   "BlankNode",
@@ -3264,13 +3446,13 @@
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedIriIdentifier)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_104"
+            "value": "df_0_110"
           },
           "type": {
             "kind": "LazyOption",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_104"
+              "value": "df_0_110"
             },
             "partialType": {
               "kind": "Option",
@@ -3289,7 +3471,7 @@
                   "kind": "Iri",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_104"
+                    "value": "df_0_110"
                   },
                   "nodeKinds": [
                     "IRI"
@@ -3339,13 +3521,13 @@
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedUnion)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_105"
+            "value": "df_0_111"
           },
           "type": {
             "kind": "LazyOption",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_105"
+              "value": "df_0_111"
             },
             "partialType": {
               "kind": "Option",
@@ -3364,7 +3546,7 @@
                   "kind": "Identifier",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_103"
+                    "value": "df_0_109"
                   },
                   "nodeKinds": [
                     "BlankNode",
@@ -3483,13 +3665,13 @@
           "path": "PredicatePath(http://example.com/optionalPartialToResolvedBlankNodeOrIriIdentifier)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_106"
+            "value": "df_0_112"
           },
           "type": {
             "kind": "LazyOption",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_106"
+              "value": "df_0_112"
             },
             "partialType": {
               "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
@@ -3581,13 +3763,13 @@
           "path": "PredicatePath(http://example.com/setPartialToResolvedBlankNodeOrIriIdentifier)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_107"
+            "value": "df_0_113"
           },
           "type": {
             "kind": "LazySet",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_107"
+              "value": "df_0_113"
             },
             "partialType": {
               "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
@@ -3681,13 +3863,13 @@
           "path": "PredicatePath(http://example.com/requiredPartialToResolvedBlankNodeOrIriIdentifier)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_108"
+            "value": "df_0_114"
           },
           "type": {
             "kind": "Lazy",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_108"
+              "value": "df_0_114"
             },
             "partialType": {
               "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
@@ -3759,13 +3941,13 @@
           "path": "PredicatePath(http://example.com/optionalPartialToResolvedUnion)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_109"
+            "value": "df_0_115"
           },
           "type": {
             "kind": "LazyOption",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_109"
+              "value": "df_0_115"
             },
             "partialType": {
               "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
@@ -3910,13 +4092,13 @@
           "path": "PredicatePath(http://example.com/optionalPartialUnionToResolvedUnion)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_110"
+            "value": "df_0_116"
           },
           "type": {
             "kind": "LazyOption",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_110"
+              "value": "df_0_116"
             },
             "partialType": {
               "comment": "Counterpart of Union for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
@@ -4128,13 +4310,13 @@
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedBlankNodeOrIriIdentifier)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_111"
+            "value": "df_0_117"
           },
           "type": {
             "kind": "LazyOption",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_111"
+              "value": "df_0_117"
             },
             "partialType": {
               "kind": "Option",
@@ -4153,7 +4335,7 @@
                   "kind": "Identifier",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_103"
+                    "value": "df_0_109"
                   },
                   "nodeKinds": [
                     "BlankNode",
@@ -4219,13 +4401,13 @@
           "path": "PredicatePath(http://example.com/setLazyToResolvedBlankNodeOrIriIdentifier)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_112"
+            "value": "df_0_118"
           },
           "type": {
             "kind": "LazySet",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_112"
+              "value": "df_0_118"
             },
             "partialType": {
               "kind": "Set",
@@ -4244,7 +4426,7 @@
                   "kind": "Identifier",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_103"
+                    "value": "df_0_109"
                   },
                   "nodeKinds": [
                     "BlankNode",
@@ -4443,7 +4625,7 @@
           "path": "PredicatePath(http://example.com/listSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_113"
+            "value": "df_0_119"
           },
           "type": {
             "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
@@ -4467,7 +4649,7 @@
                 "kind": "Literal",
                 "shapeIdentifier": {
                   "termType": "BlankNode",
-                  "value": "df_0_200"
+                  "value": "df_0_206"
                 },
                 "nodeKinds": [
                   "Literal"
@@ -4490,7 +4672,7 @@
           "path": "PredicatePath(http://example.com/listListSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_114"
+            "value": "df_0_120"
           },
           "type": {
             "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
@@ -4523,7 +4705,7 @@
                   "kind": "Literal",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_200"
+                    "value": "df_0_206"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -4547,21 +4729,21 @@
           "path": "PredicatePath(http://example.com/listUnionSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_115"
+            "value": "df_0_121"
           },
           "type": {
             "comment": "Set of typeof union that includes a list",
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_115"
+              "value": "df_0_121"
             },
             "itemType": {
               "comment": "Set of typeof union that includes a list",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_115"
+                "value": "df_0_121"
               },
               "members": [
                 {
@@ -4578,7 +4760,7 @@
                       "kind": "Literal",
                       "shapeIdentifier": {
                         "termType": "BlankNode",
-                        "value": "df_0_200"
+                        "value": "df_0_206"
                       },
                       "nodeKinds": [
                         "Literal"
@@ -4597,7 +4779,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_119"
+                      "value": "df_0_125"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -4661,7 +4843,7 @@
           "path": "PredicatePath(http://example.com/structList)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_120"
+            "value": "df_0_126"
           },
           "type": {
             "comment": "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property.",
@@ -4714,7 +4896,7 @@
           "path": "PredicatePath(http://example.com/iriList)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_121"
+            "value": "df_0_127"
           },
           "type": {
             "comment": "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.",
@@ -4738,7 +4920,7 @@
                 "kind": "Iri",
                 "shapeIdentifier": {
                   "termType": "BlankNode",
-                  "value": "df_0_86"
+                  "value": "df_0_92"
                 },
                 "nodeKinds": [
                   "IRI"
@@ -4753,7 +4935,7 @@
           "path": "PredicatePath(http://example.com/stringList)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_122"
+            "value": "df_0_128"
           },
           "type": {
             "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
@@ -4777,7 +4959,7 @@
                 "kind": "Literal",
                 "shapeIdentifier": {
                   "termType": "BlankNode",
-                  "value": "df_0_200"
+                  "value": "df_0_206"
                 },
                 "nodeKinds": [
                   "Literal"
@@ -4798,7 +4980,7 @@
           "path": "PredicatePath(http://example.com/stringListList)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_123"
+            "value": "df_0_129"
           },
           "type": {
             "comment": "A node shape that models an RDF list of string lists. Should be transformed into a list data structure when used as a property.",
@@ -4831,7 +5013,7 @@
                   "kind": "Literal",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_200"
+                    "value": "df_0_206"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -4895,19 +5077,19 @@
           "path": "PredicatePath(http://example.com/mutableString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_124"
+            "value": "df_0_130"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_124"
+              "value": "df_0_130"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_124"
+                "value": "df_0_130"
               },
               "nodeKinds": [
                 "Literal"
@@ -4928,7 +5110,7 @@
           "path": "PredicatePath(http://example.com/mutableList)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_125"
+            "value": "df_0_131"
           },
           "type": {
             "comment": "A node shape that models an RDF list of strings. Should be transformed into a mutable list data structure when used as a property.",
@@ -4952,7 +5134,7 @@
                 "kind": "Literal",
                 "shapeIdentifier": {
                   "termType": "BlankNode",
-                  "value": "df_0_131"
+                  "value": "df_0_137"
                 },
                 "nodeKinds": [
                   "Literal"
@@ -4976,19 +5158,19 @@
           "path": "PredicatePath(http://example.com/mutableSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_126"
+            "value": "df_0_132"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_126"
+              "value": "df_0_132"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_126"
+                "value": "df_0_132"
               },
               "nodeKinds": [
                 "Literal"
@@ -5022,7 +5204,7 @@
             "kind": "Iri",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_134"
+              "value": "df_0_140"
             },
             "nodeKinds": [
               "IRI"
@@ -5034,7 +5216,7 @@
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_136"
+              "value": "df_0_142"
             },
             "nodeKinds": [
               "Literal"
@@ -5066,7 +5248,7 @@
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_138"
+              "value": "df_0_144"
             },
             "nodeKinds": [
               "Literal"
@@ -5085,7 +5267,7 @@
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_140"
+              "value": "df_0_146"
             },
             "nodeKinds": [
               "Literal"
@@ -5143,7 +5325,7 @@
           "path": "PredicatePath(http://example.com/namedUnion1)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_141"
+            "value": "df_0_147"
           },
           "type": {
             "comment": "Named union of IRI and string",
@@ -5161,7 +5343,7 @@
                   "kind": "Iri",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_134"
+                    "value": "df_0_140"
                   },
                   "nodeKinds": [
                     "IRI"
@@ -5173,7 +5355,7 @@
                   "kind": "Literal",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_136"
+                    "value": "df_0_142"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -5195,7 +5377,7 @@
           "path": "PredicatePath(http://example.com/namedUnion2)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_142"
+            "value": "df_0_148"
           },
           "type": {
             "comment": "Named union of date and date-time",
@@ -5214,7 +5396,7 @@
                   "kind": "Literal",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_138"
+                    "value": "df_0_144"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -5233,7 +5415,7 @@
                   "kind": "Literal",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_140"
+                    "value": "df_0_146"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -5343,13 +5525,13 @@
           "path": "PredicatePath(http://example.com/noRdfTypeUnionMember1String)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_145"
+            "value": "df_0_151"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_145"
+              "value": "df_0_151"
             },
             "nodeKinds": [
               "Literal"
@@ -5393,13 +5575,13 @@
           "path": "PredicatePath(http://example.com/noRdfTypeUnionMember2String)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_146"
+            "value": "df_0_152"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_146"
+              "value": "df_0_152"
             },
             "nodeKinds": [
               "Literal"
@@ -5458,13 +5640,13 @@
           "path": "PredicatePath(http://example.com/blankNodeKind)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_147"
+            "value": "df_0_153"
           },
           "type": {
             "kind": "BlankNode",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_147"
+              "value": "df_0_153"
             },
             "nodeKinds": [
               "BlankNode"
@@ -5477,13 +5659,13 @@
           "path": "PredicatePath(http://example.com/blankNodeOrIriNodeKind)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_148"
+            "value": "df_0_154"
           },
           "type": {
             "kind": "Identifier",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_148"
+              "value": "df_0_154"
             },
             "nodeKinds": [
               "BlankNode",
@@ -5497,13 +5679,13 @@
           "path": "PredicatePath(http://example.com/blankNodeOrLiteralNodeKind)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_149"
+            "value": "df_0_155"
           },
           "type": {
             "kind": "Term",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_149"
+              "value": "df_0_155"
             },
             "nodeKinds": [
               "BlankNode",
@@ -5517,13 +5699,13 @@
           "path": "PredicatePath(http://example.com/iriNodeKind)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_150"
+            "value": "df_0_156"
           },
           "type": {
             "kind": "Iri",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_150"
+              "value": "df_0_156"
             },
             "nodeKinds": [
               "IRI"
@@ -5536,13 +5718,13 @@
           "path": "PredicatePath(http://example.com/iriOrLiteralNodeKind)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_151"
+            "value": "df_0_157"
           },
           "type": {
             "kind": "Term",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_151"
+              "value": "df_0_157"
             },
             "nodeKinds": [
               "IRI",
@@ -5556,13 +5738,13 @@
           "path": "PredicatePath(http://example.com/literalNodeKind)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_152"
+            "value": "df_0_158"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_152"
+              "value": "df_0_158"
             },
             "nodeKinds": [
               "Literal"
@@ -5615,198 +5797,6 @@
           "path": "PredicatePath(http://example.com/byteNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_154"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_154"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_154"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "byte",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#byte"
-              }
-            }
-          }
-        },
-        {
-          "name": "decimalNumeric",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/decimalNumeric)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_155"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_155"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_155"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "decimal",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#decimal"
-              }
-            }
-          }
-        },
-        {
-          "name": "doubleNumeric",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/doubleNumeric)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_156"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_156"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_156"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "double",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#double"
-              }
-            }
-          }
-        },
-        {
-          "name": "floatNumeric",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/floatNumeric)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_157"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_157"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_157"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "float",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#float"
-              }
-            }
-          }
-        },
-        {
-          "name": "intNumeric",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/intNumeric)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_158"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_158"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_158"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "int",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#int"
-              }
-            }
-          }
-        },
-        {
-          "name": "integerNumeric",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/integerNumeric)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_159"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_159"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_159"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "integer",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#integer"
-              }
-            }
-          }
-        },
-        {
-          "name": "longNumeric",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/longNumeric)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
             "value": "df_0_160"
           },
           "type": {
@@ -5826,17 +5816,17 @@
               ],
               "datatype": {
                 "prefix": "xsd",
-                "reference": "long",
+                "reference": "byte",
                 "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#long"
+                "value": "http://www.w3.org/2001/XMLSchema#byte"
               }
             }
           }
         },
         {
-          "name": "negativeIntegerNumeric",
+          "name": "decimalNumeric",
           "order": 0,
-          "path": "PredicatePath(http://example.com/negativeIntegerNumeric)",
+          "path": "PredicatePath(http://example.com/decimalNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_161"
@@ -5858,17 +5848,17 @@
               ],
               "datatype": {
                 "prefix": "xsd",
-                "reference": "negativeInteger",
+                "reference": "decimal",
                 "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#negativeInteger"
+                "value": "http://www.w3.org/2001/XMLSchema#decimal"
               }
             }
           }
         },
         {
-          "name": "nonNegativeIntegerNumeric",
+          "name": "doubleNumeric",
           "order": 0,
-          "path": "PredicatePath(http://example.com/nonNegativeIntegerNumeric)",
+          "path": "PredicatePath(http://example.com/doubleNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_162"
@@ -5890,17 +5880,17 @@
               ],
               "datatype": {
                 "prefix": "xsd",
-                "reference": "nonNegativeInteger",
+                "reference": "double",
                 "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+                "value": "http://www.w3.org/2001/XMLSchema#double"
               }
             }
           }
         },
         {
-          "name": "nonPositiveIntegerNumeric",
+          "name": "floatNumeric",
           "order": 0,
-          "path": "PredicatePath(http://example.com/nonPositiveIntegerNumeric)",
+          "path": "PredicatePath(http://example.com/floatNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_163"
@@ -5922,17 +5912,17 @@
               ],
               "datatype": {
                 "prefix": "xsd",
-                "reference": "nonPositiveInteger",
+                "reference": "float",
                 "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#nonPositiveInteger"
+                "value": "http://www.w3.org/2001/XMLSchema#float"
               }
             }
           }
         },
         {
-          "name": "positiveIntegerNumeric",
+          "name": "intNumeric",
           "order": 0,
-          "path": "PredicatePath(http://example.com/positiveIntegerNumeric)",
+          "path": "PredicatePath(http://example.com/intNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_164"
@@ -5954,17 +5944,17 @@
               ],
               "datatype": {
                 "prefix": "xsd",
-                "reference": "positiveInteger",
+                "reference": "int",
                 "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#positiveInteger"
+                "value": "http://www.w3.org/2001/XMLSchema#int"
               }
             }
           }
         },
         {
-          "name": "shortNumeric",
+          "name": "integerNumeric",
           "order": 0,
-          "path": "PredicatePath(http://example.com/shortNumeric)",
+          "path": "PredicatePath(http://example.com/integerNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_165"
@@ -5986,17 +5976,17 @@
               ],
               "datatype": {
                 "prefix": "xsd",
-                "reference": "short",
+                "reference": "integer",
                 "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#short"
+                "value": "http://www.w3.org/2001/XMLSchema#integer"
               }
             }
           }
         },
         {
-          "name": "unsignedByteNumeric",
+          "name": "longNumeric",
           "order": 0,
-          "path": "PredicatePath(http://example.com/unsignedByteNumeric)",
+          "path": "PredicatePath(http://example.com/longNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_166"
@@ -6018,17 +6008,17 @@
               ],
               "datatype": {
                 "prefix": "xsd",
-                "reference": "unsignedByte",
+                "reference": "long",
                 "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#unsignedByte"
+                "value": "http://www.w3.org/2001/XMLSchema#long"
               }
             }
           }
         },
         {
-          "name": "unsignedIntNumeric",
+          "name": "negativeIntegerNumeric",
           "order": 0,
-          "path": "PredicatePath(http://example.com/unsignedIntNumeric)",
+          "path": "PredicatePath(http://example.com/negativeIntegerNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_167"
@@ -6050,17 +6040,17 @@
               ],
               "datatype": {
                 "prefix": "xsd",
-                "reference": "unsignedInt",
+                "reference": "negativeInteger",
                 "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#unsignedInt"
+                "value": "http://www.w3.org/2001/XMLSchema#negativeInteger"
               }
             }
           }
         },
         {
-          "name": "unsignedLongNumeric",
+          "name": "nonNegativeIntegerNumeric",
           "order": 0,
-          "path": "PredicatePath(http://example.com/unsignedLongNumeric)",
+          "path": "PredicatePath(http://example.com/nonNegativeIntegerNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_168"
@@ -6082,17 +6072,17 @@
               ],
               "datatype": {
                 "prefix": "xsd",
-                "reference": "unsignedLong",
+                "reference": "nonNegativeInteger",
                 "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#unsignedLong"
+                "value": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
               }
             }
           }
         },
         {
-          "name": "unsignedShortNumeric",
+          "name": "nonPositiveIntegerNumeric",
           "order": 0,
-          "path": "PredicatePath(http://example.com/unsignedShortNumeric)",
+          "path": "PredicatePath(http://example.com/nonPositiveIntegerNumeric)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_169"
@@ -6108,6 +6098,198 @@
               "shapeIdentifier": {
                 "termType": "BlankNode",
                 "value": "df_0_169"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
+                "reference": "nonPositiveInteger",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#nonPositiveInteger"
+              }
+            }
+          }
+        },
+        {
+          "name": "positiveIntegerNumeric",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/positiveIntegerNumeric)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_170"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_170"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_170"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
+                "reference": "positiveInteger",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#positiveInteger"
+              }
+            }
+          }
+        },
+        {
+          "name": "shortNumeric",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/shortNumeric)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_171"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_171"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_171"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
+                "reference": "short",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#short"
+              }
+            }
+          }
+        },
+        {
+          "name": "unsignedByteNumeric",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/unsignedByteNumeric)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_172"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_172"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_172"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
+                "reference": "unsignedByte",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#unsignedByte"
+              }
+            }
+          }
+        },
+        {
+          "name": "unsignedIntNumeric",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/unsignedIntNumeric)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_173"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_173"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_173"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
+                "reference": "unsignedInt",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#unsignedInt"
+              }
+            }
+          }
+        },
+        {
+          "name": "unsignedLongNumeric",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/unsignedLongNumeric)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_174"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_174"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_174"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
+                "reference": "unsignedLong",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#unsignedLong"
+              }
+            }
+          }
+        },
+        {
+          "name": "unsignedShortNumeric",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/unsignedShortNumeric)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_175"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_175"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_175"
               },
               "nodeKinds": [
                 "Literal"
@@ -6153,13 +6335,13 @@
           "path": "PredicatePath(http://example.com/orderedC)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_170"
+            "value": "df_0_176"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_170"
+              "value": "df_0_176"
             },
             "nodeKinds": [
               "Literal"
@@ -6178,13 +6360,13 @@
           "path": "PredicatePath(http://example.com/orderedB)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_172"
+            "value": "df_0_178"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_172"
+              "value": "df_0_178"
             },
             "nodeKinds": [
               "Literal"
@@ -6203,13 +6385,13 @@
           "path": "PredicatePath(http://example.com/orderedA)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_171"
+            "value": "df_0_177"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_171"
+              "value": "df_0_177"
             },
             "nodeKinds": [
               "Literal"
@@ -6268,19 +6450,19 @@
           "path": "PredicatePath(http://example.com/newNameString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_173"
+            "value": "df_0_179"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_173"
+              "value": "df_0_179"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_173"
+                "value": "df_0_179"
               },
               "nodeKinds": [
                 "Literal"
@@ -6339,13 +6521,13 @@
           "path": "PredicatePath(http://example.com/lazilyResolved)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_177"
+            "value": "df_0_183"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_177"
+              "value": "df_0_183"
             },
             "nodeKinds": [
               "Literal"
@@ -6432,13 +6614,13 @@
           "path": "PredicatePath(http://example.com/unionMember1Distinct)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_291"
+            "value": "df_0_297"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_291"
+              "value": "df_0_297"
             },
             "nodeKinds": [
               "Literal"
@@ -6496,13 +6678,13 @@
           "path": "PredicatePath(http://example.com/lazilyResolved)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_178"
+            "value": "df_0_184"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_178"
+              "value": "df_0_184"
             },
             "nodeKinds": [
               "Literal"
@@ -6589,13 +6771,13 @@
           "path": "PredicatePath(http://example.com/unionMember2Distinct)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_292"
+            "value": "df_0_298"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_292"
+              "value": "df_0_298"
             },
             "nodeKinds": [
               "Literal"
@@ -6641,13 +6823,13 @@
           "path": "PredicatePath(http://example.com/required)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_179"
+            "value": "df_0_185"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_179"
+              "value": "df_0_185"
             },
             "nodeKinds": [
               "Literal"
@@ -6667,19 +6849,19 @@
           "path": "PredicatePath(http://example.com/optional)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_180"
+            "value": "df_0_186"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_180"
+              "value": "df_0_186"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_180"
+                "value": "df_0_186"
               },
               "nodeKinds": [
                 "Literal"
@@ -6700,19 +6882,19 @@
           "path": "PredicatePath(http://example.com/emptySet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_181"
+            "value": "df_0_187"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_181"
+              "value": "df_0_187"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_181"
+                "value": "df_0_187"
               },
               "nodeKinds": [
                 "Literal"
@@ -6734,19 +6916,19 @@
           "path": "PredicatePath(http://example.com/nonEmptySet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_182"
+            "value": "df_0_188"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_182"
+              "value": "df_0_188"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_182"
+                "value": "df_0_188"
               },
               "nodeKinds": [
                 "Literal"
@@ -6838,13 +7020,13 @@
           "path": "PredicatePath(http://example.com/actualName1)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_183"
+            "value": "df_0_189"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_183"
+              "value": "df_0_189"
             },
             "nodeKinds": [
               "Literal"
@@ -6865,13 +7047,13 @@
           "path": "PredicatePath(http://example.com/ignoreName2)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_184"
+            "value": "df_0_190"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_184"
+              "value": "df_0_190"
             },
             "nodeKinds": [
               "Literal"
@@ -6891,13 +7073,13 @@
           "path": "PredicatePath(http://example.com/ignoreName3)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_185"
+            "value": "df_0_191"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_185"
+              "value": "df_0_191"
             },
             "nodeKinds": [
               "Literal"
@@ -6918,13 +7100,13 @@
           "path": "PredicatePath(http://example.com/ignoreName4)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_186"
+            "value": "df_0_192"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_186"
+              "value": "df_0_192"
             },
             "nodeKinds": [
               "Literal"
@@ -6983,19 +7165,19 @@
           "path": "InversePath(PredicatePath(http://example.com/inversePath))",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_187"
+            "value": "df_0_193"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_187"
+              "value": "df_0_193"
             },
             "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_187"
+                "value": "df_0_193"
               },
               "nodeKinds": [
                 "IRI"
@@ -7009,19 +7191,19 @@
           "path": "PredicatePath(http://example.com/predicatePath)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_189"
+            "value": "df_0_195"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_189"
+              "value": "df_0_195"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_189"
+                "value": "df_0_195"
               },
               "nodeKinds": [
                 "Literal"
@@ -7094,7 +7276,7 @@
           "recursive": true,
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_192"
+            "value": "df_0_198"
           },
           "type": {
             "comment": "Node shape that sh:xone's node shapes that have properties with the union's type",
@@ -7167,7 +7349,7 @@
           "recursive": true,
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_193"
+            "value": "df_0_199"
           },
           "type": {
             "comment": "Node shape that sh:xone's node shapes that have properties with the union's type",
@@ -7239,19 +7421,19 @@
           "path": "PredicatePath(http://example.com/blankNodeTerm)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_214"
+            "value": "df_0_220"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_214"
+              "value": "df_0_220"
             },
             "itemType": {
               "kind": "BlankNode",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_214"
+                "value": "df_0_220"
               },
               "nodeKinds": [
                 "BlankNode"
@@ -7263,186 +7445,6 @@
           "name": "booleanTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/booleanTerm)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_215"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_215"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_215"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "boolean",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#boolean"
-              }
-            }
-          }
-        },
-        {
-          "name": "dateTerm",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/dateTerm)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_216"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_216"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_216"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "date",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#date"
-              }
-            }
-          }
-        },
-        {
-          "name": "dateTimeTerm",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/dateTimeTerm)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_217"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_217"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_217"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "dateTime",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#dateTime"
-              }
-            }
-          }
-        },
-        {
-          "name": "numberTerm",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/numberTerm)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_218"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_218"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_218"
-              },
-              "nodeKinds": [
-                "Literal"
-              ],
-              "datatype": {
-                "prefix": "xsd",
-                "reference": "double",
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#double"
-              }
-            }
-          }
-        },
-        {
-          "name": "iriTerm",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/iriTerm)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_219"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_219"
-            },
-            "itemType": {
-              "kind": "Iri",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_219"
-              },
-              "nodeKinds": [
-                "IRI"
-              ]
-            }
-          }
-        },
-        {
-          "name": "literalTerm",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/literalTerm)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_220"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_220"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_220"
-              },
-              "nodeKinds": [
-                "Literal"
-              ]
-            }
-          }
-        },
-        {
-          "name": "stringTerm",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/stringTerm)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_221"
@@ -7464,6 +7466,186 @@
               ],
               "datatype": {
                 "prefix": "xsd",
+                "reference": "boolean",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#boolean"
+              }
+            }
+          }
+        },
+        {
+          "name": "dateTerm",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/dateTerm)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_222"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_222"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_222"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
+                "reference": "date",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#date"
+              }
+            }
+          }
+        },
+        {
+          "name": "dateTimeTerm",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/dateTimeTerm)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_223"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_223"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_223"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
+                "reference": "dateTime",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+              }
+            }
+          }
+        },
+        {
+          "name": "numberTerm",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/numberTerm)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_224"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_224"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_224"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
+                "reference": "double",
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#double"
+              }
+            }
+          }
+        },
+        {
+          "name": "iriTerm",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/iriTerm)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_225"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_225"
+            },
+            "itemType": {
+              "kind": "Iri",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_225"
+              },
+              "nodeKinds": [
+                "IRI"
+              ]
+            }
+          }
+        },
+        {
+          "name": "literalTerm",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/literalTerm)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_226"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_226"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_226"
+              },
+              "nodeKinds": [
+                "Literal"
+              ]
+            }
+          }
+        },
+        {
+          "name": "stringTerm",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/stringTerm)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_227"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_227"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_227"
+              },
+              "nodeKinds": [
+                "Literal"
+              ],
+              "datatype": {
+                "prefix": "xsd",
                 "reference": "string",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
@@ -7477,19 +7659,19 @@
           "path": "PredicatePath(http://example.com/term)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_222"
+            "value": "df_0_228"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_222"
+              "value": "df_0_228"
             },
             "itemType": {
               "kind": "Term",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_222"
+                "value": "df_0_228"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -7532,21 +7714,21 @@
           "path": "PredicatePath(http://example.com/optionalNodeOrNodeOrString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_225"
+            "value": "df_0_231"
           },
           "type": {
             "comment": "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_225"
+              "value": "df_0_231"
             },
             "itemType": {
               "comment": "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_225"
+                "value": "df_0_231"
               },
               "members": [
                 {
@@ -7632,7 +7814,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_231"
+                      "value": "df_0_237"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -7656,21 +7838,21 @@
           "path": "PredicatePath(http://example.com/optionalIriOrLiteral)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_232"
+            "value": "df_0_238"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_232"
+              "value": "df_0_238"
             },
             "itemType": {
               "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_232"
+                "value": "df_0_238"
               },
               "members": [
                 {
@@ -7678,7 +7860,7 @@
                     "kind": "Iri",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_234"
+                      "value": "df_0_240"
                     },
                     "nodeKinds": [
                       "IRI"
@@ -7690,7 +7872,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_236"
+                      "value": "df_0_242"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -7708,21 +7890,21 @@
           "path": "PredicatePath(http://example.com/optionalNodeOrLiteral)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_237"
+            "value": "df_0_243"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_237"
+              "value": "df_0_243"
             },
             "itemType": {
               "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_237"
+                "value": "df_0_243"
               },
               "members": [
                 {
@@ -7769,7 +7951,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_241"
+                      "value": "df_0_247"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -7787,21 +7969,21 @@
           "path": "PredicatePath(http://example.com/optionalIriOrString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_242"
+            "value": "df_0_248"
           },
           "type": {
             "comment": "Union that can be discriminated by typeof.",
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_242"
+              "value": "df_0_248"
             },
             "itemType": {
               "comment": "Union that can be discriminated by typeof.",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_242"
+                "value": "df_0_248"
               },
               "members": [
                 {
@@ -7809,7 +7991,7 @@
                     "kind": "Iri",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_244"
+                      "value": "df_0_250"
                     },
                     "nodeKinds": [
                       "IRI"
@@ -7821,7 +8003,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_246"
+                      "value": "df_0_252"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -7845,14 +8027,14 @@
           "path": "PredicatePath(http://example.com/requiredNodeOrLiteral)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_247"
+            "value": "df_0_253"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "kind": "Union",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_247"
+              "value": "df_0_253"
             },
             "members": [
               {
@@ -7899,7 +8081,7 @@
                   "kind": "Literal",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_251"
+                    "value": "df_0_257"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -7916,14 +8098,14 @@
           "path": "PredicatePath(http://example.com/requiredNodeOrNodeOrString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_252"
+            "value": "df_0_258"
           },
           "type": {
             "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             "kind": "Union",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_252"
+              "value": "df_0_258"
             },
             "members": [
               {
@@ -8009,7 +8191,7 @@
                   "kind": "Literal",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_258"
+                    "value": "df_0_264"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -8032,21 +8214,21 @@
           "path": "PredicatePath(http://example.com/setNodeOrLiteral)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_259"
+            "value": "df_0_265"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_259"
+              "value": "df_0_265"
             },
             "itemType": {
               "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_259"
+                "value": "df_0_265"
               },
               "members": [
                 {
@@ -8093,7 +8275,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_263"
+                      "value": "df_0_269"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -8112,14 +8294,14 @@
           "path": "PredicatePath(http://example.com/requiredIriOrLiteral)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_264"
+            "value": "df_0_270"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
             "kind": "Union",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_264"
+              "value": "df_0_270"
             },
             "members": [
               {
@@ -8127,7 +8309,7 @@
                   "kind": "Iri",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_266"
+                    "value": "df_0_272"
                   },
                   "nodeKinds": [
                     "IRI"
@@ -8139,7 +8321,7 @@
                   "kind": "Literal",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_268"
+                    "value": "df_0_274"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -8156,14 +8338,14 @@
           "path": "PredicatePath(http://example.com/requiredIriOrString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_269"
+            "value": "df_0_275"
           },
           "type": {
             "comment": "Union that can be discriminated by typeof.",
             "kind": "Union",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_269"
+              "value": "df_0_275"
             },
             "members": [
               {
@@ -8171,7 +8353,7 @@
                   "kind": "Iri",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_271"
+                    "value": "df_0_277"
                   },
                   "nodeKinds": [
                     "IRI"
@@ -8183,7 +8365,7 @@
                   "kind": "Literal",
                   "shapeIdentifier": {
                     "termType": "BlankNode",
-                    "value": "df_0_273"
+                    "value": "df_0_279"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -8206,21 +8388,21 @@
           "path": "PredicatePath(http://example.com/setNodeOrNodeOrString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_274"
+            "value": "df_0_280"
           },
           "type": {
             "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_274"
+              "value": "df_0_280"
             },
             "itemType": {
               "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_274"
+                "value": "df_0_280"
               },
               "members": [
                 {
@@ -8306,7 +8488,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_280"
+                      "value": "df_0_286"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -8331,21 +8513,21 @@
           "path": "PredicatePath(http://example.com/setIriOrLiteral)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_281"
+            "value": "df_0_287"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_281"
+              "value": "df_0_287"
             },
             "itemType": {
               "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_281"
+                "value": "df_0_287"
               },
               "members": [
                 {
@@ -8353,7 +8535,7 @@
                     "kind": "Iri",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_283"
+                      "value": "df_0_289"
                     },
                     "nodeKinds": [
                       "IRI"
@@ -8365,7 +8547,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_285"
+                      "value": "df_0_291"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -8384,21 +8566,21 @@
           "path": "PredicatePath(http://example.com/setIriOrString)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_286"
+            "value": "df_0_292"
           },
           "type": {
             "comment": "Union that can be discriminated by typeof.",
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_286"
+              "value": "df_0_292"
             },
             "itemType": {
               "comment": "Union that can be discriminated by typeof.",
               "kind": "Union",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_286"
+                "value": "df_0_292"
               },
               "members": [
                 {
@@ -8406,7 +8588,7 @@
                     "kind": "Iri",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_288"
+                      "value": "df_0_294"
                     },
                     "nodeKinds": [
                       "IRI"
@@ -8418,7 +8600,7 @@
                     "kind": "Literal",
                     "shapeIdentifier": {
                       "termType": "BlankNode",
-                      "value": "df_0_290"
+                      "value": "df_0_296"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -8449,7 +8631,7 @@
         "kind": "Identifier",
         "shapeIdentifier": {
           "termType": "BlankNode",
-          "value": "df_0_103"
+          "value": "df_0_109"
         },
         "nodeKinds": [
           "BlankNode",
@@ -8470,7 +8652,7 @@
         "kind": "Iri",
         "shapeIdentifier": {
           "termType": "BlankNode",
-          "value": "df_0_104"
+          "value": "df_0_110"
         },
         "nodeKinds": [
           "IRI"
