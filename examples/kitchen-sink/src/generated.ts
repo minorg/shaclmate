@@ -18163,9 +18163,13 @@ export namespace InPropertiesStruct {
       reusableIn: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/reusableIn"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const, in: ["cat", "dog"] },
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return { kind: "String" as const, in: ["cat", "dog"] };
+            },
+          };
         },
       },
     },
@@ -27777,12 +27781,16 @@ export namespace NamedUnionsStruct {
       namedUnion1: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedUnion1"),
-        type: NamedUnion1.schema,
+        get type() {
+          return NamedUnion1.schema;
+        },
       },
       namedUnion2: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedUnion2"),
-        type: NamedUnion2.schema,
+        get type() {
+          return NamedUnion2.schema;
+        },
       },
     },
   } as const;
