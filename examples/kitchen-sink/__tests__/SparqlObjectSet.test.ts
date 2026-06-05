@@ -21,7 +21,7 @@ describe("SparqlObjectSet", () => {
         options,
       );
       for (const quad of dataset) {
-        oxigraphStore.add(quad);
+        oxigraphStore.add(quad as oxigraph.Quad);
       }
       // const ttl = quadsToTurtle(oxigraphStore.match());
       // console.log(ttl);

@@ -60,7 +60,7 @@ const externalDependencies = {
   "graphql-yoga": "5.14.0",
   "js-sha256": "~0.11.0",
   n3: "~1.26.0",
-  oxigraph: "0.4.11",
+  oxigraph: "0.5.8",
   pino: "~9.1.0",
   "pino-pretty": "~13.1.2",
   plur: "~5.1.0",
