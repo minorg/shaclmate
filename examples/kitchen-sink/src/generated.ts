@@ -2138,6 +2138,30 @@ function $monkeyPatchObject<T extends object>(
   return obj;
 }
 
+function $mutableListFromRdfResourceValues<ItemT, ItemSchemaT>(
+  itemFromRdfResourceValues: $FromRdfResourceValuesFunction<ItemT, ItemSchemaT>,
+): $FromRdfResourceValuesFunction<ItemT[], $CollectionSchema<ItemSchemaT>> {
+  const immutableListFromRdfResourceValues = $listFromRdfResourceValues(
+    itemFromRdfResourceValues,
+  );
+  return (values, options) =>
+    immutableListFromRdfResourceValues(values, options).map((values) =>
+      values.map((value) => value.concat()),
+    );
+}
+
+function $mutableSetFromRdfResourceValues<ItemT, ItemSchemaT>(
+  itemFromRdfResourceValues: $FromRdfResourceValuesFunction<ItemT, ItemSchemaT>,
+): $FromRdfResourceValuesFunction<ItemT[], $CollectionSchema<ItemSchemaT>> {
+  const immutableSetFromRdfResourceValues = $listFromRdfResourceValues(
+    itemFromRdfResourceValues,
+  );
+  return (values, options) =>
+    immutableSetFromRdfResourceValues(values, options).map((values) =>
+      values.map((value) => value.concat()),
+    );
+}
+
 function $normalizeSparqlWherePatterns(
   patterns: readonly $SparqlPattern[],
 ): readonly $SparqlPattern[] {
@@ -27013,7 +27037,7 @@ export namespace MutablePropertiesStruct {
             string[],
             $CollectionSchema<$StringSchema<string>>
           >(
-            $listFromRdfResourceValues<string, $StringSchema<string>>(
+            $mutableListFromRdfResourceValues<string, $StringSchema<string>>(
               $stringFromRdfResourceValues<string>,
             ),
           ),
@@ -27029,7 +27053,7 @@ export namespace MutablePropertiesStruct {
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
           propertySchema: schema.properties.mutableSet,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
+          typeFromRdfResourceValues: $mutableSetFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),

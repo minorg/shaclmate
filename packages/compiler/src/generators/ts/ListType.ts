@@ -73,7 +73,7 @@ export class ListType<
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+    return code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
   }
 
   @Memoize()

@@ -110,6 +110,8 @@ import { snippets_maybeFromRdfResourceValues } from "./_snippets/snippets_maybeF
 import { snippets_maybeSparqlConstructTriples } from "./_snippets/snippets_maybeSparqlConstructTriples.js";
 import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSparqlWherePatterns.js";
 import { snippets_monkeyPatchObject } from "./_snippets/snippets_monkeyPatchObject.js";
+import { snippets_mutableListFromRdfResourceValues } from "./_snippets/snippets_mutableListFromRdfResourceValues.js";
+import { snippets_mutableSetFromRdfResourceValues } from "./_snippets/snippets_mutableSetFromRdfResourceValues.js";
 import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
@@ -840,6 +842,16 @@ export class Snippets {
   @Memoize()
   get monkeyPatchObject(): Snippet {
     return this.snippet(snippets_monkeyPatchObject);
+  }
+
+  @Memoize()
+  get mutableListFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_mutableListFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get mutableSetFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_mutableSetFromRdfResourceValues);
   }
 
   @Memoize()
