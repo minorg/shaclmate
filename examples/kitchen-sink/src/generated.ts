@@ -238,15 +238,17 @@ const $bigDecimalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
     .concat(filterPatterns);
 };
 
-function $bigIntFromRdfResourceValues<T extends bigint>(
+function $bigIntFromRdfResourceValues<BigintT extends bigint>(
   values: Resource.Values,
-  options: Parameters<$FromRdfResourceValuesFunction<T, $NumericSchema<T>>>[1],
-): Either<Error, Resource.Values<T>> {
+  options: Parameters<
+    $FromRdfResourceValuesFunction<BigintT, $NumericSchema<BigintT>>
+  >[1],
+): Either<Error, Resource.Values<BigintT>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) =>
       options.schema.in
         ? value.toBigInt(options.schema.in)
-        : (value.toBigInt() as Either<Error, T>),
+        : (value.toBigInt() as Either<Error, BigintT>),
     ),
   );
 }
@@ -285,22 +287,24 @@ interface $BooleanFilter {
   readonly value?: boolean;
 }
 
-function $booleanFromRdfResourceValues<T extends boolean>(
+function $booleanFromRdfResourceValues<BooleanT extends boolean>(
   values: Resource.Values,
-  options: Parameters<$FromRdfResourceValuesFunction<T, $BooleanSchema<T>>>[1],
-): Either<Error, Resource.Values<T>> {
+  options: Parameters<
+    $FromRdfResourceValuesFunction<BooleanT, $BooleanSchema<BooleanT>>
+  >[1],
+): Either<Error, Resource.Values<BooleanT>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) =>
       options.schema.in
         ? value.toBoolean(options.schema.in)
-        : (value.toBoolean() as Either<Error, T>),
+        : (value.toBoolean() as Either<Error, BooleanT>),
     ),
   );
 }
 
-interface $BooleanSchema<T extends boolean> {
+interface $BooleanSchema<BooleanT extends boolean> {
   readonly hasValues?: readonly Literal[];
-  readonly in?: readonly T[];
+  readonly in?: readonly BooleanT[];
   readonly kind: "Boolean";
 }
 
@@ -1151,9 +1155,9 @@ function $filterMaybe<ItemT, ItemFilterT>(
   };
 }
 
-function $filterNumeric<T extends bigint | number>(
-  filter: $NumericFilter<T>,
-  value: T,
+function $filterNumeric<NumericT extends bigint | number>(
+  filter: $NumericFilter<NumericT>,
+  value: NumericT,
 ) {
   if (
     filter.in !== undefined &&
@@ -1239,15 +1243,17 @@ function $filterTerm<TermT extends BlankNode | Literal | NamedNode>(
   return true;
 }
 
-function $floatFromRdfResourceValues<T extends number>(
+function $floatFromRdfResourceValues<FloatT extends number>(
   values: Resource.Values,
-  options: Parameters<$FromRdfResourceValuesFunction<T, $NumericSchema<T>>>[1],
-): Either<Error, Resource.Values<T>> {
+  options: Parameters<
+    $FromRdfResourceValuesFunction<FloatT, $NumericSchema<FloatT>>
+  >[1],
+): Either<Error, Resource.Values<FloatT>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) =>
       options.schema.in
         ? value.toFloat(options.schema.in)
-        : (value.toFloat() as Either<Error, T>),
+        : (value.toFloat() as Either<Error, FloatT>),
     ),
   );
 }
@@ -1475,15 +1481,17 @@ function $identityValidationFunction<T>(
   return Either.of(value);
 }
 
-function $intFromRdfResourceValues<T extends number>(
+function $intFromRdfResourceValues<IntT extends number>(
   values: Resource.Values,
-  options: Parameters<$FromRdfResourceValuesFunction<T, $NumericSchema<T>>>[1],
-): Either<Error, Resource.Values<T>> {
+  options: Parameters<
+    $FromRdfResourceValuesFunction<IntT, $NumericSchema<IntT>>
+  >[1],
+): Either<Error, Resource.Values<IntT>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) =>
       options.schema.in
         ? value.toInt(options.schema.in)
-        : (value.toInt() as Either<Error, T>),
+        : (value.toInt() as Either<Error, IntT>),
     ),
   );
 }
@@ -1669,7 +1677,10 @@ function $liftSparqlPatterns(
 
 function $listFromRdfResourceValues<ItemT, ItemSchemaT>(
   itemFromRdfResourceValues: $FromRdfResourceValuesFunction<ItemT, ItemSchemaT>,
-): $FromRdfResourceValuesFunction<ItemT[], $CollectionSchema<ItemSchemaT>> {
+): $FromRdfResourceValuesFunction<
+  readonly ItemT[],
+  $CollectionSchema<ItemSchemaT>
+> {
   return (values, options) =>
     values
       .chainMap((value) => value.toList({ graph: options.graph })) // Resource.Values<Resource.Value> to Resource.Values<Resource.Values>;
@@ -2254,14 +2265,20 @@ interface $NumericSchema<T> {
   readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
 
-function $numericSparqlWherePatterns<T extends bigint | number>({
+function $numericSparqlWherePatterns<NumericT extends bigint | number>({
   filter,
   valueVariable,
   ...otherParameters
 }: Parameters<
-  $ValueSparqlWherePatternsFunction<$NumericFilter<T>, $NumericSchema<T>>
+  $ValueSparqlWherePatternsFunction<
+    $NumericFilter<NumericT>,
+    $NumericSchema<NumericT>
+  >
 >[0]): ReturnType<
-  $ValueSparqlWherePatternsFunction<$NumericFilter<T>, $NumericSchema<T>>
+  $ValueSparqlWherePatternsFunction<
+    $NumericFilter<NumericT>,
+    $NumericSchema<NumericT>
+  >
 > {
   const filterPatterns: $SparqlFilterPattern[] = [];
 
@@ -2498,13 +2515,16 @@ function $sequenceRecord<T extends Record<string, unknown>>(
 
 function $setFromRdfResourceValues<ItemT, ItemSchemaT>(
   itemFromRdfResourceValues: $FromRdfResourceValuesFunction<ItemT, ItemSchemaT>,
-): $FromRdfResourceValuesFunction<ItemT[], $CollectionSchema<ItemSchemaT>> {
+): $FromRdfResourceValuesFunction<
+  readonly ItemT[],
+  $CollectionSchema<ItemSchemaT>
+> {
   return (values, options) =>
     itemFromRdfResourceValues(values, {
       ...options,
       schema: options.schema.itemType,
     })
-      .map((values) => values.toArray().concat())
+      .map((values) => values.toArray())
       .map((valuesArray) =>
         Resource.Values.fromValue({
           focusResource: options.focusResource,
@@ -3086,22 +3106,24 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
-function $stringFromRdfResourceValues<T extends string>(
+function $stringFromRdfResourceValues<StringT extends string>(
   values: Resource.Values,
-  options: Parameters<$FromRdfResourceValuesFunction<T, $StringSchema<T>>>[1],
-): Either<Error, Resource.Values<T>> {
+  options: Parameters<
+    $FromRdfResourceValuesFunction<StringT, $StringSchema<StringT>>
+  >[1],
+): Either<Error, Resource.Values<StringT>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) =>
       options.schema.in
         ? value.toString(options.schema.in)
-        : (value.toString() as Either<Error, T>),
+        : (value.toString() as Either<Error, StringT>),
     ),
   );
 }
 
-interface $StringSchema<T extends string> {
+interface $StringSchema<StringT extends string> {
   readonly hasValues?: readonly Literal[];
-  readonly in?: readonly T[];
+  readonly in?: readonly StringT[];
   readonly languageIn?: readonly string[];
   readonly kind: "String";
 }
@@ -3264,10 +3286,14 @@ function $termFilterSparqlPatterns({
   return filterPatterns;
 }
 
-function $termFromRdfResourceValues<T extends BlankNode | Literal | NamedNode>(
+function $termFromRdfResourceValues<
+  TermT extends BlankNode | Literal | NamedNode,
+>(
   values: Resource.Values,
-  options: Parameters<$FromRdfResourceValuesFunction<T, $TermSchema<T>>>[1],
-): Either<Error, Resource.Values<T>> {
+  options: Parameters<
+    $FromRdfResourceValuesFunction<TermT, $TermSchema<TermT>>
+  >[1],
+): Either<Error, Resource.Values<TermT>> {
   const { focusResource, propertyPath, schema } = options;
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
     values.chainMap((value) =>
@@ -3298,7 +3324,7 @@ function $termFromRdfResourceValues<T extends BlankNode | Literal | NamedNode>(
           );
         }
 
-        return Right(term as T);
+        return Right(term as TermT);
       }),
     ),
   );
@@ -3370,11 +3396,11 @@ const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
   return chain;
 };
 
-interface $TermSchema<T extends BlankNode | Literal | NamedNode> {
-  readonly hasValues?: readonly Exclude<T, BlankNode>[];
-  readonly in?: readonly Exclude<T, BlankNode>[];
+interface $TermSchema<TermT extends BlankNode | Literal | NamedNode> {
+  readonly hasValues?: readonly Exclude<TermT, BlankNode>[];
+  readonly in?: readonly Exclude<TermT, BlankNode>[];
   readonly kind: "Term";
-  readonly types: readonly T["termType"][];
+  readonly types: readonly TermT["termType"][];
 }
 
 function $termSchemaSparqlPatterns({
@@ -17479,7 +17505,7 @@ export namespace InPropertiesStruct {
     }
     if (
       filter.inDoubles !== undefined &&
-      !$filterMaybe<1 | 2, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<1 | 2, $NumericFilter<1 | 2>>($filterNumeric<1 | 2>)(
         filter.inDoubles,
         value.inDoubles,
       )
@@ -17488,7 +17514,7 @@ export namespace InPropertiesStruct {
     }
     if (
       filter.inIntegers !== undefined &&
-      !$filterMaybe<1n | 2n, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+      !$filterMaybe<1n | 2n, $NumericFilter<1n | 2n>>($filterNumeric<1n | 2n>)(
         filter.inIntegers,
         value.inIntegers,
       )
@@ -17529,8 +17555,8 @@ export namespace InPropertiesStruct {
     readonly $identifier?: $IdentifierFilter;
     readonly inBooleans?: $MaybeFilter<$BooleanFilter>;
     readonly inDateTimes?: $MaybeFilter<$DateFilter>;
-    readonly inDoubles?: $MaybeFilter<$NumericFilter<number>>;
-    readonly inIntegers?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly inDoubles?: $MaybeFilter<$NumericFilter<1 | 2>>;
+    readonly inIntegers?: $MaybeFilter<$NumericFilter<1n | 2n>>;
     readonly inIris?: $MaybeFilter<$IriFilter>;
     readonly inStrings?: $MaybeFilter<$StringFilter>;
     readonly reusableIn?: $MaybeFilter<$StringFilter>;
@@ -17590,8 +17616,8 @@ export namespace InPropertiesStruct {
         propertyName: "inDoubles",
         propertySchema: schema.properties.inDoubles,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $NumericFilter<number>,
-          $NumericSchema<number>
+          $NumericFilter<1 | 2>,
+          $NumericSchema<1 | 2>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -17604,8 +17630,8 @@ export namespace InPropertiesStruct {
         propertyName: "inIntegers",
         propertySchema: schema.properties.inIntegers,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $NumericFilter<bigint>,
-          $NumericSchema<bigint>
+          $NumericFilter<1n | 2n>,
+          $NumericSchema<1n | 2n>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -17753,9 +17779,9 @@ export namespace InPropertiesStruct {
         propertyName: "inDoubles",
         propertySchema: schema.properties.inDoubles,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $NumericFilter<number>,
-          $NumericSchema<number>
-        >($numericSparqlWherePatterns<number>),
+          $NumericFilter<1 | 2>,
+          $NumericSchema<1 | 2>
+        >($numericSparqlWherePatterns<1 | 2>),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -17768,9 +17794,9 @@ export namespace InPropertiesStruct {
         propertyName: "inIntegers",
         propertySchema: schema.properties.inIntegers,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $NumericFilter<bigint>,
-          $NumericSchema<bigint>
-        >($numericSparqlWherePatterns<bigint>),
+          $NumericFilter<1n | 2n>,
+          $NumericSchema<1n | 2n>
+        >($numericSparqlWherePatterns<1n | 2n>),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -17926,7 +17952,7 @@ export namespace InPropertiesStruct {
         }),
         inDoubles: $shaclPropertyFromRdf<
           Maybe<1 | 2>,
-          $MaybeSchema<$NumericSchema<number>>
+          $MaybeSchema<$NumericSchema<1 | 2>>
         >({
           context: _$options.context,
           graph: _$options.graph,
@@ -17936,13 +17962,13 @@ export namespace InPropertiesStruct {
           propertySchema: schema.properties.inDoubles,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             1 | 2,
-            $NumericSchema<number>
+            $NumericSchema<1 | 2>
           >($floatFromRdfResourceValues<1 | 2>),
           objectSet: _$options.objectSet,
         }),
         inIntegers: $shaclPropertyFromRdf<
           Maybe<1n | 2n>,
-          $MaybeSchema<$NumericSchema<bigint>>
+          $MaybeSchema<$NumericSchema<1n | 2n>>
         >({
           context: _$options.context,
           graph: _$options.graph,
@@ -17952,7 +17978,7 @@ export namespace InPropertiesStruct {
           propertySchema: schema.properties.inIntegers,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             1n | 2n,
-            $NumericSchema<bigint>
+            $NumericSchema<1n | 2n>
           >($bigIntFromRdfResourceValues<1n | 2n>),
           objectSet: _$options.objectSet,
         }),
