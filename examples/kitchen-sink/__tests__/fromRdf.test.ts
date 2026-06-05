@@ -131,7 +131,7 @@ describe("fromRdf", () => {
         expectedInstance,
       );
     expect(
-      kitchenSink.ExplicitFromToRdfTypesStruct.fromRdfType.value,
+      kitchenSink.ExplicitFromToRdfTypesStruct.schema.fromRdfType.value,
     ).not.toStrictEqual("http://example.com/ExtraneousRdfType");
     const actualRdfTypeQuads = [
       ...actualResource.dataset.match(actualResource.identifier, rdf.type),
@@ -236,7 +236,7 @@ describe("fromRdf", () => {
       dataFactory.quad(
         identifier,
         rdf.type,
-        kitchenSink.InPropertiesStruct.fromRdfType,
+        kitchenSink.InPropertiesStruct.schema.fromRdfType,
       ),
     );
     dataset.add(
@@ -350,7 +350,7 @@ describe("fromRdf", () => {
       kitchenSink.IriIdentifierStruct.fromRdfResource(
         new ResourceSet({ dataFactory, dataset: datasetFactory.dataset() })
           .resource(dataFactory.namedNode("http://example.com/identifier"))
-          .add(rdf.type, kitchenSink.IriIdentifierStruct.fromRdfType),
+          .add(rdf.type, kitchenSink.IriIdentifierStruct.schema.fromRdfType),
       ).isRight(),
     ).toBe(true);
   });
@@ -364,7 +364,7 @@ describe("fromRdf", () => {
               "http://example.com/InIdentifierStructInstance1",
             ),
           )
-          .add(rdf.type, kitchenSink.InIdentifierStruct.fromRdfType),
+          .add(rdf.type, kitchenSink.InIdentifierStruct.schema.fromRdfType),
       ).isRight(),
     ).toBe(true);
   });
@@ -470,7 +470,7 @@ describe("fromRdf", () => {
       dataFactory.quad(
         dataFactory.namedNode("http://example.com/newSubType"),
         rdfs.subClassOf,
-        kitchenSink.ExplicitRdfTypeStruct.fromRdfType,
+        kitchenSink.ExplicitRdfTypeStruct.schema.fromRdfType,
       ),
     );
 

@@ -62,11 +62,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI." ;
     sh:property [
-        sh:maxCount 1 ;
-        sh:path :convertibleTermOption
-    ], [
-        sh:path :convertibleTermSet
-    ], [
         sh:minCount 1 ;
         sh:path :convertibleTermNonEmptySet
     ], [
@@ -105,6 +100,11 @@
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :convertibleTerm
+    ], [
+        sh:maxCount 1 ;
+        sh:path :convertibleTermOption
+    ], [
+        sh:path :convertibleTermSet
     ] .
 
 :DateUnionsStruct

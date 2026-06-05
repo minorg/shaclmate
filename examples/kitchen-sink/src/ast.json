@@ -495,15 +495,15 @@
       ],
       "properties": [
         {
-          "name": "convertibleTermOption",
+          "name": "convertibleTermNonEmptySet",
           "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTermOption)",
+          "path": "PredicatePath(http://example.com/convertibleTermNonEmptySet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_10"
           },
           "type": {
-            "kind": "Option",
+            "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
               "value": "df_0_10"
@@ -513,63 +513,6 @@
               "shapeIdentifier": {
                 "termType": "BlankNode",
                 "value": "df_0_10"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI",
-                "Literal"
-              ]
-            }
-          }
-        },
-        {
-          "name": "convertibleTermSet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTermSet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_11"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_11"
-            },
-            "itemType": {
-              "kind": "Term",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_11"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI",
-                "Literal"
-              ]
-            },
-            "minCount": 0
-          }
-        },
-        {
-          "name": "convertibleTermNonEmptySet",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/convertibleTermNonEmptySet)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_12"
-          },
-          "type": {
-            "kind": "Set",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_12"
-            },
-            "itemType": {
-              "kind": "Term",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_12"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -586,13 +529,13 @@
           "path": "PredicatePath(http://example.com/convertibleIri)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_13"
+            "value": "df_0_11"
           },
           "type": {
             "kind": "Iri",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_13"
+              "value": "df_0_11"
             },
             "nodeKinds": [
               "IRI"
@@ -605,19 +548,19 @@
           "path": "PredicatePath(http://example.com/convertibleIriOption)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_14"
+            "value": "df_0_12"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_14"
+              "value": "df_0_12"
             },
             "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_14"
+                "value": "df_0_12"
               },
               "nodeKinds": [
                 "IRI"
@@ -631,19 +574,19 @@
           "path": "PredicatePath(http://example.com/convertibleIriSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_15"
+            "value": "df_0_13"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_15"
+              "value": "df_0_13"
             },
             "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_15"
+                "value": "df_0_13"
               },
               "nodeKinds": [
                 "IRI"
@@ -658,19 +601,19 @@
           "path": "PredicatePath(http://example.com/convertibleIriNonEmptySet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_16"
+            "value": "df_0_14"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_16"
+              "value": "df_0_14"
             },
             "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_16"
+                "value": "df_0_14"
               },
               "nodeKinds": [
                 "IRI"
@@ -685,13 +628,13 @@
           "path": "PredicatePath(http://example.com/convertibleLiteral)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_17"
+            "value": "df_0_15"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_17"
+              "value": "df_0_15"
             },
             "nodeKinds": [
               "Literal"
@@ -704,19 +647,19 @@
           "path": "PredicatePath(http://example.com/convertibleLiteralOption)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_18"
+            "value": "df_0_16"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_18"
+              "value": "df_0_16"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_18"
+                "value": "df_0_16"
               },
               "nodeKinds": [
                 "Literal"
@@ -730,19 +673,19 @@
           "path": "PredicatePath(http://example.com/convertibleLiteralSet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_19"
+            "value": "df_0_17"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_19"
+              "value": "df_0_17"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_19"
+                "value": "df_0_17"
               },
               "nodeKinds": [
                 "Literal"
@@ -757,19 +700,19 @@
           "path": "PredicatePath(http://example.com/convertibleLiteralNonEmptySet)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_20"
+            "value": "df_0_18"
           },
           "type": {
             "kind": "Set",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_20"
+              "value": "df_0_18"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_20"
+                "value": "df_0_18"
               },
               "nodeKinds": [
                 "Literal"
@@ -784,19 +727,76 @@
           "path": "PredicatePath(http://example.com/convertibleTerm)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_21"
+            "value": "df_0_19"
           },
           "type": {
             "kind": "Term",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_21"
+              "value": "df_0_19"
             },
             "nodeKinds": [
               "BlankNode",
               "IRI",
               "Literal"
             ]
+          }
+        },
+        {
+          "name": "convertibleTermOption",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleTermOption)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_20"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_20"
+            },
+            "itemType": {
+              "kind": "Term",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_20"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI",
+                "Literal"
+              ]
+            }
+          }
+        },
+        {
+          "name": "convertibleTermSet",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/convertibleTermSet)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_21"
+          },
+          "type": {
+            "kind": "Set",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_21"
+            },
+            "itemType": {
+              "kind": "Term",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_21"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI",
+                "Literal"
+              ]
+            },
+            "minCount": 0
           }
         }
       ]

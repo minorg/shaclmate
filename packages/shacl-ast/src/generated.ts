@@ -1602,7 +1602,7 @@ export namespace NodeShape {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [NodeShape.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [NodeShape.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -2246,15 +2246,12 @@ export namespace NodeShape {
         .chain((resource) => NodeShape.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#NodeShape",
-  );
-
   export function isNodeShape(object: $Object): object is NodeShape {
     return object.$type === "NodeShape";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -3161,7 +3158,7 @@ export namespace Ontology {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [Ontology.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [Ontology.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -3230,15 +3227,14 @@ export namespace Ontology {
         .chain((resource) => Ontology.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/2002/07/owl#Ontology",
-  );
-
   export function isOntology(object: $Object): object is Ontology {
     return object.$type === "Ontology";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://www.w3.org/2002/07/owl#Ontology",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -3378,9 +3374,11 @@ export namespace PropertyGroup {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [PropertyGroup.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [PropertyGroup.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -3447,15 +3445,14 @@ export namespace PropertyGroup {
         .chain((resource) => PropertyGroup.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#PropertyGroup",
-  );
-
   export function isPropertyGroup(object: $Object): object is PropertyGroup {
     return object.$type === "PropertyGroup";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://www.w3.org/ns/shacl#PropertyGroup",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -4382,9 +4379,11 @@ export namespace PropertyShape {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [PropertyShape.fromRdfType], {
-            graph: _$options.graph,
-          })
+        ? $ensureRdfResourceType(
+            $resource,
+            [PropertyShape.schema.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -5198,15 +5197,14 @@ export namespace PropertyShape {
         .chain((resource) => PropertyShape.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#PropertyShape",
-  );
-
   export function isPropertyShape(object: $Object): object is PropertyShape {
     return object.$type === "PropertyShape";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://www.w3.org/ns/shacl#PropertyShape",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",

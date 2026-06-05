@@ -803,13 +803,16 @@ function $sequenceRecord<T extends Record<string, unknown>>(
 
 function $setFromRdfResourceValues<ItemT, ItemSchemaT>(
   itemFromRdfResourceValues: $FromRdfResourceValuesFunction<ItemT, ItemSchemaT>,
-): $FromRdfResourceValuesFunction<ItemT[], $CollectionSchema<ItemSchemaT>> {
+): $FromRdfResourceValuesFunction<
+  readonly ItemT[],
+  $CollectionSchema<ItemSchemaT>
+> {
   return (values, options) =>
     itemFromRdfResourceValues(values, {
       ...options,
       schema: options.schema.itemType,
     })
-      .map((values) => values.toArray().concat())
+      .map((values) => values.toArray())
       .map((valuesArray) =>
         Resource.Values.fromValue({
           focusResource: options.focusResource,
@@ -918,16 +921,28 @@ const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
 
   if (preferredLanguages && preferredLanguages.length > 0) {
     chain = chain.chain((values) => {
+      const literals: Literal[] = [];
+      const literalValues: Resource.Value[] = [];
+      const nonLiteralValues: Resource.Value[] = [];
+
+      for (const value of values) {
+        const term = value.toTerm().unsafeCoerce();
+        if (term.termType === "Literal") {
+          literals.push(term);
+          literalValues.push(value);
+        } else {
+          nonLiteralValues.push(value);
+        }
+      }
+
       // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
       // Within a preferredLanguage the literals may be in any order.
-      const filteredValues: Resource.Value[] = [];
+      const preferredLanguageLiteralValues: Resource.Value[] = [];
       for (const preferredLanguage of preferredLanguages) {
-        for (const value of values) {
-          value.toLiteral().ifRight((literal) => {
-            if (literal.language === preferredLanguage) {
-              filteredValues.push(value);
-            }
-          });
+        for (let literalI = 0; literalI < literals.length; literalI++) {
+          if (literals[literalI].language === preferredLanguage) {
+            preferredLanguageLiteralValues.push(literalValues[literalI]);
+          }
         }
       }
 
@@ -935,7 +950,7 @@ const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
         Resource.Values.fromArray({
           focusResource: values.focusResource,
           propertyPath: values.propertyPath,
-          values: filteredValues,
+          values: nonLiteralValues.concat(preferredLanguageLiteralValues),
         }),
       );
     });
@@ -1334,7 +1349,7 @@ export namespace NestedObject {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [NestedObject.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [NestedObject.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -1419,15 +1434,12 @@ export namespace NestedObject {
         .chain((resource) => NestedObject.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/NestedObject",
-  );
-
   export function isNestedObject(object: $Object): object is NestedObject {
     return object.$type === "NestedObject";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/NestedObject"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -1757,7 +1769,7 @@ export namespace RootObject {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [RootObject.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [RootObject.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -1931,15 +1943,12 @@ export namespace RootObject {
         .chain((resource) => RootObject.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RootObject",
-  );
-
   export function isRootObject(object: $Object): object is RootObject {
     return object.$type === "RootObject";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/RootObject"),
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
       lazyObjectSetProperty: {
@@ -2194,7 +2203,7 @@ export namespace UnionMember1 {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [UnionMember1.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [UnionMember1.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -2250,15 +2259,12 @@ export namespace UnionMember1 {
         .chain((resource) => UnionMember1.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember1",
-  );
-
   export function isUnionMember1(object: $Object): object is UnionMember1 {
     return object.$type === "UnionMember1";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember1"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -2423,7 +2429,7 @@ export namespace UnionMember2 {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [UnionMember2.fromRdfType], {
+        ? $ensureRdfResourceType($resource, [UnionMember2.schema.fromRdfType], {
             graph: _$options.graph,
           })
         : Right(true as const)
@@ -2479,15 +2485,12 @@ export namespace UnionMember2 {
         .chain((resource) => UnionMember2.fromRdfResource(resource, options)),
     );
 
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember2",
-  );
-
   export function isUnionMember2(object: $Object): object is UnionMember2 {
     return object.$type === "UnionMember2";
   }
 
   export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember2"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -3156,7 +3159,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: NestedObject.filter,
         fromRdfResource: NestedObject.fromRdfResource,
-        fromRdfTypes: [NestedObject.fromRdfType],
+        fromRdfTypes: [NestedObject.schema.fromRdfType],
       },
       query,
     );
@@ -3228,7 +3231,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: RootObject.filter,
         fromRdfResource: RootObject.fromRdfResource,
-        fromRdfTypes: [RootObject.fromRdfType],
+        fromRdfTypes: [RootObject.schema.fromRdfType],
       },
       query,
     );
@@ -3300,7 +3303,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: UnionMember1.filter,
         fromRdfResource: UnionMember1.fromRdfResource,
-        fromRdfTypes: [UnionMember1.fromRdfType],
+        fromRdfTypes: [UnionMember1.schema.fromRdfType],
       },
       query,
     );
@@ -3372,7 +3375,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: UnionMember2.filter,
         fromRdfResource: UnionMember2.fromRdfResource,
-        fromRdfTypes: [UnionMember2.fromRdfType],
+        fromRdfTypes: [UnionMember2.schema.fromRdfType],
       },
       query,
     );
@@ -3435,12 +3438,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: Union.filter,
           fromRdfResource: UnionMember1.fromRdfResource,
-          fromRdfTypes: [UnionMember1.fromRdfType],
+          fromRdfTypes: [UnionMember1.schema.fromRdfType],
         },
         {
           filter: Union.filter,
           fromRdfResource: UnionMember2.fromRdfResource,
-          fromRdfTypes: [UnionMember2.fromRdfType],
+          fromRdfTypes: [UnionMember2.schema.fromRdfType],
         },
       ],
       query,
@@ -3510,22 +3513,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: $Object.filter,
           fromRdfResource: NestedObject.fromRdfResource,
-          fromRdfTypes: [NestedObject.fromRdfType],
+          fromRdfTypes: [NestedObject.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: RootObject.fromRdfResource,
-          fromRdfTypes: [RootObject.fromRdfType],
+          fromRdfTypes: [RootObject.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: UnionMember1.fromRdfResource,
-          fromRdfTypes: [UnionMember1.fromRdfType],
+          fromRdfTypes: [UnionMember1.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
           fromRdfResource: UnionMember2.fromRdfResource,
-          fromRdfTypes: [UnionMember2.fromRdfType],
+          fromRdfTypes: [UnionMember2.schema.fromRdfType],
         },
       ],
       query,
