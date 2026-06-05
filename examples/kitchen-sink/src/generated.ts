@@ -2153,7 +2153,7 @@ function $mutableListFromRdfResourceValues<ItemT, ItemSchemaT>(
 function $mutableSetFromRdfResourceValues<ItemT, ItemSchemaT>(
   itemFromRdfResourceValues: $FromRdfResourceValuesFunction<ItemT, ItemSchemaT>,
 ): $FromRdfResourceValuesFunction<ItemT[], $CollectionSchema<ItemSchemaT>> {
-  const immutableSetFromRdfResourceValues = $listFromRdfResourceValues(
+  const immutableSetFromRdfResourceValues = $setFromRdfResourceValues(
     itemFromRdfResourceValues,
   );
   return (values, options) =>
