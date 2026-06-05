@@ -70,7 +70,9 @@ export function transformShapeToAstListType(
         itemType: astListTypePlaceholderItemType,
         label: nodeShape.label,
         mutable: nodeShape.mutable.orDefault(false),
-        name: shapeAstTypeName(nodeShape),
+        // name: shapeAstTypeName(nodeShape),
+        // List types don't need names currently
+        name: Maybe.empty(),
         shapeIdentifier: nodeShape.$identifier(),
         toRdfTypes: nodeShape.toRdfTypes,
       });
