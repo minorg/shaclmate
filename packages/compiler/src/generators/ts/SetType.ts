@@ -126,22 +126,6 @@ export class SetType<
     )})))`;
   }
 
-  // override fromRdfResourceValuesExpression(
-  //   parameters: Parameters<
-  //     AbstractCollectionType<ItemTypeT>["fromRdfResourceValuesExpression"]
-  //   >[0],
-  // ): Code {
-  //   const { variables } = parameters;
-  //   return joinCode(
-  //     [
-  //       this.itemType.fromRdfResourceValuesExpression(parameters),
-  //       code`map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,
-  //       code`map(valuesArray => ${this.reusables.imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: valuesArray }))`,
-  //     ],
-  //     { on: "." },
-  //   );
-  // }
-
   override jsonSchema(
     parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
   ): Code {

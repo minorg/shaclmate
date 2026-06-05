@@ -64,18 +64,6 @@ export class DefaultValueType<
     return this.itemType.filterType;
   }
 
-  // override fromRdfResourceValuesExpression({
-  //   variables,
-  // }: Parameters<
-  //   AbstractContainerType<ItemTypeT>["fromRdfResourceValuesExpression"]
-  // >[0]): Code {
-  //   return this.itemType.fromRdfResourceValuesExpression({
-  //     variables: {
-  //       ...variables,
-  //       resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.resource, propertyPath: variables.propertyPath, term: this.rdfjsTermExpression(this.defaultValue) }}).toValues())`,
-  //     },
-  //   });
-  // }
   @Memoize()
   override get fromRdfResourceValuesFunction(): Code {
     return code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;

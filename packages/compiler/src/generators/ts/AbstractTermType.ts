@@ -101,28 +101,6 @@ export abstract class AbstractTermType<
     return initializers;
   }
 
-  // override fromRdfResourceValuesExpression(
-  //   parameters: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0],
-  // ): Code {
-  //   // invariant(
-  //   //   this.nodeKinds.has("Literal") &&
-  //   //     (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
-  //   //   "IdentifierType and LiteralType should override",
-  //   // );
-
-  //   const chain = this.fromRdfResourceValuesExpressionChain(parameters);
-  //   const { variables } = parameters;
-  //   return joinCode(
-  //     [
-  //       variables.resourceValues,
-  //       chain.hasValues,
-  //       chain.languageIn,
-  //       chain.preferredLanguages,
-  //       chain.valueTo,
-  //     ].filter((_) => _ !== undefined),
-  //     { on: "." },
-  //   );
-  // }
   override jsonUiSchemaElement(): Maybe<Code> {
     return Maybe.empty();
   }

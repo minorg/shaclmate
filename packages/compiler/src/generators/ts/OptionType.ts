@@ -126,15 +126,6 @@ export class OptionType<
     return code`${expression}.map(item => (${itemFromJsonExpression}).map(${this.reusables.imports.Maybe}.of)).orDefault(${this.reusables.imports.Either}.of(${this.reusables.imports.Maybe}.empty()))`;
   }
 
-  // override fromRdfResourceValuesExpression(
-  //   parameters: Parameters<
-  //     AbstractContainerType<ItemTypeT>["fromRdfResourceValuesExpression"]
-  //   >[0],
-  // ): Code {
-  //   const { variables } = parameters;
-  //   return code`${this.itemType.fromRdfResourceValuesExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${this.reusables.imports.Maybe}.of(value)) : ${this.reusables.imports.Resource}.Values.fromValue<${this.reusables.imports.Maybe}<${this.itemType.expression}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${this.reusables.imports.Maybe}.empty() }))`;
-  // }
-
   override graphqlResolveExpression(
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["graphqlResolveExpression"]

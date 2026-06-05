@@ -27,24 +27,6 @@ export abstract class AbstractLiteralType extends AbstractTermType<
    * For example, a string would be converted to "thestring".
    */
   abstract literalValueExpression(literal: Literal): Code;
-
-  // protected override fromRdfResourceValuesExpressionChain({
-  //   variables,
-  // }: Parameters<
-  //   AbstractTermType<Literal, Literal>["fromRdfResourceValuesExpressionChain"]
-  // >[0]): ReturnType<
-  //   AbstractTermType<Literal, Literal>["fromRdfResourceValuesExpressionChain"]
-  // > {
-  //   return {
-  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
-  //     languageIn:
-  //       this.languageIn.length > 0
-  //         ? code`chain(values => ${this.reusables.snippets.fromRdfLanguageIn}(values, ${JSON.stringify(this.languageIn)}))`
-  //         : undefined,
-  //     preferredLanguages: code`chain(values => ${this.reusables.snippets.fromRdfPreferredLanguages}(values, ${variables.preferredLanguages}))`,
-  //     valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,
-  //   };
-  // }
 }
 
 export namespace AbstractLiteralType {

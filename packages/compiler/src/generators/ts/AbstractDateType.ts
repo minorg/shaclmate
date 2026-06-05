@@ -41,25 +41,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.date(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
-
-  // protected override fromRdfResourceValuesExpressionChain({
-  //   variables,
-  // }: Parameters<
-  //   AbstractPrimitiveType<Date>["fromRdfResourceValuesExpressionChain"]
-  // >[0]): ReturnType<
-  //   AbstractPrimitiveType<Date>["fromRdfResourceValuesExpressionChain"]
-  // > {
-  //   return {
-  //     ...super.fromRdfResourceValuesExpressionChain({ variables }),
-  //     languageIn: undefined,
-  //     preferredLanguages: undefined,
-  //     valueTo: code`chain(values => values.chainMap(value => ${this.fromRdfResourceValueExpression(
-  //       {
-  //         variables: { value: code`value` },
-  //       },
-  //     )}))`,
-  //   };
-  // }
 }
 
 export namespace AbstractDateType {
