@@ -24,7 +24,8 @@ import { ObjectType_jsonSchemaExpression } from "./_ObjectType/ObjectType_jsonSc
 import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonTypeExpression.js";
 import { ObjectType_jsonUiSchemaFunctionExpression } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionExpression.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
-import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
+import { ObjectType_schemaExpression } from "./_ObjectType/ObjectType_schemaExpression.js";
+import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schemaTypeExpression.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_toJsonFunctionDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionDeclaration.js";
@@ -213,10 +214,12 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
         );
       }
 
-      //   ...ObjectType_jsonParseFunctionDeclaration.call(this).toList(),
-      //   ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
-      //   ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
-      // ];
+      if (this.configuration.features.has("Object.schema")) {
+        staticModuleDeclarations.push(
+          code`export const schema = ${ObjectType_schemaExpression};`,
+          code`export type Schema = typeof schema;`,
+        );
+      }
 
       if (this.configuration.features.has("Object.toString")) {
         staticModuleDeclarations.push(
@@ -236,7 +239,6 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
         ).toList(),
         ...ObjectType_fromJsonFunctionDeclaration.call(this).toList(),
         ...ObjectType_isTypeFunctionDeclaration.call(this).toList(),
-        ...ObjectType_schemaVariableStatement.call(this).toList(),
         ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
           name,
           configuration: this.configuration,
@@ -367,12 +369,16 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get schema(): Code {
-    return code`${this.name.unsafeCoerce()}.schema`;
+    return this.name
+      .map((name) => code`${name}.schema`)
+      .orDefault(ObjectType_schemaExpression.call(this));
   }
 
   @Memoize()
   override get schemaType(): Code {
-    return code`typeof ${this.schema}`;
+    return this.name
+      .map((name) => code`${name}.Schema`)
+      .orDefault(ObjectType_schemaTypeExpression.call(this));
   }
 
   @Memoize()

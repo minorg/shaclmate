@@ -1,12 +1,11 @@
-import { Maybe } from "purify-ts";
+import type { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
-import { Memoize } from "typescript-memoize";
 
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
-import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 
 export abstract class AbstractProperty<
   TypeT extends Pick<
@@ -96,6 +95,16 @@ export abstract class AbstractProperty<
   abstract readonly recursive: boolean;
 
   /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  abstract readonly schema: Maybe<Code>;
+
+  /**
+   * TypeScript type describing .schema.
+   */
+  abstract readonly schemaType: Maybe<Code>;
+
+  /**
    * Property type
 .   */
   readonly type: TypeT;
@@ -126,23 +135,6 @@ export abstract class AbstractProperty<
       logger: this.logger,
       snippets: this.reusables.snippets,
     });
-  }
-
-  /**
-   * TypeScript object describing this type, for runtime use.
-   */
-  @Memoize()
-  get schema(): Maybe<Code> {
-    return Maybe.of(
-      code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`,
-    );
-  }
-
-  /**
-   * Helper to compose the result of schema along the type hierarchy.
-   */
-  protected get schemaInitializers(): readonly Code[] {
-    return [code`kind: ${literalOf(this.kind)}`];
   }
 
   /**

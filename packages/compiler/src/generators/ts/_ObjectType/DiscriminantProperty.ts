@@ -21,6 +21,8 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override readonly kind = "Discriminant";
   override readonly mutable = false;
   override readonly recursive = false;
+  override readonly schema: Maybe<Code> = Maybe.empty();
+  override readonly schemaType: Maybe<Code> = Maybe.empty();
   readonly value: string;
 
   constructor({
@@ -41,18 +43,11 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     });
   }
 
-  override get schema(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
   @Memoize()
   get values(): readonly string[] {
     return [this.value];
   }
 
-  // protected override get schemaInitializers(): readonly Code[] {
-  //   return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
-  // }
   private get constValue(): Code {
     return code`${literalOf(this.value)} as const`;
   }

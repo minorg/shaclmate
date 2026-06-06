@@ -101,8 +101,25 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(code`readonly "@id": string`);
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
+  override get schema(): Maybe<Code> {
+    return Maybe.of(
+      code`{ ${joinCode(
+        [code`kind: ${literalOf(this.kind)}`, code`type: ${this.type.schema}`],
+        { on: ", " },
+      )} }`,
+    );
+  }
+
+  override get schemaType(): Maybe<Code> {
+    return Maybe.of(
+      code`{ ${joinCode(
+        [
+          code`readonly kind: ${literalOf(this.kind)}`,
+          code`readonly type: ${this.type.schemaType}`,
+        ],
+        { on: ", " },
+      )} }`,
+    );
   }
 
   @Memoize()

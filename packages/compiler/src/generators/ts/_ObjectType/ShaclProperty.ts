@@ -141,8 +141,8 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     );
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    const initializers = super.schemaInitializers.concat();
+  override get schema(): Maybe<Code> {
+    const initializers = [code`kind: ${literalOf(this.kind)}`];
     if (
       this.configuration.features.has("Object.fromRdf") ||
       this.configuration.features.has("Object.toRdf")
@@ -155,7 +155,21 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     } else {
       initializers.push(code`type: ${this.type.schema}`);
     }
-    return initializers;
+    return Maybe.of(code`{ ${joinCode(initializers, { on: ", " })} }`);
+  }
+
+  override get schemaType(): Maybe<Code> {
+    const initializers = [code`readonly kind: ${literalOf(this.kind)}`];
+    if (
+      this.configuration.features.has("Object.fromRdf") ||
+      this.configuration.features.has("Object.toRdf")
+    ) {
+      initializers.push(
+        code`readonly path: ${this.reusables.snippets.PropertyPath}`,
+      );
+    }
+    initializers.push(code`readonly type: ${this.type.schemaType}`);
+    return Maybe.of(code`{ ${joinCode(initializers, { on: ", " })} }`);
   }
 
   override constructorInitializer({
