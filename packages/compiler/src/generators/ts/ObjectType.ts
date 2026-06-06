@@ -22,7 +22,7 @@ import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hash
 import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
 import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
 import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
-import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
+import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonTypeExpression.js";
 import { ObjectType_jsonUiSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionDeclaration.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
@@ -164,6 +164,12 @@ export class ObjectType extends AbstractType {
         );
       }
 
+      if (this.configuration.features.has("Object.JSON.type")) {
+        staticModuleDeclarations.push(
+          code`export type Json = ${ObjectType_jsonTypeExpression.call(this)}`,
+        );
+      }
+
       const jsonModuleDeclarations: Code[] = [
         ...ObjectType_jsonParseFunctionDeclaration.call(this).toList(),
         ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
@@ -182,7 +188,6 @@ export class ObjectType extends AbstractType {
       staticModuleDeclarations.push(
         ...ObjectType_graphqlTypeVariableStatement.call(this).toList(),
         ...identifierTypeDeclarations.call(this),
-        ...ObjectType_jsonTypeAliasDeclaration.call(this).toList(),
         ...(jsonModuleDeclarations.length > 0
           ? [
               code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
@@ -386,7 +391,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override jsonType(): AbstractType.JsonType {
-    return new AbstractType.JsonType(code`${this.name.unsafeCoerce()}.Json`);
+    return new AbstractType.JsonType(
+      this.name
+        .map((name) => code`${name}.Json`)
+        .orDefault(ObjectType_jsonTypeExpression.call(this)),
+    );
   }
 
   override jsonUiSchemaElement({
