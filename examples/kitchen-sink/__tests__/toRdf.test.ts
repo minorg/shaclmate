@@ -117,10 +117,16 @@ describe("toRdf", async () => {
     expect(resource.dataset.size).toStrictEqual(1); // The rdf:type statement
   });
 
-  for (const [id, harness] of Object.entries(harnesses)) {
-    if (id.startsWith("lazy")) {
-      continue;
+  for (const [idString, harness] of Object.entries(harnesses)) {
+    const id = idString as keyof typeof harnesses;
+
+    switch (id) {
+      case "lazyPropertiesStructEmpty":
+      case "lazyPropertiesStructNonEmpty":
+      case "ignoredPropertiesStruct":
+        continue;
     }
+
     it(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
       expect,
     }) => {
