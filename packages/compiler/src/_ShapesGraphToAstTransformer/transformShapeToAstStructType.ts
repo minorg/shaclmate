@@ -82,10 +82,6 @@ export function transformShapeToAstStructType(
         // A node shape must have sh:property to be considered a StructType
         return Either.of(Maybe.empty());
       }
-
-      if (nodeShape.$identifier().termType !== "NamedNode") {
-        return Either.of(Maybe.empty());
-      }
     } // else assume all extern node shapes are structs
 
     return Eithers.chain2(
