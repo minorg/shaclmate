@@ -313,8 +313,10 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
-    return this.fromRdfType.map(
-      () => code`${this.name.unsafeCoerce()}.schema.fromRdfType`,
+    return this.fromRdfType.map((fromRdfType) =>
+      this.name
+        .map((name) => code`${name}.schema.fromRdfType`)
+        .orDefault(this.rdfjsTermExpression(fromRdfType)),
     );
   }
 
