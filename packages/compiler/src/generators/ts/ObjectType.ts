@@ -10,7 +10,7 @@ import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/Identif
 import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";
 import { ObjectType_createFunctionDeclaration } from "./_ObjectType/ObjectType_createFunctionDeclaration.js";
 import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
-import { ObjectType_filterFunctionDeclaration } from "./_ObjectType/ObjectType_filterFunctionDeclaration.js";
+import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunctionExpression.js";
 import { ObjectType_filterTypeDeclaration } from "./_ObjectType/ObjectType_filterTypeDeclaration.js";
 import { ObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
 import { ObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionDeclaration.js";
@@ -149,6 +149,12 @@ export class ObjectType extends AbstractType {
         );
       }
 
+      if (this.configuration.features.has("Object.filter")) {
+        staticModuleDeclarations.push(
+          code`export const filter = ${ObjectType_filterFunctionExpression.call(this)};`,
+        );
+      }
+
       if (this.configuration.features.has("Object.hash")) {
         staticModuleDeclarations.push(
           code`export const hash = ${ObjectType_hashFunctionExpression.call(this)};`,
@@ -170,7 +176,6 @@ export class ObjectType extends AbstractType {
               code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
             ]
           : []),
-        ...ObjectType_filterFunctionDeclaration.call(this).toList(),
         ...ObjectType_filterTypeDeclaration.call(this).toList(),
         ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.call(
           this,
@@ -239,7 +244,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   get filterFunction(): Code {
-    return code`${this.name.unsafeCoerce()}.filter`;
+    return this.name
+      .map((name) => code`${name}.filter`)
+      .orDefault(ObjectType_filterFunctionExpression.call(this));
   }
 
   @Memoize()
