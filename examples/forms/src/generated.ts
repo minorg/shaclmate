@@ -1,18 +1,8 @@
 import datasetFactory from "@rdfjs/dataset";
-import type {
-  BlankNode,
-  Literal,
-  NamedNode,
-  Quad_Graph,
-  Variable,
-} from "@rdfjs/types";
+import type { BlankNode, NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
-import {
-  PropertyPath as RdfxResourcePropertyPath,
-  type Resource,
-  ResourceSet,
-} from "@rdfx/resource";
+import { type Resource, ResourceSet } from "@rdfx/resource";
 import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
 import { Either, Left, Maybe, Right } from "purify-ts";
 import { z } from "zod";
@@ -54,6 +44,19 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
 type $ConversionFunction<SourceT, TargetT> = (
   source: SourceT,
 ) => Either<Error, TargetT>;
+
+function $convertToIdentifier(
+  value: BlankNode | NamedNode | string | undefined,
+): Either<Error, BlankNode | NamedNode> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "string":
+      return Either.of(dataFactory.namedNode(value));
+    case "undefined":
+      return Either.of(dataFactory.blankNode());
+  }
+}
 
 function $convertToIdentifierProperty(
   identifier:
@@ -182,104 +185,71 @@ function $monkeyPatchObject<T extends object>(
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
-export type $PropertyPath = RdfxResourcePropertyPath;
-
-export namespace $PropertyPath {
-  export const schema: Readonly<object> = {};
-
-  export const toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
-    RdfxResourcePropertyPath.toResource;
-
-  export const $toString = RdfxResourcePropertyPath.toString;
-}
-
 namespace $RdfVocabularies {
-  export namespace rdf {
-    export const first = dataFactory.namedNode(
+  export const rdf = {
+    first: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    );
-    export const nil = dataFactory.namedNode(
+    ),
+    nil: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    );
-    export const rest = dataFactory.namedNode(
+    ),
+    rest: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    );
-    export const subject = dataFactory.namedNode(
+    ),
+    subject: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    );
-    export const type = dataFactory.namedNode(
+    ),
+    type: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    );
-  }
+    ),
+  };
 
-  export namespace rdfs {
-    export const subClassOf = dataFactory.namedNode(
+  export const rdfs = {
+    subClassOf: dataFactory.namedNode(
       "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    );
-  }
+    ),
+  };
 
-  export namespace xsd {
-    export const boolean = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#boolean",
-    );
-    export const byte = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#byte",
-    );
-    export const date = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#date",
-    );
-    export const dateTime = dataFactory.namedNode(
+  export const xsd = {
+    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
+    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
+    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
+    dateTime: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
-    );
-    export const decimal = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#decimal",
-    );
-    export const double = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#double",
-    );
-    export const float = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#float",
-    );
-    export const int = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#int",
-    );
-    export const integer = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#integer",
-    );
-    export const long = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#long",
-    );
-    export const negativeInteger = dataFactory.namedNode(
+    ),
+    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
+    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
+    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
+    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
+    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
+    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
+    negativeInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    );
-    export const nonNegativeInteger = dataFactory.namedNode(
+    ),
+    nonNegativeInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    );
-    export const nonPositiveInteger = dataFactory.namedNode(
+    ),
+    nonPositiveInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    );
-    export const positiveInteger = dataFactory.namedNode(
+    ),
+    positiveInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    );
-    export const short = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#short",
-    );
-    export const string = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#string",
-    );
-    export const unsignedByte = dataFactory.namedNode(
+    ),
+    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
+    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
+    unsignedByte: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    );
-    export const unsignedInt = dataFactory.namedNode(
+    ),
+    unsignedInt: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    );
-    export const unsignedLong = dataFactory.namedNode(
+    ),
+    unsignedLong: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    );
-    export const unsignedShort = dataFactory.namedNode(
+    ),
+    unsignedShort: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    );
-  }
+    ),
+  };
 }
 
 function $sequenceRecord<T extends Record<string, unknown>>(
@@ -309,23 +279,6 @@ export type $ToRdfResourceFunction<
     resourceSet?: ResourceSet;
   },
 ) => Resource<IdentifierT>;
-
-export type $ToRdfResourceValuesFunction<
-  ValueT,
-  ReturnT extends BlankNode | Literal | NamedNode =
-    | BlankNode
-    | Literal
-    | NamedNode,
-> = (
-  value: ValueT,
-  options: {
-    graph?: Exclude<Quad_Graph, Variable>;
-    ignoreRdfType?: boolean;
-    propertyPath: $PropertyPath;
-    resource: Resource;
-    resourceSet: ResourceSet;
-  },
-) => ReturnT[];
 
 function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
@@ -409,7 +362,7 @@ export interface FormStruct {
   /**
    * Nested object
    */
-  readonly nestedStructProperty: NestedStruct;
+  readonly nestedStructProperty: BlankNode | NamedNode;
 
   /**
    * Non-empty string set
@@ -440,7 +393,7 @@ export namespace FormStruct {
       | NamedNode
       | string;
     readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: NestedStruct;
+    readonly nestedStructProperty?: BlankNode | NamedNode | string;
     readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
@@ -457,7 +410,9 @@ export namespace FormStruct {
           value,
         ),
       ),
-      nestedStructProperty: Either.of(parameters.nestedStructProperty),
+      nestedStructProperty: $convertToIdentifier(
+        parameters.nestedStructProperty,
+      ),
       nonEmptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
@@ -489,7 +444,7 @@ export namespace FormStruct {
       | NamedNode
       | string;
     readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: NestedStruct;
+    readonly nestedStructProperty?: BlankNode | NamedNode | string;
     readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
@@ -509,7 +464,7 @@ export namespace FormStruct {
     readonly "@id": string;
     readonly "@type": "FormStruct";
     readonly emptyStringSetProperty?: readonly string[];
-    readonly nestedStructProperty: NestedStruct.Json;
+    readonly nestedStructProperty: { readonly "@id": string };
     readonly nonEmptyStringSetProperty: readonly string[];
     readonly optionalStringProperty?: string;
     readonly requiredIntProperty: number;
@@ -536,9 +491,9 @@ export namespace FormStruct {
             .optional()
             .readonly()
             .meta({ title: "Empty string set" }),
-          nestedStructProperty: NestedStruct.Json.schema().meta({
-            title: "Nested object",
-          }),
+          nestedStructProperty: z
+            .object({ "@id": z.string().min(1) })
+            .meta({ title: "Nested object" }),
           nonEmptyStringSetProperty: z
             .string()
             .array()
@@ -583,9 +538,11 @@ export namespace FormStruct {
             scope: `${scopePrefix}/properties/emptyStringSetProperty`,
             type: "Control",
           },
-          NestedStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/nestedStructProperty`,
-          }),
+          {
+            label: "Nested object",
+            scope: `${scopePrefix}/properties/nestedStructProperty`,
+            type: "Control",
+          },
           {
             label: "Non-empty string set",
             scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
@@ -625,8 +582,12 @@ export namespace FormStruct {
           Either.of<Error, string>(item),
         ),
       ),
-      nestedStructProperty: NestedStruct.fromJson(
-        $json["nestedStructProperty"],
+      nestedStructProperty: Either.of<Error, BlankNode | NamedNode>(
+        $json["nestedStructProperty"]["@id"].startsWith("_:")
+          ? dataFactory.blankNode(
+              $json["nestedStructProperty"]["@id"].substring(2),
+            )
+          : dataFactory.namedNode($json["nestedStructProperty"]["@id"]),
       ),
       nonEmptyStringSetProperty: Either.sequence<Error, string>(
         $json["nonEmptyStringSetProperty"].map((item) =>
@@ -667,9 +628,7 @@ export namespace FormStruct {
       nestedStructProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nestedStructProperty"),
-        get type() {
-          return NestedStruct.schema;
-        },
+        type: { kind: "Identifier" as const },
       },
       nonEmptyStringSetProperty: {
         kind: "Shacl",
@@ -718,9 +677,10 @@ export namespace FormStruct {
         emptyStringSetProperty: _formStruct.emptyStringSetProperty.map(
           (item) => item,
         ),
-        nestedStructProperty: NestedStruct.toJson(
-          _formStruct.nestedStructProperty,
-        ),
+        nestedStructProperty:
+          _formStruct.nestedStructProperty.termType === "BlankNode"
+            ? { "@id": `_:${_formStruct.nestedStructProperty.value}` }
+            : { "@id": _formStruct.nestedStructProperty.value },
         nonEmptyStringSetProperty: _formStruct.nonEmptyStringSetProperty.map(
           (item) => item,
         ),
@@ -746,12 +706,7 @@ export namespace FormStruct {
     );
     parameters.resource.add(
       FormStruct.schema.properties.nestedStructProperty.path,
-      [
-        NestedStruct.toRdfResource(parameters.object.nestedStructProperty, {
-          graph: parameters.graph,
-          resourceSet: parameters.resourceSet,
-        }).identifier,
-      ],
+      [parameters.object.nestedStructProperty],
       parameters.graph,
     );
     parameters.resource.add(
@@ -800,307 +755,4 @@ export namespace FormStruct {
     return `FormStruct(${JSON.stringify(_propertiesToStrings(_formStruct))})`;
   }
 }
-export interface NestedStruct {
-  readonly $identifier: () => NestedStruct.Identifier;
-
-  readonly $type: "NestedStruct";
-
-  /**
-   * Required string
-   */
-  readonly requiredStringProperty: string;
-}
-
-export namespace NestedStruct {
-  export function create(parameters: {
-    readonly $identifier?:
-      | (() => NestedStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly requiredStringProperty: string;
-  }): Either<Error, NestedStruct> {
-    return $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    })
-      .map((properties) => ({ ...properties, $type: "NestedStruct" as const }))
-      .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
-  }
-
-  export function createUnsafe(parameters: {
-    readonly $identifier?:
-      | (() => NestedStruct.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly requiredStringProperty: string;
-  }): NestedStruct {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export type Identifier = BlankNode | NamedNode;
-
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly "@type": "NestedStruct";
-    readonly requiredStringProperty: string;
-  };
-
-  export namespace Json {
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("NestedStruct"),
-          requiredStringProperty: z.string().meta({ title: "Required string" }),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "NestedStruct" as const },
-                scope: `${scopePrefix}/properties/@type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/@type`,
-            type: "Control",
-          },
-          {
-            label: "Required string",
-            scope: `${scopePrefix}/properties/requiredStringProperty`,
-            type: "Control",
-          },
-        ],
-        label: "NestedStruct",
-        type: "Group",
-      };
-    }
-  }
-
-  export function fromJson(
-    $json: NestedStruct.Json,
-  ): Either<Error, NestedStruct> {
-    return $sequenceRecord({
-      $identifier: Either.of<Error, BlankNode | NamedNode>(
-        $json["@id"].startsWith("_:")
-          ? dataFactory.blankNode($json["@id"].substring(2))
-          : dataFactory.namedNode($json["@id"]),
-      ),
-      requiredStringProperty: Either.of<Error, string>(
-        $json["requiredStringProperty"],
-      ),
-    }).chain(create);
-  }
-
-  export function isNestedStruct(object: $Object): object is NestedStruct {
-    return object.$type === "NestedStruct";
-  }
-
-  export const schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
-      requiredStringProperty: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/requiredStringProperty",
-        ),
-        type: { kind: "String" as const },
-      },
-    },
-  } as const;
-
-  export function toJson(_nestedStruct: NestedStruct): NestedStruct.Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _nestedStruct.$identifier().termType === "BlankNode"
-            ? `_:${_nestedStruct.$identifier().value}`
-            : _nestedStruct.$identifier().value,
-        "@type": _nestedStruct.$type,
-        requiredStringProperty: _nestedStruct.requiredStringProperty,
-      } satisfies NestedStruct.Json),
-    );
-  }
-
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    NestedStruct.Identifier,
-    NestedStruct
-  > = (parameters) => {
-    parameters.resource.add(
-      NestedStruct.schema.properties.requiredStringProperty.path,
-      [$literalFactory.string(parameters.object.requiredStringProperty)],
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export function _propertiesToStrings(
-    _nestedStruct: NestedStruct,
-  ): Record<string, string> {
-    return $compactRecord({
-      $identifier: _nestedStruct.$identifier().toString(),
-    });
-  }
-
-  export function $toString(_nestedStruct: NestedStruct): string {
-    return `NestedStruct(${JSON.stringify(_propertiesToStrings(_nestedStruct))})`;
-  }
-}
-export type $Object = FormStruct | NestedStruct;
-
-export namespace $Object {
-  export const $toString = (value: $Object): string => {
-    if (FormStruct.isFormStruct(value)) {
-      return FormStruct.$toString(value);
-    }
-    if (NestedStruct.isNestedStruct(value)) {
-      return NestedStruct.$toString(value);
-    }
-
-    throw new Error("unable to serialize to string");
-  };
-
-  export const fromJson = (value: $Object.Json): Either<Error, $Object> => {
-    if (value["@type"] === "FormStruct") {
-      return FormStruct.fromJson(value as FormStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["@type"] === "NestedStruct") {
-      return NestedStruct.fromJson(value as NestedStruct.Json).map(
-        (value) => value,
-      );
-    }
-
-    throw new Error("unable to deserialize JSON");
-  };
-
-  export type Identifier = BlankNode | NamedNode;
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export namespace Json {
-    export const schema = () =>
-      z
-        .discriminatedUnion("$type", [
-          FormStruct.Json.schema(),
-          NestedStruct.Json.schema(),
-        ])
-        .readonly()
-        .meta({});
-
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-  }
-
-  export type Json = FormStruct.Json | NestedStruct.Json;
-
-  export const schema = {
-    kind: "ObjectUnion" as const,
-    members: {
-      FormStruct: {
-        discriminantValues: ["FormStruct"],
-        type: FormStruct.schema,
-      },
-      NestedStruct: {
-        discriminantValues: ["NestedStruct"],
-        type: NestedStruct.schema,
-      },
-    },
-    properties: {
-      requiredStringProperty: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/requiredStringProperty",
-        ),
-        type: { kind: "String" as const },
-      },
-    },
-  } as const;
-
-  export const toJson = (value: $Object): $Object.Json => {
-    if (FormStruct.isFormStruct(value)) {
-      return FormStruct.toJson(value);
-    }
-    if (NestedStruct.isNestedStruct(value)) {
-      return NestedStruct.toJson(value);
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
-
-  export const toRdfResource: $ToRdfResourceFunction<$Object> = (
-    object,
-    options,
-  ) => {
-    if (FormStruct.isFormStruct(object)) {
-      return FormStruct.toRdfResource(object, options);
-    }
-    if (NestedStruct.isNestedStruct(object)) {
-      return NestedStruct.toRdfResource(object, options);
-    }
-    throw new Error("unrecognized type");
-  };
-
-  export const toRdfResourceValues = ((
-    value,
-    _options,
-  ): (BlankNode | NamedNode)[] => {
-    if (FormStruct.isFormStruct(value)) {
-      return [
-        FormStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (NestedStruct.isNestedStruct(value)) {
-      return [
-        NestedStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-
-    throw new Error("unable to serialize to RDF");
-  }) satisfies $ToRdfResourceValuesFunction<$Object>;
-}
+type $Object = FormStruct;
