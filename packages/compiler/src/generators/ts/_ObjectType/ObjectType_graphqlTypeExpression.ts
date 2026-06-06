@@ -1,20 +1,9 @@
-import { Maybe } from "purify-ts";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function ObjectType_graphqlTypeVariableStatement(
-  this: ObjectType,
-): Maybe<Code> {
-  if (!this.configuration.features.has("GraphQL")) {
-    return Maybe.empty();
-  }
-
-  if (this.synthetic) {
-    return Maybe.empty();
-  }
-
-  return Maybe.of(code`\
-export const GraphQL = new ${this.reusables.imports.GraphQLObjectType}<${this.expression}, { objectSet: ${this.configuration.syntheticNamePrefix}ObjectSet }>(${{
+export function ObjectType_graphqlTypeExpression(this: ObjectType): Code {
+  return code`\
+new ${this.reusables.imports.GraphQLObjectType}<${this.expression}, { objectSet: ${this.configuration.syntheticNamePrefix}ObjectSet }>(${{
     description: this.comment.extract(),
     fields: code`() => (${this.properties.reduce(
       (fields, property) => {
@@ -41,6 +30,6 @@ export const GraphQL = new ${this.reusables.imports.GraphQLObjectType}<${this.ex
       },
       {} as Record<string, object>,
     )})`,
-    name: this.name.unsafeCoerce(),
-  }});`);
+    name: this.name.orDefault(this.shapeIdentifier.value),
+  }})`;
 }

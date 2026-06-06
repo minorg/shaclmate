@@ -16,7 +16,7 @@ import { ObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_Objec
 import { ObjectType_fromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_fromJsonFunctionDeclaration.js";
 import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceFunctionDeclaration.js";
 import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
-import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectType_graphqlTypeVariableStatement.js";
+import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
 import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
@@ -158,6 +158,12 @@ export class ObjectType extends AbstractType {
         );
       }
 
+      if (this.configuration.features.has("GraphQL") && !this.synthetic) {
+        staticModuleDeclarations.push(
+          code`export const GraphQL = ${ObjectType_graphqlTypeExpression.call(this)};`,
+        );
+      }
+
       if (this.configuration.features.has("Object.hash")) {
         staticModuleDeclarations.push(
           code`export const hash = ${ObjectType_hashFunctionExpression.call(this)};`,
@@ -214,7 +220,6 @@ export class ObjectType extends AbstractType {
       }
 
       staticModuleDeclarations.push(
-        ...ObjectType_graphqlTypeVariableStatement.call(this).toList(),
         ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.call(
           this,
         ).toList(),
@@ -308,7 +313,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   get graphqlType(): AbstractType.GraphqlType {
     return new AbstractType.GraphqlType(
-      code`${this.name.unsafeCoerce()}.GraphQL`,
+      this.name
+        .map((name) => code`${name}.GraphQL`)
+        .orDefault(ObjectType_graphqlTypeExpression.call(this)),
       this.reusables,
     );
   }
