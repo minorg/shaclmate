@@ -18,7 +18,7 @@ import { ObjectType_fromJsonFunctionDeclaration } from "./_ObjectType/ObjectType
 import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceFunctionDeclaration.js";
 import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
 import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectType_graphqlTypeVariableStatement.js";
-import { ObjectType_hashFunctionDeclarations } from "./_ObjectType/ObjectType_hashFunctionDeclarations.js";
+import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
 import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
 import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
 import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
@@ -149,9 +149,11 @@ export class ObjectType extends AbstractType {
         );
       }
 
-      staticModuleDeclarations.push(
-        ...ObjectType_hashFunctionDeclarations.call(this),
-      );
+      if (this.configuration.features.has("Object.hash")) {
+        staticModuleDeclarations.push(
+          code`export const hash = ${ObjectType_hashFunctionExpression.call(this)};`,
+        );
+      }
 
       const jsonModuleDeclarations: Code[] = [
         ...ObjectType_jsonParseFunctionDeclaration.call(this).toList(),
@@ -267,7 +269,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get hashFunction(): Code {
-    return code`${this.name.unsafeCoerce()}.hash`;
+    return this.name
+      .map((name) => code`${name}.hash`)
+      .orDefault(ObjectType_hashFunctionExpression.call(this));
   }
 
   @Memoize()

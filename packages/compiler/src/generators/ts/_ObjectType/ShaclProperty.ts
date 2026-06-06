@@ -2,6 +2,7 @@ import type { PropertyPath } from "@rdfx/resource";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
@@ -103,6 +104,10 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       resolve: code`(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: code`source.${this.name}` } })}`,
       type: this.type.graphqlType.expression,
     });
+  }
+
+  override get hashFunctionParameter(): Code {
+    return this.declaration;
   }
 
   @Memoize()

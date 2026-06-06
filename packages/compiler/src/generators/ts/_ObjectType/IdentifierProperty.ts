@@ -69,6 +69,11 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
+  override get hashFunctionParameter(): Code {
+    return code`readonly ${this.name}?: ${this.typeExpression}`;
+  }
+
+  @Memoize()
   override get jsonSchema(): AbstractProperty<IdentifierType>["jsonSchema"] {
     let schema: Code;
     if (this.type.in_.length > 0 && this.type.kind === "Iri") {
@@ -190,7 +195,9 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["hashStatements"]
   >[0]): readonly Code[] {
-    return [code`${variables.hasher}.update(${variables.value}.value);`];
+    return [
+      code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}.value); }`,
+    ];
   }
 
   override jsonUiSchemaElement({

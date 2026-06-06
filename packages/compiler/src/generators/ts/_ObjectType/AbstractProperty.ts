@@ -25,12 +25,12 @@ export abstract class AbstractProperty<
   abstract readonly constructorParameter: Maybe<Code>;
 
   /**
-   * Property declaration to include in a class or interface declaration of the object type.
+   * Property declaration to include in the type declaration of the ObjectType.
    */
   abstract readonly declaration: Code;
 
   /**
-   * Optional property in the object type's filter.
+   * Optional property in the ObjectType's filter.
    */
   abstract readonly filterProperty: Maybe<{
     readonly name: string;
@@ -54,6 +54,13 @@ export abstract class AbstractProperty<
     resolve: Code;
     type: Code;
   }>;
+
+  /**
+   * Parameter to include in the expression of the ObjectType passed to its hash function.
+   *
+   * Only specified if different from declaration.
+   */
+  abstract readonly hashFunctionParameter: Code;
 
   /**
    * zod object key: schema.
