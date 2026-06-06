@@ -1,5 +1,6 @@
 import dataFactory from "@rdfx/data-factory";
 import { Curie, type NodeKind } from "@shaclmate/shacl-ast";
+import { sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
@@ -200,6 +201,14 @@ function transformPropertyShapeToAstType(
     });
 }
 
+/**
+ * Try to transform a property shape to an ast.StructType.Field.
+ *
+ * Returns:
+ *  - Right<Just<ast.StructType.Field>> if the transformation succeeds
+ *  - Right<Nothing> if the property shape should be ignored
+ *  - Left<Error> if the transformation fails
+ */
 export function transformPropertyShapeToAstStructTypeField(
   this: ShapesGraphToAstTransformer,
   {
@@ -209,7 +218,17 @@ export function transformPropertyShapeToAstStructTypeField(
     propertyShape: input.PropertyShape;
     structType: ast.StructType;
   },
-): Either<Error, ast.StructType.Field> {
+): Either<Error, Maybe<ast.StructType.Field>> {
+  if (propertyShape.ignore) {
+    return Either.of(Maybe.empty());
+  }
+
+  switch (propertyShape.severity.orDefault(sh.Violation).value) {
+    case "http://www.w3.org/ns/shacl#Info":
+    case "http://www.w3.org/ns/shacl#Warning":
+      return Either.of(Maybe.empty());
+  }
+
   const shapeStack = new ShapeStack(); // Start a new ShapeStack per property shape
   return Eithers.chain2(
     propertyShape.resolve.isJust()
@@ -372,19 +391,21 @@ export function transformPropertyShapeToAstStructTypeField(
     }
 
     return Either.of(
-      new ast.StructType.Field({
-        comment: propertyShape.comment,
-        description: propertyShape.description,
-        display: propertyShape.display,
-        label: propertyShape.label,
-        mutable: propertyShape.mutable.orDefault(false),
-        name: fieldName.call(this, propertyShape, structType),
-        order: propertyShape.order.orDefault(0),
-        path: propertyShape.path,
-        shapeIdentifier: propertyShape.$identifier(),
-        structType,
-        type: astType,
-      }),
+      Maybe.of(
+        new ast.StructType.Field({
+          comment: propertyShape.comment,
+          description: propertyShape.description,
+          display: propertyShape.display,
+          label: propertyShape.label,
+          mutable: propertyShape.mutable.orDefault(false),
+          name: fieldName.call(this, propertyShape, structType),
+          order: propertyShape.order.orDefault(0),
+          path: propertyShape.path,
+          shapeIdentifier: propertyShape.$identifier(),
+          structType,
+          type: astType,
+        }),
+      ),
     );
   });
 }

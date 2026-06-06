@@ -154,7 +154,15 @@ export function transformShapeToAstListType(
               propertyShape: firstPropertyShape,
               structType: listPropertiesStructType,
             })
-            .chain((firstField) => {
+            .chain((firstFieldMaybe) => {
+              const firstField = firstFieldMaybe.extract();
+
+              if (!firstField) {
+                return Left(
+                  new Error(`${nodeShape}: rdf:first field is ignored`),
+                );
+              }
+
               if (!ast.ListType.isItemType(firstField.type)) {
                 return Left(
                   new Error(
@@ -171,7 +179,15 @@ export function transformShapeToAstListType(
                   propertyShape: restPropertyShape,
                   structType: listPropertiesStructType,
                 })
-                .chain((restField) => {
+                .chain((restFieldMaybe) => {
+                  const restField = restFieldMaybe.extract();
+
+                  if (!restField) {
+                    return Left(
+                      new Error(`${nodeShape}: rdf:rest field is ignored`),
+                    );
+                  }
+
                   if (
                     restField.type.kind !== "List" ||
                     !restField.type.shapeIdentifier.equals(

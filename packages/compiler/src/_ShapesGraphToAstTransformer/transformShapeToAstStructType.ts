@@ -192,7 +192,9 @@ export function transformShapeToAstStructType(
             return fieldEither;
           }
           fieldEither.ifRight((property) => {
-            structType.addFields(property);
+            property.ifJust((property) => {
+              structType.addFields(property);
+            });
           });
         }
 
