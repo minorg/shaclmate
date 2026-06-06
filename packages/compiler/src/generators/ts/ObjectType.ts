@@ -14,8 +14,7 @@ import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filter
 import { ObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
 import { ObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionDeclaration.js";
 import { ObjectType_fromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_fromJsonFunctionDeclaration.js";
-import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceFunctionDeclaration.js";
-import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
+import { ObjectType_fromRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceFunctionExpression.js";
 import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
 import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
@@ -164,6 +163,15 @@ export class ObjectType extends AbstractType {
         );
       }
 
+      if (this.configuration.features.has("Object.fromRdf")) {
+        staticModuleDeclarations.push(code`
+export const _fromRdfResource = ${ObjectType_fromRdfResourceFunctionExpression.call(this)};         
+export const fromRdfResource = ${this.reusables.snippets.wrap_FromRdfResourceFunction}(_fromRdfResource);
+
+export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}> = 
+  (values, options) => values.chainMap(value => value.toResource().chain(resource => fromRdfResource(resource, options)));`);
+      }
+
       if (this.configuration.features.has("Object.hash")) {
         staticModuleDeclarations.push(
           code`export const hash = ${ObjectType_hashFunctionExpression.call(this)};`,
@@ -227,10 +235,6 @@ export class ObjectType extends AbstractType {
           this,
         ).toList(),
         ...ObjectType_fromJsonFunctionDeclaration.call(this).toList(),
-        ...ObjectType_fromRdfResourceFunctionDeclaration.call(this).toList(),
-        ...ObjectType_fromRdfResourceValuesFunctionDeclaration.call(
-          this,
-        ).toList(),
         ...ObjectType_isTypeFunctionDeclaration.call(this).toList(),
         ...ObjectType_schemaVariableStatement.call(this).toList(),
         ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
@@ -300,7 +304,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.name.unsafeCoerce()}.fromRdfResourceValues`;
+    return this.name
+      .map((name) => code`${name}.fromRdfResourceValues`)
+      .orDefault(
+        code`((values, options) => values.chainMap(value => value.toResource().chain(resource => ${ObjectType_fromRdfResourceFunctionExpression.call(this)}(resource, options))))`,
+      );
   }
 
   @Memoize()

@@ -1,15 +1,10 @@
-import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ObjectType } from "../ObjectType.js";
 import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectType_fromRdfResourceFunctionDeclaration(
+export function ObjectType_fromRdfResourceFunctionExpression(
   this: ObjectType,
-): Maybe<Code> {
-  if (!this.configuration.features.has("Object.fromRdf")) {
-    return Maybe.empty();
-  }
-
+): Code {
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
 
   const optionsVariable = `_${syntheticNamePrefix}options`;
@@ -54,16 +49,12 @@ export function ObjectType_fromRdfResourceFunctionDeclaration(
     variable: "properties",
   });
 
-  return Maybe.of(code`\
-export const _fromRdfResource: ${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}> = (${variables.resource}, ${optionsVariable}) => {
-  return ${chains
+  return code`\
+((${variables.resource}, ${optionsVariable}) => ${chains
     .reverse()
     .reduce(
       (acc, { expression, variable }) =>
         code`(${expression}).chain(${variable} => ${acc})`,
       code`(create(properties))`,
-    )};
-}
-
-export const fromRdfResource = ${this.reusables.snippets.wrap_FromRdfResourceFunction}(_fromRdfResource);`);
+    )})`;
 }
