@@ -9,40 +9,40 @@ export const snippets_RdfVocabularies: SnippetFactory = ({
     `${syntheticNamePrefix}RdfVocabularies`,
     code`\
 namespace ${syntheticNamePrefix}RdfVocabularies {
-  export namespace rdf {
-    export const first = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
-    export const nil = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
-    export const rest = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
-    export const subject = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
-    export const type = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-  }
+  export const rdf = {
+    first: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first"),
+    nil: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"),
+    rest: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"),
+    subject: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject"),
+    type: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+  };
 
-  export namespace rdfs {
-    export const subClassOf = ${imports.dataFactory}.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
-  }
+  export const rdfs = {
+    subClassOf: ${imports.dataFactory}.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf")
+  };
 
-  export namespace xsd {
-    export const boolean = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
-    export const byte = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#byte");
-    export const date = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#date");
-    export const dateTime = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
-    export const decimal = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
-    export const double = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#double");
-    export const float = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#float");
-    export const int = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#int");
-    export const integer = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#integer");
-    export const long = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#long");
-    export const negativeInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#negativeInteger");
-    export const nonNegativeInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
-    export const nonPositiveInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#nonPositiveInteger");
-    export const positiveInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#positiveInteger");
-    export const short = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#short");
-    export const string = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#string");
-    export const unsignedByte = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedByte");
-    export const unsignedInt = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedInt");
-    export const unsignedLong = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedLong");
-    export const unsignedShort = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedShort");
-  }
+  export const xsd = {
+    boolean: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
+    byte: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
+    date: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#date"),
+    dateTime: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#dateTime"),
+    decimal: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
+    double: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#double"),
+    float: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#float"),
+    int: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#int"),
+    integer: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
+    long: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#long"),
+    negativeInteger: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#negativeInteger"),
+    nonNegativeInteger: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#nonNegativeInteger"),
+    nonPositiveInteger: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#nonPositiveInteger"),
+    positiveInteger: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#positiveInteger"),
+    short: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#short"),
+    string: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#string"),
+    unsignedByte: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedByte"),
+    unsignedInt: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedInt"),
+    unsignedLong: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedLong"),
+    unsignedShort: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedShort")
+  };
 }
 `,
   );

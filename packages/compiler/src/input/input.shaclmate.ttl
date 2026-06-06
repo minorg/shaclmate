@@ -44,7 +44,7 @@ shaclmate:NodeShape-tsImports
     sh:path shaclmate:tsImport .
 
 shaclmate:PropertyShape
-    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
+    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-ignore, shaclmate:PropertyShape-resolve, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
 shaclmate:PropertyShape-display
     a sh:PropertyShape ;
@@ -53,6 +53,14 @@ shaclmate:PropertyShape-display
     sh:defaultValue false ;
     sh:maxCount 1 ;
     sh:path shaclmate:display .
+
+shaclmate:PropertyShape-ignore
+    a sh:PropertyShape ;
+    rdfs:comment "Whether to ignore this property in code generation, defaults to false" ;
+    sh:datatype xsd:boolean ;
+    sh:defaultValue false ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:ignore .
 
 shaclmate:PropertyShape-resolve
     a sh:PropertyShape ;

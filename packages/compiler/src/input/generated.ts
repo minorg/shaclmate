@@ -3995,6 +3995,11 @@ export interface PropertyShape {
 
   readonly hasValues: readonly (NamedNode | Literal)[];
 
+  /**
+   * Whether to ignore this property in code generation, defaults to false
+   */
+  readonly ignore: boolean;
+
   readonly in_: Maybe<readonly (NamedNode | Literal)[]>;
 
   readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
@@ -4113,6 +4118,7 @@ export namespace PropertyShape {
     readonly hasValues?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
+    readonly ignore?: boolean;
     readonly in_?:
       | readonly (NamedNode | Literal)[]
       | Maybe<readonly (NamedNode | Literal)[]>;
@@ -4369,6 +4375,10 @@ export namespace PropertyShape {
           value,
         ),
       ),
+      ignore: $convertWithDefaultValue(
+        $identityConversionFunction,
+        false,
+      )(parameters.ignore),
       in_: $convertToMaybe($convertToList($identityConversionFunction, true))(
         parameters.in_,
       ).chain((value) =>
@@ -4705,6 +4715,7 @@ export namespace PropertyShape {
     readonly hasValues?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
+    readonly ignore?: boolean;
     readonly in_?:
       | readonly (NamedNode | Literal)[]
       | Maybe<readonly (NamedNode | Literal)[]>;
@@ -5093,6 +5104,21 @@ export namespace PropertyShape {
             NamedNode | Literal,
             $TermSchema<NamedNode | Literal>
           >($termFromRdfResourceValues<NamedNode | Literal>),
+        }),
+        ignore: $shaclPropertyFromRdf<
+          boolean,
+          $DefaultValueSchema<$BooleanSchema<boolean>>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: schema.properties.ignore,
+          typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
+            boolean,
+            $BooleanSchema<boolean>
+          >($booleanFromRdfResourceValues<boolean>),
         }),
         in_: $shaclPropertyFromRdf<
           Maybe<readonly (NamedNode | Literal)[]>,
@@ -5864,6 +5890,20 @@ export namespace PropertyShape {
           itemType: { kind: "Term" as const, types: ["NamedNode", "Literal"] },
         },
       },
+      ignore: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#ignore",
+        ),
+        type: {
+          kind: "DefaultValue" as const,
+          itemType: { kind: "Boolean" as const },
+          defaultValue: dataFactory.literal(
+            "false",
+            $RdfVocabularies.xsd.boolean,
+          ),
+        },
+      },
       in_: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
@@ -6343,6 +6383,18 @@ export namespace PropertyShape {
     parameters.resource.add(
       NodeShape.schema.properties.hasValues.path,
       parameters.object.hasValues.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      PropertyShape.schema.properties.ignore.path,
+      $strictEquals(parameters.object.ignore, false).isLeft()
+        ? [
+            $literalFactory.boolean(
+              parameters.object.ignore,
+              $RdfVocabularies.xsd.boolean,
+            ),
+          ]
+        : [],
       parameters.graph,
     );
     parameters.resource.add(

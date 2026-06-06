@@ -15,7 +15,7 @@ const tryTransformShapeToAstTypeMethods = [
 ];
 
 /**
- * Try to convert a shape to a type using some heuristics. All shape -> AST type transformation calls should go through this function,
+ * Try to transform a shape to an AST type using some heuristics. All shape -> AST type transformation calls should go through this function,
  * not the other transformShapeToAst*Type functions directly.
  */
 export function transformShapeToAstType(

@@ -2433,92 +2433,70 @@ export namespace $PropertyPath {
 }
 
 namespace $RdfVocabularies {
-  export namespace rdf {
-    export const first = dataFactory.namedNode(
+  export const rdf = {
+    first: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    );
-    export const nil = dataFactory.namedNode(
+    ),
+    nil: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    );
-    export const rest = dataFactory.namedNode(
+    ),
+    rest: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    );
-    export const subject = dataFactory.namedNode(
+    ),
+    subject: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    );
-    export const type = dataFactory.namedNode(
+    ),
+    type: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    );
-  }
+    ),
+  };
 
-  export namespace rdfs {
-    export const subClassOf = dataFactory.namedNode(
+  export const rdfs = {
+    subClassOf: dataFactory.namedNode(
       "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    );
-  }
+    ),
+  };
 
-  export namespace xsd {
-    export const boolean = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#boolean",
-    );
-    export const byte = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#byte",
-    );
-    export const date = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#date",
-    );
-    export const dateTime = dataFactory.namedNode(
+  export const xsd = {
+    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
+    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
+    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
+    dateTime: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
-    );
-    export const decimal = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#decimal",
-    );
-    export const double = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#double",
-    );
-    export const float = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#float",
-    );
-    export const int = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#int",
-    );
-    export const integer = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#integer",
-    );
-    export const long = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#long",
-    );
-    export const negativeInteger = dataFactory.namedNode(
+    ),
+    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
+    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
+    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
+    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
+    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
+    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
+    negativeInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    );
-    export const nonNegativeInteger = dataFactory.namedNode(
+    ),
+    nonNegativeInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    );
-    export const nonPositiveInteger = dataFactory.namedNode(
+    ),
+    nonPositiveInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    );
-    export const positiveInteger = dataFactory.namedNode(
+    ),
+    positiveInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    );
-    export const short = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#short",
-    );
-    export const string = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#string",
-    );
-    export const unsignedByte = dataFactory.namedNode(
+    ),
+    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
+    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
+    unsignedByte: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    );
-    export const unsignedInt = dataFactory.namedNode(
+    ),
+    unsignedInt: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    );
-    export const unsignedLong = dataFactory.namedNode(
+    ),
+    unsignedLong: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    );
-    export const unsignedShort = dataFactory.namedNode(
+    ),
+    unsignedShort: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    );
-  }
+    ),
+  };
 }
 
 function $sequenceRecord<T extends Record<string, unknown>>(
@@ -15454,6 +15432,660 @@ export namespace HasValuesStruct {
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
       HasValuesStruct.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+} /**
+ * Struct node shape that uses different methods to make SHACLmate ignore properties.
+ */
+
+export interface IgnoredPropertiesStruct {
+  readonly $identifier: () => IgnoredPropertiesStruct.Identifier;
+
+  readonly $type: "IgnoredPropertiesStruct";
+
+  /**
+   * A property without an sh:severity defaults to sh:Violation severity and is not ignored
+   */
+  readonly severityDefaultProperty: string;
+
+  /**
+   * A property with an explicit sh:severity sh:Violation is not ignored
+   */
+  readonly severityViolationProperty: string;
+
+  /**
+   * A property with shaclmate:ignore set to false (the default) is not ignored
+   */
+  readonly shaclmateIgnoreFalseProperty: string;
+}
+
+export namespace IgnoredPropertiesStruct {
+  export function create(parameters: {
+    readonly $identifier?:
+      | (() => IgnoredPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly severityDefaultProperty: string;
+    readonly severityViolationProperty: string;
+    readonly shaclmateIgnoreFalseProperty: string;
+  }): Either<Error, IgnoredPropertiesStruct> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      severityDefaultProperty: Either.of(parameters.severityDefaultProperty),
+      severityViolationProperty: Either.of(
+        parameters.severityViolationProperty,
+      ),
+      shaclmateIgnoreFalseProperty: Either.of(
+        parameters.shaclmateIgnoreFalseProperty,
+      ),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "IgnoredPropertiesStruct" as const,
+      }))
+      .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => IgnoredPropertiesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly severityDefaultProperty: string;
+    readonly severityViolationProperty: string;
+    readonly shaclmateIgnoreFalseProperty: string;
+  }): IgnoredPropertiesStruct {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export function equals(
+    left: IgnoredPropertiesStruct,
+    right: IgnoredPropertiesStruct,
+  ): $EqualsResult {
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
+        left,
+        right,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(
+          left.severityDefaultProperty,
+          right.severityDefaultProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "severityDefaultProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $strictEquals(
+          left.severityViolationProperty,
+          right.severityViolationProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "severityViolationProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $strictEquals(
+          left.shaclmateIgnoreFalseProperty,
+          right.shaclmateIgnoreFalseProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "shaclmateIgnoreFalseProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
+    _ignoredPropertiesStruct: IgnoredPropertiesStruct,
+  ): HasherT {
+    IgnoredPropertiesStruct.hashShaclProperties(
+      hasher,
+      _ignoredPropertiesStruct,
+    );
+    hasher.update(_ignoredPropertiesStruct.$identifier().value);
+    hasher.update(_ignoredPropertiesStruct.$type);
+    return hasher;
+  }
+
+  export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
+    _ignoredPropertiesStruct: IgnoredPropertiesStruct,
+  ): HasherT {
+    $hashString(hasher, _ignoredPropertiesStruct.severityDefaultProperty);
+    $hashString(hasher, _ignoredPropertiesStruct.severityViolationProperty);
+    $hashString(hasher, _ignoredPropertiesStruct.shaclmateIgnoreFalseProperty);
+    return hasher;
+  }
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly "@type": "IgnoredPropertiesStruct";
+    readonly severityDefaultProperty: string;
+    readonly severityViolationProperty: string;
+    readonly shaclmateIgnoreFalseProperty: string;
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          "@type": z.literal("IgnoredPropertiesStruct"),
+          severityDefaultProperty: z.string().meta({
+            description:
+              "A property without an sh:severity defaults to sh:Violation severity and is not ignored",
+          }),
+          severityViolationProperty: z.string().meta({
+            description:
+              "A property with an explicit sh:severity sh:Violation is not ignored",
+          }),
+          shaclmateIgnoreFalseProperty: z.string().meta({
+            description:
+              "A property with shaclmate:ignore set to false (the default) is not ignored",
+          }),
+        })
+        .meta({
+          description:
+            "Struct node shape that uses different methods to make SHACLmate ignore properties.",
+        }) satisfies z.ZodType<Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "IgnoredPropertiesStruct" as const },
+                scope: `${scopePrefix}/properties/@type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/@type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/severityDefaultProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/severityViolationProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/shaclmateIgnoreFalseProperty`,
+            type: "Control",
+          },
+        ],
+        label: "IgnoredPropertiesStruct",
+        type: "Group",
+      };
+    }
+  }
+
+  export function filter(
+    filter: IgnoredPropertiesStruct.Filter,
+    value: IgnoredPropertiesStruct,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.severityDefaultProperty !== undefined &&
+      !$filterString(
+        filter.severityDefaultProperty,
+        value.severityDefaultProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.severityViolationProperty !== undefined &&
+      !$filterString(
+        filter.severityViolationProperty,
+        value.severityViolationProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.shaclmateIgnoreFalseProperty !== undefined &&
+      !$filterString(
+        filter.shaclmateIgnoreFalseProperty,
+        value.shaclmateIgnoreFalseProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly severityDefaultProperty?: $StringFilter;
+    readonly severityViolationProperty?: $StringFilter;
+    readonly shaclmateIgnoreFalseProperty?: $StringFilter;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    IgnoredPropertiesStruct.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.severityDefaultProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "severityDefaultProperty",
+        propertySchema: schema.properties.severityDefaultProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.severityViolationProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "severityViolationProperty",
+        propertySchema: schema.properties.severityViolationProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.shaclmateIgnoreFalseProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "shaclmateIgnoreFalseProperty",
+        propertySchema: schema.properties.shaclmateIgnoreFalseProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    IgnoredPropertiesStruct.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: IgnoredPropertiesStruct.schema.properties.$identifier.type,
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.severityDefaultProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "severityDefaultProperty",
+        propertySchema: schema.properties.severityDefaultProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.severityViolationProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "severityViolationProperty",
+        propertySchema: schema.properties.severityViolationProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.shaclmateIgnoreFalseProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "shaclmateIgnoreFalseProperty",
+        propertySchema: schema.properties.shaclmateIgnoreFalseProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export function fromJson(
+    $json: IgnoredPropertiesStruct.Json,
+  ): Either<Error, IgnoredPropertiesStruct> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      severityDefaultProperty: Either.of<Error, string>(
+        $json["severityDefaultProperty"],
+      ),
+      severityViolationProperty: Either.of<Error, string>(
+        $json["severityViolationProperty"],
+      ),
+      shaclmateIgnoreFalseProperty: Either.of<Error, string>(
+        $json["shaclmateIgnoreFalseProperty"],
+      ),
+    }).chain(create);
+  }
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    IgnoredPropertiesStruct
+  > = ($resource, _$options) => {
+    return $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+        {
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          preferredLanguages: _$options.preferredLanguages,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          schema: schema.properties.$identifier.type,
+          objectSet: _$options.objectSet,
+        },
+      ).chain((values) => values.head()),
+      severityDefaultProperty: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        context: _$options.context,
+        graph: _$options.graph,
+        focusResource: $resource,
+        ignoreRdfType: true,
+        preferredLanguages: _$options.preferredLanguages,
+        propertySchema: schema.properties.severityDefaultProperty,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+        objectSet: _$options.objectSet,
+      }),
+      severityViolationProperty: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        context: _$options.context,
+        graph: _$options.graph,
+        focusResource: $resource,
+        ignoreRdfType: true,
+        preferredLanguages: _$options.preferredLanguages,
+        propertySchema: schema.properties.severityViolationProperty,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+        objectSet: _$options.objectSet,
+      }),
+      shaclmateIgnoreFalseProperty: $shaclPropertyFromRdf<
+        string,
+        $StringSchema<string>
+      >({
+        context: _$options.context,
+        graph: _$options.graph,
+        focusResource: $resource,
+        ignoreRdfType: true,
+        preferredLanguages: _$options.preferredLanguages,
+        propertySchema: schema.properties.shaclmateIgnoreFalseProperty,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+        objectSet: _$options.objectSet,
+      }),
+    }).chain((properties) => create(properties));
+  };
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    IgnoredPropertiesStruct,
+    typeof IgnoredPropertiesStruct.schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) =>
+          IgnoredPropertiesStruct.fromRdfResource(resource, options),
+        ),
+    );
+
+  export function isIgnoredPropertiesStruct(
+    object: $Object,
+  ): object is IgnoredPropertiesStruct {
+    return object.$type === "IgnoredPropertiesStruct";
+  }
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      severityDefaultProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/severityDefaultProperty",
+        ),
+        type: { kind: "String" as const },
+      },
+      severityViolationProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/severityViolationProperty",
+        ),
+        type: { kind: "String" as const },
+      },
+      shaclmateIgnoreFalseProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/shaclmateIgnoreFalseProperty",
+        ),
+        type: { kind: "String" as const },
+      },
+    },
+  } as const;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: IgnoredPropertiesStruct.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "ignoredPropertiesStruct";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IgnoredPropertiesStruct.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          IgnoredPropertiesStruct.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof IgnoredPropertiesStruct.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IgnoredPropertiesStruct.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function toJson(
+    _ignoredPropertiesStruct: IgnoredPropertiesStruct,
+  ): IgnoredPropertiesStruct.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _ignoredPropertiesStruct.$identifier().termType === "BlankNode"
+            ? `_:${_ignoredPropertiesStruct.$identifier().value}`
+            : _ignoredPropertiesStruct.$identifier().value,
+        "@type": _ignoredPropertiesStruct.$type,
+        severityDefaultProperty:
+          _ignoredPropertiesStruct.severityDefaultProperty,
+        severityViolationProperty:
+          _ignoredPropertiesStruct.severityViolationProperty,
+        shaclmateIgnoreFalseProperty:
+          _ignoredPropertiesStruct.shaclmateIgnoreFalseProperty,
+      } satisfies IgnoredPropertiesStruct.Json),
+    );
+  }
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    IgnoredPropertiesStruct.Identifier,
+    IgnoredPropertiesStruct
+  > = (parameters) => {
+    parameters.resource.add(
+      IgnoredPropertiesStruct.schema.properties.severityDefaultProperty.path,
+      [$literalFactory.string(parameters.object.severityDefaultProperty)],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      IgnoredPropertiesStruct.schema.properties.severityViolationProperty.path,
+      [$literalFactory.string(parameters.object.severityViolationProperty)],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      IgnoredPropertiesStruct.schema.properties.shaclmateIgnoreFalseProperty
+        .path,
+      [$literalFactory.string(parameters.object.shaclmateIgnoreFalseProperty)],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export function _propertiesToStrings(
+    _ignoredPropertiesStruct: IgnoredPropertiesStruct,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _ignoredPropertiesStruct.$identifier().toString(),
+    });
+  }
+
+  export function $toString(
+    _ignoredPropertiesStruct: IgnoredPropertiesStruct,
+  ): string {
+    return `IgnoredPropertiesStruct(${JSON.stringify(_propertiesToStrings(_ignoredPropertiesStruct))})`;
+  }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    IgnoredPropertiesStruct.Filter,
+    typeof IgnoredPropertiesStruct.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    IgnoredPropertiesStruct.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    IgnoredPropertiesStruct.Filter,
+    typeof IgnoredPropertiesStruct.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      IgnoredPropertiesStruct.focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -51194,6 +51826,7 @@ export type $Object =
   | ExplicitRdfTypeStruct
   | FlattenUnionMember3
   | HasValuesStruct
+  | IgnoredPropertiesStruct
   | IndirectRecursiveStruct
   | IndirectRecursiveStructHelper
   | InIdentifierStruct
@@ -51268,6 +51901,9 @@ export namespace $Object {
     }
     if (HasValuesStruct.isHasValuesStruct(value)) {
       return HasValuesStruct.$toString(value);
+    }
+    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)) {
+      return IgnoredPropertiesStruct.$toString(value);
     }
     if (IndirectRecursiveStruct.isIndirectRecursiveStruct(value)) {
       return IndirectRecursiveStruct.$toString(value);
@@ -51490,6 +52126,15 @@ export namespace $Object {
       return HasValuesStruct.equals(
         left as HasValuesStruct,
         right as HasValuesStruct,
+      );
+    }
+    if (
+      IgnoredPropertiesStruct.isIgnoredPropertiesStruct(left) &&
+      IgnoredPropertiesStruct.isIgnoredPropertiesStruct(right)
+    ) {
+      return IgnoredPropertiesStruct.equals(
+        left as IgnoredPropertiesStruct,
+        right as IgnoredPropertiesStruct,
       );
     }
     if (
@@ -51933,6 +52578,19 @@ export namespace $Object {
       }
     }
     if (
+      filter.on?.["IgnoredPropertiesStruct"] !== undefined &&
+      IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)
+    ) {
+      if (
+        !IgnoredPropertiesStruct.filter(
+          filter.on["IgnoredPropertiesStruct"],
+          value,
+        )
+      ) {
+        return false;
+      }
+    }
+    if (
       filter.on?.["IndirectRecursiveStruct"] !== undefined &&
       IndirectRecursiveStruct.isIndirectRecursiveStruct(value)
     ) {
@@ -52290,6 +52948,7 @@ export namespace $Object {
       readonly ExplicitRdfTypeStruct?: ExplicitRdfTypeStruct.Filter;
       readonly FlattenUnionMember3?: FlattenUnionMember3.Filter;
       readonly HasValuesStruct?: HasValuesStruct.Filter;
+      readonly IgnoredPropertiesStruct?: IgnoredPropertiesStruct.Filter;
       readonly IndirectRecursiveStruct?: IndirectRecursiveStruct.Filter;
       readonly IndirectRecursiveStructHelper?: IndirectRecursiveStructHelper.Filter;
       readonly InIdentifierStruct?: InIdentifierStruct.Filter;
@@ -52409,6 +53068,12 @@ export namespace $Object {
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}HasValuesStruct`,
+      }).concat(),
+      ...IgnoredPropertiesStruct.focusSparqlConstructTriples({
+        filter: filter?.on?.IgnoredPropertiesStruct,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IgnoredPropertiesStruct`,
       }).concat(),
       ...IndirectRecursiveStruct.focusSparqlConstructTriples({
         filter: filter?.on?.IndirectRecursiveStruct,
@@ -52764,6 +53429,16 @@ export namespace $Object {
             ignoreRdfType: false,
             preferredLanguages,
             variablePrefix: `${variablePrefix}HasValuesStruct`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IgnoredPropertiesStruct.focusSparqlWherePatterns({
+            filter: filter?.on?.IgnoredPropertiesStruct,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IgnoredPropertiesStruct`,
           }).concat(),
           type: "group",
         },
@@ -53178,6 +53853,11 @@ export namespace $Object {
         (value) => value,
       );
     }
+    if (value["@type"] === "IgnoredPropertiesStruct") {
+      return IgnoredPropertiesStruct.fromJson(
+        value as IgnoredPropertiesStruct.Json,
+      ).map((value) => value);
+    }
     if (value["@type"] === "IndirectRecursiveStruct") {
       return IndirectRecursiveStruct.fromJson(
         value as IndirectRecursiveStruct.Json,
@@ -53433,6 +54113,13 @@ export namespace $Object {
       .altLazy(
         () =>
           HasValuesStruct.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          IgnoredPropertiesStruct.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -53775,6 +54462,13 @@ export namespace $Object {
         )
         .altLazy(
           () =>
+            IgnoredPropertiesStruct.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["IgnoredPropertiesStruct"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
+        .altLazy(
+          () =>
             IndirectRecursiveStruct.fromRdfResourceValues(valueAsValues, {
               ...options,
               schema: options.schema.members["IndirectRecursiveStruct"].type,
@@ -54072,6 +54766,9 @@ export namespace $Object {
     if (HasValuesStruct.isHasValuesStruct(value)) {
       return HasValuesStruct.hash(hasher, value);
     }
+    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)) {
+      return IgnoredPropertiesStruct.hash(hasher, value);
+    }
     if (IndirectRecursiveStruct.isIndirectRecursiveStruct(value)) {
       return IndirectRecursiveStruct.hash(hasher, value);
     }
@@ -54207,6 +54904,7 @@ export namespace $Object {
           ExplicitRdfTypeStruct.Json.schema(),
           FlattenUnionMember3.Json.schema(),
           HasValuesStruct.Json.schema(),
+          IgnoredPropertiesStruct.Json.schema(),
           IndirectRecursiveStruct.Json.schema(),
           IndirectRecursiveStructHelper.Json.schema(),
           InIdentifierStruct.Json.schema(),
@@ -54267,6 +54965,7 @@ export namespace $Object {
     | ExplicitRdfTypeStruct.Json
     | FlattenUnionMember3.Json
     | HasValuesStruct.Json
+    | IgnoredPropertiesStruct.Json
     | IndirectRecursiveStruct.Json
     | IndirectRecursiveStructHelper.Json
     | InIdentifierStruct.Json
@@ -54352,6 +55051,10 @@ export namespace $Object {
       HasValuesStruct: {
         discriminantValues: ["HasValuesStruct"],
         type: HasValuesStruct.schema,
+      },
+      IgnoredPropertiesStruct: {
+        discriminantValues: ["IgnoredPropertiesStruct"],
+        type: IgnoredPropertiesStruct.schema,
       },
       IndirectRecursiveStruct: {
         discriminantValues: ["IndirectRecursiveStruct"],
@@ -54585,6 +55288,9 @@ export namespace $Object {
     if (HasValuesStruct.isHasValuesStruct(value)) {
       return HasValuesStruct.toJson(value);
     }
+    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)) {
+      return IgnoredPropertiesStruct.toJson(value);
+    }
     if (IndirectRecursiveStruct.isIndirectRecursiveStruct(value)) {
       return IndirectRecursiveStruct.toJson(value);
     }
@@ -54740,6 +55446,9 @@ export namespace $Object {
     }
     if (HasValuesStruct.isHasValuesStruct(object)) {
       return HasValuesStruct.toRdfResource(object, options);
+    }
+    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(object)) {
+      return IgnoredPropertiesStruct.toRdfResource(object, options);
     }
     if (IndirectRecursiveStruct.isIndirectRecursiveStruct(object)) {
       return IndirectRecursiveStruct.toRdfResource(object, options);
@@ -54954,6 +55663,14 @@ export namespace $Object {
     if (HasValuesStruct.isHasValuesStruct(value)) {
       return [
         HasValuesStruct.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)) {
+      return [
+        IgnoredPropertiesStruct.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -55343,6 +56060,14 @@ export namespace $Object {
         filter: filter?.on?.["HasValuesStruct"],
         ignoreRdfType: false,
         schema: schema.members["HasValuesStruct"].type,
+      }),
+    );
+    triples = triples.concat(
+      IgnoredPropertiesStruct.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["IgnoredPropertiesStruct"],
+        ignoreRdfType: false,
+        schema: schema.members["IgnoredPropertiesStruct"].type,
       }),
     );
     triples = triples.concat(
@@ -55736,6 +56461,15 @@ export namespace $Object {
         filter: filter?.on?.["HasValuesStruct"],
         ignoreRdfType: false,
         schema: schema.members["HasValuesStruct"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: IgnoredPropertiesStruct.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["IgnoredPropertiesStruct"],
+        ignoreRdfType: false,
+        schema: schema.members["IgnoredPropertiesStruct"].type,
       }).concat(),
       type: "group",
     });
@@ -56389,6 +57123,35 @@ export interface $ObjectSet {
       HasValuesStruct.Identifier
     >,
   ): Promise<Either<Error, readonly HasValuesStruct[]>>;
+
+  ignoredPropertiesStruct(
+    identifier: IgnoredPropertiesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, IgnoredPropertiesStruct>>;
+
+  ignoredPropertiesStructCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        IgnoredPropertiesStruct.Filter,
+        IgnoredPropertiesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  ignoredPropertiesStructIdentifiers(
+    query?: $ObjectSet.Query<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IgnoredPropertiesStruct.Identifier[]>>;
+
+  ignoredPropertiesStructs(
+    query?: $ObjectSet.Query<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IgnoredPropertiesStruct[]>>;
 
   indirectRecursiveStruct(
     identifier: IndirectRecursiveStruct.Identifier,
@@ -58540,6 +59303,98 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: HasValuesStruct.filter,
         fromRdfResource: HasValuesStruct.fromRdfResource,
+        fromRdfTypes: [],
+      },
+      query,
+    );
+  }
+
+  async ignoredPropertiesStruct(
+    identifier: IgnoredPropertiesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, IgnoredPropertiesStruct>> {
+    return this.ignoredPropertiesStructSync(identifier, options);
+  }
+
+  ignoredPropertiesStructSync(
+    identifier: IgnoredPropertiesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, IgnoredPropertiesStruct> {
+    return this.ignoredPropertiesStructsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async ignoredPropertiesStructCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        IgnoredPropertiesStruct.Filter,
+        IgnoredPropertiesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.ignoredPropertiesStructCountSync(query);
+  }
+
+  ignoredPropertiesStructCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        IgnoredPropertiesStruct.Filter,
+        IgnoredPropertiesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.ignoredPropertiesStructsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async ignoredPropertiesStructIdentifiers(
+    query?: $ObjectSet.Query<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IgnoredPropertiesStruct.Identifier[]>> {
+    return this.ignoredPropertiesStructIdentifiersSync(query);
+  }
+
+  ignoredPropertiesStructIdentifiersSync(
+    query?: $ObjectSet.Query<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >,
+  ): Either<Error, readonly IgnoredPropertiesStruct.Identifier[]> {
+    return this.ignoredPropertiesStructsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async ignoredPropertiesStructs(
+    query?: $ObjectSet.Query<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IgnoredPropertiesStruct[]>> {
+    return this.ignoredPropertiesStructsSync(query);
+  }
+
+  ignoredPropertiesStructsSync(
+    query?: $ObjectSet.Query<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >,
+  ): Either<Error, readonly IgnoredPropertiesStruct[]> {
+    return this.#objectsSync<
+      IgnoredPropertiesStruct,
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >(
+      {
+        filter: IgnoredPropertiesStruct.filter,
+        fromRdfResource: IgnoredPropertiesStruct.fromRdfResource,
         fromRdfTypes: [],
       },
       query,
@@ -62075,6 +62930,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           filter: $Object.filter,
+          fromRdfResource: IgnoredPropertiesStruct.fromRdfResource,
+          fromRdfTypes: [],
+        },
+        {
+          filter: $Object.filter,
           fromRdfResource: IndirectRecursiveStruct.fromRdfResource,
           fromRdfTypes: [IndirectRecursiveStruct.schema.fromRdfType],
         },
@@ -63182,6 +64042,58 @@ export class $SparqlObjectSet implements $ObjectSet {
       HasValuesStruct.Filter,
       HasValuesStruct.Identifier
     >(HasValuesStruct, query);
+  }
+
+  async ignoredPropertiesStruct(
+    identifier: IgnoredPropertiesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, IgnoredPropertiesStruct>> {
+    return (
+      await this.ignoredPropertiesStructs({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async ignoredPropertiesStructCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        IgnoredPropertiesStruct.Filter,
+        IgnoredPropertiesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >(IgnoredPropertiesStruct, query);
+  }
+
+  async ignoredPropertiesStructIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IgnoredPropertiesStruct.Identifier[]>> {
+    return this.#objectIdentifiers<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >(IgnoredPropertiesStruct, query);
+  }
+
+  async ignoredPropertiesStructs(
+    query?: $SparqlObjectSet.Query<
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly IgnoredPropertiesStruct[]>> {
+    return this.#objects<
+      IgnoredPropertiesStruct,
+      IgnoredPropertiesStruct.Filter,
+      IgnoredPropertiesStruct.Identifier
+    >(IgnoredPropertiesStruct, query);
   }
 
   async indirectRecursiveStruct(
