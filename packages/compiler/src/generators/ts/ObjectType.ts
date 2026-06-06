@@ -9,7 +9,7 @@ import { DiscriminantProperty as _DiscriminantProperty } from "./_ObjectType/Dis
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";
 import { ObjectType_createFunctionDeclaration } from "./_ObjectType/ObjectType_createFunctionDeclaration.js";
-import { ObjectType_equalsFunctionDeclaration } from "./_ObjectType/ObjectType_equalsFunctionDeclaration.js";
+import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
 import { ObjectType_filterFunctionDeclaration } from "./_ObjectType/ObjectType_filterFunctionDeclaration.js";
 import { ObjectType_filterTypeDeclaration } from "./_ObjectType/ObjectType_filterTypeDeclaration.js";
 import { ObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
@@ -19,7 +19,6 @@ import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/Obj
 import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
 import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectType_graphqlTypeVariableStatement.js";
 import { ObjectType_hashFunctionDeclarations } from "./_ObjectType/ObjectType_hashFunctionDeclarations.js";
-import { ObjectType_interfaceDeclaration } from "./_ObjectType/ObjectType_interfaceDeclaration.js";
 import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
 import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
 import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
@@ -42,6 +41,7 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
+import { tsComment } from "./tsComment.js";
 
 export class ObjectType extends AbstractType {
   protected readonly toRdfTypes: readonly NamedNode[];
@@ -111,6 +111,13 @@ export class ObjectType extends AbstractType {
     );
   }
 
+  private get inlineExpression(): Code {
+    return code`{ ${joinCode(
+      this.properties.map((property) => property.declaration),
+      { on: "\n\n" },
+    )} }`;
+  }
+
   override get declaration(): Maybe<Code> {
     const name = this.name.extract();
     if (!name) {
@@ -120,15 +127,29 @@ export class ObjectType extends AbstractType {
     const declarations: Code[] = [];
 
     if (!this.extern) {
+      if (this.configuration.features.has("Object.type")) {
+        declarations.push(code`\
+ ${this.comment
+   .alt(this.label)
+   .map(tsComment)
+   .orDefault("")}export type ${name} = ${this.inlineExpression};`);
+      }
+
       const staticModuleDeclarations: Code[] = [];
 
-      if (this.configuration.features.has("Object.type")) {
-        declarations.push(ObjectType_interfaceDeclaration.call(this));
+      if (this.configuration.features.has("Object.create")) {
+        staticModuleDeclarations.push(
+          ObjectType_createFunctionDeclaration.call(this),
+        );
+      }
+
+      if (this.configuration.features.has("Object.equals")) {
+        staticModuleDeclarations.push(
+          code`export const equals = ${ObjectType_equalsFunctionExpression.call(this)};`,
+        );
       }
 
       staticModuleDeclarations.push(
-        ...ObjectType_createFunctionDeclaration.call(this).toList(),
-        ...ObjectType_equalsFunctionDeclaration.call(this).toList(),
         ...ObjectType_hashFunctionDeclarations.call(this),
       );
 
@@ -202,12 +223,16 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get equalsFunction(): Code {
-    return code`${this.name.unsafeCoerce()}.equals`;
+    return this.name
+      .map((name) => code`${name}.equals`)
+      .orDefault(ObjectType_equalsFunctionExpression.call(this));
   }
 
   @Memoize()
   get expression(): Code {
-    return code`${this.name.unsafeCoerce()}`;
+    return this.name
+      .map((name) => code`${name}`)
+      .orDefault(this.inlineExpression);
   }
 
   @Memoize()

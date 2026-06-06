@@ -1,15 +1,8 @@
-import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
-export function ObjectType_createFunctionDeclaration(
-  this: ObjectType,
-): Maybe<Code> {
-  if (!this.configuration.features.has("Object.create")) {
-    return Maybe.empty();
-  }
-
+export function ObjectType_createFunctionDeclaration(this: ObjectType): Code {
   const parametersPropertySignatures = this.properties.flatMap((property) =>
     property.constructorParameter.toList(),
   );
@@ -55,12 +48,12 @@ export function ObjectType_createFunctionDeclaration(
     returnExpression = code`${returnExpression}.map(object => ${this.reusables.snippets.monkeyPatchObject}(object, { ${monkeyPatchMethods.join(", ")} }))`;
   }
 
-  return Maybe.of(code`\
+  return code`\
 export function create(${parametersSignature}): ${this.reusables.imports.Either}<Error, ${this.expression}> {
   return ${returnExpression};
 }
   
 export function createUnsafe(${parametersSignature}): ${this.expression} {
   return create(parameters).unsafeCoerce();
-}`);
+}`;
 }
