@@ -29,7 +29,7 @@ import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schema
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_toJsonFunctionDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionDeclaration.js";
-import { ObjectType_toRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_toRdfResourceFunctionDeclaration.js";
+import { ObjectType_toRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceFunctionDeclaration.js";
 import { ObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
 import { ObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
@@ -221,6 +221,13 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
         );
       }
 
+      if (this.configuration.features.has("Object.toRdf")) {
+        staticModuleDeclarations.push(
+          code`export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}> = ${ObjectType_toRdfResourceFunctionExpression.call(this)};`,
+          code`export const toRdfResource = ${this.reusables.snippets.wrap_ToRdfResourceFunction}(_toRdfResource);`,
+        );
+      }
+
       if (this.configuration.features.has("Object.toString")) {
         staticModuleDeclarations.push(
           code`export const ${this.configuration.syntheticNamePrefix}toString = (${this.thisVariable}: ${this.expression}): string => \`\${${name}(JSON.stringify(toStringRecord(${this.thisVariable}))}\`;`,
@@ -252,7 +259,6 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
           reusables: this.reusables,
         }).toList(),
         ...ObjectType_toJsonFunctionDeclaration.call(this).toList(),
-        ...ObjectType_toRdfResourceFunctionDeclaration.call(this).toList(),
         ...ObjectType_valueSparqlConstructTriplesFunctionDeclaration.call(
           this,
         ).toList(),
@@ -470,7 +476,12 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    return code`[${this.name.unsafeCoerce()}.toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+    const toRdfResourceFunction = this.name
+      .map((name) => code`${name}.toRdfResource`)
+      .orDefault(
+        code`${this.reusables.snippets.wrap_ToRdfResourceFunction}(${ObjectType_toRdfResourceFunctionExpression.call(this)})`,
+      );
+    return code`[${toRdfResourceFunction}(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
 
   override toStringExpression({

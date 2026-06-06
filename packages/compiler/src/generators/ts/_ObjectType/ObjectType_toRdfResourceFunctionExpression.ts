@@ -1,15 +1,10 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
-import { Maybe } from "purify-ts";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectType_toRdfResourceFunctionDeclaration(
+export function ObjectType_toRdfResourceFunctionExpression(
   this: ObjectType,
-): Maybe<Code> {
-  if (!this.configuration.features.has("Object.toRdf")) {
-    return Maybe.empty();
-  }
-
+): Code {
   const statements: Code[] = [];
 
   if (this.toRdfTypes.length > 0) {
@@ -41,12 +36,10 @@ export function ObjectType_toRdfResourceFunctionDeclaration(
 
   statements.push(code`return ${variables.resource};`);
 
-  return Maybe.of(code`\
-export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}> = (parameters) => {
-${joinCode(statements)}
-}
-
-export const toRdfResource = ${this.reusables.snippets.wrap_ToRdfResourceFunction}(_toRdfResource);`);
+  return code`\
+((parameters) => {
+  ${joinCode(statements)}
+})`;
 }
 
 const variables = {
