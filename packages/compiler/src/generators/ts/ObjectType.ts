@@ -30,7 +30,6 @@ import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectTyp
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_toJsonFunctionDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionDeclaration.js";
 import { ObjectType_toRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_toRdfResourceFunctionDeclaration.js";
-import { ObjectType_toStringFunctionDeclarations } from "./_ObjectType/ObjectType_toStringFunctionDeclarations.js";
 import { ObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
 import { ObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
@@ -171,6 +170,15 @@ export class ObjectType extends AbstractType {
         ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
       ];
 
+      if (this.configuration.features.has("Object.toString")) {
+        staticModuleDeclarations.push(
+          code`export const ${this.configuration.syntheticNamePrefix}toString = (${this.thisVariable}: ${this.expression}): string => \`\${${name}(JSON.stringify(toStringRecord(${this.thisVariable}))}\`;`,
+        );
+        staticModuleDeclarations.push(
+          code`export const toStringRecord = (${this.thisVariable}: ${this.expression}): string => ${this.toStringRecordExpression({ variables: { value: this.thisVariable } })};`,
+        );
+      }
+
       staticModuleDeclarations.push(
         ...ObjectType_graphqlTypeVariableStatement.call(this).toList(),
         ...identifierTypeDeclarations.call(this),
@@ -207,7 +215,6 @@ export class ObjectType extends AbstractType {
         }).toList(),
         ...ObjectType_toJsonFunctionDeclaration.call(this).toList(),
         ...ObjectType_toRdfResourceFunctionDeclaration.call(this).toList(),
-        ...ObjectType_toStringFunctionDeclarations.call(this),
         ...ObjectType_valueSparqlConstructTriplesFunctionDeclaration.call(
           this,
         ).toList(),
@@ -405,7 +412,33 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.name.unsafeCoerce()}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
+    return this.name
+      .map(
+        (name) =>
+          code`${name}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`,
+      )
+      .orDefault(
+        code`JSON.stringify(${this.toStringRecordExpression({ variables })})`,
+      );
+  }
+
+  private toStringRecordExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    return code`${this.reusables.snippets.compactRecord}({${joinCode(
+      this.properties.flatMap((property) =>
+        property
+          .toStringInitializer({
+            variables: {
+              value: property.accessExpression({
+                variables: { object: variables.value },
+              }),
+            },
+          })
+          .toList(),
+      ),
+      { on: "," },
+    )}})`;
   }
 
   private readonly lazyProperties: (
