@@ -403,7 +403,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   protected get thisVariable(): Code {
-    return code`_${camelCase(this.name.unsafeCoerce())}`;
+    return this.name
+      .map((name) => code`_${camelCase(name)}`)
+      .orDefault(code`_object`);
   }
 
   override fromJsonExpression({
