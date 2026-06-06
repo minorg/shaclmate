@@ -7,7 +7,6 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_ObjectType/DiscriminantProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
-import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";
 import { ObjectType_createFunctionDeclaration } from "./_ObjectType/ObjectType_createFunctionDeclaration.js";
 import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
 import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunctionExpression.js";
@@ -19,11 +18,12 @@ import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/Obj
 import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
 import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectType_graphqlTypeVariableStatement.js";
 import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
+import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
 import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
-import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
+import { ObjectType_jsonSchemaExpression } from "./_ObjectType/ObjectType_jsonSchemaExpression.js";
 import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonTypeExpression.js";
-import { ObjectType_jsonUiSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionDeclaration.js";
+import { ObjectType_jsonUiSchemaFunctionExpression } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionExpression.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
@@ -134,7 +134,7 @@ export class ObjectType extends AbstractType {
    .orDefault("")}export type ${name} = ${this.inlineExpression};`);
       }
 
-      const staticModuleDeclarations: Code[] = [];
+      let staticModuleDeclarations: Code[] = [];
 
       if (this.configuration.features.has("Object.create")) {
         staticModuleDeclarations.push(
@@ -164,17 +164,45 @@ export class ObjectType extends AbstractType {
         );
       }
 
+      if (this.configuration.features.has("Object.type")) {
+        // Identifier
+        staticModuleDeclarations = staticModuleDeclarations.concat(
+          ObjectType_identifierTypeDeclarations.call(this),
+        );
+      }
+
       if (this.configuration.features.has("Object.JSON.type")) {
         staticModuleDeclarations.push(
           code`export type Json = ${ObjectType_jsonTypeExpression.call(this)}`,
         );
       }
 
-      const jsonModuleDeclarations: Code[] = [
-        ...ObjectType_jsonParseFunctionDeclaration.call(this).toList(),
-        ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
-        ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
-      ];
+      const jsonModuleDeclarations: Code[] = [];
+      if (this.configuration.features.has("Object.JSON.parse")) {
+        jsonModuleDeclarations.push(
+          ObjectType_jsonParseFunctionDeclaration.call(this),
+        );
+      }
+      if (this.configuration.features.has("Object.JSON.schema")) {
+        jsonModuleDeclarations.push(
+          code`export function schema() { return ${ObjectType_jsonSchemaExpression.call(this)} satisfies ${this.reusables.imports.z}.ZodType<Json>; }`,
+        );
+      }
+      if (this.configuration.features.has("Object.JSON.uiSchema")) {
+        jsonModuleDeclarations.push(
+          code`export const uiSchema = ${ObjectType_jsonUiSchemaFunctionExpression.call(this)};`,
+        );
+      }
+      if (jsonModuleDeclarations.length > 0) {
+        staticModuleDeclarations.push(
+          code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
+        );
+      }
+
+      //   ...ObjectType_jsonParseFunctionDeclaration.call(this).toList(),
+      //   ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
+      //   ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
+      // ];
 
       if (this.configuration.features.has("Object.toString")) {
         staticModuleDeclarations.push(
@@ -187,12 +215,6 @@ export class ObjectType extends AbstractType {
 
       staticModuleDeclarations.push(
         ...ObjectType_graphqlTypeVariableStatement.call(this).toList(),
-        ...identifierTypeDeclarations.call(this),
-        ...(jsonModuleDeclarations.length > 0
-          ? [
-              code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
-            ]
-          : []),
         ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.call(
           this,
         ).toList(),
@@ -379,14 +401,18 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    let expression = code`${this.name.unsafeCoerce()}.Json.schema()`;
-    if (
-      context === "property" &&
-      this.properties.some((property) => property.recursive)
-    ) {
-      expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name.unsafeCoerce()}.Json> => ${expression})`;
-    }
-    return expression;
+    return this.name
+      .map((name) => {
+        let expression = code`${name}.Json.schema()`;
+        if (
+          context === "property" &&
+          this.properties.some((property) => property.recursive)
+        ) {
+          expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name.unsafeCoerce()}.Json> => ${expression})`;
+        }
+        return expression;
+      })
+      .orDefault(ObjectType_jsonSchemaExpression.call(this));
   }
 
   @Memoize()
@@ -402,7 +428,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name.unsafeCoerce()}.Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
+      code`${this.name
+        .map((name) => code`${name}.Json.uiSchema`)
+        .orDefault(
+          ObjectType_jsonUiSchemaFunctionExpression.call(this),
+        )}({ scopePrefix: ${variables.scopePrefix} })`,
     );
   }
 
