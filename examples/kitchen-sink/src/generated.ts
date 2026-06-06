@@ -15440,7 +15440,7 @@ export namespace HasValuesStruct {
       }),
     );
 } /**
- * Struct node shape that uses different methods to make SHACLmate ignore properties
+ * Struct node shape that uses different methods to make SHACLmate ignore properties.
  */
 
 export interface IgnoredPropertiesStruct {
@@ -15454,29 +15454,14 @@ export interface IgnoredPropertiesStruct {
   readonly severityDefaultProperty: string;
 
   /**
-   * A property with an explicit sh:severity sh:Info is ignored
-   */
-  readonly severityInfoProperty: string;
-
-  /**
    * A property with an explicit sh:severity sh:Violation is not ignored
    */
   readonly severityViolationProperty: string;
 
   /**
-   * A property with an explicit sh:severity sh:Warning is ignored
-   */
-  readonly severityWarningProperty: string;
-
-  /**
    * A property with shaclmate:ignore set to false (the default) is not ignored
    */
   readonly shaclmateIgnoreFalseProperty: string;
-
-  /**
-   * A property with shaclmate:ignore set to true not ignored
-   */
-  readonly shaclmateIgnoreTrueProperty: string;
 }
 
 export namespace IgnoredPropertiesStruct {
@@ -15487,25 +15472,17 @@ export namespace IgnoredPropertiesStruct {
       | NamedNode
       | string;
     readonly severityDefaultProperty: string;
-    readonly severityInfoProperty: string;
     readonly severityViolationProperty: string;
-    readonly severityWarningProperty: string;
     readonly shaclmateIgnoreFalseProperty: string;
-    readonly shaclmateIgnoreTrueProperty: string;
   }): Either<Error, IgnoredPropertiesStruct> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       severityDefaultProperty: Either.of(parameters.severityDefaultProperty),
-      severityInfoProperty: Either.of(parameters.severityInfoProperty),
       severityViolationProperty: Either.of(
         parameters.severityViolationProperty,
       ),
-      severityWarningProperty: Either.of(parameters.severityWarningProperty),
       shaclmateIgnoreFalseProperty: Either.of(
         parameters.shaclmateIgnoreFalseProperty,
-      ),
-      shaclmateIgnoreTrueProperty: Either.of(
-        parameters.shaclmateIgnoreTrueProperty,
       ),
     })
       .map((properties) => ({
@@ -15522,11 +15499,8 @@ export namespace IgnoredPropertiesStruct {
       | NamedNode
       | string;
     readonly severityDefaultProperty: string;
-    readonly severityInfoProperty: string;
     readonly severityViolationProperty: string;
-    readonly severityWarningProperty: string;
     readonly shaclmateIgnoreFalseProperty: string;
-    readonly shaclmateIgnoreTrueProperty: string;
   }): IgnoredPropertiesStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -15557,18 +15531,6 @@ export namespace IgnoredPropertiesStruct {
       )
       .chain(() =>
         $strictEquals(
-          left.severityInfoProperty,
-          right.severityInfoProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "severityInfoProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        $strictEquals(
           left.severityViolationProperty,
           right.severityViolationProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -15581,36 +15543,12 @@ export namespace IgnoredPropertiesStruct {
       )
       .chain(() =>
         $strictEquals(
-          left.severityWarningProperty,
-          right.severityWarningProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "severityWarningProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        $strictEquals(
           left.shaclmateIgnoreFalseProperty,
           right.shaclmateIgnoreFalseProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left,
           right,
           propertyName: "shaclmateIgnoreFalseProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        $strictEquals(
-          left.shaclmateIgnoreTrueProperty,
-          right.shaclmateIgnoreTrueProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "shaclmateIgnoreTrueProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -15635,11 +15573,8 @@ export namespace IgnoredPropertiesStruct {
     _ignoredPropertiesStruct: IgnoredPropertiesStruct,
   ): HasherT {
     $hashString(hasher, _ignoredPropertiesStruct.severityDefaultProperty);
-    $hashString(hasher, _ignoredPropertiesStruct.severityInfoProperty);
     $hashString(hasher, _ignoredPropertiesStruct.severityViolationProperty);
-    $hashString(hasher, _ignoredPropertiesStruct.severityWarningProperty);
     $hashString(hasher, _ignoredPropertiesStruct.shaclmateIgnoreFalseProperty);
-    $hashString(hasher, _ignoredPropertiesStruct.shaclmateIgnoreTrueProperty);
     return hasher;
   }
 
@@ -15654,11 +15589,8 @@ export namespace IgnoredPropertiesStruct {
     readonly "@id": string;
     readonly "@type": "IgnoredPropertiesStruct";
     readonly severityDefaultProperty: string;
-    readonly severityInfoProperty: string;
     readonly severityViolationProperty: string;
-    readonly severityWarningProperty: string;
     readonly shaclmateIgnoreFalseProperty: string;
-    readonly shaclmateIgnoreTrueProperty: string;
   };
 
   export namespace Json {
@@ -15679,30 +15611,18 @@ export namespace IgnoredPropertiesStruct {
             description:
               "A property without an sh:severity defaults to sh:Violation severity and is not ignored",
           }),
-          severityInfoProperty: z.string().meta({
-            description:
-              "A property with an explicit sh:severity sh:Info is ignored",
-          }),
           severityViolationProperty: z.string().meta({
             description:
               "A property with an explicit sh:severity sh:Violation is not ignored",
-          }),
-          severityWarningProperty: z.string().meta({
-            description:
-              "A property with an explicit sh:severity sh:Warning is ignored",
           }),
           shaclmateIgnoreFalseProperty: z.string().meta({
             description:
               "A property with shaclmate:ignore set to false (the default) is not ignored",
           }),
-          shaclmateIgnoreTrueProperty: z.string().meta({
-            description:
-              "A property with shaclmate:ignore set to true not ignored",
-          }),
         })
         .meta({
           description:
-            "Struct node shape that uses different methods to make SHACLmate ignore properties",
+            "Struct node shape that uses different methods to make SHACLmate ignore properties.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -15731,23 +15651,11 @@ export namespace IgnoredPropertiesStruct {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/severityInfoProperty`,
-            type: "Control",
-          },
-          {
             scope: `${scopePrefix}/properties/severityViolationProperty`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/severityWarningProperty`,
-            type: "Control",
-          },
-          {
             scope: `${scopePrefix}/properties/shaclmateIgnoreFalseProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/shaclmateIgnoreTrueProperty`,
             type: "Control",
           },
         ],
@@ -15777,25 +15685,10 @@ export namespace IgnoredPropertiesStruct {
       return false;
     }
     if (
-      filter.severityInfoProperty !== undefined &&
-      !$filterString(filter.severityInfoProperty, value.severityInfoProperty)
-    ) {
-      return false;
-    }
-    if (
       filter.severityViolationProperty !== undefined &&
       !$filterString(
         filter.severityViolationProperty,
         value.severityViolationProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.severityWarningProperty !== undefined &&
-      !$filterString(
-        filter.severityWarningProperty,
-        value.severityWarningProperty,
       )
     ) {
       return false;
@@ -15809,26 +15702,14 @@ export namespace IgnoredPropertiesStruct {
     ) {
       return false;
     }
-    if (
-      filter.shaclmateIgnoreTrueProperty !== undefined &&
-      !$filterString(
-        filter.shaclmateIgnoreTrueProperty,
-        value.shaclmateIgnoreTrueProperty,
-      )
-    ) {
-      return false;
-    }
     return true;
   }
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly severityDefaultProperty?: $StringFilter;
-    readonly severityInfoProperty?: $StringFilter;
     readonly severityViolationProperty?: $StringFilter;
-    readonly severityWarningProperty?: $StringFilter;
     readonly shaclmateIgnoreFalseProperty?: $StringFilter;
-    readonly shaclmateIgnoreTrueProperty?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -15848,17 +15729,6 @@ export namespace IgnoredPropertiesStruct {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.severityInfoProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "severityInfoProperty",
-        propertySchema: schema.properties.severityInfoProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.severityViolationProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -15870,33 +15740,11 @@ export namespace IgnoredPropertiesStruct {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.severityWarningProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "severityWarningProperty",
-        propertySchema: schema.properties.severityWarningProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.shaclmateIgnoreFalseProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "shaclmateIgnoreFalseProperty",
         propertySchema: schema.properties.shaclmateIgnoreFalseProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.shaclmateIgnoreTrueProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "shaclmateIgnoreTrueProperty",
-        propertySchema: schema.properties.shaclmateIgnoreTrueProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15935,18 +15783,6 @@ export namespace IgnoredPropertiesStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.severityInfoProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "severityInfoProperty",
-        propertySchema: schema.properties.severityInfoProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.severityViolationProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -15959,36 +15795,12 @@ export namespace IgnoredPropertiesStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.severityWarningProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "severityWarningProperty",
-        propertySchema: schema.properties.severityWarningProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.shaclmateIgnoreFalseProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "shaclmateIgnoreFalseProperty",
         propertySchema: schema.properties.shaclmateIgnoreFalseProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.shaclmateIgnoreTrueProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "shaclmateIgnoreTrueProperty",
-        propertySchema: schema.properties.shaclmateIgnoreTrueProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -16008,20 +15820,11 @@ export namespace IgnoredPropertiesStruct {
       severityDefaultProperty: Either.of<Error, string>(
         $json["severityDefaultProperty"],
       ),
-      severityInfoProperty: Either.of<Error, string>(
-        $json["severityInfoProperty"],
-      ),
       severityViolationProperty: Either.of<Error, string>(
         $json["severityViolationProperty"],
       ),
-      severityWarningProperty: Either.of<Error, string>(
-        $json["severityWarningProperty"],
-      ),
       shaclmateIgnoreFalseProperty: Either.of<Error, string>(
         $json["shaclmateIgnoreFalseProperty"],
-      ),
-      shaclmateIgnoreTrueProperty: Either.of<Error, string>(
-        $json["shaclmateIgnoreTrueProperty"],
       ),
     }).chain(create);
   }
@@ -16060,19 +15863,6 @@ export namespace IgnoredPropertiesStruct {
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
-      severityInfoProperty: $shaclPropertyFromRdf<
-        string,
-        $StringSchema<string>
-      >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
-        ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.severityInfoProperty,
-        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
-      }),
       severityViolationProperty: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
@@ -16086,19 +15876,6 @@ export namespace IgnoredPropertiesStruct {
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
-      severityWarningProperty: $shaclPropertyFromRdf<
-        string,
-        $StringSchema<string>
-      >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
-        ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.severityWarningProperty,
-        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
-      }),
       shaclmateIgnoreFalseProperty: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
@@ -16109,19 +15886,6 @@ export namespace IgnoredPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
         propertySchema: schema.properties.shaclmateIgnoreFalseProperty,
-        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
-      }),
-      shaclmateIgnoreTrueProperty: $shaclPropertyFromRdf<
-        string,
-        $StringSchema<string>
-      >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
-        ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.shaclmateIgnoreTrueProperty,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -16162,11 +15926,6 @@ export namespace IgnoredPropertiesStruct {
         ),
         type: { kind: "String" as const },
       },
-      severityInfoProperty: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/severityInfoProperty"),
-        type: { kind: "String" as const },
-      },
       severityViolationProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -16174,24 +15933,10 @@ export namespace IgnoredPropertiesStruct {
         ),
         type: { kind: "String" as const },
       },
-      severityWarningProperty: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/severityWarningProperty",
-        ),
-        type: { kind: "String" as const },
-      },
       shaclmateIgnoreFalseProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/shaclmateIgnoreFalseProperty",
-        ),
-        type: { kind: "String" as const },
-      },
-      shaclmateIgnoreTrueProperty: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/shaclmateIgnoreTrueProperty",
         ),
         type: { kind: "String" as const },
       },
@@ -16270,15 +16015,10 @@ export namespace IgnoredPropertiesStruct {
         "@type": _ignoredPropertiesStruct.$type,
         severityDefaultProperty:
           _ignoredPropertiesStruct.severityDefaultProperty,
-        severityInfoProperty: _ignoredPropertiesStruct.severityInfoProperty,
         severityViolationProperty:
           _ignoredPropertiesStruct.severityViolationProperty,
-        severityWarningProperty:
-          _ignoredPropertiesStruct.severityWarningProperty,
         shaclmateIgnoreFalseProperty:
           _ignoredPropertiesStruct.shaclmateIgnoreFalseProperty,
-        shaclmateIgnoreTrueProperty:
-          _ignoredPropertiesStruct.shaclmateIgnoreTrueProperty,
       } satisfies IgnoredPropertiesStruct.Json),
     );
   }
@@ -16293,30 +16033,14 @@ export namespace IgnoredPropertiesStruct {
       parameters.graph,
     );
     parameters.resource.add(
-      IgnoredPropertiesStruct.schema.properties.severityInfoProperty.path,
-      [$literalFactory.string(parameters.object.severityInfoProperty)],
-      parameters.graph,
-    );
-    parameters.resource.add(
       IgnoredPropertiesStruct.schema.properties.severityViolationProperty.path,
       [$literalFactory.string(parameters.object.severityViolationProperty)],
-      parameters.graph,
-    );
-    parameters.resource.add(
-      IgnoredPropertiesStruct.schema.properties.severityWarningProperty.path,
-      [$literalFactory.string(parameters.object.severityWarningProperty)],
       parameters.graph,
     );
     parameters.resource.add(
       IgnoredPropertiesStruct.schema.properties.shaclmateIgnoreFalseProperty
         .path,
       [$literalFactory.string(parameters.object.shaclmateIgnoreFalseProperty)],
-      parameters.graph,
-    );
-    parameters.resource.add(
-      IgnoredPropertiesStruct.schema.properties.shaclmateIgnoreTrueProperty
-        .path,
-      [$literalFactory.string(parameters.object.shaclmateIgnoreTrueProperty)],
       parameters.graph,
     );
     return parameters.resource;
