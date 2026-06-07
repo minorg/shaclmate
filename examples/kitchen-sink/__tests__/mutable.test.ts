@@ -7,7 +7,7 @@ import { sha256 } from "js-sha256";
 
 function $identifier(this: kitchenSink.MutablePropertiesStruct) {
   return dataFactory.namedNode(
-    `urn:shaclmate:MutablePropertiesStruct:${kitchenSink.MutablePropertiesStruct.hashShaclProperties(sha256.create(), this)}`,
+    `urn:shaclmate:MutablePropertiesStruct:${kitchenSink.MutablePropertiesStruct.hash(sha256.create(), { ...this, $identifier: undefined, $type: undefined })}`,
   );
 }
 

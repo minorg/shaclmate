@@ -1,5 +1,5 @@
+import dataFactory from "@rdfx/data-factory";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
@@ -250,6 +250,7 @@ export class TsGenerator implements Generator {
         label: Maybe.empty(),
         logger: this.logger,
         reusables,
+        shapeIdentifier: dataFactory.blankNode(),
       });
     } else {
       switch ([...nodeKinds][0]) {
@@ -261,6 +262,7 @@ export class TsGenerator implements Generator {
             label: Maybe.empty(),
             logger: this.logger,
             reusables,
+            shapeIdentifier: dataFactory.blankNode(),
           });
           break;
         case "IRI":
@@ -273,6 +275,7 @@ export class TsGenerator implements Generator {
             label: Maybe.empty(),
             logger: this.logger,
             reusables,
+            shapeIdentifier: dataFactory.blankNode(),
           });
           break;
       }
@@ -291,6 +294,7 @@ export class TsGenerator implements Generator {
       })),
       recursive: false,
       reusables,
+      shapeIdentifier: dataFactory.blankNode(),
       synthetic: true,
     });
   }

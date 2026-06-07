@@ -1,11 +1,9 @@
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function identifierTypeDeclarations(this: ObjectType): readonly Code[] {
-  if (!this.configuration.features.has("Object.type")) {
-    return [];
-  }
-
+export function ObjectType_identifierTypeDeclarations(
+  this: ObjectType,
+): readonly Code[] {
   // Bespoke identifier type and associated functions
   return [
     code`export type Identifier = ${this.identifierType.expression};`,

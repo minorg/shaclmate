@@ -148,6 +148,7 @@ export class TypeFactory {
       ),
       recursive: astType.recursive,
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
       synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
     });
@@ -188,6 +189,7 @@ export class TypeFactory {
       name: astType.name.map((name) => this.tsName(name)),
       recursive: astType.recursive,
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
       synthetic: astType.synthetic,
     });
 
@@ -255,6 +257,7 @@ export class TypeFactory {
       name: astType.name.map((name) => this.tsName(name)),
       recursive: astType.recursive,
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
       synthetic: astType.synthetic,
     });
   }
@@ -267,6 +270,7 @@ export class TypeFactory {
       logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
@@ -284,6 +288,7 @@ export class TypeFactory {
       logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
@@ -301,6 +306,7 @@ export class TypeFactory {
           logger: this.logger,
           name: astType.name.map((name) => this.tsName(name)),
           reusables: this.reusables,
+          shapeIdentifier: astType.shapeIdentifier,
         });
       case "Iri":
         return this.createIriType(astType);
@@ -317,6 +323,7 @@ export class TypeFactory {
       logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
@@ -334,6 +341,7 @@ export class TypeFactory {
         ObjectType | ObjectUnionType
       >,
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
@@ -351,6 +359,7 @@ export class TypeFactory {
         ObjectType | ObjectUnionType
       >,
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
@@ -368,6 +377,7 @@ export class TypeFactory {
         | ObjectType
         | ObjectUnionType,
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
@@ -384,6 +394,7 @@ export class TypeFactory {
       mutable: astType.mutable,
       name: astType.name.map((name) => this.tsName(name)),
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
       toRdfTypes: astType.toRdfTypes,
     });
   }
@@ -429,6 +440,7 @@ export class TypeFactory {
               logger: this.logger,
               name: astType.name.map((name) => this.tsName(name)),
               reusables: this.reusables,
+              shapeIdentifier: astType.shapeIdentifier,
             });
           case "bigint":
             return new BigIntType({
@@ -445,6 +457,7 @@ export class TypeFactory {
                 LiteralDecoder.decodeBigIntLiteral(value).unsafeCoerce(),
               ),
               reusables: this.reusables,
+              shapeIdentifier: astType.shapeIdentifier,
             });
           case "boolean":
             return new BooleanType({
@@ -461,6 +474,7 @@ export class TypeFactory {
                 LiteralDecoder.decodeBooleanLiteral(value).unsafeCoerce(),
               ),
               reusables: this.reusables,
+              shapeIdentifier: astType.shapeIdentifier,
             });
           case "date":
           case "datetime":
@@ -482,6 +496,7 @@ export class TypeFactory {
                   : LiteralDecoder.decodeDateTimeLiteral)(value).unsafeCoerce(),
               ),
               reusables: this.reusables,
+              shapeIdentifier: astType.shapeIdentifier,
             });
           case "float":
           case "int":
@@ -503,6 +518,7 @@ export class TypeFactory {
                   : LiteralDecoder.decodeIntLiteral)(value).unsafeCoerce(),
               ),
               reusables: this.reusables,
+              shapeIdentifier: astType.shapeIdentifier,
             });
           case "string":
             if (!datatype.equals(rdf.langString)) {
@@ -518,6 +534,7 @@ export class TypeFactory {
                 name: astType.name.map((name) => this.tsName(name)),
                 primitiveIn: astType.in_.map((value) => value.value),
                 reusables: this.reusables,
+                shapeIdentifier: astType.shapeIdentifier,
               });
             }
             break;
@@ -549,6 +566,7 @@ export class TypeFactory {
       logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
@@ -604,6 +622,7 @@ export class TypeFactory {
       logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
@@ -620,6 +639,7 @@ export class TypeFactory {
       minCount: astType.minCount,
       name: astType.name.map((name) => this.tsName(name)),
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
@@ -634,6 +654,7 @@ export class TypeFactory {
       name: astType.name.map((name) => this.tsName(name)),
       nodeKinds: astType.nodeKinds,
       reusables: this.reusables,
+      shapeIdentifier: astType.shapeIdentifier,
     });
   }
 

@@ -2,6 +2,7 @@ import type { PropertyPath } from "@rdfx/resource";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
@@ -47,11 +48,17 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get constructorParameter(): Maybe<Code> {
+  override get constructorParameter(): Maybe<{
+    hasQuestionToken: boolean;
+    signature: Code;
+  }> {
     const conversionFunction = this.type.conversionFunction.extract();
 
     if (!conversionFunction) {
-      return Maybe.of(code`readonly ${this.name}: ${this.type.expression};`);
+      return Maybe.of({
+        hasQuestionToken: false,
+        signature: code`readonly ${this.name}: ${this.type.expression};`,
+      });
     }
 
     let hasQuestionToken = false;
@@ -65,23 +72,23 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       }
     }
 
-    return Maybe.of(
-      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
-    );
+    return Maybe.of({
+      hasQuestionToken,
+      signature: code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
+    });
   }
 
   @Memoize()
   override get declaration(): Code {
-    const lhs: Code[] = [];
-    if (!this.mutable) {
-      lhs.push(code`readonly`);
-    }
-    lhs.push(code`${this.name}`);
-    return code`${this.comment
+    let declaration = code`${!this.mutable ? "readonly " : ""}${this.name}: ${this.type.expression};`;
+    this.comment
       .alt(this.description)
       .alt(this.label)
       .map(tsComment)
-      .orDefault("")}${joinCode(lhs, { on: " " })}: ${this.type.expression};`;
+      .ifJust((comment) => {
+        declaration = code`${comment}${declaration}`;
+      });
+    return declaration;
   }
 
   @Memoize()
@@ -103,6 +110,10 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       resolve: code`(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: code`source.${this.name}` } })}`,
       type: this.type.graphqlType.expression,
     });
+  }
+
+  override get hashFunctionParameter(): Code {
+    return this.declaration;
   }
 
   @Memoize()
@@ -136,8 +147,8 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     );
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    const initializers = super.schemaInitializers.concat();
+  override get schema(): Maybe<Code> {
+    const initializers = [code`kind: ${literalOf(this.kind)}`];
     if (
       this.configuration.features.has("Object.fromRdf") ||
       this.configuration.features.has("Object.toRdf")
@@ -150,7 +161,34 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     } else {
       initializers.push(code`type: ${this.type.schema}`);
     }
-    return initializers;
+    return Maybe.of(code`{ ${joinCode(initializers, { on: ", " })} }`);
+  }
+
+  override get schemaType(): Maybe<Code> {
+    const initializers = [code`readonly kind: ${literalOf(this.kind)}`];
+    if (
+      this.configuration.features.has("Object.fromRdf") ||
+      this.configuration.features.has("Object.toRdf")
+    ) {
+      initializers.push(
+        code`readonly path: ${this.reusables.snippets.PropertyPath}`,
+      );
+    }
+    initializers.push(code`readonly type: ${this.type.schemaType}`);
+    return Maybe.of(code`{ ${joinCode(initializers, { on: ", " })} }`);
+  }
+
+  @Memoize()
+  private get schemaVariable(): Code {
+    return this.objectType.name
+      .map((name) => code`${name}.schema.properties.${this.name}`)
+      .orDefaultLazy(() => this.schema.unsafeCoerce());
+  }
+
+  private get typeSchemaVariable(): Code {
+    return this.objectType.name
+      .map((name) => code`${name}.schema.properties.${this.name}.type`)
+      .orDefaultLazy(() => this.type.schema);
   }
 
   override constructorInitializer({
@@ -164,11 +202,11 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const validationFunction = this.type.validationFunction.extract();
     let rhs: Code;
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.type, value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;
     } else if (conversionFunction) {
       rhs = code`${conversionFunction}(${parameterVariable})`;
     } else if (validationFunction) {
-      rhs = code`${validationFunction}(${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.type, ${parameterVariable})`;
+      rhs = code`${validationFunction}(${this.typeSchemaVariable}, ${parameterVariable})`;
     } else {
       rhs = code`${this.reusables.imports.Either}.of(${parameterVariable})`;
     }
@@ -202,7 +240,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       // subject of any statements.
       ignoreRdfType: true,
       preferredLanguages: variables.preferredLanguages,
-      propertySchema: code`schema.properties.${this.name}`,
+      propertySchema: this.schemaVariable,
       typeFromRdfResourceValues: this.type.fromRdfResourceValuesFunction,
     };
     if (this.configuration.features.has("ObjectSet")) {
@@ -252,7 +290,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         focusIdentifier: variables.focusIdentifier,
         ignoreRdfType: true,
         propertyName: this.name,
-        propertySchema: code`schema.properties.${this.name}`,
+        propertySchema: this.schemaVariable,
         typeSparqlConstructTriples:
           this.type.valueSparqlConstructTriplesFunction,
         variablePrefix: variables.variablePrefix,
@@ -274,7 +312,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         ignoreRdfType: true,
         preferredLanguages: variables.preferredLanguages,
         propertyName: this.name,
-        propertySchema: code`schema.properties.${this.name}`,
+        propertySchema: this.schemaVariable,
         typeSparqlWherePatterns: this.type.valueSparqlWherePatternsFunction,
         variablePrefix: variables.variablePrefix,
       }})`,
@@ -306,7 +344,10 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         return [];
     }
 
-    const propertyPath = code`${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.path`;
+    const propertyPath = this.objectType.name
+      .map(() => code`${this.schemaVariable}.path`)
+      .orDefault(this.propertyPathToCode(this.path));
+
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
         {

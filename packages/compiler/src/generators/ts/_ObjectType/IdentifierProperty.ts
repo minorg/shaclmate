@@ -25,7 +25,10 @@ export class IdentifierProperty extends AbstractProperty<
   override readonly recursive = false;
 
   @Memoize()
-  override get constructorParameter(): Maybe<Code> {
+  override get constructorParameter(): Maybe<{
+    hasQuestionToken: boolean;
+    signature: Code;
+  }> {
     let hasQuestionToken: boolean = false;
     const typeExpressions: Code[] = [code`(() => ${this.typeExpression})`];
     for (const type of this.type.conversionFunction.unsafeCoerce()
@@ -37,9 +40,10 @@ export class IdentifierProperty extends AbstractProperty<
       }
     }
 
-    return Maybe.of(
-      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
-    );
+    return Maybe.of({
+      hasQuestionToken,
+      signature: code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
+    });
   }
 
   @Memoize()
@@ -63,9 +67,14 @@ export class IdentifierProperty extends AbstractProperty<
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.typeExpression}.stringify(${this.accessExpression({ variables: { object: code`source` } })})`,
+      resolve: code`(source) => ${this.type.stringifyFunction}(${this.accessExpression({ variables: { object: code`source` } })})`,
       type: this.type.graphqlType.expression,
     });
+  }
+
+  @Memoize()
+  override get hashFunctionParameter(): Code {
+    return code`readonly ${this.name}?: () => ${this.typeExpression};`;
   }
 
   @Memoize()
@@ -96,8 +105,25 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(code`readonly "@id": string`);
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
+  override get schema(): Maybe<Code> {
+    return Maybe.of(
+      code`{ ${joinCode(
+        [code`kind: ${literalOf(this.kind)}`, code`type: ${this.type.schema}`],
+        { on: ", " },
+      )} }`,
+    );
+  }
+
+  override get schemaType(): Maybe<Code> {
+    return Maybe.of(
+      code`{ ${joinCode(
+        [
+          code`readonly kind: ${literalOf(this.kind)}`,
+          code`readonly type: ${this.type.schemaType}`,
+        ],
+        { on: ", " },
+      )} }`,
+    );
   }
 
   @Memoize()
@@ -105,6 +131,12 @@ export class IdentifierProperty extends AbstractProperty<
     return this.objectType.name
       .map((objectTypeAlias) => code`${objectTypeAlias}.Identifier`)
       .orDefault(this.type.expression);
+  }
+
+  private get typeSchemaVariable(): Code {
+    return this.objectType.name
+      .map((name) => code`${name}.schema.properties.${this.name}.type`)
+      .orDefaultLazy(() => this.type.schema);
   }
 
   override accessExpression({
@@ -171,7 +203,7 @@ export class IdentifierProperty extends AbstractProperty<
       focusResource: variables.focusResource,
       preferredLanguages: variables.preferredLanguages,
       propertyPath: this.rdfjsTermExpression(rdf.subject),
-      schema: code`schema.properties.${this.name}.type`,
+      schema: this.typeSchemaVariable,
     };
     if (this.configuration.features.has("ObjectSet")) {
       options["objectSet"] = variables.objectSet;
@@ -190,7 +222,9 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["hashStatements"]
   >[0]): readonly Code[] {
-    return [code`${variables.hasher}.update(${variables.value}.value);`];
+    return [
+      code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}().value); }`,
+    ];
   }
 
   override jsonUiSchemaElement({
@@ -219,12 +253,7 @@ export class IdentifierProperty extends AbstractProperty<
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: this.objectType.name
-          .map(
-            (objectTypeAlias) =>
-              code`${objectTypeAlias}.schema.properties.${this.name}.type`,
-          )
-          .orDefault(this.type.schema),
+        schema: this.typeSchemaVariable,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,

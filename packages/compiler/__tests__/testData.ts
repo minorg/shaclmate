@@ -137,6 +137,21 @@ export const testData = {
       //     .extractNullable();
       // },
 
+      get graphqlExample() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "..",
+            "examples",
+            "graphql",
+            "src",
+            "graphql.shaclmate.ttl",
+          ),
+        );
+      },
+
       get kitchenSinkExample() {
         return parseShapesGraph(
           path.join(

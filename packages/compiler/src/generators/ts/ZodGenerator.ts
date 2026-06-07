@@ -1,8 +1,8 @@
 import type { Logger } from "ts-log";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
-import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
+import { ObjectType_jsonSchemaExpression } from "./_ObjectType/ObjectType_jsonSchemaExpression.js";
+import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonTypeExpression.js";
 import { Reusables } from "./Reusables.js";
 import { TsGenerator } from "./TsGenerator.js";
 import { TypeFactory } from "./TypeFactory.js";
@@ -35,10 +35,12 @@ export class ZodGenerator implements Generator {
           const tsNamedObjectType = typeFactory.createObjectType(astNamedType);
           declarations.push(code`\
 export namespace ${tsNamedObjectType.name.unsafeCoerce()} {
-  ${joinCode(ObjectType_jsonTypeAliasDeclaration.call(tsNamedObjectType).toList())}
+  export type Json = ${ObjectType_jsonTypeExpression.call(tsNamedObjectType)};
 
   export namespace Json {
-    ${joinCode(ObjectType_jsonSchemaFunctionDeclaration.call(tsNamedObjectType).toList())}
+    export function schema() {
+      return ${ObjectType_jsonSchemaExpression.call(tsNamedObjectType)};
+    }
   }
 }`);
           break;

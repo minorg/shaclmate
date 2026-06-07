@@ -9,7 +9,7 @@ describe("hash", () => {
         .hash(sha256.create(), harnesses.nonClassStruct.instance)
         .hex(),
     ).toStrictEqual(
-      "9aa796c784f263a7941e3f5d63ba5ed2d07ffb6ab039db22f50ee68b3712dd1a",
+      "7fec181bb9c77561646fbcb60e9b3ba1b51b2a3a87922fec568acb4d463cd9ec",
     );
   });
 });

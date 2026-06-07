@@ -1,14 +1,7 @@
-import { Maybe } from "purify-ts";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectType_equalsFunctionDeclaration(
-  this: ObjectType,
-): Maybe<Code> {
-  if (!this.configuration.features.has("Object.equals")) {
-    return Maybe.empty();
-  }
-
+export function ObjectType_equalsFunctionExpression(this: ObjectType): Code {
   const chain: Code[] = [];
   for (const property of this.properties) {
     if (property.kind === "Discriminant") {
@@ -20,13 +13,13 @@ export function ObjectType_equalsFunctionDeclaration(
     );
   }
 
-  return Maybe.of(code`\
-export function equals(left: ${this.expression}, right: ${this.expression}): ${this.reusables.snippets.EqualsResult} {
-  return ${joinCode(
+  return code`\
+((left, right) =>
+  ${joinCode(
     chain.map((chainPart, chainPartI) =>
       chainPartI === 0 ? chainPart : code`chain(() => ${chainPart})`,
     ),
     { on: "." },
   )}
-}`);
+)`;
 }

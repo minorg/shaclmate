@@ -45,18 +45,16 @@
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:name "nestedStructProperty" ;
-        sh:node :NestedStruct ;
+        sh:node [
+            sh:property [
+                rdfs:label "Required string" ;
+                sh:datatype xsd:string ;
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:name "requiredStringProperty" ;
+                sh:path :requiredStringProperty
+            ]
+        ] ;
         sh:path :nestedStructProperty
-    ] .
-
-:NestedStruct
-    a sh:NodeShape ;
-    sh:property [
-        rdfs:label "Required string" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:name "requiredStringProperty" ;
-        sh:path :requiredStringProperty
     ] .
 

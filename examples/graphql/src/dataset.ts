@@ -2,7 +2,7 @@ import datasetFactory from "@rdfjs/dataset";
 import dataFactory from "@rdfx/data-factory";
 import { ResourceSet } from "@rdfx/resource";
 import {
-  NestedObject,
+  LazyObject,
   RootObject,
   UnionMember1,
   UnionMember2,
@@ -14,7 +14,7 @@ const resourceSet = new ResourceSet({
   dataset,
 });
 for (let i = 0; i < 4; i++) {
-  const lazyObject = NestedObject.createUnsafe({
+  const lazyObject = LazyObject.createUnsafe({
     $identifier: dataFactory.namedNode(
       `http://example.com/rootObject${i}/lazyObject`,
     ),
@@ -22,21 +22,19 @@ for (let i = 0; i < 4; i++) {
     optionalStringProperty: "optional string (lazy)",
     requiredStringProperty: "required string (lazy)",
   });
-  NestedObject.toRdfResource(lazyObject, { resourceSet });
+  LazyObject.toRdfResource(lazyObject, { resourceSet });
 
   RootObject.toRdfResource(
     RootObject.createUnsafe({
       $identifier: dataFactory.namedNode(`http://example.com/rootObject${i}`),
       lazyObjectSetProperty: [lazyObject],
       optionalLazyProperty: lazyObject,
-      optionalObjectProperty: NestedObject.createUnsafe({
+      optionalObjectProperty: {
         $identifier: dataFactory.namedNode(
           `http://example.com/rootObject${i}/nestedObject`,
         ),
-        optionalNumberProperty: 2,
-        optionalStringProperty: "optional string (nested)",
         requiredStringProperty: "required string (nested)",
-      }),
+      },
       optionalStringProperty: "optional string (root)",
       requiredStringProperty: "required string (root)",
     }),

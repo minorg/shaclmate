@@ -1,14 +1,7 @@
-import { Maybe } from "purify-ts";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectType_jsonSchemaFunctionDeclaration(
-  this: ObjectType,
-): Maybe<Code> {
-  if (!this.configuration.features.has("Object.JSON.schema")) {
-    return Maybe.empty();
-  }
-
+export function ObjectType_jsonSchemaExpression(this: ObjectType): Code {
   const properties = this.properties
     .flatMap((property) => property.jsonSchema.toList())
     .map(({ key, schema }) => code`"${key}": ${schema}`);
@@ -24,8 +17,5 @@ export function ObjectType_jsonSchemaFunctionDeclaration(
   });
 
   // ${this.properties.every((property) => !property.mutable) ? `.readonly()` : ""}
-  return Maybe.of(code`\
-export function schema() {
-  return ${this.reusables.imports.z}.object({${joinCode(properties, { on: "," })}}).meta(${meta}) satisfies ${this.reusables.imports.z}.ZodType<Json>;
-}`);
+  return code`${this.reusables.imports.z}.object({${joinCode(properties, { on: "," })}}).meta(${meta})`;
 }

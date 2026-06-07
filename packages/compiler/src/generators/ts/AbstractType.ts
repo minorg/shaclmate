@@ -1,3 +1,5 @@
+import type { BlankNode, NamedNode } from "@rdfjs/types";
+
 import type { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
@@ -148,6 +150,11 @@ export abstract class AbstractType {
   abstract readonly schemaType: Code;
 
   /**
+   * Identifier of the shape this type was derived from.
+   */
+  readonly shapeIdentifier: BlankNode | NamedNode;
+
+  /**
    * The type(s) of the array elements produced by the toRdfResourceValuesExpression.
    */
   abstract readonly toRdfResourceValueTypes: ReadonlySet<
@@ -199,6 +206,7 @@ export abstract class AbstractType {
     logger,
     name,
     reusables,
+    shapeIdentifier,
   }: {
     name: Maybe<string>;
     comment: Maybe<string>;
@@ -206,6 +214,7 @@ export abstract class AbstractType {
     label: Maybe<string>;
     logger: Logger;
     reusables: Reusables;
+    shapeIdentifier: BlankNode | NamedNode;
   }) {
     this.comment = comment;
     this.configuration = configuration;
@@ -218,6 +227,7 @@ export abstract class AbstractType {
       logger: this.logger,
       snippets: this.reusables.snippets,
     });
+    this.shapeIdentifier = shapeIdentifier;
   }
 
   /**

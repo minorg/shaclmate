@@ -5,14 +5,25 @@ import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
-  override readonly constructorParameter: Maybe<Code> = Maybe.empty();
+  override readonly constructorParameter: AbstractProperty<DiscriminantProperty.Type>["constructorParameter"] =
+    Maybe.empty();
+  override readonly declaration =
+    code`readonly ${this.name}: ${this.type.expression};`;
   override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
   override readonly graphqlField: AbstractProperty<DiscriminantProperty.Type>["graphqlField"] =
     Maybe.empty();
+  override readonly hashFunctionParameter =
+    code`readonly ${this.name}?: ${this.type.expression};`;
+  readonly jsonName = "@type";
+  override readonly jsonSignature = Maybe.of(
+    code`readonly "${this.jsonName}": ${this.type.expression}`,
+  );
   override readonly kind = "Discriminant";
   override readonly mutable = false;
   override readonly recursive = false;
+  override readonly schema: Maybe<Code> = Maybe.empty();
+  override readonly schemaType: Maybe<Code> = Maybe.empty();
   readonly value: string;
 
   constructor({
@@ -25,15 +36,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     this.value = value;
   }
 
-  override get declaration(): Code {
-    return code`readonly ${this.name}: ${this.type.expression};`;
-  }
-
-  @Memoize()
-  get jsonName(): string {
-    return "@type";
-  }
-
   @Memoize()
   override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
     return Maybe.of({
@@ -43,17 +45,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    return Maybe.of(code`readonly "${this.jsonName}": ${this.type.expression}`);
+  get values(): readonly string[] {
+    return [this.value];
   }
 
-  override get schema(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
-  // protected override get schemaInitializers(): readonly Code[] {
-  //   return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
-  // }
   private get constValue(): Code {
     return code`${literalOf(this.value)} as const`;
   }
@@ -75,7 +70,9 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
-    return [code`${variables.hasher}.update(${variables.value});`];
+    return [
+      code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}); }`,
+    ];
   }
 
   override jsonUiSchemaElement({
@@ -113,11 +110,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   override toStringInitializer(): Maybe<Code> {
     return Maybe.empty();
-  }
-
-  @Memoize()
-  get values(): readonly string[] {
-    return [this.value];
   }
 }
 

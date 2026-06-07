@@ -6,7 +6,7 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-:NestedObject
+:LazyObject
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
@@ -34,14 +34,14 @@
     sh:property :optionalStringProperty .
 
 :lazyObjectSetProperty
-    shaclmate:resolve :NestedObject ;
+    shaclmate:resolve :LazyObject ;
     a sh:PropertyShape ;
     rdfs:comment "Lazy object set property" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path :lazyObjectSetProperty .
 
 :optionalLazyProperty
-    shaclmate:resolve :NestedObject ;
+    shaclmate:resolve :LazyObject ;
     a sh:PropertyShape ;
     rdfs:comment "Optional lazy object property" ;
     sh:maxCount 1 ;
@@ -57,9 +57,12 @@
 
 :optionalObjectProperty
     a sh:PropertyShape ;
-    rdfs:comment "Optional object property" ;
+    rdfs:comment "Optional object property with 'anonymous' object" ;
     sh:maxCount 1 ;
-    sh:node :NestedObject ;
+    sh:node [
+        sh:nodeKind sh:BlankNodeOrIRI ;
+        sh:property :requiredStringProperty
+    ] ;
     sh:path :optionalObjectProperty .
 
 :optionalStringProperty
