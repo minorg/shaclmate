@@ -61,7 +61,7 @@
     sh:maxCount 1 ;
     sh:node [
         sh:nodeKind sh:BlankNodeOrIRI ;
-        sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty
+        sh:property :requiredStringProperty
     ] ;
     sh:path :optionalObjectProperty .
 

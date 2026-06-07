@@ -81,15 +81,13 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   @Memoize()
   override get declaration(): Code {
     let declaration = code`${!this.mutable ? "readonly " : ""}${this.name}: ${this.type.expression};`;
-    if (this.objectType.name.isJust()) {
-      this.comment
-        .alt(this.description)
-        .alt(this.label)
-        .map(tsComment)
-        .ifJust((comment) => {
-          declaration = code`${comment}${declaration}`;
-        });
-    }
+    this.comment
+      .alt(this.description)
+      .alt(this.label)
+      .map(tsComment)
+      .ifJust((comment) => {
+        declaration = code`${comment}${declaration}`;
+      });
     return declaration;
   }
 

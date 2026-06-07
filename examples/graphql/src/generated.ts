@@ -1516,16 +1516,6 @@ export type RootObject = {
     readonly $identifier: () => BlankNode | NamedNode;
 
     /**
-     * Optional number property
-     */
-    readonly optionalNumberProperty: Maybe<number>;
-
-    /**
-     * Optional string property
-     */
-    readonly optionalStringProperty: Maybe<string>;
-
-    /**
      * Required string property
      */
     readonly requiredStringProperty: string;
@@ -1559,22 +1549,10 @@ export namespace RootObject {
             | BlankNode
             | NamedNode
             | string;
-          readonly optionalNumberProperty?: number | Maybe<number>;
-          readonly optionalStringProperty?: string | Maybe<string>;
           readonly requiredStringProperty: string;
         }
       | Maybe<{
           readonly $identifier: () => BlankNode | NamedNode;
-
-          /**
-           * Optional number property
-           */
-          readonly optionalNumberProperty: Maybe<number>;
-
-          /**
-           * Optional string property
-           */
-          readonly optionalStringProperty: Maybe<string>;
 
           /**
            * Required string property
@@ -1601,28 +1579,10 @@ export namespace RootObject {
             | BlankNode
             | NamedNode
             | string;
-          readonly optionalNumberProperty?: number | Maybe<number>;
-          readonly optionalStringProperty?: string | Maybe<string>;
           readonly requiredStringProperty: string;
         }) =>
           $sequenceRecord({
             $identifier: $convertToIdentifierProperty(parameters.$identifier),
-            optionalNumberProperty: $convertToMaybe(
-              $identityConversionFunction,
-            )(parameters.optionalNumberProperty).chain((value) =>
-              $validateMaybe($identityValidationFunction)(
-                LazyObject.schema.properties.optionalNumberProperty.type,
-                value,
-              ),
-            ),
-            optionalStringProperty: $convertToMaybe(
-              $identityConversionFunction,
-            )(parameters.optionalStringProperty).chain((value) =>
-              $validateMaybe($identityValidationFunction)(
-                LazyObject.schema.properties.optionalStringProperty.type,
-                value,
-              ),
-            ),
             requiredStringProperty: Either.of(
               parameters.requiredStringProperty,
             ),
@@ -1673,22 +1633,10 @@ export namespace RootObject {
             | BlankNode
             | NamedNode
             | string;
-          readonly optionalNumberProperty?: number | Maybe<number>;
-          readonly optionalStringProperty?: string | Maybe<string>;
           readonly requiredStringProperty: string;
         }
       | Maybe<{
           readonly $identifier: () => BlankNode | NamedNode;
-
-          /**
-           * Optional number property
-           */
-          readonly optionalNumberProperty: Maybe<number>;
-
-          /**
-           * Optional string property
-           */
-          readonly optionalStringProperty: Maybe<string>;
 
           /**
            * Required string property
@@ -1707,8 +1655,6 @@ export namespace RootObject {
     readonly optionalLazyProperty?: $MaybeFilter<$DefaultPartial.Filter>;
     readonly optionalObjectProperty?: $MaybeFilter<{
       readonly $identifier?: $IdentifierFilter;
-      readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
-      readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
       readonly requiredStringProperty?: $StringFilter;
     }>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
@@ -1762,50 +1708,18 @@ export namespace RootObject {
           readonly $identifier: () => BlankNode | NamedNode;
 
           /**
-           * Optional number property
-           */
-          readonly optionalNumberProperty: Maybe<number>;
-
-          /**
-           * Optional string property
-           */
-          readonly optionalStringProperty: Maybe<string>;
-
-          /**
            * Required string property
            */
           readonly requiredStringProperty: string;
         },
         {
           readonly $identifier?: $IdentifierFilter;
-          readonly optionalNumberProperty?: $MaybeFilter<
-            $NumericFilter<number>
-          >;
-          readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
           readonly requiredStringProperty?: $StringFilter;
         }
       >((filter, value) => {
         if (
           filter.$identifier !== undefined &&
           !$filterIdentifier(filter.$identifier, value.$identifier())
-        ) {
-          return false;
-        }
-        if (
-          filter.optionalNumberProperty !== undefined &&
-          !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-            filter.optionalNumberProperty,
-            value.optionalNumberProperty,
-          )
-        ) {
-          return false;
-        }
-        if (
-          filter.optionalStringProperty !== undefined &&
-          !$filterMaybe<string, $StringFilter>($filterString)(
-            filter.optionalStringProperty,
-            value.optionalStringProperty,
-          )
         ) {
           return false;
         }
@@ -1891,16 +1805,6 @@ export namespace RootObject {
               readonly $identifier: () => BlankNode | NamedNode;
 
               /**
-               * Optional number property
-               */
-              readonly optionalNumberProperty: Maybe<number>;
-
-              /**
-               * Optional string property
-               */
-              readonly optionalStringProperty: Maybe<string>;
-
-              /**
                * Required string property
                */
               readonly requiredStringProperty: string;
@@ -1915,22 +1819,6 @@ export namespace RootObject {
                 name: "_identifier",
                 resolve: (source) =>
                   NTriplesTerm.stringify(source.$identifier()),
-                type: new GraphQLNonNull(GraphQLString),
-              },
-              optionalNumberProperty: {
-                args: undefined,
-                description: '"Optional number property"',
-                name: "optionalNumberProperty",
-                resolve: (source, _args) =>
-                  source.optionalNumberProperty.extractNullable(),
-                type: new GraphQLNonNull(GraphQLFloat),
-              },
-              optionalStringProperty: {
-                args: undefined,
-                description: '"Optional string property"',
-                name: "optionalStringProperty",
-                resolve: (source, _args) =>
-                  source.optionalStringProperty.extractNullable(),
                 type: new GraphQLNonNull(GraphQLString),
               },
               requiredStringProperty: {
@@ -2085,16 +1973,6 @@ export namespace RootObject {
             readonly $identifier: () => BlankNode | NamedNode;
 
             /**
-             * Optional number property
-             */
-            readonly optionalNumberProperty: Maybe<number>;
-
-            /**
-             * Optional string property
-             */
-            readonly optionalStringProperty: Maybe<string>;
-
-            /**
              * Required string property
              */
             readonly requiredStringProperty: string;
@@ -2104,16 +1982,6 @@ export namespace RootObject {
               $identifier: {
                 readonly kind: "Identifier";
                 readonly type: $IdentifierSchema;
-              };
-              optionalNumberProperty: {
-                readonly kind: "Shacl";
-                readonly path: $PropertyPath;
-                readonly type: $MaybeSchema<$NumericSchema<number>>;
-              };
-              optionalStringProperty: {
-                readonly kind: "Shacl";
-                readonly path: $PropertyPath;
-                readonly type: $MaybeSchema<$StringSchema<string>>;
               };
               requiredStringProperty: {
                 readonly kind: "Shacl";
@@ -2134,16 +2002,6 @@ export namespace RootObject {
               readonly $identifier: () => BlankNode | NamedNode;
 
               /**
-               * Optional number property
-               */
-              readonly optionalNumberProperty: Maybe<number>;
-
-              /**
-               * Optional string property
-               */
-              readonly optionalStringProperty: Maybe<string>;
-
-              /**
                * Required string property
                */
               readonly requiredStringProperty: string;
@@ -2153,16 +2011,6 @@ export namespace RootObject {
                 $identifier: {
                   readonly kind: "Identifier";
                   readonly type: $IdentifierSchema;
-                };
-                optionalNumberProperty: {
-                  readonly kind: "Shacl";
-                  readonly path: $PropertyPath;
-                  readonly type: $MaybeSchema<$NumericSchema<number>>;
-                };
-                optionalStringProperty: {
-                  readonly kind: "Shacl";
-                  readonly path: $PropertyPath;
-                  readonly type: $MaybeSchema<$StringSchema<string>>;
                 };
                 requiredStringProperty: {
                   readonly kind: "Shacl";
@@ -2193,40 +2041,6 @@ export namespace RootObject {
                         objectSet: _$options.objectSet,
                       },
                     ).chain((values) => values.head()),
-                    optionalNumberProperty: $shaclPropertyFromRdf<
-                      Maybe<number>,
-                      $MaybeSchema<$NumericSchema<number>>
-                    >({
-                      context: _$options.context,
-                      graph: _$options.graph,
-                      focusResource: $resource,
-                      ignoreRdfType: true,
-                      preferredLanguages: _$options.preferredLanguages,
-                      propertySchema:
-                        LazyObject.schema.properties.optionalNumberProperty,
-                      typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-                        number,
-                        $NumericSchema<number>
-                      >($floatFromRdfResourceValues<number>),
-                      objectSet: _$options.objectSet,
-                    }),
-                    optionalStringProperty: $shaclPropertyFromRdf<
-                      Maybe<string>,
-                      $MaybeSchema<$StringSchema<string>>
-                    >({
-                      context: _$options.context,
-                      graph: _$options.graph,
-                      focusResource: $resource,
-                      ignoreRdfType: true,
-                      preferredLanguages: _$options.preferredLanguages,
-                      propertySchema:
-                        LazyObject.schema.properties.optionalStringProperty,
-                      typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-                        string,
-                        $StringSchema<string>
-                      >($stringFromRdfResourceValues<string>),
-                      objectSet: _$options.objectSet,
-                    }),
                     requiredStringProperty: $shaclPropertyFromRdf<
                       string,
                       $StringSchema<string>
@@ -2249,31 +2063,11 @@ export namespace RootObject {
                         | BlankNode
                         | NamedNode
                         | string;
-                      readonly optionalNumberProperty?: number | Maybe<number>;
-                      readonly optionalStringProperty?: string | Maybe<string>;
                       readonly requiredStringProperty: string;
                     }) =>
                       $sequenceRecord({
                         $identifier: $convertToIdentifierProperty(
                           parameters.$identifier,
-                        ),
-                        optionalNumberProperty: $convertToMaybe(
-                          $identityConversionFunction,
-                        )(parameters.optionalNumberProperty).chain((value) =>
-                          $validateMaybe($identityValidationFunction)(
-                            LazyObject.schema.properties.optionalNumberProperty
-                              .type,
-                            value,
-                          ),
-                        ),
-                        optionalStringProperty: $convertToMaybe(
-                          $identityConversionFunction,
-                        )(parameters.optionalStringProperty).chain((value) =>
-                          $validateMaybe($identityValidationFunction)(
-                            LazyObject.schema.properties.optionalStringProperty
-                              .type,
-                            value,
-                          ),
                         ),
                         requiredStringProperty: Either.of(
                           parameters.requiredStringProperty,
@@ -2401,26 +2195,6 @@ export namespace RootObject {
                 kind: "Identifier",
                 type: { kind: "Identifier" as const },
               },
-              optionalNumberProperty: {
-                kind: "Shacl",
-                path: dataFactory.namedNode(
-                  "http://example.com/optionalNumberProperty",
-                ),
-                type: {
-                  kind: "Option" as const,
-                  itemType: { kind: "Float" as const },
-                },
-              },
-              optionalStringProperty: {
-                kind: "Shacl",
-                path: dataFactory.namedNode(
-                  "http://example.com/optionalStringProperty",
-                ),
-                type: {
-                  kind: "Option" as const,
-                  itemType: { kind: "String" as const },
-                },
-              },
               requiredStringProperty: {
                 kind: "Shacl",
                 path: dataFactory.namedNode(
@@ -2496,37 +2270,11 @@ export namespace RootObject {
             readonly $identifier: () => BlankNode | NamedNode;
 
             /**
-             * Optional number property
-             */
-            readonly optionalNumberProperty: Maybe<number>;
-
-            /**
-             * Optional string property
-             */
-            readonly optionalStringProperty: Maybe<string>;
-
-            /**
              * Required string property
              */
             readonly requiredStringProperty: string;
           }
         >((parameters) => {
-          parameters.resource.add(
-            LazyObject.schema.properties.optionalNumberProperty.path,
-            parameters.object.optionalNumberProperty
-              .toList()
-              .flatMap((value) => [
-                $literalFactory.number(value, $RdfVocabularies.xsd.double),
-              ]),
-            parameters.graph,
-          );
-          parameters.resource.add(
-            LazyObject.schema.properties.optionalStringProperty.path,
-            parameters.object.optionalStringProperty
-              .toList()
-              .flatMap((value) => [$literalFactory.string(value)]),
-            parameters.graph,
-          );
           parameters.resource.add(
             LazyObject.schema.properties.requiredStringProperty.path,
             [$literalFactory.string(parameters.object.requiredStringProperty)],
