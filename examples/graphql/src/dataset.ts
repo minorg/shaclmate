@@ -33,8 +33,6 @@ for (let i = 0; i < 4; i++) {
         $identifier: dataFactory.namedNode(
           `http://example.com/rootObject${i}/nestedObject`,
         ),
-        optionalNumberProperty: 2,
-        optionalStringProperty: "optional string (nested)",
         requiredStringProperty: "required string (nested)",
       },
       optionalStringProperty: "optional string (root)",
