@@ -247,7 +247,7 @@ export class ObjectType extends AbstractType {
       // schema / Schema
       if (this.configuration.features.has("Object.schema")) {
         staticModuleDeclarations.push(
-          code`export const schema = ${ObjectType_schemaExpression};`,
+          code`export const schema = ${ObjectType_schemaExpression.call(this)};`,
           code`export type Schema = typeof schema;`,
         );
       }
@@ -288,8 +288,8 @@ export class ObjectType extends AbstractType {
       // toString / toStringRecord
       if (this.configuration.features.has("Object.toString")) {
         staticModuleDeclarations.push(
-          code`export const ${this.configuration.syntheticNamePrefix}toString = (${this.thisVariable}: ${this.expression}): string => \`\${${name}(JSON.stringify(toStringRecord(${this.thisVariable}))}\`;`,
-          code`export const toStringRecord = (${this.thisVariable}: ${this.expression}): string => ${this.toStringRecordExpression({ variables: { value: this.thisVariable } })};`,
+          code`export const ${this.configuration.syntheticNamePrefix}toString = (${this.thisVariable}: ${this.expression}): string => \`${name}(\${JSON.stringify(toStringRecord(${this.thisVariable}))})\`;`,
+          code`export const toStringRecord = (${this.thisVariable}: ${this.expression}): Record<string, string> => ${this.toStringRecordExpression({ variables: { value: this.thisVariable } })};`,
         );
       }
 
