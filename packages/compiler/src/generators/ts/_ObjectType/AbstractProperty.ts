@@ -21,7 +21,10 @@ export abstract class AbstractProperty<
   /**
    * Optional parameter to include in the parameters object of constructor function.
    */
-  abstract readonly constructorParameter: Maybe<Code>;
+  abstract readonly constructorParameter: Maybe<{
+    readonly hasQuestionToken: boolean;
+    readonly signature: Code;
+  }>;
 
   /**
    * Property declaration to include in the type declaration of the ObjectType.

@@ -25,7 +25,10 @@ export class IdentifierProperty extends AbstractProperty<
   override readonly recursive = false;
 
   @Memoize()
-  override get constructorParameter(): Maybe<Code> {
+  override get constructorParameter(): Maybe<{
+    hasQuestionToken: boolean;
+    signature: Code;
+  }> {
     let hasQuestionToken: boolean = false;
     const typeExpressions: Code[] = [code`(() => ${this.typeExpression})`];
     for (const type of this.type.conversionFunction.unsafeCoerce()
@@ -37,9 +40,10 @@ export class IdentifierProperty extends AbstractProperty<
       }
     }
 
-    return Maybe.of(
-      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
-    );
+    return Maybe.of({
+      hasQuestionToken,
+      signature: code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
+    });
   }
 
   @Memoize()

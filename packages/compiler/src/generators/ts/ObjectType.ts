@@ -7,7 +7,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_ObjectType/DiscriminantProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
-import { ObjectType_createFunctionDeclaration } from "./_ObjectType/ObjectType_createFunctionDeclaration.js";
+import { ObjectType_createFunctionExpression } from "./_ObjectType/ObjectType_createFunctionDeclaration.js";
 import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
 import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunctionExpression.js";
 import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterTypeExpression.js";
@@ -94,29 +94,6 @@ export class ObjectType extends AbstractType {
     this.toRdfTypes = toRdfTypes;
   }
 
-  @Memoize()
-  get referencesNamedType(): boolean {
-    return (
-      this.name.isJust() ||
-      this.properties.some((property) => {
-        switch (property.kind) {
-          case "Identifier":
-          case "Shacl":
-            return property.type.referencesNamedType;
-          default:
-            return false;
-        }
-      })
-    );
-  }
-
-  private get inlineExpression(): Code {
-    return code`{ ${joinCode(
-      this.properties.map((property) => property.declaration),
-      { on: "\n\n" },
-    )} }`;
-  }
-
   override get declaration(): Maybe<Code> {
     const name = this.name.extract();
     if (!name) {
@@ -139,7 +116,10 @@ export class ObjectType extends AbstractType {
       // create
       if (this.configuration.features.has("Object.create")) {
         staticModuleDeclarations.push(
-          ObjectType_createFunctionDeclaration.call(this),
+          code`export const create: (${this.constructorParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}> = ${ObjectType_createFunctionExpression.call(this)};`,
+          code`export function createUnsafe(${this.constructorParameters.signature}): ${this.expression} {
+  return create(parameters).unsafeCoerce();
+}`,
         );
       }
 
@@ -408,6 +388,22 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
+  get referencesNamedType(): boolean {
+    return (
+      this.name.isJust() ||
+      this.properties.some((property) => {
+        switch (property.kind) {
+          case "Identifier":
+          case "Shacl":
+            return property.type.referencesNamedType;
+          default:
+            return false;
+        }
+      })
+    );
+  }
+
+  @Memoize()
   override get schema(): Code {
     return this.name
       .map((name) => code`${name}.schema`)
@@ -450,10 +446,48 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
+  protected get constructorParameters(): {
+    hasQuestionToken: boolean;
+    signature: Code;
+    variable: string;
+  } {
+    let hasQuestionToken: boolean = true;
+    const propertySignatures: Code[] = [];
+    for (const property of this.properties) {
+      property.constructorParameter.ifJust((propertyConstructorParameter) => {
+        hasQuestionToken =
+          hasQuestionToken && propertyConstructorParameter.hasQuestionToken;
+        propertySignatures.push(propertyConstructorParameter.signature);
+      });
+    }
+    invariant(propertySignatures.length > 0);
+
+    return {
+      hasQuestionToken,
+      signature: code`parameters${hasQuestionToken ? "?" : ""}: { ${joinCode(propertySignatures)} }`,
+      variable: "parameters",
+    };
+  }
+
+  @Memoize()
+  protected get createFunction(): Code {
+    return this.name
+      .map((name) => code`${name}.create`)
+      .orDefault(ObjectType_createFunctionExpression.call(this));
+  }
+
+  @Memoize()
   protected get thisVariable(): Code {
     return this.name
       .map((name) => code`_${camelCase(name)}`)
       .orDefault(code`_object`);
+  }
+
+  private get inlineExpression(): Code {
+    return code`{ ${joinCode(
+      this.properties.map((property) => property.declaration),
+      { on: "\n\n" },
+    )} }`;
   }
 
   override fromJsonExpression({
@@ -542,6 +576,10 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       );
   }
 
+  private readonly lazyProperties: (
+    namedObjectType: ObjectType,
+  ) => readonly ObjectType.Property[];
+
   private toStringRecordExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
@@ -560,10 +598,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       { on: "," },
     )}})`;
   }
-
-  private readonly lazyProperties: (
-    namedObjectType: ObjectType,
-  ) => readonly ObjectType.Property[];
 }
 
 export namespace ObjectType {

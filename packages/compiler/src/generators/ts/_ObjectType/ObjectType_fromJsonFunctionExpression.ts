@@ -13,5 +13,5 @@ export function ObjectType_fromJsonFunctionExpression(this: ObjectType): Code {
   invariant(propertyInitializers.length > 0);
 
   return code`\
-((${variables.jsonObject}) => ${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} }).chain(create))`;
+((${variables.jsonObject}) => ${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} }).chain(${this.createFunction}))`;
 }

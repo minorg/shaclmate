@@ -5,7 +5,8 @@ import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
-  override readonly constructorParameter: Maybe<Code> = Maybe.empty();
+  override readonly constructorParameter: AbstractProperty<DiscriminantProperty.Type>["constructorParameter"] =
+    Maybe.empty();
   override readonly declaration =
     code`readonly ${this.name}: ${this.type.expression};`;
   override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =

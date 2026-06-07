@@ -676,7 +676,7 @@ export type FormStruct = {
 };
 
 export namespace FormStruct {
-  export function create(parameters: {
+  export const create: (parameters: {
     readonly $identifier?:
       | (() => FormStruct.Identifier)
       | BlankNode
@@ -695,8 +695,8 @@ export namespace FormStruct {
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
     readonly requiredStringProperty: string;
-  }): Either<Error, FormStruct> {
-    return $sequenceRecord({
+  }) => Either<Error, FormStruct> = (parameters) =>
+    $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       emptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
@@ -730,7 +730,6 @@ export namespace FormStruct {
     })
       .map((properties) => ({ ...properties, $type: "FormStruct" as const }))
       .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
-  }
 
   export function createUnsafe(parameters: {
     readonly $identifier?:
@@ -778,7 +777,16 @@ export namespace FormStruct {
             requiredStringProperty: Either.of<Error, string>(
               $json["requiredStringProperty"],
             ),
-          }).chain(create))($json["nestedStructProperty"]),
+          }).chain((parameters) =>
+            $sequenceRecord({
+              $identifier: $convertToIdentifierProperty(parameters.$identifier),
+              requiredStringProperty: Either.of(
+                parameters.requiredStringProperty,
+              ),
+            }).map((object) =>
+              $monkeyPatchObject(object, { toJson, $toString }),
+            ),
+          ))($json["nestedStructProperty"]),
         nonEmptyStringSetProperty: Either.sequence<Error, string>(
           $json["nonEmptyStringSetProperty"].map((item) =>
             Either.of<Error, string>(item),
@@ -795,7 +803,7 @@ export namespace FormStruct {
         requiredStringProperty: Either.of<Error, string>(
           $json["requiredStringProperty"],
         ),
-      }).chain(create);
+      }).chain(FormStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<FormStruct> = (
     $resource,

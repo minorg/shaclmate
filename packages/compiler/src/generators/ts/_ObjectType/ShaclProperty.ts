@@ -48,11 +48,17 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get constructorParameter(): Maybe<Code> {
+  override get constructorParameter(): Maybe<{
+    hasQuestionToken: boolean;
+    signature: Code;
+  }> {
     const conversionFunction = this.type.conversionFunction.extract();
 
     if (!conversionFunction) {
-      return Maybe.of(code`readonly ${this.name}: ${this.type.expression};`);
+      return Maybe.of({
+        hasQuestionToken: false,
+        signature: code`readonly ${this.name}: ${this.type.expression};`,
+      });
     }
 
     let hasQuestionToken = false;
@@ -66,9 +72,10 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       }
     }
 
-    return Maybe.of(
-      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
-    );
+    return Maybe.of({
+      hasQuestionToken,
+      signature: code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeExpressions, { on: "|" })};`,
+    });
   }
 
   @Memoize()

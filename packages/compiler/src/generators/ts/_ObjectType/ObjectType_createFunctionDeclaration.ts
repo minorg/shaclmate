@@ -2,23 +2,8 @@ import { invariant } from "ts-invariant";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
-export function ObjectType_createFunctionDeclaration(this: ObjectType): Code {
-  const parametersPropertySignatures = this.properties.flatMap((property) =>
-    property.constructorParameter.toList(),
-  );
-
-  const parametersType =
-    parametersPropertySignatures.length > 0
-      ? code`{ ${joinCode(parametersPropertySignatures)} }`
-      : code`object`;
-
-  const parametersHasQuestionToken = parametersPropertySignatures.every(
-    (propertySignature) =>
-      propertySignature.toCodeString([]).indexOf("?:") !== -1,
-  );
-  const parametersVariable = code`parameters${parametersHasQuestionToken ? "?" : ""}`;
-
-  const parametersSignature = code`parameters${parametersHasQuestionToken ? "?" : ""}: ${parametersType}`;
+export function ObjectType_createFunctionExpression(this: ObjectType): Code {
+  const parametersVariable = code`parameters`;
 
   const propertyInitializers = this.properties.flatMap((property) =>
     property
@@ -48,12 +33,5 @@ export function ObjectType_createFunctionDeclaration(this: ObjectType): Code {
     returnExpression = code`${returnExpression}.map(object => ${this.reusables.snippets.monkeyPatchObject}(object, { ${monkeyPatchMethods.join(", ")} }))`;
   }
 
-  return code`\
-export function create(${parametersSignature}): ${this.reusables.imports.Either}<Error, ${this.expression}> {
-  return ${returnExpression};
-}
-  
-export function createUnsafe(${parametersSignature}): ${this.expression} {
-  return create(parameters).unsafeCoerce();
-}`;
+  return code`((parameters) => ${returnExpression})`;
 }
