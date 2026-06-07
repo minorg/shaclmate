@@ -74,7 +74,7 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   override get hashFunctionParameter(): Code {
-    return code`readonly ${this.name}?: ${this.typeExpression}`;
+    return code`readonly ${this.name}?: () => ${this.typeExpression};`;
   }
 
   @Memoize()
@@ -217,7 +217,7 @@ export class IdentifierProperty extends AbstractProperty<
     AbstractProperty<IdentifierType>["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}.value); }`,
+      code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}().value); }`,
     ];
   }
 

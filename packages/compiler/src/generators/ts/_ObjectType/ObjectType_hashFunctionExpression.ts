@@ -11,7 +11,7 @@ export function ObjectType_hashFunctionExpression(this: ObjectType): Code {
     const propertyHashStatements = property.hashStatements({
       variables: {
         hasher: hasherVariable,
-        value: code`${property.accessExpression({ variables: { object: this.thisVariable } })}`,
+        value: code`${this.thisVariable}.${property.name}`,
       },
     });
     if (propertyHashStatements.length === 0) {
@@ -21,7 +21,7 @@ export function ObjectType_hashFunctionExpression(this: ObjectType): Code {
 
     if (!codeEquals(property.hashFunctionParameter, property.declaration)) {
       replacePropertyDeclarations[property.name] =
-        property.hashFunctionParameter;
+        code`${property.hashFunctionParameter}`;
     }
   }
   statements.push(code`return ${hasherVariable};`);
