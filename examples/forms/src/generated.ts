@@ -904,10 +904,19 @@ export namespace FormStruct {
                     typeFromRdfResourceValues:
                       $stringFromRdfResourceValues<string>,
                   }),
-                }).chain((properties) => create(properties)))(
-                resource,
-                options,
-              ),
+                }).chain((properties) =>
+                  ((parameters) =>
+                    $sequenceRecord({
+                      $identifier: $convertToIdentifierProperty(
+                        parameters.$identifier,
+                      ),
+                      requiredStringProperty: Either.of(
+                        parameters.requiredStringProperty,
+                      ),
+                    }).map((object) =>
+                      $monkeyPatchObject(object, { toJson, $toString }),
+                    ))(properties),
+                ))(resource, options),
             ),
           ),
       }),
@@ -965,7 +974,7 @@ export namespace FormStruct {
         propertySchema: schema.properties.requiredStringProperty,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
       }),
-    }).chain((properties) => create(properties));
+    }).chain((properties) => FormStruct.create(properties));
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
@@ -1302,12 +1311,12 @@ export namespace FormStruct {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export const $toString = (_formStruct: FormStruct): string =>
+  export const $toString: (_formStruct: FormStruct) => string = (_formStruct) =>
     `FormStruct(${JSON.stringify(toStringRecord(_formStruct))})`;
 
-  export const toStringRecord = (
+  export const toStringRecord: (
     _formStruct: FormStruct,
-  ): Record<string, string> =>
+  ) => Record<string, string> = (_formStruct) =>
     $compactRecord({ $identifier: _formStruct.$identifier().toString() });
 }
 type $Object = FormStruct;

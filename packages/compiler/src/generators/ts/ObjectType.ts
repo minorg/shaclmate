@@ -30,6 +30,8 @@ import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectTyp
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunctionExpression.js";
 import { ObjectType_toRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceFunctionExpression.js";
+import { ObjectType_toStringFunctionExpression } from "./_ObjectType/ObjectType_toStringFunctionExpression.js";
+import { ObjectType_toStringRecordFunctionExpression } from "./_ObjectType/ObjectType_toStringRecordFunctionExpression.js";
 import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.js";
 import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
@@ -268,8 +270,8 @@ export class ObjectType extends AbstractType {
       // toString / toStringRecord
       if (this.configuration.features.has("Object.toString")) {
         staticModuleDeclarations.push(
-          code`export const ${this.configuration.syntheticNamePrefix}toString = (${this.thisVariable}: ${this.expression}): string => \`${name}(\${JSON.stringify(toStringRecord(${this.thisVariable}))})\`;`,
-          code`export const toStringRecord = (${this.thisVariable}: ${this.expression}): Record<string, string> => ${this.toStringRecordExpression({ variables: { value: this.thisVariable } })};`,
+          code`export const ${this.configuration.syntheticNamePrefix}toString: (${this.thisVariable}: ${this.expression}) => string = ${ObjectType_toStringFunctionExpression.call(this)};`,
+          code`export const toStringRecord: (${this.thisVariable}: ${this.expression}) => Record<string, string> = ${ObjectType_toStringRecordFunctionExpression.call(this)};`,
         );
       }
 
@@ -483,6 +485,13 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       .orDefault(code`_object`);
   }
 
+  @Memoize()
+  protected get toJsonFunction(): Code {
+    return this.name
+      .map((name) => code`${name}.toJson`)
+      .orDefault(ObjectType_toJsonFunctionExpression.call(this));
+  }
+
   private get inlineExpression(): Code {
     return code`{ ${joinCode(
       this.properties.map((property) => property.declaration),
@@ -576,11 +585,17 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       );
   }
 
-  private readonly lazyProperties: (
-    namedObjectType: ObjectType,
-  ) => readonly ObjectType.Property[];
+  @Memoize()
+  protected toStringFunction(): Code {
+    return this.name
+      .map(
+        (name) =>
+          code`${name}.${this.configuration.syntheticNamePrefix}toString`,
+      )
+      .orDefault(ObjectType_toStringFunctionExpression.call(this));
+  }
 
-  private toStringRecordExpression({
+  protected toStringRecordExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
     return code`${this.reusables.snippets.compactRecord}({${joinCode(
@@ -598,6 +613,10 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       { on: "," },
     )}})`;
   }
+
+  private readonly lazyProperties: (
+    namedObjectType: ObjectType,
+  ) => readonly ObjectType.Property[];
 }
 
 export namespace ObjectType {
