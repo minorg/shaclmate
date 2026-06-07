@@ -3721,7 +3721,7 @@ export namespace $DefaultPartial {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: $DefaultPartial.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -4062,7 +4062,7 @@ export namespace $NamedDefaultPartial {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: $NamedDefaultPartial.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -4326,33 +4326,41 @@ export namespace AnonymousTypesStruct {
   }) => Either<Error, AnonymousTypesStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      anonymousStruct: $convertToMaybe((parameters) =>
-        $sequenceRecord({
-          $identifier: $convertToIdentifierProperty(parameters.$identifier),
-          anonymousStructString: Either.of(parameters.anonymousStructString),
-        }).map((object) =>
-          $monkeyPatchObject(object, {
-            toJson: (_object) =>
-              JSON.parse(
-                JSON.stringify({
-                  "@id":
-                    _object.$identifier().termType === "BlankNode"
-                      ? `_:${_object.$identifier().value}`
-                      : _object.$identifier().value,
-                  anonymousStructString: _object.anonymousStructString,
-                } satisfies {
-                  readonly "@id": string;
-                  readonly anonymousStructString: string;
-                }),
-              ),
-            $toString: (_object) =>
-              JSON.stringify(
-                $compactRecord({
-                  $identifier: _object.$identifier().toString(),
-                }),
-              ),
-          }),
-        ),
+      anonymousStruct: $convertToMaybe(
+        (parameters: {
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | string;
+          readonly anonymousStructString: string;
+        }) =>
+          $sequenceRecord({
+            $identifier: $convertToIdentifierProperty(parameters.$identifier),
+            anonymousStructString: Either.of(parameters.anonymousStructString),
+          }).map((object) =>
+            $monkeyPatchObject(object, {
+              toJson: (_object) =>
+                JSON.parse(
+                  JSON.stringify({
+                    "@id":
+                      _object.$identifier().termType === "BlankNode"
+                        ? `_:${_object.$identifier().value}`
+                        : _object.$identifier().value,
+                    anonymousStructString: _object.anonymousStructString,
+                  } satisfies {
+                    readonly "@id": string;
+                    readonly anonymousStructString: string;
+                  }),
+                ),
+              $toString: (_object) =>
+                JSON.stringify(
+                  $compactRecord({
+                    $identifier: _object.$identifier().toString(),
+                  }),
+                ),
+            }),
+          ),
       )(parameters?.anonymousStruct).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           AnonymousTypesStruct.schema.properties.anonymousStruct.type,
@@ -4735,37 +4743,45 @@ export namespace AnonymousTypesStruct {
               anonymousStructString: Either.of<Error, string>(
                 $json["anonymousStructString"],
               ),
-            }).chain((parameters) =>
-              $sequenceRecord({
-                $identifier: $convertToIdentifierProperty(
-                  parameters.$identifier,
+            }).chain(
+              (parameters: {
+                readonly $identifier?:
+                  | (() => BlankNode | NamedNode)
+                  | BlankNode
+                  | NamedNode
+                  | string;
+                readonly anonymousStructString: string;
+              }) =>
+                $sequenceRecord({
+                  $identifier: $convertToIdentifierProperty(
+                    parameters.$identifier,
+                  ),
+                  anonymousStructString: Either.of(
+                    parameters.anonymousStructString,
+                  ),
+                }).map((object) =>
+                  $monkeyPatchObject(object, {
+                    toJson: (_object) =>
+                      JSON.parse(
+                        JSON.stringify({
+                          "@id":
+                            _object.$identifier().termType === "BlankNode"
+                              ? `_:${_object.$identifier().value}`
+                              : _object.$identifier().value,
+                          anonymousStructString: _object.anonymousStructString,
+                        } satisfies {
+                          readonly "@id": string;
+                          readonly anonymousStructString: string;
+                        }),
+                      ),
+                    $toString: (_object) =>
+                      JSON.stringify(
+                        $compactRecord({
+                          $identifier: _object.$identifier().toString(),
+                        }),
+                      ),
+                  }),
                 ),
-                anonymousStructString: Either.of(
-                  parameters.anonymousStructString,
-                ),
-              }).map((object) =>
-                $monkeyPatchObject(object, {
-                  toJson: (_object) =>
-                    JSON.parse(
-                      JSON.stringify({
-                        "@id":
-                          _object.$identifier().termType === "BlankNode"
-                            ? `_:${_object.$identifier().value}`
-                            : _object.$identifier().value,
-                        anonymousStructString: _object.anonymousStructString,
-                      } satisfies {
-                        readonly "@id": string;
-                        readonly anonymousStructString: string;
-                      }),
-                    ),
-                  $toString: (_object) =>
-                    JSON.stringify(
-                      $compactRecord({
-                        $identifier: _object.$identifier().toString(),
-                      }),
-                    ),
-                }),
-              ),
             ))(item).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
@@ -4796,7 +4812,7 @@ export namespace AnonymousTypesStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: AnonymousTypesStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -4862,7 +4878,7 @@ export namespace AnonymousTypesStruct {
                         focusResource: $resource,
                         preferredLanguages: _$options.preferredLanguages,
                         propertyPath: $RdfVocabularies.rdf.subject,
-                        schema: schema.properties.$identifier.type,
+                        schema: { kind: "Identifier" as const },
                         objectSet: _$options.objectSet,
                       },
                     ).chain((values) => values.head()),
@@ -4887,7 +4903,14 @@ export namespace AnonymousTypesStruct {
                       objectSet: _$options.objectSet,
                     }),
                   }).chain((properties) =>
-                    ((parameters) =>
+                    ((parameters: {
+                      readonly $identifier?:
+                        | (() => BlankNode | NamedNode)
+                        | BlankNode
+                        | NamedNode
+                        | string;
+                      readonly anonymousStructString: string;
+                    }) =>
                       $sequenceRecord({
                         $identifier: $convertToIdentifierProperty(
                           parameters.$identifier,
@@ -5536,7 +5559,8 @@ export namespace BlankNodeIdentifierStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema:
+              BlankNodeIdentifierStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -6098,7 +6122,8 @@ export namespace BlankNodeOrIriIdentifierStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema:
+              BlankNodeOrIriIdentifierStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -6970,7 +6995,7 @@ export namespace ClassConstraintsStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: ClassConstraintsStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -8623,7 +8648,7 @@ export namespace ConvertibleTypesStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -10988,7 +11013,7 @@ export namespace DateUnionsStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: DateUnionsStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -12612,7 +12637,7 @@ export namespace DefaultValuesStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: DefaultValuesStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -13383,7 +13408,7 @@ export namespace DirectRecursiveStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: DirectRecursiveStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -14032,7 +14057,7 @@ export namespace DisplayStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: DisplayStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -14627,7 +14652,8 @@ export namespace ExplicitFromToRdfTypesStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema:
+              ExplicitFromToRdfTypesStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -15166,7 +15192,7 @@ export namespace ExplicitRdfTypeStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: ExplicitRdfTypeStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -15690,7 +15716,7 @@ export namespace FlattenUnionMember3 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: FlattenUnionMember3.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -16190,7 +16216,7 @@ export namespace HasValuesStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: HasValuesStruct.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -16787,7 +16813,7 @@ export namespace IgnoredPropertiesStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: IgnoredPropertiesStruct.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -17381,7 +17407,7 @@ export namespace IndirectRecursiveStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -17922,7 +17948,8 @@ export namespace IndirectRecursiveStructHelper {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema:
+              IndirectRecursiveStructHelper.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -18506,7 +18533,7 @@ export namespace InIdentifierStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: InIdentifierStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -19504,7 +19531,7 @@ export namespace InPropertiesStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: InPropertiesStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -20309,7 +20336,7 @@ export namespace IriIdentifierStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: IriIdentifierStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -20811,7 +20838,7 @@ export namespace LanguageInStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: LanguageInStruct.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -21349,7 +21376,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema:
+              LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
+                .$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -21834,7 +21863,9 @@ export namespace LazilyResolvedIriIdentifierStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema:
+            LazilyResolvedIriIdentifierStruct.schema.properties.$identifier
+              .type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -22337,7 +22368,8 @@ export namespace LazilyResolvedUnionMember1 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema:
+              LazilyResolvedUnionMember1.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -22851,7 +22883,8 @@ export namespace LazilyResolvedUnionMember2 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema:
+              LazilyResolvedUnionMember2.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -24387,7 +24420,7 @@ export namespace LazyPropertiesStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: LazyPropertiesStruct.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -26235,7 +26268,7 @@ export namespace ListSetsStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: ListSetsStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -27495,7 +27528,7 @@ export namespace ListsStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: ListsStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -28617,7 +28650,7 @@ export namespace MutablePropertiesStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: MutablePropertiesStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -29325,7 +29358,7 @@ export namespace NamedUnionsStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: NamedUnionsStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -29887,7 +29920,7 @@ export namespace NewName {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: NewName.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -30706,7 +30739,7 @@ export namespace NodeKindsStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: NodeKindsStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -31405,7 +31438,7 @@ export namespace NonClassStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: NonClassStruct.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -31841,7 +31874,7 @@ export namespace NoRdfTypeUnionMember1 {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: NoRdfTypeUnionMember1.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -32292,7 +32325,7 @@ export namespace NoRdfTypeUnionMember2 {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: NoRdfTypeUnionMember2.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -33838,7 +33871,7 @@ export namespace NumericsStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: NumericsStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -34999,7 +35032,7 @@ export namespace OrderedStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: OrderedStruct.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -35474,7 +35507,7 @@ export namespace PartialStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: PartialStruct.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -35965,7 +35998,7 @@ export namespace PartialUnionMember1 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: PartialUnionMember1.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -36467,7 +36500,7 @@ export namespace PartialUnionMember2 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: PartialUnionMember2.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -37123,7 +37156,8 @@ export namespace PropertyCardinalitiesStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema:
+            PropertyCardinalitiesStruct.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -37949,7 +37983,7 @@ export namespace PropertyNamesStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: PropertyNamesStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -38667,7 +38701,7 @@ export namespace PropertyPathsStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: PropertyPathsStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -39222,7 +39256,7 @@ export namespace RecursiveUnionMember1 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: RecursiveUnionMember1.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -39771,7 +39805,7 @@ export namespace RecursiveUnionMember2 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: RecursiveUnionMember2.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -40920,7 +40954,7 @@ export namespace TermsStruct {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: TermsStruct.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -45549,7 +45583,7 @@ export namespace UnionDiscriminantsStruct {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: UnionDiscriminantsStruct.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -48729,7 +48763,7 @@ export namespace UnionMember1 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: UnionMember1.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -49305,7 +49339,7 @@ export namespace UnionMember2 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: UnionMember2.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
