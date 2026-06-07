@@ -302,36 +302,37 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override get equalsFunction(): Code {
     return this.name
       .map((name) => code`${name}.equals`)
-      .orDefault(ObjectType_equalsFunctionExpression.call(this));
+      .orDefaultLazy(() => ObjectType_equalsFunctionExpression.call(this));
   }
 
   @Memoize()
   get expression(): Code {
     return this.name
       .map((name) => code`${name}`)
-      .orDefault(this.inlineExpression);
+      .orDefaultLazy(() => this.inlineExpression);
   }
 
   @Memoize()
   get filterFunction(): Code {
     return this.name
       .map((name) => code`${name}.filter`)
-      .orDefault(ObjectType_filterFunctionExpression.call(this));
+      .orDefaultLazy(() => ObjectType_filterFunctionExpression.call(this));
   }
 
   @Memoize()
   get filterType(): Code {
     return this.name
       .map((name) => code`${name}.Filter`)
-      .orDefault(ObjectType_filterTypeExpression.call(this));
+      .orDefaultLazy(() => ObjectType_filterTypeExpression.call(this));
   }
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Code {
     return this.name
       .map((name) => code`${name}.fromRdfResourceValues`)
-      .orDefault(
-        code`((values, options) => values.chainMap(value => value.toResource().chain(resource => ${ObjectType_fromRdfResourceFunctionExpression.call(this)}(resource, options))))`,
+      .orDefaultLazy(
+        () =>
+          code`((values, options) => values.chainMap(value => value.toResource().chain(resource => ${ObjectType_fromRdfResourceFunctionExpression.call(this)}(resource, options))))`,
       );
   }
 
@@ -340,7 +341,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return this.fromRdfType.map((fromRdfType) =>
       this.name
         .map((name) => code`${name}.schema.fromRdfType`)
-        .orDefault(this.rdfjsTermExpression(fromRdfType)),
+        .orDefaultLazy(() => this.rdfjsTermExpression(fromRdfType)),
     );
   }
 
@@ -349,7 +350,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return new AbstractType.GraphqlType(
       this.name
         .map((name) => code`${name}.GraphQL`)
-        .orDefault(ObjectType_graphqlTypeExpression.call(this)),
+        .orDefaultLazy(() => ObjectType_graphqlTypeExpression.call(this)),
       this.reusables,
     );
   }
@@ -358,7 +359,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override get hashFunction(): Code {
     return this.name
       .map((name) => code`${name}.hash`)
-      .orDefault(ObjectType_hashFunctionExpression.call(this));
+      .orDefaultLazy(() => ObjectType_hashFunctionExpression.call(this));
   }
 
   @Memoize()
@@ -409,14 +410,14 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override get schema(): Code {
     return this.name
       .map((name) => code`${name}.schema`)
-      .orDefault(ObjectType_schemaExpression.call(this));
+      .orDefaultLazy(() => ObjectType_schemaExpression.call(this));
   }
 
   @Memoize()
   override get schemaType(): Code {
     return this.name
       .map((name) => code`${name}.Schema`)
-      .orDefault(ObjectType_schemaTypeExpression.call(this));
+      .orDefaultLazy(() => ObjectType_schemaTypeExpression.call(this));
   }
 
   @Memoize()
@@ -433,7 +434,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override get valueSparqlConstructTriplesFunction(): Code {
     return this.name
       .map((name) => code`${name}.valueSparqlConstructTriples`)
-      .orDefault(
+      .orDefaultLazy(() =>
         ObjectType_valueSparqlConstructTriplesFunctionExpression.call(this),
       );
   }
@@ -442,7 +443,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override get valueSparqlWherePatternsFunction(): Code {
     return this.name
       .map((name) => code`${name}.valueSparqlWherePatterns`)
-      .orDefault(
+      .orDefaultLazy(() =>
         ObjectType_valueSparqlWherePatternsFunctionExpression.call(this),
       );
   }
@@ -475,7 +476,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   protected get createFunction(): Code {
     return this.name
       .map((name) => code`${name}.create`)
-      .orDefault(ObjectType_createFunctionExpression.call(this));
+      .orDefaultLazy(() => ObjectType_createFunctionExpression.call(this));
   }
 
   @Memoize()
@@ -489,7 +490,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   protected get toJsonFunction(): Code {
     return this.name
       .map((name) => code`${name}.toJson`)
-      .orDefault(ObjectType_toJsonFunctionExpression.call(this));
+      .orDefaultLazy(() => ObjectType_toJsonFunctionExpression.call(this));
   }
 
   @Memoize()
@@ -499,7 +500,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
         (name) =>
           code`${name}.${this.configuration.syntheticNamePrefix}toString`,
       )
-      .orDefault(ObjectType_toStringFunctionExpression.call(this));
+      .orDefaultLazy(() => ObjectType_toStringFunctionExpression.call(this));
   }
 
   private get inlineExpression(): Code {
@@ -513,7 +514,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     // Assumes the JSON object has been recursively validated already.
-    return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(ObjectType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
+    return code`${this.name.map((name) => code`${name}.fromJson`).orDefaultLazy(() => ObjectType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
   }
 
   override graphqlResolveExpression({
@@ -538,7 +539,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
         }
         return expression;
       })
-      .orDefault(ObjectType_jsonSchemaExpression.call(this));
+      .orDefaultLazy(() => ObjectType_jsonSchemaExpression.call(this));
   }
 
   @Memoize()
@@ -546,7 +547,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return new AbstractType.JsonType(
       this.name
         .map((name) => code`${name}.Json`)
-        .orDefault(ObjectType_jsonTypeExpression.call(this)),
+        .orDefaultLazy(() => ObjectType_jsonTypeExpression.call(this)),
     );
   }
 
@@ -556,7 +557,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return Maybe.of(
       code`${this.name
         .map((name) => code`${name}.Json.uiSchema`)
-        .orDefault(
+        .orDefaultLazy(() =>
           ObjectType_jsonUiSchemaFunctionExpression.call(this),
         )}({ scopePrefix: ${variables.scopePrefix} })`,
     );
@@ -567,7 +568,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     const toJsonFunction = this.name
       .map((name) => code`${name}.toJson`)
-      .orDefault(ObjectType_toJsonFunctionExpression.call(this));
+      .orDefaultLazy(() => ObjectType_toJsonFunctionExpression.call(this));
     return code`${toJsonFunction}(${variables.value})`;
   }
 
@@ -576,8 +577,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     const toRdfResourceFunction = this.name
       .map((name) => code`${name}.toRdfResource`)
-      .orDefault(
-        code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${ObjectType_toRdfResourceFunctionExpression.call(this)})`,
+      .orDefaultLazy(
+        () =>
+          code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${ObjectType_toRdfResourceFunctionExpression.call(this)})`,
       );
     return code`[${toRdfResourceFunction}(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
@@ -590,8 +592,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
         (name) =>
           code`${name}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`,
       )
-      .orDefault(
-        code`JSON.stringify(${this.toStringRecordExpression({ variables })})`,
+      .orDefaultLazy(
+        () =>
+          code`JSON.stringify(${this.toStringRecordExpression({ variables })})`,
       );
   }
 
