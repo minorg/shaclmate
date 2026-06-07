@@ -80,16 +80,17 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   @Memoize()
   override get declaration(): Code {
-    const lhs: Code[] = [];
-    if (!this.mutable) {
-      lhs.push(code`readonly`);
+    let declaration = code`${!this.mutable ? "readonly " : ""}${this.name}: ${this.type.expression};`;
+    if (this.objectType.name.isJust()) {
+      this.comment
+        .alt(this.description)
+        .alt(this.label)
+        .map(tsComment)
+        .ifJust((comment) => {
+          declaration = code`${comment}${declaration}`;
+        });
     }
-    lhs.push(code`${this.name}`);
-    return code`${this.comment
-      .alt(this.description)
-      .alt(this.label)
-      .map(tsComment)
-      .orDefault("")}${joinCode(lhs, { on: " " })}: ${this.type.expression};`;
+    return declaration;
   }
 
   @Memoize()
