@@ -10,6 +10,17 @@ const $identifier = dataFactory.namedNode("http://example.com/instance");
 const literalFactory = new LiteralFactory({ dataFactory });
 
 export const harnesses = {
+  anonymousTypesStruct: new Harness(
+    kitchenSink.AnonymousTypesStruct.createUnsafe({
+      $identifier,
+      anonymousStruct: {
+        $identifier: () =>
+          dataFactory.namedNode("http://example.com/anonymousStructInstance"),
+        anonymousStructString: "test",
+      },
+    }),
+    kitchenSink.AnonymousTypesStruct,
+  ),
   blankNodeOrIriIdentifierStructWithExplicitBlankNodeIdentifier: new Harness(
     kitchenSink.BlankNodeOrIriIdentifierStruct.createUnsafe({
       $identifier: dataFactory.blankNode(),
