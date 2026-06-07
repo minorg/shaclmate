@@ -8,6 +8,6 @@ export function ObjectType_valueSparqlWherePatternsFunctionExpression(
   return code`\
 (({ filter, ignoreRdfType, preferredLanguages, propertyPatterns, valueVariable, variablePrefix }) =>
   (propertyPatterns as readonly ${this.reusables.snippets.SparqlPattern}[]).concat(
-    ${this.name.map(name => code`${name}.focusSparqlWherePatterns`).orDefault(ObjectType_focusSparqlWherePatternsFunctionExpression.call(this))}({ filter, focusIdentifier: valueVariable, ignoreRdfType, preferredLanguages, variablePrefix })
+    ${this.name.map((name) => code`${name}.focusSparqlWherePatterns`).orDefaultLazy(() => ObjectType_focusSparqlWherePatternsFunctionExpression.call(this))}({ filter, focusIdentifier: valueVariable, ignoreRdfType, preferredLanguages, variablePrefix })
 ))`;
 }
