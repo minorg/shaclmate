@@ -13,7 +13,7 @@ import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_fi
 import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterTypeExpression.js";
 import { ObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
 import { ObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionDeclaration.js";
-import { ObjectType_fromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_fromJsonFunctionDeclaration.js";
+import { ObjectType_fromJsonFunctionExpression } from "./_ObjectType/ObjectType_fromJsonFunctionExpression.js";
 import { ObjectType_fromRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceFunctionExpression.js";
 import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
 import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
@@ -164,6 +164,12 @@ export class ObjectType extends AbstractType {
         );
       }
 
+      if (this.configuration.features.has("Object.fromJson")) {
+        staticModuleDeclarations.push(
+          code`export const fromJson = ${ObjectType_fromJsonFunctionExpression.call(this)};`,
+        );
+      }
+
       if (this.configuration.features.has("Object.fromRdf")) {
         staticModuleDeclarations.push(code`
 export const _fromRdfResource = ${ObjectType_fromRdfResourceFunctionExpression.call(this)};         
@@ -250,7 +256,6 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
         ...ObjectType_focusSparqlWherePatternsFunctionDeclaration.call(
           this,
         ).toList(),
-        ...ObjectType_fromJsonFunctionDeclaration.call(this).toList(),
         ...ObjectType_isTypeFunctionDeclaration.call(this).toList(),
         ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
           name,
@@ -423,7 +428,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     // Assumes the JSON object has been recursively validated already.
-    return code`${this.name.unsafeCoerce()}.fromJson(${variables.value})`;
+    return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(ObjectType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
   }
 
   override graphqlResolveExpression({
