@@ -1,5 +1,4 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
-import { Maybe } from "purify-ts";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -10,13 +9,9 @@ const variables = {
   variablePrefix: code`parameters.variablePrefix`,
 };
 
-export function ObjectType_focusSparqlWherePatternsFunctionDeclaration(
+export function ObjectType_focusSparqlWherePatternsFunctionExpression(
   this: ObjectType,
-): Maybe<Code> {
-  if (!this.configuration.features.has("Object.SPARQL")) {
-    return Maybe.empty();
-  }
-
+): Code {
   const rdfClassVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
   const rdfTypeVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
@@ -82,8 +77,8 @@ if (!parameters?.ignoreRdfType) {
       });
   }
 
-  return Maybe.of(code`\
-export const focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
+  return code`\
+((${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([
@@ -93,5 +88,5 @@ ${
       ])
     : "return [];"
 }
-};`);
+})`;
 }

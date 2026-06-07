@@ -41,6 +41,8 @@ import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 import { tsComment } from "./tsComment.js";
+import { ObjectType_focusSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionExpression.js";
+import { ObjectType_focusSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionExpression.js";
 
 export class ObjectType extends AbstractType {
   protected readonly toRdfTypes: readonly NamedNode[];
@@ -136,18 +138,21 @@ export class ObjectType extends AbstractType {
 
       let staticModuleDeclarations: Code[] = [];
 
+      // create
       if (this.configuration.features.has("Object.create")) {
         staticModuleDeclarations.push(
           ObjectType_createFunctionDeclaration.call(this),
         );
       }
 
+      // equals
       if (this.configuration.features.has("Object.equals")) {
         staticModuleDeclarations.push(
           code`export const equals = ${ObjectType_equalsFunctionExpression.call(this)};`,
         );
       }
 
+      // Filter / filter
       if (this.configuration.features.has("Object.filter")) {
         staticModuleDeclarations.push(
           code`export type Filter = ${ObjectType_filterTypeExpression.call(this)};`,
@@ -158,18 +163,29 @@ export class ObjectType extends AbstractType {
         );
       }
 
+      // GraphQL
       if (this.configuration.features.has("GraphQL") && !this.synthetic) {
         staticModuleDeclarations.push(
           code`export const GraphQL = ${ObjectType_graphqlTypeExpression.call(this)};`,
         );
       }
 
+      // focusSparqlConstructTriples / focusSparqlWherePatterns
+      if (this.configuration.features.has("Object.SPARQL")) {
+        staticModuleDeclarations.push(
+          code`export const focusSparqlConstructTriples: ${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}> = ${ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this)};`,
+          code`export const focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = ${ObjectType_focusSparqlWherePatternsFunctionExpression.call(this)};`
+        )
+      }
+
+      // fromJson
       if (this.configuration.features.has("Object.fromJson")) {
         staticModuleDeclarations.push(
           code`export const fromJson = ${ObjectType_fromJsonFunctionExpression.call(this)};`,
         );
       }
 
+      // fromRdfResource / fromRdfResourceValues
       if (this.configuration.features.has("Object.fromRdf")) {
         staticModuleDeclarations.push(code`
 export const _fromRdfResource = ${ObjectType_fromRdfResourceFunctionExpression.call(this)};         
@@ -179,47 +195,53 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
   (values, options) => values.chainMap(value => value.toResource().chain(resource => fromRdfResource(resource, options)));`);
       }
 
+      // hash
       if (this.configuration.features.has("Object.hash")) {
         staticModuleDeclarations.push(
           code`export const hash = ${ObjectType_hashFunctionExpression.call(this)};`,
         );
       }
 
+      // Identifier
       if (this.configuration.features.has("Object.type")) {
-        // Identifier
         staticModuleDeclarations = staticModuleDeclarations.concat(
           ObjectType_identifierTypeDeclarations.call(this),
         );
       }
 
+      // type Json
       if (this.configuration.features.has("Object.JSON.type")) {
         staticModuleDeclarations.push(
           code`export type Json = ${ObjectType_jsonTypeExpression.call(this)}`,
         );
       }
 
-      const jsonModuleDeclarations: Code[] = [];
-      if (this.configuration.features.has("Object.JSON.parse")) {
-        jsonModuleDeclarations.push(
-          ObjectType_jsonParseFunctionDeclaration.call(this),
-        );
-      }
-      if (this.configuration.features.has("Object.JSON.schema")) {
-        jsonModuleDeclarations.push(
-          code`export function schema() { return ${ObjectType_jsonSchemaExpression.call(this)} satisfies ${this.reusables.imports.z}.ZodType<Json>; }`,
-        );
-      }
-      if (this.configuration.features.has("Object.JSON.uiSchema")) {
-        jsonModuleDeclarations.push(
-          code`export const uiSchema = ${ObjectType_jsonUiSchemaFunctionExpression.call(this)};`,
-        );
-      }
-      if (jsonModuleDeclarations.length > 0) {
-        staticModuleDeclarations.push(
-          code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
-        );
+      // namespace Json
+      {
+        const jsonModuleDeclarations: Code[] = [];
+        if (this.configuration.features.has("Object.JSON.parse")) {
+          jsonModuleDeclarations.push(
+            ObjectType_jsonParseFunctionDeclaration.call(this),
+          );
+        }
+        if (this.configuration.features.has("Object.JSON.schema")) {
+          jsonModuleDeclarations.push(
+            code`export function schema() { return ${ObjectType_jsonSchemaExpression.call(this)} satisfies ${this.reusables.imports.z}.ZodType<Json>; }`,
+          );
+        }
+        if (this.configuration.features.has("Object.JSON.uiSchema")) {
+          jsonModuleDeclarations.push(
+            code`export const uiSchema = ${ObjectType_jsonUiSchemaFunctionExpression.call(this)};`,
+          );
+        }
+        if (jsonModuleDeclarations.length > 0) {
+          staticModuleDeclarations.push(
+            code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
+          );
+        }
       }
 
+      // schema / Schema
       if (this.configuration.features.has("Object.schema")) {
         staticModuleDeclarations.push(
           code`export const schema = ${ObjectType_schemaExpression};`,
@@ -227,12 +249,14 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
         );
       }
 
+      // toJson
       if (this.configuration.features.has("Object.toJson")) {
         staticModuleDeclarations.push(
           code`export const toJson = ${ObjectType_toJsonFunctionExpression.call(this)};`,
         );
       }
 
+      // toRdfResource
       if (this.configuration.features.has("Object.toRdf")) {
         staticModuleDeclarations.push(
           code`export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}> = ${ObjectType_toRdfResourceFunctionExpression.call(this)};`,
@@ -240,6 +264,7 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
         );
       }
 
+      // toString / toStringRecord
       if (this.configuration.features.has("Object.toString")) {
         staticModuleDeclarations.push(
           code`export const ${this.configuration.syntheticNamePrefix}toString = (${this.thisVariable}: ${this.expression}): string => \`\${${name}(JSON.stringify(toStringRecord(${this.thisVariable}))}\`;`,
