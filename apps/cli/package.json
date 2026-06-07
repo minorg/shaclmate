@@ -3,7 +3,7 @@
     "shaclmate": "dist/cli.js"
   },
   "dependencies": {
-    "@shaclmate/compiler": "4.0.41",
+    "@shaclmate/compiler": "4.0.42",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/serializer-turtle": "~1.1.5",
@@ -55,5 +55,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.41"
+  "version": "4.0.42"
 }
