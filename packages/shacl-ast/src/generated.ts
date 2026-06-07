@@ -464,6 +464,8 @@ export namespace $PropertyPath {
 
   export const schema: Readonly<object> = {};
 
+  export type Schema = typeof schema;
+
   export const toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
     RdfxResourcePropertyPath.toResource;
 
@@ -471,92 +473,70 @@ export namespace $PropertyPath {
 }
 
 namespace $RdfVocabularies {
-  export namespace rdf {
-    export const first = dataFactory.namedNode(
+  export const rdf = {
+    first: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    );
-    export const nil = dataFactory.namedNode(
+    ),
+    nil: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    );
-    export const rest = dataFactory.namedNode(
+    ),
+    rest: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    );
-    export const subject = dataFactory.namedNode(
+    ),
+    subject: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    );
-    export const type = dataFactory.namedNode(
+    ),
+    type: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    );
-  }
+    ),
+  };
 
-  export namespace rdfs {
-    export const subClassOf = dataFactory.namedNode(
+  export const rdfs = {
+    subClassOf: dataFactory.namedNode(
       "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    );
-  }
+    ),
+  };
 
-  export namespace xsd {
-    export const boolean = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#boolean",
-    );
-    export const byte = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#byte",
-    );
-    export const date = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#date",
-    );
-    export const dateTime = dataFactory.namedNode(
+  export const xsd = {
+    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
+    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
+    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
+    dateTime: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
-    );
-    export const decimal = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#decimal",
-    );
-    export const double = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#double",
-    );
-    export const float = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#float",
-    );
-    export const int = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#int",
-    );
-    export const integer = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#integer",
-    );
-    export const long = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#long",
-    );
-    export const negativeInteger = dataFactory.namedNode(
+    ),
+    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
+    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
+    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
+    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
+    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
+    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
+    negativeInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    );
-    export const nonNegativeInteger = dataFactory.namedNode(
+    ),
+    nonNegativeInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    );
-    export const nonPositiveInteger = dataFactory.namedNode(
+    ),
+    nonPositiveInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    );
-    export const positiveInteger = dataFactory.namedNode(
+    ),
+    positiveInteger: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    );
-    export const short = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#short",
-    );
-    export const string = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#string",
-    );
-    export const unsignedByte = dataFactory.namedNode(
+    ),
+    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
+    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
+    unsignedByte: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    );
-    export const unsignedInt = dataFactory.namedNode(
+    ),
+    unsignedInt: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    );
-    export const unsignedLong = dataFactory.namedNode(
+    ),
+    unsignedLong: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    );
-    export const unsignedShort = dataFactory.namedNode(
+    ),
+    unsignedShort: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    );
-  }
+    ),
+  };
 }
 
 function $sequenceRecord<T extends Record<string, unknown>>(
@@ -895,7 +875,7 @@ function $wrap_ToRdfResourceFunction<
     return resource;
   };
 }
-export interface NodeShape {
+export type NodeShape = {
   readonly $identifier: () => NodeShape.Identifier;
 
   readonly $type: "NodeShape";
@@ -982,10 +962,10 @@ export interface NodeShape {
   readonly types: readonly NamedNode[];
 
   readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
-}
+};
 
 export namespace NodeShape {
-  export function create(parameters?: {
+  export const create: (parameters?: {
     readonly $identifier?:
       | (() => NodeShape.Identifier)
       | BlankNode
@@ -1135,8 +1115,8 @@ export namespace NodeShape {
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-  }): Either<Error, NodeShape> {
-    return $sequenceRecord({
+  }) => Either<Error, NodeShape> = (parameters) =>
+    $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       and: $convertToMaybe($convertToList($convertToIdentifier, true))(
         parameters?.and,
@@ -1432,8 +1412,9 @@ export namespace NodeShape {
       ),
     })
       .map((properties) => ({ ...properties, $type: "NodeShape" as const }))
-      .map((object) => $monkeyPatchObject(object, { $toString }));
-  }
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: NodeShape.$toString }),
+      );
 
   export function createUnsafe(parameters?: {
     readonly $identifier?:
@@ -1589,23 +1570,15 @@ export namespace NodeShape {
     return create(parameters).unsafeCoerce();
   }
 
-  export type Identifier = BlankNode | NamedNode;
-
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
   export const _fromRdfResource: $_FromRdfResourceFunction<NodeShape> = (
     $resource,
     _$options,
-  ) => {
-    return (
-      !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [NodeShape.schema.fromRdfType], {
-            graph: _$options.graph,
-          })
-        : Right(true as const)
+  ) =>
+    (!_$options.ignoreRdfType
+      ? $ensureRdfResourceType($resource, [NodeShape.schema.fromRdfType], {
+          graph: _$options.graph,
+        })
+      : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
@@ -2229,22 +2202,28 @@ export namespace NodeShape {
             >($identifierFromRdfResourceValues),
           ),
         }),
-      }).chain((properties) => create(properties)),
+      }).chain((properties) => NodeShape.create(properties)),
     );
-  };
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     NodeShape,
-    typeof NodeShape.schema
+    NodeShape.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => NodeShape.fromRdfResource(resource, options)),
+        .chain((resource) => fromRdfResource(resource, options)),
     );
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
 
   export function isNodeShape(object: $Object): object is NodeShape {
     return object.$type === "NodeShape";
@@ -2564,6 +2543,8 @@ export namespace NodeShape {
       },
     },
   } as const;
+
+  export type Schema = typeof schema;
 
   export const _toRdfResource: $_ToRdfResourceFunction<
     NodeShape.Identifier,
@@ -3077,20 +3058,18 @@ export namespace NodeShape {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function _propertiesToStrings(
+  export const $toString: (_nodeShape: NodeShape) => string = (_nodeShape) =>
+    `NodeShape(${JSON.stringify(toStringRecord(_nodeShape))})`;
+
+  export const toStringRecord: (
     _nodeShape: NodeShape,
-  ): Record<string, string> {
-    return $compactRecord({
+  ) => Record<string, string> = (_nodeShape) =>
+    $compactRecord({
       $identifier: _nodeShape.$identifier().toString(),
       label: _nodeShape.label.map((item) => item.toString()).extract(),
     });
-  }
-
-  export function $toString(_nodeShape: NodeShape): string {
-    return `NodeShape(${JSON.stringify(_propertiesToStrings(_nodeShape))})`;
-  }
 }
-export interface Ontology {
+export type Ontology = {
   readonly $identifier: () => Ontology.Identifier;
 
   readonly $type: "Ontology";
@@ -3098,10 +3077,10 @@ export interface Ontology {
   readonly comment: Maybe<string>;
 
   readonly label: Maybe<string>;
-}
+};
 
 export namespace Ontology {
-  export function create(parameters?: {
+  export const create: (parameters?: {
     readonly $identifier?:
       | (() => Ontology.Identifier)
       | BlankNode
@@ -3109,8 +3088,8 @@ export namespace Ontology {
       | string;
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
-  }): Either<Error, Ontology> {
-    return $sequenceRecord({
+  }) => Either<Error, Ontology> = (parameters) =>
+    $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       comment: $convertToMaybe($identityConversionFunction)(
         parameters?.comment,
@@ -3130,8 +3109,9 @@ export namespace Ontology {
       ),
     })
       .map((properties) => ({ ...properties, $type: "Ontology" as const }))
-      .map((object) => $monkeyPatchObject(object, { $toString }));
-  }
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: Ontology.$toString }),
+      );
 
   export function createUnsafe(parameters?: {
     readonly $identifier?:
@@ -3145,23 +3125,15 @@ export namespace Ontology {
     return create(parameters).unsafeCoerce();
   }
 
-  export type Identifier = BlankNode | NamedNode;
-
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
   export const _fromRdfResource: $_FromRdfResourceFunction<Ontology> = (
     $resource,
     _$options,
-  ) => {
-    return (
-      !_$options.ignoreRdfType
-        ? $ensureRdfResourceType($resource, [Ontology.schema.fromRdfType], {
-            graph: _$options.graph,
-          })
-        : Right(true as const)
+  ) =>
+    (!_$options.ignoreRdfType
+      ? $ensureRdfResourceType($resource, [Ontology.schema.fromRdfType], {
+          graph: _$options.graph,
+        })
+      : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
@@ -3210,22 +3182,28 @@ export namespace Ontology {
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
         }),
-      }).chain((properties) => create(properties)),
+      }).chain((properties) => Ontology.create(properties)),
     );
-  };
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     Ontology,
-    typeof Ontology.schema
+    Ontology.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => Ontology.fromRdfResource(resource, options)),
+        .chain((resource) => fromRdfResource(resource, options)),
     );
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
 
   export function isOntology(object: $Object): object is Ontology {
     return object.$type === "Ontology";
@@ -3263,6 +3241,8 @@ export namespace Ontology {
     },
   } as const;
 
+  export type Schema = typeof schema;
+
   export const _toRdfResource: $_ToRdfResourceFunction<
     Ontology.Identifier,
     Ontology
@@ -3293,20 +3273,17 @@ export namespace Ontology {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function _propertiesToStrings(
-    _ontology: Ontology,
-  ): Record<string, string> {
-    return $compactRecord({
-      $identifier: _ontology.$identifier().toString(),
-      label: _ontology.label.map((item) => item.toString()).extract(),
-    });
-  }
+  export const $toString: (_ontology: Ontology) => string = (_ontology) =>
+    `Ontology(${JSON.stringify(toStringRecord(_ontology))})`;
 
-  export function $toString(_ontology: Ontology): string {
-    return `Ontology(${JSON.stringify(_propertiesToStrings(_ontology))})`;
-  }
+  export const toStringRecord: (_ontology: Ontology) => Record<string, string> =
+    (_ontology) =>
+      $compactRecord({
+        $identifier: _ontology.$identifier().toString(),
+        label: _ontology.label.map((item) => item.toString()).extract(),
+      });
 }
-export interface PropertyGroup {
+export type PropertyGroup = {
   readonly $identifier: () => PropertyGroup.Identifier;
 
   readonly $type: "PropertyGroup";
@@ -3314,10 +3291,10 @@ export interface PropertyGroup {
   readonly comment: Maybe<string>;
 
   readonly label: Maybe<string>;
-}
+};
 
 export namespace PropertyGroup {
-  export function create(parameters?: {
+  export const create: (parameters?: {
     readonly $identifier?:
       | (() => PropertyGroup.Identifier)
       | BlankNode
@@ -3325,8 +3302,8 @@ export namespace PropertyGroup {
       | string;
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
-  }): Either<Error, PropertyGroup> {
-    return $sequenceRecord({
+  }) => Either<Error, PropertyGroup> = (parameters) =>
+    $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       comment: $convertToMaybe($identityConversionFunction)(
         parameters?.comment,
@@ -3346,8 +3323,9 @@ export namespace PropertyGroup {
       ),
     })
       .map((properties) => ({ ...properties, $type: "PropertyGroup" as const }))
-      .map((object) => $monkeyPatchObject(object, { $toString }));
-  }
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: PropertyGroup.$toString }),
+      );
 
   export function createUnsafe(parameters?: {
     readonly $identifier?:
@@ -3361,25 +3339,15 @@ export namespace PropertyGroup {
     return create(parameters).unsafeCoerce();
   }
 
-  export type Identifier = BlankNode | NamedNode;
-
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
   export const _fromRdfResource: $_FromRdfResourceFunction<PropertyGroup> = (
     $resource,
     _$options,
-  ) => {
-    return (
-      !_$options.ignoreRdfType
-        ? $ensureRdfResourceType(
-            $resource,
-            [PropertyGroup.schema.fromRdfType],
-            { graph: _$options.graph },
-          )
-        : Right(true as const)
+  ) =>
+    (!_$options.ignoreRdfType
+      ? $ensureRdfResourceType($resource, [PropertyGroup.schema.fromRdfType], {
+          graph: _$options.graph,
+        })
+      : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
@@ -3428,22 +3396,28 @@ export namespace PropertyGroup {
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
         }),
-      }).chain((properties) => create(properties)),
+      }).chain((properties) => PropertyGroup.create(properties)),
     );
-  };
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     PropertyGroup,
-    typeof PropertyGroup.schema
+    PropertyGroup.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => PropertyGroup.fromRdfResource(resource, options)),
+        .chain((resource) => fromRdfResource(resource, options)),
     );
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
 
   export function isPropertyGroup(object: $Object): object is PropertyGroup {
     return object.$type === "PropertyGroup";
@@ -3481,6 +3455,8 @@ export namespace PropertyGroup {
     },
   } as const;
 
+  export type Schema = typeof schema;
+
   export const _toRdfResource: $_ToRdfResourceFunction<
     PropertyGroup.Identifier,
     PropertyGroup
@@ -3511,20 +3487,19 @@ export namespace PropertyGroup {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function _propertiesToStrings(
+  export const $toString: (_propertyGroup: PropertyGroup) => string = (
+    _propertyGroup,
+  ) => `PropertyGroup(${JSON.stringify(toStringRecord(_propertyGroup))})`;
+
+  export const toStringRecord: (
     _propertyGroup: PropertyGroup,
-  ): Record<string, string> {
-    return $compactRecord({
+  ) => Record<string, string> = (_propertyGroup) =>
+    $compactRecord({
       $identifier: _propertyGroup.$identifier().toString(),
       label: _propertyGroup.label.map((item) => item.toString()).extract(),
     });
-  }
-
-  export function $toString(_propertyGroup: PropertyGroup): string {
-    return `PropertyGroup(${JSON.stringify(_propertiesToStrings(_propertyGroup))})`;
-  }
 }
-export interface PropertyShape {
+export type PropertyShape = {
   readonly $identifier: () => PropertyShape.Identifier;
 
   readonly $type: "PropertyShape";
@@ -3635,10 +3610,10 @@ export interface PropertyShape {
   readonly uniqueLang: Maybe<boolean>;
 
   readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
-}
+};
 
 export namespace PropertyShape {
-  export function create(parameters: {
+  export const create: (parameters: {
     readonly $identifier?:
       | (() => PropertyShape.Identifier)
       | BlankNode
@@ -3805,8 +3780,8 @@ export namespace PropertyShape {
     readonly xone?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-  }): Either<Error, PropertyShape> {
-    return $sequenceRecord({
+  }) => Either<Error, PropertyShape> = (parameters) =>
+    $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       and: $convertToMaybe($convertToList($convertToIdentifier, true))(
         parameters.and,
@@ -4192,8 +4167,9 @@ export namespace PropertyShape {
       ),
     })
       .map((properties) => ({ ...properties, $type: "PropertyShape" as const }))
-      .map((object) => $monkeyPatchObject(object, { $toString }));
-  }
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: PropertyShape.$toString }),
+      );
 
   export function createUnsafe(parameters: {
     readonly $identifier?:
@@ -4366,25 +4342,15 @@ export namespace PropertyShape {
     return create(parameters).unsafeCoerce();
   }
 
-  export type Identifier = BlankNode | NamedNode;
-
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
   export const _fromRdfResource: $_FromRdfResourceFunction<PropertyShape> = (
     $resource,
     _$options,
-  ) => {
-    return (
-      !_$options.ignoreRdfType
-        ? $ensureRdfResourceType(
-            $resource,
-            [PropertyShape.schema.fromRdfType],
-            { graph: _$options.graph },
-          )
-        : Right(true as const)
+  ) =>
+    (!_$options.ignoreRdfType
+      ? $ensureRdfResourceType($resource, [PropertyShape.schema.fromRdfType], {
+          graph: _$options.graph,
+        })
+      : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
@@ -4958,17 +4924,15 @@ export namespace PropertyShape {
             $NumericSchema<number>
           >($floatFromRdfResourceValues<number>),
         }),
-        path: $shaclPropertyFromRdf<$PropertyPath, typeof $PropertyPath.schema>(
-          {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            ignoreRdfType: true,
-            preferredLanguages: _$options.preferredLanguages,
-            propertySchema: schema.properties.path,
-            typeFromRdfResourceValues: $PropertyPath.fromRdfResourceValues,
-          },
-        ),
+        path: $shaclPropertyFromRdf<$PropertyPath, $PropertyPath.Schema>({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: schema.properties.path,
+          typeFromRdfResourceValues: $PropertyPath.fromRdfResourceValues,
+        }),
         pattern: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
@@ -5180,22 +5144,28 @@ export namespace PropertyShape {
             >($identifierFromRdfResourceValues),
           ),
         }),
-      }).chain((properties) => create(properties)),
+      }).chain((properties) => PropertyShape.create(properties)),
     );
-  };
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     PropertyShape,
-    typeof PropertyShape.schema
+    PropertyShape.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => PropertyShape.fromRdfResource(resource, options)),
+        .chain((resource) => fromRdfResource(resource, options)),
     );
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
 
   export function isPropertyShape(object: $Object): object is PropertyShape {
     return object.$type === "PropertyShape";
@@ -5608,6 +5578,8 @@ export namespace PropertyShape {
       },
     },
   } as const;
+
+  export type Schema = typeof schema;
 
   export const _toRdfResource: $_ToRdfResourceFunction<
     PropertyShape.Identifier,
@@ -6164,20 +6136,19 @@ export namespace PropertyShape {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function _propertiesToStrings(
+  export const $toString: (_propertyShape: PropertyShape) => string = (
+    _propertyShape,
+  ) => `PropertyShape(${JSON.stringify(toStringRecord(_propertyShape))})`;
+
+  export const toStringRecord: (
     _propertyShape: PropertyShape,
-  ): Record<string, string> {
-    return $compactRecord({
+  ) => Record<string, string> = (_propertyShape) =>
+    $compactRecord({
       $identifier: _propertyShape.$identifier().toString(),
       label: _propertyShape.label.map((item) => item.toString()).extract(),
       name: _propertyShape.name.map((item) => item.toString()).extract(),
       path: $PropertyPath.$toString(_propertyShape.path),
     });
-  }
-
-  export function $toString(_propertyShape: PropertyShape): string {
-    return `PropertyShape(${JSON.stringify(_propertiesToStrings(_propertyShape))})`;
-  }
 }
 export type Shape = NodeShape | PropertyShape;
 
