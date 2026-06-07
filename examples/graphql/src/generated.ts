@@ -690,6 +690,8 @@ export namespace $PropertyPath {
 
   export const schema: Readonly<object> = {};
 
+  export type Schema = typeof schema;
+
   export const toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
     RdfxResourcePropertyPath.toResource;
 
@@ -1099,7 +1101,7 @@ export namespace $DefaultPartial {
           focusResource: $resource,
           preferredLanguages: _$options.preferredLanguages,
           propertyPath: $RdfVocabularies.rdf.subject,
-          schema: schema.properties.$identifier.type,
+          schema: $DefaultPartial.schema.properties.$identifier.type,
           objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
@@ -1154,10 +1156,10 @@ export namespace $DefaultPartial {
   ) => Record<string, string> = (_defaultPartial) =>
     $compactRecord({ $identifier: _defaultPartial.$identifier().toString() });
 }
-export type NestedObject = {
-  readonly $identifier: () => NestedObject.Identifier;
+export type LazyObject = {
+  readonly $identifier: () => LazyObject.Identifier;
 
-  readonly $type: "NestedObject";
+  readonly $type: "LazyObject";
 
   /**
    * Optional number property
@@ -1175,24 +1177,24 @@ export type NestedObject = {
   readonly requiredStringProperty: string;
 };
 
-export namespace NestedObject {
+export namespace LazyObject {
   export const create: (parameters: {
     readonly $identifier?:
-      | (() => NestedObject.Identifier)
+      | (() => LazyObject.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly optionalNumberProperty?: number | Maybe<number>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
-  }) => Either<Error, NestedObject> = (parameters) =>
+  }) => Either<Error, LazyObject> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNumberProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          NestedObject.schema.properties.optionalNumberProperty.type,
+          LazyObject.schema.properties.optionalNumberProperty.type,
           value,
         ),
       ),
@@ -1200,27 +1202,27 @@ export namespace NestedObject {
         parameters.optionalStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          NestedObject.schema.properties.optionalStringProperty.type,
+          LazyObject.schema.properties.optionalStringProperty.type,
           value,
         ),
       ),
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
     })
-      .map((properties) => ({ ...properties, $type: "NestedObject" as const }))
+      .map((properties) => ({ ...properties, $type: "LazyObject" as const }))
       .map((object) =>
-        $monkeyPatchObject(object, { $toString: NestedObject.$toString }),
+        $monkeyPatchObject(object, { $toString: LazyObject.$toString }),
       );
 
   export function createUnsafe(parameters: {
     readonly $identifier?:
-      | (() => NestedObject.Identifier)
+      | (() => LazyObject.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly optionalNumberProperty?: number | Maybe<number>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
-  }): NestedObject {
+  }): LazyObject {
     return create(parameters).unsafeCoerce();
   }
 
@@ -1232,8 +1234,8 @@ export namespace NestedObject {
   };
 
   export const filter: (
-    filter: NestedObject.Filter,
-    value: NestedObject,
+    filter: LazyObject.Filter,
+    value: LazyObject,
   ) => boolean = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -1272,7 +1274,7 @@ export namespace NestedObject {
   };
 
   export const GraphQL = new GraphQLObjectType<
-    NestedObject,
+    LazyObject,
     { objectSet: $ObjectSet }
   >({
     description: undefined,
@@ -1281,8 +1283,7 @@ export namespace NestedObject {
         args: undefined,
         description: undefined,
         name: "_identifier",
-        resolve: (source) =>
-          NestedObject.Identifier.stringify(source.$identifier()),
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
         type: new GraphQLNonNull(GraphQLString),
       },
       optionalNumberProperty: {
@@ -1309,15 +1310,15 @@ export namespace NestedObject {
         type: new GraphQLNonNull(GraphQLString),
       },
     }),
-    name: "NestedObject",
+    name: "LazyObject",
   });
 
-  export const _fromRdfResource: $_FromRdfResourceFunction<NestedObject> = (
+  export const _fromRdfResource: $_FromRdfResourceFunction<LazyObject> = (
     $resource,
     _$options,
   ) =>
     (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [NestedObject.schema.fromRdfType], {
+      ? $ensureRdfResourceType($resource, [LazyObject.schema.fromRdfType], {
           graph: _$options.graph,
         })
       : Right(true as const)
@@ -1336,7 +1337,7 @@ export namespace NestedObject {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: LazyObject.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -1349,7 +1350,7 @@ export namespace NestedObject {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.optionalNumberProperty,
+          propertySchema: LazyObject.schema.properties.optionalNumberProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -1365,7 +1366,7 @@ export namespace NestedObject {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.optionalStringProperty,
+          propertySchema: LazyObject.schema.properties.optionalStringProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -1381,19 +1382,19 @@ export namespace NestedObject {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.requiredStringProperty,
+          propertySchema: LazyObject.schema.properties.requiredStringProperty,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
-      }).chain((properties) => NestedObject.create(properties)),
+      }).chain((properties) => LazyObject.create(properties)),
     );
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    NestedObject,
-    NestedObject.Schema
+    LazyObject,
+    LazyObject.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -1408,12 +1409,12 @@ export namespace NestedObject {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isNestedObject(object: $Object): object is NestedObject {
-    return object.$type === "NestedObject";
+  export function isLazyObject(object: $Object): object is LazyObject {
+    return object.$type === "LazyObject";
   }
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/NestedObject"),
+    fromRdfType: dataFactory.namedNode("http://example.com/LazyObject"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -1449,18 +1450,18 @@ export namespace NestedObject {
   export type Schema = typeof schema;
 
   export const _toRdfResource: $_ToRdfResourceFunction<
-    NestedObject.Identifier,
-    NestedObject
+    LazyObject.Identifier,
+    LazyObject
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/NestedObject"),
+        dataFactory.namedNode("http://example.com/LazyObject"),
         parameters.graph,
       );
     }
     parameters.resource.add(
-      NestedObject.schema.properties.optionalNumberProperty.path,
+      LazyObject.schema.properties.optionalNumberProperty.path,
       parameters.object.optionalNumberProperty
         .toList()
         .flatMap((value) => [
@@ -1469,14 +1470,14 @@ export namespace NestedObject {
       parameters.graph,
     );
     parameters.resource.add(
-      NestedObject.schema.properties.optionalStringProperty.path,
+      LazyObject.schema.properties.optionalStringProperty.path,
       parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      NestedObject.schema.properties.requiredStringProperty.path,
+      LazyObject.schema.properties.requiredStringProperty.path,
       [$literalFactory.string(parameters.object.requiredStringProperty)],
       parameters.graph,
     );
@@ -1485,14 +1486,13 @@ export namespace NestedObject {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export const $toString: (_nestedObject: NestedObject) => string = (
-    _nestedObject,
-  ) => `NestedObject(${JSON.stringify(toStringRecord(_nestedObject))})`;
+  export const $toString: (_lazyObject: LazyObject) => string = (_lazyObject) =>
+    `LazyObject(${JSON.stringify(toStringRecord(_lazyObject))})`;
 
   export const toStringRecord: (
-    _nestedObject: NestedObject,
-  ) => Record<string, string> = (_nestedObject) =>
-    $compactRecord({ $identifier: _nestedObject.$identifier().toString() });
+    _lazyObject: LazyObject,
+  ) => Record<string, string> = (_lazyObject) =>
+    $compactRecord({ $identifier: _lazyObject.$identifier().toString() });
 }
 export type RootObject = {
   readonly $identifier: () => RootObject.Identifier;
@@ -1502,17 +1502,34 @@ export type RootObject = {
   /**
    * Lazy object set property
    */
-  readonly lazyObjectSetProperty: $LazySet<$DefaultPartial, NestedObject>;
+  readonly lazyObjectSetProperty: $LazySet<$DefaultPartial, LazyObject>;
 
   /**
    * Optional lazy object property
    */
-  readonly optionalLazyProperty: $LazyOption<$DefaultPartial, NestedObject>;
+  readonly optionalLazyProperty: $LazyOption<$DefaultPartial, LazyObject>;
 
   /**
-   * Optional object property
+   * Optional object property with 'anonymous' object
    */
-  readonly optionalObjectProperty: Maybe<NestedObject>;
+  readonly optionalObjectProperty: Maybe<{
+    readonly $identifier: () => BlankNode | NamedNode;
+
+    /**
+     * Optional number property
+     */
+    readonly optionalNumberProperty: Maybe<number>;
+
+    /**
+     * Optional string property
+     */
+    readonly optionalStringProperty: Maybe<string>;
+
+    /**
+     * Required string property
+     */
+    readonly requiredStringProperty: string;
+  }>;
 
   /**
    * Optional string property
@@ -1529,13 +1546,41 @@ export namespace RootObject {
   export const create: (parameters: {
     readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
     readonly lazyObjectSetProperty?:
-      | $LazySet<$DefaultPartial, NestedObject>
-      | readonly NestedObject[];
+      | $LazySet<$DefaultPartial, LazyObject>
+      | readonly LazyObject[];
     readonly optionalLazyProperty?:
-      | $LazyOption<$DefaultPartial, NestedObject>
-      | Maybe<NestedObject>
-      | NestedObject;
-    readonly optionalObjectProperty?: NestedObject | Maybe<NestedObject>;
+      | $LazyOption<$DefaultPartial, LazyObject>
+      | Maybe<LazyObject>
+      | LazyObject;
+    readonly optionalObjectProperty?:
+      | {
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | string;
+          readonly optionalNumberProperty?: number | Maybe<number>;
+          readonly optionalStringProperty?: string | Maybe<string>;
+          readonly requiredStringProperty: string;
+        }
+      | Maybe<{
+          readonly $identifier: () => BlankNode | NamedNode;
+
+          /**
+           * Optional number property
+           */
+          readonly optionalNumberProperty: Maybe<number>;
+
+          /**
+           * Optional string property
+           */
+          readonly optionalStringProperty: Maybe<string>;
+
+          /**
+           * Required string property
+           */
+          readonly requiredStringProperty: string;
+        }>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
   }) => Either<Error, RootObject> = (parameters) =>
@@ -1543,15 +1588,63 @@ export namespace RootObject {
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
       ),
-      lazyObjectSetProperty: $convertToLazySet<$DefaultPartial, NestedObject>(
+      lazyObjectSetProperty: $convertToLazySet<$DefaultPartial, LazyObject>(
         $DefaultPartial.createUnsafe,
       )(parameters.lazyObjectSetProperty),
-      optionalLazyProperty: $convertToLazyOption<$DefaultPartial, NestedObject>(
+      optionalLazyProperty: $convertToLazyOption<$DefaultPartial, LazyObject>(
         $DefaultPartial.createUnsafe,
       )(parameters.optionalLazyProperty),
-      optionalObjectProperty: $convertToMaybe($identityConversionFunction)(
-        parameters.optionalObjectProperty,
-      ).chain((value) =>
+      optionalObjectProperty: $convertToMaybe(
+        (parameters: {
+          readonly $identifier: () => BlankNode | NamedNode;
+
+          /**
+           * Optional number property
+           */
+          readonly optionalNumberProperty: Maybe<number>;
+
+          /**
+           * Optional string property
+           */
+          readonly optionalStringProperty: Maybe<string>;
+
+          /**
+           * Required string property
+           */
+          readonly requiredStringProperty: string;
+        }) =>
+          $sequenceRecord({
+            $identifier: $convertToIdentifierProperty(parameters.$identifier),
+            optionalNumberProperty: $convertToMaybe(
+              $identityConversionFunction,
+            )(parameters.optionalNumberProperty).chain((value) =>
+              $validateMaybe($identityValidationFunction)(
+                LazyObject.schema.properties.optionalNumberProperty.type,
+                value,
+              ),
+            ),
+            optionalStringProperty: $convertToMaybe(
+              $identityConversionFunction,
+            )(parameters.optionalStringProperty).chain((value) =>
+              $validateMaybe($identityValidationFunction)(
+                LazyObject.schema.properties.optionalStringProperty.type,
+                value,
+              ),
+            ),
+            requiredStringProperty: Either.of(
+              parameters.requiredStringProperty,
+            ),
+          }).map((object) =>
+            $monkeyPatchObject(object, {
+              $toString: (_object) =>
+                JSON.stringify(
+                  $compactRecord({
+                    $identifier: _object.$identifier().toString(),
+                  }),
+                ),
+            }),
+          ),
+      )(parameters.optionalObjectProperty).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           RootObject.schema.properties.optionalObjectProperty.type,
           value,
@@ -1561,7 +1654,7 @@ export namespace RootObject {
         parameters.optionalStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          NestedObject.schema.properties.optionalStringProperty.type,
+          LazyObject.schema.properties.optionalStringProperty.type,
           value,
         ),
       ),
@@ -1575,13 +1668,41 @@ export namespace RootObject {
   export function createUnsafe(parameters: {
     readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
     readonly lazyObjectSetProperty?:
-      | $LazySet<$DefaultPartial, NestedObject>
-      | readonly NestedObject[];
+      | $LazySet<$DefaultPartial, LazyObject>
+      | readonly LazyObject[];
     readonly optionalLazyProperty?:
-      | $LazyOption<$DefaultPartial, NestedObject>
-      | Maybe<NestedObject>
-      | NestedObject;
-    readonly optionalObjectProperty?: NestedObject | Maybe<NestedObject>;
+      | $LazyOption<$DefaultPartial, LazyObject>
+      | Maybe<LazyObject>
+      | LazyObject;
+    readonly optionalObjectProperty?:
+      | {
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | string;
+          readonly optionalNumberProperty?: number | Maybe<number>;
+          readonly optionalStringProperty?: string | Maybe<string>;
+          readonly requiredStringProperty: string;
+        }
+      | Maybe<{
+          readonly $identifier: () => BlankNode | NamedNode;
+
+          /**
+           * Optional number property
+           */
+          readonly optionalNumberProperty: Maybe<number>;
+
+          /**
+           * Optional string property
+           */
+          readonly optionalStringProperty: Maybe<string>;
+
+          /**
+           * Required string property
+           */
+          readonly requiredStringProperty: string;
+        }>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
   }): RootObject {
@@ -1592,7 +1713,12 @@ export namespace RootObject {
     readonly $identifier?: $IriFilter;
     readonly lazyObjectSetProperty?: $CollectionFilter<$DefaultPartial.Filter>;
     readonly optionalLazyProperty?: $MaybeFilter<$DefaultPartial.Filter>;
-    readonly optionalObjectProperty?: $MaybeFilter<NestedObject.Filter>;
+    readonly optionalObjectProperty?: $MaybeFilter<{
+      readonly $identifier?: $IdentifierFilter;
+      readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
+      readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+      readonly requiredStringProperty?: $StringFilter;
+    }>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
     readonly requiredStringProperty?: $StringFilter;
   };
@@ -1611,7 +1737,7 @@ export namespace RootObject {
       filter.lazyObjectSetProperty !== undefined &&
       !((
         filter: $CollectionFilter<$DefaultPartial.Filter>,
-        value: $LazySet<$DefaultPartial, NestedObject>,
+        value: $LazySet<$DefaultPartial, LazyObject>,
       ) =>
         $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
           $DefaultPartial.filter,
@@ -1626,7 +1752,7 @@ export namespace RootObject {
       filter.optionalLazyProperty !== undefined &&
       !((
         filter: $MaybeFilter<$DefaultPartial.Filter>,
-        value: $LazyOption<$DefaultPartial, NestedObject>,
+        value: $LazyOption<$DefaultPartial, LazyObject>,
       ) =>
         $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
           $DefaultPartial.filter,
@@ -1639,10 +1765,69 @@ export namespace RootObject {
     }
     if (
       filter.optionalObjectProperty !== undefined &&
-      !$filterMaybe<NestedObject, NestedObject.Filter>(NestedObject.filter)(
-        filter.optionalObjectProperty,
-        value.optionalObjectProperty,
-      )
+      !$filterMaybe<
+        {
+          readonly $identifier: () => BlankNode | NamedNode;
+
+          /**
+           * Optional number property
+           */
+          readonly optionalNumberProperty: Maybe<number>;
+
+          /**
+           * Optional string property
+           */
+          readonly optionalStringProperty: Maybe<string>;
+
+          /**
+           * Required string property
+           */
+          readonly requiredStringProperty: string;
+        },
+        {
+          readonly $identifier?: $IdentifierFilter;
+          readonly optionalNumberProperty?: $MaybeFilter<
+            $NumericFilter<number>
+          >;
+          readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+          readonly requiredStringProperty?: $StringFilter;
+        }
+      >((filter, value) => {
+        if (
+          filter.$identifier !== undefined &&
+          !$filterIdentifier(filter.$identifier, value.$identifier())
+        ) {
+          return false;
+        }
+        if (
+          filter.optionalNumberProperty !== undefined &&
+          !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+            filter.optionalNumberProperty,
+            value.optionalNumberProperty,
+          )
+        ) {
+          return false;
+        }
+        if (
+          filter.optionalStringProperty !== undefined &&
+          !$filterMaybe<string, $StringFilter>($filterString)(
+            filter.optionalStringProperty,
+            value.optionalStringProperty,
+          )
+        ) {
+          return false;
+        }
+        if (
+          filter.requiredStringProperty !== undefined &&
+          !$filterString(
+            filter.requiredStringProperty,
+            value.requiredStringProperty,
+          )
+        ) {
+          return false;
+        }
+        return true;
+      })(filter.optionalObjectProperty, value.optionalObjectProperty)
     ) {
       return false;
     }
@@ -1677,8 +1862,7 @@ export namespace RootObject {
         args: undefined,
         description: undefined,
         name: "_identifier",
-        resolve: (source) =>
-          RootObject.Identifier.stringify(source.$identifier()),
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
         type: new GraphQLNonNull(GraphQLString),
       },
       lazyObjectSetProperty: {
@@ -1690,7 +1874,7 @@ export namespace RootObject {
             .resolve({ limit: args.limit, offset: args.offset })
             .then((either) => either.unsafeCoerce()),
         type: new GraphQLNonNull(
-          new GraphQLList(new GraphQLNonNull(NestedObject.GraphQL)),
+          new GraphQLList(new GraphQLNonNull(LazyObject.GraphQL)),
         ),
       },
       optionalLazyProperty: {
@@ -1701,15 +1885,73 @@ export namespace RootObject {
           source.optionalLazyProperty
             .resolve()
             .then((either) => either.unsafeCoerce().extractNullable()),
-        type: new GraphQLNonNull(NestedObject.GraphQL),
+        type: new GraphQLNonNull(LazyObject.GraphQL),
       },
       optionalObjectProperty: {
         args: undefined,
-        description: '"Optional object property"',
+        description: "\"Optional object property with 'anonymous' object\"",
         name: "optionalObjectProperty",
         resolve: (source, _args) =>
           source.optionalObjectProperty.extractNullable(),
-        type: new GraphQLNonNull(NestedObject.GraphQL),
+        type: new GraphQLNonNull(
+          new GraphQLObjectType<
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
+
+              /**
+               * Optional number property
+               */
+              readonly optionalNumberProperty: Maybe<number>;
+
+              /**
+               * Optional string property
+               */
+              readonly optionalStringProperty: Maybe<string>;
+
+              /**
+               * Required string property
+               */
+              readonly requiredStringProperty: string;
+            },
+            { objectSet: $ObjectSet }
+          >({
+            description: undefined,
+            fields: () => ({
+              _identifier: {
+                args: undefined,
+                description: undefined,
+                name: "_identifier",
+                resolve: (source) =>
+                  NTriplesTerm.stringify(source.$identifier()),
+                type: new GraphQLNonNull(GraphQLString),
+              },
+              optionalNumberProperty: {
+                args: undefined,
+                description: '"Optional number property"',
+                name: "optionalNumberProperty",
+                resolve: (source, _args) =>
+                  source.optionalNumberProperty.extractNullable(),
+                type: new GraphQLNonNull(GraphQLFloat),
+              },
+              optionalStringProperty: {
+                args: undefined,
+                description: '"Optional string property"',
+                name: "optionalStringProperty",
+                resolve: (source, _args) =>
+                  source.optionalStringProperty.extractNullable(),
+                type: new GraphQLNonNull(GraphQLString),
+              },
+              requiredStringProperty: {
+                args: undefined,
+                description: '"Required string property"',
+                name: "requiredStringProperty",
+                resolve: (source, _args) => source.requiredStringProperty,
+                type: new GraphQLNonNull(GraphQLString),
+              },
+            }),
+            name: "df_0_5",
+          }),
+        ),
       },
       optionalStringProperty: {
         args: undefined,
@@ -1754,12 +1996,12 @@ export namespace RootObject {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: RootObject.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         lazyObjectSetProperty: $shaclPropertyFromRdf<
-          $LazySet<$DefaultPartial, NestedObject>,
+          $LazySet<$DefaultPartial, LazyObject>,
           {
             kind: "LazySet";
             partialType: $CollectionSchema<$DefaultPartial.Schema>;
@@ -1770,7 +2012,7 @@ export namespace RootObject {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.lazyObjectSetProperty,
+          propertySchema: RootObject.schema.properties.lazyObjectSetProperty,
           typeFromRdfResourceValues: ((
             values,
             { objectSet, schema, ...otherOptions },
@@ -1784,10 +2026,10 @@ export namespace RootObject {
             }).map((values) =>
               values.map(
                 (partials) =>
-                  new $LazySet<$DefaultPartial, NestedObject>({
+                  new $LazySet<$DefaultPartial, LazyObject>({
                     partials,
                     resolver: (partials, options) =>
-                      objectSet.nestedObjects({
+                      objectSet.lazyObjects({
                         identifiers: partials.map((partial) =>
                           partial.$identifier(),
                         ),
@@ -1796,7 +2038,7 @@ export namespace RootObject {
                   }),
               ),
             )) satisfies $FromRdfResourceValuesFunction<
-            $LazySet<$DefaultPartial, NestedObject>,
+            $LazySet<$DefaultPartial, LazyObject>,
             {
               kind: "LazySet";
               partialType: $CollectionSchema<$DefaultPartial.Schema>;
@@ -1805,7 +2047,7 @@ export namespace RootObject {
           objectSet: _$options.objectSet,
         }),
         optionalLazyProperty: $shaclPropertyFromRdf<
-          $LazyOption<$DefaultPartial, NestedObject>,
+          $LazyOption<$DefaultPartial, LazyObject>,
           {
             kind: "LazyOption";
             partialType: $MaybeSchema<$DefaultPartial.Schema>;
@@ -1816,7 +2058,7 @@ export namespace RootObject {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.optionalLazyProperty,
+          propertySchema: RootObject.schema.properties.optionalLazyProperty,
           typeFromRdfResourceValues: ((
             values,
             { objectSet, schema, ...otherOptions },
@@ -1831,14 +2073,14 @@ export namespace RootObject {
             }).map((values) =>
               values.map(
                 (partial) =>
-                  new $LazyOption<$DefaultPartial, NestedObject>({
+                  new $LazyOption<$DefaultPartial, LazyObject>({
                     partial,
                     resolver: (partial, options) =>
-                      objectSet.nestedObject(partial.$identifier(), options),
+                      objectSet.lazyObject(partial.$identifier(), options),
                   }),
               ),
             )) satisfies $FromRdfResourceValuesFunction<
-            $LazyOption<$DefaultPartial, NestedObject>,
+            $LazyOption<$DefaultPartial, LazyObject>,
             {
               kind: "LazyOption";
               partialType: $MaybeSchema<$DefaultPartial.Schema>;
@@ -1847,19 +2089,225 @@ export namespace RootObject {
           objectSet: _$options.objectSet,
         }),
         optionalObjectProperty: $shaclPropertyFromRdf<
-          Maybe<NestedObject>,
-          $MaybeSchema<NestedObject.Schema>
+          Maybe<{
+            readonly $identifier: () => BlankNode | NamedNode;
+
+            /**
+             * Optional number property
+             */
+            readonly optionalNumberProperty: Maybe<number>;
+
+            /**
+             * Optional string property
+             */
+            readonly optionalStringProperty: Maybe<string>;
+
+            /**
+             * Required string property
+             */
+            readonly requiredStringProperty: string;
+          }>,
+          $MaybeSchema<{
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              optionalNumberProperty: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $MaybeSchema<$NumericSchema<number>>;
+              };
+              optionalStringProperty: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $MaybeSchema<$StringSchema<string>>;
+              };
+              requiredStringProperty: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }>
         >({
           context: _$options.context,
           graph: _$options.graph,
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.optionalObjectProperty,
+          propertySchema: RootObject.schema.properties.optionalObjectProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NestedObject,
-            NestedObject.Schema
-          >(NestedObject.fromRdfResourceValues),
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
+
+              /**
+               * Optional number property
+               */
+              readonly optionalNumberProperty: Maybe<number>;
+
+              /**
+               * Optional string property
+               */
+              readonly optionalStringProperty: Maybe<string>;
+
+              /**
+               * Required string property
+               */
+              readonly requiredStringProperty: string;
+            },
+            {
+              properties: {
+                $identifier: {
+                  readonly kind: "Identifier";
+                  readonly type: $IdentifierSchema;
+                };
+                optionalNumberProperty: {
+                  readonly kind: "Shacl";
+                  readonly path: $PropertyPath;
+                  readonly type: $MaybeSchema<$NumericSchema<number>>;
+                };
+                optionalStringProperty: {
+                  readonly kind: "Shacl";
+                  readonly path: $PropertyPath;
+                  readonly type: $MaybeSchema<$StringSchema<string>>;
+                };
+                requiredStringProperty: {
+                  readonly kind: "Shacl";
+                  readonly path: $PropertyPath;
+                  readonly type: $StringSchema<string>;
+                };
+              };
+            }
+          >((values, options) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                (($resource, _$options) =>
+                  $sequenceRecord({
+                    $identifier: $identifierFromRdfResourceValues(
+                      new Resource.Value({
+                        dataFactory: dataFactory,
+                        focusResource: $resource,
+                        propertyPath: $RdfVocabularies.rdf.subject,
+                        term: $resource.identifier,
+                      }).toValues(),
+                      {
+                        context: _$options.context,
+                        graph: _$options.graph,
+                        focusResource: $resource,
+                        preferredLanguages: _$options.preferredLanguages,
+                        propertyPath: $RdfVocabularies.rdf.subject,
+                        schema: { kind: "Identifier" as const },
+                        objectSet: _$options.objectSet,
+                      },
+                    ).chain((values) => values.head()),
+                    optionalNumberProperty: $shaclPropertyFromRdf<
+                      Maybe<number>,
+                      $MaybeSchema<$NumericSchema<number>>
+                    >({
+                      context: _$options.context,
+                      graph: _$options.graph,
+                      focusResource: $resource,
+                      ignoreRdfType: true,
+                      preferredLanguages: _$options.preferredLanguages,
+                      propertySchema:
+                        LazyObject.schema.properties.optionalNumberProperty,
+                      typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+                        number,
+                        $NumericSchema<number>
+                      >($floatFromRdfResourceValues<number>),
+                      objectSet: _$options.objectSet,
+                    }),
+                    optionalStringProperty: $shaclPropertyFromRdf<
+                      Maybe<string>,
+                      $MaybeSchema<$StringSchema<string>>
+                    >({
+                      context: _$options.context,
+                      graph: _$options.graph,
+                      focusResource: $resource,
+                      ignoreRdfType: true,
+                      preferredLanguages: _$options.preferredLanguages,
+                      propertySchema:
+                        LazyObject.schema.properties.optionalStringProperty,
+                      typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+                        string,
+                        $StringSchema<string>
+                      >($stringFromRdfResourceValues<string>),
+                      objectSet: _$options.objectSet,
+                    }),
+                    requiredStringProperty: $shaclPropertyFromRdf<
+                      string,
+                      $StringSchema<string>
+                    >({
+                      context: _$options.context,
+                      graph: _$options.graph,
+                      focusResource: $resource,
+                      ignoreRdfType: true,
+                      preferredLanguages: _$options.preferredLanguages,
+                      propertySchema:
+                        LazyObject.schema.properties.requiredStringProperty,
+                      typeFromRdfResourceValues:
+                        $stringFromRdfResourceValues<string>,
+                      objectSet: _$options.objectSet,
+                    }),
+                  }).chain((properties) =>
+                    ((parameters: {
+                      readonly $identifier: () => BlankNode | NamedNode;
+
+                      /**
+                       * Optional number property
+                       */
+                      readonly optionalNumberProperty: Maybe<number>;
+
+                      /**
+                       * Optional string property
+                       */
+                      readonly optionalStringProperty: Maybe<string>;
+
+                      /**
+                       * Required string property
+                       */
+                      readonly requiredStringProperty: string;
+                    }) =>
+                      $sequenceRecord({
+                        $identifier: $convertToIdentifierProperty(
+                          parameters.$identifier,
+                        ),
+                        optionalNumberProperty: $convertToMaybe(
+                          $identityConversionFunction,
+                        )(parameters.optionalNumberProperty).chain((value) =>
+                          $validateMaybe($identityValidationFunction)(
+                            LazyObject.schema.properties.optionalNumberProperty
+                              .type,
+                            value,
+                          ),
+                        ),
+                        optionalStringProperty: $convertToMaybe(
+                          $identityConversionFunction,
+                        )(parameters.optionalStringProperty).chain((value) =>
+                          $validateMaybe($identityValidationFunction)(
+                            LazyObject.schema.properties.optionalStringProperty
+                              .type,
+                            value,
+                          ),
+                        ),
+                        requiredStringProperty: Either.of(
+                          parameters.requiredStringProperty,
+                        ),
+                      }).map((object) =>
+                        $monkeyPatchObject(object, {
+                          $toString: (_object) =>
+                            JSON.stringify(
+                              $compactRecord({
+                                $identifier: _object.$identifier().toString(),
+                              }),
+                            ),
+                        }),
+                      ))(properties),
+                  ))(resource, options),
+              ),
+            ),
+          ),
           objectSet: _$options.objectSet,
         }),
         optionalStringProperty: $shaclPropertyFromRdf<
@@ -1871,7 +2319,7 @@ export namespace RootObject {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.optionalStringProperty,
+          propertySchema: LazyObject.schema.properties.optionalStringProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -1887,7 +2335,7 @@ export namespace RootObject {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.requiredStringProperty,
+          propertySchema: LazyObject.schema.properties.requiredStringProperty,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -1961,13 +2409,43 @@ export namespace RootObject {
         path: dataFactory.namedNode(
           "http://example.com/optionalObjectProperty",
         ),
-        get type() {
-          return {
-            kind: "Option" as const,
-            get itemType() {
-              return NestedObject.schema;
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            properties: {
+              $identifier: {
+                kind: "Identifier",
+                type: { kind: "Identifier" as const },
+              },
+              optionalNumberProperty: {
+                kind: "Shacl",
+                path: dataFactory.namedNode(
+                  "http://example.com/optionalNumberProperty",
+                ),
+                type: {
+                  kind: "Option" as const,
+                  itemType: { kind: "Float" as const },
+                },
+              },
+              optionalStringProperty: {
+                kind: "Shacl",
+                path: dataFactory.namedNode(
+                  "http://example.com/optionalStringProperty",
+                ),
+                type: {
+                  kind: "Option" as const,
+                  itemType: { kind: "String" as const },
+                },
+              },
+              requiredStringProperty: {
+                kind: "Shacl",
+                path: dataFactory.namedNode(
+                  "http://example.com/requiredStringProperty",
+                ),
+                type: { kind: "String" as const },
+              },
             },
-          };
+          } as const,
         },
       },
       optionalStringProperty: {
@@ -2028,7 +2506,50 @@ export namespace RootObject {
     parameters.resource.add(
       RootObject.schema.properties.optionalObjectProperty.path,
       parameters.object.optionalObjectProperty.toList().flatMap((value) => [
-        NestedObject.toRdfResource(value, {
+        $wrap_ToRdfResourceFunction<
+          BlankNode | NamedNode,
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+
+            /**
+             * Optional number property
+             */
+            readonly optionalNumberProperty: Maybe<number>;
+
+            /**
+             * Optional string property
+             */
+            readonly optionalStringProperty: Maybe<string>;
+
+            /**
+             * Required string property
+             */
+            readonly requiredStringProperty: string;
+          }
+        >((parameters) => {
+          parameters.resource.add(
+            LazyObject.schema.properties.optionalNumberProperty.path,
+            parameters.object.optionalNumberProperty
+              .toList()
+              .flatMap((value) => [
+                $literalFactory.number(value, $RdfVocabularies.xsd.double),
+              ]),
+            parameters.graph,
+          );
+          parameters.resource.add(
+            LazyObject.schema.properties.optionalStringProperty.path,
+            parameters.object.optionalStringProperty
+              .toList()
+              .flatMap((value) => [$literalFactory.string(value)]),
+            parameters.graph,
+          );
+          parameters.resource.add(
+            LazyObject.schema.properties.requiredStringProperty.path,
+            [$literalFactory.string(parameters.object.requiredStringProperty)],
+            parameters.graph,
+          );
+          return parameters.resource;
+        })(value, {
           graph: parameters.graph,
           resourceSet: parameters.resourceSet,
         }).identifier,
@@ -2036,14 +2557,14 @@ export namespace RootObject {
       parameters.graph,
     );
     parameters.resource.add(
-      NestedObject.schema.properties.optionalStringProperty.path,
+      LazyObject.schema.properties.optionalStringProperty.path,
       parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      NestedObject.schema.properties.requiredStringProperty.path,
+      LazyObject.schema.properties.requiredStringProperty.path,
       [$literalFactory.string(parameters.object.requiredStringProperty)],
       parameters.graph,
     );
@@ -2086,7 +2607,7 @@ export namespace UnionMember1 {
         parameters?.optionalNumberProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          NestedObject.schema.properties.optionalNumberProperty.type,
+          LazyObject.schema.properties.optionalNumberProperty.type,
           value,
         ),
       ),
@@ -2144,8 +2665,7 @@ export namespace UnionMember1 {
         args: undefined,
         description: undefined,
         name: "_identifier",
-        resolve: (source) =>
-          UnionMember1.Identifier.stringify(source.$identifier()),
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
         type: new GraphQLNonNull(GraphQLString),
       },
       optionalNumberProperty: {
@@ -2184,7 +2704,7 @@ export namespace UnionMember1 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: UnionMember1.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -2197,7 +2717,7 @@ export namespace UnionMember1 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.optionalNumberProperty,
+          propertySchema: LazyObject.schema.properties.optionalNumberProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -2262,7 +2782,7 @@ export namespace UnionMember1 {
       );
     }
     parameters.resource.add(
-      NestedObject.schema.properties.optionalNumberProperty.path,
+      LazyObject.schema.properties.optionalNumberProperty.path,
       parameters.object.optionalNumberProperty
         .toList()
         .flatMap((value) => [
@@ -2310,7 +2830,7 @@ export namespace UnionMember2 {
         parameters?.optionalStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          NestedObject.schema.properties.optionalStringProperty.type,
+          LazyObject.schema.properties.optionalStringProperty.type,
           value,
         ),
       ),
@@ -2368,8 +2888,7 @@ export namespace UnionMember2 {
         args: undefined,
         description: undefined,
         name: "_identifier",
-        resolve: (source) =>
-          UnionMember2.Identifier.stringify(source.$identifier()),
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
         type: new GraphQLNonNull(GraphQLString),
       },
       optionalStringProperty: {
@@ -2408,7 +2927,7 @@ export namespace UnionMember2 {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: UnionMember2.schema.properties.$identifier.type,
             objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
@@ -2421,7 +2940,7 @@ export namespace UnionMember2 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.optionalStringProperty,
+          propertySchema: LazyObject.schema.properties.optionalStringProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -2489,7 +3008,7 @@ export namespace UnionMember2 {
       );
     }
     parameters.resource.add(
-      NestedObject.schema.properties.optionalStringProperty.path,
+      LazyObject.schema.properties.optionalStringProperty.path,
       parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -2668,12 +3187,12 @@ export namespace Union {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<Union>;
 }
-export type $Object = NestedObject | RootObject | UnionMember1 | UnionMember2;
+export type $Object = LazyObject | RootObject | UnionMember1 | UnionMember2;
 
 export namespace $Object {
   export const $toString = (value: $Object): string => {
-    if (NestedObject.isNestedObject(value)) {
-      return NestedObject.$toString(value);
+    if (LazyObject.isLazyObject(value)) {
+      return LazyObject.$toString(value);
     }
     if (RootObject.isRootObject(value)) {
       return RootObject.$toString(value);
@@ -2696,10 +3215,10 @@ export namespace $Object {
       return false;
     }
     if (
-      filter.on?.["NestedObject"] !== undefined &&
-      NestedObject.isNestedObject(value)
+      filter.on?.["LazyObject"] !== undefined &&
+      LazyObject.isLazyObject(value)
     ) {
-      if (!NestedObject.filter(filter.on["NestedObject"], value)) {
+      if (!LazyObject.filter(filter.on["LazyObject"], value)) {
         return false;
       }
     }
@@ -2734,7 +3253,7 @@ export namespace $Object {
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
-      readonly NestedObject?: NestedObject.Filter;
+      readonly LazyObject?: LazyObject.Filter;
       readonly RootObject?: RootObject.Filter;
       readonly UnionMember1?: UnionMember1.Filter;
       readonly UnionMember2?: UnionMember2.Filter;
@@ -2746,7 +3265,7 @@ export namespace $Object {
     options,
   ) =>
     (
-      NestedObject.fromRdfResource(resource, {
+      LazyObject.fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
       }) as Either<Error, $Object>
@@ -2780,9 +3299,9 @@ export namespace $Object {
     values.chainMap((value) => {
       const valueAsValues = value.toValues();
       return (
-        NestedObject.fromRdfResourceValues(valueAsValues, {
+        LazyObject.fromRdfResourceValues(valueAsValues, {
           ...options,
-          schema: options.schema.members["NestedObject"].type,
+          schema: options.schema.members["LazyObject"].type,
         }) as Either<Error, Resource.Values<$Object>>
       )
         .altLazy(
@@ -2821,9 +3340,9 @@ export namespace $Object {
   export const schema = {
     kind: "ObjectUnion" as const,
     members: {
-      NestedObject: {
-        discriminantValues: ["NestedObject"],
-        type: NestedObject.schema,
+      LazyObject: {
+        discriminantValues: ["LazyObject"],
+        type: LazyObject.schema,
       },
       RootObject: {
         discriminantValues: ["RootObject"],
@@ -2845,8 +3364,8 @@ export namespace $Object {
     object,
     options,
   ) => {
-    if (NestedObject.isNestedObject(object)) {
-      return NestedObject.toRdfResource(object, options);
+    if (LazyObject.isLazyObject(object)) {
+      return LazyObject.toRdfResource(object, options);
     }
     if (RootObject.isRootObject(object)) {
       return RootObject.toRdfResource(object, options);
@@ -2864,9 +3383,9 @@ export namespace $Object {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (NestedObject.isNestedObject(value)) {
+    if (LazyObject.isLazyObject(value)) {
       return [
-        NestedObject.toRdfResource(value, {
+        LazyObject.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -2901,25 +3420,25 @@ export namespace $Object {
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
 }
 export interface $ObjectSet {
-  nestedObject(
-    identifier: NestedObject.Identifier,
+  lazyObject(
+    identifier: LazyObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NestedObject>>;
+  ): Promise<Either<Error, LazyObject>>;
 
-  nestedObjectCount(
+  lazyObjectCount(
     query?: Pick<
-      $ObjectSet.Query<NestedObject.Filter, NestedObject.Identifier>,
+      $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
-  nestedObjectIdentifiers(
-    query?: $ObjectSet.Query<NestedObject.Filter, NestedObject.Identifier>,
-  ): Promise<Either<Error, readonly NestedObject.Identifier[]>>;
+  lazyObjectIdentifiers(
+    query?: $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
+  ): Promise<Either<Error, readonly LazyObject.Identifier[]>>;
 
-  nestedObjects(
-    query?: $ObjectSet.Query<NestedObject.Filter, NestedObject.Identifier>,
-  ): Promise<Either<Error, readonly NestedObject[]>>;
+  lazyObjects(
+    query?: $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
+  ): Promise<Either<Error, readonly LazyObject[]>>;
 
   rootObject(
     identifier: RootObject.Identifier,
@@ -3058,73 +3577,73 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     });
   }
 
-  async nestedObject(
-    identifier: NestedObject.Identifier,
+  async lazyObject(
+    identifier: LazyObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NestedObject>> {
-    return this.nestedObjectSync(identifier, options);
+  ): Promise<Either<Error, LazyObject>> {
+    return this.lazyObjectSync(identifier, options);
   }
 
-  nestedObjectSync(
-    identifier: NestedObject.Identifier,
+  lazyObjectSync(
+    identifier: LazyObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NestedObject> {
-    return this.nestedObjectsSync({
+  ): Either<Error, LazyObject> {
+    return this.lazyObjectsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
-  async nestedObjectCount(
+  async lazyObjectCount(
     query?: Pick<
-      $ObjectSet.Query<NestedObject.Filter, NestedObject.Identifier>,
+      $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
-    return this.nestedObjectCountSync(query);
+    return this.lazyObjectCountSync(query);
   }
 
-  nestedObjectCountSync(
+  lazyObjectCountSync(
     query?: Pick<
-      $ObjectSet.Query<NestedObject.Filter, NestedObject.Identifier>,
+      $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
       "filter"
     >,
   ): Either<Error, number> {
-    return this.nestedObjectsSync(query).map((objects) => objects.length);
+    return this.lazyObjectsSync(query).map((objects) => objects.length);
   }
 
-  async nestedObjectIdentifiers(
-    query?: $ObjectSet.Query<NestedObject.Filter, NestedObject.Identifier>,
-  ): Promise<Either<Error, readonly NestedObject.Identifier[]>> {
-    return this.nestedObjectIdentifiersSync(query);
+  async lazyObjectIdentifiers(
+    query?: $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
+  ): Promise<Either<Error, readonly LazyObject.Identifier[]>> {
+    return this.lazyObjectIdentifiersSync(query);
   }
 
-  nestedObjectIdentifiersSync(
-    query?: $ObjectSet.Query<NestedObject.Filter, NestedObject.Identifier>,
-  ): Either<Error, readonly NestedObject.Identifier[]> {
-    return this.nestedObjectsSync(query).map((objects) =>
+  lazyObjectIdentifiersSync(
+    query?: $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
+  ): Either<Error, readonly LazyObject.Identifier[]> {
+    return this.lazyObjectsSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
   }
 
-  async nestedObjects(
-    query?: $ObjectSet.Query<NestedObject.Filter, NestedObject.Identifier>,
-  ): Promise<Either<Error, readonly NestedObject[]>> {
-    return this.nestedObjectsSync(query);
+  async lazyObjects(
+    query?: $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
+  ): Promise<Either<Error, readonly LazyObject[]>> {
+    return this.lazyObjectsSync(query);
   }
 
-  nestedObjectsSync(
-    query?: $ObjectSet.Query<NestedObject.Filter, NestedObject.Identifier>,
-  ): Either<Error, readonly NestedObject[]> {
+  lazyObjectsSync(
+    query?: $ObjectSet.Query<LazyObject.Filter, LazyObject.Identifier>,
+  ): Either<Error, readonly LazyObject[]> {
     return this.#objectsSync<
-      NestedObject,
-      NestedObject.Filter,
-      NestedObject.Identifier
+      LazyObject,
+      LazyObject.Filter,
+      LazyObject.Identifier
     >(
       {
-        filter: NestedObject.filter,
-        fromRdfResource: NestedObject.fromRdfResource,
-        fromRdfTypes: [NestedObject.schema.fromRdfType],
+        filter: LazyObject.filter,
+        fromRdfResource: LazyObject.fromRdfResource,
+        fromRdfTypes: [LazyObject.schema.fromRdfType],
       },
       query,
     );
@@ -3477,8 +3996,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       [
         {
           filter: $Object.filter,
-          fromRdfResource: NestedObject.fromRdfResource,
-          fromRdfTypes: [NestedObject.schema.fromRdfType],
+          fromRdfResource: LazyObject.fromRdfResource,
+          fromRdfTypes: [LazyObject.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -3787,27 +4306,27 @@ export const graphqlSchema = new GraphQLSchema({
   query: new GraphQLObjectType<null, { objectSet: $ObjectSet }>({
     name: "Query",
     fields: {
-      nestedObject: {
+      lazyObject: {
         args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
         resolve: async (
           _source,
           args: { identifier: string },
           { objectSet },
-        ): Promise<NestedObject> =>
+        ): Promise<LazyObject> =>
           (
-            await EitherAsync<Error, NestedObject>(async ({ liftEither }) =>
+            await EitherAsync<Error, LazyObject>(async ({ liftEither }) =>
               liftEither(
-                await objectSet.nestedObject(
+                await objectSet.lazyObject(
                   await liftEither(
-                    NestedObject.Identifier.parse(args.identifier),
+                    LazyObject.Identifier.parse(args.identifier),
                   ),
                 ),
               ),
             )
           ).unsafeCoerce(),
-        type: new GraphQLNonNull(NestedObject.GraphQL),
+        type: new GraphQLNonNull(LazyObject.GraphQL),
       },
-      nestedObjectIdentifiers: {
+      lazyObjectIdentifiers: {
         args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
         resolve: async (
           _source,
@@ -3815,16 +4334,16 @@ export const graphqlSchema = new GraphQLSchema({
           { objectSet },
         ): Promise<readonly string[]> =>
           (
-            await objectSet.nestedObjectIdentifiers({
+            await objectSet.lazyObjectIdentifiers({
               limit: args.limit !== null ? args.limit : undefined,
               offset: args.offset !== null ? args.offset : undefined,
             })
           )
             .unsafeCoerce()
-            .map(NestedObject.Identifier.stringify),
+            .map(LazyObject.Identifier.stringify),
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
-      nestedObjects: {
+      lazyObjects: {
         args: {
           identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
           limit: { type: GraphQLInt },
@@ -3838,24 +4357,24 @@ export const graphqlSchema = new GraphQLSchema({
             offset: number | null;
           },
           { objectSet },
-        ): Promise<readonly NestedObject[]> =>
+        ): Promise<readonly LazyObject[]> =>
           (
-            await EitherAsync<Error, readonly NestedObject[]>(
+            await EitherAsync<Error, readonly LazyObject[]>(
               async ({ liftEither }) => {
-                let filter: NestedObject.Filter | undefined;
+                let filter: LazyObject.Filter | undefined;
                 if (args.identifiers) {
-                  const identifiers: NestedObject.Identifier[] = [];
+                  const identifiers: LazyObject.Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        NestedObject.Identifier.parse(identifierArg),
+                        LazyObject.Identifier.parse(identifierArg),
                       ),
                     );
                   }
                   filter = { $identifier: { in: identifiers } };
                 }
                 return await liftEither(
-                  await objectSet.nestedObjects({
+                  await objectSet.lazyObjects({
                     filter,
                     limit: args.limit !== null ? args.limit : undefined,
                     offset: args.offset !== null ? args.offset : undefined,
@@ -3865,12 +4384,12 @@ export const graphqlSchema = new GraphQLSchema({
             )
           ).unsafeCoerce(),
         type: new GraphQLNonNull(
-          new GraphQLList(new GraphQLNonNull(NestedObject.GraphQL)),
+          new GraphQLList(new GraphQLNonNull(LazyObject.GraphQL)),
         ),
       },
-      nestedObjectCount: {
+      lazyObjectCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
-          (await objectSet.nestedObjectCount()).unsafeCoerce(),
+          (await objectSet.lazyObjectCount()).unsafeCoerce(),
         type: new GraphQLNonNull(GraphQLInt),
       },
       rootObject: {

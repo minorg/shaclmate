@@ -32,5 +32,5 @@ export function ObjectType_createFunctionExpression(this: ObjectType): Code {
     returnExpression = code`${returnExpression}.map(object => ${this.reusables.snippets.monkeyPatchObject}(object, ${monkeyPatchMethods}))`;
   }
 
-  return code`((parameters) => ${returnExpression})`;
+  return code`((parameters${this.name.map(() => code``).orDefaultLazy(() => code`: ${this.expression}`)}) => ${returnExpression})`;
 }

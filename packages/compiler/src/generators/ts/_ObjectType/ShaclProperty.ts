@@ -346,7 +346,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     }
 
     const propertyPath = this.objectType.name
-      .map((name) => code`${name}.schema.properties.${this.name}.path`)
+      .map(() => code`${this.schemaVariable}.path`)
       .orDefault(this.propertyPathToCode(this.path));
 
     return [

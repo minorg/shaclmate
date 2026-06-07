@@ -67,7 +67,7 @@ export class IdentifierProperty extends AbstractProperty<
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.typeExpression}.stringify(${this.accessExpression({ variables: { object: code`source` } })})`,
+      resolve: code`(source) => ${this.type.stringifyFunction}(${this.accessExpression({ variables: { object: code`source` } })})`,
       type: this.type.graphqlType.expression,
     });
   }
@@ -131,6 +131,12 @@ export class IdentifierProperty extends AbstractProperty<
     return this.objectType.name
       .map((objectTypeAlias) => code`${objectTypeAlias}.Identifier`)
       .orDefault(this.type.expression);
+  }
+
+  private get typeSchemaVariable(): Code {
+    return this.objectType.name
+      .map((name) => code`${name}.schema.properties.${this.name}.type`)
+      .orDefaultLazy(() => this.type.schema);
   }
 
   override accessExpression({
@@ -197,7 +203,7 @@ export class IdentifierProperty extends AbstractProperty<
       focusResource: variables.focusResource,
       preferredLanguages: variables.preferredLanguages,
       propertyPath: this.rdfjsTermExpression(rdf.subject),
-      schema: code`schema.properties.${this.name}.type`,
+      schema: this.typeSchemaVariable,
     };
     if (this.configuration.features.has("ObjectSet")) {
       options["objectSet"] = variables.objectSet;
@@ -247,12 +253,7 @@ export class IdentifierProperty extends AbstractProperty<
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: this.objectType.name
-          .map(
-            (objectTypeAlias) =>
-              code`${objectTypeAlias}.schema.properties.${this.name}.type`,
-          )
-          .orDefault(this.type.schema),
+        schema: this.typeSchemaVariable,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,
