@@ -14,8 +14,7 @@ export const harnesses = {
     kitchenSink.AnonymousTypesStruct.createUnsafe({
       $identifier,
       anonymousStruct: {
-        $identifier: () =>
-          dataFactory.namedNode("http://example.com/anonymousStructInstance"),
+        $identifier: "http://example.com/anonymousStructInstance",
         anonymousStructString: "test",
       },
     }),

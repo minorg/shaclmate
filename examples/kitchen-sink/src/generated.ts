@@ -4312,8 +4312,11 @@ export namespace AnonymousTypesStruct {
       | string;
     readonly anonymousStruct?:
       | {
-          readonly $identifier: () => BlankNode | NamedNode;
-
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | string;
           readonly anonymousStructString: string;
         }
       | Maybe<{
@@ -4323,9 +4326,34 @@ export namespace AnonymousTypesStruct {
   }) => Either<Error, AnonymousTypesStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      anonymousStruct: $convertToMaybe($identityConversionFunction)(
-        parameters?.anonymousStruct,
-      ).chain((value) =>
+      anonymousStruct: $convertToMaybe((parameters) =>
+        $sequenceRecord({
+          $identifier: $convertToIdentifierProperty(parameters.$identifier),
+          anonymousStructString: Either.of(parameters.anonymousStructString),
+        }).map((object) =>
+          $monkeyPatchObject(object, {
+            toJson: (_object) =>
+              JSON.parse(
+                JSON.stringify({
+                  "@id":
+                    _object.$identifier().termType === "BlankNode"
+                      ? `_:${_object.$identifier().value}`
+                      : _object.$identifier().value,
+                  anonymousStructString: _object.anonymousStructString,
+                } satisfies {
+                  readonly "@id": string;
+                  readonly anonymousStructString: string;
+                }),
+              ),
+            $toString: (_object) =>
+              JSON.stringify(
+                $compactRecord({
+                  $identifier: _object.$identifier().toString(),
+                }),
+              ),
+          }),
+        ),
+      )(parameters?.anonymousStruct).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           AnonymousTypesStruct.schema.properties.anonymousStruct.type,
           value,
@@ -4351,8 +4379,11 @@ export namespace AnonymousTypesStruct {
       | string;
     readonly anonymousStruct?:
       | {
-          readonly $identifier: () => BlankNode | NamedNode;
-
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | string;
           readonly anonymousStructString: string;
         }
       | Maybe<{
