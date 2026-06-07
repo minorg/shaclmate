@@ -388,11 +388,11 @@ export namespace FormStruct {
       | string;
     readonly emptyStringSetProperty?: string | readonly string[];
     readonly nestedStructProperty: {
-      readonly $identifier: () => BlankNode | NamedNode;
-
-      /**
-       * Required string
-       */
+      readonly $identifier?:
+        | (() => BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | string;
       readonly requiredStringProperty: string;
     };
     readonly nonEmptyStringSetProperty: string | readonly string[];
@@ -411,7 +411,33 @@ export namespace FormStruct {
           value,
         ),
       ),
-      nestedStructProperty: Either.of(parameters.nestedStructProperty),
+      nestedStructProperty: ((parameters) =>
+        $sequenceRecord({
+          $identifier: $convertToIdentifierProperty(parameters.$identifier),
+          requiredStringProperty: Either.of(parameters.requiredStringProperty),
+        }).map((object) =>
+          $monkeyPatchObject(object, {
+            toJson: (_object) =>
+              JSON.parse(
+                JSON.stringify({
+                  "@id":
+                    _object.$identifier().termType === "BlankNode"
+                      ? `_:${_object.$identifier().value}`
+                      : _object.$identifier().value,
+                  requiredStringProperty: _object.requiredStringProperty,
+                } satisfies {
+                  readonly "@id": string;
+                  readonly requiredStringProperty: string;
+                }),
+              ),
+            $toString: (_object) =>
+              JSON.stringify(
+                $compactRecord({
+                  $identifier: _object.$identifier().toString(),
+                }),
+              ),
+          }),
+        ))(parameters.nestedStructProperty),
       nonEmptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
         true,
@@ -448,11 +474,11 @@ export namespace FormStruct {
       | string;
     readonly emptyStringSetProperty?: string | readonly string[];
     readonly nestedStructProperty: {
-      readonly $identifier: () => BlankNode | NamedNode;
-
-      /**
-       * Required string
-       */
+      readonly $identifier?:
+        | (() => BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | string;
       readonly requiredStringProperty: string;
     };
     readonly nonEmptyStringSetProperty: string | readonly string[];
