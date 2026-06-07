@@ -182,12 +182,15 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const conversionFunction = this.type.conversionFunction.extract()?.code;
     const validationFunction = this.type.validationFunction.extract();
     let rhs: Code;
+    const typeSchema = this.objectType.name
+      .map((name) => code`${name}.schema.properties.${this.name}.type`)
+      .orDefault(this.type.schema);
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.type, value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${typeSchema}, value))`;
     } else if (conversionFunction) {
       rhs = code`${conversionFunction}(${parameterVariable})`;
     } else if (validationFunction) {
-      rhs = code`${validationFunction}(${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.type, ${parameterVariable})`;
+      rhs = code`${validationFunction}(${typeSchema}, ${parameterVariable})`;
     } else {
       rhs = code`${this.reusables.imports.Either}.of(${parameterVariable})`;
     }
@@ -325,7 +328,10 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         return [];
     }
 
-    const propertyPath = code`${this.objectType.name.unsafeCoerce()}.schema.properties.${this.name}.path`;
+    const propertyPath = this.objectType.name
+      .map((name) => code`${name}.schema.properties.${this.name}.path`)
+      .orDefault(this.propertyPathToCode(this.path));
+
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
         {
