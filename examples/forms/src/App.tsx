@@ -39,10 +39,10 @@ const classes = {
 const initialData = generated.FormStruct.toJson(
   generated.FormStruct.createUnsafe({
     $identifier: dataFactory.namedNode("http://example.com/form"),
-    nestedStructProperty: generated.NestedStruct.createUnsafe({
-      $identifier: dataFactory.namedNode("http://example.com/nested"),
+    nestedStructProperty: {
+      $identifier: "http://example.com/nested",
       requiredStringProperty: "required/nested",
-    }),
+    },
     nonEmptyStringSetProperty: ["test"],
     requiredIntProperty: 1,
     requiredStringProperty: "required/form",
