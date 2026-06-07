@@ -730,7 +730,9 @@ export namespace FormStruct {
 
   export type Schema = typeof schema;
 
-  export const toJson = (_formStruct: FormStruct): FormStruct.Json =>
+  export const toJson: (_formStruct: FormStruct) => FormStruct.Json = (
+    _formStruct,
+  ) =>
     JSON.parse(
       JSON.stringify({
         "@id":
@@ -741,17 +743,7 @@ export namespace FormStruct {
         emptyStringSetProperty: _formStruct.emptyStringSetProperty.map(
           (item) => item,
         ),
-        nestedStructProperty: ((_object: {
-          readonly $identifier: () => BlankNode | NamedNode;
-
-          /**
-           * Required string
-           */
-          readonly requiredStringProperty: string;
-        }): {
-          readonly "@id": string;
-          readonly requiredStringProperty: string;
-        } =>
+        nestedStructProperty: ((_object) =>
           JSON.parse(
             JSON.stringify({
               "@id":
@@ -789,7 +781,17 @@ export namespace FormStruct {
     parameters.resource.add(
       FormStruct.schema.properties.nestedStructProperty.path,
       [
-        $wrap_ToRdfResourceFunction((parameters) => {
+        $wrap_ToRdfResourceFunction<
+          BlankNode | NamedNode,
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+
+            /**
+             * Required string
+             */
+            readonly requiredStringProperty: string;
+          }
+        >((parameters) => {
           parameters.resource.add(
             dataFactory.namedNode("http://example.com/requiredStringProperty"),
             [$literalFactory.string(parameters.object.requiredStringProperty)],

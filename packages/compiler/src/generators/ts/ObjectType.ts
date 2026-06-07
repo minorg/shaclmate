@@ -273,7 +273,7 @@ export class ObjectType extends AbstractType {
       // toJson
       if (this.configuration.features.has("Object.toJson")) {
         staticModuleDeclarations.push(
-          code`export const toJson = ${ObjectType_toJsonFunctionExpression.call(this)};`,
+          code`export const toJson: (${this.thisVariable}: ${this.expression}) => ${this.jsonType().expression} = ${ObjectType_toJsonFunctionExpression.call(this)};`,
         );
       }
 
@@ -524,7 +524,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     const toRdfResourceFunction = this.name
       .map((name) => code`${name}.toRdfResource`)
       .orDefault(
-        code`${this.reusables.snippets.wrap_ToRdfResourceFunction}(${ObjectType_toRdfResourceFunctionExpression.call(this)})`,
+        code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${ObjectType_toRdfResourceFunctionExpression.call(this)})`,
       );
     return code`[${toRdfResourceFunction}(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
