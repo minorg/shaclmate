@@ -3,7 +3,7 @@ import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export function ObjectType_createFunctionExpression(this: ObjectType): Code {
-  const parametersVariable = code`parameters`;
+  const parametersVariable = code`parameters${this.constructorParameters.hasQuestionToken ? "?" : ""}`;
 
   const propertyInitializers = this.properties.flatMap((property) =>
     property
