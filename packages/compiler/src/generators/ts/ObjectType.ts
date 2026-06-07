@@ -146,7 +146,7 @@ export class ObjectType extends AbstractType {
       // equals
       if (this.configuration.features.has("Object.equals")) {
         staticModuleDeclarations.push(
-          code`export const equals = ${ObjectType_equalsFunctionExpression.call(this)};`,
+          code`export const equals: (left: ${this.expression}, right: ${this.expression}) => ${this.reusables.snippets.EqualsResult} = ${ObjectType_equalsFunctionExpression.call(this)};`,
         );
       }
 
@@ -157,7 +157,7 @@ export class ObjectType extends AbstractType {
         );
 
         staticModuleDeclarations.push(
-          code`export const filter = ${ObjectType_filterFunctionExpression.call(this)};`,
+          code`export const filter: (filter: ${this.filterType}, value: ${this.expression}) => boolean = ${ObjectType_filterFunctionExpression.call(this)};`,
         );
       }
 
@@ -179,14 +179,14 @@ export class ObjectType extends AbstractType {
       // fromJson
       if (this.configuration.features.has("Object.fromJson")) {
         staticModuleDeclarations.push(
-          code`export const fromJson = ${ObjectType_fromJsonFunctionExpression.call(this)};`,
+          code`export const fromJson: (json: ${this.jsonType().expression}) => ${this.reusables.imports.Either}<Error, ${this.expression}> = ${ObjectType_fromJsonFunctionExpression.call(this)};`,
         );
       }
 
       // fromRdfResource / fromRdfResourceValues
       if (this.configuration.features.has("Object.fromRdf")) {
         staticModuleDeclarations.push(
-          code`export const _fromRdfResource = ${ObjectType_fromRdfResourceFunctionExpression.call(this)};`,
+          code`export const _fromRdfResource: ${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}> = ${ObjectType_fromRdfResourceFunctionExpression.call(this)};`,
           code`export const fromRdfResource = ${this.reusables.snippets.wrap_FromRdfResourceFunction}(_fromRdfResource);`,
           code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}> = 
   (values, options) => values.chainMap(value => value.toResource().chain(resource => fromRdfResource(resource, options)));`,

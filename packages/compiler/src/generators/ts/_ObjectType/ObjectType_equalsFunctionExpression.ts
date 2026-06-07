@@ -14,12 +14,12 @@ export function ObjectType_equalsFunctionExpression(this: ObjectType): Code {
   }
 
   return code`\
-((left: ${this.expression}, right: ${this.expression}): ${this.reusables.snippets.EqualsResult} => {
-  return ${joinCode(
+((left, right) =>
+  ${joinCode(
     chain.map((chainPart, chainPartI) =>
       chainPartI === 0 ? chainPart : code`chain(() => ${chainPart})`,
     ),
     { on: "." },
   )}
-})`;
+)`;
 }

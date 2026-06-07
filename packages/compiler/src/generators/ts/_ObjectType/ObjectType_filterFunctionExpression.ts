@@ -12,5 +12,5 @@ export function ObjectType_filterFunctionExpression(this: ObjectType): Code {
   }
   statements.push(code`return true;`);
 
-  return code`(filter: ${this.filterType}, value: ${this.expression}): boolean => { ${joinCode(statements)} }`;
+  return code`((filter, value) => { ${joinCode(statements)} })`;
 }
