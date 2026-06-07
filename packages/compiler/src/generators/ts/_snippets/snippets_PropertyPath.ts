@@ -50,7 +50,8 @@ export const fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${
 
   if (configuration.features.has("Object.schema")) {
     companionDeclarations.push(
-      code`export const schema: Readonly<object> = {}`,
+      code`export const schema: Readonly<object> = {};`,
+      code`export type Schema = typeof schema;`,
     );
   }
 
