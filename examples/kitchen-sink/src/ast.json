@@ -257,10 +257,10 @@
       ],
       "properties": [
         {
-          "comment": "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          "name": "multiClass",
+          "comment": "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          "name": "singleClass",
           "order": 0,
-          "path": "PredicatePath(http://example.com/multiClass)",
+          "path": "PredicatePath(http://example.com/singleClass)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_8"
@@ -285,10 +285,10 @@
           }
         },
         {
-          "comment": "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
-          "name": "iriClass",
+          "comment": "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          "name": "multiClass",
           "order": 0,
-          "path": "PredicatePath(http://example.com/iriClass)",
+          "path": "PredicatePath(http://example.com/multiClass)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_9"
@@ -300,10 +300,38 @@
               "value": "df_0_9"
             },
             "itemType": {
-              "kind": "Iri",
+              "kind": "Identifier",
               "shapeIdentifier": {
                 "termType": "BlankNode",
                 "value": "df_0_9"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI"
+              ]
+            }
+          }
+        },
+        {
+          "comment": "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
+          "name": "iriClass",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/iriClass)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_10"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_10"
+            },
+            "itemType": {
+              "kind": "Iri",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_10"
               },
               "nodeKinds": [
                 "IRI"
@@ -318,7 +346,7 @@
           "path": "PredicatePath(http://example.com/nodeClass1)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_10"
+            "value": "df_0_11"
           },
           "type": {
             "comment": "Struct node shape that isn't an rdfs:Class.",
@@ -362,7 +390,7 @@
           "path": "PredicatePath(http://example.com/nodeClass2)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_11"
+            "value": "df_0_12"
           },
           "type": {
             "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
@@ -396,34 +424,6 @@
                   "IRI"
                 ]
               }
-            }
-          }
-        },
-        {
-          "comment": "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          "name": "singleClass",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/singleClass)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_12"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_12"
-            },
-            "itemType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_12"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
             }
           }
         }

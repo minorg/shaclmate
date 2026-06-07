@@ -2426,6 +2426,8 @@ export namespace $PropertyPath {
 
   export const schema: Readonly<object> = {};
 
+  export type Schema = typeof schema;
+
   export const toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
     RdfxResourcePropertyPath.toResource;
 
@@ -4284,6 +4286,968 @@ export namespace $NamedDefaultPartial {
       }),
     );
 } /**
+ * Struct node shape with anonymous property types.
+ */
+
+export type AnonymousTypesStruct = {
+  readonly $identifier: () => AnonymousTypesStruct.Identifier;
+
+  readonly $type: "AnonymousTypesStruct";
+
+  /**
+   * Anonymous struct node shape
+   */
+  readonly anonymousStruct: Maybe<{
+    readonly $identifier: () => BlankNode | NamedNode;
+    readonly anonymousStructString: string;
+  }>;
+};
+
+export namespace AnonymousTypesStruct {
+  export const create: (parameters?: {
+    readonly $identifier?:
+      | (() => AnonymousTypesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly anonymousStruct?:
+      | {
+          readonly $identifier: () => BlankNode | NamedNode;
+
+          readonly anonymousStructString: string;
+        }
+      | Maybe<{
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly anonymousStructString: string;
+        }>;
+  }) => Either<Error, AnonymousTypesStruct> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      anonymousStruct: $convertToMaybe($identityConversionFunction)(
+        parameters?.anonymousStruct,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          AnonymousTypesStruct.schema.properties.anonymousStruct.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "AnonymousTypesStruct" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          toJson: AnonymousTypesStruct.toJson,
+          $toString: AnonymousTypesStruct.$toString,
+        }),
+      );
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => AnonymousTypesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly anonymousStruct?:
+      | {
+          readonly $identifier: () => BlankNode | NamedNode;
+
+          readonly anonymousStructString: string;
+        }
+      | Maybe<{
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly anonymousStructString: string;
+        }>;
+  }): AnonymousTypesStruct {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const equals: (
+    left: AnonymousTypesStruct,
+    right: AnonymousTypesStruct,
+  ) => $EqualsResult = (left, right) =>
+    $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
+        left,
+        right,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) =>
+            $booleanEquals(left.$identifier(), right.$identifier())
+              .mapLeft((propertyValuesUnequal) => ({
+                left,
+                right,
+                propertyName: "$identifier",
+                propertyValuesUnequal,
+                type: "property" as const,
+              }))
+              .chain(() =>
+                $strictEquals(
+                  left.anonymousStructString,
+                  right.anonymousStructString,
+                ).mapLeft((propertyValuesUnequal) => ({
+                  left,
+                  right,
+                  propertyName: "anonymousStructString",
+                  propertyValuesUnequal,
+                  type: "property" as const,
+                })),
+              ),
+          ))(left.anonymousStruct, right.anonymousStruct).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "anonymousStruct",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      );
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly anonymousStruct?: $MaybeFilter<{
+      readonly $identifier?: $IdentifierFilter;
+      readonly anonymousStructString?: $StringFilter;
+    }>;
+  };
+
+  export const filter: (
+    filter: AnonymousTypesStruct.Filter,
+    value: AnonymousTypesStruct,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.anonymousStruct !== undefined &&
+      !$filterMaybe<
+        {
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly anonymousStructString: string;
+        },
+        {
+          readonly $identifier?: $IdentifierFilter;
+          readonly anonymousStructString?: $StringFilter;
+        }
+      >((filter, value) => {
+        if (
+          filter.$identifier !== undefined &&
+          !$filterIdentifier(filter.$identifier, value.$identifier())
+        ) {
+          return false;
+        }
+        if (
+          filter.anonymousStructString !== undefined &&
+          !$filterString(
+            filter.anonymousStructString,
+            value.anonymousStructString,
+          )
+        ) {
+          return false;
+        }
+        return true;
+      })(filter.anonymousStruct, value.anonymousStruct)
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    AnonymousTypesStruct.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.anonymousStruct,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "anonymousStruct",
+        propertySchema: AnonymousTypesStruct.schema.properties.anonymousStruct,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly $identifier?: $IdentifierFilter;
+            readonly anonymousStructString?: $StringFilter;
+          },
+          {
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              anonymousStructString: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }
+        >(({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+          ((parameters) => {
+            let triples: sparqljs.Triple[] = [];
+            triples = triples.concat(
+              $shaclPropertySparqlConstructTriples({
+                filter: parameters.filter?.anonymousStructString,
+                focusIdentifier: parameters.focusIdentifier,
+                ignoreRdfType: true,
+                propertyName: "anonymousStructString",
+                propertySchema: {
+                  kind: "Shacl",
+                  path: dataFactory.namedNode(
+                    "http://example.com/anonymousStructString",
+                  ),
+                  type: { kind: "String" as const },
+                },
+                typeSparqlConstructTriples: (_: object) => [],
+                variablePrefix: parameters.variablePrefix,
+              }),
+            );
+            return triples;
+          })({
+            filter,
+            focusIdentifier: valueVariable,
+            ignoreRdfType,
+            variablePrefix,
+          }),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    AnonymousTypesStruct.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: AnonymousTypesStruct.schema.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: AnonymousTypesStruct.schema.properties.$identifier.type,
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.anonymousStruct,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "anonymousStruct",
+        propertySchema: AnonymousTypesStruct.schema.properties.anonymousStruct,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly $identifier?: $IdentifierFilter;
+            readonly anonymousStructString?: $StringFilter;
+          },
+          {
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              anonymousStructString: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }
+        >(
+          ({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            propertyPatterns,
+            valueVariable,
+            variablePrefix,
+          }) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              ((parameters) => {
+                let patterns: $SparqlPattern[] = [];
+                if (parameters.focusIdentifier.termType === "Variable") {
+                  patterns = patterns.concat(
+                    $identifierSparqlWherePatterns({
+                      filter: parameters.filter?.$identifier,
+                      ignoreRdfType: true,
+                      preferredLanguages: parameters.preferredLanguages,
+                      propertyPatterns: [],
+                      schema: { kind: "Identifier" as const },
+                      valueVariable: parameters.focusIdentifier,
+                      variablePrefix: parameters.variablePrefix,
+                    }),
+                  );
+                }
+                patterns = patterns.concat(
+                  $shaclPropertySparqlWherePatterns({
+                    filter: parameters.filter?.anonymousStructString,
+                    focusIdentifier: parameters.focusIdentifier,
+                    ignoreRdfType: true,
+                    preferredLanguages: parameters.preferredLanguages,
+                    propertyName: "anonymousStructString",
+                    propertySchema: {
+                      kind: "Shacl",
+                      path: dataFactory.namedNode(
+                        "http://example.com/anonymousStructString",
+                      ),
+                      type: { kind: "String" as const },
+                    },
+                    typeSparqlWherePatterns: $stringSparqlWherePatterns,
+                    variablePrefix: parameters.variablePrefix,
+                  }),
+                );
+                return patterns;
+              })({
+                filter,
+                focusIdentifier: valueVariable,
+                ignoreRdfType,
+                preferredLanguages,
+                variablePrefix,
+              }),
+            ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export const fromJson: (
+    json: AnonymousTypesStruct.Json,
+  ) => Either<Error, AnonymousTypesStruct> = ($json) =>
+    $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      anonymousStruct: Maybe.fromNullable($json["anonymousStruct"])
+        .map((item) =>
+          (($json) =>
+            $sequenceRecord({
+              $identifier: Either.of<Error, BlankNode | NamedNode>(
+                $json["@id"].startsWith("_:")
+                  ? dataFactory.blankNode($json["@id"].substring(2))
+                  : dataFactory.namedNode($json["@id"]),
+              ),
+              anonymousStructString: Either.of<Error, string>(
+                $json["anonymousStructString"],
+              ),
+            }).chain((parameters) =>
+              $sequenceRecord({
+                $identifier: $convertToIdentifierProperty(
+                  parameters.$identifier,
+                ),
+                anonymousStructString: Either.of(
+                  parameters.anonymousStructString,
+                ),
+              }).map((object) =>
+                $monkeyPatchObject(object, {
+                  toJson: (_object) =>
+                    JSON.parse(
+                      JSON.stringify({
+                        "@id":
+                          _object.$identifier().termType === "BlankNode"
+                            ? `_:${_object.$identifier().value}`
+                            : _object.$identifier().value,
+                        anonymousStructString: _object.anonymousStructString,
+                      } satisfies {
+                        readonly "@id": string;
+                        readonly anonymousStructString: string;
+                      }),
+                    ),
+                  $toString: (_object) =>
+                    JSON.stringify(
+                      $compactRecord({
+                        $identifier: _object.$identifier().toString(),
+                      }),
+                    ),
+                }),
+              ),
+            ))(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(AnonymousTypesStruct.create);
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    AnonymousTypesStruct
+  > = ($resource, _$options) =>
+    (!_$options.ignoreRdfType
+      ? $ensureRdfResourceType(
+          $resource,
+          [AnonymousTypesStruct.schema.fromRdfType],
+          { graph: _$options.graph },
+        )
+      : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: $identifierFromRdfResourceValues(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+          {
+            context: _$options.context,
+            graph: _$options.graph,
+            focusResource: $resource,
+            preferredLanguages: _$options.preferredLanguages,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: schema.properties.$identifier.type,
+            objectSet: _$options.objectSet,
+          },
+        ).chain((values) => values.head()),
+        anonymousStruct: $shaclPropertyFromRdf<
+          Maybe<{
+            readonly $identifier: () => BlankNode | NamedNode;
+            readonly anonymousStructString: string;
+          }>,
+          $MaybeSchema<{
+            properties: {
+              $identifier: {
+                readonly kind: "Identifier";
+                readonly type: $IdentifierSchema;
+              };
+              anonymousStructString: {
+                readonly kind: "Shacl";
+                readonly path: $PropertyPath;
+                readonly type: $StringSchema<string>;
+              };
+            };
+          }>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema:
+            AnonymousTypesStruct.schema.properties.anonymousStruct,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
+              readonly anonymousStructString: string;
+            },
+            {
+              properties: {
+                $identifier: {
+                  readonly kind: "Identifier";
+                  readonly type: $IdentifierSchema;
+                };
+                anonymousStructString: {
+                  readonly kind: "Shacl";
+                  readonly path: $PropertyPath;
+                  readonly type: $StringSchema<string>;
+                };
+              };
+            }
+          >((values, options) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                (($resource, _$options) =>
+                  $sequenceRecord({
+                    $identifier: $identifierFromRdfResourceValues(
+                      new Resource.Value({
+                        dataFactory: dataFactory,
+                        focusResource: $resource,
+                        propertyPath: $RdfVocabularies.rdf.subject,
+                        term: $resource.identifier,
+                      }).toValues(),
+                      {
+                        context: _$options.context,
+                        graph: _$options.graph,
+                        focusResource: $resource,
+                        preferredLanguages: _$options.preferredLanguages,
+                        propertyPath: $RdfVocabularies.rdf.subject,
+                        schema: schema.properties.$identifier.type,
+                        objectSet: _$options.objectSet,
+                      },
+                    ).chain((values) => values.head()),
+                    anonymousStructString: $shaclPropertyFromRdf<
+                      string,
+                      $StringSchema<string>
+                    >({
+                      context: _$options.context,
+                      graph: _$options.graph,
+                      focusResource: $resource,
+                      ignoreRdfType: true,
+                      preferredLanguages: _$options.preferredLanguages,
+                      propertySchema: {
+                        kind: "Shacl",
+                        path: dataFactory.namedNode(
+                          "http://example.com/anonymousStructString",
+                        ),
+                        type: { kind: "String" as const },
+                      },
+                      typeFromRdfResourceValues:
+                        $stringFromRdfResourceValues<string>,
+                      objectSet: _$options.objectSet,
+                    }),
+                  }).chain((properties) =>
+                    ((parameters) =>
+                      $sequenceRecord({
+                        $identifier: $convertToIdentifierProperty(
+                          parameters.$identifier,
+                        ),
+                        anonymousStructString: Either.of(
+                          parameters.anonymousStructString,
+                        ),
+                      }).map((object) =>
+                        $monkeyPatchObject(object, {
+                          toJson: (_object) =>
+                            JSON.parse(
+                              JSON.stringify({
+                                "@id":
+                                  _object.$identifier().termType === "BlankNode"
+                                    ? `_:${_object.$identifier().value}`
+                                    : _object.$identifier().value,
+                                anonymousStructString:
+                                  _object.anonymousStructString,
+                              } satisfies {
+                                readonly "@id": string;
+                                readonly anonymousStructString: string;
+                              }),
+                            ),
+                          $toString: (_object) =>
+                            JSON.stringify(
+                              $compactRecord({
+                                $identifier: _object.$identifier().toString(),
+                              }),
+                            ),
+                        }),
+                      ))(properties),
+                  ))(resource, options),
+              ),
+            ),
+          ),
+          objectSet: _$options.objectSet,
+        }),
+      }).chain((properties) => AnonymousTypesStruct.create(properties)),
+    );
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    AnonymousTypesStruct,
+    AnonymousTypesStruct.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export const hash = <HasherT extends $Hasher>(
+    hasher: HasherT,
+    _anonymousTypesStruct: Omit<
+      AnonymousTypesStruct,
+      "$identifier" | "$type"
+    > & {
+      readonly $identifier?: () => AnonymousTypesStruct.Identifier;
+      readonly $type?: "AnonymousTypesStruct";
+    },
+  ): HasherT => {
+    if (_anonymousTypesStruct.$identifier) {
+      hasher.update(_anonymousTypesStruct.$identifier().value);
+    }
+    if (_anonymousTypesStruct.$type) {
+      hasher.update(_anonymousTypesStruct.$type);
+    }
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        _object: Omit<
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+            readonly anonymousStructString: string;
+          },
+          "$identifier"
+        > & { readonly $identifier?: () => BlankNode | NamedNode },
+      ): HasherT => {
+        if (_object.$identifier) {
+          hasher.update(_object.$identifier().value);
+        }
+        $hashString(hasher, _object.anonymousStructString);
+        return hasher;
+      },
+    )(hasher, _anonymousTypesStruct.anonymousStruct);
+    return hasher;
+  };
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export function isAnonymousTypesStruct(
+    object: $Object,
+  ): object is AnonymousTypesStruct {
+    return object.$type === "AnonymousTypesStruct";
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly "@type": "AnonymousTypesStruct";
+    readonly anonymousStruct?: {
+      readonly "@id": string;
+      readonly anonymousStructString: string;
+    };
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          "@type": z.literal("AnonymousTypesStruct"),
+          anonymousStruct: z
+            .object({
+              "@id": z.string().min(1),
+              anonymousStructString: z.string().meta({}),
+            })
+            .meta({})
+            .optional()
+            .meta({ description: "Anonymous struct node shape" }),
+        })
+        .meta({
+          description: "Struct node shape with anonymous property types.",
+        }) satisfies z.ZodType<Json>;
+    }
+
+    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "AnonymousTypesStruct" as const },
+                scope: `${scopePrefix}/properties/@type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/@type`,
+            type: "Control",
+          },
+          ((parameters?: { scopePrefix?: string }): any => {
+            const scopePrefix = parameters?.scopePrefix ?? "#";
+            return {
+              elements: [
+                {
+                  label: "Identifier",
+                  scope: `${scopePrefix}/properties/@id`,
+                  type: "Control",
+                },
+                {
+                  scope: `${scopePrefix}/properties/anonymousStructString`,
+                  type: "Control",
+                },
+              ],
+              type: "Group",
+            };
+          })({ scopePrefix: `${scopePrefix}/properties/anonymousStruct` }),
+        ],
+        type: "Group",
+        label: "AnonymousTypesStruct",
+      };
+    };
+  }
+
+  export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/AnonymousTypesStruct",
+    ),
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      anonymousStruct: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/anonymousStruct"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            properties: {
+              $identifier: {
+                kind: "Identifier",
+                type: { kind: "Identifier" as const },
+              },
+              anonymousStructString: {
+                kind: "Shacl",
+                path: dataFactory.namedNode(
+                  "http://example.com/anonymousStructString",
+                ),
+                type: { kind: "String" as const },
+              },
+            },
+          } as const,
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: AnonymousTypesStruct.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "anonymousTypesStruct";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        AnonymousTypesStruct.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          AnonymousTypesStruct.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof AnonymousTypesStruct.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      AnonymousTypesStruct.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const toJson: (
+    _anonymousTypesStruct: AnonymousTypesStruct,
+  ) => AnonymousTypesStruct.Json = (_anonymousTypesStruct) =>
+    JSON.parse(
+      JSON.stringify({
+        "@id":
+          _anonymousTypesStruct.$identifier().termType === "BlankNode"
+            ? `_:${_anonymousTypesStruct.$identifier().value}`
+            : _anonymousTypesStruct.$identifier().value,
+        "@type": _anonymousTypesStruct.$type,
+        anonymousStruct: _anonymousTypesStruct.anonymousStruct
+          .map((item) =>
+            ((_object) =>
+              JSON.parse(
+                JSON.stringify({
+                  "@id":
+                    _object.$identifier().termType === "BlankNode"
+                      ? `_:${_object.$identifier().value}`
+                      : _object.$identifier().value,
+                  anonymousStructString: _object.anonymousStructString,
+                } satisfies {
+                  readonly "@id": string;
+                  readonly anonymousStructString: string;
+                }),
+              ))(item),
+          )
+          .extract(),
+      } satisfies AnonymousTypesStruct.Json),
+    );
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    AnonymousTypesStruct.Identifier,
+    AnonymousTypesStruct
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/AnonymousTypesStruct"),
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      AnonymousTypesStruct.schema.properties.anonymousStruct.path,
+      parameters.object.anonymousStruct.toList().flatMap((value) => [
+        $wrap_ToRdfResourceFunction<
+          BlankNode | NamedNode,
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+            readonly anonymousStructString: string;
+          }
+        >((parameters) => {
+          parameters.resource.add(
+            dataFactory.namedNode("http://example.com/anonymousStructString"),
+            [$literalFactory.string(parameters.object.anonymousStructString)],
+            parameters.graph,
+          );
+          return parameters.resource;
+        })(value, {
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
+        }).identifier,
+      ]),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export const $toString: (
+    _anonymousTypesStruct: AnonymousTypesStruct,
+  ) => string = (_anonymousTypesStruct) =>
+    `AnonymousTypesStruct(${JSON.stringify(toStringRecord(_anonymousTypesStruct))})`;
+
+  export const toStringRecord: (
+    _anonymousTypesStruct: AnonymousTypesStruct,
+  ) => Record<string, string> = (_anonymousTypesStruct) =>
+    $compactRecord({
+      $identifier: _anonymousTypesStruct.$identifier().toString(),
+    });
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    AnonymousTypesStruct.Filter,
+    AnonymousTypesStruct.Schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    AnonymousTypesStruct.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    AnonymousTypesStruct.Filter,
+    AnonymousTypesStruct.Schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      AnonymousTypesStruct.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+} /**
  * Struct node shape that can only have a blank node as an identifier
  */
 
@@ -4412,7 +5376,8 @@ export namespace BlankNodeIdentifierStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "blankNodeIdentifierString",
-        propertySchema: schema.properties.blankNodeIdentifierString,
+        propertySchema:
+          BlankNodeIdentifierStruct.schema.properties.blankNodeIdentifierString,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -4489,7 +5454,8 @@ export namespace BlankNodeIdentifierStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "blankNodeIdentifierString",
-        propertySchema: schema.properties.blankNodeIdentifierString,
+        propertySchema:
+          BlankNodeIdentifierStruct.schema.properties.blankNodeIdentifierString,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -4552,7 +5518,9 @@ export namespace BlankNodeIdentifierStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.blankNodeIdentifierString,
+          propertySchema:
+            BlankNodeIdentifierStruct.schema.properties
+              .blankNodeIdentifierString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -4963,7 +5931,9 @@ export namespace BlankNodeOrIriIdentifierStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "blankNodeOrIriIdentifierString",
-        propertySchema: schema.properties.blankNodeOrIriIdentifierString,
+        propertySchema:
+          BlankNodeOrIriIdentifierStruct.schema.properties
+            .blankNodeOrIriIdentifierString,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -5041,7 +6011,9 @@ export namespace BlankNodeOrIriIdentifierStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "blankNodeOrIriIdentifierString",
-        propertySchema: schema.properties.blankNodeOrIriIdentifierString,
+        propertySchema:
+          BlankNodeOrIriIdentifierStruct.schema.properties
+            .blankNodeOrIriIdentifierString,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -5108,7 +6080,9 @@ export namespace BlankNodeOrIriIdentifierStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.blankNodeOrIriIdentifierString,
+          propertySchema:
+            BlankNodeOrIriIdentifierStruct.schema.properties
+              .blankNodeOrIriIdentifierString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -5694,7 +6668,7 @@ export namespace ClassConstraintsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "iriClass",
-        propertySchema: schema.properties.iriClass,
+        propertySchema: ClassConstraintsStruct.schema.properties.iriClass,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
           $IriSchema<string>
@@ -5708,7 +6682,7 @@ export namespace ClassConstraintsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "multiClass",
-        propertySchema: schema.properties.multiClass,
+        propertySchema: ClassConstraintsStruct.schema.properties.multiClass,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IdentifierFilter,
           $IdentifierSchema
@@ -5722,7 +6696,7 @@ export namespace ClassConstraintsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "nodeClass1",
-        propertySchema: schema.properties.nodeClass1,
+        propertySchema: ClassConstraintsStruct.schema.properties.nodeClass1,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           NonClassStruct.Filter,
           NonClassStruct.Schema
@@ -5736,7 +6710,7 @@ export namespace ClassConstraintsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "nodeClass2",
-        propertySchema: schema.properties.nodeClass2,
+        propertySchema: ClassConstraintsStruct.schema.properties.nodeClass2,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           PartialStruct.Filter,
           PartialStruct.Schema
@@ -5750,7 +6724,7 @@ export namespace ClassConstraintsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "singleClass",
-        propertySchema: schema.properties.singleClass,
+        propertySchema: ClassConstraintsStruct.schema.properties.singleClass,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IdentifierFilter,
           $IdentifierSchema
@@ -5827,7 +6801,7 @@ export namespace ClassConstraintsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "iriClass",
-        propertySchema: schema.properties.iriClass,
+        propertySchema: ClassConstraintsStruct.schema.properties.iriClass,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
           $IriSchema<string>
@@ -5842,7 +6816,7 @@ export namespace ClassConstraintsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "multiClass",
-        propertySchema: schema.properties.multiClass,
+        propertySchema: ClassConstraintsStruct.schema.properties.multiClass,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IdentifierFilter,
           $IdentifierSchema
@@ -5857,7 +6831,7 @@ export namespace ClassConstraintsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "nodeClass1",
-        propertySchema: schema.properties.nodeClass1,
+        propertySchema: ClassConstraintsStruct.schema.properties.nodeClass1,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           NonClassStruct.Filter,
           NonClassStruct.Schema
@@ -5872,7 +6846,7 @@ export namespace ClassConstraintsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "nodeClass2",
-        propertySchema: schema.properties.nodeClass2,
+        propertySchema: ClassConstraintsStruct.schema.properties.nodeClass2,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           PartialStruct.Filter,
           PartialStruct.Schema
@@ -5887,7 +6861,7 @@ export namespace ClassConstraintsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "singleClass",
-        propertySchema: schema.properties.singleClass,
+        propertySchema: ClassConstraintsStruct.schema.properties.singleClass,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IdentifierFilter,
           $IdentifierSchema
@@ -5978,7 +6952,7 @@ export namespace ClassConstraintsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.iriClass,
+          propertySchema: ClassConstraintsStruct.schema.properties.iriClass,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -5994,7 +6968,7 @@ export namespace ClassConstraintsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.multiClass,
+          propertySchema: ClassConstraintsStruct.schema.properties.multiClass,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -6010,7 +6984,7 @@ export namespace ClassConstraintsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.nodeClass1,
+          propertySchema: ClassConstraintsStruct.schema.properties.nodeClass1,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NonClassStruct,
             NonClassStruct.Schema
@@ -6026,7 +7000,7 @@ export namespace ClassConstraintsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.nodeClass2,
+          propertySchema: ClassConstraintsStruct.schema.properties.nodeClass2,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             PartialStruct,
             PartialStruct.Schema
@@ -6042,7 +7016,7 @@ export namespace ClassConstraintsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.singleClass,
+          propertySchema: ClassConstraintsStruct.schema.properties.singleClass,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -7019,7 +7993,7 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleIri",
-        propertySchema: schema.properties.convertibleIri,
+        propertySchema: ConvertibleTypesStruct.schema.properties.convertibleIri,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -7030,7 +8004,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleIriNonEmptySet",
-        propertySchema: schema.properties.convertibleIriNonEmptySet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $IriFilter,
           $IriSchema<string>
@@ -7044,7 +8019,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleIriOption",
-        propertySchema: schema.properties.convertibleIriOption,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleIriOption,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
           $IriSchema<string>
@@ -7058,7 +8034,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleIriSet",
-        propertySchema: schema.properties.convertibleIriSet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleIriSet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $IriFilter,
           $IriSchema<string>
@@ -7072,7 +8049,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleLiteral",
-        propertySchema: schema.properties.convertibleLiteral,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleLiteral,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -7083,7 +8061,9 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleLiteralNonEmptySet",
-        propertySchema: schema.properties.convertibleLiteralNonEmptySet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties
+            .convertibleLiteralNonEmptySet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $LiteralFilter,
           $LiteralSchema
@@ -7097,7 +8077,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleLiteralOption",
-        propertySchema: schema.properties.convertibleLiteralOption,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleLiteralOption,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $LiteralFilter,
           $LiteralSchema
@@ -7111,7 +8092,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleLiteralSet",
-        propertySchema: schema.properties.convertibleLiteralSet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleLiteralSet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $LiteralFilter,
           $LiteralSchema
@@ -7125,7 +8107,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleTerm",
-        propertySchema: schema.properties.convertibleTerm,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTerm,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -7136,7 +8119,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleTermNonEmptySet",
-        propertySchema: schema.properties.convertibleTermNonEmptySet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $TermFilter<BlankNode | NamedNode | Literal>,
           $TermSchema<BlankNode | NamedNode | Literal>
@@ -7150,7 +8134,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleTermOption",
-        propertySchema: schema.properties.convertibleTermOption,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTermOption,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $TermFilter<BlankNode | NamedNode | Literal>,
           $TermSchema<BlankNode | NamedNode | Literal>
@@ -7164,7 +8149,8 @@ export namespace ConvertibleTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "convertibleTermSet",
-        propertySchema: schema.properties.convertibleTermSet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTermSet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $TermFilter<BlankNode | NamedNode | Literal>,
           $TermSchema<BlankNode | NamedNode | Literal>
@@ -7241,7 +8227,7 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleIri",
-        propertySchema: schema.properties.convertibleIri,
+        propertySchema: ConvertibleTypesStruct.schema.properties.convertibleIri,
         typeSparqlWherePatterns: $iriSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -7253,7 +8239,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleIriNonEmptySet",
-        propertySchema: schema.properties.convertibleIriNonEmptySet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $IriFilter,
           $IriSchema<string>
@@ -7268,7 +8255,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleIriOption",
-        propertySchema: schema.properties.convertibleIriOption,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleIriOption,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
           $IriSchema<string>
@@ -7283,7 +8271,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleIriSet",
-        propertySchema: schema.properties.convertibleIriSet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleIriSet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $IriFilter,
           $IriSchema<string>
@@ -7298,7 +8287,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleLiteral",
-        propertySchema: schema.properties.convertibleLiteral,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleLiteral,
         typeSparqlWherePatterns: $literalSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -7310,7 +8300,9 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleLiteralNonEmptySet",
-        propertySchema: schema.properties.convertibleLiteralNonEmptySet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties
+            .convertibleLiteralNonEmptySet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $LiteralFilter,
           $LiteralSchema
@@ -7325,7 +8317,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleLiteralOption",
-        propertySchema: schema.properties.convertibleLiteralOption,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleLiteralOption,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $LiteralFilter,
           $LiteralSchema
@@ -7340,7 +8333,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleLiteralSet",
-        propertySchema: schema.properties.convertibleLiteralSet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleLiteralSet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $LiteralFilter,
           $LiteralSchema
@@ -7355,7 +8349,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleTerm",
-        propertySchema: schema.properties.convertibleTerm,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTerm,
         typeSparqlWherePatterns: $termSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -7367,7 +8362,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleTermNonEmptySet",
-        propertySchema: schema.properties.convertibleTermNonEmptySet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $TermFilter<BlankNode | NamedNode | Literal>,
           $TermSchema<BlankNode | NamedNode | Literal>
@@ -7382,7 +8378,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleTermOption",
-        propertySchema: schema.properties.convertibleTermOption,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTermOption,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $TermFilter<BlankNode | NamedNode | Literal>,
           $TermSchema<BlankNode | NamedNode | Literal>
@@ -7397,7 +8394,8 @@ export namespace ConvertibleTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "convertibleTermSet",
-        propertySchema: schema.properties.convertibleTermSet,
+        propertySchema:
+          ConvertibleTypesStruct.schema.properties.convertibleTermSet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $TermFilter<BlankNode | NamedNode | Literal>,
           $TermSchema<BlankNode | NamedNode | Literal>
@@ -7604,7 +8602,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleIri,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleIri,
           typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -7617,7 +8616,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleIriNonEmptySet,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -7633,7 +8633,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleIriOption,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleIriOption,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -7649,7 +8650,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleIriSet,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleIriSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -7662,7 +8664,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleLiteral,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleLiteral,
           typeFromRdfResourceValues: $literalFromRdfResourceValues,
           objectSet: _$options.objectSet,
         }),
@@ -7675,7 +8678,9 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleLiteralNonEmptySet,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties
+              .convertibleLiteralNonEmptySet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -7691,7 +8696,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleLiteralOption,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleLiteralOption,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -7707,7 +8713,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleLiteralSet,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleLiteralSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -7723,7 +8730,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleTerm,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleTerm,
           typeFromRdfResourceValues: $termFromRdfResourceValues<
             BlankNode | NamedNode | Literal
           >,
@@ -7738,7 +8746,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleTermNonEmptySet,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode | Literal,
             $TermSchema<BlankNode | NamedNode | Literal>
@@ -7754,7 +8763,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleTermOption,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleTermOption,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode | Literal,
             $TermSchema<BlankNode | NamedNode | Literal>
@@ -7770,7 +8780,8 @@ export namespace ConvertibleTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.convertibleTermSet,
+          propertySchema:
+            ConvertibleTypesStruct.schema.properties.convertibleTermSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode | Literal,
             $TermSchema<BlankNode | NamedNode | Literal>
@@ -9138,7 +10149,7 @@ export namespace DateUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateOrDateTime",
-        propertySchema: schema.properties.dateOrDateTime,
+        propertySchema: DateUnionsStruct.schema.properties.dateOrDateTime,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
             readonly on?: {
@@ -9210,7 +10221,7 @@ export namespace DateUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateOrString",
-        propertySchema: schema.properties.dateOrString,
+        propertySchema: DateUnionsStruct.schema.properties.dateOrString,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
             readonly on?: {
@@ -9282,7 +10293,7 @@ export namespace DateUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateTimeOrDate",
-        propertySchema: schema.properties.dateTimeOrDate,
+        propertySchema: DateUnionsStruct.schema.properties.dateTimeOrDate,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
             readonly on?: {
@@ -9354,7 +10365,7 @@ export namespace DateUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "stringOrDate",
-        propertySchema: schema.properties.stringOrDate,
+        propertySchema: DateUnionsStruct.schema.properties.stringOrDate,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
             readonly on?: {
@@ -9489,7 +10500,7 @@ export namespace DateUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateOrDateTime",
-        propertySchema: schema.properties.dateOrDateTime,
+        propertySchema: DateUnionsStruct.schema.properties.dateOrDateTime,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
@@ -9564,7 +10575,7 @@ export namespace DateUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateOrString",
-        propertySchema: schema.properties.dateOrString,
+        propertySchema: DateUnionsStruct.schema.properties.dateOrString,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
@@ -9639,7 +10650,7 @@ export namespace DateUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateTimeOrDate",
-        propertySchema: schema.properties.dateTimeOrDate,
+        propertySchema: DateUnionsStruct.schema.properties.dateTimeOrDate,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
@@ -9714,7 +10725,7 @@ export namespace DateUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "stringOrDate",
-        propertySchema: schema.properties.stringOrDate,
+        propertySchema: DateUnionsStruct.schema.properties.stringOrDate,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
@@ -9973,7 +10984,7 @@ export namespace DateUnionsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.dateOrDateTime,
+          propertySchema: DateUnionsStruct.schema.properties.dateOrDateTime,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             { type: "date"; value: Date } | { type: "dateTime"; value: Date },
             {
@@ -10079,7 +11090,7 @@ export namespace DateUnionsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.dateOrString,
+          propertySchema: DateUnionsStruct.schema.properties.dateOrString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             { type: "date"; value: Date } | { type: "string"; value: string },
             {
@@ -10185,7 +11196,7 @@ export namespace DateUnionsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.dateTimeOrDate,
+          propertySchema: DateUnionsStruct.schema.properties.dateTimeOrDate,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             { type: "dateTime"; value: Date } | { type: "date"; value: Date },
             {
@@ -10291,7 +11302,7 @@ export namespace DateUnionsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.stringOrDate,
+          propertySchema: DateUnionsStruct.schema.properties.stringOrDate,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             { type: "string"; value: string } | { type: "date"; value: Date },
             {
@@ -11295,7 +12306,7 @@ export namespace DefaultValuesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateDefaultValue",
-        propertySchema: schema.properties.dateDefaultValue,
+        propertySchema: DefaultValuesStruct.schema.properties.dateDefaultValue,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -11306,7 +12317,8 @@ export namespace DefaultValuesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateTimeDefaultValue",
-        propertySchema: schema.properties.dateTimeDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.dateTimeDefaultValue,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -11317,7 +12329,8 @@ export namespace DefaultValuesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "falseBooleanDefaultValue",
-        propertySchema: schema.properties.falseBooleanDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -11328,7 +12341,8 @@ export namespace DefaultValuesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "numberDefaultValue",
-        propertySchema: schema.properties.numberDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.numberDefaultValue,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -11339,7 +12353,8 @@ export namespace DefaultValuesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "stringDefaultValue",
-        propertySchema: schema.properties.stringDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.stringDefaultValue,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -11350,7 +12365,8 @@ export namespace DefaultValuesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "trueBooleanDefaultValue",
-        propertySchema: schema.properties.trueBooleanDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -11424,7 +12440,7 @@ export namespace DefaultValuesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateDefaultValue",
-        propertySchema: schema.properties.dateDefaultValue,
+        propertySchema: DefaultValuesStruct.schema.properties.dateDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
           $DateFilter,
           $DateSchema
@@ -11439,7 +12455,8 @@ export namespace DefaultValuesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateTimeDefaultValue",
-        propertySchema: schema.properties.dateTimeDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.dateTimeDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
           $DateFilter,
           $DateSchema
@@ -11454,7 +12471,8 @@ export namespace DefaultValuesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "falseBooleanDefaultValue",
-        propertySchema: schema.properties.falseBooleanDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
           $BooleanFilter,
           $BooleanSchema<boolean>
@@ -11469,7 +12487,8 @@ export namespace DefaultValuesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "numberDefaultValue",
-        propertySchema: schema.properties.numberDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.numberDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -11484,7 +12503,8 @@ export namespace DefaultValuesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "stringDefaultValue",
-        propertySchema: schema.properties.stringDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.stringDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -11499,7 +12519,8 @@ export namespace DefaultValuesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "trueBooleanDefaultValue",
-        propertySchema: schema.properties.trueBooleanDefaultValue,
+        propertySchema:
+          DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
           $BooleanFilter,
           $BooleanSchema<boolean>
@@ -11573,7 +12594,8 @@ export namespace DefaultValuesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.dateDefaultValue,
+          propertySchema:
+            DefaultValuesStruct.schema.properties.dateDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             Date,
             $DateSchema
@@ -11589,7 +12611,8 @@ export namespace DefaultValuesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.dateTimeDefaultValue,
+          propertySchema:
+            DefaultValuesStruct.schema.properties.dateTimeDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             Date,
             $DateSchema
@@ -11605,7 +12628,8 @@ export namespace DefaultValuesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.falseBooleanDefaultValue,
+          propertySchema:
+            DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
@@ -11621,7 +12645,8 @@ export namespace DefaultValuesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.numberDefaultValue,
+          propertySchema:
+            DefaultValuesStruct.schema.properties.numberDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -11637,7 +12662,8 @@ export namespace DefaultValuesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.stringDefaultValue,
+          propertySchema:
+            DefaultValuesStruct.schema.properties.stringDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -11653,7 +12679,8 @@ export namespace DefaultValuesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.trueBooleanDefaultValue,
+          propertySchema:
+            DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
@@ -12338,7 +13365,8 @@ export namespace DirectRecursiveStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.directRecursive,
+          propertySchema:
+            DirectRecursiveStruct.schema.properties.directRecursive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             DirectRecursiveStruct,
             DirectRecursiveStruct.Schema
@@ -12801,7 +13829,7 @@ export namespace DisplayStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "explicitFalseDisplay",
-        propertySchema: schema.properties.explicitFalseDisplay,
+        propertySchema: DisplayStruct.schema.properties.explicitFalseDisplay,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12812,7 +13840,7 @@ export namespace DisplayStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "explicitTrueDisplay",
-        propertySchema: schema.properties.explicitTrueDisplay,
+        propertySchema: DisplayStruct.schema.properties.explicitTrueDisplay,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12823,7 +13851,7 @@ export namespace DisplayStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "implicitFalseDisplay",
-        propertySchema: schema.properties.implicitFalseDisplay,
+        propertySchema: DisplayStruct.schema.properties.implicitFalseDisplay,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12897,7 +13925,7 @@ export namespace DisplayStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "explicitFalseDisplay",
-        propertySchema: schema.properties.explicitFalseDisplay,
+        propertySchema: DisplayStruct.schema.properties.explicitFalseDisplay,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12909,7 +13937,7 @@ export namespace DisplayStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "explicitTrueDisplay",
-        propertySchema: schema.properties.explicitTrueDisplay,
+        propertySchema: DisplayStruct.schema.properties.explicitTrueDisplay,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12921,7 +13949,7 @@ export namespace DisplayStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "implicitFalseDisplay",
-        propertySchema: schema.properties.implicitFalseDisplay,
+        propertySchema: DisplayStruct.schema.properties.implicitFalseDisplay,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12986,7 +14014,7 @@ export namespace DisplayStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.explicitFalseDisplay,
+          propertySchema: DisplayStruct.schema.properties.explicitFalseDisplay,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -12999,7 +14027,7 @@ export namespace DisplayStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.explicitTrueDisplay,
+          propertySchema: DisplayStruct.schema.properties.explicitTrueDisplay,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -13012,7 +14040,7 @@ export namespace DisplayStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.implicitFalseDisplay,
+          propertySchema: DisplayStruct.schema.properties.implicitFalseDisplay,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -13440,7 +14468,9 @@ export namespace ExplicitFromToRdfTypesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "explicitFromToRdfTypesString",
-        propertySchema: schema.properties.explicitFromToRdfTypesString,
+        propertySchema:
+          ExplicitFromToRdfTypesStruct.schema.properties
+            .explicitFromToRdfTypesString,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -13515,7 +14545,9 @@ export namespace ExplicitFromToRdfTypesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "explicitFromToRdfTypesString",
-        propertySchema: schema.properties.explicitFromToRdfTypesString,
+        propertySchema:
+          ExplicitFromToRdfTypesStruct.schema.properties
+            .explicitFromToRdfTypesString,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -13577,7 +14609,9 @@ export namespace ExplicitFromToRdfTypesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.explicitFromToRdfTypesString,
+          propertySchema:
+            ExplicitFromToRdfTypesStruct.schema.properties
+              .explicitFromToRdfTypesString,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -13978,7 +15012,8 @@ export namespace ExplicitRdfTypeStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "explicitRdfTypeString",
-        propertySchema: schema.properties.explicitRdfTypeString,
+        propertySchema:
+          ExplicitRdfTypeStruct.schema.properties.explicitRdfTypeString,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14052,7 +15087,8 @@ export namespace ExplicitRdfTypeStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "explicitRdfTypeString",
-        propertySchema: schema.properties.explicitRdfTypeString,
+        propertySchema:
+          ExplicitRdfTypeStruct.schema.properties.explicitRdfTypeString,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14112,7 +15148,8 @@ export namespace ExplicitRdfTypeStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.explicitRdfTypeString,
+          propertySchema:
+            ExplicitRdfTypeStruct.schema.properties.explicitRdfTypeString,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -14499,7 +15536,8 @@ export namespace FlattenUnionMember3 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "flattenUnionMember3String",
-        propertySchema: schema.properties.flattenUnionMember3String,
+        propertySchema:
+          FlattenUnionMember3.schema.properties.flattenUnionMember3String,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14573,7 +15611,8 @@ export namespace FlattenUnionMember3 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "flattenUnionMember3String",
-        propertySchema: schema.properties.flattenUnionMember3String,
+        propertySchema:
+          FlattenUnionMember3.schema.properties.flattenUnionMember3String,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14633,7 +15672,8 @@ export namespace FlattenUnionMember3 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.flattenUnionMember3String,
+          propertySchema:
+            FlattenUnionMember3.schema.properties.flattenUnionMember3String,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -15023,7 +16063,7 @@ export namespace HasValuesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "hasIriValue",
-        propertySchema: schema.properties.hasIriValue,
+        propertySchema: HasValuesStruct.schema.properties.hasIriValue,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15034,7 +16074,7 @@ export namespace HasValuesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "hasLiteralValue",
-        propertySchema: schema.properties.hasLiteralValue,
+        propertySchema: HasValuesStruct.schema.properties.hasLiteralValue,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15066,7 +16106,7 @@ export namespace HasValuesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "hasIriValue",
-        propertySchema: schema.properties.hasIriValue,
+        propertySchema: HasValuesStruct.schema.properties.hasIriValue,
         typeSparqlWherePatterns: $iriSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15078,7 +16118,7 @@ export namespace HasValuesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "hasLiteralValue",
-        propertySchema: schema.properties.hasLiteralValue,
+        propertySchema: HasValuesStruct.schema.properties.hasLiteralValue,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15129,7 +16169,7 @@ export namespace HasValuesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.hasIriValue,
+        propertySchema: HasValuesStruct.schema.properties.hasIriValue,
         typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -15139,7 +16179,7 @@ export namespace HasValuesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.hasLiteralValue,
+        propertySchema: HasValuesStruct.schema.properties.hasLiteralValue,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -15585,7 +16625,8 @@ export namespace IgnoredPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "severityDefaultProperty",
-        propertySchema: schema.properties.severityDefaultProperty,
+        propertySchema:
+          IgnoredPropertiesStruct.schema.properties.severityDefaultProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15596,7 +16637,8 @@ export namespace IgnoredPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "severityViolationProperty",
-        propertySchema: schema.properties.severityViolationProperty,
+        propertySchema:
+          IgnoredPropertiesStruct.schema.properties.severityViolationProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15607,7 +16649,9 @@ export namespace IgnoredPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "shaclmateIgnoreFalseProperty",
-        propertySchema: schema.properties.shaclmateIgnoreFalseProperty,
+        propertySchema:
+          IgnoredPropertiesStruct.schema.properties
+            .shaclmateIgnoreFalseProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15639,7 +16683,8 @@ export namespace IgnoredPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "severityDefaultProperty",
-        propertySchema: schema.properties.severityDefaultProperty,
+        propertySchema:
+          IgnoredPropertiesStruct.schema.properties.severityDefaultProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15651,7 +16696,8 @@ export namespace IgnoredPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "severityViolationProperty",
-        propertySchema: schema.properties.severityViolationProperty,
+        propertySchema:
+          IgnoredPropertiesStruct.schema.properties.severityViolationProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15663,7 +16709,9 @@ export namespace IgnoredPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "shaclmateIgnoreFalseProperty",
-        propertySchema: schema.properties.shaclmateIgnoreFalseProperty,
+        propertySchema:
+          IgnoredPropertiesStruct.schema.properties
+            .shaclmateIgnoreFalseProperty,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15721,7 +16769,8 @@ export namespace IgnoredPropertiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.severityDefaultProperty,
+        propertySchema:
+          IgnoredPropertiesStruct.schema.properties.severityDefaultProperty,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -15734,7 +16783,8 @@ export namespace IgnoredPropertiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.severityViolationProperty,
+        propertySchema:
+          IgnoredPropertiesStruct.schema.properties.severityViolationProperty,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -15747,7 +16797,9 @@ export namespace IgnoredPropertiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.shaclmateIgnoreFalseProperty,
+        propertySchema:
+          IgnoredPropertiesStruct.schema.properties
+            .shaclmateIgnoreFalseProperty,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -16311,7 +17363,8 @@ export namespace IndirectRecursiveStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.indirectRecursiveHelper,
+          propertySchema:
+            IndirectRecursiveStruct.schema.properties.indirectRecursiveHelper,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             IndirectRecursiveStructHelper,
             IndirectRecursiveStructHelper.Schema
@@ -16851,7 +17904,8 @@ export namespace IndirectRecursiveStructHelper {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.indirectRecursive,
+          propertySchema:
+            IndirectRecursiveStructHelper.schema.properties.indirectRecursive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             IndirectRecursiveStruct,
             IndirectRecursiveStruct.Schema
@@ -17289,7 +18343,7 @@ export namespace InIdentifierStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "inIdentifierString",
-        propertySchema: schema.properties.inIdentifierString,
+        propertySchema: InIdentifierStruct.schema.properties.inIdentifierString,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -17366,7 +18420,7 @@ export namespace InIdentifierStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "inIdentifierString",
-        propertySchema: schema.properties.inIdentifierString,
+        propertySchema: InIdentifierStruct.schema.properties.inIdentifierString,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -17434,7 +18488,8 @@ export namespace InIdentifierStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.inIdentifierString,
+          propertySchema:
+            InIdentifierStruct.schema.properties.inIdentifierString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -18090,7 +19145,7 @@ export namespace InPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "inBooleans",
-        propertySchema: schema.properties.inBooleans,
+        propertySchema: InPropertiesStruct.schema.properties.inBooleans,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $BooleanFilter,
           $BooleanSchema<true>
@@ -18104,7 +19159,7 @@ export namespace InPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "inDateTimes",
-        propertySchema: schema.properties.inDateTimes,
+        propertySchema: InPropertiesStruct.schema.properties.inDateTimes,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $DateFilter,
           $DateSchema
@@ -18118,7 +19173,7 @@ export namespace InPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "inDoubles",
-        propertySchema: schema.properties.inDoubles,
+        propertySchema: InPropertiesStruct.schema.properties.inDoubles,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<1 | 2>,
           $NumericSchema<1 | 2>
@@ -18132,7 +19187,7 @@ export namespace InPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "inIntegers",
-        propertySchema: schema.properties.inIntegers,
+        propertySchema: InPropertiesStruct.schema.properties.inIntegers,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<1n | 2n>,
           $NumericSchema<1n | 2n>
@@ -18146,7 +19201,7 @@ export namespace InPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "inIris",
-        propertySchema: schema.properties.inIris,
+        propertySchema: InPropertiesStruct.schema.properties.inIris,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
           $IriSchema<"http://example.com/InIri1" | "http://example.com/InIri2">
@@ -18160,7 +19215,7 @@ export namespace InPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "inStrings",
-        propertySchema: schema.properties.inStrings,
+        propertySchema: InPropertiesStruct.schema.properties.inStrings,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<"text" | "html">
@@ -18174,7 +19229,7 @@ export namespace InPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "reusableIn",
-        propertySchema: schema.properties.reusableIn,
+        propertySchema: InPropertiesStruct.schema.properties.reusableIn,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<ReusableIn>
@@ -18251,7 +19306,7 @@ export namespace InPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "inBooleans",
-        propertySchema: schema.properties.inBooleans,
+        propertySchema: InPropertiesStruct.schema.properties.inBooleans,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $BooleanFilter,
           $BooleanSchema<true>
@@ -18266,7 +19321,7 @@ export namespace InPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "inDateTimes",
-        propertySchema: schema.properties.inDateTimes,
+        propertySchema: InPropertiesStruct.schema.properties.inDateTimes,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $DateFilter,
           $DateSchema
@@ -18281,7 +19336,7 @@ export namespace InPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "inDoubles",
-        propertySchema: schema.properties.inDoubles,
+        propertySchema: InPropertiesStruct.schema.properties.inDoubles,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<1 | 2>,
           $NumericSchema<1 | 2>
@@ -18296,7 +19351,7 @@ export namespace InPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "inIntegers",
-        propertySchema: schema.properties.inIntegers,
+        propertySchema: InPropertiesStruct.schema.properties.inIntegers,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<1n | 2n>,
           $NumericSchema<1n | 2n>
@@ -18311,7 +19366,7 @@ export namespace InPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "inIris",
-        propertySchema: schema.properties.inIris,
+        propertySchema: InPropertiesStruct.schema.properties.inIris,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
           $IriSchema<"http://example.com/InIri1" | "http://example.com/InIri2">
@@ -18326,7 +19381,7 @@ export namespace InPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "inStrings",
-        propertySchema: schema.properties.inStrings,
+        propertySchema: InPropertiesStruct.schema.properties.inStrings,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<"text" | "html">
@@ -18341,7 +19396,7 @@ export namespace InPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "reusableIn",
-        propertySchema: schema.properties.reusableIn,
+        propertySchema: InPropertiesStruct.schema.properties.reusableIn,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<ReusableIn>
@@ -18431,7 +19486,7 @@ export namespace InPropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.inBooleans,
+          propertySchema: InPropertiesStruct.schema.properties.inBooleans,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             true,
             $BooleanSchema<true>
@@ -18447,7 +19502,7 @@ export namespace InPropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.inDateTimes,
+          propertySchema: InPropertiesStruct.schema.properties.inDateTimes,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Date,
             $DateSchema
@@ -18463,7 +19518,7 @@ export namespace InPropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.inDoubles,
+          propertySchema: InPropertiesStruct.schema.properties.inDoubles,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             1 | 2,
             $NumericSchema<1 | 2>
@@ -18479,7 +19534,7 @@ export namespace InPropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.inIntegers,
+          propertySchema: InPropertiesStruct.schema.properties.inIntegers,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             1n | 2n,
             $NumericSchema<1n | 2n>
@@ -18501,7 +19556,7 @@ export namespace InPropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.inIris,
+          propertySchema: InPropertiesStruct.schema.properties.inIris,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode<
               "http://example.com/InIri1" | "http://example.com/InIri2"
@@ -18525,7 +19580,7 @@ export namespace InPropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.inStrings,
+          propertySchema: InPropertiesStruct.schema.properties.inStrings,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             "text" | "html",
             $StringSchema<"text" | "html">
@@ -18541,7 +19596,7 @@ export namespace InPropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.reusableIn,
+          propertySchema: InPropertiesStruct.schema.properties.reusableIn,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             ReusableIn,
             $StringSchema<ReusableIn>
@@ -19096,7 +20151,8 @@ export namespace IriIdentifierStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "iriIdentifierString",
-        propertySchema: schema.properties.iriIdentifierString,
+        propertySchema:
+          IriIdentifierStruct.schema.properties.iriIdentifierString,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -19173,7 +20229,8 @@ export namespace IriIdentifierStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "iriIdentifierString",
-        propertySchema: schema.properties.iriIdentifierString,
+        propertySchema:
+          IriIdentifierStruct.schema.properties.iriIdentifierString,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -19234,7 +20291,8 @@ export namespace IriIdentifierStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.iriIdentifierString,
+          propertySchema:
+            IriIdentifierStruct.schema.properties.iriIdentifierString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -19633,7 +20691,7 @@ export namespace LanguageInStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "languageInLiteral",
-        propertySchema: schema.properties.languageInLiteral,
+        propertySchema: LanguageInStruct.schema.properties.languageInLiteral,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $LiteralFilter,
           $LiteralSchema
@@ -19668,7 +20726,7 @@ export namespace LanguageInStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "languageInLiteral",
-        propertySchema: schema.properties.languageInLiteral,
+        propertySchema: LanguageInStruct.schema.properties.languageInLiteral,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $LiteralFilter,
           $LiteralSchema
@@ -19735,7 +20793,7 @@ export namespace LanguageInStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.languageInLiteral,
+        propertySchema: LanguageInStruct.schema.properties.languageInLiteral,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           Literal,
           $LiteralSchema
@@ -20132,7 +21190,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema:
+          LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
+            .lazilyResolved,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -20209,7 +21269,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema:
+          LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
+            .lazilyResolved,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -20266,7 +21328,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.lazilyResolved,
+          propertySchema:
+            LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
+              .lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -20668,7 +21732,8 @@ export namespace LazilyResolvedIriIdentifierStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema:
+          LazilyResolvedIriIdentifierStruct.schema.properties.lazilyResolved,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -20702,7 +21767,8 @@ export namespace LazilyResolvedIriIdentifierStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema:
+          LazilyResolvedIriIdentifierStruct.schema.properties.lazilyResolved,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -20747,7 +21813,8 @@ export namespace LazilyResolvedIriIdentifierStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema:
+          LazilyResolvedIriIdentifierStruct.schema.properties.lazilyResolved,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -21118,7 +22185,8 @@ export namespace LazilyResolvedUnionMember1 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema:
+          LazilyResolvedUnionMember1.schema.properties.lazilyResolved,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -21192,7 +22260,8 @@ export namespace LazilyResolvedUnionMember1 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema:
+          LazilyResolvedUnionMember1.schema.properties.lazilyResolved,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -21247,7 +22316,8 @@ export namespace LazilyResolvedUnionMember1 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.lazilyResolved,
+          propertySchema:
+            LazilyResolvedUnionMember1.schema.properties.lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -21629,7 +22699,8 @@ export namespace LazilyResolvedUnionMember2 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema:
+          LazilyResolvedUnionMember2.schema.properties.lazilyResolved,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -21703,7 +22774,8 @@ export namespace LazilyResolvedUnionMember2 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema:
+          LazilyResolvedUnionMember2.schema.properties.lazilyResolved,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -21758,7 +22830,8 @@ export namespace LazilyResolvedUnionMember2 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.lazilyResolved,
+          propertySchema:
+            LazilyResolvedUnionMember2.schema.properties.lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -22632,7 +23705,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         propertyName: "optionalLazyToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.optionalLazyToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .optionalLazyToResolvedBlankNodeOrIriIdentifier,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             $DefaultPartial.Filter,
@@ -22650,7 +23724,9 @@ export namespace LazyPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "optionalLazyToResolvedIriIdentifier",
-        propertySchema: schema.properties.optionalLazyToResolvedIriIdentifier,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties
+            .optionalLazyToResolvedIriIdentifier,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             $NamedDefaultPartial.Filter,
@@ -22668,7 +23744,8 @@ export namespace LazyPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "optionalLazyToResolvedUnion",
-        propertySchema: schema.properties.optionalLazyToResolvedUnion,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties.optionalLazyToResolvedUnion,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             $DefaultPartial.Filter,
@@ -22688,7 +23765,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         propertyName: "optionalPartialToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.optionalPartialToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .optionalPartialToResolvedBlankNodeOrIriIdentifier,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             PartialStruct.Filter,
@@ -22706,7 +23784,8 @@ export namespace LazyPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "optionalPartialToResolvedUnion",
-        propertySchema: schema.properties.optionalPartialToResolvedUnion,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties.optionalPartialToResolvedUnion,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             PartialStruct.Filter,
@@ -22724,7 +23803,9 @@ export namespace LazyPropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "optionalPartialUnionToResolvedUnion",
-        propertySchema: schema.properties.optionalPartialUnionToResolvedUnion,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties
+            .optionalPartialUnionToResolvedUnion,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             PartialUnion.Filter,
@@ -22744,7 +23825,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         propertyName: "requiredLazyToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.requiredLazyToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .requiredLazyToResolvedBlankNodeOrIriIdentifier,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $DefaultPartial.valueSparqlConstructTriples({
             ...otherParameters,
@@ -22761,7 +23843,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         propertyName: "requiredPartialToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.requiredPartialToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .requiredPartialToResolvedBlankNodeOrIriIdentifier,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           PartialStruct.valueSparqlConstructTriples({
             ...otherParameters,
@@ -22777,7 +23860,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         propertyName: "setLazyToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.setLazyToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .setLazyToResolvedBlankNodeOrIriIdentifier,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $setSparqlConstructTriples<
             $DefaultPartial.Filter,
@@ -22796,7 +23880,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         propertyName: "setPartialToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.setPartialToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .setPartialToResolvedBlankNodeOrIriIdentifier,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $setSparqlConstructTriples<
             PartialStruct.Filter,
@@ -22837,7 +23922,8 @@ export namespace LazyPropertiesStruct {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalLazyToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.optionalLazyToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .optionalLazyToResolvedBlankNodeOrIriIdentifier,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             $DefaultPartial.Filter,
@@ -22856,7 +23942,9 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalLazyToResolvedIriIdentifier",
-        propertySchema: schema.properties.optionalLazyToResolvedIriIdentifier,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties
+            .optionalLazyToResolvedIriIdentifier,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             $NamedDefaultPartial.Filter,
@@ -22875,7 +23963,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalLazyToResolvedUnion",
-        propertySchema: schema.properties.optionalLazyToResolvedUnion,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties.optionalLazyToResolvedUnion,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             $DefaultPartial.Filter,
@@ -22896,7 +23985,8 @@ export namespace LazyPropertiesStruct {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalPartialToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.optionalPartialToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .optionalPartialToResolvedBlankNodeOrIriIdentifier,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<PartialStruct.Filter, PartialStruct.Schema>(
             PartialStruct.valueSparqlWherePatterns,
@@ -22914,7 +24004,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalPartialToResolvedUnion",
-        propertySchema: schema.properties.optionalPartialToResolvedUnion,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties.optionalPartialToResolvedUnion,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<PartialStruct.Filter, PartialStruct.Schema>(
             PartialStruct.valueSparqlWherePatterns,
@@ -22932,7 +24023,9 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalPartialUnionToResolvedUnion",
-        propertySchema: schema.properties.optionalPartialUnionToResolvedUnion,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties
+            .optionalPartialUnionToResolvedUnion,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             PartialUnion.Filter,
@@ -22953,7 +24046,8 @@ export namespace LazyPropertiesStruct {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "requiredLazyToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.requiredLazyToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .requiredLazyToResolvedBlankNodeOrIriIdentifier,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $DefaultPartial.valueSparqlWherePatterns({
             ...otherParameters,
@@ -22971,7 +24065,8 @@ export namespace LazyPropertiesStruct {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "requiredPartialToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.requiredPartialToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .requiredPartialToResolvedBlankNodeOrIriIdentifier,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           PartialStruct.valueSparqlWherePatterns({
             ...otherParameters,
@@ -22988,7 +24083,8 @@ export namespace LazyPropertiesStruct {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "setLazyToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.setLazyToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .setLazyToResolvedBlankNodeOrIriIdentifier,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $setSparqlWherePatterns<
             $DefaultPartial.Filter,
@@ -23008,7 +24104,8 @@ export namespace LazyPropertiesStruct {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "setPartialToResolvedBlankNodeOrIriIdentifier",
         propertySchema:
-          schema.properties.setPartialToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .setPartialToResolvedBlankNodeOrIriIdentifier,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $setSparqlWherePatterns<PartialStruct.Filter, PartialStruct.Schema>(
             PartialStruct.valueSparqlWherePatterns,
@@ -23279,7 +24376,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
         propertySchema:
-          schema.properties.optionalLazyToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .optionalLazyToResolvedBlankNodeOrIriIdentifier,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -23329,7 +24427,9 @@ export namespace LazyPropertiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.optionalLazyToResolvedIriIdentifier,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties
+            .optionalLazyToResolvedIriIdentifier,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -23377,7 +24477,8 @@ export namespace LazyPropertiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.optionalLazyToResolvedUnion,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties.optionalLazyToResolvedUnion,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -23422,7 +24523,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
         propertySchema:
-          schema.properties.optionalPartialToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .optionalPartialToResolvedBlankNodeOrIriIdentifier,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -23469,7 +24571,8 @@ export namespace LazyPropertiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.optionalPartialToResolvedUnion,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties.optionalPartialToResolvedUnion,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -23513,7 +24616,9 @@ export namespace LazyPropertiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.optionalPartialUnionToResolvedUnion,
+        propertySchema:
+          LazyPropertiesStruct.schema.properties
+            .optionalPartialUnionToResolvedUnion,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -23555,7 +24660,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
         propertySchema:
-          schema.properties.requiredLazyToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .requiredLazyToResolvedBlankNodeOrIriIdentifier,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -23597,7 +24703,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
         propertySchema:
-          schema.properties.requiredPartialToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .requiredPartialToResolvedBlankNodeOrIriIdentifier,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -23640,7 +24747,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
         propertySchema:
-          schema.properties.setLazyToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .setLazyToResolvedBlankNodeOrIriIdentifier,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -23693,7 +24801,8 @@ export namespace LazyPropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
         propertySchema:
-          schema.properties.setPartialToResolvedBlankNodeOrIriIdentifier,
+          LazyPropertiesStruct.schema.properties
+            .setPartialToResolvedBlankNodeOrIriIdentifier,
         typeFromRdfResourceValues: ((
           values,
           { objectSet, schema, ...otherOptions },
@@ -24725,7 +25834,7 @@ export namespace ListSetsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "listListSet",
-        propertySchema: schema.properties.listListSet,
+        propertySchema: ListSetsStruct.schema.properties.listListSet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $CollectionFilter<$CollectionFilter<$StringFilter>>,
           $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
@@ -24748,7 +25857,7 @@ export namespace ListSetsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "listSet",
-        propertySchema: schema.properties.listSet,
+        propertySchema: ListSetsStruct.schema.properties.listSet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $CollectionFilter<$StringFilter>,
           $CollectionSchema<$StringSchema<string>>
@@ -24766,7 +25875,7 @@ export namespace ListSetsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "listUnionSet",
-        propertySchema: schema.properties.listUnionSet,
+        propertySchema: ListSetsStruct.schema.properties.listUnionSet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           {
             readonly on?: {
@@ -24903,7 +26012,7 @@ export namespace ListSetsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "listListSet",
-        propertySchema: schema.properties.listListSet,
+        propertySchema: ListSetsStruct.schema.properties.listListSet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $CollectionFilter<$CollectionFilter<$StringFilter>>,
           $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
@@ -24927,7 +26036,7 @@ export namespace ListSetsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "listSet",
-        propertySchema: schema.properties.listSet,
+        propertySchema: ListSetsStruct.schema.properties.listSet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $CollectionFilter<$StringFilter>,
           $CollectionSchema<$StringSchema<string>>
@@ -24946,7 +26055,7 @@ export namespace ListSetsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "listUnionSet",
-        propertySchema: schema.properties.listUnionSet,
+        propertySchema: ListSetsStruct.schema.properties.listUnionSet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           {
             readonly on?: {
@@ -25110,7 +26219,7 @@ export namespace ListSetsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.listListSet,
+          propertySchema: ListSetsStruct.schema.properties.listListSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             readonly (readonly string[])[],
             $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
@@ -25135,7 +26244,7 @@ export namespace ListSetsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.listSet,
+          propertySchema: ListSetsStruct.schema.properties.listSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             readonly string[],
             $CollectionSchema<$StringSchema<string>>
@@ -25167,7 +26276,7 @@ export namespace ListSetsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.listUnionSet,
+          propertySchema: ListSetsStruct.schema.properties.listUnionSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             readonly string[] | string,
             {
@@ -26067,7 +27176,7 @@ export namespace ListsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "iriList",
-        propertySchema: schema.properties.iriList,
+        propertySchema: ListsStruct.schema.properties.iriList,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $CollectionFilter<$IriFilter>,
           $CollectionSchema<$IriSchema<string>>
@@ -26085,7 +27194,7 @@ export namespace ListsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "stringList",
-        propertySchema: schema.properties.stringList,
+        propertySchema: ListsStruct.schema.properties.stringList,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $CollectionFilter<$StringFilter>,
           $CollectionSchema<$StringSchema<string>>
@@ -26103,7 +27212,7 @@ export namespace ListsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "stringListList",
-        propertySchema: schema.properties.stringListList,
+        propertySchema: ListsStruct.schema.properties.stringListList,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $CollectionFilter<$CollectionFilter<$StringFilter>>,
           $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
@@ -26126,7 +27235,7 @@ export namespace ListsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "structList",
-        propertySchema: schema.properties.structList,
+        propertySchema: ListsStruct.schema.properties.structList,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $CollectionFilter<NonClassStruct.Filter>,
           $CollectionSchema<NonClassStruct.Schema>
@@ -26208,7 +27317,7 @@ export namespace ListsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "iriList",
-        propertySchema: schema.properties.iriList,
+        propertySchema: ListsStruct.schema.properties.iriList,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $CollectionFilter<$IriFilter>,
           $CollectionSchema<$IriSchema<string>>
@@ -26227,7 +27336,7 @@ export namespace ListsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "stringList",
-        propertySchema: schema.properties.stringList,
+        propertySchema: ListsStruct.schema.properties.stringList,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $CollectionFilter<$StringFilter>,
           $CollectionSchema<$StringSchema<string>>
@@ -26246,7 +27355,7 @@ export namespace ListsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "stringListList",
-        propertySchema: schema.properties.stringListList,
+        propertySchema: ListsStruct.schema.properties.stringListList,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $CollectionFilter<$CollectionFilter<$StringFilter>>,
           $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
@@ -26270,7 +27379,7 @@ export namespace ListsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "structList",
-        propertySchema: schema.properties.structList,
+        propertySchema: ListsStruct.schema.properties.structList,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $CollectionFilter<NonClassStruct.Filter>,
           $CollectionSchema<NonClassStruct.Schema>
@@ -26368,7 +27477,7 @@ export namespace ListsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.iriList,
+          propertySchema: ListsStruct.schema.properties.iriList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly NamedNode[],
             $CollectionSchema<$IriSchema<string>>
@@ -26388,7 +27497,7 @@ export namespace ListsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.stringList,
+          propertySchema: ListsStruct.schema.properties.stringList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly string[],
             $CollectionSchema<$StringSchema<string>>
@@ -26410,7 +27519,7 @@ export namespace ListsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.stringListList,
+          propertySchema: ListsStruct.schema.properties.stringListList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (readonly string[])[],
             $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
@@ -26435,7 +27544,7 @@ export namespace ListsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.structList,
+          propertySchema: ListsStruct.schema.properties.structList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly NonClassStruct[],
             $CollectionSchema<NonClassStruct.Schema>
@@ -27272,7 +28381,7 @@ export namespace MutablePropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "mutableList",
-        propertySchema: schema.properties.mutableList,
+        propertySchema: MutablePropertiesStruct.schema.properties.mutableList,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $CollectionFilter<$StringFilter>,
           $CollectionSchema<$StringSchema<string>>
@@ -27290,7 +28399,7 @@ export namespace MutablePropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "mutableSet",
-        propertySchema: schema.properties.mutableSet,
+        propertySchema: MutablePropertiesStruct.schema.properties.mutableSet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -27304,7 +28413,7 @@ export namespace MutablePropertiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "mutableString",
-        propertySchema: schema.properties.mutableString,
+        propertySchema: MutablePropertiesStruct.schema.properties.mutableString,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -27381,7 +28490,7 @@ export namespace MutablePropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "mutableList",
-        propertySchema: schema.properties.mutableList,
+        propertySchema: MutablePropertiesStruct.schema.properties.mutableList,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $CollectionFilter<$StringFilter>,
           $CollectionSchema<$StringSchema<string>>
@@ -27400,7 +28509,7 @@ export namespace MutablePropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "mutableSet",
-        propertySchema: schema.properties.mutableSet,
+        propertySchema: MutablePropertiesStruct.schema.properties.mutableSet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -27415,7 +28524,7 @@ export namespace MutablePropertiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "mutableString",
-        propertySchema: schema.properties.mutableString,
+        propertySchema: MutablePropertiesStruct.schema.properties.mutableString,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -27490,7 +28599,7 @@ export namespace MutablePropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.mutableList,
+          propertySchema: MutablePropertiesStruct.schema.properties.mutableList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string[],
             $CollectionSchema<$StringSchema<string>>
@@ -27510,7 +28619,7 @@ export namespace MutablePropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.mutableSet,
+          propertySchema: MutablePropertiesStruct.schema.properties.mutableSet,
           typeFromRdfResourceValues: $mutableSetFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -27526,7 +28635,8 @@ export namespace MutablePropertiesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.mutableString,
+          propertySchema:
+            MutablePropertiesStruct.schema.properties.mutableString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -28041,7 +29151,7 @@ export namespace NamedUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "namedUnion1",
-        propertySchema: schema.properties.namedUnion1,
+        propertySchema: NamedUnionsStruct.schema.properties.namedUnion1,
         typeSparqlConstructTriples: NamedUnion1.valueSparqlConstructTriples,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -28052,7 +29162,7 @@ export namespace NamedUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "namedUnion2",
-        propertySchema: schema.properties.namedUnion2,
+        propertySchema: NamedUnionsStruct.schema.properties.namedUnion2,
         typeSparqlConstructTriples: NamedUnion2.valueSparqlConstructTriples,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -28126,7 +29236,7 @@ export namespace NamedUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "namedUnion1",
-        propertySchema: schema.properties.namedUnion1,
+        propertySchema: NamedUnionsStruct.schema.properties.namedUnion1,
         typeSparqlWherePatterns: NamedUnion1.valueSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -28138,7 +29248,7 @@ export namespace NamedUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "namedUnion2",
-        propertySchema: schema.properties.namedUnion2,
+        propertySchema: NamedUnionsStruct.schema.properties.namedUnion2,
         typeSparqlWherePatterns: NamedUnion2.valueSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -28197,7 +29307,7 @@ export namespace NamedUnionsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.namedUnion1,
+          propertySchema: NamedUnionsStruct.schema.properties.namedUnion1,
           typeFromRdfResourceValues: NamedUnion1.fromRdfResourceValues,
           objectSet: _$options.objectSet,
         }),
@@ -28210,7 +29320,7 @@ export namespace NamedUnionsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.namedUnion2,
+          propertySchema: NamedUnionsStruct.schema.properties.namedUnion2,
           typeFromRdfResourceValues: NamedUnion2.fromRdfResourceValues,
           objectSet: _$options.objectSet,
         }),
@@ -28620,7 +29730,7 @@ export namespace NewName {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "newNameString",
-        propertySchema: schema.properties.newNameString,
+        propertySchema: NewName.schema.properties.newNameString,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -28697,7 +29807,7 @@ export namespace NewName {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "newNameString",
-        propertySchema: schema.properties.newNameString,
+        propertySchema: NewName.schema.properties.newNameString,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -28759,7 +29869,7 @@ export namespace NewName {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.newNameString,
+          propertySchema: NewName.schema.properties.newNameString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -29274,7 +30384,7 @@ export namespace NodeKindsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "blankNodeKind",
-        propertySchema: schema.properties.blankNodeKind,
+        propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29285,7 +30395,8 @@ export namespace NodeKindsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "blankNodeOrIriNodeKind",
-        propertySchema: schema.properties.blankNodeOrIriNodeKind,
+        propertySchema:
+          NodeKindsStruct.schema.properties.blankNodeOrIriNodeKind,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29296,7 +30407,8 @@ export namespace NodeKindsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "blankNodeOrLiteralNodeKind",
-        propertySchema: schema.properties.blankNodeOrLiteralNodeKind,
+        propertySchema:
+          NodeKindsStruct.schema.properties.blankNodeOrLiteralNodeKind,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29307,7 +30419,7 @@ export namespace NodeKindsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "iriNodeKind",
-        propertySchema: schema.properties.iriNodeKind,
+        propertySchema: NodeKindsStruct.schema.properties.iriNodeKind,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29318,7 +30430,7 @@ export namespace NodeKindsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "iriOrLiteralNodeKind",
-        propertySchema: schema.properties.iriOrLiteralNodeKind,
+        propertySchema: NodeKindsStruct.schema.properties.iriOrLiteralNodeKind,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29329,7 +30441,7 @@ export namespace NodeKindsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "literalNodeKind",
-        propertySchema: schema.properties.literalNodeKind,
+        propertySchema: NodeKindsStruct.schema.properties.literalNodeKind,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29403,7 +30515,7 @@ export namespace NodeKindsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "blankNodeKind",
-        propertySchema: schema.properties.blankNodeKind,
+        propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
         typeSparqlWherePatterns: $blankNodeSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29415,7 +30527,8 @@ export namespace NodeKindsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "blankNodeOrIriNodeKind",
-        propertySchema: schema.properties.blankNodeOrIriNodeKind,
+        propertySchema:
+          NodeKindsStruct.schema.properties.blankNodeOrIriNodeKind,
         typeSparqlWherePatterns: $identifierSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29427,7 +30540,8 @@ export namespace NodeKindsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "blankNodeOrLiteralNodeKind",
-        propertySchema: schema.properties.blankNodeOrLiteralNodeKind,
+        propertySchema:
+          NodeKindsStruct.schema.properties.blankNodeOrLiteralNodeKind,
         typeSparqlWherePatterns: $termSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29439,7 +30553,7 @@ export namespace NodeKindsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "iriNodeKind",
-        propertySchema: schema.properties.iriNodeKind,
+        propertySchema: NodeKindsStruct.schema.properties.iriNodeKind,
         typeSparqlWherePatterns: $iriSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29451,7 +30565,7 @@ export namespace NodeKindsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "iriOrLiteralNodeKind",
-        propertySchema: schema.properties.iriOrLiteralNodeKind,
+        propertySchema: NodeKindsStruct.schema.properties.iriOrLiteralNodeKind,
         typeSparqlWherePatterns: $termSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29463,7 +30577,7 @@ export namespace NodeKindsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "literalNodeKind",
-        propertySchema: schema.properties.literalNodeKind,
+        propertySchema: NodeKindsStruct.schema.properties.literalNodeKind,
         typeSparqlWherePatterns: $literalSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -29571,7 +30685,7 @@ export namespace NodeKindsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.blankNodeKind,
+          propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
           typeFromRdfResourceValues: $blankNodeFromRdfResourceValues,
           objectSet: _$options.objectSet,
         }),
@@ -29584,7 +30698,8 @@ export namespace NodeKindsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.blankNodeOrIriNodeKind,
+          propertySchema:
+            NodeKindsStruct.schema.properties.blankNodeOrIriNodeKind,
           typeFromRdfResourceValues: $identifierFromRdfResourceValues,
           objectSet: _$options.objectSet,
         }),
@@ -29597,7 +30712,8 @@ export namespace NodeKindsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.blankNodeOrLiteralNodeKind,
+          propertySchema:
+            NodeKindsStruct.schema.properties.blankNodeOrLiteralNodeKind,
           typeFromRdfResourceValues: $termFromRdfResourceValues<
             BlankNode | Literal
           >,
@@ -29609,7 +30725,7 @@ export namespace NodeKindsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.iriNodeKind,
+          propertySchema: NodeKindsStruct.schema.properties.iriNodeKind,
           typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -29622,7 +30738,8 @@ export namespace NodeKindsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.iriOrLiteralNodeKind,
+          propertySchema:
+            NodeKindsStruct.schema.properties.iriOrLiteralNodeKind,
           typeFromRdfResourceValues: $termFromRdfResourceValues<
             NamedNode | Literal
           >,
@@ -29634,7 +30751,7 @@ export namespace NodeKindsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.literalNodeKind,
+          propertySchema: NodeKindsStruct.schema.properties.literalNodeKind,
           typeFromRdfResourceValues: $literalFromRdfResourceValues,
           objectSet: _$options.objectSet,
         }),
@@ -30187,7 +31304,7 @@ export namespace NonClassStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "nonClassString",
-        propertySchema: schema.properties.nonClassString,
+        propertySchema: NonClassStruct.schema.properties.nonClassString,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30219,7 +31336,7 @@ export namespace NonClassStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "nonClassString",
-        propertySchema: schema.properties.nonClassString,
+        propertySchema: NonClassStruct.schema.properties.nonClassString,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30267,7 +31384,7 @@ export namespace NonClassStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.nonClassString,
+        propertySchema: NonClassStruct.schema.properties.nonClassString,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -30620,7 +31737,8 @@ export namespace NoRdfTypeUnionMember1 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "noRdfTypeUnionMember1String",
-        propertySchema: schema.properties.noRdfTypeUnionMember1String,
+        propertySchema:
+          NoRdfTypeUnionMember1.schema.properties.noRdfTypeUnionMember1String,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30652,7 +31770,8 @@ export namespace NoRdfTypeUnionMember1 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "noRdfTypeUnionMember1String",
-        propertySchema: schema.properties.noRdfTypeUnionMember1String,
+        propertySchema:
+          NoRdfTypeUnionMember1.schema.properties.noRdfTypeUnionMember1String,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30704,7 +31823,8 @@ export namespace NoRdfTypeUnionMember1 {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.noRdfTypeUnionMember1String,
+        propertySchema:
+          NoRdfTypeUnionMember1.schema.properties.noRdfTypeUnionMember1String,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -31068,7 +32188,8 @@ export namespace NoRdfTypeUnionMember2 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "noRdfTypeUnionMember2String",
-        propertySchema: schema.properties.noRdfTypeUnionMember2String,
+        propertySchema:
+          NoRdfTypeUnionMember2.schema.properties.noRdfTypeUnionMember2String,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -31100,7 +32221,8 @@ export namespace NoRdfTypeUnionMember2 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "noRdfTypeUnionMember2String",
-        propertySchema: schema.properties.noRdfTypeUnionMember2String,
+        propertySchema:
+          NoRdfTypeUnionMember2.schema.properties.noRdfTypeUnionMember2String,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -31152,7 +32274,8 @@ export namespace NoRdfTypeUnionMember2 {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.noRdfTypeUnionMember2String,
+        propertySchema:
+          NoRdfTypeUnionMember2.schema.properties.noRdfTypeUnionMember2String,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -32048,7 +33171,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "byteNumeric",
-        propertySchema: schema.properties.byteNumeric,
+        propertySchema: NumericsStruct.schema.properties.byteNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32062,7 +33185,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "decimalNumeric",
-        propertySchema: schema.properties.decimalNumeric,
+        propertySchema: NumericsStruct.schema.properties.decimalNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<BigDecimal>,
           $NumericSchema<BigDecimal>
@@ -32076,7 +33199,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "doubleNumeric",
-        propertySchema: schema.properties.doubleNumeric,
+        propertySchema: NumericsStruct.schema.properties.doubleNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32090,7 +33213,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "floatNumeric",
-        propertySchema: schema.properties.floatNumeric,
+        propertySchema: NumericsStruct.schema.properties.floatNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32104,7 +33227,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "integerNumeric",
-        propertySchema: schema.properties.integerNumeric,
+        propertySchema: NumericsStruct.schema.properties.integerNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32118,7 +33241,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "intNumeric",
-        propertySchema: schema.properties.intNumeric,
+        propertySchema: NumericsStruct.schema.properties.intNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32132,7 +33255,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "longNumeric",
-        propertySchema: schema.properties.longNumeric,
+        propertySchema: NumericsStruct.schema.properties.longNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32146,7 +33269,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "negativeIntegerNumeric",
-        propertySchema: schema.properties.negativeIntegerNumeric,
+        propertySchema: NumericsStruct.schema.properties.negativeIntegerNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32160,7 +33283,8 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "nonNegativeIntegerNumeric",
-        propertySchema: schema.properties.nonNegativeIntegerNumeric,
+        propertySchema:
+          NumericsStruct.schema.properties.nonNegativeIntegerNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32174,7 +33298,8 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "nonPositiveIntegerNumeric",
-        propertySchema: schema.properties.nonPositiveIntegerNumeric,
+        propertySchema:
+          NumericsStruct.schema.properties.nonPositiveIntegerNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32188,7 +33313,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "positiveIntegerNumeric",
-        propertySchema: schema.properties.positiveIntegerNumeric,
+        propertySchema: NumericsStruct.schema.properties.positiveIntegerNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32202,7 +33327,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "shortNumeric",
-        propertySchema: schema.properties.shortNumeric,
+        propertySchema: NumericsStruct.schema.properties.shortNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32216,7 +33341,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "unsignedByteNumeric",
-        propertySchema: schema.properties.unsignedByteNumeric,
+        propertySchema: NumericsStruct.schema.properties.unsignedByteNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32230,7 +33355,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "unsignedIntNumeric",
-        propertySchema: schema.properties.unsignedIntNumeric,
+        propertySchema: NumericsStruct.schema.properties.unsignedIntNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32244,7 +33369,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "unsignedLongNumeric",
-        propertySchema: schema.properties.unsignedLongNumeric,
+        propertySchema: NumericsStruct.schema.properties.unsignedLongNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32258,7 +33383,7 @@ export namespace NumericsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "unsignedShortNumeric",
-        propertySchema: schema.properties.unsignedShortNumeric,
+        propertySchema: NumericsStruct.schema.properties.unsignedShortNumeric,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32335,7 +33460,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "byteNumeric",
-        propertySchema: schema.properties.byteNumeric,
+        propertySchema: NumericsStruct.schema.properties.byteNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32350,7 +33475,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "decimalNumeric",
-        propertySchema: schema.properties.decimalNumeric,
+        propertySchema: NumericsStruct.schema.properties.decimalNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<BigDecimal>,
           $NumericSchema<BigDecimal>
@@ -32365,7 +33490,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "doubleNumeric",
-        propertySchema: schema.properties.doubleNumeric,
+        propertySchema: NumericsStruct.schema.properties.doubleNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32380,7 +33505,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "floatNumeric",
-        propertySchema: schema.properties.floatNumeric,
+        propertySchema: NumericsStruct.schema.properties.floatNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32395,7 +33520,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "integerNumeric",
-        propertySchema: schema.properties.integerNumeric,
+        propertySchema: NumericsStruct.schema.properties.integerNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32410,7 +33535,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "intNumeric",
-        propertySchema: schema.properties.intNumeric,
+        propertySchema: NumericsStruct.schema.properties.intNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32425,7 +33550,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "longNumeric",
-        propertySchema: schema.properties.longNumeric,
+        propertySchema: NumericsStruct.schema.properties.longNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32440,7 +33565,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "negativeIntegerNumeric",
-        propertySchema: schema.properties.negativeIntegerNumeric,
+        propertySchema: NumericsStruct.schema.properties.negativeIntegerNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32455,7 +33580,8 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "nonNegativeIntegerNumeric",
-        propertySchema: schema.properties.nonNegativeIntegerNumeric,
+        propertySchema:
+          NumericsStruct.schema.properties.nonNegativeIntegerNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32470,7 +33596,8 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "nonPositiveIntegerNumeric",
-        propertySchema: schema.properties.nonPositiveIntegerNumeric,
+        propertySchema:
+          NumericsStruct.schema.properties.nonPositiveIntegerNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32485,7 +33612,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "positiveIntegerNumeric",
-        propertySchema: schema.properties.positiveIntegerNumeric,
+        propertySchema: NumericsStruct.schema.properties.positiveIntegerNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32500,7 +33627,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "shortNumeric",
-        propertySchema: schema.properties.shortNumeric,
+        propertySchema: NumericsStruct.schema.properties.shortNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32515,7 +33642,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "unsignedByteNumeric",
-        propertySchema: schema.properties.unsignedByteNumeric,
+        propertySchema: NumericsStruct.schema.properties.unsignedByteNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32530,7 +33657,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "unsignedIntNumeric",
-        propertySchema: schema.properties.unsignedIntNumeric,
+        propertySchema: NumericsStruct.schema.properties.unsignedIntNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32545,7 +33672,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "unsignedLongNumeric",
-        propertySchema: schema.properties.unsignedLongNumeric,
+        propertySchema: NumericsStruct.schema.properties.unsignedLongNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<bigint>,
           $NumericSchema<bigint>
@@ -32560,7 +33687,7 @@ export namespace NumericsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "unsignedShortNumeric",
-        propertySchema: schema.properties.unsignedShortNumeric,
+        propertySchema: NumericsStruct.schema.properties.unsignedShortNumeric,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -32693,7 +33820,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.byteNumeric,
+          propertySchema: NumericsStruct.schema.properties.byteNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -32709,7 +33836,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.decimalNumeric,
+          propertySchema: NumericsStruct.schema.properties.decimalNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BigDecimal,
             $NumericSchema<BigDecimal>
@@ -32725,7 +33852,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.doubleNumeric,
+          propertySchema: NumericsStruct.schema.properties.doubleNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -32741,7 +33868,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.floatNumeric,
+          propertySchema: NumericsStruct.schema.properties.floatNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -32757,7 +33884,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.integerNumeric,
+          propertySchema: NumericsStruct.schema.properties.integerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -32773,7 +33900,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.intNumeric,
+          propertySchema: NumericsStruct.schema.properties.intNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -32789,7 +33916,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.longNumeric,
+          propertySchema: NumericsStruct.schema.properties.longNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -32805,7 +33932,8 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.negativeIntegerNumeric,
+          propertySchema:
+            NumericsStruct.schema.properties.negativeIntegerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -32821,7 +33949,8 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.nonNegativeIntegerNumeric,
+          propertySchema:
+            NumericsStruct.schema.properties.nonNegativeIntegerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -32837,7 +33966,8 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.nonPositiveIntegerNumeric,
+          propertySchema:
+            NumericsStruct.schema.properties.nonPositiveIntegerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -32853,7 +33983,8 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.positiveIntegerNumeric,
+          propertySchema:
+            NumericsStruct.schema.properties.positiveIntegerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -32869,7 +34000,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.shortNumeric,
+          propertySchema: NumericsStruct.schema.properties.shortNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -32885,7 +34016,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.unsignedByteNumeric,
+          propertySchema: NumericsStruct.schema.properties.unsignedByteNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -32901,7 +34032,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.unsignedIntNumeric,
+          propertySchema: NumericsStruct.schema.properties.unsignedIntNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -32917,7 +34048,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.unsignedLongNumeric,
+          propertySchema: NumericsStruct.schema.properties.unsignedLongNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -32933,7 +34064,7 @@ export namespace NumericsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.unsignedShortNumeric,
+          propertySchema: NumericsStruct.schema.properties.unsignedShortNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -33719,7 +34850,7 @@ export namespace OrderedStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "orderedC",
-        propertySchema: schema.properties.orderedC,
+        propertySchema: OrderedStruct.schema.properties.orderedC,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -33730,7 +34861,7 @@ export namespace OrderedStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "orderedB",
-        propertySchema: schema.properties.orderedB,
+        propertySchema: OrderedStruct.schema.properties.orderedB,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -33741,7 +34872,7 @@ export namespace OrderedStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "orderedA",
-        propertySchema: schema.properties.orderedA,
+        propertySchema: OrderedStruct.schema.properties.orderedA,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -33773,7 +34904,7 @@ export namespace OrderedStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "orderedC",
-        propertySchema: schema.properties.orderedC,
+        propertySchema: OrderedStruct.schema.properties.orderedC,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -33785,7 +34916,7 @@ export namespace OrderedStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "orderedB",
-        propertySchema: schema.properties.orderedB,
+        propertySchema: OrderedStruct.schema.properties.orderedB,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -33797,7 +34928,7 @@ export namespace OrderedStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "orderedA",
-        propertySchema: schema.properties.orderedA,
+        propertySchema: OrderedStruct.schema.properties.orderedA,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -33847,7 +34978,7 @@ export namespace OrderedStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.orderedC,
+        propertySchema: OrderedStruct.schema.properties.orderedC,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -33857,7 +34988,7 @@ export namespace OrderedStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.orderedB,
+        propertySchema: OrderedStruct.schema.properties.orderedB,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -33867,7 +34998,7 @@ export namespace OrderedStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.orderedA,
+        propertySchema: OrderedStruct.schema.properties.orderedA,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -34242,7 +35373,7 @@ export namespace PartialStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema: PartialStruct.schema.properties.lazilyResolved,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -34274,7 +35405,7 @@ export namespace PartialStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema: PartialStruct.schema.properties.lazilyResolved,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -34322,7 +35453,7 @@ export namespace PartialStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema: PartialStruct.schema.properties.lazilyResolved,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -34684,7 +35815,7 @@ export namespace PartialUnionMember1 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema: PartialUnionMember1.schema.properties.lazilyResolved,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -34758,7 +35889,7 @@ export namespace PartialUnionMember1 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema: PartialUnionMember1.schema.properties.lazilyResolved,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -34813,7 +35944,7 @@ export namespace PartialUnionMember1 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.lazilyResolved,
+          propertySchema: PartialUnionMember1.schema.properties.lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -35186,7 +36317,7 @@ export namespace PartialUnionMember2 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema: PartialUnionMember2.schema.properties.lazilyResolved,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -35260,7 +36391,7 @@ export namespace PartialUnionMember2 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "lazilyResolved",
-        propertySchema: schema.properties.lazilyResolved,
+        propertySchema: PartialUnionMember2.schema.properties.lazilyResolved,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -35315,7 +36446,7 @@ export namespace PartialUnionMember2 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.lazilyResolved,
+          propertySchema: PartialUnionMember2.schema.properties.lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -35793,7 +36924,7 @@ export namespace PropertyCardinalitiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "emptySet",
-        propertySchema: schema.properties.emptySet,
+        propertySchema: PropertyCardinalitiesStruct.schema.properties.emptySet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -35807,7 +36938,8 @@ export namespace PropertyCardinalitiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "nonEmptySet",
-        propertySchema: schema.properties.nonEmptySet,
+        propertySchema:
+          PropertyCardinalitiesStruct.schema.properties.nonEmptySet,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -35821,7 +36953,7 @@ export namespace PropertyCardinalitiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "optional",
-        propertySchema: schema.properties.optional,
+        propertySchema: PropertyCardinalitiesStruct.schema.properties.optional,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -35835,7 +36967,7 @@ export namespace PropertyCardinalitiesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "required",
-        propertySchema: schema.properties.required,
+        propertySchema: PropertyCardinalitiesStruct.schema.properties.required,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -35868,7 +37000,7 @@ export namespace PropertyCardinalitiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "emptySet",
-        propertySchema: schema.properties.emptySet,
+        propertySchema: PropertyCardinalitiesStruct.schema.properties.emptySet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -35883,7 +37015,8 @@ export namespace PropertyCardinalitiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "nonEmptySet",
-        propertySchema: schema.properties.nonEmptySet,
+        propertySchema:
+          PropertyCardinalitiesStruct.schema.properties.nonEmptySet,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -35898,7 +37031,7 @@ export namespace PropertyCardinalitiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optional",
-        propertySchema: schema.properties.optional,
+        propertySchema: PropertyCardinalitiesStruct.schema.properties.optional,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -35913,7 +37046,7 @@ export namespace PropertyCardinalitiesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "required",
-        propertySchema: schema.properties.required,
+        propertySchema: PropertyCardinalitiesStruct.schema.properties.required,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -35972,7 +37105,7 @@ export namespace PropertyCardinalitiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.emptySet,
+        propertySchema: PropertyCardinalitiesStruct.schema.properties.emptySet,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           string,
           $StringSchema<string>
@@ -35988,7 +37121,8 @@ export namespace PropertyCardinalitiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.nonEmptySet,
+        propertySchema:
+          PropertyCardinalitiesStruct.schema.properties.nonEmptySet,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           string,
           $StringSchema<string>
@@ -36004,7 +37138,7 @@ export namespace PropertyCardinalitiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.optional,
+        propertySchema: PropertyCardinalitiesStruct.schema.properties.optional,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           string,
           $StringSchema<string>
@@ -36017,7 +37151,7 @@ export namespace PropertyCardinalitiesStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.required,
+        propertySchema: PropertyCardinalitiesStruct.schema.properties.required,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         objectSet: _$options.objectSet,
       }),
@@ -36569,7 +37703,7 @@ export namespace PropertyNamesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "actualName1",
-        propertySchema: schema.properties.actualName1,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName1,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36580,7 +37714,7 @@ export namespace PropertyNamesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "actualName2",
-        propertySchema: schema.properties.actualName2,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName2,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36591,7 +37725,7 @@ export namespace PropertyNamesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "actualName3",
-        propertySchema: schema.properties.actualName3,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName3,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36602,7 +37736,7 @@ export namespace PropertyNamesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "actualName4",
-        propertySchema: schema.properties.actualName4,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName4,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36613,7 +37747,7 @@ export namespace PropertyNamesStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "actualName5",
-        propertySchema: schema.properties.actualName5,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName5,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36687,7 +37821,7 @@ export namespace PropertyNamesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "actualName1",
-        propertySchema: schema.properties.actualName1,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName1,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36699,7 +37833,7 @@ export namespace PropertyNamesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "actualName2",
-        propertySchema: schema.properties.actualName2,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName2,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36711,7 +37845,7 @@ export namespace PropertyNamesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "actualName3",
-        propertySchema: schema.properties.actualName3,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName3,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36723,7 +37857,7 @@ export namespace PropertyNamesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "actualName4",
-        propertySchema: schema.properties.actualName4,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName4,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36735,7 +37869,7 @@ export namespace PropertyNamesStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "actualName5",
-        propertySchema: schema.properties.actualName5,
+        propertySchema: PropertyNamesStruct.schema.properties.actualName5,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36794,7 +37928,7 @@ export namespace PropertyNamesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.actualName1,
+          propertySchema: PropertyNamesStruct.schema.properties.actualName1,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -36804,7 +37938,7 @@ export namespace PropertyNamesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.actualName2,
+          propertySchema: PropertyNamesStruct.schema.properties.actualName2,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -36814,7 +37948,7 @@ export namespace PropertyNamesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.actualName3,
+          propertySchema: PropertyNamesStruct.schema.properties.actualName3,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -36824,7 +37958,7 @@ export namespace PropertyNamesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.actualName4,
+          propertySchema: PropertyNamesStruct.schema.properties.actualName4,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -36834,7 +37968,7 @@ export namespace PropertyNamesStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.actualName5,
+          propertySchema: PropertyNamesStruct.schema.properties.actualName5,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -37339,7 +38473,7 @@ export namespace PropertyPathsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "inversePath",
-        propertySchema: schema.properties.inversePath,
+        propertySchema: PropertyPathsStruct.schema.properties.inversePath,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
           $IriSchema<string>
@@ -37353,7 +38487,7 @@ export namespace PropertyPathsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "predicatePath",
-        propertySchema: schema.properties.predicatePath,
+        propertySchema: PropertyPathsStruct.schema.properties.predicatePath,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -37430,7 +38564,7 @@ export namespace PropertyPathsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "inversePath",
-        propertySchema: schema.properties.inversePath,
+        propertySchema: PropertyPathsStruct.schema.properties.inversePath,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
           $IriSchema<string>
@@ -37445,7 +38579,7 @@ export namespace PropertyPathsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "predicatePath",
-        propertySchema: schema.properties.predicatePath,
+        propertySchema: PropertyPathsStruct.schema.properties.predicatePath,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -37515,7 +38649,7 @@ export namespace PropertyPathsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.inversePath,
+          propertySchema: PropertyPathsStruct.schema.properties.inversePath,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -37531,7 +38665,7 @@ export namespace PropertyPathsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.predicatePath,
+          propertySchema: PropertyPathsStruct.schema.properties.predicatePath,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -38070,7 +39204,9 @@ export namespace RecursiveUnionMember1 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.recursiveUnionMember1Property,
+          propertySchema:
+            RecursiveUnionMember1.schema.properties
+              .recursiveUnionMember1Property,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             RecursiveUnion,
             typeof RecursiveUnion.schema
@@ -38617,7 +39753,9 @@ export namespace RecursiveUnionMember2 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.recursiveUnionMember2Property,
+          propertySchema:
+            RecursiveUnionMember2.schema.properties
+              .recursiveUnionMember2Property,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             RecursiveUnion,
             typeof RecursiveUnion.schema
@@ -39335,7 +40473,7 @@ export namespace TermsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "blankNodeTerm",
-        propertySchema: schema.properties.blankNodeTerm,
+        propertySchema: TermsStruct.schema.properties.blankNodeTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $BlankNodeFilter,
           $BlankNodeSchema
@@ -39349,7 +40487,7 @@ export namespace TermsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "booleanTerm",
-        propertySchema: schema.properties.booleanTerm,
+        propertySchema: TermsStruct.schema.properties.booleanTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $BooleanFilter,
           $BooleanSchema<boolean>
@@ -39363,7 +40501,7 @@ export namespace TermsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateTerm",
-        propertySchema: schema.properties.dateTerm,
+        propertySchema: TermsStruct.schema.properties.dateTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $DateFilter,
           $DateSchema
@@ -39377,7 +40515,7 @@ export namespace TermsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateTimeTerm",
-        propertySchema: schema.properties.dateTimeTerm,
+        propertySchema: TermsStruct.schema.properties.dateTimeTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $DateFilter,
           $DateSchema
@@ -39391,7 +40529,7 @@ export namespace TermsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "iriTerm",
-        propertySchema: schema.properties.iriTerm,
+        propertySchema: TermsStruct.schema.properties.iriTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
           $IriSchema<string>
@@ -39405,7 +40543,7 @@ export namespace TermsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "literalTerm",
-        propertySchema: schema.properties.literalTerm,
+        propertySchema: TermsStruct.schema.properties.literalTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $LiteralFilter,
           $LiteralSchema
@@ -39419,7 +40557,7 @@ export namespace TermsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "numberTerm",
-        propertySchema: schema.properties.numberTerm,
+        propertySchema: TermsStruct.schema.properties.numberTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -39433,7 +40571,7 @@ export namespace TermsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "stringTerm",
-        propertySchema: schema.properties.stringTerm,
+        propertySchema: TermsStruct.schema.properties.stringTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<string>
@@ -39447,7 +40585,7 @@ export namespace TermsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "term",
-        propertySchema: schema.properties.term,
+        propertySchema: TermsStruct.schema.properties.term,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $TermFilter<BlankNode | NamedNode | Literal>,
           $TermSchema<BlankNode | NamedNode | Literal>
@@ -39524,7 +40662,7 @@ export namespace TermsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "blankNodeTerm",
-        propertySchema: schema.properties.blankNodeTerm,
+        propertySchema: TermsStruct.schema.properties.blankNodeTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $BlankNodeFilter,
           $BlankNodeSchema
@@ -39539,7 +40677,7 @@ export namespace TermsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "booleanTerm",
-        propertySchema: schema.properties.booleanTerm,
+        propertySchema: TermsStruct.schema.properties.booleanTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $BooleanFilter,
           $BooleanSchema<boolean>
@@ -39554,7 +40692,7 @@ export namespace TermsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateTerm",
-        propertySchema: schema.properties.dateTerm,
+        propertySchema: TermsStruct.schema.properties.dateTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $DateFilter,
           $DateSchema
@@ -39569,7 +40707,7 @@ export namespace TermsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateTimeTerm",
-        propertySchema: schema.properties.dateTimeTerm,
+        propertySchema: TermsStruct.schema.properties.dateTimeTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $DateFilter,
           $DateSchema
@@ -39584,7 +40722,7 @@ export namespace TermsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "iriTerm",
-        propertySchema: schema.properties.iriTerm,
+        propertySchema: TermsStruct.schema.properties.iriTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
           $IriSchema<string>
@@ -39599,7 +40737,7 @@ export namespace TermsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "literalTerm",
-        propertySchema: schema.properties.literalTerm,
+        propertySchema: TermsStruct.schema.properties.literalTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $LiteralFilter,
           $LiteralSchema
@@ -39614,7 +40752,7 @@ export namespace TermsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "numberTerm",
-        propertySchema: schema.properties.numberTerm,
+        propertySchema: TermsStruct.schema.properties.numberTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $NumericFilter<number>,
           $NumericSchema<number>
@@ -39629,7 +40767,7 @@ export namespace TermsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "stringTerm",
-        propertySchema: schema.properties.stringTerm,
+        propertySchema: TermsStruct.schema.properties.stringTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
           $StringSchema<string>
@@ -39644,7 +40782,7 @@ export namespace TermsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "term",
-        propertySchema: schema.properties.term,
+        propertySchema: TermsStruct.schema.properties.term,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $TermFilter<BlankNode | NamedNode | Literal>,
           $TermSchema<BlankNode | NamedNode | Literal>
@@ -39764,7 +40902,7 @@ export namespace TermsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.blankNodeTerm,
+          propertySchema: TermsStruct.schema.properties.blankNodeTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode,
             $BlankNodeSchema
@@ -39780,7 +40918,7 @@ export namespace TermsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.booleanTerm,
+          propertySchema: TermsStruct.schema.properties.booleanTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
@@ -39794,7 +40932,7 @@ export namespace TermsStruct {
             focusResource: $resource,
             ignoreRdfType: true,
             preferredLanguages: _$options.preferredLanguages,
-            propertySchema: schema.properties.dateTerm,
+            propertySchema: TermsStruct.schema.properties.dateTerm,
             typeFromRdfResourceValues: $maybeFromRdfResourceValues<
               Date,
               $DateSchema
@@ -39811,7 +40949,7 @@ export namespace TermsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.dateTimeTerm,
+          propertySchema: TermsStruct.schema.properties.dateTimeTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Date,
             $DateSchema
@@ -39827,7 +40965,7 @@ export namespace TermsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.iriTerm,
+          propertySchema: TermsStruct.schema.properties.iriTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -39843,7 +40981,7 @@ export namespace TermsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.literalTerm,
+          propertySchema: TermsStruct.schema.properties.literalTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -39859,7 +40997,7 @@ export namespace TermsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.numberTerm,
+          propertySchema: TermsStruct.schema.properties.numberTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -39875,7 +41013,7 @@ export namespace TermsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.stringTerm,
+          propertySchema: TermsStruct.schema.properties.stringTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -39891,7 +41029,7 @@ export namespace TermsStruct {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.term,
+          propertySchema: TermsStruct.schema.properties.term,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode | Literal,
             $TermSchema<BlankNode | NamedNode | Literal>
@@ -41925,7 +43063,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "optionalIriOrLiteral",
-        propertySchema: schema.properties.optionalIriOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
             readonly on?: {
@@ -41997,7 +43136,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "optionalIriOrString",
-        propertySchema: schema.properties.optionalIriOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalIriOrString,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
             readonly on?: {
@@ -42069,7 +43209,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "optionalNodeOrLiteral",
-        propertySchema: schema.properties.optionalNodeOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
             readonly on?: {
@@ -42141,7 +43282,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "optionalNodeOrNodeOrString",
-        propertySchema: schema.properties.optionalNodeOrNodeOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalNodeOrNodeOrString,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           {
             readonly on?: {
@@ -42231,7 +43373,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "requiredIriOrLiteral",
-        propertySchema: schema.properties.requiredIriOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredIriOrLiteral,
         typeSparqlConstructTriples: (({
           ignoreRdfType,
           filter,
@@ -42288,7 +43431,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "requiredIriOrString",
-        propertySchema: schema.properties.requiredIriOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredIriOrString,
         typeSparqlConstructTriples: (({
           ignoreRdfType,
           filter,
@@ -42345,7 +43489,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "requiredNodeOrLiteral",
-        propertySchema: schema.properties.requiredNodeOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral,
         typeSparqlConstructTriples: (({
           ignoreRdfType,
           filter,
@@ -42402,7 +43547,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "requiredNodeOrNodeOrString",
-        propertySchema: schema.properties.requiredNodeOrNodeOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString,
         typeSparqlConstructTriples: (({
           ignoreRdfType,
           filter,
@@ -42472,7 +43618,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "setIriOrLiteral",
-        propertySchema: schema.properties.setIriOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setIriOrLiteral,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           {
             readonly on?: {
@@ -42544,7 +43691,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "setIriOrString",
-        propertySchema: schema.properties.setIriOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setIriOrString,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           {
             readonly on?: {
@@ -42616,7 +43764,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "setNodeOrLiteral",
-        propertySchema: schema.properties.setNodeOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           {
             readonly on?: {
@@ -42688,7 +43837,8 @@ export namespace UnionDiscriminantsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "setNodeOrNodeOrString",
-        propertySchema: schema.properties.setNodeOrNodeOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           {
             readonly on?: {
@@ -42799,7 +43949,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalIriOrLiteral",
-        propertySchema: schema.properties.optionalIriOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
@@ -42874,7 +44025,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalIriOrString",
-        propertySchema: schema.properties.optionalIriOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalIriOrString,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
@@ -42949,7 +44101,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalNodeOrLiteral",
-        propertySchema: schema.properties.optionalNodeOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
@@ -43024,7 +44177,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "optionalNodeOrNodeOrString",
-        propertySchema: schema.properties.optionalNodeOrNodeOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalNodeOrNodeOrString,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
@@ -43118,7 +44272,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "requiredIriOrLiteral",
-        propertySchema: schema.properties.requiredIriOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredIriOrLiteral,
         typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
@@ -43173,7 +44328,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "requiredIriOrString",
-        propertySchema: schema.properties.requiredIriOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredIriOrString,
         typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
@@ -43228,7 +44384,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "requiredNodeOrLiteral",
-        propertySchema: schema.properties.requiredNodeOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral,
         typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
@@ -43283,7 +44440,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "requiredNodeOrNodeOrString",
-        propertySchema: schema.properties.requiredNodeOrNodeOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString,
         typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
@@ -43352,7 +44510,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "setIriOrLiteral",
-        propertySchema: schema.properties.setIriOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setIriOrLiteral,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           {
             readonly on?: {
@@ -43427,7 +44586,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "setIriOrString",
-        propertySchema: schema.properties.setIriOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setIriOrString,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           {
             readonly on?: {
@@ -43502,7 +44662,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "setNodeOrLiteral",
-        propertySchema: schema.properties.setNodeOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           {
             readonly on?: {
@@ -43577,7 +44738,8 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "setNodeOrNodeOrString",
-        propertySchema: schema.properties.setNodeOrNodeOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           {
             readonly on?: {
@@ -44381,7 +45543,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.optionalIriOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           NamedNode | Literal,
           {
@@ -44453,7 +45616,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.optionalIriOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalIriOrString,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           NamedNode | string,
           {
@@ -44525,7 +45689,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.optionalNodeOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           { termType: "UnionMember1"; value: UnionMember1 } | Literal,
           {
@@ -44629,7 +45794,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.optionalNodeOrNodeOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.optionalNodeOrNodeOrString,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           | { type: "UnionMember1"; value: UnionMember1 }
           | { type: "UnionMember2"; value: UnionMember2 }
@@ -44795,7 +45961,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.requiredIriOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredIriOrLiteral,
         typeFromRdfResourceValues: ((values, options) =>
           values.chainMap((value) => {
             const valueAsValues = value.toValues();
@@ -44852,7 +46019,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.requiredIriOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredIriOrString,
         typeFromRdfResourceValues: ((values, options) =>
           values.chainMap((value) => {
             const valueAsValues = value.toValues();
@@ -44909,7 +46077,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.requiredNodeOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral,
         typeFromRdfResourceValues: ((values, options) =>
           values.chainMap((value) => {
             const valueAsValues = value.toValues();
@@ -44996,7 +46165,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.requiredNodeOrNodeOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString,
         typeFromRdfResourceValues: ((values, options) =>
           values.chainMap((value) => {
             const valueAsValues = value.toValues();
@@ -45132,7 +46302,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.setIriOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setIriOrLiteral,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           NamedNode | Literal,
           {
@@ -45204,7 +46375,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.setIriOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setIriOrString,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           NamedNode | string,
           {
@@ -45279,7 +46451,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.setNodeOrLiteral,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           { termType: "UnionMember1"; value: UnionMember1 } | Literal,
           {
@@ -45383,7 +46556,8 @@ export namespace UnionDiscriminantsStruct {
         focusResource: $resource,
         ignoreRdfType: true,
         preferredLanguages: _$options.preferredLanguages,
-        propertySchema: schema.properties.setNodeOrNodeOrString,
+        propertySchema:
+          UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           | { type: "UnionMember1"; value: UnionMember1 }
           | { type: "UnionMember2"; value: UnionMember2 }
@@ -47380,7 +48554,7 @@ export namespace UnionMember1 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "unionMember1Distinct",
-        propertySchema: schema.properties.unionMember1Distinct,
+        propertySchema: UnionMember1.schema.properties.unionMember1Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47391,7 +48565,7 @@ export namespace UnionMember1 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "unionMemberCommon",
-        propertySchema: schema.properties.unionMemberCommon,
+        propertySchema: UnionMember1.schema.properties.unionMemberCommon,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47465,7 +48639,7 @@ export namespace UnionMember1 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "unionMember1Distinct",
-        propertySchema: schema.properties.unionMember1Distinct,
+        propertySchema: UnionMember1.schema.properties.unionMember1Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47477,7 +48651,7 @@ export namespace UnionMember1 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "unionMemberCommon",
-        propertySchema: schema.properties.unionMemberCommon,
+        propertySchema: UnionMember1.schema.properties.unionMemberCommon,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47537,7 +48711,7 @@ export namespace UnionMember1 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.unionMember1Distinct,
+          propertySchema: UnionMember1.schema.properties.unionMember1Distinct,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -47548,7 +48722,7 @@ export namespace UnionMember1 {
             focusResource: $resource,
             ignoreRdfType: true,
             preferredLanguages: _$options.preferredLanguages,
-            propertySchema: schema.properties.unionMemberCommon,
+            propertySchema: UnionMember1.schema.properties.unionMemberCommon,
             typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
             objectSet: _$options.objectSet,
           },
@@ -47956,7 +49130,7 @@ export namespace UnionMember2 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "unionMember2Distinct",
-        propertySchema: schema.properties.unionMember2Distinct,
+        propertySchema: UnionMember2.schema.properties.unionMember2Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47967,7 +49141,7 @@ export namespace UnionMember2 {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "unionMemberCommon",
-        propertySchema: schema.properties.unionMemberCommon,
+        propertySchema: UnionMember1.schema.properties.unionMemberCommon,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -48041,7 +49215,7 @@ export namespace UnionMember2 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "unionMember2Distinct",
-        propertySchema: schema.properties.unionMember2Distinct,
+        propertySchema: UnionMember2.schema.properties.unionMember2Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -48053,7 +49227,7 @@ export namespace UnionMember2 {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "unionMemberCommon",
-        propertySchema: schema.properties.unionMemberCommon,
+        propertySchema: UnionMember1.schema.properties.unionMemberCommon,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -48113,7 +49287,7 @@ export namespace UnionMember2 {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.unionMember2Distinct,
+          propertySchema: UnionMember2.schema.properties.unionMember2Distinct,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
           objectSet: _$options.objectSet,
         }),
@@ -48124,7 +49298,7 @@ export namespace UnionMember2 {
             focusResource: $resource,
             ignoreRdfType: true,
             preferredLanguages: _$options.preferredLanguages,
-            propertySchema: schema.properties.unionMemberCommon,
+            propertySchema: UnionMember1.schema.properties.unionMemberCommon,
             typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
             objectSet: _$options.objectSet,
           },
@@ -51714,6 +52888,7 @@ export namespace Union {
   >;
 }
 export type $Object =
+  | AnonymousTypesStruct
   | BlankNodeIdentifierStruct
   | BlankNodeOrIriIdentifierStruct
   | ClassConstraintsStruct
@@ -51764,6 +52939,9 @@ export type $Object =
 
 export namespace $Object {
   export const $toString = (value: $Object): string => {
+    if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
+      return AnonymousTypesStruct.$toString(value);
+    }
     if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(value)) {
       return BlankNodeIdentifierStruct.$toString(value);
     }
@@ -51920,6 +53098,15 @@ export namespace $Object {
   };
 
   export const equals = (left: $Object, right: $Object) => {
+    if (
+      AnonymousTypesStruct.isAnonymousTypesStruct(left) &&
+      AnonymousTypesStruct.isAnonymousTypesStruct(right)
+    ) {
+      return AnonymousTypesStruct.equals(
+        left as AnonymousTypesStruct,
+        right as AnonymousTypesStruct,
+      );
+    }
     if (
       BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(left) &&
       BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(right)
@@ -52347,6 +53534,16 @@ export namespace $Object {
       !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
+    }
+    if (
+      filter.on?.["AnonymousTypesStruct"] !== undefined &&
+      AnonymousTypesStruct.isAnonymousTypesStruct(value)
+    ) {
+      if (
+        !AnonymousTypesStruct.filter(filter.on["AnonymousTypesStruct"], value)
+      ) {
+        return false;
+      }
     }
     if (
       filter.on?.["BlankNodeIdentifierStruct"] !== undefined &&
@@ -52836,6 +54033,7 @@ export namespace $Object {
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
+      readonly AnonymousTypesStruct?: AnonymousTypesStruct.Filter;
       readonly BlankNodeIdentifierStruct?: BlankNodeIdentifierStruct.Filter;
       readonly BlankNodeOrIriIdentifierStruct?: BlankNodeOrIriIdentifierStruct.Filter;
       readonly ClassConstraintsStruct?: ClassConstraintsStruct.Filter;
@@ -52897,6 +54095,12 @@ export namespace $Object {
     variablePrefix: string;
   }): readonly sparqljs.Triple[] {
     return [
+      ...AnonymousTypesStruct.focusSparqlConstructTriples({
+        filter: filter?.on?.AnonymousTypesStruct,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}AnonymousTypesStruct`,
+      }).concat(),
       ...BlankNodeIdentifierStruct.focusSparqlConstructTriples({
         filter: filter?.on?.BlankNodeIdentifierStruct,
         focusIdentifier,
@@ -53212,6 +54416,16 @@ export namespace $Object {
     }
     patterns.push({
       patterns: [
+        {
+          patterns: AnonymousTypesStruct.focusSparqlWherePatterns({
+            filter: filter?.on?.AnonymousTypesStruct,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}AnonymousTypesStruct`,
+          }).concat(),
+          type: "group",
+        },
         {
           patterns: BlankNodeIdentifierStruct.focusSparqlWherePatterns({
             filter: filter?.on?.BlankNodeIdentifierStruct,
@@ -53693,6 +54907,11 @@ export namespace $Object {
   }
 
   export const fromJson = (value: $Object.Json): Either<Error, $Object> => {
+    if (value["@type"] === "AnonymousTypesStruct") {
+      return AnonymousTypesStruct.fromJson(
+        value as AnonymousTypesStruct.Json,
+      ).map((value) => value);
+    }
     if (value["@type"] === "BlankNodeIdentifierStruct") {
       return BlankNodeIdentifierStruct.fromJson(
         value as BlankNodeIdentifierStruct.Json,
@@ -53935,11 +55154,18 @@ export namespace $Object {
     options,
   ) =>
     (
-      BlankNodeIdentifierStruct.fromRdfResource(resource, {
+      AnonymousTypesStruct.fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
       }) as Either<Error, $Object>
     )
+      .altLazy(
+        () =>
+          BlankNodeIdentifierStruct.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
       .altLazy(
         () =>
           BlankNodeOrIriIdentifierStruct.fromRdfResource(resource, {
@@ -54273,11 +55499,18 @@ export namespace $Object {
     values.chainMap((value) => {
       const valueAsValues = value.toValues();
       return (
-        BlankNodeIdentifierStruct.fromRdfResourceValues(valueAsValues, {
+        AnonymousTypesStruct.fromRdfResourceValues(valueAsValues, {
           ...options,
-          schema: options.schema.members["BlankNodeIdentifierStruct"].type,
+          schema: options.schema.members["AnonymousTypesStruct"].type,
         }) as Either<Error, Resource.Values<$Object>>
       )
+        .altLazy(
+          () =>
+            BlankNodeIdentifierStruct.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["BlankNodeIdentifierStruct"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
         .altLazy(
           () =>
             BlankNodeOrIriIdentifierStruct.fromRdfResourceValues(
@@ -54628,6 +55861,9 @@ export namespace $Object {
     hasher: HasherT,
     value: $Object,
   ): HasherT => {
+    if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
+      return AnonymousTypesStruct.hash(hasher, value);
+    }
     if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(value)) {
       return BlankNodeIdentifierStruct.hash(hasher, value);
     }
@@ -54792,6 +56028,7 @@ export namespace $Object {
     export const schema = () =>
       z
         .discriminatedUnion("$type", [
+          AnonymousTypesStruct.Json.schema(),
           BlankNodeIdentifierStruct.Json.schema(),
           BlankNodeOrIriIdentifierStruct.Json.schema(),
           ClassConstraintsStruct.Json.schema(),
@@ -54853,6 +56090,7 @@ export namespace $Object {
   }
 
   export type Json =
+    | AnonymousTypesStruct.Json
     | BlankNodeIdentifierStruct.Json
     | BlankNodeOrIriIdentifierStruct.Json
     | ClassConstraintsStruct.Json
@@ -54904,6 +56142,10 @@ export namespace $Object {
   export const schema = {
     kind: "ObjectUnion" as const,
     members: {
+      AnonymousTypesStruct: {
+        discriminantValues: ["AnonymousTypesStruct"],
+        type: AnonymousTypesStruct.schema,
+      },
       BlankNodeIdentifierStruct: {
         discriminantValues: ["BlankNodeIdentifierStruct"],
         type: BlankNodeIdentifierStruct.schema,
@@ -55150,6 +56392,9 @@ export namespace $Object {
   }
 
   export const toJson = (value: $Object): $Object.Json => {
+    if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
+      return AnonymousTypesStruct.toJson(value);
+    }
     if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(value)) {
       return BlankNodeIdentifierStruct.toJson(value);
     }
@@ -55309,6 +56554,9 @@ export namespace $Object {
     object,
     options,
   ) => {
+    if (AnonymousTypesStruct.isAnonymousTypesStruct(object)) {
+      return AnonymousTypesStruct.toRdfResource(object, options);
+    }
     if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(object)) {
       return BlankNodeIdentifierStruct.toRdfResource(object, options);
     }
@@ -55470,6 +56718,14 @@ export namespace $Object {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
+    if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
+      return [
+        AnonymousTypesStruct.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
     if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(value)) {
       return [
         BlankNodeIdentifierStruct.toRdfResource(value, {
@@ -55867,6 +57123,14 @@ export namespace $Object {
     let triples: sparqljs.Triple[] = [];
 
     triples = triples.concat(
+      AnonymousTypesStruct.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["AnonymousTypesStruct"],
+        ignoreRdfType: false,
+        schema: schema.members["AnonymousTypesStruct"].type,
+      }),
+    );
+    triples = triples.concat(
       BlankNodeIdentifierStruct.valueSparqlConstructTriples({
         ...otherParameters,
         filter: filter?.on?.["BlankNodeIdentifierStruct"],
@@ -56256,6 +57520,15 @@ export namespace $Object {
   > = (({ filter, schema, ...otherParameters }) => {
     const unionPatterns: sparqljs.GroupPattern[] = [];
 
+    unionPatterns.push({
+      patterns: AnonymousTypesStruct.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["AnonymousTypesStruct"],
+        ignoreRdfType: false,
+        schema: schema.members["AnonymousTypesStruct"].type,
+      }).concat(),
+      type: "group",
+    });
     unionPatterns.push({
       patterns: BlankNodeIdentifierStruct.valueSparqlWherePatterns({
         ...otherParameters,
@@ -56689,6 +57962,35 @@ export namespace $Object {
   >;
 }
 export interface $ObjectSet {
+  anonymousTypesStruct(
+    identifier: AnonymousTypesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, AnonymousTypesStruct>>;
+
+  anonymousTypesStructCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        AnonymousTypesStruct.Filter,
+        AnonymousTypesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  anonymousTypesStructIdentifiers(
+    query?: $ObjectSet.Query<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly AnonymousTypesStruct.Identifier[]>>;
+
+  anonymousTypesStructs(
+    query?: $ObjectSet.Query<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly AnonymousTypesStruct[]>>;
+
   blankNodeIdentifierStruct(
     identifier: BlankNodeIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -58135,6 +59437,98 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       dataFactory: dataFactory,
       dataset: this.$dataset(),
     });
+  }
+
+  async anonymousTypesStruct(
+    identifier: AnonymousTypesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, AnonymousTypesStruct>> {
+    return this.anonymousTypesStructSync(identifier, options);
+  }
+
+  anonymousTypesStructSync(
+    identifier: AnonymousTypesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, AnonymousTypesStruct> {
+    return this.anonymousTypesStructsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async anonymousTypesStructCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        AnonymousTypesStruct.Filter,
+        AnonymousTypesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.anonymousTypesStructCountSync(query);
+  }
+
+  anonymousTypesStructCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        AnonymousTypesStruct.Filter,
+        AnonymousTypesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.anonymousTypesStructsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async anonymousTypesStructIdentifiers(
+    query?: $ObjectSet.Query<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly AnonymousTypesStruct.Identifier[]>> {
+    return this.anonymousTypesStructIdentifiersSync(query);
+  }
+
+  anonymousTypesStructIdentifiersSync(
+    query?: $ObjectSet.Query<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >,
+  ): Either<Error, readonly AnonymousTypesStruct.Identifier[]> {
+    return this.anonymousTypesStructsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async anonymousTypesStructs(
+    query?: $ObjectSet.Query<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly AnonymousTypesStruct[]>> {
+    return this.anonymousTypesStructsSync(query);
+  }
+
+  anonymousTypesStructsSync(
+    query?: $ObjectSet.Query<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >,
+  ): Either<Error, readonly AnonymousTypesStruct[]> {
+    return this.#objectsSync<
+      AnonymousTypesStruct,
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >(
+      {
+        filter: AnonymousTypesStruct.filter,
+        fromRdfResource: AnonymousTypesStruct.fromRdfResource,
+        fromRdfTypes: [AnonymousTypesStruct.schema.fromRdfType],
+      },
+      query,
+    );
   }
 
   async blankNodeIdentifierStruct(
@@ -62770,6 +64164,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       [
         {
           filter: $Object.filter,
+          fromRdfResource: AnonymousTypesStruct.fromRdfResource,
+          fromRdfTypes: [AnonymousTypesStruct.schema.fromRdfType],
+        },
+        {
+          filter: $Object.filter,
           fromRdfResource: BlankNodeIdentifierStruct.fromRdfResource,
           fromRdfTypes: [BlankNodeIdentifierStruct.schema.fromRdfType],
         },
@@ -63317,6 +64716,58 @@ export class $SparqlObjectSet implements $ObjectSet {
   ) {
     this.#graph = options?.graph;
     this.#sparqlClient = sparqlClient;
+  }
+
+  async anonymousTypesStruct(
+    identifier: AnonymousTypesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, AnonymousTypesStruct>> {
+    return (
+      await this.anonymousTypesStructs({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async anonymousTypesStructCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        AnonymousTypesStruct.Filter,
+        AnonymousTypesStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >(AnonymousTypesStruct, query);
+  }
+
+  async anonymousTypesStructIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly AnonymousTypesStruct.Identifier[]>> {
+    return this.#objectIdentifiers<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >(AnonymousTypesStruct, query);
+  }
+
+  async anonymousTypesStructs(
+    query?: $SparqlObjectSet.Query<
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly AnonymousTypesStruct[]>> {
+    return this.#objects<
+      AnonymousTypesStruct,
+      AnonymousTypesStruct.Filter,
+      AnonymousTypesStruct.Identifier
+    >(AnonymousTypesStruct, query);
   }
 
   async blankNodeIdentifierStruct(
