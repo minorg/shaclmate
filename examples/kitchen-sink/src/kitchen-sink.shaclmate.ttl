@@ -63,6 +63,21 @@
     rdfs:comment "Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI." ;
     sh:property [
         sh:minCount 1 ;
+        sh:path :convertibleTermNonEmptySet
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :convertibleIri
+    ], [
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :convertibleIriOption
+    ], [
+        sh:nodeKind sh:IRI ;
+        sh:path :convertibleIriSet
+    ], [
+        sh:minCount 1 ;
         sh:nodeKind sh:IRI ;
         sh:path :convertibleIriNonEmptySet
     ], [
@@ -90,21 +105,6 @@
         sh:path :convertibleTermOption
     ], [
         sh:path :convertibleTermSet
-    ], [
-        sh:minCount 1 ;
-        sh:path :convertibleTermNonEmptySet
-    ], [
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:path :convertibleIri
-    ], [
-        sh:maxCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:path :convertibleIriOption
-    ], [
-        sh:nodeKind sh:IRI ;
-        sh:path :convertibleIriSet
     ] .
 
 :DateUnionsStruct
