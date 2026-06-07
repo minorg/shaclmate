@@ -7,7 +7,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_ObjectType/DiscriminantProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
-import { ObjectType_createFunctionExpression } from "./_ObjectType/ObjectType_createFunctionDeclaration.js";
+import { ObjectType_createFunctionExpression } from "./_ObjectType/ObjectType_createFunctionExpression.js";
 import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
 import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunctionExpression.js";
 import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterTypeExpression.js";
@@ -492,6 +492,16 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       .orDefault(ObjectType_toJsonFunctionExpression.call(this));
   }
 
+  @Memoize()
+  protected get toStringFunction(): Code {
+    return this.name
+      .map(
+        (name) =>
+          code`${name}.${this.configuration.syntheticNamePrefix}toString`,
+      )
+      .orDefault(ObjectType_toStringFunctionExpression.call(this));
+  }
+
   private get inlineExpression(): Code {
     return code`{ ${joinCode(
       this.properties.map((property) => property.declaration),
@@ -583,16 +593,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       .orDefault(
         code`JSON.stringify(${this.toStringRecordExpression({ variables })})`,
       );
-  }
-
-  @Memoize()
-  protected toStringFunction(): Code {
-    return this.name
-      .map(
-        (name) =>
-          code`${name}.${this.configuration.syntheticNamePrefix}toString`,
-      )
-      .orDefault(ObjectType_toStringFunctionExpression.call(this));
   }
 
   protected toStringRecordExpression({

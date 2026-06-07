@@ -20,17 +20,16 @@ export function ObjectType_createFunctionExpression(this: ObjectType): Code {
     returnExpression = code`${returnExpression}.map(properties => ({ ...properties, ${discriminantProperty.name}: ${literalOf(discriminantProperty.value)} as const }))`;
   });
 
-  const monkeyPatchMethods: string[] = [];
+  const monkeyPatchMethods: Record<string, Code> = {};
   if (this.configuration.features.has("Object.toJson")) {
-    monkeyPatchMethods.push("toJson");
+    monkeyPatchMethods["toJson"] = this.toJsonFunction;
   }
   if (this.configuration.features.has("Object.toString")) {
-    monkeyPatchMethods.push(
-      `${this.configuration.syntheticNamePrefix}toString`,
-    );
+    monkeyPatchMethods[`${this.configuration.syntheticNamePrefix}toString`] =
+      this.toStringFunction;
   }
-  if (monkeyPatchMethods.length > 0) {
-    returnExpression = code`${returnExpression}.map(object => ${this.reusables.snippets.monkeyPatchObject}(object, { ${monkeyPatchMethods.join(", ")} }))`;
+  if (Object.keys(monkeyPatchMethods).length > 0) {
+    returnExpression = code`${returnExpression}.map(object => ${this.reusables.snippets.monkeyPatchObject}(object, ${monkeyPatchMethods}))`;
   }
 
   return code`((parameters) => ${returnExpression})`;

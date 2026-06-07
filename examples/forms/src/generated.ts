@@ -729,7 +729,12 @@ export namespace FormStruct {
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
     })
       .map((properties) => ({ ...properties, $type: "FormStruct" as const }))
-      .map((object) => $monkeyPatchObject(object, { toJson, $toString }));
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          toJson: FormStruct.toJson,
+          $toString: FormStruct.$toString,
+        }),
+      );
 
   export function createUnsafe(parameters: {
     readonly $identifier?:
@@ -784,7 +789,27 @@ export namespace FormStruct {
                 parameters.requiredStringProperty,
               ),
             }).map((object) =>
-              $monkeyPatchObject(object, { toJson, $toString }),
+              $monkeyPatchObject(object, {
+                toJson: (_object) =>
+                  JSON.parse(
+                    JSON.stringify({
+                      "@id":
+                        _object.$identifier().termType === "BlankNode"
+                          ? `_:${_object.$identifier().value}`
+                          : _object.$identifier().value,
+                      requiredStringProperty: _object.requiredStringProperty,
+                    } satisfies {
+                      readonly "@id": string;
+                      readonly requiredStringProperty: string;
+                    }),
+                  ),
+                $toString: (_object) =>
+                  JSON.stringify(
+                    $compactRecord({
+                      $identifier: _object.$identifier().toString(),
+                    }),
+                  ),
+              }),
             ),
           ))($json["nestedStructProperty"]),
         nonEmptyStringSetProperty: Either.sequence<Error, string>(
@@ -914,7 +939,28 @@ export namespace FormStruct {
                         parameters.requiredStringProperty,
                       ),
                     }).map((object) =>
-                      $monkeyPatchObject(object, { toJson, $toString }),
+                      $monkeyPatchObject(object, {
+                        toJson: (_object) =>
+                          JSON.parse(
+                            JSON.stringify({
+                              "@id":
+                                _object.$identifier().termType === "BlankNode"
+                                  ? `_:${_object.$identifier().value}`
+                                  : _object.$identifier().value,
+                              requiredStringProperty:
+                                _object.requiredStringProperty,
+                            } satisfies {
+                              readonly "@id": string;
+                              readonly requiredStringProperty: string;
+                            }),
+                          ),
+                        $toString: (_object) =>
+                          JSON.stringify(
+                            $compactRecord({
+                              $identifier: _object.$identifier().toString(),
+                            }),
+                          ),
+                      }),
                     ))(properties),
                 ))(resource, options),
             ),
