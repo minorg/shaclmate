@@ -47,8 +47,6 @@ import { tsComment } from "./tsComment.js";
 export class ObjectType extends AbstractType {
   protected readonly toRdfTypes: readonly NamedNode[];
 
-  override readonly conversionFunction: Maybe<AbstractType.ConversionFunction> =
-    Maybe.empty();
   override readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
@@ -94,6 +92,25 @@ export class ObjectType extends AbstractType {
     this.recursive = recursive;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
+  }
+
+  @Memoize()
+  override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
+    if (this.name.isJust()) {
+      return Maybe.empty();
+    }
+    return Maybe.of({
+      code: this.createFunction,
+      sourceTypes: [
+        {
+          expression: this.constructorParameters.type.expression,
+          jsType: {
+            instanceof: "Object",
+            typeof: "object",
+          },
+        },
+      ],
+    });
   }
 
   override get declaration(): Maybe<Code> {
@@ -452,6 +469,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   protected get constructorParameters(): {
     hasQuestionToken: boolean;
     signature: Code;
+    type: {
+      expression: Code;
+    };
     variable: string;
   } {
     let hasQuestionToken: boolean = true;
@@ -465,9 +485,14 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     }
     invariant(propertySignatures.length > 0);
 
+    const typeExpression = code`{ ${joinCode(propertySignatures)} }`;
+
     return {
       hasQuestionToken,
-      signature: code`parameters${hasQuestionToken ? "?" : ""}: { ${joinCode(propertySignatures)} }`,
+      signature: code`parameters${hasQuestionToken ? "?" : ""}: ${typeExpression}`,
+      type: {
+        expression: typeExpression,
+      },
       variable: "parameters",
     };
   }
