@@ -1596,21 +1596,13 @@ export namespace RootObject {
       )(parameters.optionalLazyProperty),
       optionalObjectProperty: $convertToMaybe(
         (parameters: {
-          readonly $identifier: () => BlankNode | NamedNode;
-
-          /**
-           * Optional number property
-           */
-          readonly optionalNumberProperty: Maybe<number>;
-
-          /**
-           * Optional string property
-           */
-          readonly optionalStringProperty: Maybe<string>;
-
-          /**
-           * Required string property
-           */
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | string;
+          readonly optionalNumberProperty?: number | Maybe<number>;
+          readonly optionalStringProperty?: string | Maybe<string>;
           readonly requiredStringProperty: string;
         }) =>
           $sequenceRecord({
@@ -2252,21 +2244,13 @@ export namespace RootObject {
                     }),
                   }).chain((properties) =>
                     ((parameters: {
-                      readonly $identifier: () => BlankNode | NamedNode;
-
-                      /**
-                       * Optional number property
-                       */
-                      readonly optionalNumberProperty: Maybe<number>;
-
-                      /**
-                       * Optional string property
-                       */
-                      readonly optionalStringProperty: Maybe<string>;
-
-                      /**
-                       * Required string property
-                       */
+                      readonly $identifier?:
+                        | (() => BlankNode | NamedNode)
+                        | BlankNode
+                        | NamedNode
+                        | string;
+                      readonly optionalNumberProperty?: number | Maybe<number>;
+                      readonly optionalStringProperty?: string | Maybe<string>;
                       readonly requiredStringProperty: string;
                     }) =>
                       $sequenceRecord({
