@@ -28,7 +28,7 @@ function generate(
 }
 
 describe("TsGenerator", () => {
-  for (const [id, shapesGraphEither] of Object.entries(
+  for (const [idString, shapesGraphEither] of Object.entries(
     testData.shapesGraphs.wellFormed,
   ) as [
     keyof typeof testData.shapesGraphs.wellFormed,
@@ -37,6 +37,7 @@ describe("TsGenerator", () => {
     if (shapesGraphEither === null) {
       continue;
     }
+    const id = idString as keyof typeof testData.shapesGraphs.wellFormed;
 
     it(id, () => {
       let configuration: Partial<TsGenerator.Configuration> | undefined;
