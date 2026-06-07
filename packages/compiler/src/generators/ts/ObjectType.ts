@@ -11,8 +11,8 @@ import { ObjectType_createFunctionDeclaration } from "./_ObjectType/ObjectType_c
 import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
 import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunctionExpression.js";
 import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterTypeExpression.js";
-import { ObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
-import { ObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionDeclaration.js";
+import { ObjectType_focusSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionExpression.js";
+import { ObjectType_focusSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionExpression.js";
 import { ObjectType_fromJsonFunctionExpression } from "./_ObjectType/ObjectType_fromJsonFunctionExpression.js";
 import { ObjectType_fromRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceFunctionExpression.js";
 import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
@@ -30,8 +30,8 @@ import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectTyp
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunctionExpression.js";
 import { ObjectType_toRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceFunctionExpression.js";
-import { ObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
-import { ObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
+import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.js";
+import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
 import { AbstractType } from "./AbstractType.js";
@@ -41,8 +41,6 @@ import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 import { tsComment } from "./tsComment.js";
-import { ObjectType_focusSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionExpression.js";
-import { ObjectType_focusSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionExpression.js";
 
 export class ObjectType extends AbstractType {
   protected readonly toRdfTypes: readonly NamedNode[];
@@ -174,8 +172,8 @@ export class ObjectType extends AbstractType {
       if (this.configuration.features.has("Object.SPARQL")) {
         staticModuleDeclarations.push(
           code`export const focusSparqlConstructTriples: ${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}> = ${ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this)};`,
-          code`export const focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = ${ObjectType_focusSparqlWherePatternsFunctionExpression.call(this)};`
-        )
+          code`export const focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = ${ObjectType_focusSparqlWherePatternsFunctionExpression.call(this)};`,
+        );
       }
 
       // fromJson
@@ -187,12 +185,12 @@ export class ObjectType extends AbstractType {
 
       // fromRdfResource / fromRdfResourceValues
       if (this.configuration.features.has("Object.fromRdf")) {
-        staticModuleDeclarations.push(code`
-export const _fromRdfResource = ${ObjectType_fromRdfResourceFunctionExpression.call(this)};         
-export const fromRdfResource = ${this.reusables.snippets.wrap_FromRdfResourceFunction}(_fromRdfResource);
-
-export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}> = 
-  (values, options) => values.chainMap(value => value.toResource().chain(resource => fromRdfResource(resource, options)));`);
+        staticModuleDeclarations.push(
+          code`export const _fromRdfResource = ${ObjectType_fromRdfResourceFunctionExpression.call(this)};`,
+          code`export const fromRdfResource = ${this.reusables.snippets.wrap_FromRdfResourceFunction}(_fromRdfResource);`,
+          code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}> = 
+  (values, options) => values.chainMap(value => value.toResource().chain(resource => fromRdfResource(resource, options)));`,
+        );
       }
 
       // hash
@@ -208,6 +206,11 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
           ObjectType_identifierTypeDeclarations.call(this),
         );
       }
+
+      // isType
+      staticModuleDeclarations = staticModuleDeclarations.concat(
+        ObjectType_isTypeFunctionDeclaration.call(this).toList(),
+      );
 
       // type Json
       if (this.configuration.features.has("Object.JSON.type")) {
@@ -249,6 +252,24 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
         );
       }
 
+      // sparqlConstructQuery / sparqlConstructQueryString
+      if (this.configuration.features.has("Object.SPARQL")) {
+        staticModuleDeclarations.push(
+          ObjectType_sparqlConstructQueryFunctionDeclaration.call({
+            name,
+            configuration: this.configuration,
+            filterType: this.filterType,
+            reusables: this.reusables,
+          }),
+          ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
+            name,
+            configuration: this.configuration,
+            filterType: this.filterType,
+            reusables: this.reusables,
+          }),
+        );
+      }
+
       // toJson
       if (this.configuration.features.has("Object.toJson")) {
         staticModuleDeclarations.push(
@@ -268,39 +289,17 @@ export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceVal
       if (this.configuration.features.has("Object.toString")) {
         staticModuleDeclarations.push(
           code`export const ${this.configuration.syntheticNamePrefix}toString = (${this.thisVariable}: ${this.expression}): string => \`\${${name}(JSON.stringify(toStringRecord(${this.thisVariable}))}\`;`,
-        );
-        staticModuleDeclarations.push(
           code`export const toStringRecord = (${this.thisVariable}: ${this.expression}): string => ${this.toStringRecordExpression({ variables: { value: this.thisVariable } })};`,
         );
       }
 
-      staticModuleDeclarations.push(
-        ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.call(
-          this,
-        ).toList(),
-        ...ObjectType_focusSparqlWherePatternsFunctionDeclaration.call(
-          this,
-        ).toList(),
-        ...ObjectType_isTypeFunctionDeclaration.call(this).toList(),
-        ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
-          name,
-          configuration: this.configuration,
-          filterType: this.filterType,
-          reusables: this.reusables,
-        }).toList(),
-        ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-          name,
-          configuration: this.configuration,
-          filterType: this.filterType,
-          reusables: this.reusables,
-        }).toList(),
-        ...ObjectType_valueSparqlConstructTriplesFunctionDeclaration.call(
-          this,
-        ).toList(),
-        ...ObjectType_valueSparqlWherePatternsFunctionDeclaration.call(
-          this,
-        ).toList(),
-      );
+      // valueSparqlConstructTriples / valueSparqlWherePatterns
+      if (this.configuration.features.has("Object.SPARQL")) {
+        staticModuleDeclarations.push(
+          code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${ObjectType_valueSparqlConstructTriplesFunctionExpression.call(this)};`,
+          code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${ObjectType_valueSparqlWherePatternsFunctionExpression.call(this)};`,
+        );
+      }
 
       if (staticModuleDeclarations.length > 0) {
         declarations.push(code`\
@@ -434,12 +433,20 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.name.unsafeCoerce()}.valueSparqlConstructTriples`;
+    return this.name
+      .map((name) => code`${name}.valueSparqlConstructTriples`)
+      .orDefault(
+        ObjectType_valueSparqlConstructTriplesFunctionExpression.call(this),
+      );
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.name.unsafeCoerce()}.valueSparqlWherePatterns`;
+    return this.name
+      .map((name) => code`${name}.valueSparqlWherePatterns`)
+      .orDefault(
+        ObjectType_valueSparqlWherePatternsFunctionExpression.call(this),
+      );
   }
 
   @Memoize()
@@ -474,7 +481,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
           context === "property" &&
           this.properties.some((property) => property.recursive)
         ) {
-          expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name.unsafeCoerce()}.Json> => ${expression})`;
+          expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${name}.Json> => ${expression})`;
         }
         return expression;
       })

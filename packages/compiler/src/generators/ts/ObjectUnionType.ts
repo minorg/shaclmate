@@ -47,6 +47,7 @@ export class ObjectUnionType extends UnionType<ObjectType> {
 
   protected override get staticModuleDeclarations(): Record<string, Code> {
     const name = this.name.unsafeCoerce();
+
     return {
       ...super.staticModuleDeclarations,
       ...this.identifierTypeDeclarations,
@@ -56,22 +57,28 @@ export class ObjectUnionType extends UnionType<ObjectType> {
       ...this.graphqlTypeVariableStatement,
       ...this.isTypeFunctionDeclaration,
       ...this.schemaVariableStatement,
-      ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
-        name,
-        configuration: this.configuration,
-        filterType: this.filterType,
-        reusables: this.reusables,
-      })
-        .map((code_) => singleEntryRecord(`sparqlConstructQuery`, code_))
-        .orDefault({}),
-      ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-        name,
-        configuration: this.configuration,
-        filterType: this.filterType,
-        reusables: this.reusables,
-      })
-        .map((code_) => singleEntryRecord(`sparqlConstructQueryString`, code_))
-        .orDefault({}),
+      ...(this.configuration.features.has("Object.SPARQL")
+        ? {
+            ...singleEntryRecord(
+              "sparqlConstructQuery",
+              ObjectType_sparqlConstructQueryFunctionDeclaration.call({
+                name,
+                configuration: this.configuration,
+                filterType: this.filterType,
+                reusables: this.reusables,
+              }),
+            ),
+            ...singleEntryRecord(
+              "sparqlConstructQueryString",
+              ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
+                name,
+                configuration: this.configuration,
+                filterType: this.filterType,
+                reusables: this.reusables,
+              }),
+            ),
+          }
+        : {}),
       ...this.toRdfResourceFunctionDeclaration,
     };
   }
