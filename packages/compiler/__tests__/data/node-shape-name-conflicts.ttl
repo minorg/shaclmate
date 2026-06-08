@@ -1,3 +1,4 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix : <http://example.com/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
@@ -6,15 +7,21 @@
 :Object
     a rdfs:Class, sh:NodeShape ;
     rdfs:comment "Conflict with the $Object synthetic union; should be no conflict because of the $ prefix" ;
-    sh:property [ sh:path :property ] .
+    sh:property [
+        sh:path :property
+    ] .
 
 :ObjectSet
     a rdfs:Class, sh:NodeShape ;
     rdfs:comment "Conflict with the $ObjectSet interface; should be no conflict because of the $ prefix" ;
-    sh:property [ sh:path :property ] .
+    sh:property [
+        sh:path :property
+    ] .
 
 :Resource
     a rdfs:Class, sh:NodeShape ;
     rdfs:comment "Conflict with the Resource@@rdfx/resource import; the latter should be renamed" ;
-    sh:property [ sh:path :property ] .
+    sh:property [
+        sh:path :property
+    ] .
 
