@@ -411,7 +411,14 @@ export namespace FormStruct {
           value,
         ),
       ),
-      nestedStructProperty: ((parameters) =>
+      nestedStructProperty: ((parameters: {
+        readonly $identifier?:
+          | (() => BlankNode | NamedNode)
+          | BlankNode
+          | NamedNode
+          | string;
+        readonly requiredStringProperty: string;
+      }) =>
         $sequenceRecord({
           $identifier: $convertToIdentifierProperty(parameters.$identifier),
           requiredStringProperty: Either.of(parameters.requiredStringProperty),
@@ -512,35 +519,45 @@ export namespace FormStruct {
             requiredStringProperty: Either.of<Error, string>(
               $json["requiredStringProperty"],
             ),
-          }).chain((parameters) =>
-            $sequenceRecord({
-              $identifier: $convertToIdentifierProperty(parameters.$identifier),
-              requiredStringProperty: Either.of(
-                parameters.requiredStringProperty,
+          }).chain(
+            (parameters: {
+              readonly $identifier?:
+                | (() => BlankNode | NamedNode)
+                | BlankNode
+                | NamedNode
+                | string;
+              readonly requiredStringProperty: string;
+            }) =>
+              $sequenceRecord({
+                $identifier: $convertToIdentifierProperty(
+                  parameters.$identifier,
+                ),
+                requiredStringProperty: Either.of(
+                  parameters.requiredStringProperty,
+                ),
+              }).map((object) =>
+                $monkeyPatchObject(object, {
+                  toJson: (_object) =>
+                    JSON.parse(
+                      JSON.stringify({
+                        "@id":
+                          _object.$identifier().termType === "BlankNode"
+                            ? `_:${_object.$identifier().value}`
+                            : _object.$identifier().value,
+                        requiredStringProperty: _object.requiredStringProperty,
+                      } satisfies {
+                        readonly "@id": string;
+                        readonly requiredStringProperty: string;
+                      }),
+                    ),
+                  $toString: (_object) =>
+                    JSON.stringify(
+                      $compactRecord({
+                        $identifier: _object.$identifier().toString(),
+                      }),
+                    ),
+                }),
               ),
-            }).map((object) =>
-              $monkeyPatchObject(object, {
-                toJson: (_object) =>
-                  JSON.parse(
-                    JSON.stringify({
-                      "@id":
-                        _object.$identifier().termType === "BlankNode"
-                          ? `_:${_object.$identifier().value}`
-                          : _object.$identifier().value,
-                      requiredStringProperty: _object.requiredStringProperty,
-                    } satisfies {
-                      readonly "@id": string;
-                      readonly requiredStringProperty: string;
-                    }),
-                  ),
-                $toString: (_object) =>
-                  JSON.stringify(
-                    $compactRecord({
-                      $identifier: _object.$identifier().toString(),
-                    }),
-                  ),
-              }),
-            ),
           ))($json["nestedStructProperty"]),
         nonEmptyStringSetProperty: Either.sequence<Error, string>(
           $json["nonEmptyStringSetProperty"].map((item) =>
@@ -595,42 +612,39 @@ export namespace FormStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("FormStruct"),
-          emptyStringSetProperty: z
-            .string()
-            .array()
-            .optional()
-            .readonly()
-            .meta({ title: "Empty string set" }),
-          nestedStructProperty: z
-            .object({
-              "@id": z.string().min(1),
-              requiredStringProperty: z
-                .string()
-                .meta({ title: "Required string" }),
-            })
-            .meta({})
-            .meta({ title: "Nested object" }),
-          nonEmptyStringSetProperty: z
-            .string()
-            .array()
-            .nonempty()
-            .min(1)
-            .readonly()
-            .meta({
-              title: "Non-empty string set",
-            }),
-          optionalStringProperty: z
-            .string()
-            .optional()
-            .meta({ title: "Optional string" }),
-          requiredIntProperty: z.number().meta({ title: "Required int" }),
-          requiredStringProperty: z.string().meta({ title: "Required string" }),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("FormStruct"),
+        emptyStringSetProperty: z
+          .string()
+          .array()
+          .optional()
+          .readonly()
+          .meta({ title: "Empty string set" }),
+        nestedStructProperty: z
+          .object({
+            "@id": z.string().min(1),
+            requiredStringProperty: z
+              .string()
+              .meta({ title: "Required string" }),
+          })
+          .meta({ title: "Nested object" }),
+        nonEmptyStringSetProperty: z
+          .string()
+          .array()
+          .nonempty()
+          .min(1)
+          .readonly()
+          .meta({
+            title: "Non-empty string set",
+          }),
+        optionalStringProperty: z
+          .string()
+          .optional()
+          .meta({ title: "Optional string" }),
+        requiredIntProperty: z.number().meta({ title: "Required int" }),
+        requiredStringProperty: z.string().meta({ title: "Required string" }),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
