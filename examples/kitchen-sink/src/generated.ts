@@ -3778,12 +3778,10 @@ export namespace $DefaultPartial {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("DefaultPartial"),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("DefaultPartial"),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -4122,12 +4120,10 @@ export namespace $NamedDefaultPartial {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("NamedDefaultPartial"),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("NamedDefaultPartial"),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -5040,11 +5036,12 @@ export namespace AnonymousTypesStruct {
           anonymousStruct: z
             .object({
               "@id": z.string().min(1),
-              anonymousStructString: z.string().meta({}),
+              anonymousStructString: z.string(),
             })
-            .meta({})
             .optional()
-            .meta({ description: "Anonymous struct node shape" }),
+            .meta({
+              description: "Anonymous struct node shape",
+            }),
         })
         .meta({
           description: "Struct node shape with anonymous property types.",
@@ -5654,7 +5651,7 @@ export namespace BlankNodeIdentifierStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("BlankNodeIdentifierStruct"),
-          blankNodeIdentifierString: z.string().optional().meta({}),
+          blankNodeIdentifierString: z.string().optional(),
         })
         .meta({
           description:
@@ -6219,7 +6216,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("BlankNodeOrIriIdentifierStruct"),
-          blankNodeOrIriIdentifierString: z.string().optional().meta({}),
+          blankNodeOrIriIdentifierString: z.string().optional(),
         })
         .meta({
           description:
@@ -8999,31 +8996,26 @@ export namespace ConvertibleTypesStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("ConvertibleTypesStruct"),
-          convertibleIri: z.object({ "@id": z.string().min(1) }).meta({}),
+          convertibleIri: z.object({ "@id": z.string().min(1) }),
           convertibleIriNonEmptySet: z
             .object({ "@id": z.string().min(1) })
             .array()
             .nonempty()
             .min(1)
-            .readonly()
-            .meta({}),
+            .readonly(),
           convertibleIriOption: z
             .object({ "@id": z.string().min(1) })
-            .optional()
-            .meta({}),
+            .optional(),
           convertibleIriSet: z
             .object({ "@id": z.string().min(1) })
             .array()
             .optional()
-            .readonly()
-            .meta({}),
-          convertibleLiteral: z
-            .object({
-              "@language": z.string().optional(),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-            })
-            .meta({}),
+            .readonly(),
+          convertibleLiteral: z.object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          }),
           convertibleLiteralNonEmptySet: z
             .object({
               "@language": z.string().optional(),
@@ -9033,16 +9025,14 @@ export namespace ConvertibleTypesStruct {
             .array()
             .nonempty()
             .min(1)
-            .readonly()
-            .meta({}),
+            .readonly(),
           convertibleLiteralOption: z
             .object({
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
             })
-            .optional()
-            .meta({}),
+            .optional(),
           convertibleLiteralSet: z
             .object({
               "@language": z.string().optional(),
@@ -9051,26 +9041,23 @@ export namespace ConvertibleTypesStruct {
             })
             .array()
             .optional()
-            .readonly()
-            .meta({}),
-          convertibleTerm: z
-            .discriminatedUnion("termType", [
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("BlankNode"),
-              }),
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("NamedNode"),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-                termType: z.literal("Literal"),
-              }),
-            ])
-            .meta({}),
+            .readonly(),
+          convertibleTerm: z.discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("BlankNode"),
+            }),
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+              termType: z.literal("Literal"),
+            }),
+          ]),
           convertibleTermNonEmptySet: z
             .discriminatedUnion("termType", [
               z.object({
@@ -9091,8 +9078,7 @@ export namespace ConvertibleTypesStruct {
             .array()
             .nonempty()
             .min(1)
-            .readonly()
-            .meta({}),
+            .readonly(),
           convertibleTermOption: z
             .discriminatedUnion("termType", [
               z.object({
@@ -9110,8 +9096,7 @@ export namespace ConvertibleTypesStruct {
                 termType: z.literal("Literal"),
               }),
             ])
-            .optional()
-            .meta({}),
+            .optional(),
           convertibleTermSet: z
             .discriminatedUnion("termType", [
               z.object({
@@ -9131,8 +9116,7 @@ export namespace ConvertibleTypesStruct {
             ])
             .array()
             .optional()
-            .readonly()
-            .meta({}),
+            .readonly(),
         })
         .meta({
           description:
@@ -11590,16 +11574,14 @@ export namespace DateUnionsStruct {
               }),
             ])
             .readonly()
-            .optional()
-            .meta({}),
+            .optional(),
           dateOrString: z
             .discriminatedUnion("type", [
               z.object({ type: z.literal("date"), value: z.iso.date() }),
               z.object({ type: z.literal("string"), value: z.string() }),
             ])
             .readonly()
-            .optional()
-            .meta({}),
+            .optional(),
           dateTimeOrDate: z
             .discriminatedUnion("type", [
               z.object({
@@ -11609,16 +11591,14 @@ export namespace DateUnionsStruct {
               z.object({ type: z.literal("date"), value: z.iso.date() }),
             ])
             .readonly()
-            .optional()
-            .meta({}),
+            .optional(),
           stringOrDate: z
             .discriminatedUnion("type", [
               z.object({ type: z.literal("string"), value: z.string() }),
               z.object({ type: z.literal("date"), value: z.iso.date() }),
             ])
             .readonly()
-            .optional()
-            .meta({}),
+            .optional(),
         })
         .meta({
           description:
@@ -12819,12 +12799,12 @@ export namespace DefaultValuesStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("DefaultValuesStruct"),
-          dateDefaultValue: z.iso.date().meta({}),
-          dateTimeDefaultValue: z.iso.datetime().meta({}),
-          falseBooleanDefaultValue: z.boolean().meta({}),
-          numberDefaultValue: z.number().meta({}),
-          stringDefaultValue: z.string().meta({}),
-          trueBooleanDefaultValue: z.boolean().meta({}),
+          dateDefaultValue: z.iso.date(),
+          dateTimeDefaultValue: z.iso.datetime(),
+          falseBooleanDefaultValue: z.boolean(),
+          numberDefaultValue: z.number(),
+          stringDefaultValue: z.string(),
+          trueBooleanDefaultValue: z.boolean(),
         })
         .meta({
           description: "Struct node shape with sh:defaultValue properties.",
@@ -13497,19 +13477,16 @@ export namespace DirectRecursiveStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("DirectRecursiveStruct"),
-          directRecursive: z
-            .lazy(
-              (): z.ZodType<DirectRecursiveStruct.Json> =>
-                DirectRecursiveStruct.Json.schema(),
-            )
-            .optional()
-            .meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("DirectRecursiveStruct"),
+        directRecursive: z
+          .lazy(
+            (): z.ZodType<DirectRecursiveStruct.Json> =>
+              DirectRecursiveStruct.Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -14744,7 +14721,7 @@ export namespace ExplicitFromToRdfTypesStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("ExplicitFromToRdfTypesStruct"),
-          explicitFromToRdfTypesString: z.string().meta({}),
+          explicitFromToRdfTypesString: z.string(),
         })
         .meta({
           description:
@@ -15279,7 +15256,7 @@ export namespace ExplicitRdfTypeStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("ExplicitRdfTypeStruct"),
-          explicitRdfTypeString: z.string().meta({}),
+          explicitRdfTypeString: z.string(),
         })
         .meta({
           description:
@@ -15796,13 +15773,11 @@ export namespace FlattenUnionMember3 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("FlattenUnionMember3"),
-          flattenUnionMember3String: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("FlattenUnionMember3"),
+        flattenUnionMember3String: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -16307,8 +16282,8 @@ export namespace HasValuesStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("HasValuesStruct"),
-          hasIriValue: z.object({ "@id": z.string().min(1) }).meta({}),
-          hasLiteralValue: z.string().meta({}),
+          hasIriValue: z.object({ "@id": z.string().min(1) }),
+          hasLiteralValue: z.string(),
         })
         .meta({
           description: "Struct node shape with sh:hasValue properties.",
@@ -17496,19 +17471,16 @@ export namespace IndirectRecursiveStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("IndirectRecursiveStruct"),
-          indirectRecursiveHelper: z
-            .lazy(
-              (): z.ZodType<IndirectRecursiveStructHelper.Json> =>
-                IndirectRecursiveStructHelper.Json.schema(),
-            )
-            .optional()
-            .meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("IndirectRecursiveStruct"),
+        indirectRecursiveHelper: z
+          .lazy(
+            (): z.ZodType<IndirectRecursiveStructHelper.Json> =>
+              IndirectRecursiveStructHelper.Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -18040,19 +18012,16 @@ export namespace IndirectRecursiveStructHelper {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("IndirectRecursiveStructHelper"),
-          indirectRecursive: z
-            .lazy(
-              (): z.ZodType<IndirectRecursiveStruct.Json> =>
-                IndirectRecursiveStruct.Json.schema(),
-            )
-            .optional()
-            .meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("IndirectRecursiveStructHelper"),
+        indirectRecursive: z
+          .lazy(
+            (): z.ZodType<IndirectRecursiveStruct.Json> =>
+              IndirectRecursiveStruct.Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -18652,7 +18621,7 @@ export namespace InIdentifierStruct {
             "http://example.com/InIdentifierStructInstance2",
           ]),
           "@type": z.literal("InIdentifierStruct"),
-          inIdentifierString: z.string().optional().meta({}),
+          inIdentifierString: z.string().optional(),
         })
         .meta({
           description:
@@ -19741,13 +19710,10 @@ export namespace InPropertiesStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("InPropertiesStruct"),
-          inBooleans: z.literal(true).optional().meta({}),
-          inDateTimes: z.iso.datetime().optional().meta({}),
-          inDoubles: z
-            .union([z.literal(1), z.literal(2)])
-            .optional()
-            .meta({}),
-          inIntegers: z.enum(["1", "2"]).optional().meta({}),
+          inBooleans: z.literal(true).optional(),
+          inDateTimes: z.iso.datetime().optional(),
+          inDoubles: z.union([z.literal(1), z.literal(2)]).optional(),
+          inIntegers: z.enum(["1", "2"]).optional(),
           inIris: z
             .object({
               "@id": z.enum([
@@ -19755,10 +19721,9 @@ export namespace InPropertiesStruct {
                 "http://example.com/InIri2",
               ]),
             })
-            .optional()
-            .meta({}),
-          inStrings: z.enum(["text", "html"]).optional().meta({}),
-          reusableIn: z.enum(["cat", "dog"]).optional().meta({}),
+            .optional(),
+          inStrings: z.enum(["text", "html"]).optional(),
+          reusableIn: z.enum(["cat", "dog"]).optional(),
         })
         .meta({
           description: "Struct node shape with sh:in properties.",
@@ -20423,7 +20388,7 @@ export namespace IriIdentifierStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("IriIdentifierStruct"),
-          iriIdentifierString: z.string().optional().meta({}),
+          iriIdentifierString: z.string().optional(),
         })
         .meta({
           description: "A node shape that only allows IRI identifiers.",
@@ -21470,7 +21435,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("LazilyResolvedBlankNodeOrIriIdentifierStruct"),
-          lazilyResolved: z.string().meta({}),
+          lazilyResolved: z.string(),
         })
         .meta({
           description: "Struct node shape resolved by LazyPropertiesStruct",
@@ -21950,7 +21915,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("LazilyResolvedIriIdentifierStruct"),
-          lazilyResolved: z.string().meta({}),
+          lazilyResolved: z.string(),
         })
         .meta({
           description: "Struct node shape resolved by LazyPropertiesStruct",
@@ -22449,13 +22414,11 @@ export namespace LazilyResolvedUnionMember1 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("LazilyResolvedUnionMember1"),
-          lazilyResolved: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("LazilyResolvedUnionMember1"),
+        lazilyResolved: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -22964,13 +22927,11 @@ export namespace LazilyResolvedUnionMember2 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("LazilyResolvedUnionMember2"),
-          lazilyResolved: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("LazilyResolvedUnionMember2"),
+        lazilyResolved: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -25024,32 +24985,24 @@ export namespace LazyPropertiesStruct {
           "@id": z.string().min(1),
           "@type": z.literal("LazyPropertiesStruct"),
           optionalLazyToResolvedBlankNodeOrIriIdentifier:
-            $DefaultPartial.Json.schema().optional().meta({}),
+            $DefaultPartial.Json.schema().optional(),
           optionalLazyToResolvedIriIdentifier:
-            $NamedDefaultPartial.Json.schema().optional().meta({}),
-          optionalLazyToResolvedUnion: $DefaultPartial.Json.schema()
-            .optional()
-            .meta({}),
+            $NamedDefaultPartial.Json.schema().optional(),
+          optionalLazyToResolvedUnion: $DefaultPartial.Json.schema().optional(),
           optionalPartialToResolvedBlankNodeOrIriIdentifier:
-            PartialStruct.Json.schema().optional().meta({}),
-          optionalPartialToResolvedUnion: PartialStruct.Json.schema()
-            .optional()
-            .meta({}),
-          optionalPartialUnionToResolvedUnion: PartialUnion.Json.schema()
-            .optional()
-            .meta({}),
+            PartialStruct.Json.schema().optional(),
+          optionalPartialToResolvedUnion:
+            PartialStruct.Json.schema().optional(),
+          optionalPartialUnionToResolvedUnion:
+            PartialUnion.Json.schema().optional(),
           requiredLazyToResolvedBlankNodeOrIriIdentifier:
-            $DefaultPartial.Json.schema().meta({}),
+            $DefaultPartial.Json.schema(),
           requiredPartialToResolvedBlankNodeOrIriIdentifier:
-            PartialStruct.Json.schema().meta({}),
+            PartialStruct.Json.schema(),
           setLazyToResolvedBlankNodeOrIriIdentifier:
-            $DefaultPartial.Json.schema()
-              .array()
-              .optional()
-              .readonly()
-              .meta({}),
+            $DefaultPartial.Json.schema().array().optional().readonly(),
           setPartialToResolvedBlankNodeOrIriIdentifier:
-            PartialStruct.Json.schema().array().optional().readonly().meta({}),
+            PartialStruct.Json.schema().array().optional().readonly(),
         })
         .meta({
           description: "Struct node shape that has lazy properties.",
@@ -26476,39 +26429,37 @@ export namespace ListSetsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("ListSetsStruct"),
-          listListSet: z
-            .string()
-            .array()
-            .readonly()
-            .array()
-            .readonly()
-            .array()
-            .optional()
-            .readonly()
-            .meta({
-              description: "Set of lists of lists",
-            }),
-          listSet: z
-            .string()
-            .array()
-            .readonly()
-            .array()
-            .optional()
-            .readonly()
-            .meta({ description: "Set of lists" }),
-          listUnionSet: z
-            .union([z.string().array().readonly(), z.string()])
-            .readonly()
-            .array()
-            .optional()
-            .readonly()
-            .meta({ description: "Set of typeof union that includes a list" }),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("ListSetsStruct"),
+        listListSet: z
+          .string()
+          .array()
+          .readonly()
+          .array()
+          .readonly()
+          .array()
+          .optional()
+          .readonly()
+          .meta({
+            description: "Set of lists of lists",
+          }),
+        listSet: z
+          .string()
+          .array()
+          .readonly()
+          .array()
+          .optional()
+          .readonly()
+          .meta({ description: "Set of lists" }),
+        listUnionSet: z
+          .union([z.string().array().readonly(), z.string()])
+          .readonly()
+          .array()
+          .optional()
+          .readonly()
+          .meta({ description: "Set of typeof union that includes a list" }),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -27699,22 +27650,19 @@ export namespace ListsStruct {
             .object({ "@id": z.string().min(1) })
             .array()
             .readonly()
-            .optional()
-            .meta({}),
-          stringList: z.string().array().readonly().optional().meta({}),
+            .optional(),
+          stringList: z.string().array().readonly().optional(),
           stringListList: z
             .string()
             .array()
             .readonly()
             .array()
             .readonly()
-            .optional()
-            .meta({}),
+            .optional(),
           structList: NonClassStruct.Json.schema()
             .array()
             .readonly()
-            .optional()
-            .meta({}),
+            .optional(),
         })
         .meta({
           description:
@@ -29452,14 +29400,12 @@ export namespace NamedUnionsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("NamedUnionsStruct"),
-          namedUnion1: NamedUnion1.Json.schema().meta({}),
-          namedUnion2: NamedUnion2.Json.schema().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("NamedUnionsStruct"),
+        namedUnion1: NamedUnion1.Json.schema(),
+        namedUnion2: NamedUnion2.Json.schema(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -30004,7 +29950,7 @@ export namespace NewName {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("NewName"),
-          newNameString: z.string().optional().meta({}),
+          newNameString: z.string().optional(),
         })
         .meta({
           description:
@@ -30913,46 +30859,38 @@ export namespace NodeKindsStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("NodeKindsStruct"),
-          blankNodeKind: z.object({ "@id": z.string().min(1) }).meta({}),
-          blankNodeOrIriNodeKind: z
-            .object({ "@id": z.string().min(1) })
-            .meta({}),
-          blankNodeOrLiteralNodeKind: z
-            .discriminatedUnion("termType", [
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("BlankNode"),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-                termType: z.literal("Literal"),
-              }),
-            ])
-            .meta({}),
-          iriNodeKind: z.object({ "@id": z.string().min(1) }).meta({}),
-          iriOrLiteralNodeKind: z
-            .discriminatedUnion("termType", [
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("NamedNode"),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-                termType: z.literal("Literal"),
-              }),
-            ])
-            .meta({}),
-          literalNodeKind: z
-            .object({
+          blankNodeKind: z.object({ "@id": z.string().min(1) }),
+          blankNodeOrIriNodeKind: z.object({ "@id": z.string().min(1) }),
+          blankNodeOrLiteralNodeKind: z.discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("BlankNode"),
+            }),
+            z.object({
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
-            })
-            .meta({}),
+              termType: z.literal("Literal"),
+            }),
+          ]),
+          iriNodeKind: z.object({ "@id": z.string().min(1) }),
+          iriOrLiteralNodeKind: z.discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+              termType: z.literal("Literal"),
+            }),
+          ]),
+          literalNodeKind: z.object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          }),
         })
         .meta({
           description:
@@ -31515,7 +31453,7 @@ export namespace NonClassStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("NonClassStruct"),
-          nonClassString: z.string().meta({}),
+          nonClassString: z.string(),
         })
         .meta({
           description: "Struct node shape that isn't an rdfs:Class.",
@@ -31956,13 +31894,11 @@ export namespace NoRdfTypeUnionMember1 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("NoRdfTypeUnionMember1"),
-          noRdfTypeUnionMember1String: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("NoRdfTypeUnionMember1"),
+        noRdfTypeUnionMember1String: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -32407,13 +32343,11 @@ export namespace NoRdfTypeUnionMember2 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("NoRdfTypeUnionMember2"),
-          noRdfTypeUnionMember2String: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("NoRdfTypeUnionMember2"),
+        noRdfTypeUnionMember2String: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -34229,22 +34163,22 @@ export namespace NumericsStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("NumericsStruct"),
-          byteNumeric: z.number().optional().meta({}),
-          decimalNumeric: z.string().optional().meta({}),
-          doubleNumeric: z.number().optional().meta({}),
-          floatNumeric: z.number().optional().meta({}),
-          integerNumeric: z.string().optional().meta({}),
-          intNumeric: z.number().optional().meta({}),
-          longNumeric: z.string().optional().meta({}),
-          negativeIntegerNumeric: z.string().optional().meta({}),
-          nonNegativeIntegerNumeric: z.string().optional().meta({}),
-          nonPositiveIntegerNumeric: z.string().optional().meta({}),
-          positiveIntegerNumeric: z.string().optional().meta({}),
-          shortNumeric: z.number().optional().meta({}),
-          unsignedByteNumeric: z.number().optional().meta({}),
-          unsignedIntNumeric: z.number().optional().meta({}),
-          unsignedLongNumeric: z.string().optional().meta({}),
-          unsignedShortNumeric: z.number().optional().meta({}),
+          byteNumeric: z.number().optional(),
+          decimalNumeric: z.string().optional(),
+          doubleNumeric: z.number().optional(),
+          floatNumeric: z.number().optional(),
+          integerNumeric: z.string().optional(),
+          intNumeric: z.number().optional(),
+          longNumeric: z.string().optional(),
+          negativeIntegerNumeric: z.string().optional(),
+          nonNegativeIntegerNumeric: z.string().optional(),
+          nonPositiveIntegerNumeric: z.string().optional(),
+          positiveIntegerNumeric: z.string().optional(),
+          shortNumeric: z.number().optional(),
+          unsignedByteNumeric: z.number().optional(),
+          unsignedIntNumeric: z.number().optional(),
+          unsignedLongNumeric: z.string().optional(),
+          unsignedShortNumeric: z.number().optional(),
         })
         .meta({
           description:
@@ -35133,9 +35067,9 @@ export namespace OrderedStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("OrderedStruct"),
-          orderedC: z.string().meta({}),
-          orderedB: z.string().meta({}),
-          orderedA: z.string().meta({}),
+          orderedC: z.string(),
+          orderedB: z.string(),
+          orderedA: z.string(),
         })
         .meta({
           description:
@@ -35584,7 +35518,7 @@ export namespace PartialStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("PartialStruct"),
-          lazilyResolved: z.string().meta({}),
+          lazilyResolved: z.string(),
         })
         .meta({
           description:
@@ -36074,13 +36008,11 @@ export namespace PartialUnionMember1 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("PartialUnionMember1"),
-          lazilyResolved: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("PartialUnionMember1"),
+        lazilyResolved: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -36576,13 +36508,11 @@ export namespace PartialUnionMember2 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("PartialUnionMember2"),
-          lazilyResolved: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("PartialUnionMember2"),
+        lazilyResolved: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -38805,11 +38735,8 @@ export namespace PropertyPathsStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("PropertyPathsStruct"),
-          inversePath: z
-            .object({ "@id": z.string().min(1) })
-            .optional()
-            .meta({}),
-          predicatePath: z.string().optional().meta({}),
+          inversePath: z.object({ "@id": z.string().min(1) }).optional(),
+          predicatePath: z.string().optional(),
         })
         .meta({
           description:
@@ -39346,19 +39273,15 @@ export namespace RecursiveUnionMember1 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("RecursiveUnionMember1"),
-          recursiveUnionMember1Property: z
-            .lazy(
-              (): z.ZodType<RecursiveUnion.Json> =>
-                RecursiveUnion.Json.schema(),
-            )
-            .optional()
-            .meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("RecursiveUnionMember1"),
+        recursiveUnionMember1Property: z
+          .lazy(
+            (): z.ZodType<RecursiveUnion.Json> => RecursiveUnion.Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -39895,19 +39818,15 @@ export namespace RecursiveUnionMember2 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("RecursiveUnionMember2"),
-          recursiveUnionMember2Property: z
-            .lazy(
-              (): z.ZodType<RecursiveUnion.Json> =>
-                RecursiveUnion.Json.schema(),
-            )
-            .optional()
-            .meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("RecursiveUnionMember2"),
+        recursiveUnionMember2Property: z
+          .lazy(
+            (): z.ZodType<RecursiveUnion.Json> => RecursiveUnion.Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -41192,27 +41111,20 @@ export namespace TermsStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("TermsStruct"),
-          blankNodeTerm: z
-            .object({ "@id": z.string().min(1) })
-            .optional()
-            .meta({}),
-          booleanTerm: z.boolean().optional().meta({}),
-          dateTerm: z.iso.date().optional().meta({}),
-          dateTimeTerm: z.iso.datetime().optional().meta({}),
-          iriTerm: z
-            .object({ "@id": z.string().min(1) })
-            .optional()
-            .meta({}),
+          blankNodeTerm: z.object({ "@id": z.string().min(1) }).optional(),
+          booleanTerm: z.boolean().optional(),
+          dateTerm: z.iso.date().optional(),
+          dateTimeTerm: z.iso.datetime().optional(),
+          iriTerm: z.object({ "@id": z.string().min(1) }).optional(),
           literalTerm: z
             .object({
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
             })
-            .optional()
-            .meta({}),
-          numberTerm: z.number().optional().meta({}),
-          stringTerm: z.string().optional().meta({}),
+            .optional(),
+          numberTerm: z.number().optional(),
+          stringTerm: z.string().optional(),
           term: z
             .discriminatedUnion("termType", [
               z.object({
@@ -41230,8 +41142,7 @@ export namespace TermsStruct {
                 termType: z.literal("Literal"),
               }),
             ])
-            .optional()
-            .meta({}),
+            .optional(),
         })
         .meta({
           description:
@@ -48854,14 +48765,12 @@ export namespace UnionMember1 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("UnionMember1"),
-          unionMember1Distinct: z.string().meta({}),
-          unionMemberCommon: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("UnionMember1"),
+        unionMember1Distinct: z.string(),
+        unionMemberCommon: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -49430,14 +49339,12 @@ export namespace UnionMember2 {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          "@type": z.literal("UnionMember2"),
-          unionMember2Distinct: z.string().meta({}),
-          unionMemberCommon: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.literal("UnionMember2"),
+        unionMember2Distinct: z.string(),
+        unionMemberCommon: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
@@ -56142,8 +56049,7 @@ export namespace $Object {
           UnionMember1.Json.schema(),
           UnionMember2.Json.schema(),
         ])
-        .readonly()
-        .meta({});
+        .readonly();
 
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);

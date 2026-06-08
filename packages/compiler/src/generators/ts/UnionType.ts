@@ -317,6 +317,8 @@ ${joinCode(
   }
 
   get jsonSchemaFunctionDeclaration(): Code {
+    let expression = this.jsonSchemaExpression;
+
     const meta: Record<string, string> = {
       // id: this.name,
     };
@@ -326,8 +328,11 @@ ${joinCode(
     this.label.ifJust((label) => {
       meta["title"] = label;
     });
+    if (Object.keys(meta).length > 0) {
+      expression = code`${expression}.meta(${meta})`;
+    }
 
-    return code`export const schema = () => ${this.jsonSchemaExpression}.meta(${meta});`;
+    return code`export const schema = () => ${expression};`;
   }
 
   get jsonTypeAliasDeclaration(): Code {

@@ -6,6 +6,9 @@ export function ObjectType_jsonSchemaExpression(this: ObjectType): Code {
     .flatMap((property) => property.jsonSchema.toList())
     .map(({ key, schema }) => code`"${key}": ${schema}`);
 
+  // ${this.properties.every((property) => !property.mutable) ? `.readonly()` : ""}
+  let expression = code`${this.reusables.imports.z}.object({${joinCode(properties, { on: "," })}})`;
+
   const meta: Record<string, string> = {
     // id: this.name,
   };
@@ -15,7 +18,9 @@ export function ObjectType_jsonSchemaExpression(this: ObjectType): Code {
   this.label.ifJust((label) => {
     meta["title"] = label;
   });
+  if (Object.keys(meta).length > 0) {
+    expression = code`${expression}.meta(${meta})`;
+  }
 
-  // ${this.properties.every((property) => !property.mutable) ? `.readonly()` : ""}
-  return code`${this.reusables.imports.z}.object({${joinCode(properties, { on: "," })}}).meta(${meta})`;
+  return expression;
 }
