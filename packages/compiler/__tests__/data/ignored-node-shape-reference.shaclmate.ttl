@@ -1,0 +1,26 @@
+@prefix : <http://example.com/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
+
+:IgnoredNodeShape
+    shaclmate:ignore true ;
+    a sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :string
+    ] .
+
+:NodeShape
+    a sh:NodeShape ;
+    sh:property [
+        rdfs:comment "A property shape with an sh:node to an ignored node shape should produce an error." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :IgnoredNodeShape ;
+        sh:path :ignoredNodeShape
+    ] .
+
