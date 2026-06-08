@@ -5,26 +5,30 @@ import datasetFactory from "@rdfjs/dataset";
 import type { DatasetCore } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
 import { Parser } from "n3";
-import type { Either } from "purify-ts";
+import { Either } from "purify-ts";
 import { ShapesGraph } from "../src/ShapesGraph.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function parseDataset(filePath: string): DatasetCore {
-  return datasetFactory.dataset(
-    new Parser({ factory: dataFactory, format: "Turtle" }).parse(
-      fs.readFileSync(filePath).toString(),
-    ),
-  );
+function parseDataset(filePath: string): Either<Error, DatasetCore> {
+  return Either.encase(() => {
+    return datasetFactory.dataset(
+      new Parser({ factory: dataFactory, format: "Turtle" }).parse(
+        fs.readFileSync(filePath).toString(),
+      ),
+    );
+  });
 }
 
 function parseShapesGraph(
   filePath: string,
   options?: { ignoreUndefinedShapes?: boolean },
 ): Either<Error, ShapesGraph> {
-  return ShapesGraph.builder()
-    .parseDataset(parseDataset(filePath), options)
-    .map((_) => _.build());
+  return parseDataset(filePath).chain((dataset) =>
+    ShapesGraph.builder()
+      .parseDataset(dataset, options)
+      .map((_) => _.build()),
+  );
 }
 
 export const testData = {
