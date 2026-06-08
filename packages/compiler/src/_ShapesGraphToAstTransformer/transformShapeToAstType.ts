@@ -1,4 +1,4 @@
-import { Either } from "purify-ts";
+import { Either, Left } from "purify-ts";
 import type * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -23,6 +23,12 @@ export function transformShapeToAstType(
   shape: input.Shape,
   shapeStack: ShapeStack,
 ): Either<Error, ast.Type> {
+  if (shape.ignore) {
+    // ShapesGraphToAstTransformer and the property shape -> property transformation code skip shapes with .igniroe,
+    // so any call to this method with a shape that has .ignore=true is a reference to an ignored shape.
+    return Left(new Error(`reference to ignored ${shape}`));
+  }
+
   const astType = this.cachedAstTypesByShapeIdentifier.get(shape.$identifier());
   if (astType) {
     return Either.of(astType);

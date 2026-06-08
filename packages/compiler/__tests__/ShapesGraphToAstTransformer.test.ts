@@ -168,7 +168,7 @@ describe("ShapesGraphToAstTransformer", () => {
         .transform()
         .extract();
       expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).includes("who knows");
+      expect((error as Error).message).includes("reference to ignored");
     });
 
     it("inverse paths can only have blank or IRI node kinds", ({ expect }) => {

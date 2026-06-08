@@ -41,6 +41,10 @@ export class ShapesGraphToAstTransformer {
         continue;
       }
 
+      if (nodeShape.ignore) {
+        continue;
+      }
+
       const nodeShapeAstTypeEither = transformShapeToAstType.call(
         this,
         nodeShape,
