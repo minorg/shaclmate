@@ -131,7 +131,9 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     this.label.ifJust((label) => {
       meta["title"] = label;
     });
-    schema = code`${schema}.meta(${meta})`;
+    if (Object.keys(meta).length > 0) {
+      schema = code`${schema}.meta(${meta})`;
+    }
 
     return Maybe.of({
       key: this.name,
