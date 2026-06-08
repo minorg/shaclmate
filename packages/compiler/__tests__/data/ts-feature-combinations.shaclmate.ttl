@@ -6,15 +6,6 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-:Object
-    a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:IRI ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:path :stringProperty
-    ] .
-
 :Nested
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
@@ -22,6 +13,15 @@
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:path :nestedStringProperty
+    ] .
+
+:Object
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :stringProperty
     ] .
 
 :Union

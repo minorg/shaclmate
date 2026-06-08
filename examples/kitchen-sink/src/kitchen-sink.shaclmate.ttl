@@ -46,6 +46,12 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :iriClass
+    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -67,12 +73,6 @@
         sh:class :UndefinedClass1, :UndefinedClass2 ;
         sh:maxCount 1 ;
         sh:path :multiClass
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:path :iriClass
     ] .
 
 :ConvertibleTypesStruct
@@ -342,6 +342,15 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :shaclmateIgnoreTrueProperty
     ] .
 
+:IgnoredStruct
+    shaclmate:ignore true ;
+    a sh:NodeShape ;
+    rdfs:comment "Struct node shape that's ignored by SHACLmate. References (sh:node) to this shape from non-ignored shapes will produce errors." ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:path :ignoredString
+    ] .
+
 :InIdentifierStruct
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:in constraining its identifier." ;
@@ -358,12 +367,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:in properties." ;
     sh:property [
-        sh:in (1e0
-            2e0
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDoubles
-    ], [
         sh:in ("text"
             "html"
         ) ;
@@ -395,6 +398,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :ReusableIn ;
         sh:path :reusableIn
+    ], [
+        sh:in (1e0
+            2e0
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDoubles
     ] .
 
 :IndirectRecursiveStruct

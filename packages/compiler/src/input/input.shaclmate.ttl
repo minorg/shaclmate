@@ -6,7 +6,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 shaclmate:NodeShape
-    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
+    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
 shaclmate:NodeShape-discriminantValue
     a sh:PropertyShape ;
@@ -44,7 +44,7 @@ shaclmate:NodeShape-tsImports
     sh:path shaclmate:tsImport .
 
 shaclmate:PropertyShape
-    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-ignore, shaclmate:PropertyShape-resolve, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
+    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
 shaclmate:PropertyShape-display
     a sh:PropertyShape ;
@@ -54,20 +54,20 @@ shaclmate:PropertyShape-display
     sh:maxCount 1 ;
     sh:path shaclmate:display .
 
-shaclmate:PropertyShape-ignore
-    a sh:PropertyShape ;
-    rdfs:comment "Whether to ignore this property in code generation, defaults to false" ;
-    sh:datatype xsd:boolean ;
-    sh:defaultValue false ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:ignore .
-
 shaclmate:PropertyShape-resolve
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "resolve" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path shaclmate:resolve .
+
+shaclmate:Shape-ignore
+    a sh:PropertyShape ;
+    rdfs:comment "Whether to ignore this shape in code generation, defaults to false" ;
+    sh:datatype xsd:boolean ;
+    sh:defaultValue false ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:ignore .
 
 shaclmate:Shape-mutable
     a sh:PropertyShape ;

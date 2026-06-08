@@ -1,3 +1,4 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix : <http://example.com/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
@@ -6,16 +7,17 @@
 :PropertyShapeNameConflicts
     a rdfs:Class, sh:NodeShape ;
     sh:property [
-        sh:name "create" ;
         sh:datatype xsd:int ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
+        sh:name "create" ;
         sh:path :create
     ], [
         rdfs:comment "Conflict with built-in Object.toString() method" ;
-        sh:name "toString" ;
         sh:datatype xsd:int ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
+        sh:name "toString" ;
         sh:path :toString
     ] .
+

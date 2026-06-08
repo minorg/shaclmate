@@ -159,6 +159,18 @@ describe("ShapesGraphToAstTransformer", () => {
       );
     });
 
+    it("ignored node shape reference", ({ expect }) => {
+      const error = new ShapesGraphToAstTransformer({
+        logger,
+        shapesGraph:
+          testData.shapesGraphs.illFormed.ignoredNodeShapeReference.unsafeCoerce(),
+      })
+        .transform()
+        .extract();
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).includes("reference to ignored");
+    });
+
     it("inverse paths can only have blank or IRI node kinds", ({ expect }) => {
       const error = new ShapesGraphToAstTransformer({
         logger,

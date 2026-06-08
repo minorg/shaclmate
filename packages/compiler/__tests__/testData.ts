@@ -86,6 +86,16 @@ export const testData = {
         );
       },
 
+      get ignoredNodeShapeReference() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "ignored-node-shape-reference.shaclmate.ttl",
+          ),
+        );
+      },
+
       get inversePathNodeKindConflict() {
         return parseShapesGraph(
           path.join(

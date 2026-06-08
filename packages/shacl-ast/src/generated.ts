@@ -1594,7 +1594,7 @@ export namespace NodeShape {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: NodeShape.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
         and: $shaclPropertyFromRdf<
@@ -1606,7 +1606,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.and,
+          propertySchema: NodeShape.schema.properties.and,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
             $CollectionSchema<$IdentifierSchema>
@@ -1626,7 +1626,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.classes,
+          propertySchema: NodeShape.schema.properties.classes,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -1641,7 +1641,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.closed,
+          propertySchema: NodeShape.schema.properties.closed,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
@@ -1656,7 +1656,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.comment,
+          propertySchema: NodeShape.schema.properties.comment,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -1671,7 +1671,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.datatype,
+          propertySchema: NodeShape.schema.properties.datatype,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -1686,7 +1686,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.deactivated,
+          propertySchema: NodeShape.schema.properties.deactivated,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
@@ -1701,7 +1701,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.flags,
+          propertySchema: NodeShape.schema.properties.flags,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -1716,7 +1716,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.hasValues,
+          propertySchema: NodeShape.schema.properties.hasValues,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode | Literal,
             $TermSchema<NamedNode | Literal>
@@ -1731,7 +1731,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.ignoredProperties,
+          propertySchema: NodeShape.schema.properties.ignoredProperties,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly NamedNode[],
             $CollectionSchema<$IriSchema<string>>
@@ -1750,7 +1750,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.in_,
+          propertySchema: NodeShape.schema.properties.in_,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (NamedNode | Literal)[],
             $CollectionSchema<$TermSchema<NamedNode | Literal>>
@@ -1770,7 +1770,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.isDefinedBy,
+          propertySchema: NodeShape.schema.properties.isDefinedBy,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -1785,7 +1785,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.label,
+          propertySchema: NodeShape.schema.properties.label,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -1800,7 +1800,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.languageIn,
+          propertySchema: NodeShape.schema.properties.languageIn,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly string[],
             $CollectionSchema<$StringSchema<string>>
@@ -1819,7 +1819,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.maxExclusive,
+          propertySchema: NodeShape.schema.properties.maxExclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -1834,7 +1834,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.maxInclusive,
+          propertySchema: NodeShape.schema.properties.maxInclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -1849,7 +1849,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.maxLength,
+          propertySchema: NodeShape.schema.properties.maxLength,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -1864,7 +1864,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.message,
+          propertySchema: NodeShape.schema.properties.message,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -1879,7 +1879,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.minExclusive,
+          propertySchema: NodeShape.schema.properties.minExclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -1894,7 +1894,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.minInclusive,
+          propertySchema: NodeShape.schema.properties.minInclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -1909,7 +1909,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.minLength,
+          propertySchema: NodeShape.schema.properties.minLength,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -1924,7 +1924,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.node,
+          propertySchema: NodeShape.schema.properties.node,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -1957,7 +1957,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.nodeKind,
+          propertySchema: NodeShape.schema.properties.nodeKind,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode<
               | "http://www.w3.org/ns/shacl#BlankNode"
@@ -1995,7 +1995,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.not,
+          propertySchema: NodeShape.schema.properties.not,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -2010,7 +2010,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.or,
+          propertySchema: NodeShape.schema.properties.or,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
             $CollectionSchema<$IdentifierSchema>
@@ -2030,7 +2030,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.pattern,
+          propertySchema: NodeShape.schema.properties.pattern,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -2045,7 +2045,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.properties,
+          propertySchema: NodeShape.schema.properties.properties,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -2072,7 +2072,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.severity,
+          propertySchema: NodeShape.schema.properties.severity,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode<
               | "http://www.w3.org/ns/shacl#Info"
@@ -2101,7 +2101,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.subClassOf,
+          propertySchema: NodeShape.schema.properties.subClassOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -2116,7 +2116,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.targetClasses,
+          propertySchema: NodeShape.schema.properties.targetClasses,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -2131,7 +2131,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.targetNodes,
+          propertySchema: NodeShape.schema.properties.targetNodes,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode | Literal,
             $TermSchema<NamedNode | Literal>
@@ -2146,7 +2146,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.targetObjectsOf,
+          propertySchema: NodeShape.schema.properties.targetObjectsOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -2161,7 +2161,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.targetSubjectsOf,
+          propertySchema: NodeShape.schema.properties.targetSubjectsOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -2176,7 +2176,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.types,
+          propertySchema: NodeShape.schema.properties.types,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -2191,7 +2191,7 @@ export namespace NodeShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.xone,
+          propertySchema: NodeShape.schema.properties.xone,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
             $CollectionSchema<$IdentifierSchema>
@@ -3149,7 +3149,7 @@ export namespace Ontology {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: Ontology.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
         comment: $shaclPropertyFromRdf<
@@ -3161,7 +3161,7 @@ export namespace Ontology {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.comment,
+          propertySchema: NodeShape.schema.properties.comment,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -3176,7 +3176,7 @@ export namespace Ontology {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.label,
+          propertySchema: NodeShape.schema.properties.label,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -3363,7 +3363,7 @@ export namespace PropertyGroup {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: PropertyGroup.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
         comment: $shaclPropertyFromRdf<
@@ -3375,7 +3375,7 @@ export namespace PropertyGroup {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.comment,
+          propertySchema: NodeShape.schema.properties.comment,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -3390,7 +3390,7 @@ export namespace PropertyGroup {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.label,
+          propertySchema: NodeShape.schema.properties.label,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -4366,7 +4366,7 @@ export namespace PropertyShape {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: schema.properties.$identifier.type,
+            schema: PropertyShape.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
         and: $shaclPropertyFromRdf<
@@ -4378,7 +4378,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.and,
+          propertySchema: NodeShape.schema.properties.and,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
             $CollectionSchema<$IdentifierSchema>
@@ -4398,7 +4398,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.classes,
+          propertySchema: NodeShape.schema.properties.classes,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -4413,7 +4413,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.comment,
+          propertySchema: NodeShape.schema.properties.comment,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -4428,7 +4428,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.datatype,
+          propertySchema: NodeShape.schema.properties.datatype,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -4443,7 +4443,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.deactivated,
+          propertySchema: NodeShape.schema.properties.deactivated,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
@@ -4458,7 +4458,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.defaultValue,
+          propertySchema: PropertyShape.schema.properties.defaultValue,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode | Literal,
             $TermSchema<NamedNode | Literal>
@@ -4473,7 +4473,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.description,
+          propertySchema: PropertyShape.schema.properties.description,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -4488,7 +4488,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.disjoint,
+          propertySchema: PropertyShape.schema.properties.disjoint,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -4503,7 +4503,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.equals,
+          propertySchema: PropertyShape.schema.properties.equals,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -4518,7 +4518,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.flags,
+          propertySchema: NodeShape.schema.properties.flags,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -4533,7 +4533,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.groups,
+          propertySchema: PropertyShape.schema.properties.groups,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -4548,7 +4548,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.hasValues,
+          propertySchema: NodeShape.schema.properties.hasValues,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode | Literal,
             $TermSchema<NamedNode | Literal>
@@ -4563,7 +4563,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.in_,
+          propertySchema: NodeShape.schema.properties.in_,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (NamedNode | Literal)[],
             $CollectionSchema<$TermSchema<NamedNode | Literal>>
@@ -4583,7 +4583,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.isDefinedBy,
+          propertySchema: NodeShape.schema.properties.isDefinedBy,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -4598,7 +4598,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.label,
+          propertySchema: NodeShape.schema.properties.label,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -4613,7 +4613,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.languageIn,
+          propertySchema: NodeShape.schema.properties.languageIn,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly string[],
             $CollectionSchema<$StringSchema<string>>
@@ -4632,7 +4632,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.lessThan,
+          propertySchema: PropertyShape.schema.properties.lessThan,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -4647,7 +4647,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.lessThanOrEquals,
+          propertySchema: PropertyShape.schema.properties.lessThanOrEquals,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -4662,7 +4662,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.maxCount,
+          propertySchema: PropertyShape.schema.properties.maxCount,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -4677,7 +4677,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.maxExclusive,
+          propertySchema: NodeShape.schema.properties.maxExclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -4692,7 +4692,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.maxInclusive,
+          propertySchema: NodeShape.schema.properties.maxInclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -4707,7 +4707,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.maxLength,
+          propertySchema: NodeShape.schema.properties.maxLength,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -4722,7 +4722,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.message,
+          propertySchema: NodeShape.schema.properties.message,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -4737,7 +4737,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.minCount,
+          propertySchema: PropertyShape.schema.properties.minCount,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -4752,7 +4752,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.minExclusive,
+          propertySchema: NodeShape.schema.properties.minExclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -4767,7 +4767,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.minInclusive,
+          propertySchema: NodeShape.schema.properties.minInclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
@@ -4782,7 +4782,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.minLength,
+          propertySchema: NodeShape.schema.properties.minLength,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -4797,7 +4797,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.name,
+          propertySchema: PropertyShape.schema.properties.name,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -4812,7 +4812,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.node,
+          propertySchema: NodeShape.schema.properties.node,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -4845,7 +4845,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.nodeKind,
+          propertySchema: NodeShape.schema.properties.nodeKind,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode<
               | "http://www.w3.org/ns/shacl#BlankNode"
@@ -4883,7 +4883,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.not,
+          propertySchema: NodeShape.schema.properties.not,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -4898,7 +4898,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.or,
+          propertySchema: NodeShape.schema.properties.or,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
             $CollectionSchema<$IdentifierSchema>
@@ -4918,7 +4918,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.order,
+          propertySchema: PropertyShape.schema.properties.order,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -4930,7 +4930,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.path,
+          propertySchema: PropertyShape.schema.properties.path,
           typeFromRdfResourceValues: $PropertyPath.fromRdfResourceValues,
         }),
         pattern: $shaclPropertyFromRdf<
@@ -4942,7 +4942,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.pattern,
+          propertySchema: NodeShape.schema.properties.pattern,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -4957,7 +4957,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.qualifiedMaxCount,
+          propertySchema: PropertyShape.schema.properties.qualifiedMaxCount,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -4972,7 +4972,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.qualifiedMinCount,
+          propertySchema: PropertyShape.schema.properties.qualifiedMinCount,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
@@ -4987,7 +4987,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.qualifiedValueShape,
+          propertySchema: PropertyShape.schema.properties.qualifiedValueShape,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
@@ -5002,7 +5002,8 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.qualifiedValueShapesDisjoint,
+          propertySchema:
+            PropertyShape.schema.properties.qualifiedValueShapesDisjoint,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
@@ -5029,7 +5030,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.severity,
+          propertySchema: NodeShape.schema.properties.severity,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode<
               | "http://www.w3.org/ns/shacl#Info"
@@ -5058,7 +5059,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.targetClasses,
+          propertySchema: NodeShape.schema.properties.targetClasses,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -5073,7 +5074,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.targetNodes,
+          propertySchema: NodeShape.schema.properties.targetNodes,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode | Literal,
             $TermSchema<NamedNode | Literal>
@@ -5088,7 +5089,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.targetObjectsOf,
+          propertySchema: NodeShape.schema.properties.targetObjectsOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -5103,7 +5104,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.targetSubjectsOf,
+          propertySchema: NodeShape.schema.properties.targetSubjectsOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
@@ -5118,7 +5119,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.uniqueLang,
+          propertySchema: PropertyShape.schema.properties.uniqueLang,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
@@ -5133,7 +5134,7 @@ export namespace PropertyShape {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: schema.properties.xone,
+          propertySchema: NodeShape.schema.properties.xone,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
             $CollectionSchema<$IdentifierSchema>
