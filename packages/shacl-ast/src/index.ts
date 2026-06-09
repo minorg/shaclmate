@@ -7,6 +7,8 @@ export {
   PropertyGroup,
   PropertyShape,
   Shape,
+  ValidationReport,
+  ValidationResult,
 } from "./generated.js";
 export * from "./IdentifierNodeKind.js";
 export * from "./NodeKind.js";
