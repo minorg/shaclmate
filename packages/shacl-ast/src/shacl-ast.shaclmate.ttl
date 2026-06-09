@@ -228,6 +228,13 @@ shaclmate:PropertyShape-uniqueLang
     sh:maxCount 1 ;
     sh:path sh:uniqueLang .
 
+shaclmate:Severity
+    a sh:NodeShape ;
+    sh:in (sh:Info
+        sh:Warning
+        sh:Violation
+    ) .
+
 shaclmate:Shape
     a sh:NodeShape ;
     sh:xone (shaclmate:NodeShape
@@ -373,13 +380,6 @@ shaclmate:Shape-severity
     sh:node shaclmate:Severity ;
     sh:path sh:severity .
 
-shaclmate:Severity
-    a sh:NodeShape ;
-        sh:in (sh:Info
-        sh:Warning
-        sh:Violation
-    ) .
-
 shaclmate:Shape-targetClass
     a sh:PropertyShape ;
     sh:name "targetClasses" ;
@@ -428,23 +428,9 @@ shaclmate:StringList
         ]
     ) .
 
-shaclmate:comment
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:name "comment" ;
-    sh:path rdfs:comment .
-
-shaclmate:label
-    shaclmate:display true ;
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:path rdfs:label .
-
 shaclmate:ValidationReport
-    a sh:NodeShape ;
     shaclmate:fromRdfType sh:ValidationReport ;
+    a sh:NodeShape ;
     sh:property shaclmate:ValidationReport-conforms, shaclmate:ValidationReport-results, shaclmate:ValidationReport-shapesGraphWellFormed .
 
 shaclmate:ValidationReport-conforms
@@ -452,25 +438,23 @@ shaclmate:ValidationReport-conforms
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:path sh:conforms
-.
+    sh:path sh:conforms .
 
 shaclmate:ValidationReport-results
     a sh:PropertyShape ;
     sh:node shaclmate:ValidationResult ;
     sh:path sh:result .
 
-shaclmate:ValidationReport-shapesGraphWellFormed ;
+shaclmate:ValidationReport-shapesGraphWellFormed
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path sh:shapesGraphWellFormed .
 
 shaclmate:ValidationResult
-    a sh:NodeShape ;
     shaclmate:fromRdfType sh:ValidationResult ;
-    sh:property shaclmate:ValidationResult-focusNode, shaclmate:ValidationResult-focusNode, shaclmate:ValidationResult-sourceConstraintComponent ;
-.
+    a sh:NodeShape ;
+    sh:property shaclmate:ValidationResult-focusNode, shaclmate:ValidationResult-sourceConstraintComponent .
 
 shaclmate:ValidationResult-focusNode
     a sh:PropertyShape ;
@@ -491,3 +475,18 @@ shaclmate:ValidationResult-sourceConstraintComponent
     sh:minCount 1 ;
     sh:nodeKind sh:IRI ;
     sh:path sh:sourceConstraintComponent .
+
+shaclmate:comment
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "comment" ;
+    sh:path rdfs:comment .
+
+shaclmate:label
+    shaclmate:display true ;
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path rdfs:label .
+
