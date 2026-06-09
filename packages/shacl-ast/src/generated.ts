@@ -941,13 +941,7 @@ export type NodeShape = {
 
   readonly properties: readonly (BlankNode | NamedNode)[];
 
-  readonly severity: Maybe<
-    NamedNode<
-      | "http://www.w3.org/ns/shacl#Info"
-      | "http://www.w3.org/ns/shacl#Warning"
-      | "http://www.w3.org/ns/shacl#Violation"
-    >
-  >;
+  readonly severity: Maybe<Severity>;
 
   readonly subClassOf: readonly NamedNode[];
 
@@ -1083,18 +1077,8 @@ export namespace NodeShape {
           | "http://www.w3.org/ns/shacl#Warning"
           | "http://www.w3.org/ns/shacl#Violation"
         )
-      | NamedNode<
-          | "http://www.w3.org/ns/shacl#Info"
-          | "http://www.w3.org/ns/shacl#Warning"
-          | "http://www.w3.org/ns/shacl#Violation"
-        >
-      | Maybe<
-          NamedNode<
-            | "http://www.w3.org/ns/shacl#Info"
-            | "http://www.w3.org/ns/shacl#Warning"
-            | "http://www.w3.org/ns/shacl#Violation"
-          >
-        >;
+      | Severity
+      | Maybe<Severity>;
     readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
     readonly targetClasses?:
       | string
@@ -1534,18 +1518,8 @@ export namespace NodeShape {
           | "http://www.w3.org/ns/shacl#Warning"
           | "http://www.w3.org/ns/shacl#Violation"
         )
-      | NamedNode<
-          | "http://www.w3.org/ns/shacl#Info"
-          | "http://www.w3.org/ns/shacl#Warning"
-          | "http://www.w3.org/ns/shacl#Violation"
-        >
-      | Maybe<
-          NamedNode<
-            | "http://www.w3.org/ns/shacl#Info"
-            | "http://www.w3.org/ns/shacl#Warning"
-            | "http://www.w3.org/ns/shacl#Violation"
-          >
-        >;
+      | Severity
+      | Maybe<Severity>;
     readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
     readonly targetClasses?:
       | string
@@ -2052,13 +2026,7 @@ export namespace NodeShape {
           >($identifierFromRdfResourceValues),
         }),
         severity: $shaclPropertyFromRdf<
-          Maybe<
-            NamedNode<
-              | "http://www.w3.org/ns/shacl#Info"
-              | "http://www.w3.org/ns/shacl#Warning"
-              | "http://www.w3.org/ns/shacl#Violation"
-            >
-          >,
+          Maybe<Severity>,
           $MaybeSchema<
             $IriSchema<
               | "http://www.w3.org/ns/shacl#Info"
@@ -2074,11 +2042,7 @@ export namespace NodeShape {
           preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.severity,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode<
-              | "http://www.w3.org/ns/shacl#Info"
-              | "http://www.w3.org/ns/shacl#Warning"
-              | "http://www.w3.org/ns/shacl#Violation"
-            >,
+            Severity,
             $IriSchema<
               | "http://www.w3.org/ns/shacl#Info"
               | "http://www.w3.org/ns/shacl#Warning"
@@ -2481,16 +2445,20 @@ export namespace NodeShape {
       severity: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#severity"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
-            ],
-          },
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return {
+                kind: "Iri" as const,
+                in: [
+                  dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+                  dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+                  dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
+                ],
+              };
+            },
+          };
         },
       },
       subClassOf: {
@@ -3591,13 +3559,7 @@ export type PropertyShape = {
 
   readonly qualifiedValueShapesDisjoint: Maybe<boolean>;
 
-  readonly severity: Maybe<
-    NamedNode<
-      | "http://www.w3.org/ns/shacl#Info"
-      | "http://www.w3.org/ns/shacl#Warning"
-      | "http://www.w3.org/ns/shacl#Violation"
-    >
-  >;
+  readonly severity: Maybe<Severity>;
 
   readonly targetClasses: readonly NamedNode[];
 
@@ -3749,18 +3711,8 @@ export namespace PropertyShape {
           | "http://www.w3.org/ns/shacl#Warning"
           | "http://www.w3.org/ns/shacl#Violation"
         )
-      | NamedNode<
-          | "http://www.w3.org/ns/shacl#Info"
-          | "http://www.w3.org/ns/shacl#Warning"
-          | "http://www.w3.org/ns/shacl#Violation"
-        >
-      | Maybe<
-          NamedNode<
-            | "http://www.w3.org/ns/shacl#Info"
-            | "http://www.w3.org/ns/shacl#Warning"
-            | "http://www.w3.org/ns/shacl#Violation"
-          >
-        >;
+      | Severity
+      | Maybe<Severity>;
     readonly targetClasses?:
       | string
       | NamedNode
@@ -4307,18 +4259,8 @@ export namespace PropertyShape {
           | "http://www.w3.org/ns/shacl#Warning"
           | "http://www.w3.org/ns/shacl#Violation"
         )
-      | NamedNode<
-          | "http://www.w3.org/ns/shacl#Info"
-          | "http://www.w3.org/ns/shacl#Warning"
-          | "http://www.w3.org/ns/shacl#Violation"
-        >
-      | Maybe<
-          NamedNode<
-            | "http://www.w3.org/ns/shacl#Info"
-            | "http://www.w3.org/ns/shacl#Warning"
-            | "http://www.w3.org/ns/shacl#Violation"
-          >
-        >;
+      | Severity
+      | Maybe<Severity>;
     readonly targetClasses?:
       | string
       | NamedNode
@@ -5010,13 +4952,7 @@ export namespace PropertyShape {
           >($booleanFromRdfResourceValues<boolean>),
         }),
         severity: $shaclPropertyFromRdf<
-          Maybe<
-            NamedNode<
-              | "http://www.w3.org/ns/shacl#Info"
-              | "http://www.w3.org/ns/shacl#Warning"
-              | "http://www.w3.org/ns/shacl#Violation"
-            >
-          >,
+          Maybe<Severity>,
           $MaybeSchema<
             $IriSchema<
               | "http://www.w3.org/ns/shacl#Info"
@@ -5032,11 +4968,7 @@ export namespace PropertyShape {
           preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.severity,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode<
-              | "http://www.w3.org/ns/shacl#Info"
-              | "http://www.w3.org/ns/shacl#Warning"
-              | "http://www.w3.org/ns/shacl#Violation"
-            >,
+            Severity,
             $IriSchema<
               | "http://www.w3.org/ns/shacl#Info"
               | "http://www.w3.org/ns/shacl#Warning"
@@ -5519,16 +5451,20 @@ export namespace PropertyShape {
       severity: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#severity"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
-            ],
-          },
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return {
+                kind: "Iri" as const,
+                in: [
+                  dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+                  dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+                  dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
+                ],
+              };
+            },
+          };
         },
       },
       targetClasses: {
@@ -6151,6 +6087,760 @@ export namespace PropertyShape {
       path: $PropertyPath.$toString(_propertyShape.path),
     });
 }
+export type Severity = NamedNode<
+  | "http://www.w3.org/ns/shacl#Info"
+  | "http://www.w3.org/ns/shacl#Warning"
+  | "http://www.w3.org/ns/shacl#Violation"
+>;
+export type ValidationReport = {
+  readonly $identifier: () => ValidationReport.Identifier;
+
+  readonly $type: "ValidationReport";
+
+  readonly conforms: boolean;
+
+  readonly results: readonly ValidationResult[];
+
+  readonly shapesGraphWellFormed: Maybe<boolean>;
+};
+
+export namespace ValidationReport {
+  export const create: (parameters: {
+    readonly $identifier?:
+      | (() => ValidationReport.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly conforms: boolean;
+    readonly results?: ValidationResult | readonly ValidationResult[];
+    readonly shapesGraphWellFormed?: boolean | Maybe<boolean>;
+  }) => Either<Error, ValidationReport> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      conforms: Either.of(parameters.conforms),
+      results: $convertToScalarSet(
+        $identityConversionFunction,
+        true,
+      )(parameters.results).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ValidationReport.schema.properties.results.type,
+          value,
+        ),
+      ),
+      shapesGraphWellFormed: $convertToMaybe($identityConversionFunction)(
+        parameters.shapesGraphWellFormed,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ValidationReport.schema.properties.shapesGraphWellFormed.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "ValidationReport" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: ValidationReport.$toString }),
+      );
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => ValidationReport.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly conforms: boolean;
+    readonly results?: ValidationResult | readonly ValidationResult[];
+    readonly shapesGraphWellFormed?: boolean | Maybe<boolean>;
+  }): ValidationReport {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<ValidationReport> = (
+    $resource,
+    _$options,
+  ) =>
+    (!_$options.ignoreRdfType
+      ? $ensureRdfResourceType(
+          $resource,
+          [ValidationReport.schema.fromRdfType],
+          { graph: _$options.graph },
+        )
+      : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: $identifierFromRdfResourceValues(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+          {
+            context: _$options.context,
+            graph: _$options.graph,
+            focusResource: $resource,
+            preferredLanguages: _$options.preferredLanguages,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: ValidationReport.schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        conforms: $shaclPropertyFromRdf<boolean, $BooleanSchema<boolean>>({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationReport.schema.properties.conforms,
+          typeFromRdfResourceValues: $booleanFromRdfResourceValues<boolean>,
+        }),
+        results: $shaclPropertyFromRdf<
+          readonly ValidationResult[],
+          $CollectionSchema<ValidationResult.Schema>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationReport.schema.properties.results,
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            ValidationResult,
+            ValidationResult.Schema
+          >(ValidationResult.fromRdfResourceValues),
+        }),
+        shapesGraphWellFormed: $shaclPropertyFromRdf<
+          Maybe<boolean>,
+          $MaybeSchema<$BooleanSchema<boolean>>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema:
+            ValidationReport.schema.properties.shapesGraphWellFormed,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            boolean,
+            $BooleanSchema<boolean>
+          >($booleanFromRdfResourceValues<boolean>),
+        }),
+      }).chain((properties) => ValidationReport.create(properties)),
+    );
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ValidationReport,
+    ValidationReport.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export function isValidationReport(
+    object: $Object,
+  ): object is ValidationReport {
+    return object.$type === "ValidationReport";
+  }
+
+  export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://www.w3.org/ns/shacl#ValidationReport",
+    ),
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      conforms: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#conforms"),
+        type: { kind: "Boolean" as const },
+      },
+      results: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#result"),
+        get type() {
+          return {
+            kind: "Set" as const,
+            get itemType() {
+              return ValidationResult.schema;
+            },
+          };
+        },
+      },
+      shapesGraphWellFormed: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#shapesGraphWellFormed",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Boolean" as const },
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ValidationReport.Identifier,
+    ValidationReport
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationReport"),
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      ValidationReport.schema.properties.conforms.path,
+      [
+        $literalFactory.boolean(
+          parameters.object.conforms,
+          $RdfVocabularies.xsd.boolean,
+        ),
+      ],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationReport.schema.properties.results.path,
+      parameters.object.results.flatMap((item) => [
+        ValidationResult.toRdfResource(item, {
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
+        }).identifier,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationReport.schema.properties.shapesGraphWellFormed.path,
+      parameters.object.shapesGraphWellFormed
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
+        ]),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export const $toString: (_validationReport: ValidationReport) => string = (
+    _validationReport,
+  ) => `ValidationReport(${JSON.stringify(toStringRecord(_validationReport))})`;
+
+  export const toStringRecord: (
+    _validationReport: ValidationReport,
+  ) => Record<string, string> = (_validationReport) =>
+    $compactRecord({ $identifier: _validationReport.$identifier().toString() });
+}
+export type ValidationResult = {
+  readonly $identifier: () => ValidationResult.Identifier;
+
+  readonly $type: "ValidationResult";
+
+  readonly details: readonly (BlankNode | NamedNode | Literal)[];
+
+  readonly focusNode: BlankNode | NamedNode | Literal;
+
+  readonly message: Maybe<string>;
+
+  readonly path: Maybe<$PropertyPath>;
+
+  readonly severity: Severity;
+
+  readonly sourceConstraintComponent: NamedNode;
+
+  readonly sourceShape: Maybe<BlankNode | NamedNode>;
+
+  readonly value: Maybe<BlankNode | NamedNode | Literal>;
+};
+
+export namespace ValidationResult {
+  export const create: (parameters: {
+    readonly $identifier?:
+      | (() => ValidationResult.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly details?:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
+    readonly focusNode: BlankNode | NamedNode | Literal;
+    readonly message?: string | Maybe<string>;
+    readonly path?: $PropertyPath | Maybe<$PropertyPath>;
+    readonly severity:
+      | (
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        )
+      | Severity;
+    readonly sourceConstraintComponent: string | NamedNode;
+    readonly sourceShape?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly value?:
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
+  }) => Either<Error, ValidationResult> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      details: $convertToScalarSet(
+        $identityConversionFunction,
+        true,
+      )(parameters.details).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ValidationResult.schema.properties.details.type,
+          value,
+        ),
+      ),
+      focusNode: Either.of(parameters.focusNode),
+      message: $convertToMaybe($identityConversionFunction)(
+        parameters.message,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ValidationResult.schema.properties.message.type,
+          value,
+        ),
+      ),
+      path: $convertToMaybe($identityConversionFunction)(parameters.path).chain(
+        (value) =>
+          $validateMaybe($identityValidationFunction)(
+            ValidationResult.schema.properties.path.type,
+            value,
+          ),
+      ),
+      severity: $convertToIri<
+        | "http://www.w3.org/ns/shacl#Info"
+        | "http://www.w3.org/ns/shacl#Warning"
+        | "http://www.w3.org/ns/shacl#Violation"
+      >(parameters.severity),
+      sourceConstraintComponent: $convertToIri<string>(
+        parameters.sourceConstraintComponent,
+      ),
+      sourceShape: $convertToMaybe($convertToIdentifier)(
+        parameters.sourceShape,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ValidationResult.schema.properties.sourceShape.type,
+          value,
+        ),
+      ),
+      value: $convertToMaybe($identityConversionFunction)(
+        parameters.value,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ValidationResult.schema.properties.value.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "ValidationResult" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: ValidationResult.$toString }),
+      );
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => ValidationResult.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly details?:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
+    readonly focusNode: BlankNode | NamedNode | Literal;
+    readonly message?: string | Maybe<string>;
+    readonly path?: $PropertyPath | Maybe<$PropertyPath>;
+    readonly severity:
+      | (
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        )
+      | Severity;
+    readonly sourceConstraintComponent: string | NamedNode;
+    readonly sourceShape?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly value?:
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
+  }): ValidationResult {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<ValidationResult> = (
+    $resource,
+    _$options,
+  ) =>
+    (!_$options.ignoreRdfType
+      ? $ensureRdfResourceType(
+          $resource,
+          [ValidationResult.schema.fromRdfType],
+          { graph: _$options.graph },
+        )
+      : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: $identifierFromRdfResourceValues(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+          {
+            context: _$options.context,
+            graph: _$options.graph,
+            focusResource: $resource,
+            preferredLanguages: _$options.preferredLanguages,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: ValidationResult.schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        details: $shaclPropertyFromRdf<
+          readonly (BlankNode | NamedNode | Literal)[],
+          $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.details,
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            BlankNode | NamedNode | Literal,
+            $TermSchema<BlankNode | NamedNode | Literal>
+          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+        }),
+        focusNode: $shaclPropertyFromRdf<
+          BlankNode | NamedNode | Literal,
+          $TermSchema<BlankNode | NamedNode | Literal>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.focusNode,
+          typeFromRdfResourceValues: $termFromRdfResourceValues<
+            BlankNode | NamedNode | Literal
+          >,
+        }),
+        message: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.message,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
+        }),
+        path: $shaclPropertyFromRdf<
+          Maybe<$PropertyPath>,
+          $MaybeSchema<$PropertyPath.Schema>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.path,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            $PropertyPath,
+            $PropertyPath.Schema
+          >($PropertyPath.fromRdfResourceValues),
+        }),
+        severity: $shaclPropertyFromRdf<
+          Severity,
+          $IriSchema<
+            | "http://www.w3.org/ns/shacl#Info"
+            | "http://www.w3.org/ns/shacl#Warning"
+            | "http://www.w3.org/ns/shacl#Violation"
+          >
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.severity,
+          typeFromRdfResourceValues: $iriFromRdfResourceValues<
+            | "http://www.w3.org/ns/shacl#Info"
+            | "http://www.w3.org/ns/shacl#Warning"
+            | "http://www.w3.org/ns/shacl#Violation"
+          >,
+        }),
+        sourceConstraintComponent: $shaclPropertyFromRdf<
+          NamedNode,
+          $IriSchema<string>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema:
+            ValidationResult.schema.properties.sourceConstraintComponent,
+          typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
+        }),
+        sourceShape: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode>,
+          $MaybeSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.sourceShape,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
+        }),
+        value: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode | Literal>,
+          $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.value,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode | Literal,
+            $TermSchema<BlankNode | NamedNode | Literal>
+          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+        }),
+      }).chain((properties) => ValidationResult.create(properties)),
+    );
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ValidationResult,
+    ValidationResult.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export function isValidationResult(
+    object: $Object,
+  ): object is ValidationResult {
+    return object.$type === "ValidationResult";
+  }
+
+  export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://www.w3.org/ns/shacl#ValidationResult",
+    ),
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      details: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#detail"),
+        type: {
+          kind: "Set" as const,
+          itemType: {
+            kind: "Term" as const,
+            types: ["BlankNode", "NamedNode", "Literal"],
+          },
+        },
+      },
+      focusNode: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#focusNode"),
+        type: {
+          kind: "Term" as const,
+          types: ["BlankNode", "NamedNode", "Literal"],
+        },
+      },
+      message: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#resultMessage"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
+      path: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#resultPath"),
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return $PropertyPath.schema;
+            },
+          };
+        },
+      },
+      severity: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#resultSeverity",
+        ),
+        get type() {
+          return {
+            kind: "Iri" as const,
+            in: [
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
+            ],
+          };
+        },
+      },
+      sourceConstraintComponent: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#sourceConstraintComponent",
+        ),
+        type: { kind: "Iri" as const },
+      },
+      sourceShape: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#sourceShape"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Identifier" as const },
+        },
+      },
+      value: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#value"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "Term" as const,
+            types: ["BlankNode", "NamedNode", "Literal"],
+          },
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ValidationResult.Identifier,
+    ValidationResult
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationResult"),
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      ValidationResult.schema.properties.details.path,
+      parameters.object.details.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.focusNode.path,
+      [parameters.object.focusNode],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.message.path,
+      parameters.object.message
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.path.path,
+      parameters.object.path.toList().flatMap((value) => [
+        $PropertyPath.toRdfResource(value, {
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
+        }).identifier,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.severity.path,
+      [parameters.object.severity],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.sourceConstraintComponent.path,
+      [parameters.object.sourceConstraintComponent],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.sourceShape.path,
+      parameters.object.sourceShape.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.value.path,
+      parameters.object.value.toList(),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export const $toString: (_validationResult: ValidationResult) => string = (
+    _validationResult,
+  ) => `ValidationResult(${JSON.stringify(toStringRecord(_validationResult))})`;
+
+  export const toStringRecord: (
+    _validationResult: ValidationResult,
+  ) => Record<string, string> = (_validationResult) =>
+    $compactRecord({ $identifier: _validationResult.$identifier().toString() });
+}
 export type Shape = NodeShape | PropertyShape;
 
 export namespace Shape {
@@ -6442,16 +7132,20 @@ export namespace Shape {
       severity: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#severity"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
-              dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
-            ],
-          },
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return {
+                kind: "Iri" as const,
+                in: [
+                  dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+                  dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+                  dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
+                ],
+              };
+            },
+          };
         },
       },
       targetClasses: {
@@ -6532,7 +7226,13 @@ export namespace Shape {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<Shape>;
 }
-export type $Object = NodeShape | Ontology | PropertyGroup | PropertyShape;
+export type $Object =
+  | NodeShape
+  | Ontology
+  | PropertyGroup
+  | PropertyShape
+  | ValidationReport
+  | ValidationResult;
 
 export namespace $Object {
   export const $toString = (value: $Object): string => {
@@ -6547,6 +7247,12 @@ export namespace $Object {
     }
     if (PropertyShape.isPropertyShape(value)) {
       return PropertyShape.$toString(value);
+    }
+    if (ValidationReport.isValidationReport(value)) {
+      return ValidationReport.$toString(value);
+    }
+    if (ValidationResult.isValidationResult(value)) {
+      return ValidationResult.$toString(value);
     }
 
     throw new Error("unable to serialize to string");
@@ -6579,6 +7285,20 @@ export namespace $Object {
       .altLazy(
         () =>
           PropertyShape.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ValidationReport.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ValidationResult.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -6617,6 +7337,20 @@ export namespace $Object {
               schema: options.schema.members["PropertyShape"].type,
             }) as Either<Error, Resource.Values<$Object>>,
         )
+        .altLazy(
+          () =>
+            ValidationReport.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["ValidationReport"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
+        .altLazy(
+          () =>
+            ValidationResult.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["ValidationResult"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
         .chain((values) => values.head());
     })) satisfies $FromRdfResourceValuesFunction<
     $Object,
@@ -6642,29 +7376,16 @@ export namespace $Object {
         discriminantValues: ["PropertyShape"],
         type: PropertyShape.schema,
       },
-    },
-    properties: {
-      comment: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const },
-        },
+      ValidationReport: {
+        discriminantValues: ["ValidationReport"],
+        type: ValidationReport.schema,
       },
-      label: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const },
-        },
+      ValidationResult: {
+        discriminantValues: ["ValidationResult"],
+        type: ValidationResult.schema,
       },
     },
+    properties: {},
   } as const;
 
   export const toRdfResource: $ToRdfResourceFunction<$Object> = (
@@ -6682,6 +7403,12 @@ export namespace $Object {
     }
     if (PropertyShape.isPropertyShape(object)) {
       return PropertyShape.toRdfResource(object, options);
+    }
+    if (ValidationReport.isValidationReport(object)) {
+      return ValidationReport.toRdfResource(object, options);
+    }
+    if (ValidationResult.isValidationResult(object)) {
+      return ValidationResult.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -6717,6 +7444,22 @@ export namespace $Object {
     if (PropertyShape.isPropertyShape(value)) {
       return [
         PropertyShape.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (ValidationReport.isValidationReport(value)) {
+      return [
+        ValidationReport.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (ValidationResult.isValidationResult(value)) {
+      return [
+        ValidationResult.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
