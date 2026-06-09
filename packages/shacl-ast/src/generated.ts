@@ -6092,31 +6092,29 @@ export type Severity = NamedNode<
   | "http://www.w3.org/ns/shacl#Warning"
   | "http://www.w3.org/ns/shacl#Violation"
 >;
-export type shaclmate_ValidationReport = {
-  readonly $identifier: () => shaclmate_ValidationReport.Identifier;
+export type ValidationReport = {
+  readonly $identifier: () => ValidationReport.Identifier;
 
-  readonly $type: "shaclmate_ValidationReport";
+  readonly $type: "ValidationReport";
 
   readonly conforms: boolean;
 
-  readonly results: readonly shaclmate_ValidationResult[];
+  readonly results: readonly ValidationResult[];
 
   readonly shapesGraphWellFormed: Maybe<boolean>;
 };
 
-export namespace shaclmate_ValidationReport {
+export namespace ValidationReport {
   export const create: (parameters: {
     readonly $identifier?:
-      | (() => shaclmate_ValidationReport.Identifier)
+      | (() => ValidationReport.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly conforms: boolean;
-    readonly results?:
-      | shaclmate_ValidationResult
-      | readonly shaclmate_ValidationResult[];
+    readonly results?: ValidationResult | readonly ValidationResult[];
     readonly shapesGraphWellFormed?: boolean | Maybe<boolean>;
-  }) => Either<Error, shaclmate_ValidationReport> = (parameters) =>
+  }) => Either<Error, ValidationReport> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       conforms: Either.of(parameters.conforms),
@@ -6125,7 +6123,7 @@ export namespace shaclmate_ValidationReport {
         true,
       )(parameters.results).chain((value) =>
         $validateArray($identityValidationFunction, true)(
-          shaclmate_ValidationReport.schema.properties.results.type,
+          ValidationReport.schema.properties.results.type,
           value,
         ),
       ),
@@ -6133,44 +6131,40 @@ export namespace shaclmate_ValidationReport {
         parameters.shapesGraphWellFormed,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          shaclmate_ValidationReport.schema.properties.shapesGraphWellFormed
-            .type,
+          ValidationReport.schema.properties.shapesGraphWellFormed.type,
           value,
         ),
       ),
     })
       .map((properties) => ({
         ...properties,
-        $type: "shaclmate_ValidationReport" as const,
+        $type: "ValidationReport" as const,
       }))
       .map((object) =>
-        $monkeyPatchObject(object, {
-          $toString: shaclmate_ValidationReport.$toString,
-        }),
+        $monkeyPatchObject(object, { $toString: ValidationReport.$toString }),
       );
 
   export function createUnsafe(parameters: {
     readonly $identifier?:
-      | (() => shaclmate_ValidationReport.Identifier)
+      | (() => ValidationReport.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly conforms: boolean;
-    readonly results?:
-      | shaclmate_ValidationResult
-      | readonly shaclmate_ValidationResult[];
+    readonly results?: ValidationResult | readonly ValidationResult[];
     readonly shapesGraphWellFormed?: boolean | Maybe<boolean>;
-  }): shaclmate_ValidationReport {
+  }): ValidationReport {
     return create(parameters).unsafeCoerce();
   }
 
-  export const _fromRdfResource: $_FromRdfResourceFunction<
-    shaclmate_ValidationReport
-  > = ($resource, _$options) =>
+  export const _fromRdfResource: $_FromRdfResourceFunction<ValidationReport> = (
+    $resource,
+    _$options,
+  ) =>
     (!_$options.ignoreRdfType
       ? $ensureRdfResourceType(
           $resource,
-          [shaclmate_ValidationReport.schema.fromRdfType],
+          [ValidationReport.schema.fromRdfType],
           { graph: _$options.graph },
         )
       : Right(true as const)
@@ -6189,8 +6183,7 @@ export namespace shaclmate_ValidationReport {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema:
-              shaclmate_ValidationReport.schema.properties.$identifier.type,
+            schema: ValidationReport.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
         conforms: $shaclPropertyFromRdf<boolean, $BooleanSchema<boolean>>({
@@ -6199,23 +6192,23 @@ export namespace shaclmate_ValidationReport {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: shaclmate_ValidationReport.schema.properties.conforms,
+          propertySchema: ValidationReport.schema.properties.conforms,
           typeFromRdfResourceValues: $booleanFromRdfResourceValues<boolean>,
         }),
         results: $shaclPropertyFromRdf<
-          readonly shaclmate_ValidationResult[],
-          $CollectionSchema<shaclmate_ValidationResult.Schema>
+          readonly ValidationResult[],
+          $CollectionSchema<ValidationResult.Schema>
         >({
           context: _$options.context,
           graph: _$options.graph,
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema: shaclmate_ValidationReport.schema.properties.results,
+          propertySchema: ValidationReport.schema.properties.results,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
-            shaclmate_ValidationResult,
-            shaclmate_ValidationResult.Schema
-          >(shaclmate_ValidationResult.fromRdfResourceValues),
+            ValidationResult,
+            ValidationResult.Schema
+          >(ValidationResult.fromRdfResourceValues),
         }),
         shapesGraphWellFormed: $shaclPropertyFromRdf<
           Maybe<boolean>,
@@ -6227,21 +6220,21 @@ export namespace shaclmate_ValidationReport {
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
           propertySchema:
-            shaclmate_ValidationReport.schema.properties.shapesGraphWellFormed,
+            ValidationReport.schema.properties.shapesGraphWellFormed,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
           >($booleanFromRdfResourceValues<boolean>),
         }),
-      }).chain((properties) => shaclmate_ValidationReport.create(properties)),
+      }).chain((properties) => ValidationReport.create(properties)),
     );
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    shaclmate_ValidationReport,
-    shaclmate_ValidationReport.Schema
+    ValidationReport,
+    ValidationReport.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -6256,10 +6249,10 @@ export namespace shaclmate_ValidationReport {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isshaclmate_ValidationReport(
+  export function isValidationReport(
     object: $Object,
-  ): object is shaclmate_ValidationReport {
-    return object.$type === "shaclmate_ValidationReport";
+  ): object is ValidationReport {
+    return object.$type === "ValidationReport";
   }
 
   export const schema = {
@@ -6283,7 +6276,7 @@ export namespace shaclmate_ValidationReport {
           return {
             kind: "Set" as const,
             get itemType() {
-              return shaclmate_ValidationResult.schema;
+              return ValidationResult.schema;
             },
           };
         },
@@ -6304,8 +6297,8 @@ export namespace shaclmate_ValidationReport {
   export type Schema = typeof schema;
 
   export const _toRdfResource: $_ToRdfResourceFunction<
-    shaclmate_ValidationReport.Identifier,
-    shaclmate_ValidationReport
+    ValidationReport.Identifier,
+    ValidationReport
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -6315,7 +6308,7 @@ export namespace shaclmate_ValidationReport {
       );
     }
     parameters.resource.add(
-      shaclmate_ValidationReport.schema.properties.conforms.path,
+      ValidationReport.schema.properties.conforms.path,
       [
         $literalFactory.boolean(
           parameters.object.conforms,
@@ -6325,9 +6318,9 @@ export namespace shaclmate_ValidationReport {
       parameters.graph,
     );
     parameters.resource.add(
-      shaclmate_ValidationReport.schema.properties.results.path,
+      ValidationReport.schema.properties.results.path,
       parameters.object.results.flatMap((item) => [
-        shaclmate_ValidationResult.toRdfResource(item, {
+        ValidationResult.toRdfResource(item, {
           graph: parameters.graph,
           resourceSet: parameters.resourceSet,
         }).identifier,
@@ -6335,7 +6328,7 @@ export namespace shaclmate_ValidationReport {
       parameters.graph,
     );
     parameters.resource.add(
-      shaclmate_ValidationReport.schema.properties.shapesGraphWellFormed.path,
+      ValidationReport.schema.properties.shapesGraphWellFormed.path,
       parameters.object.shapesGraphWellFormed
         .toList()
         .flatMap((value) => [
@@ -6348,74 +6341,167 @@ export namespace shaclmate_ValidationReport {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export const $toString: (
-    _shaclmateValidationReport: shaclmate_ValidationReport,
-  ) => string = (_shaclmateValidationReport) =>
-    `shaclmate_ValidationReport(${JSON.stringify(toStringRecord(_shaclmateValidationReport))})`;
+  export const $toString: (_validationReport: ValidationReport) => string = (
+    _validationReport,
+  ) => `ValidationReport(${JSON.stringify(toStringRecord(_validationReport))})`;
 
   export const toStringRecord: (
-    _shaclmateValidationReport: shaclmate_ValidationReport,
-  ) => Record<string, string> = (_shaclmateValidationReport) =>
-    $compactRecord({
-      $identifier: _shaclmateValidationReport.$identifier().toString(),
-    });
+    _validationReport: ValidationReport,
+  ) => Record<string, string> = (_validationReport) =>
+    $compactRecord({ $identifier: _validationReport.$identifier().toString() });
 }
-export type shaclmate_ValidationResult = {
-  readonly $identifier: () => shaclmate_ValidationResult.Identifier;
+export type ValidationResult = {
+  readonly $identifier: () => ValidationResult.Identifier;
 
-  readonly $type: "shaclmate_ValidationResult";
+  readonly $type: "ValidationResult";
+
+  readonly details: readonly (BlankNode | NamedNode | Literal)[];
 
   readonly focusNode: BlankNode | NamedNode | Literal;
 
+  readonly message: Maybe<string>;
+
+  readonly path: Maybe<$PropertyPath>;
+
+  readonly severity: Severity;
+
   readonly sourceConstraintComponent: NamedNode;
+
+  readonly sourceShape: Maybe<BlankNode | NamedNode>;
+
+  readonly value: Maybe<BlankNode | NamedNode | Literal>;
 };
 
-export namespace shaclmate_ValidationResult {
+export namespace ValidationResult {
   export const create: (parameters: {
     readonly $identifier?:
-      | (() => shaclmate_ValidationResult.Identifier)
+      | (() => ValidationResult.Identifier)
       | BlankNode
       | NamedNode
       | string;
+    readonly details?:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
     readonly focusNode: BlankNode | NamedNode | Literal;
+    readonly message?: string | Maybe<string>;
+    readonly path?: $PropertyPath | Maybe<$PropertyPath>;
+    readonly severity:
+      | (
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        )
+      | Severity;
     readonly sourceConstraintComponent: string | NamedNode;
-  }) => Either<Error, shaclmate_ValidationResult> = (parameters) =>
+    readonly sourceShape?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly value?:
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
+  }) => Either<Error, ValidationResult> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      details: $convertToScalarSet(
+        $identityConversionFunction,
+        true,
+      )(parameters.details).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ValidationResult.schema.properties.details.type,
+          value,
+        ),
+      ),
       focusNode: Either.of(parameters.focusNode),
+      message: $convertToMaybe($identityConversionFunction)(
+        parameters.message,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ValidationResult.schema.properties.message.type,
+          value,
+        ),
+      ),
+      path: $convertToMaybe($identityConversionFunction)(parameters.path).chain(
+        (value) =>
+          $validateMaybe($identityValidationFunction)(
+            ValidationResult.schema.properties.path.type,
+            value,
+          ),
+      ),
+      severity: $convertToIri<
+        | "http://www.w3.org/ns/shacl#Info"
+        | "http://www.w3.org/ns/shacl#Warning"
+        | "http://www.w3.org/ns/shacl#Violation"
+      >(parameters.severity),
       sourceConstraintComponent: $convertToIri<string>(
         parameters.sourceConstraintComponent,
+      ),
+      sourceShape: $convertToMaybe($convertToIdentifier)(
+        parameters.sourceShape,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ValidationResult.schema.properties.sourceShape.type,
+          value,
+        ),
+      ),
+      value: $convertToMaybe($identityConversionFunction)(
+        parameters.value,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ValidationResult.schema.properties.value.type,
+          value,
+        ),
       ),
     })
       .map((properties) => ({
         ...properties,
-        $type: "shaclmate_ValidationResult" as const,
+        $type: "ValidationResult" as const,
       }))
       .map((object) =>
-        $monkeyPatchObject(object, {
-          $toString: shaclmate_ValidationResult.$toString,
-        }),
+        $monkeyPatchObject(object, { $toString: ValidationResult.$toString }),
       );
 
   export function createUnsafe(parameters: {
     readonly $identifier?:
-      | (() => shaclmate_ValidationResult.Identifier)
+      | (() => ValidationResult.Identifier)
       | BlankNode
       | NamedNode
       | string;
+    readonly details?:
+      | (BlankNode | NamedNode | Literal)
+      | readonly (BlankNode | NamedNode | Literal)[];
     readonly focusNode: BlankNode | NamedNode | Literal;
+    readonly message?: string | Maybe<string>;
+    readonly path?: $PropertyPath | Maybe<$PropertyPath>;
+    readonly severity:
+      | (
+          | "http://www.w3.org/ns/shacl#Info"
+          | "http://www.w3.org/ns/shacl#Warning"
+          | "http://www.w3.org/ns/shacl#Violation"
+        )
+      | Severity;
     readonly sourceConstraintComponent: string | NamedNode;
-  }): shaclmate_ValidationResult {
+    readonly sourceShape?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly value?:
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
+  }): ValidationResult {
     return create(parameters).unsafeCoerce();
   }
 
-  export const _fromRdfResource: $_FromRdfResourceFunction<
-    shaclmate_ValidationResult
-  > = ($resource, _$options) =>
+  export const _fromRdfResource: $_FromRdfResourceFunction<ValidationResult> = (
+    $resource,
+    _$options,
+  ) =>
     (!_$options.ignoreRdfType
       ? $ensureRdfResourceType(
           $resource,
-          [shaclmate_ValidationResult.schema.fromRdfType],
+          [ValidationResult.schema.fromRdfType],
           { graph: _$options.graph },
         )
       : Right(true as const)
@@ -6434,10 +6520,24 @@ export namespace shaclmate_ValidationResult {
             focusResource: $resource,
             preferredLanguages: _$options.preferredLanguages,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema:
-              shaclmate_ValidationResult.schema.properties.$identifier.type,
+            schema: ValidationResult.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
+        details: $shaclPropertyFromRdf<
+          readonly (BlankNode | NamedNode | Literal)[],
+          $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.details,
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            BlankNode | NamedNode | Literal,
+            $TermSchema<BlankNode | NamedNode | Literal>
+          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+        }),
         focusNode: $shaclPropertyFromRdf<
           BlankNode | NamedNode | Literal,
           $TermSchema<BlankNode | NamedNode | Literal>
@@ -6447,10 +6547,59 @@ export namespace shaclmate_ValidationResult {
           focusResource: $resource,
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
-          propertySchema:
-            shaclmate_ValidationResult.schema.properties.focusNode,
+          propertySchema: ValidationResult.schema.properties.focusNode,
           typeFromRdfResourceValues: $termFromRdfResourceValues<
             BlankNode | NamedNode | Literal
+          >,
+        }),
+        message: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.message,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
+        }),
+        path: $shaclPropertyFromRdf<
+          Maybe<$PropertyPath>,
+          $MaybeSchema<$PropertyPath.Schema>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.path,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            $PropertyPath,
+            $PropertyPath.Schema
+          >($PropertyPath.fromRdfResourceValues),
+        }),
+        severity: $shaclPropertyFromRdf<
+          Severity,
+          $IriSchema<
+            | "http://www.w3.org/ns/shacl#Info"
+            | "http://www.w3.org/ns/shacl#Warning"
+            | "http://www.w3.org/ns/shacl#Violation"
+          >
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.severity,
+          typeFromRdfResourceValues: $iriFromRdfResourceValues<
+            | "http://www.w3.org/ns/shacl#Info"
+            | "http://www.w3.org/ns/shacl#Warning"
+            | "http://www.w3.org/ns/shacl#Violation"
           >,
         }),
         sourceConstraintComponent: $shaclPropertyFromRdf<
@@ -6463,19 +6612,48 @@ export namespace shaclmate_ValidationResult {
           ignoreRdfType: true,
           preferredLanguages: _$options.preferredLanguages,
           propertySchema:
-            shaclmate_ValidationResult.schema.properties
-              .sourceConstraintComponent,
+            ValidationResult.schema.properties.sourceConstraintComponent,
           typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
         }),
-      }).chain((properties) => shaclmate_ValidationResult.create(properties)),
+        sourceShape: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode>,
+          $MaybeSchema<$IdentifierSchema>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.sourceShape,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
+        }),
+        value: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode | Literal>,
+          $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
+        >({
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          ignoreRdfType: true,
+          preferredLanguages: _$options.preferredLanguages,
+          propertySchema: ValidationResult.schema.properties.value,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode | Literal,
+            $TermSchema<BlankNode | NamedNode | Literal>
+          >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
+        }),
+      }).chain((properties) => ValidationResult.create(properties)),
     );
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    shaclmate_ValidationResult,
-    shaclmate_ValidationResult.Schema
+    ValidationResult,
+    ValidationResult.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -6490,10 +6668,10 @@ export namespace shaclmate_ValidationResult {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isshaclmate_ValidationResult(
+  export function isValidationResult(
     object: $Object,
-  ): object is shaclmate_ValidationResult {
-    return object.$type === "shaclmate_ValidationResult";
+  ): object is ValidationResult {
+    return object.$type === "ValidationResult";
   }
 
   export const schema = {
@@ -6505,12 +6683,59 @@ export namespace shaclmate_ValidationResult {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      details: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#detail"),
+        type: {
+          kind: "Set" as const,
+          itemType: {
+            kind: "Term" as const,
+            types: ["BlankNode", "NamedNode", "Literal"],
+          },
+        },
+      },
       focusNode: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#focusNode"),
         type: {
           kind: "Term" as const,
           types: ["BlankNode", "NamedNode", "Literal"],
+        },
+      },
+      message: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#resultMessage"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
+      path: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#resultPath"),
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return $PropertyPath.schema;
+            },
+          };
+        },
+      },
+      severity: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#resultSeverity",
+        ),
+        get type() {
+          return {
+            kind: "Iri" as const,
+            in: [
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Info"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Warning"),
+              dataFactory.namedNode("http://www.w3.org/ns/shacl#Violation"),
+            ],
+          };
         },
       },
       sourceConstraintComponent: {
@@ -6520,14 +6745,33 @@ export namespace shaclmate_ValidationResult {
         ),
         type: { kind: "Iri" as const },
       },
+      sourceShape: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#sourceShape"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Identifier" as const },
+        },
+      },
+      value: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#value"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "Term" as const,
+            types: ["BlankNode", "NamedNode", "Literal"],
+          },
+        },
+      },
     },
   } as const;
 
   export type Schema = typeof schema;
 
   export const _toRdfResource: $_ToRdfResourceFunction<
-    shaclmate_ValidationResult.Identifier,
-    shaclmate_ValidationResult
+    ValidationResult.Identifier,
+    ValidationResult
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
@@ -6537,14 +6781,50 @@ export namespace shaclmate_ValidationResult {
       );
     }
     parameters.resource.add(
-      shaclmate_ValidationResult.schema.properties.focusNode.path,
+      ValidationResult.schema.properties.details.path,
+      parameters.object.details.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.focusNode.path,
       [parameters.object.focusNode],
       parameters.graph,
     );
     parameters.resource.add(
-      shaclmate_ValidationResult.schema.properties.sourceConstraintComponent
-        .path,
+      ValidationResult.schema.properties.message.path,
+      parameters.object.message
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.path.path,
+      parameters.object.path.toList().flatMap((value) => [
+        $PropertyPath.toRdfResource(value, {
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
+        }).identifier,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.severity.path,
+      [parameters.object.severity],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.sourceConstraintComponent.path,
       [parameters.object.sourceConstraintComponent],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.sourceShape.path,
+      parameters.object.sourceShape.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      ValidationResult.schema.properties.value.path,
+      parameters.object.value.toList(),
       parameters.graph,
     );
     return parameters.resource;
@@ -6552,17 +6832,14 @@ export namespace shaclmate_ValidationResult {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export const $toString: (
-    _shaclmateValidationResult: shaclmate_ValidationResult,
-  ) => string = (_shaclmateValidationResult) =>
-    `shaclmate_ValidationResult(${JSON.stringify(toStringRecord(_shaclmateValidationResult))})`;
+  export const $toString: (_validationResult: ValidationResult) => string = (
+    _validationResult,
+  ) => `ValidationResult(${JSON.stringify(toStringRecord(_validationResult))})`;
 
   export const toStringRecord: (
-    _shaclmateValidationResult: shaclmate_ValidationResult,
-  ) => Record<string, string> = (_shaclmateValidationResult) =>
-    $compactRecord({
-      $identifier: _shaclmateValidationResult.$identifier().toString(),
-    });
+    _validationResult: ValidationResult,
+  ) => Record<string, string> = (_validationResult) =>
+    $compactRecord({ $identifier: _validationResult.$identifier().toString() });
 }
 export type Shape = NodeShape | PropertyShape;
 
@@ -6954,8 +7231,8 @@ export type $Object =
   | Ontology
   | PropertyGroup
   | PropertyShape
-  | shaclmate_ValidationReport
-  | shaclmate_ValidationResult;
+  | ValidationReport
+  | ValidationResult;
 
 export namespace $Object {
   export const $toString = (value: $Object): string => {
@@ -6971,11 +7248,11 @@ export namespace $Object {
     if (PropertyShape.isPropertyShape(value)) {
       return PropertyShape.$toString(value);
     }
-    if (shaclmate_ValidationReport.isshaclmate_ValidationReport(value)) {
-      return shaclmate_ValidationReport.$toString(value);
+    if (ValidationReport.isValidationReport(value)) {
+      return ValidationReport.$toString(value);
     }
-    if (shaclmate_ValidationResult.isshaclmate_ValidationResult(value)) {
-      return shaclmate_ValidationResult.$toString(value);
+    if (ValidationResult.isValidationResult(value)) {
+      return ValidationResult.$toString(value);
     }
 
     throw new Error("unable to serialize to string");
@@ -7014,14 +7291,14 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          shaclmate_ValidationReport.fromRdfResource(resource, {
+          ValidationReport.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
       )
       .altLazy(
         () =>
-          shaclmate_ValidationResult.fromRdfResource(resource, {
+          ValidationResult.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -7062,16 +7339,16 @@ export namespace $Object {
         )
         .altLazy(
           () =>
-            shaclmate_ValidationReport.fromRdfResourceValues(valueAsValues, {
+            ValidationReport.fromRdfResourceValues(valueAsValues, {
               ...options,
-              schema: options.schema.members["shaclmate_ValidationReport"].type,
+              schema: options.schema.members["ValidationReport"].type,
             }) as Either<Error, Resource.Values<$Object>>,
         )
         .altLazy(
           () =>
-            shaclmate_ValidationResult.fromRdfResourceValues(valueAsValues, {
+            ValidationResult.fromRdfResourceValues(valueAsValues, {
               ...options,
-              schema: options.schema.members["shaclmate_ValidationResult"].type,
+              schema: options.schema.members["ValidationResult"].type,
             }) as Either<Error, Resource.Values<$Object>>,
         )
         .chain((values) => values.head());
@@ -7099,13 +7376,13 @@ export namespace $Object {
         discriminantValues: ["PropertyShape"],
         type: PropertyShape.schema,
       },
-      shaclmate_ValidationReport: {
-        discriminantValues: ["shaclmate_ValidationReport"],
-        type: shaclmate_ValidationReport.schema,
+      ValidationReport: {
+        discriminantValues: ["ValidationReport"],
+        type: ValidationReport.schema,
       },
-      shaclmate_ValidationResult: {
-        discriminantValues: ["shaclmate_ValidationResult"],
-        type: shaclmate_ValidationResult.schema,
+      ValidationResult: {
+        discriminantValues: ["ValidationResult"],
+        type: ValidationResult.schema,
       },
     },
     properties: {},
@@ -7127,11 +7404,11 @@ export namespace $Object {
     if (PropertyShape.isPropertyShape(object)) {
       return PropertyShape.toRdfResource(object, options);
     }
-    if (shaclmate_ValidationReport.isshaclmate_ValidationReport(object)) {
-      return shaclmate_ValidationReport.toRdfResource(object, options);
+    if (ValidationReport.isValidationReport(object)) {
+      return ValidationReport.toRdfResource(object, options);
     }
-    if (shaclmate_ValidationResult.isshaclmate_ValidationResult(object)) {
-      return shaclmate_ValidationResult.toRdfResource(object, options);
+    if (ValidationResult.isValidationResult(object)) {
+      return ValidationResult.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -7172,17 +7449,17 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (shaclmate_ValidationReport.isshaclmate_ValidationReport(value)) {
+    if (ValidationReport.isValidationReport(value)) {
       return [
-        shaclmate_ValidationReport.toRdfResource(value, {
+        ValidationReport.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
-    if (shaclmate_ValidationResult.isshaclmate_ValidationResult(value)) {
+    if (ValidationResult.isValidationResult(value)) {
       return [
-        shaclmate_ValidationResult.toRdfResource(value, {
+        ValidationResult.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
