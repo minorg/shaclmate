@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import Serializer from "@rdfjs/serializer-turtle";
 import { type Either, EitherAsync } from "purify-ts";
-import { parseInputs } from "./parseInputs.js";
+import { parseInputs } from "../parseInputs.js";
 
 export async function merge({
   inputPaths,
