@@ -369,12 +369,16 @@ shaclmate:Shape-pattern
 
 shaclmate:Shape-severity
     a sh:PropertyShape ;
-    sh:in (sh:Info
+    sh:maxCount 1 ;
+    sh:node shaclmate:Severity ;
+    sh:path sh:severity .
+
+shaclmate:Severity
+    a sh:NodeShape ;
+        sh:in (sh:Info
         sh:Warning
         sh:Violation
-    ) ;
-    sh:maxCount 1 ;
-    sh:path sh:severity .
+    ) .
 
 shaclmate:Shape-targetClass
     a sh:PropertyShape ;
@@ -438,3 +442,52 @@ shaclmate:label
     sh:maxCount 1 ;
     sh:path rdfs:label .
 
+shaclmate:ValidationReport
+    a sh:NodeShape ;
+    shaclmate:fromRdfType sh:ValidationReport ;
+    sh:property shaclmate:ValidationReport-conforms, shaclmate:ValidationReport-results, shaclmate:ValidationReport-shapesGraphWellFormed .
+
+shaclmate:ValidationReport-conforms
+    a sh:PropertyShape ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path sh:conforms
+.
+
+shaclmate:ValidationReport-results
+    a sh:PropertyShape ;
+    sh:node shaclmate:ValidationResult ;
+    sh:path sh:result .
+
+shaclmate:ValidationReport-shapesGraphWellFormed ;
+    a sh:PropertyShape ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:path sh:shapesGraphWellFormed .
+
+shaclmate:ValidationResult
+    a sh:NodeShape ;
+    shaclmate:fromRdfType sh:ValidationResult ;
+    sh:property shaclmate:ValidationResult-focusNode, shaclmate:ValidationResult-focusNode, shaclmate:ValidationResult-sourceConstraintComponent ;
+.
+
+shaclmate:ValidationResult-focusNode
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path sh:focusNode .
+
+shaclmate:ValidationResult-severity
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:node shaclmate:Severity ;
+    sh:path sh:resultSeverity .
+
+shaclmate:ValidationResult-sourceConstraintComponent
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:nodeKind sh:IRI ;
+    sh:path sh:sourceConstraintComponent .
