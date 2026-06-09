@@ -7,7 +7,7 @@ import SHACLValidator from "rdf-validate-shacl";
 import * as tmp from "tmp-promise";
 import which from "which";
 import { logger } from "../logger.js";
-import { parseInputs } from "./parseInputs.js";
+import { parseInputs } from "../parseInputs.js";
 
 function execFileStreaming(
   cmd: string,

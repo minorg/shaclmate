@@ -5,7 +5,7 @@ import type { DatasetCore, NamedNode } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
 import { RdfDirectory, type RdfFile, RdfFileSystemEntry } from "@rdfx/fs";
 import { Either, EitherAsync, Left } from "purify-ts";
-import { logger } from "../logger.js";
+import { logger } from "./logger.js";
 
 export async function parseInputs(inputPaths: readonly string[]): Promise<
   Either<

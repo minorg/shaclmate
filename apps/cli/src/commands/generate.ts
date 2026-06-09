@@ -5,8 +5,8 @@ import { Compiler, ShapesGraph } from "@shaclmate/compiler";
 import { type Either, EitherAsync } from "purify-ts";
 import SHACLValidator from "rdf-validate-shacl";
 import { logger } from "../logger.js";
-import { parseInputs } from "./parseInputs.js";
-import { shaclShaclDataset } from "./shaclShaclDataset.js";
+import { parseInputs } from "../parseInputs.js";
+import { shaclShaclDataset } from "../shaclShaclDataset.js";
 
 export async function generate({
   generator,
