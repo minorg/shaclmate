@@ -2434,6 +2434,15 @@ export namespace $PropertyPath {
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
+function $rdfResourceIdentifierValues(resource: Resource): Resource.Values {
+  return new Resource.Value({
+    dataFactory: dataFactory,
+    focusResource: resource,
+    propertyPath: $RdfVocabularies.rdf.subject,
+    term: resource.identifier,
+  }).toValues();
+}
+
 namespace $RdfVocabularies {
   export const rdf = {
     first: dataFactory.namedNode(
@@ -3709,12 +3718,7 @@ export namespace $DefaultPartial {
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -4048,12 +4052,7 @@ export namespace $NamedDefaultPartial {
   > = ($resource, _$options) =>
     $sequenceRecord({
       $identifier: $iriFromRdfResourceValues<string>(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -4796,12 +4795,7 @@ export namespace AnonymousTypesStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -4862,12 +4856,7 @@ export namespace AnonymousTypesStruct {
                 (($resource, _$options) =>
                   $sequenceRecord({
                     $identifier: $identifierFromRdfResourceValues(
-                      new Resource.Value({
-                        dataFactory: dataFactory,
-                        focusResource: $resource,
-                        propertyPath: $RdfVocabularies.rdf.subject,
-                        term: $resource.identifier,
-                      }).toValues(),
+                      $rdfResourceIdentifierValues($resource),
                       {
                         context: _$options.context,
                         graph: _$options.graph,
@@ -5547,12 +5536,7 @@ export namespace BlankNodeIdentifierStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $blankNodeFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -6113,12 +6097,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -6989,12 +6968,7 @@ export namespace ClassConstraintsStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -8645,12 +8619,7 @@ export namespace ConvertibleTypesStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -11000,12 +10969,7 @@ export namespace DateUnionsStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -12621,12 +12585,7 @@ export namespace DefaultValuesStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -13395,12 +13354,7 @@ export namespace DirectRecursiveStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -14044,12 +13998,7 @@ export namespace DisplayStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -14640,12 +14589,7 @@ export namespace ExplicitFromToRdfTypesStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -15179,12 +15123,7 @@ export namespace ExplicitRdfTypeStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -15704,12 +15643,7 @@ export namespace FlattenUnionMember3 {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -16205,12 +16139,7 @@ export namespace HasValuesStruct {
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -16802,12 +16731,7 @@ export namespace IgnoredPropertiesStruct {
   > = ($resource, _$options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -17396,12 +17320,7 @@ export namespace IndirectRecursiveStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -17937,12 +17856,7 @@ export namespace IndirectRecursiveStructHelper {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -18519,23 +18433,15 @@ export namespace InIdentifierStruct {
         $identifier: $iriFromRdfResourceValues<
           | "http://example.com/InIdentifierStructInstance1"
           | "http://example.com/InIdentifierStructInstance2"
-        >(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-          {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema: InIdentifierStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
-          },
-        ).chain((values) => values.head()),
+        >($rdfResourceIdentifierValues($resource), {
+          context: _$options.context,
+          graph: _$options.graph,
+          focusResource: $resource,
+          preferredLanguages: _$options.preferredLanguages,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          schema: InIdentifierStruct.schema.properties.$identifier.type,
+          objectSet: _$options.objectSet,
+        }).chain((values) => values.head()),
         inIdentifierString: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
@@ -19521,12 +19427,7 @@ export namespace InPropertiesStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -20325,12 +20226,7 @@ export namespace IriIdentifierStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $iriFromRdfResourceValues<string>(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -20830,12 +20726,7 @@ export namespace LanguageInStruct {
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -21368,12 +21259,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -21858,12 +21744,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
   > = ($resource, _$options) =>
     $sequenceRecord({
       $identifier: $iriFromRdfResourceValues<string>(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -22363,12 +22244,7 @@ export namespace LazilyResolvedUnionMember1 {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -22879,12 +22755,7 @@ export namespace LazilyResolvedUnionMember2 {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -24417,12 +24288,7 @@ export namespace LazyPropertiesStruct {
   > = ($resource, _$options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -26257,12 +26123,7 @@ export namespace ListSetsStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -27516,12 +27377,7 @@ export namespace ListsStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -28636,12 +28492,7 @@ export namespace MutablePropertiesStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -29347,12 +29198,7 @@ export namespace NamedUnionsStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -29908,12 +29754,7 @@ export namespace NewName {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -30730,12 +30571,7 @@ export namespace NodeKindsStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -31422,12 +31258,7 @@ export namespace NonClassStruct {
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -31858,12 +31689,7 @@ export namespace NoRdfTypeUnionMember1 {
   > = ($resource, _$options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -32307,12 +32133,7 @@ export namespace NoRdfTypeUnionMember2 {
   > = ($resource, _$options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -33851,12 +33672,7 @@ export namespace NumericsStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -35013,12 +34829,7 @@ export namespace OrderedStruct {
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -35488,12 +35299,7 @@ export namespace PartialStruct {
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -35979,12 +35785,7 @@ export namespace PartialUnionMember1 {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -36480,12 +36281,7 @@ export namespace PartialUnionMember2 {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -37135,12 +36931,7 @@ export namespace PropertyCardinalitiesStruct {
   > = ($resource, _$options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -37962,12 +37753,7 @@ export namespace PropertyNamesStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -38683,12 +38469,7 @@ export namespace PropertyPathsStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -39238,12 +39019,7 @@ export namespace RecursiveUnionMember1 {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -39786,12 +39562,7 @@ export namespace RecursiveUnionMember2 {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -40934,12 +40705,7 @@ export namespace TermsStruct {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -45556,12 +45322,7 @@ export namespace UnionDiscriminantsStruct {
   > = ($resource, _$options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
+        $rdfResourceIdentifierValues($resource),
         {
           context: _$options.context,
           graph: _$options.graph,
@@ -48736,12 +48497,7 @@ export namespace UnionMember1 {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -49311,12 +49067,7 @@ export namespace UnionMember2 {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,

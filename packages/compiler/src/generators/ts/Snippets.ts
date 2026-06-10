@@ -121,6 +121,7 @@ import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js"
 import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
 import { snippets_parseIri } from "./_snippets/snippets_parseIri.js";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
+import { snippets_rdfResourceIdentifierValues } from "./_snippets/snippets_rdfResourceIdentifierValues.js";
 import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
 import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
 import { snippets_SparqlPattern } from "./_snippets/snippets_SparqlPattern.js";
@@ -877,6 +878,11 @@ export class Snippets {
   @Memoize()
   get parseIri(): Snippet {
     return this.snippet(snippets_parseIri);
+  }
+
+  @Memoize()
+  get rdfResourceIdentifierValues(): Snippet {
+    return this.snippet(snippets_rdfResourceIdentifierValues);
   }
 
   @Memoize()
