@@ -2,8 +2,8 @@
   "dependencies": {
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/data-factory": "0.0.18",
-    "@rdfx/resource": "0.0.18",
+    "@rdfx/data-factory": "0.0.19",
+    "@rdfx/resource": "0.0.19",
     "graphql": "16.11.0",
     "graphql-yoga": "5.14.0",
     "purify-ts": "~2.1.4"
@@ -37,5 +37,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.48"
+  "version": "4.0.49"
 }

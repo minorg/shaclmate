@@ -8,8 +8,8 @@
     "@mui/x-date-pickers": "~7.17.0",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/data-factory": "0.0.18",
-    "@rdfx/resource": "0.0.18",
+    "@rdfx/data-factory": "0.0.19",
+    "@rdfx/resource": "0.0.19",
     "@types/n3": "~1.26.0",
     "@types/rdfjs__dataset": "~2.0.7",
     "n3": "~1.26.0",
@@ -42,5 +42,5 @@
     "start": "vite dev --port 3000"
   },
   "type": "module",
-  "version": "4.0.48"
+  "version": "4.0.49"
 }
