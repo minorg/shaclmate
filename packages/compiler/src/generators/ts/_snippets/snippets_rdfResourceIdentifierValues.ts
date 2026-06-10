@@ -11,7 +11,7 @@ export const snippets_rdfResourceIdentifierValues: SnippetFactory = ({
     `${syntheticNamePrefix}rdfResourceIdentifierValues`,
     code`\
 function ${syntheticNamePrefix}rdfResourceIdentifierValues(resource: ${imports.Resource}): ${imports.Resource}.Values {
-  return new Resource.Value({
+  return new ${imports.Resource}.Value({
     dataFactory: ${imports.dataFactory},
     focusResource: resource,
     propertyPath: ${rdfjsTermExpression(rdf.subject)},
