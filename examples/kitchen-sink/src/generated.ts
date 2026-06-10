@@ -931,6 +931,8 @@ function $ensureRdfResourceType(
     });
 }
 
+export type $EqualsFunction<T> = (left: T, right: T) => $EqualsResult;
+
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -2391,6 +2393,25 @@ export function $parseIri(identifier: string): Either<Error, NamedNode> {
   ) as Either<Error, NamedNode>;
 }
 
+function $propertyEquals<ObjectT, PropertyValueT>(
+  property: Readonly<{
+    equalsFunction: $EqualsFunction<PropertyValueT>;
+    name: string;
+  }>,
+  left: readonly [ObjectT, PropertyValueT],
+  right: readonly [ObjectT, PropertyValueT],
+): $EqualsResult {
+  return property
+    .equalsFunction(left[1], right[1])
+    .mapLeft((propertyValuesUnequal) => ({
+      left: left[0],
+      right: right[0],
+      propertyName: property.name,
+      propertyValuesUnequal,
+      type: "property" as const,
+    }));
+}
+
 export type $PropertyPath = RdfxResourcePropertyPath;
 
 export namespace $PropertyPath {
@@ -3650,14 +3671,10 @@ export namespace $DefaultPartial {
     left: $DefaultPartial,
     right: $DefaultPartial,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-      (propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }),
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
     );
 
   export type Filter = { readonly $identifier?: $IdentifierFilter };
@@ -3984,14 +4001,10 @@ export namespace $NamedDefaultPartial {
     left: $NamedDefaultPartial,
     right: $NamedDefaultPartial,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-      (propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }),
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
     );
 
   export type Filter = { readonly $identifier?: $IriFilter };
@@ -4395,47 +4408,36 @@ export namespace AnonymousTypesStruct {
     left: AnonymousTypesStruct,
     right: AnonymousTypesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $booleanEquals(left.$identifier(), right.$identifier())
-              .mapLeft((propertyValuesUnequal) => ({
-                left,
-                right,
-                propertyName: "$identifier",
-                propertyValuesUnequal,
-                type: "property" as const,
-              }))
-              .chain(() =>
-                $strictEquals(
-                  left.anonymousStructString,
-                  right.anonymousStructString,
-                ).mapLeft((propertyValuesUnequal) => ({
-                  left,
-                  right,
-                  propertyName: "anonymousStructString",
-                  propertyValuesUnequal,
-                  type: "property" as const,
-                })),
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, (left, right) =>
+              $propertyEquals(
+                { equalsFunction: $booleanEquals, name: "$identifier" },
+                [left, left.$identifier()],
+                [right, right.$identifier()],
+              ).chain(() =>
+                $propertyEquals(
+                  {
+                    equalsFunction: $strictEquals,
+                    name: "anonymousStructString",
+                  },
+                  [left, left.anonymousStructString],
+                  [right, right.anonymousStructString],
+                ),
               ),
-          ))(left.anonymousStruct, right.anonymousStruct).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "anonymousStruct",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+            ),
+          name: "anonymousStruct",
+        },
+        [left, left.anonymousStruct],
+        [right, right.anonymousStruct],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -5329,26 +5331,21 @@ export namespace BlankNodeIdentifierStruct {
     left: BlankNodeIdentifierStruct,
     right: BlankNodeIdentifierStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.blankNodeIdentifierString,
-          right.blankNodeIdentifierString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "blankNodeIdentifierString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, $strictEquals),
+          name: "blankNodeIdentifierString",
+        },
+        [left, left.blankNodeIdentifierString],
+        [right, right.blankNodeIdentifierString],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $BlankNodeFilter;
@@ -5877,26 +5874,21 @@ export namespace BlankNodeOrIriIdentifierStruct {
     left: BlankNodeOrIriIdentifierStruct,
     right: BlankNodeOrIriIdentifierStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.blankNodeOrIriIdentifierString,
-          right.blankNodeOrIriIdentifierString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "blankNodeOrIriIdentifierString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, $strictEquals),
+          name: "blankNodeOrIriIdentifierString",
+        },
+        [left, left.blankNodeOrIriIdentifierString],
+        [right, right.blankNodeOrIriIdentifierString],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -6522,73 +6514,65 @@ export namespace ClassConstraintsStruct {
     left: ClassConstraintsStruct,
     right: ClassConstraintsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.iriClass,
-          right.iriClass,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "iriClass",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "iriClass",
+          },
+          [left, left.iriClass],
+          [right, right.iriClass],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.multiClass,
-          right.multiClass,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "multiClass",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "multiClass",
+          },
+          [left, left.multiClass],
+          [right, right.multiClass],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, NonClassStruct.equals))(
-          left.nodeClass1,
-          right.nodeClass1,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "nodeClass1",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, NonClassStruct.equals),
+            name: "nodeClass1",
+          },
+          [left, left.nodeClass1],
+          [right, right.nodeClass1],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, PartialStruct.equals))(
-          left.nodeClass2,
-          right.nodeClass2,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "nodeClass2",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, PartialStruct.equals),
+            name: "nodeClass2",
+          },
+          [left, left.nodeClass2],
+          [right, right.nodeClass2],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.singleClass,
-          right.singleClass,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "singleClass",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "singleClass",
+          },
+          [left, left.singleClass],
+          [right, right.singleClass],
+        ),
       );
 
   export type Filter = {
@@ -7672,155 +7656,130 @@ export namespace ConvertibleTypesStruct {
     left: ConvertibleTypesStruct,
     right: ConvertibleTypesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $booleanEquals(left.convertibleIri, right.convertibleIri).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "convertibleIri",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "convertibleIri" },
+          [left, left.convertibleIri],
+          [right, right.convertibleIri],
         ),
       )
       .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
-          left.convertibleIriNonEmptySet,
-          right.convertibleIriNonEmptySet,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleIriNonEmptySet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.convertibleIriOption,
-          right.convertibleIriOption,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleIriOption",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
-          left.convertibleIriSet,
-          right.convertibleIriSet,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleIriSet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        $booleanEquals(
-          left.convertibleLiteral,
-          right.convertibleLiteral,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleLiteral",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
-          left.convertibleLiteralNonEmptySet,
-          right.convertibleLiteralNonEmptySet,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleLiteralNonEmptySet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.convertibleLiteralOption,
-          right.convertibleLiteralOption,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleLiteralOption",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
-          left.convertibleLiteralSet,
-          right.convertibleLiteralSet,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleLiteralSet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        $booleanEquals(left.convertibleTerm, right.convertibleTerm).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "convertibleTerm",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
+            name: "convertibleIriNonEmptySet",
+          },
+          [left, left.convertibleIriNonEmptySet],
+          [right, right.convertibleIriNonEmptySet],
         ),
       )
       .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
-          left.convertibleTermNonEmptySet,
-          right.convertibleTermNonEmptySet,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleTermNonEmptySet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "convertibleIriOption",
+          },
+          [left, left.convertibleIriOption],
+          [right, right.convertibleIriOption],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.convertibleTermOption,
-          right.convertibleTermOption,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleTermOption",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
+            name: "convertibleIriSet",
+          },
+          [left, left.convertibleIriSet],
+          [right, right.convertibleIriSet],
+        ),
       )
       .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
-          left.convertibleTermSet,
-          right.convertibleTermSet,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "convertibleTermSet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "convertibleLiteral" },
+          [left, left.convertibleLiteral],
+          [right, right.convertibleLiteral],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
+            name: "convertibleLiteralNonEmptySet",
+          },
+          [left, left.convertibleLiteralNonEmptySet],
+          [right, right.convertibleLiteralNonEmptySet],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "convertibleLiteralOption",
+          },
+          [left, left.convertibleLiteralOption],
+          [right, right.convertibleLiteralOption],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
+            name: "convertibleLiteralSet",
+          },
+          [left, left.convertibleLiteralSet],
+          [right, right.convertibleLiteralSet],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "convertibleTerm" },
+          [left, left.convertibleTerm],
+          [right, right.convertibleTerm],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
+            name: "convertibleTermNonEmptySet",
+          },
+          [left, left.convertibleTermNonEmptySet],
+          [right, right.convertibleTermNonEmptySet],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "convertibleTermOption",
+          },
+          [left, left.convertibleTermOption],
+          [right, right.convertibleTermOption],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
+            name: "convertibleTermSet",
+          },
+          [left, left.convertibleTermSet],
+          [right, right.convertibleTermSet],
+        ),
       );
 
   export type Filter = {
@@ -9670,186 +9629,185 @@ export namespace DateUnionsStruct {
     left: DateUnionsStruct,
     right: DateUnionsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(
-            left,
-            right,
-            (
-              left:
-                | { type: "date"; value: Date }
-                | { type: "dateTime"; value: Date },
-              right:
-                | { type: "date"; value: Date }
-                | { type: "dateTime"; value: Date },
-            ) => {
-              if (left["type"] === "date" && right["type"] === "date") {
-                return $dateEquals(left.value as Date, right.value as Date);
-              }
-              if (left["type"] === "dateTime" && right["type"] === "dateTime") {
-                return $dateEquals(left.value as Date, right.value as Date);
-              }
-
-              return Left({
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (
+                  left:
+                    | { type: "date"; value: Date }
+                    | { type: "dateTime"; value: Date },
+                  right:
+                    | { type: "date"; value: Date }
+                    | { type: "dateTime"; value: Date },
+                ) => {
+                  if (left["type"] === "date" && right["type"] === "date") {
+                    return $dateEquals(left.value as Date, right.value as Date);
+                  }
+                  if (
+                    left["type"] === "dateTime" &&
+                    right["type"] === "dateTime"
+                  ) {
+                    return $dateEquals(left.value as Date, right.value as Date);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-          ))(left.dateOrDateTime, right.dateOrDateTime).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "dateOrDateTime",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+              ),
+            name: "dateOrDateTime",
+          },
+          [left, left.dateOrDateTime],
+          [right, right.dateOrDateTime],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(
-            left,
-            right,
-            (
-              left:
-                | { type: "date"; value: Date }
-                | { type: "string"; value: string },
-              right:
-                | { type: "date"; value: Date }
-                | { type: "string"; value: string },
-            ) => {
-              if (left["type"] === "date" && right["type"] === "date") {
-                return $dateEquals(left.value as Date, right.value as Date);
-              }
-              if (left["type"] === "string" && right["type"] === "string") {
-                return $strictEquals(
-                  left.value as string,
-                  right.value as string,
-                );
-              }
-
-              return Left({
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (
+                  left:
+                    | { type: "date"; value: Date }
+                    | { type: "string"; value: string },
+                  right:
+                    | { type: "date"; value: Date }
+                    | { type: "string"; value: string },
+                ) => {
+                  if (left["type"] === "date" && right["type"] === "date") {
+                    return $dateEquals(left.value as Date, right.value as Date);
+                  }
+                  if (left["type"] === "string" && right["type"] === "string") {
+                    return $strictEquals(
+                      left.value as string,
+                      right.value as string,
+                    );
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-          ))(left.dateOrString, right.dateOrString).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "dateOrString",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+              ),
+            name: "dateOrString",
+          },
+          [left, left.dateOrString],
+          [right, right.dateOrString],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(
-            left,
-            right,
-            (
-              left:
-                | { type: "dateTime"; value: Date }
-                | { type: "date"; value: Date },
-              right:
-                | { type: "dateTime"; value: Date }
-                | { type: "date"; value: Date },
-            ) => {
-              if (left["type"] === "dateTime" && right["type"] === "dateTime") {
-                return $dateEquals(left.value as Date, right.value as Date);
-              }
-              if (left["type"] === "date" && right["type"] === "date") {
-                return $dateEquals(left.value as Date, right.value as Date);
-              }
-
-              return Left({
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (
+                  left:
+                    | { type: "dateTime"; value: Date }
+                    | { type: "date"; value: Date },
+                  right:
+                    | { type: "dateTime"; value: Date }
+                    | { type: "date"; value: Date },
+                ) => {
+                  if (
+                    left["type"] === "dateTime" &&
+                    right["type"] === "dateTime"
+                  ) {
+                    return $dateEquals(left.value as Date, right.value as Date);
+                  }
+                  if (left["type"] === "date" && right["type"] === "date") {
+                    return $dateEquals(left.value as Date, right.value as Date);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-          ))(left.dateTimeOrDate, right.dateTimeOrDate).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "dateTimeOrDate",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+              ),
+            name: "dateTimeOrDate",
+          },
+          [left, left.dateTimeOrDate],
+          [right, right.dateTimeOrDate],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(
-            left,
-            right,
-            (
-              left:
-                | { type: "string"; value: string }
-                | { type: "date"; value: Date },
-              right:
-                | { type: "string"; value: string }
-                | { type: "date"; value: Date },
-            ) => {
-              if (left["type"] === "string" && right["type"] === "string") {
-                return $strictEquals(
-                  left.value as string,
-                  right.value as string,
-                );
-              }
-              if (left["type"] === "date" && right["type"] === "date") {
-                return $dateEquals(left.value as Date, right.value as Date);
-              }
-
-              return Left({
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (
+                  left:
+                    | { type: "string"; value: string }
+                    | { type: "date"; value: Date },
+                  right:
+                    | { type: "string"; value: string }
+                    | { type: "date"; value: Date },
+                ) => {
+                  if (left["type"] === "string" && right["type"] === "string") {
+                    return $strictEquals(
+                      left.value as string,
+                      right.value as string,
+                    );
+                  }
+                  if (left["type"] === "date" && right["type"] === "date") {
+                    return $dateEquals(left.value as Date, right.value as Date);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-          ))(left.stringOrDate, right.stringOrDate).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "stringOrDate",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+              ),
+            name: "stringOrDate",
+          },
+          [left, left.stringOrDate],
+          [right, right.stringOrDate],
         ),
       );
 
@@ -12048,84 +12006,52 @@ export namespace DefaultValuesStruct {
     left: DefaultValuesStruct,
     right: DefaultValuesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $dateEquals(left.dateDefaultValue, right.dateDefaultValue).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "dateDefaultValue",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $dateEquals, name: "dateDefaultValue" },
+          [left, left.dateDefaultValue],
+          [right, right.dateDefaultValue],
         ),
       )
       .chain(() =>
-        $dateEquals(
-          left.dateTimeDefaultValue,
-          right.dateTimeDefaultValue,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "dateTimeDefaultValue",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $dateEquals, name: "dateTimeDefaultValue" },
+          [left, left.dateTimeDefaultValue],
+          [right, right.dateTimeDefaultValue],
+        ),
       )
       .chain(() =>
-        $strictEquals(
-          left.falseBooleanDefaultValue,
-          right.falseBooleanDefaultValue,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "falseBooleanDefaultValue",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "falseBooleanDefaultValue" },
+          [left, left.falseBooleanDefaultValue],
+          [right, right.falseBooleanDefaultValue],
+        ),
       )
       .chain(() =>
-        $strictEquals(
-          left.numberDefaultValue,
-          right.numberDefaultValue,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "numberDefaultValue",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "numberDefaultValue" },
+          [left, left.numberDefaultValue],
+          [right, right.numberDefaultValue],
+        ),
       )
       .chain(() =>
-        $strictEquals(
-          left.stringDefaultValue,
-          right.stringDefaultValue,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "stringDefaultValue",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "stringDefaultValue" },
+          [left, left.stringDefaultValue],
+          [right, right.stringDefaultValue],
+        ),
       )
       .chain(() =>
-        $strictEquals(
-          left.trueBooleanDefaultValue,
-          right.trueBooleanDefaultValue,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "trueBooleanDefaultValue",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "trueBooleanDefaultValue" },
+          [left, left.trueBooleanDefaultValue],
+          [right, right.trueBooleanDefaultValue],
+        ),
       );
 
   export type Filter = {
@@ -13073,27 +12999,21 @@ export namespace DirectRecursiveStruct {
     left: DirectRecursiveStruct,
     right: DirectRecursiveStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, DirectRecursiveStruct.equals))(
-          left.directRecursive,
-          right.directRecursive,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "directRecursive",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, DirectRecursiveStruct.equals),
+          name: "directRecursive",
+        },
+        [left, left.directRecursive],
+        [right, right.directRecursive],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -13602,49 +13522,31 @@ export namespace DisplayStruct {
     left: DisplayStruct,
     right: DisplayStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $strictEquals(
-          left.explicitFalseDisplay,
-          right.explicitFalseDisplay,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "explicitFalseDisplay",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "explicitFalseDisplay" },
+          [left, left.explicitFalseDisplay],
+          [right, right.explicitFalseDisplay],
+        ),
       )
       .chain(() =>
-        $strictEquals(
-          left.explicitTrueDisplay,
-          right.explicitTrueDisplay,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "explicitTrueDisplay",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "explicitTrueDisplay" },
+          [left, left.explicitTrueDisplay],
+          [right, right.explicitTrueDisplay],
+        ),
       )
       .chain(() =>
-        $strictEquals(
-          left.implicitFalseDisplay,
-          right.implicitFalseDisplay,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "implicitFalseDisplay",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "implicitFalseDisplay" },
+          [left, left.implicitFalseDisplay],
+          [right, right.implicitFalseDisplay],
+        ),
       );
 
   export type Filter = {
@@ -14260,26 +14162,17 @@ export namespace ExplicitFromToRdfTypesStruct {
     left: ExplicitFromToRdfTypesStruct,
     right: ExplicitFromToRdfTypesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(
-          left.explicitFromToRdfTypesString,
-          right.explicitFromToRdfTypesString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "explicitFromToRdfTypesString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "explicitFromToRdfTypesString" },
+        [left, left.explicitFromToRdfTypesString],
+        [right, right.explicitFromToRdfTypesString],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -14794,26 +14687,17 @@ export namespace ExplicitRdfTypeStruct {
     left: ExplicitRdfTypeStruct,
     right: ExplicitRdfTypeStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(
-          left.explicitRdfTypeString,
-          right.explicitRdfTypeString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "explicitRdfTypeString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "explicitRdfTypeString" },
+        [left, left.explicitRdfTypeString],
+        [right, right.explicitRdfTypeString],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -15305,26 +15189,17 @@ export namespace FlattenUnionMember3 {
     left: FlattenUnionMember3,
     right: FlattenUnionMember3,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(
-          left.flattenUnionMember3String,
-          right.flattenUnionMember3String,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "flattenUnionMember3String",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "flattenUnionMember3String" },
+        [left, left.flattenUnionMember3String],
+        [right, right.flattenUnionMember3String],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -15822,34 +15697,23 @@ export namespace HasValuesStruct {
     left: HasValuesStruct,
     right: HasValuesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $booleanEquals(left.hasIriValue, right.hasIriValue).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "hasIriValue",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "hasIriValue" },
+          [left, left.hasIriValue],
+          [right, right.hasIriValue],
         ),
       )
       .chain(() =>
-        $strictEquals(left.hasLiteralValue, right.hasLiteralValue).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "hasLiteralValue",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "hasLiteralValue" },
+          [left, left.hasLiteralValue],
+          [right, right.hasLiteralValue],
         ),
       );
 
@@ -16340,49 +16204,34 @@ export namespace IgnoredPropertiesStruct {
     left: IgnoredPropertiesStruct,
     right: IgnoredPropertiesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $strictEquals(
-          left.severityDefaultProperty,
-          right.severityDefaultProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "severityDefaultProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "severityDefaultProperty" },
+          [left, left.severityDefaultProperty],
+          [right, right.severityDefaultProperty],
+        ),
       )
       .chain(() =>
-        $strictEquals(
-          left.severityViolationProperty,
-          right.severityViolationProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "severityViolationProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "severityViolationProperty" },
+          [left, left.severityViolationProperty],
+          [right, right.severityViolationProperty],
+        ),
       )
       .chain(() =>
-        $strictEquals(
-          left.shaclmateIgnoreFalseProperty,
-          right.shaclmateIgnoreFalseProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "shaclmateIgnoreFalseProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: $strictEquals,
+            name: "shaclmateIgnoreFalseProperty",
+          },
+          [left, left.shaclmateIgnoreFalseProperty],
+          [right, right.shaclmateIgnoreFalseProperty],
+        ),
       );
 
   export type Filter = {
@@ -16972,27 +16821,21 @@ export namespace IndirectRecursiveStruct {
     left: IndirectRecursiveStruct,
     right: IndirectRecursiveStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, IndirectRecursiveStructHelper.equals))(
-          left.indirectRecursiveHelper,
-          right.indirectRecursiveHelper,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "indirectRecursiveHelper",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, IndirectRecursiveStructHelper.equals),
+          name: "indirectRecursiveHelper",
+        },
+        [left, left.indirectRecursiveHelper],
+        [right, right.indirectRecursiveHelper],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -17507,27 +17350,21 @@ export namespace IndirectRecursiveStructHelper {
     left: IndirectRecursiveStructHelper,
     right: IndirectRecursiveStructHelper,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, IndirectRecursiveStruct.equals))(
-          left.indirectRecursive,
-          right.indirectRecursive,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "indirectRecursive",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, IndirectRecursiveStruct.equals),
+          name: "indirectRecursive",
+        },
+        [left, left.indirectRecursive],
+        [right, right.indirectRecursive],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -18046,26 +17883,21 @@ export namespace InIdentifierStruct {
     left: InIdentifierStruct,
     right: InIdentifierStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.inIdentifierString,
-          right.inIdentifierString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "inIdentifierString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, $strictEquals),
+          name: "inIdentifierString",
+        },
+        [left, left.inIdentifierString],
+        [right, right.inIdentifierString],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IriFilter;
@@ -18705,97 +18537,87 @@ export namespace InPropertiesStruct {
     left: InPropertiesStruct,
     right: InPropertiesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.inBooleans,
-          right.inBooleans,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "inBooleans",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "inBooleans",
+          },
+          [left, left.inBooleans],
+          [right, right.inBooleans],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $dateEquals))(
-          left.inDateTimes,
-          right.inDateTimes,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "inDateTimes",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $dateEquals),
+            name: "inDateTimes",
+          },
+          [left, left.inDateTimes],
+          [right, right.inDateTimes],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.inDoubles,
-          right.inDoubles,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "inDoubles",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "inDoubles",
+          },
+          [left, left.inDoubles],
+          [right, right.inDoubles],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.inIntegers,
-          right.inIntegers,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "inIntegers",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "inIntegers",
+          },
+          [left, left.inIntegers],
+          [right, right.inIntegers],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.inIris,
-          right.inIris,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "inIris",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "inIris",
+          },
+          [left, left.inIris],
+          [right, right.inIris],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.inStrings,
-          right.inStrings,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "inStrings",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "inStrings",
+          },
+          [left, left.inStrings],
+          [right, right.inStrings],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.reusableIn,
-          right.reusableIn,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "reusableIn",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "reusableIn",
+          },
+          [left, left.reusableIn],
+          [right, right.reusableIn],
+        ),
       );
 
   export type Filter = {
@@ -19813,26 +19635,21 @@ export namespace IriIdentifierStruct {
     left: IriIdentifierStruct,
     right: IriIdentifierStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.iriIdentifierString,
-          right.iriIdentifierString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "iriIdentifierString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, $strictEquals),
+          name: "iriIdentifierString",
+        },
+        [left, left.iriIdentifierString],
+        [right, right.iriIdentifierString],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IriFilter;
@@ -20359,26 +20176,21 @@ export namespace LanguageInStruct {
     left: LanguageInStruct,
     right: LanguageInStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
-          left.languageInLiteral,
-          right.languageInLiteral,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "languageInLiteral",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $arrayEquals(left, right, $booleanEquals),
+          name: "languageInLiteral",
+        },
+        [left, left.languageInLiteral],
+        [right, right.languageInLiteral],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -20837,25 +20649,17 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     left: LazilyResolvedBlankNodeOrIriIdentifierStruct,
     right: LazilyResolvedBlankNodeOrIriIdentifierStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.lazilyResolved, right.lazilyResolved).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "lazilyResolved",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "lazilyResolved" },
+        [left, left.lazilyResolved],
+        [right, right.lazilyResolved],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -21387,25 +21191,17 @@ export namespace LazilyResolvedIriIdentifierStruct {
     left: LazilyResolvedIriIdentifierStruct,
     right: LazilyResolvedIriIdentifierStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.lazilyResolved, right.lazilyResolved).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "lazilyResolved",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "lazilyResolved" },
+        [left, left.lazilyResolved],
+        [right, right.lazilyResolved],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IriFilter;
@@ -21817,25 +21613,17 @@ export namespace LazilyResolvedUnionMember1 {
     left: LazilyResolvedUnionMember1,
     right: LazilyResolvedUnionMember1,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.lazilyResolved, right.lazilyResolved).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "lazilyResolved",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "lazilyResolved" },
+        [left, left.lazilyResolved],
+        [right, right.lazilyResolved],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -22322,25 +22110,17 @@ export namespace LazilyResolvedUnionMember2 {
     left: LazilyResolvedUnionMember2,
     right: LazilyResolvedUnionMember2,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.lazilyResolved, right.lazilyResolved).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "lazilyResolved",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "lazilyResolved" },
+        [left, left.lazilyResolved],
+        [right, right.lazilyResolved],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -23017,166 +22797,151 @@ export namespace LazyPropertiesStruct {
     left: LazyPropertiesStruct,
     right: LazyPropertiesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) =>
-          ((left, right) => $maybeEquals(left, right, $DefaultPartial.equals))(
-            left.partial,
-            right.partial,
-          ))(
-          left.optionalLazyToResolvedBlankNodeOrIriIdentifier,
-          right.optionalLazyToResolvedBlankNodeOrIriIdentifier,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "optionalLazyToResolvedBlankNodeOrIriIdentifier",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              ((left, right) =>
+                $maybeEquals(left, right, $DefaultPartial.equals))(
+                left.partial,
+                right.partial,
+              ),
+            name: "optionalLazyToResolvedBlankNodeOrIriIdentifier",
+          },
+          [left, left.optionalLazyToResolvedBlankNodeOrIriIdentifier],
+          [right, right.optionalLazyToResolvedBlankNodeOrIriIdentifier],
+        ),
       )
       .chain(() =>
-        ((left, right) =>
-          ((left, right) =>
-            $maybeEquals(left, right, $NamedDefaultPartial.equals))(
-            left.partial,
-            right.partial,
-          ))(
-          left.optionalLazyToResolvedIriIdentifier,
-          right.optionalLazyToResolvedIriIdentifier,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "optionalLazyToResolvedIriIdentifier",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              ((left, right) =>
+                $maybeEquals(left, right, $NamedDefaultPartial.equals))(
+                left.partial,
+                right.partial,
+              ),
+            name: "optionalLazyToResolvedIriIdentifier",
+          },
+          [left, left.optionalLazyToResolvedIriIdentifier],
+          [right, right.optionalLazyToResolvedIriIdentifier],
+        ),
       )
       .chain(() =>
-        ((left, right) =>
-          ((left, right) => $maybeEquals(left, right, $DefaultPartial.equals))(
-            left.partial,
-            right.partial,
-          ))(
-          left.optionalLazyToResolvedUnion,
-          right.optionalLazyToResolvedUnion,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "optionalLazyToResolvedUnion",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              ((left, right) =>
+                $maybeEquals(left, right, $DefaultPartial.equals))(
+                left.partial,
+                right.partial,
+              ),
+            name: "optionalLazyToResolvedUnion",
+          },
+          [left, left.optionalLazyToResolvedUnion],
+          [right, right.optionalLazyToResolvedUnion],
+        ),
       )
       .chain(() =>
-        ((left, right) =>
-          ((left, right) => $maybeEquals(left, right, PartialStruct.equals))(
-            left.partial,
-            right.partial,
-          ))(
-          left.optionalPartialToResolvedBlankNodeOrIriIdentifier,
-          right.optionalPartialToResolvedBlankNodeOrIriIdentifier,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "optionalPartialToResolvedBlankNodeOrIriIdentifier",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              ((left, right) =>
+                $maybeEquals(left, right, PartialStruct.equals))(
+                left.partial,
+                right.partial,
+              ),
+            name: "optionalPartialToResolvedBlankNodeOrIriIdentifier",
+          },
+          [left, left.optionalPartialToResolvedBlankNodeOrIriIdentifier],
+          [right, right.optionalPartialToResolvedBlankNodeOrIriIdentifier],
+        ),
       )
       .chain(() =>
-        ((left, right) =>
-          ((left, right) => $maybeEquals(left, right, PartialStruct.equals))(
-            left.partial,
-            right.partial,
-          ))(
-          left.optionalPartialToResolvedUnion,
-          right.optionalPartialToResolvedUnion,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "optionalPartialToResolvedUnion",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              ((left, right) =>
+                $maybeEquals(left, right, PartialStruct.equals))(
+                left.partial,
+                right.partial,
+              ),
+            name: "optionalPartialToResolvedUnion",
+          },
+          [left, left.optionalPartialToResolvedUnion],
+          [right, right.optionalPartialToResolvedUnion],
+        ),
       )
       .chain(() =>
-        ((left, right) =>
-          ((left, right) => $maybeEquals(left, right, PartialUnion.equals))(
-            left.partial,
-            right.partial,
-          ))(
-          left.optionalPartialUnionToResolvedUnion,
-          right.optionalPartialUnionToResolvedUnion,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "optionalPartialUnionToResolvedUnion",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              ((left, right) => $maybeEquals(left, right, PartialUnion.equals))(
+                left.partial,
+                right.partial,
+              ),
+            name: "optionalPartialUnionToResolvedUnion",
+          },
+          [left, left.optionalPartialUnionToResolvedUnion],
+          [right, right.optionalPartialUnionToResolvedUnion],
+        ),
       )
       .chain(() =>
-        ((left, right) => $DefaultPartial.equals(left.partial, right.partial))(
-          left.requiredLazyToResolvedBlankNodeOrIriIdentifier,
-          right.requiredLazyToResolvedBlankNodeOrIriIdentifier,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "requiredLazyToResolvedBlankNodeOrIriIdentifier",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $DefaultPartial.equals(left.partial, right.partial),
+            name: "requiredLazyToResolvedBlankNodeOrIriIdentifier",
+          },
+          [left, left.requiredLazyToResolvedBlankNodeOrIriIdentifier],
+          [right, right.requiredLazyToResolvedBlankNodeOrIriIdentifier],
+        ),
       )
       .chain(() =>
-        ((left, right) => PartialStruct.equals(left.partial, right.partial))(
-          left.requiredPartialToResolvedBlankNodeOrIriIdentifier,
-          right.requiredPartialToResolvedBlankNodeOrIriIdentifier,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "requiredPartialToResolvedBlankNodeOrIriIdentifier",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              PartialStruct.equals(left.partial, right.partial),
+            name: "requiredPartialToResolvedBlankNodeOrIriIdentifier",
+          },
+          [left, left.requiredPartialToResolvedBlankNodeOrIriIdentifier],
+          [right, right.requiredPartialToResolvedBlankNodeOrIriIdentifier],
+        ),
       )
       .chain(() =>
-        ((left, right) =>
-          ((left, right) => $arrayEquals(left, right, $DefaultPartial.equals))(
-            left.partials,
-            right.partials,
-          ))(
-          left.setLazyToResolvedBlankNodeOrIriIdentifier,
-          right.setLazyToResolvedBlankNodeOrIriIdentifier,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "setLazyToResolvedBlankNodeOrIriIdentifier",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              ((left, right) =>
+                $arrayEquals(left, right, $DefaultPartial.equals))(
+                left.partials,
+                right.partials,
+              ),
+            name: "setLazyToResolvedBlankNodeOrIriIdentifier",
+          },
+          [left, left.setLazyToResolvedBlankNodeOrIriIdentifier],
+          [right, right.setLazyToResolvedBlankNodeOrIriIdentifier],
+        ),
       )
       .chain(() =>
-        ((left, right) =>
-          ((left, right) => $arrayEquals(left, right, PartialStruct.equals))(
-            left.partials,
-            right.partials,
-          ))(
-          left.setPartialToResolvedBlankNodeOrIriIdentifier,
-          right.setPartialToResolvedBlankNodeOrIriIdentifier,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "setPartialToResolvedBlankNodeOrIriIdentifier",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              ((left, right) =>
+                $arrayEquals(left, right, PartialStruct.equals))(
+                left.partials,
+                right.partials,
+              ),
+            name: "setPartialToResolvedBlankNodeOrIriIdentifier",
+          },
+          [left, left.setPartialToResolvedBlankNodeOrIriIdentifier],
+          [right, right.setPartialToResolvedBlankNodeOrIriIdentifier],
+        ),
       );
 
   export type Filter = {
@@ -25271,82 +25036,78 @@ export namespace ListSetsStruct {
     left: ListSetsStruct,
     right: ListSetsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, (left, right) =>
-              $arrayEquals(left, right, $strictEquals),
-            ),
-          ))(left.listListSet, right.listListSet).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "listListSet",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, (left, right) =>
+                $arrayEquals(left, right, (left, right) =>
+                  $arrayEquals(left, right, $strictEquals),
+                ),
+              ),
+            name: "listListSet",
+          },
+          [left, left.listListSet],
+          [right, right.listListSet],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $arrayEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, $strictEquals),
-          ))(left.listSet, right.listSet).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "listSet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, (left, right) =>
+                $arrayEquals(left, right, $strictEquals),
+              ),
+            name: "listSet",
+          },
+          [left, left.listSet],
+          [right, right.listSet],
+        ),
       )
       .chain(() =>
-        ((left, right) =>
-          $arrayEquals(
-            left,
-            right,
-            (
-              left: readonly string[] | string,
-              right: readonly string[] | string,
-            ) => {
-              if (typeof left === "object" && typeof right === "object") {
-                return ((left, right) =>
-                  $arrayEquals(left, right, $strictEquals))(
-                  left as readonly string[],
-                  right as readonly string[],
-                );
-              }
-              if (typeof left === "string" && typeof right === "string") {
-                return $strictEquals(left as string, right as string);
-              }
-
-              return Left({
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (
+                  left: readonly string[] | string,
+                  right: readonly string[] | string,
+                ) => {
+                  if (typeof left === "object" && typeof right === "object") {
+                    return ((left, right) =>
+                      $arrayEquals(left, right, $strictEquals))(
+                      left as readonly string[],
+                      right as readonly string[],
+                    );
+                  }
+                  if (typeof left === "string" && typeof right === "string") {
+                    return $strictEquals(left as string, right as string);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-          ))(left.listUnionSet, right.listUnionSet).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "listUnionSet",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+              ),
+            name: "listUnionSet",
+          },
+          [left, left.listUnionSet],
+          [right, right.listUnionSet],
         ),
       );
 
@@ -26638,68 +26399,63 @@ export namespace ListsStruct {
     left: ListsStruct,
     right: ListsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, $booleanEquals),
-          ))(left.iriList, right.iriList).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "iriList",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, $strictEquals),
-          ))(left.stringList, right.stringList).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "stringList",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, (left, right) =>
+                $arrayEquals(left, right, $booleanEquals),
+              ),
+            name: "iriList",
+          },
+          [left, left.iriList],
+          [right, right.iriList],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, (left, right) =>
-              $arrayEquals(left, right, $strictEquals),
-            ),
-          ))(left.stringListList, right.stringListList).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "stringListList",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, (left, right) =>
+                $arrayEquals(left, right, $strictEquals),
+              ),
+            name: "stringList",
+          },
+          [left, left.stringList],
+          [right, right.stringList],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, NonClassStruct.equals),
-          ))(left.structList, right.structList).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "structList",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, (left, right) =>
+                $arrayEquals(left, right, (left, right) =>
+                  $arrayEquals(left, right, $strictEquals),
+                ),
+              ),
+            name: "stringListList",
+          },
+          [left, left.stringListList],
+          [right, right.stringListList],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, (left, right) =>
+                $arrayEquals(left, right, NonClassStruct.equals),
+              ),
+            name: "structList",
+          },
+          [left, left.structList],
+          [right, right.structList],
         ),
       );
 
@@ -27860,51 +27616,45 @@ export namespace MutablePropertiesStruct {
     left: MutablePropertiesStruct,
     right: MutablePropertiesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) =>
-            $arrayEquals(left, right, $strictEquals),
-          ))(left.mutableList, right.mutableList).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "mutableList",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, (left, right) =>
+                $arrayEquals(left, right, $strictEquals),
+              ),
+            name: "mutableList",
+          },
+          [left, left.mutableList],
+          [right, right.mutableList],
         ),
       )
       .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $strictEquals))(
-          left.mutableSet,
-          right.mutableSet,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "mutableSet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $strictEquals),
+            name: "mutableSet",
+          },
+          [left, left.mutableSet],
+          [right, right.mutableSet],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.mutableString,
-          right.mutableString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "mutableString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "mutableString",
+          },
+          [left, left.mutableString],
+          [right, right.mutableString],
+        ),
       );
 
   export type Filter = {
@@ -28647,34 +28397,23 @@ export namespace NamedUnionsStruct {
     left: NamedUnionsStruct,
     right: NamedUnionsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        NamedUnion1.equals(left.namedUnion1, right.namedUnion1).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "namedUnion1",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: NamedUnion1.equals, name: "namedUnion1" },
+          [left, left.namedUnion1],
+          [right, right.namedUnion1],
         ),
       )
       .chain(() =>
-        NamedUnion2.equals(left.namedUnion2, right.namedUnion2).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "namedUnion2",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: NamedUnion2.equals, name: "namedUnion2" },
+          [left, left.namedUnion2],
+          [right, right.namedUnion2],
         ),
       );
 
@@ -29225,26 +28964,21 @@ export namespace NewName {
     left,
     right,
   ) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.newNameString,
-          right.newNameString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "newNameString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, $strictEquals),
+          name: "newNameString",
+        },
+        [left, left.newNameString],
+        [right, right.newNameString],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -29776,81 +29510,54 @@ export namespace NodeKindsStruct {
     left: NodeKindsStruct,
     right: NodeKindsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $booleanEquals(left.blankNodeKind, right.blankNodeKind).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "blankNodeKind",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "blankNodeKind" },
+          [left, left.blankNodeKind],
+          [right, right.blankNodeKind],
         ),
       )
       .chain(() =>
-        $booleanEquals(
-          left.blankNodeOrIriNodeKind,
-          right.blankNodeOrIriNodeKind,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "blankNodeOrIriNodeKind",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        $booleanEquals(
-          left.blankNodeOrLiteralNodeKind,
-          right.blankNodeOrLiteralNodeKind,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "blankNodeOrLiteralNodeKind",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        $booleanEquals(left.iriNodeKind, right.iriNodeKind).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "iriNodeKind",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "blankNodeOrIriNodeKind" },
+          [left, left.blankNodeOrIriNodeKind],
+          [right, right.blankNodeOrIriNodeKind],
         ),
       )
       .chain(() =>
-        $booleanEquals(
-          left.iriOrLiteralNodeKind,
-          right.iriOrLiteralNodeKind,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "iriOrLiteralNodeKind",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: $booleanEquals,
+            name: "blankNodeOrLiteralNodeKind",
+          },
+          [left, left.blankNodeOrLiteralNodeKind],
+          [right, right.blankNodeOrLiteralNodeKind],
+        ),
       )
       .chain(() =>
-        $booleanEquals(left.literalNodeKind, right.literalNodeKind).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "literalNodeKind",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "iriNodeKind" },
+          [left, left.iriNodeKind],
+          [right, right.iriNodeKind],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "iriOrLiteralNodeKind" },
+          [left, left.iriOrLiteralNodeKind],
+          [right, right.iriOrLiteralNodeKind],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "literalNodeKind" },
+          [left, left.literalNodeKind],
+          [right, right.literalNodeKind],
         ),
       );
 
@@ -30774,25 +30481,17 @@ export namespace NonClassStruct {
     left: NonClassStruct,
     right: NonClassStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.nonClassString, right.nonClassString).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "nonClassString",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "nonClassString" },
+        [left, left.nonClassString],
+        [right, right.nonClassString],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -31192,26 +30891,17 @@ export namespace NoRdfTypeUnionMember1 {
     left: NoRdfTypeUnionMember1,
     right: NoRdfTypeUnionMember1,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(
-          left.noRdfTypeUnionMember1String,
-          right.noRdfTypeUnionMember1String,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "noRdfTypeUnionMember1String",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "noRdfTypeUnionMember1String" },
+        [left, left.noRdfTypeUnionMember1String],
+        [right, right.noRdfTypeUnionMember1String],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -31630,26 +31320,17 @@ export namespace NoRdfTypeUnionMember2 {
     left: NoRdfTypeUnionMember2,
     right: NoRdfTypeUnionMember2,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(
-          left.noRdfTypeUnionMember2String,
-          right.noRdfTypeUnionMember2String,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "noRdfTypeUnionMember2String",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "noRdfTypeUnionMember2String" },
+        [left, left.noRdfTypeUnionMember2String],
+        [right, right.noRdfTypeUnionMember2String],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -32256,205 +31937,186 @@ export namespace NumericsStruct {
     left: NumericsStruct,
     right: NumericsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.byteNumeric,
-          right.byteNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "byteNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "byteNumeric",
+          },
+          [left, left.byteNumeric],
+          [right, right.byteNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.decimalNumeric,
-          right.decimalNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "decimalNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "decimalNumeric",
+          },
+          [left, left.decimalNumeric],
+          [right, right.decimalNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.doubleNumeric,
-          right.doubleNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "doubleNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "doubleNumeric",
+          },
+          [left, left.doubleNumeric],
+          [right, right.doubleNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.floatNumeric,
-          right.floatNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "floatNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "floatNumeric",
+          },
+          [left, left.floatNumeric],
+          [right, right.floatNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.integerNumeric,
-          right.integerNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "integerNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "integerNumeric",
+          },
+          [left, left.integerNumeric],
+          [right, right.integerNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.intNumeric,
-          right.intNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "intNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "intNumeric",
+          },
+          [left, left.intNumeric],
+          [right, right.intNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.longNumeric,
-          right.longNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "longNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "longNumeric",
+          },
+          [left, left.longNumeric],
+          [right, right.longNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.negativeIntegerNumeric,
-          right.negativeIntegerNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "negativeIntegerNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "negativeIntegerNumeric",
+          },
+          [left, left.negativeIntegerNumeric],
+          [right, right.negativeIntegerNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.nonNegativeIntegerNumeric,
-          right.nonNegativeIntegerNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "nonNegativeIntegerNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "nonNegativeIntegerNumeric",
+          },
+          [left, left.nonNegativeIntegerNumeric],
+          [right, right.nonNegativeIntegerNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.nonPositiveIntegerNumeric,
-          right.nonPositiveIntegerNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "nonPositiveIntegerNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "nonPositiveIntegerNumeric",
+          },
+          [left, left.nonPositiveIntegerNumeric],
+          [right, right.nonPositiveIntegerNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.positiveIntegerNumeric,
-          right.positiveIntegerNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "positiveIntegerNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "positiveIntegerNumeric",
+          },
+          [left, left.positiveIntegerNumeric],
+          [right, right.positiveIntegerNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.shortNumeric,
-          right.shortNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "shortNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "shortNumeric",
+          },
+          [left, left.shortNumeric],
+          [right, right.shortNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.unsignedByteNumeric,
-          right.unsignedByteNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "unsignedByteNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "unsignedByteNumeric",
+          },
+          [left, left.unsignedByteNumeric],
+          [right, right.unsignedByteNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.unsignedIntNumeric,
-          right.unsignedIntNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "unsignedIntNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "unsignedIntNumeric",
+          },
+          [left, left.unsignedIntNumeric],
+          [right, right.unsignedIntNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.unsignedLongNumeric,
-          right.unsignedLongNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "unsignedLongNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "unsignedLongNumeric",
+          },
+          [left, left.unsignedLongNumeric],
+          [right, right.unsignedLongNumeric],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.unsignedShortNumeric,
-          right.unsignedShortNumeric,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "unsignedShortNumeric",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "unsignedShortNumeric",
+          },
+          [left, left.unsignedShortNumeric],
+          [right, right.unsignedShortNumeric],
+        ),
       );
 
   export type Filter = {
@@ -34192,45 +33854,30 @@ export namespace OrderedStruct {
     left: OrderedStruct,
     right: OrderedStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $strictEquals(left.orderedC, right.orderedC).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "orderedC",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "orderedC" },
+          [left, left.orderedC],
+          [right, right.orderedC],
         ),
       )
       .chain(() =>
-        $strictEquals(left.orderedB, right.orderedB).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "orderedB",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "orderedB" },
+          [left, left.orderedB],
+          [right, right.orderedB],
         ),
       )
       .chain(() =>
-        $strictEquals(left.orderedA, right.orderedA).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "orderedA",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "orderedA" },
+          [left, left.orderedA],
+          [right, right.orderedA],
         ),
       );
 
@@ -34734,25 +34381,17 @@ export namespace PartialStruct {
     left: PartialStruct,
     right: PartialStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.lazilyResolved, right.lazilyResolved).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "lazilyResolved",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "lazilyResolved" },
+        [left, left.lazilyResolved],
+        [right, right.lazilyResolved],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -35151,25 +34790,17 @@ export namespace PartialUnionMember1 {
     left: PartialUnionMember1,
     right: PartialUnionMember1,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.lazilyResolved, right.lazilyResolved).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "lazilyResolved",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "lazilyResolved" },
+        [left, left.lazilyResolved],
+        [right, right.lazilyResolved],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -35641,25 +35272,17 @@ export namespace PartialUnionMember2 {
     left: PartialUnionMember2,
     right: PartialUnionMember2,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.lazilyResolved, right.lazilyResolved).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "lazilyResolved",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "lazilyResolved" },
+        [left, left.lazilyResolved],
+        [right, right.lazilyResolved],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -36184,59 +35807,49 @@ export namespace PropertyCardinalitiesStruct {
     left: PropertyCardinalitiesStruct,
     right: PropertyCardinalitiesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $strictEquals))(
-          left.emptySet,
-          right.emptySet,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "emptySet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $strictEquals),
+            name: "emptySet",
+          },
+          [left, left.emptySet],
+          [right, right.emptySet],
+        ),
       )
       .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $strictEquals))(
-          left.nonEmptySet,
-          right.nonEmptySet,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "nonEmptySet",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $strictEquals),
+            name: "nonEmptySet",
+          },
+          [left, left.nonEmptySet],
+          [right, right.nonEmptySet],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.optional,
-          right.optional,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "optional",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "optional",
+          },
+          [left, left.optional],
+          [right, right.optional],
+        ),
       )
       .chain(() =>
-        $strictEquals(left.required, right.required).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "required",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "required" },
+          [left, left.required],
+          [right, right.required],
         ),
       );
 
@@ -36924,67 +36537,44 @@ export namespace PropertyNamesStruct {
     left: PropertyNamesStruct,
     right: PropertyNamesStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $strictEquals(left.actualName1, right.actualName1).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "actualName1",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "actualName1" },
+          [left, left.actualName1],
+          [right, right.actualName1],
         ),
       )
       .chain(() =>
-        $strictEquals(left.actualName2, right.actualName2).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "actualName2",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "actualName2" },
+          [left, left.actualName2],
+          [right, right.actualName2],
         ),
       )
       .chain(() =>
-        $strictEquals(left.actualName3, right.actualName3).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "actualName3",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "actualName3" },
+          [left, left.actualName3],
+          [right, right.actualName3],
         ),
       )
       .chain(() =>
-        $strictEquals(left.actualName4, right.actualName4).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "actualName4",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "actualName4" },
+          [left, left.actualName4],
+          [right, right.actualName4],
         ),
       )
       .chain(() =>
-        $strictEquals(left.actualName5, right.actualName5).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "actualName5",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "actualName5" },
+          [left, left.actualName5],
+          [right, right.actualName5],
         ),
       );
 
@@ -37720,37 +37310,32 @@ export namespace PropertyPathsStruct {
     left: PropertyPathsStruct,
     right: PropertyPathsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.inversePath,
-          right.inversePath,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "inversePath",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "inversePath",
+          },
+          [left, left.inversePath],
+          [right, right.inversePath],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.predicatePath,
-          right.predicatePath,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "predicatePath",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "predicatePath",
+          },
+          [left, left.predicatePath],
+          [right, right.predicatePath],
+        ),
       );
 
   export type Filter = {
@@ -38344,26 +37929,21 @@ export namespace RecursiveUnionMember1 {
     left: RecursiveUnionMember1,
     right: RecursiveUnionMember1,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, RecursiveUnion.equals))(
-          left.recursiveUnionMember1Property,
-          right.recursiveUnionMember1Property,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "recursiveUnionMember1Property",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, RecursiveUnion.equals),
+          name: "recursiveUnionMember1Property",
+        },
+        [left, left.recursiveUnionMember1Property],
+        [right, right.recursiveUnionMember1Property],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -38881,26 +38461,21 @@ export namespace RecursiveUnionMember2 {
     left: RecursiveUnionMember2,
     right: RecursiveUnionMember2,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, RecursiveUnion.equals))(
-          left.recursiveUnionMember2Property,
-          right.recursiveUnionMember2Property,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "recursiveUnionMember2Property",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        {
+          equalsFunction: (left, right) =>
+            $maybeEquals(left, right, RecursiveUnion.equals),
+          name: "recursiveUnionMember2Property",
+        },
+        [left, left.recursiveUnionMember2Property],
+        [right, right.recursiveUnionMember2Property],
+      ),
+    );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
@@ -39528,121 +39103,109 @@ export namespace TermsStruct {
     left: TermsStruct,
     right: TermsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.blankNodeTerm,
-          right.blankNodeTerm,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "blankNodeTerm",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "blankNodeTerm",
+          },
+          [left, left.blankNodeTerm],
+          [right, right.blankNodeTerm],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.booleanTerm,
-          right.booleanTerm,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "booleanTerm",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "booleanTerm",
+          },
+          [left, left.booleanTerm],
+          [right, right.booleanTerm],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $dateEquals))(
-          left.dateTerm,
-          right.dateTerm,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "dateTerm",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $dateEquals),
+            name: "dateTerm",
+          },
+          [left, left.dateTerm],
+          [right, right.dateTerm],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $dateEquals))(
-          left.dateTimeTerm,
-          right.dateTimeTerm,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "dateTimeTerm",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $dateEquals),
+            name: "dateTimeTerm",
+          },
+          [left, left.dateTimeTerm],
+          [right, right.dateTimeTerm],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.iriTerm,
-          right.iriTerm,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "iriTerm",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "iriTerm",
+          },
+          [left, left.iriTerm],
+          [right, right.iriTerm],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.literalTerm,
-          right.literalTerm,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "literalTerm",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "literalTerm",
+          },
+          [left, left.literalTerm],
+          [right, right.literalTerm],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.numberTerm,
-          right.numberTerm,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "numberTerm",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "numberTerm",
+          },
+          [left, left.numberTerm],
+          [right, right.numberTerm],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          left.stringTerm,
-          right.stringTerm,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "stringTerm",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "stringTerm",
+          },
+          [left, left.stringTerm],
+          [right, right.stringTerm],
+        ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          left.term,
-          right.term,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "term",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "term",
+          },
+          [left, left.term],
+          [right, right.term],
+        ),
       );
 
   export type Filter = {
@@ -41133,20 +40696,215 @@ export namespace UnionDiscriminantsStruct {
     left: UnionDiscriminantsStruct,
     right: UnionDiscriminantsStruct,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(
-            left,
-            right,
-            (left: NamedNode | Literal, right: NamedNode | Literal) => {
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
+                left,
+                right,
+                (left: NamedNode | Literal, right: NamedNode | Literal) => {
+                  if (
+                    left["termType"] === "NamedNode" &&
+                    right["termType"] === "NamedNode"
+                  ) {
+                    return $booleanEquals(
+                      left as NamedNode,
+                      right as NamedNode,
+                    );
+                  }
+                  if (
+                    left["termType"] === "Literal" &&
+                    right["termType"] === "Literal"
+                  ) {
+                    return $booleanEquals(left as Literal, right as Literal);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
+                },
+              ),
+            name: "optionalIriOrLiteral",
+          },
+          [left, left.optionalIriOrLiteral],
+          [right, right.optionalIriOrLiteral],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
+                left,
+                right,
+                (left: NamedNode | string, right: NamedNode | string) => {
+                  if (typeof left === "object" && typeof right === "object") {
+                    return $booleanEquals(
+                      left as NamedNode,
+                      right as NamedNode,
+                    );
+                  }
+                  if (typeof left === "string" && typeof right === "string") {
+                    return $strictEquals(left as string, right as string);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
+                },
+              ),
+            name: "optionalIriOrString",
+          },
+          [left, left.optionalIriOrString],
+          [right, right.optionalIriOrString],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
+                left,
+                right,
+                (
+                  left:
+                    | { termType: "UnionMember1"; value: UnionMember1 }
+                    | Literal,
+                  right:
+                    | { termType: "UnionMember1"; value: UnionMember1 }
+                    | Literal,
+                ) => {
+                  if (
+                    left["termType"] === "UnionMember1" &&
+                    right["termType"] === "UnionMember1"
+                  ) {
+                    return UnionMember1.equals(
+                      left.value as UnionMember1,
+                      right.value as UnionMember1,
+                    );
+                  }
+                  if (
+                    left["termType"] === "Literal" &&
+                    right["termType"] === "Literal"
+                  ) {
+                    return $booleanEquals(left as Literal, right as Literal);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
+                },
+              ),
+            name: "optionalNodeOrLiteral",
+          },
+          [left, left.optionalNodeOrLiteral],
+          [right, right.optionalNodeOrLiteral],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
+                left,
+                right,
+                (
+                  left:
+                    | { type: "UnionMember1"; value: UnionMember1 }
+                    | { type: "UnionMember2"; value: UnionMember2 }
+                    | {
+                        type: "string";
+                        value: string;
+                      },
+                  right:
+                    | { type: "UnionMember1"; value: UnionMember1 }
+                    | { type: "UnionMember2"; value: UnionMember2 }
+                    | {
+                        type: "string";
+                        value: string;
+                      },
+                ) => {
+                  if (
+                    left["type"] === "UnionMember1" &&
+                    right["type"] === "UnionMember1"
+                  ) {
+                    return UnionMember1.equals(
+                      left.value as UnionMember1,
+                      right.value as UnionMember1,
+                    );
+                  }
+                  if (
+                    left["type"] === "UnionMember2" &&
+                    right["type"] === "UnionMember2"
+                  ) {
+                    return UnionMember2.equals(
+                      left.value as UnionMember2,
+                      right.value as UnionMember2,
+                    );
+                  }
+                  if (left["type"] === "string" && right["type"] === "string") {
+                    return $strictEquals(
+                      left.value as string,
+                      right.value as string,
+                    );
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
+                },
+              ),
+            name: "optionalNodeOrNodeOrString",
+          },
+          [left, left.optionalNodeOrNodeOrString],
+          [right, right.optionalNodeOrNodeOrString],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (
+              left: NamedNode | Literal,
+              right: NamedNode | Literal,
+            ) => {
               if (
                 left["termType"] === "NamedNode" &&
                 right["termType"] === "NamedNode"
@@ -41172,22 +40930,19 @@ export namespace UnionDiscriminantsStruct {
                 type: "property" as const,
               });
             },
-          ))(left.optionalIriOrLiteral, right.optionalIriOrLiteral).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "optionalIriOrLiteral",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+            name: "requiredIriOrLiteral",
+          },
+          [left, left.requiredIriOrLiteral],
+          [right, right.requiredIriOrLiteral],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(
-            left,
-            right,
-            (left: NamedNode | string, right: NamedNode | string) => {
+        $propertyEquals(
+          {
+            equalsFunction: (
+              left: NamedNode | string,
+              right: NamedNode | string,
+            ) => {
               if (typeof left === "object" && typeof right === "object") {
                 return $booleanEquals(left as NamedNode, right as NamedNode);
               }
@@ -41207,22 +40962,16 @@ export namespace UnionDiscriminantsStruct {
                 type: "property" as const,
               });
             },
-          ))(left.optionalIriOrString, right.optionalIriOrString).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "optionalIriOrString",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+            name: "requiredIriOrString",
+          },
+          [left, left.requiredIriOrString],
+          [right, right.requiredIriOrString],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(
-            left,
-            right,
-            (
+        $propertyEquals(
+          {
+            equalsFunction: (
               left: { termType: "UnionMember1"; value: UnionMember1 } | Literal,
               right:
                 | { termType: "UnionMember1"; value: UnionMember1 }
@@ -41256,22 +41005,16 @@ export namespace UnionDiscriminantsStruct {
                 type: "property" as const,
               });
             },
-          ))(left.optionalNodeOrLiteral, right.optionalNodeOrLiteral).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "optionalNodeOrLiteral",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+            name: "requiredNodeOrLiteral",
+          },
+          [left, left.requiredNodeOrLiteral],
+          [right, right.requiredNodeOrLiteral],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $maybeEquals(
-            left,
-            right,
-            (
+        $propertyEquals(
+          {
+            equalsFunction: (
               left:
                 | { type: "UnionMember1"; value: UnionMember1 }
                 | { type: "UnionMember2"; value: UnionMember2 }
@@ -41324,377 +41067,207 @@ export namespace UnionDiscriminantsStruct {
                 type: "property" as const,
               });
             },
-          ))(
-          left.optionalNodeOrNodeOrString,
-          right.optionalNodeOrNodeOrString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "optionalNodeOrNodeOrString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left: NamedNode | Literal, right: NamedNode | Literal) => {
-          if (
-            left["termType"] === "NamedNode" &&
-            right["termType"] === "NamedNode"
-          ) {
-            return $booleanEquals(left as NamedNode, right as NamedNode);
-          }
-          if (
-            left["termType"] === "Literal" &&
-            right["termType"] === "Literal"
-          ) {
-            return $booleanEquals(left as Literal, right as Literal);
-          }
-
-          return Left({
-            left,
-            right,
-            propertyName: "type",
-            propertyValuesUnequal: {
-              left: typeof left,
-              right: typeof right,
-              type: "boolean" as const,
-            },
-            type: "property" as const,
-          });
-        })(left.requiredIriOrLiteral, right.requiredIriOrLiteral).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "requiredIriOrLiteral",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+            name: "requiredNodeOrNodeOrString",
+          },
+          [left, left.requiredNodeOrNodeOrString],
+          [right, right.requiredNodeOrNodeOrString],
         ),
       )
       .chain(() =>
-        ((left: NamedNode | string, right: NamedNode | string) => {
-          if (typeof left === "object" && typeof right === "object") {
-            return $booleanEquals(left as NamedNode, right as NamedNode);
-          }
-          if (typeof left === "string" && typeof right === "string") {
-            return $strictEquals(left as string, right as string);
-          }
-
-          return Left({
-            left,
-            right,
-            propertyName: "type",
-            propertyValuesUnequal: {
-              left: typeof left,
-              right: typeof right,
-              type: "boolean" as const,
-            },
-            type: "property" as const,
-          });
-        })(left.requiredIriOrString, right.requiredIriOrString).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "requiredIriOrString",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        ((
-          left: { termType: "UnionMember1"; value: UnionMember1 } | Literal,
-          right: { termType: "UnionMember1"; value: UnionMember1 } | Literal,
-        ) => {
-          if (
-            left["termType"] === "UnionMember1" &&
-            right["termType"] === "UnionMember1"
-          ) {
-            return UnionMember1.equals(
-              left.value as UnionMember1,
-              right.value as UnionMember1,
-            );
-          }
-          if (
-            left["termType"] === "Literal" &&
-            right["termType"] === "Literal"
-          ) {
-            return $booleanEquals(left as Literal, right as Literal);
-          }
-
-          return Left({
-            left,
-            right,
-            propertyName: "type",
-            propertyValuesUnequal: {
-              left: typeof left,
-              right: typeof right,
-              type: "boolean" as const,
-            },
-            type: "property" as const,
-          });
-        })(left.requiredNodeOrLiteral, right.requiredNodeOrLiteral).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "requiredNodeOrLiteral",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        ((
-          left:
-            | { type: "UnionMember1"; value: UnionMember1 }
-            | { type: "UnionMember2"; value: UnionMember2 }
-            | {
-                type: "string";
-                value: string;
-              },
-          right:
-            | { type: "UnionMember1"; value: UnionMember1 }
-            | { type: "UnionMember2"; value: UnionMember2 }
-            | {
-                type: "string";
-                value: string;
-              },
-        ) => {
-          if (
-            left["type"] === "UnionMember1" &&
-            right["type"] === "UnionMember1"
-          ) {
-            return UnionMember1.equals(
-              left.value as UnionMember1,
-              right.value as UnionMember1,
-            );
-          }
-          if (
-            left["type"] === "UnionMember2" &&
-            right["type"] === "UnionMember2"
-          ) {
-            return UnionMember2.equals(
-              left.value as UnionMember2,
-              right.value as UnionMember2,
-            );
-          }
-          if (left["type"] === "string" && right["type"] === "string") {
-            return $strictEquals(left.value as string, right.value as string);
-          }
-
-          return Left({
-            left,
-            right,
-            propertyName: "type",
-            propertyValuesUnequal: {
-              left: typeof left,
-              right: typeof right,
-              type: "boolean" as const,
-            },
-            type: "property" as const,
-          });
-        })(
-          left.requiredNodeOrNodeOrString,
-          right.requiredNodeOrNodeOrString,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "requiredNodeOrNodeOrString",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $arrayEquals(
-            left,
-            right,
-            (left: NamedNode | Literal, right: NamedNode | Literal) => {
-              if (
-                left["termType"] === "NamedNode" &&
-                right["termType"] === "NamedNode"
-              ) {
-                return $booleanEquals(left as NamedNode, right as NamedNode);
-              }
-              if (
-                left["termType"] === "Literal" &&
-                right["termType"] === "Literal"
-              ) {
-                return $booleanEquals(left as Literal, right as Literal);
-              }
-
-              return Left({
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (left: NamedNode | Literal, right: NamedNode | Literal) => {
+                  if (
+                    left["termType"] === "NamedNode" &&
+                    right["termType"] === "NamedNode"
+                  ) {
+                    return $booleanEquals(
+                      left as NamedNode,
+                      right as NamedNode,
+                    );
+                  }
+                  if (
+                    left["termType"] === "Literal" &&
+                    right["termType"] === "Literal"
+                  ) {
+                    return $booleanEquals(left as Literal, right as Literal);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-          ))(left.setIriOrLiteral, right.setIriOrLiteral).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "setIriOrLiteral",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+              ),
+            name: "setIriOrLiteral",
+          },
+          [left, left.setIriOrLiteral],
+          [right, right.setIriOrLiteral],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $arrayEquals(
-            left,
-            right,
-            (left: NamedNode | string, right: NamedNode | string) => {
-              if (typeof left === "object" && typeof right === "object") {
-                return $booleanEquals(left as NamedNode, right as NamedNode);
-              }
-              if (typeof left === "string" && typeof right === "string") {
-                return $strictEquals(left as string, right as string);
-              }
-
-              return Left({
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (left: NamedNode | string, right: NamedNode | string) => {
+                  if (typeof left === "object" && typeof right === "object") {
+                    return $booleanEquals(
+                      left as NamedNode,
+                      right as NamedNode,
+                    );
+                  }
+                  if (typeof left === "string" && typeof right === "string") {
+                    return $strictEquals(left as string, right as string);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-          ))(left.setIriOrString, right.setIriOrString).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "setIriOrString",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+              ),
+            name: "setIriOrString",
+          },
+          [left, left.setIriOrString],
+          [right, right.setIriOrString],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $arrayEquals(
-            left,
-            right,
-            (
-              left: { termType: "UnionMember1"; value: UnionMember1 } | Literal,
-              right:
-                | { termType: "UnionMember1"; value: UnionMember1 }
-                | Literal,
-            ) => {
-              if (
-                left["termType"] === "UnionMember1" &&
-                right["termType"] === "UnionMember1"
-              ) {
-                return UnionMember1.equals(
-                  left.value as UnionMember1,
-                  right.value as UnionMember1,
-                );
-              }
-              if (
-                left["termType"] === "Literal" &&
-                right["termType"] === "Literal"
-              ) {
-                return $booleanEquals(left as Literal, right as Literal);
-              }
-
-              return Left({
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (
+                  left:
+                    | { termType: "UnionMember1"; value: UnionMember1 }
+                    | Literal,
+                  right:
+                    | { termType: "UnionMember1"; value: UnionMember1 }
+                    | Literal,
+                ) => {
+                  if (
+                    left["termType"] === "UnionMember1" &&
+                    right["termType"] === "UnionMember1"
+                  ) {
+                    return UnionMember1.equals(
+                      left.value as UnionMember1,
+                      right.value as UnionMember1,
+                    );
+                  }
+                  if (
+                    left["termType"] === "Literal" &&
+                    right["termType"] === "Literal"
+                  ) {
+                    return $booleanEquals(left as Literal, right as Literal);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-          ))(left.setNodeOrLiteral, right.setNodeOrLiteral).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "setNodeOrLiteral",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+              ),
+            name: "setNodeOrLiteral",
+          },
+          [left, left.setNodeOrLiteral],
+          [right, right.setNodeOrLiteral],
         ),
       )
       .chain(() =>
-        ((left, right) =>
-          $arrayEquals(
-            left,
-            right,
-            (
-              left:
-                | { type: "UnionMember1"; value: UnionMember1 }
-                | { type: "UnionMember2"; value: UnionMember2 }
-                | {
-                    type: "string";
-                    value: string;
-                  },
-              right:
-                | { type: "UnionMember1"; value: UnionMember1 }
-                | { type: "UnionMember2"; value: UnionMember2 }
-                | {
-                    type: "string";
-                    value: string;
-                  },
-            ) => {
-              if (
-                left["type"] === "UnionMember1" &&
-                right["type"] === "UnionMember1"
-              ) {
-                return UnionMember1.equals(
-                  left.value as UnionMember1,
-                  right.value as UnionMember1,
-                );
-              }
-              if (
-                left["type"] === "UnionMember2" &&
-                right["type"] === "UnionMember2"
-              ) {
-                return UnionMember2.equals(
-                  left.value as UnionMember2,
-                  right.value as UnionMember2,
-                );
-              }
-              if (left["type"] === "string" && right["type"] === "string") {
-                return $strictEquals(
-                  left.value as string,
-                  right.value as string,
-                );
-              }
-
-              return Left({
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (
+                  left:
+                    | { type: "UnionMember1"; value: UnionMember1 }
+                    | { type: "UnionMember2"; value: UnionMember2 }
+                    | {
+                        type: "string";
+                        value: string;
+                      },
+                  right:
+                    | { type: "UnionMember1"; value: UnionMember1 }
+                    | { type: "UnionMember2"; value: UnionMember2 }
+                    | {
+                        type: "string";
+                        value: string;
+                      },
+                ) => {
+                  if (
+                    left["type"] === "UnionMember1" &&
+                    right["type"] === "UnionMember1"
+                  ) {
+                    return UnionMember1.equals(
+                      left.value as UnionMember1,
+                      right.value as UnionMember1,
+                    );
+                  }
+                  if (
+                    left["type"] === "UnionMember2" &&
+                    right["type"] === "UnionMember2"
+                  ) {
+                    return UnionMember2.equals(
+                      left.value as UnionMember2,
+                      right.value as UnionMember2,
+                    );
+                  }
+                  if (left["type"] === "string" && right["type"] === "string") {
+                    return $strictEquals(
+                      left.value as string,
+                      right.value as string,
+                    );
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-          ))(left.setNodeOrNodeOrString, right.setNodeOrNodeOrString).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "setNodeOrNodeOrString",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+              ),
+            name: "setNodeOrNodeOrString",
+          },
+          [left, left.setNodeOrNodeOrString],
+          [right, right.setNodeOrNodeOrString],
         ),
       );
 
@@ -47684,35 +47257,23 @@ export namespace UnionMember1 {
     left: UnionMember1,
     right: UnionMember1,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $strictEquals(
-          left.unionMember1Distinct,
-          right.unionMember1Distinct,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "unionMember1Distinct",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "unionMember1Distinct" },
+          [left, left.unionMember1Distinct],
+          [right, right.unionMember1Distinct],
+        ),
       )
       .chain(() =>
-        $strictEquals(left.unionMemberCommon, right.unionMemberCommon).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "unionMemberCommon",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "unionMemberCommon" },
+          [left, left.unionMemberCommon],
+          [right, right.unionMemberCommon],
         ),
       );
 
@@ -48245,35 +47806,23 @@ export namespace UnionMember2 {
     left: UnionMember2,
     right: UnionMember2,
   ) => $EqualsResult = (left, right) =>
-    $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
       .chain(() =>
-        $strictEquals(
-          left.unionMember2Distinct,
-          right.unionMember2Distinct,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "unionMember2Distinct",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "unionMember2Distinct" },
+          [left, left.unionMember2Distinct],
+          [right, right.unionMember2Distinct],
+        ),
       )
       .chain(() =>
-        $strictEquals(left.unionMemberCommon, right.unionMemberCommon).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "unionMemberCommon",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "unionMemberCommon" },
+          [left, left.unionMemberCommon],
+          [right, right.unionMemberCommon],
         ),
       );
 

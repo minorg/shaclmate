@@ -48,6 +48,7 @@ import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBig
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueFromRdfResourceValues } from "./_snippets/snippets_defaultValueFromRdfResourceValues.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
+import { snippets_EqualsFunction } from "./_snippets/snippets_EqualsFunction.js";
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
 import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
 import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
@@ -120,6 +121,7 @@ import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
 import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js";
 import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
 import { snippets_parseIri } from "./_snippets/snippets_parseIri.js";
+import { snippets_propertyEquals } from "./_snippets/snippets_propertyEquals.js";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
 import { snippets_rdfResourceIdentifierValues } from "./_snippets/snippets_rdfResourceIdentifierValues.js";
 import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
@@ -234,6 +236,11 @@ export class Snippets {
   @Memoize()
   get DefaultValueSchema(): Snippet {
     return this.snippet(snippets_DefaultValueSchema);
+  }
+
+  @Memoize()
+  get EqualsFunction(): Snippet {
+    return this.snippet(snippets_EqualsFunction);
   }
 
   @Memoize()
@@ -878,6 +885,11 @@ export class Snippets {
   @Memoize()
   get parseIri(): Snippet {
     return this.snippet(snippets_parseIri);
+  }
+
+  @Memoize()
+  get propertyEquals(): Snippet {
+    return this.snippet(snippets_propertyEquals);
   }
 
   @Memoize()
