@@ -1093,20 +1093,17 @@ export namespace $DefaultPartial {
   };
 
   export const _fromRdfResource: $_FromRdfResourceFunction<$DefaultPartial> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: $DefaultPartial.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
     }).chain((properties) => $DefaultPartial.create(properties));
@@ -1318,72 +1315,60 @@ export namespace LazyObject {
   });
 
   export const _fromRdfResource: $_FromRdfResourceFunction<LazyObject> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [LazyObject.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [LazyObject.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: LazyObject.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         optionalNumberProperty: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: LazyObject.schema.properties.optionalNumberProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($floatFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         optionalStringProperty: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: LazyObject.schema.properties.optionalStringProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         requiredStringProperty: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: LazyObject.schema.properties.requiredStringProperty,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => LazyObject.create(properties)),
     );
@@ -1853,26 +1838,23 @@ export namespace RootObject {
   });
 
   export const _fromRdfResource: $_FromRdfResourceFunction<RootObject> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [RootObject.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [RootObject.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $iriFromRdfResourceValues<string>(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: RootObject.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         lazyObjectSetProperty: $shaclPropertyFromRdf<
@@ -1882,11 +1864,9 @@ export namespace RootObject {
             partialType: $CollectionSchema<$DefaultPartial.Schema>;
           }
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: RootObject.schema.properties.lazyObjectSetProperty,
           typeFromRdfResourceValues: ((
             values,
@@ -1919,7 +1899,6 @@ export namespace RootObject {
               partialType: $CollectionSchema<$DefaultPartial.Schema>;
             }
           >,
-          objectSet: _$options.objectSet,
         }),
         optionalLazyProperty: $shaclPropertyFromRdf<
           $LazyOption<$DefaultPartial, LazyObject>,
@@ -1928,11 +1907,9 @@ export namespace RootObject {
             partialType: $MaybeSchema<$DefaultPartial.Schema>;
           }
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: RootObject.schema.properties.optionalLazyProperty,
           typeFromRdfResourceValues: ((
             values,
@@ -1961,7 +1938,6 @@ export namespace RootObject {
               partialType: $MaybeSchema<$DefaultPartial.Schema>;
             }
           >,
-          objectSet: _$options.objectSet,
         }),
         optionalObjectProperty: $shaclPropertyFromRdf<
           Maybe<{
@@ -1986,11 +1962,9 @@ export namespace RootObject {
             };
           }>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: RootObject.schema.properties.optionalObjectProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             {
@@ -2017,34 +1991,28 @@ export namespace RootObject {
           >((values, options) =>
             values.chainMap((value) =>
               value.toResource().chain((resource) =>
-                (($resource, _$options) =>
+                ((resource, options) =>
                   $sequenceRecord({
                     $identifier: $identifierFromRdfResourceValues(
-                      $rdfResourceIdentifierValues($resource),
+                      $rdfResourceIdentifierValues(resource),
                       {
-                        context: _$options.context,
-                        graph: _$options.graph,
-                        focusResource: $resource,
-                        preferredLanguages: _$options.preferredLanguages,
+                        ...options,
+                        focusResource: resource,
                         propertyPath: $RdfVocabularies.rdf.subject,
                         schema: { kind: "Identifier" as const },
-                        objectSet: _$options.objectSet,
                       },
                     ).chain((values) => values.head()),
                     requiredStringProperty: $shaclPropertyFromRdf<
                       string,
                       $StringSchema<string>
                     >({
-                      context: _$options.context,
-                      graph: _$options.graph,
-                      focusResource: $resource,
+                      ...options,
+                      focusResource: resource,
                       ignoreRdfType: true,
-                      preferredLanguages: _$options.preferredLanguages,
                       propertySchema:
                         LazyObject.schema.properties.requiredStringProperty,
                       typeFromRdfResourceValues:
                         $stringFromRdfResourceValues<string>,
-                      objectSet: _$options.objectSet,
                     }),
                   }).chain((properties) =>
                     ((parameters: {
@@ -2076,36 +2044,29 @@ export namespace RootObject {
               ),
             ),
           ),
-          objectSet: _$options.objectSet,
         }),
         optionalStringProperty: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: LazyObject.schema.properties.optionalStringProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         requiredStringProperty: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: LazyObject.schema.properties.requiredStringProperty,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => RootObject.create(properties)),
     );
@@ -2404,43 +2365,37 @@ export namespace UnionMember1 {
   });
 
   export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember1> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [UnionMember1.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [UnionMember1.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: UnionMember1.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         optionalNumberProperty: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: LazyObject.schema.properties.optionalNumberProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($floatFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => UnionMember1.create(properties)),
     );
@@ -2623,43 +2578,37 @@ export namespace UnionMember2 {
   });
 
   export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember2> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [UnionMember2.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [UnionMember2.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: UnionMember2.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         optionalStringProperty: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: LazyObject.schema.properties.optionalStringProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => UnionMember2.create(properties)),
     );

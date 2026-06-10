@@ -197,22 +197,10 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
-    const options: Record<string, Code> = {
-      context: variables.context,
-      graph: variables.graph,
-      focusResource: variables.focusResource,
-      preferredLanguages: variables.preferredLanguages,
-      propertyPath: this.rdfjsTermExpression(rdf.subject),
-      schema: this.typeSchemaVariable,
-    };
-    if (this.configuration.features.has("ObjectSet")) {
-      options["objectSet"] = variables.objectSet;
-    }
-
     return Maybe.of(
       code`${this.name}: ${this.type.fromRdfResourceValuesFunction}(
           ${this.reusables.snippets.rdfResourceIdentifierValues}(${variables.focusResource}),
-          ${options}
+          { ...${variables.options}, focusResource: ${variables.focusResource}, propertyPath: ${this.rdfjsTermExpression(rdf.subject)}, schema: ${this.typeSchemaVariable} }
         ).chain(values => values.head())`,
     );
   }

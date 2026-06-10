@@ -3713,20 +3713,17 @@ export namespace $DefaultPartial {
     }).chain($DefaultPartial.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<$DefaultPartial> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: $DefaultPartial.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
     }).chain((properties) => $DefaultPartial.create(properties));
@@ -4049,18 +4046,15 @@ export namespace $NamedDefaultPartial {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     $NamedDefaultPartial
-  > = ($resource, _$options) =>
+  > = (resource, options) =>
     $sequenceRecord({
       $identifier: $iriFromRdfResourceValues<string>(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: $NamedDefaultPartial.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
     }).chain((properties) => $NamedDefaultPartial.create(properties));
@@ -4784,26 +4778,23 @@ export namespace AnonymousTypesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     AnonymousTypesStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [AnonymousTypesStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: AnonymousTypesStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         anonymousStruct: $shaclPropertyFromRdf<
@@ -4825,11 +4816,9 @@ export namespace AnonymousTypesStruct {
             };
           }>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             AnonymousTypesStruct.schema.properties.anonymousStruct,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
@@ -4853,29 +4842,24 @@ export namespace AnonymousTypesStruct {
           >((values, options) =>
             values.chainMap((value) =>
               value.toResource().chain((resource) =>
-                (($resource, _$options) =>
+                ((resource, options) =>
                   $sequenceRecord({
                     $identifier: $identifierFromRdfResourceValues(
-                      $rdfResourceIdentifierValues($resource),
+                      $rdfResourceIdentifierValues(resource),
                       {
-                        context: _$options.context,
-                        graph: _$options.graph,
-                        focusResource: $resource,
-                        preferredLanguages: _$options.preferredLanguages,
+                        ...options,
+                        focusResource: resource,
                         propertyPath: $RdfVocabularies.rdf.subject,
                         schema: { kind: "Identifier" as const },
-                        objectSet: _$options.objectSet,
                       },
                     ).chain((values) => values.head()),
                     anonymousStructString: $shaclPropertyFromRdf<
                       string,
                       $StringSchema<string>
                     >({
-                      context: _$options.context,
-                      graph: _$options.graph,
-                      focusResource: $resource,
+                      ...options,
+                      focusResource: resource,
                       ignoreRdfType: true,
-                      preferredLanguages: _$options.preferredLanguages,
                       propertySchema: {
                         kind: "Shacl",
                         path: dataFactory.namedNode(
@@ -4885,7 +4869,6 @@ export namespace AnonymousTypesStruct {
                       },
                       typeFromRdfResourceValues:
                         $stringFromRdfResourceValues<string>,
-                      objectSet: _$options.objectSet,
                     }),
                   }).chain((properties) =>
                     ((parameters: {
@@ -4931,7 +4914,6 @@ export namespace AnonymousTypesStruct {
               ),
             ),
           ),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => AnonymousTypesStruct.create(properties)),
     );
@@ -5525,38 +5507,33 @@ export namespace BlankNodeIdentifierStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     BlankNodeIdentifierStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [BlankNodeIdentifierStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $blankNodeFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema:
               BlankNodeIdentifierStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         blankNodeIdentifierString: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             BlankNodeIdentifierStruct.schema.properties
               .blankNodeIdentifierString,
@@ -5564,7 +5541,6 @@ export namespace BlankNodeIdentifierStruct {
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => BlankNodeIdentifierStruct.create(properties)),
     );
@@ -6084,40 +6060,35 @@ export namespace BlankNodeOrIriIdentifierStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     BlankNodeOrIriIdentifierStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [BlankNodeOrIriIdentifierStruct.schema.fromRdfType],
           {
-            graph: _$options.graph,
+            graph: options.graph,
           },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema:
               BlankNodeOrIriIdentifierStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         blankNodeOrIriIdentifierString: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             BlankNodeOrIriIdentifierStruct.schema.properties
               .blankNodeOrIriIdentifierString,
@@ -6125,7 +6096,6 @@ export namespace BlankNodeOrIriIdentifierStruct {
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) =>
         BlankNodeOrIriIdentifierStruct.create(properties),
@@ -6957,107 +6927,89 @@ export namespace ClassConstraintsStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     ClassConstraintsStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [ClassConstraintsStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: ClassConstraintsStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         iriClass: $shaclPropertyFromRdf<
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ClassConstraintsStruct.schema.properties.iriClass,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
           >($iriFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         multiClass: $shaclPropertyFromRdf<
           Maybe<BlankNode | NamedNode>,
           $MaybeSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ClassConstraintsStruct.schema.properties.multiClass,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
           >($identifierFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         nodeClass1: $shaclPropertyFromRdf<
           Maybe<NonClassStruct>,
           $MaybeSchema<NonClassStruct.Schema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ClassConstraintsStruct.schema.properties.nodeClass1,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NonClassStruct,
             NonClassStruct.Schema
           >(NonClassStruct.fromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         nodeClass2: $shaclPropertyFromRdf<
           Maybe<PartialStruct>,
           $MaybeSchema<PartialStruct.Schema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ClassConstraintsStruct.schema.properties.nodeClass2,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             PartialStruct,
             PartialStruct.Schema
           >(PartialStruct.fromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         singleClass: $shaclPropertyFromRdf<
           Maybe<BlankNode | NamedNode>,
           $MaybeSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ClassConstraintsStruct.schema.properties.singleClass,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
             $IdentifierSchema
           >($identifierFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => ClassConstraintsStruct.create(properties)),
     );
@@ -8608,110 +8560,90 @@ export namespace ConvertibleTypesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     ConvertibleTypesStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [ConvertibleTypesStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         convertibleIri: $shaclPropertyFromRdf<NamedNode, $IriSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleIri,
           typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         convertibleIriNonEmptySet: $shaclPropertyFromRdf<
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
           >($iriFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         convertibleIriOption: $shaclPropertyFromRdf<
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleIriOption,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
           >($iriFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         convertibleIriSet: $shaclPropertyFromRdf<
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleIriSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
           >($iriFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         convertibleLiteral: $shaclPropertyFromRdf<Literal, $LiteralSchema>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleLiteral,
           typeFromRdfResourceValues: $literalFromRdfResourceValues,
-          objectSet: _$options.objectSet,
         }),
         convertibleLiteralNonEmptySet: $shaclPropertyFromRdf<
           readonly Literal[],
           $CollectionSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties
               .convertibleLiteralNonEmptySet,
@@ -8719,108 +8651,89 @@ export namespace ConvertibleTypesStruct {
             Literal,
             $LiteralSchema
           >($literalFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         convertibleLiteralOption: $shaclPropertyFromRdf<
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleLiteralOption,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
           >($literalFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         convertibleLiteralSet: $shaclPropertyFromRdf<
           readonly Literal[],
           $CollectionSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleLiteralSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             Literal,
             $LiteralSchema
           >($literalFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         convertibleTerm: $shaclPropertyFromRdf<
           BlankNode | NamedNode | Literal,
           $TermSchema<BlankNode | NamedNode | Literal>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleTerm,
           typeFromRdfResourceValues: $termFromRdfResourceValues<
             BlankNode | NamedNode | Literal
           >,
-          objectSet: _$options.objectSet,
         }),
         convertibleTermNonEmptySet: $shaclPropertyFromRdf<
           readonly (BlankNode | NamedNode | Literal)[],
           $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode | Literal,
             $TermSchema<BlankNode | NamedNode | Literal>
           >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-          objectSet: _$options.objectSet,
         }),
         convertibleTermOption: $shaclPropertyFromRdf<
           Maybe<BlankNode | NamedNode | Literal>,
           $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleTermOption,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode | Literal,
             $TermSchema<BlankNode | NamedNode | Literal>
           >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-          objectSet: _$options.objectSet,
         }),
         convertibleTermSet: $shaclPropertyFromRdf<
           readonly (BlankNode | NamedNode | Literal)[],
           $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ConvertibleTypesStruct.schema.properties.convertibleTermSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode | Literal,
             $TermSchema<BlankNode | NamedNode | Literal>
           >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => ConvertibleTypesStruct.create(properties)),
     );
@@ -10956,28 +10869,25 @@ export namespace DateUnionsStruct {
     }).chain(DateUnionsStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<DateUnionsStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [DateUnionsStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: DateUnionsStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         dateOrDateTime: $shaclPropertyFromRdf<
@@ -10998,11 +10908,9 @@ export namespace DateUnionsStruct {
             };
           }>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: DateUnionsStruct.schema.properties.dateOrDateTime,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             { type: "date"; value: Date } | { type: "dateTime"; value: Date },
@@ -11084,7 +10992,6 @@ export namespace DateUnionsStruct {
               };
             }
           >),
-          objectSet: _$options.objectSet,
         }),
         dateOrString: $shaclPropertyFromRdf<
           Maybe<
@@ -11104,11 +11011,9 @@ export namespace DateUnionsStruct {
             };
           }>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: DateUnionsStruct.schema.properties.dateOrString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             { type: "date"; value: Date } | { type: "string"; value: string },
@@ -11190,7 +11095,6 @@ export namespace DateUnionsStruct {
               };
             }
           >),
-          objectSet: _$options.objectSet,
         }),
         dateTimeOrDate: $shaclPropertyFromRdf<
           Maybe<
@@ -11210,11 +11114,9 @@ export namespace DateUnionsStruct {
             };
           }>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: DateUnionsStruct.schema.properties.dateTimeOrDate,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             { type: "dateTime"; value: Date } | { type: "date"; value: Date },
@@ -11296,7 +11198,6 @@ export namespace DateUnionsStruct {
               };
             }
           >),
-          objectSet: _$options.objectSet,
         }),
         stringOrDate: $shaclPropertyFromRdf<
           Maybe<
@@ -11316,11 +11217,9 @@ export namespace DateUnionsStruct {
             };
           }>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: DateUnionsStruct.schema.properties.stringOrDate,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             { type: "string"; value: string } | { type: "date"; value: Date },
@@ -11402,7 +11301,6 @@ export namespace DateUnionsStruct {
               };
             }
           >),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => DateUnionsStruct.create(properties)),
     );
@@ -12574,129 +12472,108 @@ export namespace DefaultValuesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     DefaultValuesStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [DefaultValuesStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: DefaultValuesStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         dateDefaultValue: $shaclPropertyFromRdf<
           Date,
           $DefaultValueSchema<$DateSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             DefaultValuesStruct.schema.properties.dateDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             Date,
             $DateSchema
           >($dateFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         dateTimeDefaultValue: $shaclPropertyFromRdf<
           Date,
           $DefaultValueSchema<$DateSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             DefaultValuesStruct.schema.properties.dateTimeDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             Date,
             $DateSchema
           >($dateTimeFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         falseBooleanDefaultValue: $shaclPropertyFromRdf<
           boolean,
           $DefaultValueSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             DefaultValuesStruct.schema.properties.falseBooleanDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
           >($booleanFromRdfResourceValues<boolean>),
-          objectSet: _$options.objectSet,
         }),
         numberDefaultValue: $shaclPropertyFromRdf<
           number,
           $DefaultValueSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             DefaultValuesStruct.schema.properties.numberDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($floatFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         stringDefaultValue: $shaclPropertyFromRdf<
           string,
           $DefaultValueSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             DefaultValuesStruct.schema.properties.stringDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         trueBooleanDefaultValue: $shaclPropertyFromRdf<
           boolean,
           $DefaultValueSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             DefaultValuesStruct.schema.properties.trueBooleanDefaultValue,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
           >($booleanFromRdfResourceValues<boolean>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => DefaultValuesStruct.create(properties)),
     );
@@ -13343,44 +13220,38 @@ export namespace DirectRecursiveStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     DirectRecursiveStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [DirectRecursiveStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: DirectRecursiveStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         directRecursive: $shaclPropertyFromRdf<
           Maybe<DirectRecursiveStruct>,
           $MaybeSchema<DirectRecursiveStruct.Schema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             DirectRecursiveStruct.schema.properties.directRecursive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             DirectRecursiveStruct,
             DirectRecursiveStruct.Schema
           >(DirectRecursiveStruct.fromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => DirectRecursiveStruct.create(properties)),
     );
@@ -13987,66 +13858,54 @@ export namespace DisplayStruct {
     }).chain(DisplayStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<DisplayStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [DisplayStruct.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [DisplayStruct.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: DisplayStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         explicitFalseDisplay: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: DisplayStruct.schema.properties.explicitFalseDisplay,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         explicitTrueDisplay: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: DisplayStruct.schema.properties.explicitTrueDisplay,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         implicitFalseDisplay: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: DisplayStruct.schema.properties.implicitFalseDisplay,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => DisplayStruct.create(properties)),
     );
@@ -14576,45 +14435,37 @@ export namespace ExplicitFromToRdfTypesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     ExplicitFromToRdfTypesStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [ExplicitFromToRdfTypesStruct.schema.fromRdfType],
-          {
-            graph: _$options.graph,
-          },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema:
               ExplicitFromToRdfTypesStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         explicitFromToRdfTypesString: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ExplicitFromToRdfTypesStruct.schema.properties
               .explicitFromToRdfTypesString,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => ExplicitFromToRdfTypesStruct.create(properties)),
     );
@@ -15112,41 +14963,35 @@ export namespace ExplicitRdfTypeStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     ExplicitRdfTypeStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [ExplicitRdfTypeStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: ExplicitRdfTypeStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         explicitRdfTypeString: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ExplicitRdfTypeStruct.schema.properties.explicitRdfTypeString,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => ExplicitRdfTypeStruct.create(properties)),
     );
@@ -15632,41 +15477,35 @@ export namespace FlattenUnionMember3 {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     FlattenUnionMember3
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [FlattenUnionMember3.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: FlattenUnionMember3.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         flattenUnionMember3String: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             FlattenUnionMember3.schema.properties.flattenUnionMember3String,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => FlattenUnionMember3.create(properties)),
     );
@@ -16134,41 +15973,32 @@ export namespace HasValuesStruct {
     }).chain(HasValuesStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<HasValuesStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: HasValuesStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       hasIriValue: $shaclPropertyFromRdf<NamedNode, $IriSchema<string>>({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: HasValuesStruct.schema.properties.hasIriValue,
         typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
       hasLiteralValue: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: HasValuesStruct.schema.properties.hasLiteralValue,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => HasValuesStruct.create(properties));
 
@@ -16728,62 +16558,50 @@ export namespace IgnoredPropertiesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     IgnoredPropertiesStruct
-  > = ($resource, _$options) =>
+  > = (resource, options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: IgnoredPropertiesStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       severityDefaultProperty: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           IgnoredPropertiesStruct.schema.properties.severityDefaultProperty,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
       severityViolationProperty: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           IgnoredPropertiesStruct.schema.properties.severityViolationProperty,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
       shaclmateIgnoreFalseProperty: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           IgnoredPropertiesStruct.schema.properties
             .shaclmateIgnoreFalseProperty,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => IgnoredPropertiesStruct.create(properties));
 
@@ -17309,44 +17127,38 @@ export namespace IndirectRecursiveStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     IndirectRecursiveStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [IndirectRecursiveStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         indirectRecursiveHelper: $shaclPropertyFromRdf<
           Maybe<IndirectRecursiveStructHelper>,
           $MaybeSchema<IndirectRecursiveStructHelper.Schema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             IndirectRecursiveStruct.schema.properties.indirectRecursiveHelper,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             IndirectRecursiveStructHelper,
             IndirectRecursiveStructHelper.Schema
           >(IndirectRecursiveStructHelper.fromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => IndirectRecursiveStruct.create(properties)),
     );
@@ -17843,47 +17655,39 @@ export namespace IndirectRecursiveStructHelper {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     IndirectRecursiveStructHelper
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [IndirectRecursiveStructHelper.schema.fromRdfType],
-          {
-            graph: _$options.graph,
-          },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema:
               IndirectRecursiveStructHelper.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         indirectRecursive: $shaclPropertyFromRdf<
           Maybe<IndirectRecursiveStruct>,
           $MaybeSchema<IndirectRecursiveStruct.Schema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             IndirectRecursiveStructHelper.schema.properties.indirectRecursive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             IndirectRecursiveStruct,
             IndirectRecursiveStruct.Schema
           >(IndirectRecursiveStruct.fromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) =>
         IndirectRecursiveStructHelper.create(properties),
@@ -18420,12 +18224,12 @@ export namespace InIdentifierStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     InIdentifierStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [InIdentifierStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -18433,31 +18237,25 @@ export namespace InIdentifierStruct {
         $identifier: $iriFromRdfResourceValues<
           | "http://example.com/InIdentifierStructInstance1"
           | "http://example.com/InIdentifierStructInstance2"
-        >($rdfResourceIdentifierValues($resource), {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+        >($rdfResourceIdentifierValues(resource), {
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: InIdentifierStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         }).chain((values) => values.head()),
         inIdentifierString: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             InIdentifierStruct.schema.properties.inIdentifierString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => InIdentifierStruct.create(properties)),
     );
@@ -19416,91 +19214,76 @@ export namespace InPropertiesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     InPropertiesStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [InPropertiesStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: InPropertiesStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         inBooleans: $shaclPropertyFromRdf<
           Maybe<true>,
           $MaybeSchema<$BooleanSchema<true>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: InPropertiesStruct.schema.properties.inBooleans,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             true,
             $BooleanSchema<true>
           >($booleanFromRdfResourceValues<true>),
-          objectSet: _$options.objectSet,
         }),
         inDateTimes: $shaclPropertyFromRdf<
           Maybe<Date>,
           $MaybeSchema<$DateSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: InPropertiesStruct.schema.properties.inDateTimes,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Date,
             $DateSchema
           >($dateTimeFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         inDoubles: $shaclPropertyFromRdf<
           Maybe<1 | 2>,
           $MaybeSchema<$NumericSchema<1 | 2>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: InPropertiesStruct.schema.properties.inDoubles,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             1 | 2,
             $NumericSchema<1 | 2>
           >($floatFromRdfResourceValues<1 | 2>),
-          objectSet: _$options.objectSet,
         }),
         inIntegers: $shaclPropertyFromRdf<
           Maybe<1n | 2n>,
           $MaybeSchema<$NumericSchema<1n | 2n>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: InPropertiesStruct.schema.properties.inIntegers,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             1n | 2n,
             $NumericSchema<1n | 2n>
           >($bigIntFromRdfResourceValues<1n | 2n>),
-          objectSet: _$options.objectSet,
         }),
         inIris: $shaclPropertyFromRdf<
           Maybe<
@@ -19512,11 +19295,9 @@ export namespace InPropertiesStruct {
             >
           >
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: InPropertiesStruct.schema.properties.inIris,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode<
@@ -19530,39 +19311,32 @@ export namespace InPropertiesStruct {
               "http://example.com/InIri1" | "http://example.com/InIri2"
             >,
           ),
-          objectSet: _$options.objectSet,
         }),
         inStrings: $shaclPropertyFromRdf<
           Maybe<"text" | "html">,
           $MaybeSchema<$StringSchema<"text" | "html">>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: InPropertiesStruct.schema.properties.inStrings,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             "text" | "html",
             $StringSchema<"text" | "html">
           >($stringFromRdfResourceValues<"text" | "html">),
-          objectSet: _$options.objectSet,
         }),
         reusableIn: $shaclPropertyFromRdf<
           Maybe<ReusableIn>,
           $MaybeSchema<$StringSchema<ReusableIn>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: InPropertiesStruct.schema.properties.reusableIn,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             ReusableIn,
             $StringSchema<ReusableIn>
           >($stringFromRdfResourceValues<ReusableIn>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => InPropertiesStruct.create(properties)),
     );
@@ -20215,44 +19989,38 @@ export namespace IriIdentifierStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     IriIdentifierStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [IriIdentifierStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $iriFromRdfResourceValues<string>(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: IriIdentifierStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         iriIdentifierString: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             IriIdentifierStruct.schema.properties.iriIdentifierString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => IriIdentifierStruct.create(properties)),
     );
@@ -20721,37 +20489,31 @@ export namespace LanguageInStruct {
     }).chain(LanguageInStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<LanguageInStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: LanguageInStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       languageInLiteral: $shaclPropertyFromRdf<
         readonly Literal[],
         $CollectionSchema<$LiteralSchema>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: LanguageInStruct.schema.properties.languageInLiteral,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           Literal,
           $LiteralSchema
         >($literalFromRdfResourceValues),
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => LanguageInStruct.create(properties));
 
@@ -21246,43 +21008,37 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.fromRdfType],
           {
-            graph: _$options.graph,
+            graph: options.graph,
           },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema:
               LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
                 .$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
               .lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) =>
         LazilyResolvedBlankNodeOrIriIdentifierStruct.create(properties),
@@ -21741,32 +21497,26 @@ export namespace LazilyResolvedIriIdentifierStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     LazilyResolvedIriIdentifierStruct
-  > = ($resource, _$options) =>
+  > = (resource, options) =>
     $sequenceRecord({
       $identifier: $iriFromRdfResourceValues<string>(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema:
             LazilyResolvedIriIdentifierStruct.schema.properties.$identifier
               .type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazilyResolvedIriIdentifierStruct.schema.properties.lazilyResolved,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) =>
       LazilyResolvedIriIdentifierStruct.create(properties),
@@ -22233,39 +21983,33 @@ export namespace LazilyResolvedUnionMember1 {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     LazilyResolvedUnionMember1
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [LazilyResolvedUnionMember1.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema:
               LazilyResolvedUnionMember1.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             LazilyResolvedUnionMember1.schema.properties.lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => LazilyResolvedUnionMember1.create(properties)),
     );
@@ -22744,39 +22488,33 @@ export namespace LazilyResolvedUnionMember2 {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     LazilyResolvedUnionMember2
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [LazilyResolvedUnionMember2.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema:
               LazilyResolvedUnionMember2.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             LazilyResolvedUnionMember2.schema.properties.lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => LazilyResolvedUnionMember2.create(properties)),
     );
@@ -24285,18 +24023,15 @@ export namespace LazyPropertiesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     LazyPropertiesStruct
-  > = ($resource, _$options) =>
+  > = (resource, options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: LazyPropertiesStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
@@ -24309,11 +24044,9 @@ export namespace LazyPropertiesStruct {
           partialType: $MaybeSchema<$DefaultPartial.Schema>;
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedBlankNodeOrIriIdentifier,
@@ -24352,7 +24085,6 @@ export namespace LazyPropertiesStruct {
             partialType: $MaybeSchema<$DefaultPartial.Schema>;
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       optionalLazyToResolvedIriIdentifier: $shaclPropertyFromRdf<
         $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>,
@@ -24361,11 +24093,9 @@ export namespace LazyPropertiesStruct {
           partialType: $MaybeSchema<$NamedDefaultPartial.Schema>;
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedIriIdentifier,
@@ -24402,7 +24132,6 @@ export namespace LazyPropertiesStruct {
             partialType: $MaybeSchema<$NamedDefaultPartial.Schema>;
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       optionalLazyToResolvedUnion: $shaclPropertyFromRdf<
         $LazyOption<$DefaultPartial, LazilyResolvedUnion>,
@@ -24411,11 +24140,9 @@ export namespace LazyPropertiesStruct {
           partialType: $MaybeSchema<$DefaultPartial.Schema>;
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties.optionalLazyToResolvedUnion,
         typeFromRdfResourceValues: ((
@@ -24447,7 +24174,6 @@ export namespace LazyPropertiesStruct {
             partialType: $MaybeSchema<$DefaultPartial.Schema>;
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       optionalPartialToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $LazyOption<
@@ -24456,11 +24182,9 @@ export namespace LazyPropertiesStruct {
         >,
         { kind: "LazyOption"; partialType: $MaybeSchema<PartialStruct.Schema> }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialToResolvedBlankNodeOrIriIdentifier,
@@ -24499,17 +24223,14 @@ export namespace LazyPropertiesStruct {
             partialType: $MaybeSchema<PartialStruct.Schema>;
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       optionalPartialToResolvedUnion: $shaclPropertyFromRdf<
         $LazyOption<PartialStruct, LazilyResolvedUnion>,
         { kind: "LazyOption"; partialType: $MaybeSchema<PartialStruct.Schema> }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties.optionalPartialToResolvedUnion,
         typeFromRdfResourceValues: ((
@@ -24541,7 +24262,6 @@ export namespace LazyPropertiesStruct {
             partialType: $MaybeSchema<PartialStruct.Schema>;
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       optionalPartialUnionToResolvedUnion: $shaclPropertyFromRdf<
         $LazyOption<PartialUnion, LazilyResolvedUnion>,
@@ -24550,11 +24270,9 @@ export namespace LazyPropertiesStruct {
           partialType: $MaybeSchema<typeof PartialUnion.schema>;
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialUnionToResolvedUnion,
@@ -24587,17 +24305,14 @@ export namespace LazyPropertiesStruct {
             partialType: $MaybeSchema<typeof PartialUnion.schema>;
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       requiredLazyToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
         { kind: "Lazy"; partialType: $DefaultPartial.Schema }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredLazyToResolvedBlankNodeOrIriIdentifier,
@@ -24630,17 +24345,14 @@ export namespace LazyPropertiesStruct {
           $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
           { kind: "Lazy"; partialType: $DefaultPartial.Schema }
         >,
-        objectSet: _$options.objectSet,
       }),
       requiredPartialToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
         { kind: "Lazy"; partialType: PartialStruct.Schema }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredPartialToResolvedBlankNodeOrIriIdentifier,
@@ -24671,7 +24383,6 @@ export namespace LazyPropertiesStruct {
           $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
           { kind: "Lazy"; partialType: PartialStruct.Schema }
         >,
-        objectSet: _$options.objectSet,
       }),
       setLazyToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
@@ -24680,11 +24391,9 @@ export namespace LazyPropertiesStruct {
           partialType: $CollectionSchema<$DefaultPartial.Schema>;
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setLazyToResolvedBlankNodeOrIriIdentifier,
@@ -24725,7 +24434,6 @@ export namespace LazyPropertiesStruct {
             partialType: $CollectionSchema<$DefaultPartial.Schema>;
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       setPartialToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
@@ -24734,11 +24442,9 @@ export namespace LazyPropertiesStruct {
           partialType: $CollectionSchema<PartialStruct.Schema>;
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setPartialToResolvedBlankNodeOrIriIdentifier,
@@ -24776,7 +24482,6 @@ export namespace LazyPropertiesStruct {
             partialType: $CollectionSchema<PartialStruct.Schema>;
           }
         >,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => LazyPropertiesStruct.create(properties));
 
@@ -26112,26 +25817,23 @@ export namespace ListSetsStruct {
     }).chain(ListSetsStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ListSetsStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [ListSetsStruct.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [ListSetsStruct.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: ListSetsStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         listListSet: $shaclPropertyFromRdf<
@@ -26140,11 +25842,9 @@ export namespace ListSetsStruct {
             $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
           >
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ListSetsStruct.schema.properties.listListSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             readonly (readonly string[])[],
@@ -26159,17 +25859,14 @@ export namespace ListSetsStruct {
               ),
             ),
           ),
-          objectSet: _$options.objectSet,
         }),
         listSet: $shaclPropertyFromRdf<
           readonly (readonly string[])[],
           $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ListSetsStruct.schema.properties.listSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             readonly string[],
@@ -26179,7 +25876,6 @@ export namespace ListSetsStruct {
               $stringFromRdfResourceValues<string>,
             ),
           ),
-          objectSet: _$options.objectSet,
         }),
         listUnionSet: $shaclPropertyFromRdf<
           readonly (readonly string[] | string)[],
@@ -26197,11 +25893,9 @@ export namespace ListSetsStruct {
             };
           }>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ListSetsStruct.schema.properties.listUnionSet,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             readonly string[] | string,
@@ -26256,7 +25950,6 @@ export namespace ListSetsStruct {
               };
             }
           >),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => ListSetsStruct.create(properties)),
     );
@@ -27366,37 +27059,32 @@ export namespace ListsStruct {
     }).chain(ListsStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ListsStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [ListsStruct.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [ListsStruct.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: ListsStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         iriList: $shaclPropertyFromRdf<
           Maybe<readonly NamedNode[]>,
           $MaybeSchema<$CollectionSchema<$IriSchema<string>>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ListsStruct.schema.properties.iriList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly NamedNode[],
@@ -27406,17 +27094,14 @@ export namespace ListsStruct {
               $iriFromRdfResourceValues<string>,
             ),
           ),
-          objectSet: _$options.objectSet,
         }),
         stringList: $shaclPropertyFromRdf<
           Maybe<readonly string[]>,
           $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ListsStruct.schema.properties.stringList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly string[],
@@ -27426,7 +27111,6 @@ export namespace ListsStruct {
               $stringFromRdfResourceValues<string>,
             ),
           ),
-          objectSet: _$options.objectSet,
         }),
         stringListList: $shaclPropertyFromRdf<
           Maybe<readonly (readonly string[])[]>,
@@ -27434,11 +27118,9 @@ export namespace ListsStruct {
             $CollectionSchema<$CollectionSchema<$StringSchema<string>>>
           >
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ListsStruct.schema.properties.stringListList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (readonly string[])[],
@@ -27453,17 +27135,14 @@ export namespace ListsStruct {
               ),
             ),
           ),
-          objectSet: _$options.objectSet,
         }),
         structList: $shaclPropertyFromRdf<
           Maybe<readonly NonClassStruct[]>,
           $MaybeSchema<$CollectionSchema<NonClassStruct.Schema>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ListsStruct.schema.properties.structList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly NonClassStruct[],
@@ -27473,7 +27152,6 @@ export namespace ListsStruct {
               NonClassStruct.fromRdfResourceValues,
             ),
           ),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => ListsStruct.create(properties)),
     );
@@ -28481,37 +28159,32 @@ export namespace MutablePropertiesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     MutablePropertiesStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [MutablePropertiesStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: MutablePropertiesStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         mutableList: $shaclPropertyFromRdf<
           Maybe<string[]>,
           $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: MutablePropertiesStruct.schema.properties.mutableList,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string[],
@@ -28521,40 +28194,33 @@ export namespace MutablePropertiesStruct {
               $stringFromRdfResourceValues<string>,
             ),
           ),
-          objectSet: _$options.objectSet,
         }),
         mutableSet: $shaclPropertyFromRdf<
           string[],
           $CollectionSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: MutablePropertiesStruct.schema.properties.mutableSet,
           typeFromRdfResourceValues: $mutableSetFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         mutableString: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             MutablePropertiesStruct.schema.properties.mutableString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => MutablePropertiesStruct.create(properties)),
     );
@@ -29187,53 +28853,44 @@ export namespace NamedUnionsStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     NamedUnionsStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [NamedUnionsStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: NamedUnionsStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         namedUnion1: $shaclPropertyFromRdf<
           NamedUnion1,
           typeof NamedUnion1.schema
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NamedUnionsStruct.schema.properties.namedUnion1,
           typeFromRdfResourceValues: NamedUnion1.fromRdfResourceValues,
-          objectSet: _$options.objectSet,
         }),
         namedUnion2: $shaclPropertyFromRdf<
           NamedUnion2,
           typeof NamedUnion2.schema
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NamedUnionsStruct.schema.properties.namedUnion2,
           typeFromRdfResourceValues: NamedUnion2.fromRdfResourceValues,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => NamedUnionsStruct.create(properties)),
     );
@@ -29743,43 +29400,37 @@ export namespace NewName {
     }).chain(NewName.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NewName> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [NewName.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [NewName.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: NewName.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         newNameString: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NewName.schema.properties.newNameString,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => NewName.create(properties)),
     );
@@ -30558,105 +30209,82 @@ export namespace NodeKindsStruct {
     }).chain(NodeKindsStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NodeKindsStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          $resource,
-          [NodeKindsStruct.schema.fromRdfType],
-          { graph: _$options.graph },
-        )
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [NodeKindsStruct.schema.fromRdfType], {
+          graph: options.graph,
+        })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: NodeKindsStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         blankNodeKind: $shaclPropertyFromRdf<BlankNode, $BlankNodeSchema>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeKindsStruct.schema.properties.blankNodeKind,
           typeFromRdfResourceValues: $blankNodeFromRdfResourceValues,
-          objectSet: _$options.objectSet,
         }),
         blankNodeOrIriNodeKind: $shaclPropertyFromRdf<
           BlankNode | NamedNode,
           $IdentifierSchema
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             NodeKindsStruct.schema.properties.blankNodeOrIriNodeKind,
           typeFromRdfResourceValues: $identifierFromRdfResourceValues,
-          objectSet: _$options.objectSet,
         }),
         blankNodeOrLiteralNodeKind: $shaclPropertyFromRdf<
           BlankNode | Literal,
           $TermSchema<BlankNode | Literal>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             NodeKindsStruct.schema.properties.blankNodeOrLiteralNodeKind,
           typeFromRdfResourceValues: $termFromRdfResourceValues<
             BlankNode | Literal
           >,
-          objectSet: _$options.objectSet,
         }),
         iriNodeKind: $shaclPropertyFromRdf<NamedNode, $IriSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeKindsStruct.schema.properties.iriNodeKind,
           typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         iriOrLiteralNodeKind: $shaclPropertyFromRdf<
           NamedNode | Literal,
           $TermSchema<NamedNode | Literal>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             NodeKindsStruct.schema.properties.iriOrLiteralNodeKind,
           typeFromRdfResourceValues: $termFromRdfResourceValues<
             NamedNode | Literal
           >,
-          objectSet: _$options.objectSet,
         }),
         literalNodeKind: $shaclPropertyFromRdf<Literal, $LiteralSchema>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeKindsStruct.schema.properties.literalNodeKind,
           typeFromRdfResourceValues: $literalFromRdfResourceValues,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => NodeKindsStruct.create(properties)),
     );
@@ -31253,31 +30881,25 @@ export namespace NonClassStruct {
     }).chain(NonClassStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NonClassStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: NonClassStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       nonClassString: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: NonClassStruct.schema.properties.nonClassString,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => NonClassStruct.create(properties));
 
@@ -31686,33 +31308,27 @@ export namespace NoRdfTypeUnionMember1 {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     NoRdfTypeUnionMember1
-  > = ($resource, _$options) =>
+  > = (resource, options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: NoRdfTypeUnionMember1.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       noRdfTypeUnionMember1String: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           NoRdfTypeUnionMember1.schema.properties.noRdfTypeUnionMember1String,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => NoRdfTypeUnionMember1.create(properties));
 
@@ -32130,33 +31746,27 @@ export namespace NoRdfTypeUnionMember2 {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     NoRdfTypeUnionMember2
-  > = ($resource, _$options) =>
+  > = (resource, options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: NoRdfTypeUnionMember2.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       noRdfTypeUnionMember2String: $shaclPropertyFromRdf<
         string,
         $StringSchema<string>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           NoRdfTypeUnionMember2.schema.properties.noRdfTypeUnionMember2String,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => NoRdfTypeUnionMember2.create(properties));
 
@@ -33661,287 +33271,236 @@ export namespace NumericsStruct {
     }).chain(NumericsStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NumericsStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [NumericsStruct.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [NumericsStruct.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: NumericsStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         byteNumeric: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.byteNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($intFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         decimalNumeric: $shaclPropertyFromRdf<
           Maybe<BigDecimal>,
           $MaybeSchema<$NumericSchema<BigDecimal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.decimalNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BigDecimal,
             $NumericSchema<BigDecimal>
           >($bigDecimalFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         doubleNumeric: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.doubleNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($floatFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         floatNumeric: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.floatNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($floatFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         integerNumeric: $shaclPropertyFromRdf<
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.integerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
           >($bigIntFromRdfResourceValues<bigint>),
-          objectSet: _$options.objectSet,
         }),
         intNumeric: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.intNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($intFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         longNumeric: $shaclPropertyFromRdf<
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.longNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
           >($bigIntFromRdfResourceValues<bigint>),
-          objectSet: _$options.objectSet,
         }),
         negativeIntegerNumeric: $shaclPropertyFromRdf<
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             NumericsStruct.schema.properties.negativeIntegerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
           >($bigIntFromRdfResourceValues<bigint>),
-          objectSet: _$options.objectSet,
         }),
         nonNegativeIntegerNumeric: $shaclPropertyFromRdf<
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             NumericsStruct.schema.properties.nonNegativeIntegerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
           >($bigIntFromRdfResourceValues<bigint>),
-          objectSet: _$options.objectSet,
         }),
         nonPositiveIntegerNumeric: $shaclPropertyFromRdf<
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             NumericsStruct.schema.properties.nonPositiveIntegerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
           >($bigIntFromRdfResourceValues<bigint>),
-          objectSet: _$options.objectSet,
         }),
         positiveIntegerNumeric: $shaclPropertyFromRdf<
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             NumericsStruct.schema.properties.positiveIntegerNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
           >($bigIntFromRdfResourceValues<bigint>),
-          objectSet: _$options.objectSet,
         }),
         shortNumeric: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.shortNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($intFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         unsignedByteNumeric: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.unsignedByteNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($intFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         unsignedIntNumeric: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.unsignedIntNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($intFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         unsignedLongNumeric: $shaclPropertyFromRdf<
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.unsignedLongNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
             $NumericSchema<bigint>
           >($bigIntFromRdfResourceValues<bigint>),
-          objectSet: _$options.objectSet,
         }),
         unsignedShortNumeric: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NumericsStruct.schema.properties.unsignedShortNumeric,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($intFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => NumericsStruct.create(properties)),
     );
@@ -34824,51 +34383,39 @@ export namespace OrderedStruct {
     }).chain(OrderedStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<OrderedStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: OrderedStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       orderedC: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: OrderedStruct.schema.properties.orderedC,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
       orderedB: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: OrderedStruct.schema.properties.orderedB,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
       orderedA: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: OrderedStruct.schema.properties.orderedA,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => OrderedStruct.create(properties));
 
@@ -35294,31 +34841,25 @@ export namespace PartialStruct {
     }).chain(PartialStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<PartialStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: PartialStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: PartialStruct.schema.properties.lazilyResolved,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => PartialStruct.create(properties));
 
@@ -35774,37 +35315,31 @@ export namespace PartialUnionMember1 {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     PartialUnionMember1
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [PartialUnionMember1.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: PartialUnionMember1.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PartialUnionMember1.schema.properties.lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => PartialUnionMember1.create(properties)),
     );
@@ -36270,37 +35805,31 @@ export namespace PartialUnionMember2 {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     PartialUnionMember2
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [PartialUnionMember2.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: PartialUnionMember2.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         lazilyResolved: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PartialUnionMember2.schema.properties.lazilyResolved,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => PartialUnionMember2.create(properties)),
     );
@@ -36928,79 +36457,64 @@ export namespace PropertyCardinalitiesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     PropertyCardinalitiesStruct
-  > = ($resource, _$options) =>
+  > = (resource, options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema:
             PropertyCardinalitiesStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       emptySet: $shaclPropertyFromRdf<
         readonly string[],
         $CollectionSchema<$StringSchema<string>>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: PropertyCardinalitiesStruct.schema.properties.emptySet,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           string,
           $StringSchema<string>
         >($stringFromRdfResourceValues<string>),
-        objectSet: _$options.objectSet,
       }),
       nonEmptySet: $shaclPropertyFromRdf<
         readonly string[],
         $CollectionSchema<$StringSchema<string>>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           PropertyCardinalitiesStruct.schema.properties.nonEmptySet,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           string,
           $StringSchema<string>
         >($stringFromRdfResourceValues<string>),
-        objectSet: _$options.objectSet,
       }),
       optional: $shaclPropertyFromRdf<
         Maybe<string>,
         $MaybeSchema<$StringSchema<string>>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: PropertyCardinalitiesStruct.schema.properties.optional,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           string,
           $StringSchema<string>
         >($stringFromRdfResourceValues<string>),
-        objectSet: _$options.objectSet,
       }),
       required: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema: PropertyCardinalitiesStruct.schema.properties.required,
         typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => PropertyCardinalitiesStruct.create(properties));
 
@@ -37742,77 +37256,59 @@ export namespace PropertyNamesStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     PropertyNamesStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [PropertyNamesStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: PropertyNamesStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         actualName1: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyNamesStruct.schema.properties.actualName1,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         actualName2: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyNamesStruct.schema.properties.actualName2,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         actualName3: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyNamesStruct.schema.properties.actualName3,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         actualName4: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyNamesStruct.schema.properties.actualName4,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         actualName5: $shaclPropertyFromRdf<string, $StringSchema<string>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyNamesStruct.schema.properties.actualName5,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => PropertyNamesStruct.create(properties)),
     );
@@ -38458,59 +37954,50 @@ export namespace PropertyPathsStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     PropertyPathsStruct
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [PropertyPathsStruct.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: PropertyPathsStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         inversePath: $shaclPropertyFromRdf<
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyPathsStruct.schema.properties.inversePath,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
           >($iriFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         predicatePath: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyPathsStruct.schema.properties.predicatePath,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => PropertyPathsStruct.create(properties)),
     );
@@ -39008,37 +38495,32 @@ export namespace RecursiveUnionMember1 {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     RecursiveUnionMember1
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [RecursiveUnionMember1.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: RecursiveUnionMember1.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         recursiveUnionMember1Property: $shaclPropertyFromRdf<
           Maybe<RecursiveUnion>,
           $MaybeSchema<typeof RecursiveUnion.schema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             RecursiveUnionMember1.schema.properties
               .recursiveUnionMember1Property,
@@ -39046,7 +38528,6 @@ export namespace RecursiveUnionMember1 {
             RecursiveUnion,
             typeof RecursiveUnion.schema
           >(RecursiveUnion.fromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => RecursiveUnionMember1.create(properties)),
     );
@@ -39551,37 +39032,32 @@ export namespace RecursiveUnionMember2 {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     RecursiveUnionMember2
-  > = ($resource, _$options) =>
-    (!_$options.ignoreRdfType
+  > = (resource, options) =>
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [RecursiveUnionMember2.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: RecursiveUnionMember2.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         recursiveUnionMember2Property: $shaclPropertyFromRdf<
           Maybe<RecursiveUnion>,
           $MaybeSchema<typeof RecursiveUnion.schema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             RecursiveUnionMember2.schema.properties
               .recursiveUnionMember2Property,
@@ -39589,7 +39065,6 @@ export namespace RecursiveUnionMember2 {
             RecursiveUnion,
             typeof RecursiveUnion.schema
           >(RecursiveUnion.fromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => RecursiveUnionMember2.create(properties)),
     );
@@ -40694,170 +40169,140 @@ export namespace TermsStruct {
     }).chain(TermsStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<TermsStruct> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [TermsStruct.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [TermsStruct.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: TermsStruct.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         blankNodeTerm: $shaclPropertyFromRdf<
           Maybe<BlankNode>,
           $MaybeSchema<$BlankNodeSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: TermsStruct.schema.properties.blankNodeTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode,
             $BlankNodeSchema
           >($blankNodeFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         booleanTerm: $shaclPropertyFromRdf<
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: TermsStruct.schema.properties.booleanTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
             $BooleanSchema<boolean>
           >($booleanFromRdfResourceValues<boolean>),
-          objectSet: _$options.objectSet,
         }),
         dateTerm: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>(
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
+            ...options,
+            focusResource: resource,
             ignoreRdfType: true,
-            preferredLanguages: _$options.preferredLanguages,
             propertySchema: TermsStruct.schema.properties.dateTerm,
             typeFromRdfResourceValues: $maybeFromRdfResourceValues<
               Date,
               $DateSchema
             >($dateFromRdfResourceValues),
-            objectSet: _$options.objectSet,
           },
         ),
         dateTimeTerm: $shaclPropertyFromRdf<
           Maybe<Date>,
           $MaybeSchema<$DateSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: TermsStruct.schema.properties.dateTimeTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Date,
             $DateSchema
           >($dateTimeFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         iriTerm: $shaclPropertyFromRdf<
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: TermsStruct.schema.properties.iriTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
             $IriSchema<string>
           >($iriFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         literalTerm: $shaclPropertyFromRdf<
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: TermsStruct.schema.properties.literalTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
             $LiteralSchema
           >($literalFromRdfResourceValues),
-          objectSet: _$options.objectSet,
         }),
         numberTerm: $shaclPropertyFromRdf<
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: TermsStruct.schema.properties.numberTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
           >($floatFromRdfResourceValues<number>),
-          objectSet: _$options.objectSet,
         }),
         stringTerm: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: TermsStruct.schema.properties.stringTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
-          objectSet: _$options.objectSet,
         }),
         term: $shaclPropertyFromRdf<
           Maybe<BlankNode | NamedNode | Literal>,
           $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: TermsStruct.schema.properties.term,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode | Literal,
             $TermSchema<BlankNode | NamedNode | Literal>
           >($termFromRdfResourceValues<BlankNode | NamedNode | Literal>),
-          objectSet: _$options.objectSet,
         }),
       }).chain((properties) => TermsStruct.create(properties)),
     );
@@ -45319,18 +44764,15 @@ export namespace UnionDiscriminantsStruct {
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
     UnionDiscriminantsStruct
-  > = ($resource, _$options) =>
+  > = (resource, options) =>
     $sequenceRecord({
       $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues($resource),
+        $rdfResourceIdentifierValues(resource),
         {
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
-          preferredLanguages: _$options.preferredLanguages,
+          ...options,
+          focusResource: resource,
           propertyPath: $RdfVocabularies.rdf.subject,
           schema: UnionDiscriminantsStruct.schema.properties.$identifier.type,
-          objectSet: _$options.objectSet,
         },
       ).chain((values) => values.head()),
       optionalIriOrLiteral: $shaclPropertyFromRdf<
@@ -45349,11 +44791,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
@@ -45404,7 +44844,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >),
-        objectSet: _$options.objectSet,
       }),
       optionalIriOrString: $shaclPropertyFromRdf<
         Maybe<NamedNode | string>,
@@ -45422,11 +44861,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.optionalIriOrString,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
@@ -45477,7 +44914,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >),
-        objectSet: _$options.objectSet,
       }),
       optionalNodeOrLiteral: $shaclPropertyFromRdf<
         Maybe<{ termType: "UnionMember1"; value: UnionMember1 } | Literal>,
@@ -45495,11 +44931,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
@@ -45571,7 +45005,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >),
-        objectSet: _$options.objectSet,
       }),
       optionalNodeOrNodeOrString: $shaclPropertyFromRdf<
         Maybe<
@@ -45600,11 +45033,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.optionalNodeOrNodeOrString,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
@@ -45749,7 +45180,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >),
-        objectSet: _$options.objectSet,
       }),
       requiredIriOrLiteral: $shaclPropertyFromRdf<
         NamedNode | Literal,
@@ -45767,11 +45197,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredIriOrLiteral,
         typeFromRdfResourceValues: ((values, options) =>
@@ -45807,7 +45235,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       requiredIriOrString: $shaclPropertyFromRdf<
         NamedNode | string,
@@ -45825,11 +45252,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredIriOrString,
         typeFromRdfResourceValues: ((values, options) =>
@@ -45865,7 +45290,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       requiredNodeOrLiteral: $shaclPropertyFromRdf<
         { termType: "UnionMember1"; value: UnionMember1 } | Literal,
@@ -45883,11 +45307,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral,
         typeFromRdfResourceValues: ((values, options) =>
@@ -45944,7 +45366,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       requiredNodeOrNodeOrString: $shaclPropertyFromRdf<
         | { type: "UnionMember1"; value: UnionMember1 }
@@ -45971,11 +45392,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString,
         typeFromRdfResourceValues: ((values, options) =>
@@ -46090,7 +45509,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >,
-        objectSet: _$options.objectSet,
       }),
       setIriOrLiteral: $shaclPropertyFromRdf<
         readonly (NamedNode | Literal)[],
@@ -46108,11 +45526,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.setIriOrLiteral,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
@@ -46163,7 +45579,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >),
-        objectSet: _$options.objectSet,
       }),
       setIriOrString: $shaclPropertyFromRdf<
         readonly (NamedNode | string)[],
@@ -46181,11 +45596,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.setIriOrString,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
@@ -46236,7 +45649,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >),
-        objectSet: _$options.objectSet,
       }),
       setNodeOrLiteral: $shaclPropertyFromRdf<
         readonly (
@@ -46257,11 +45669,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
@@ -46333,7 +45743,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >),
-        objectSet: _$options.objectSet,
       }),
       setNodeOrNodeOrString: $shaclPropertyFromRdf<
         readonly (
@@ -46362,11 +45771,9 @@ export namespace UnionDiscriminantsStruct {
           };
         }>
       >({
-        context: _$options.context,
-        graph: _$options.graph,
-        focusResource: $resource,
+        ...options,
+        focusResource: resource,
         ignoreRdfType: true,
-        preferredLanguages: _$options.preferredLanguages,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
@@ -46511,7 +45918,6 @@ export namespace UnionDiscriminantsStruct {
             };
           }
         >),
-        objectSet: _$options.objectSet,
       }),
     }).chain((properties) => UnionDiscriminantsStruct.create(properties));
 
@@ -48486,51 +47892,42 @@ export namespace UnionMember1 {
     }).chain(UnionMember1.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember1> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [UnionMember1.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [UnionMember1.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: UnionMember1.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         unionMember1Distinct: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: UnionMember1.schema.properties.unionMember1Distinct,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         unionMemberCommon: $shaclPropertyFromRdf<string, $StringSchema<string>>(
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
+            ...options,
+            focusResource: resource,
             ignoreRdfType: true,
-            preferredLanguages: _$options.preferredLanguages,
             propertySchema: UnionMember1.schema.properties.unionMemberCommon,
             typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-            objectSet: _$options.objectSet,
           },
         ),
       }).chain((properties) => UnionMember1.create(properties)),
@@ -49056,51 +48453,42 @@ export namespace UnionMember2 {
     }).chain(UnionMember2.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember2> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [UnionMember2.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [UnionMember2.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: UnionMember2.schema.properties.$identifier.type,
-            objectSet: _$options.objectSet,
           },
         ).chain((values) => values.head()),
         unionMember2Distinct: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: UnionMember2.schema.properties.unionMember2Distinct,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          objectSet: _$options.objectSet,
         }),
         unionMemberCommon: $shaclPropertyFromRdf<string, $StringSchema<string>>(
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
+            ...options,
+            focusResource: resource,
             ignoreRdfType: true,
-            preferredLanguages: _$options.preferredLanguages,
             propertySchema: UnionMember1.schema.properties.unionMemberCommon,
             typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-            objectSet: _$options.objectSet,
           },
         ),
       }).chain((properties) => UnionMember2.create(properties)),

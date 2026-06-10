@@ -5,9 +5,7 @@ import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
 export function ObjectType_fromRdfResourceFunctionExpression(
   this: ObjectType,
 ): Code {
-  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-
-  const optionsVariable = `_${syntheticNamePrefix}options`;
+  const optionsVariable = code`options`;
 
   const variables = {
     context: code`${optionsVariable}.context`,
@@ -15,15 +13,7 @@ export function ObjectType_fromRdfResourceFunctionExpression(
     ignoreRdfType: code`${optionsVariable}.ignoreRdfType`,
     objectSet: code`${optionsVariable}.objectSet`,
     preferredLanguages: code`${optionsVariable}.preferredLanguages`,
-    resource: code`${syntheticNamePrefix}resource`,
-  };
-
-  const propertyFromRdfResourceValuesVariables = {
-    context: variables.context,
-    focusResource: variables.resource,
-    graph: variables.graph,
-    objectSet: variables.objectSet,
-    preferredLanguages: variables.preferredLanguages,
+    resource: code`resource`,
   };
 
   const chains: { expression: Code; variable: string }[] = [];
@@ -39,7 +29,10 @@ export function ObjectType_fromRdfResourceFunctionExpression(
     this.properties.flatMap((property) =>
       property
         .fromRdfResourceValuesInitializer({
-          variables: propertyFromRdfResourceValuesVariables,
+          variables: {
+            focusResource: variables.resource,
+            options: optionsVariable,
+          },
         })
         .toList(),
     );
