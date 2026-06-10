@@ -101,8 +101,12 @@ export function transformShapeToAstStructType(
         );
 
       let fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
-      if (isClass && nodeShapeIdentifier.termType === "NamedNode") {
-        fromRdfType = fromRdfType.alt(Maybe.of(nodeShapeIdentifier));
+      if (isClass) {
+        if (nodeShapeIdentifier.termType === "NamedNode") {
+          fromRdfType = fromRdfType.alt(Maybe.of(nodeShapeIdentifier));
+        }
+      } else if (nodeShape.targetClasses.length > 0) {
+        fromRdfType = fromRdfType.alt(Maybe.of(nodeShape.targetClasses[0]));
       }
       const toRdfTypes = nodeShape.toRdfTypes.concat();
       if (toRdfTypes.length === 0) {

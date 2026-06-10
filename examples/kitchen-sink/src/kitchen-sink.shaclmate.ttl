@@ -46,17 +46,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
-        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:node :PartialStruct ;
-        sh:path :nodeClass2
-    ], [
-        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:path :singleClass
-    ], [
         rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
         sh:class :UndefinedClass1, :UndefinedClass2 ;
         sh:maxCount 1 ;
@@ -73,6 +62,17 @@
         sh:maxCount 1 ;
         sh:node :NonClassStruct ;
         sh:path :nodeClass1
+    ], [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :PartialStruct ;
+        sh:path :nodeClass2
+    ], [
+        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:path :singleClass
     ] .
 
 :ConvertibleTypesStruct
@@ -367,6 +367,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:in properties." ;
     sh:property [
+        sh:in (:InIri1
+            :InIri2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIris
+    ], [
+        sh:maxCount 1 ;
+        sh:node :ReusableIn ;
+        sh:path :reusableIn
+    ], [
         sh:in (1e0
             2e0
         ) ;
@@ -394,16 +404,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inIntegers
-    ], [
-        sh:in (:InIri1
-            :InIri2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIris
-    ], [
-        sh:maxCount 1 ;
-        sh:node :ReusableIn ;
-        sh:path :reusableIn
     ] .
 
 :IndirectRecursiveStruct
@@ -1093,6 +1093,19 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         ]
     ) .
+
+:TargetClassStruct
+    a sh:NodeShape ;
+    rdfs:comment """Struct node shape with sh:targetClass.
+    
+The sh:targetClass is expected on deserialization and added on serialization.""" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :targetClassString
+    ] ;
+    sh:targetClass :RdfType .
 
 :TermsStruct
     a owl:Class, sh:NodeShape ;

@@ -38935,6 +38935,501 @@ export namespace RecursiveUnionMember2 {
     );
 }
 export type ReusableIn = "cat" | "dog"; /**
+ * Struct node shape with sh:targetClass.
+ *
+ * The sh:targetClass is expected on deserialization and added on serialization.
+ */
+
+export type TargetClassStruct = {
+  readonly $identifier: () => TargetClassStruct.Identifier;
+
+  readonly $type: "TargetClassStruct";
+
+  readonly targetClassString: string;
+};
+
+export namespace TargetClassStruct {
+  export const create: (parameters: {
+    readonly $identifier?:
+      | (() => TargetClassStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly targetClassString: string;
+  }) => Either<Error, TargetClassStruct> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      targetClassString: Either.of(parameters.targetClassString),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "TargetClassStruct" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          toJson: TargetClassStruct.toJson,
+          $toString: TargetClassStruct.$toString,
+        }),
+      );
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => TargetClassStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly targetClassString: string;
+  }): TargetClassStruct {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const equals: (
+    left: TargetClassStruct,
+    right: TargetClassStruct,
+  ) => $EqualsResult = (left, right) =>
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    ).chain(() =>
+      $propertyEquals(
+        { equalsFunction: $strictEquals, name: "targetClassString" },
+        [left, left.targetClassString],
+        [right, right.targetClassString],
+      ),
+    );
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly targetClassString?: $StringFilter;
+  };
+
+  export const filter: (
+    filter: TargetClassStruct.Filter,
+    value: TargetClassStruct,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.targetClassString !== undefined &&
+      !$filterString(filter.targetClassString, value.targetClassString)
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    TargetClassStruct.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.targetClassString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "targetClassString",
+        propertySchema: TargetClassStruct.schema.properties.targetClassString,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    TargetClassStruct.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: TargetClassStruct.schema.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: TargetClassStruct.schema.properties.$identifier.type,
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.targetClassString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "targetClassString",
+        propertySchema: TargetClassStruct.schema.properties.targetClassString,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export const fromJson: (
+    json: TargetClassStruct.Json,
+  ) => Either<Error, TargetClassStruct> = ($json) =>
+    $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      targetClassString: Either.of<Error, string>($json["targetClassString"]),
+    }).chain(TargetClassStruct.create);
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    TargetClassStruct
+  > = (resource, options) =>
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(
+          resource,
+          [TargetClassStruct.schema.fromRdfType],
+          { graph: options.graph },
+        )
+      : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: $identifierFromRdfResourceValues(
+          $rdfResourceIdentifierValues(resource),
+          {
+            ...options,
+            focusResource: resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: TargetClassStruct.schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        targetClassString: $shaclPropertyFromRdf<string, $StringSchema<string>>(
+          {
+            ...options,
+            focusResource: resource,
+            ignoreRdfType: true,
+            propertySchema:
+              TargetClassStruct.schema.properties.targetClassString,
+            typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+          },
+        ),
+      }).chain((properties) => TargetClassStruct.create(properties)),
+    );
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    TargetClassStruct,
+    TargetClassStruct.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export const hash = <HasherT extends $Hasher>(
+    hasher: HasherT,
+    _targetClassStruct: Omit<TargetClassStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => TargetClassStruct.Identifier;
+      readonly $type?: "TargetClassStruct";
+    },
+  ): HasherT => {
+    if (_targetClassStruct.$identifier) {
+      hasher.update(_targetClassStruct.$identifier().value);
+    }
+    if (_targetClassStruct.$type) {
+      hasher.update(_targetClassStruct.$type);
+    }
+    $hashString(hasher, _targetClassStruct.targetClassString);
+    return hasher;
+  };
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export function isTargetClassStruct(
+    object: $Object,
+  ): object is TargetClassStruct {
+    return object.$type === "TargetClassStruct";
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly "@type": "TargetClassStruct";
+    readonly targetClassString: string;
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          "@type": z.literal("TargetClassStruct"),
+          targetClassString: z.string(),
+        })
+        .meta({
+          description:
+            "Struct node shape with sh:targetClass.\n    \nThe sh:targetClass is expected on deserialization and added on serialization.",
+        }) satisfies z.ZodType<Json>;
+    }
+
+    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "TargetClassStruct" as const },
+                scope: `${scopePrefix}/properties/@type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/@type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/targetClassString`,
+            type: "Control",
+          },
+        ],
+        type: "Group",
+        label: "TargetClassStruct",
+      };
+    };
+  }
+
+  export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/RdfType"),
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      targetClassString: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/targetClassString"),
+        type: { kind: "String" as const },
+      },
+    },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/RdfType")],
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: TargetClassStruct.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "targetClassStruct";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        TargetClassStruct.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          TargetClassStruct.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof TargetClassStruct.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      TargetClassStruct.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const toJson: (
+    _targetClassStruct: TargetClassStruct,
+  ) => TargetClassStruct.Json = (_targetClassStruct) =>
+    JSON.parse(
+      JSON.stringify({
+        "@id":
+          _targetClassStruct.$identifier().termType === "BlankNode"
+            ? `_:${_targetClassStruct.$identifier().value}`
+            : _targetClassStruct.$identifier().value,
+        "@type": _targetClassStruct.$type,
+        targetClassString: _targetClassStruct.targetClassString,
+      } satisfies TargetClassStruct.Json),
+    );
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    TargetClassStruct.Identifier,
+    TargetClassStruct
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        TargetClassStruct.schema.toRdfTypes,
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      TargetClassStruct.schema.properties.targetClassString.path,
+      [$literalFactory.string(parameters.object.targetClassString)],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export const $toString: (_targetClassStruct: TargetClassStruct) => string = (
+    _targetClassStruct,
+  ) =>
+    `TargetClassStruct(${JSON.stringify(toStringRecord(_targetClassStruct))})`;
+
+  export const toStringRecord: (
+    _targetClassStruct: TargetClassStruct,
+  ) => Record<string, string> = (_targetClassStruct) =>
+    $compactRecord({
+      $identifier: _targetClassStruct.$identifier().toString(),
+    });
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    TargetClassStruct.Filter,
+    TargetClassStruct.Schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    TargetClassStruct.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    TargetClassStruct.Filter,
+    TargetClassStruct.Schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      TargetClassStruct.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+} /**
  * Struct node shape with properties that are not nested objects
  */
 
@@ -51668,6 +52163,7 @@ export type $Object =
   | PropertyPathsStruct
   | RecursiveUnionMember1
   | RecursiveUnionMember2
+  | TargetClassStruct
   | TermsStruct
   | UnionDiscriminantsStruct
   | UnionMember1
@@ -51816,6 +52312,9 @@ export namespace $Object {
     }
     if (RecursiveUnionMember2.isRecursiveUnionMember2(value)) {
       return RecursiveUnionMember2.$toString(value);
+    }
+    if (TargetClassStruct.isTargetClassStruct(value)) {
+      return TargetClassStruct.$toString(value);
     }
     if (TermsStruct.isTermsStruct(value)) {
       return TermsStruct.$toString(value);
@@ -52224,6 +52723,15 @@ export namespace $Object {
       return RecursiveUnionMember2.equals(
         left as RecursiveUnionMember2,
         right as RecursiveUnionMember2,
+      );
+    }
+    if (
+      TargetClassStruct.isTargetClassStruct(left) &&
+      TargetClassStruct.isTargetClassStruct(right)
+    ) {
+      return TargetClassStruct.equals(
+        left as TargetClassStruct,
+        right as TargetClassStruct,
       );
     }
     if (TermsStruct.isTermsStruct(left) && TermsStruct.isTermsStruct(right)) {
@@ -52726,6 +53234,14 @@ export namespace $Object {
       }
     }
     if (
+      filter.on?.["TargetClassStruct"] !== undefined &&
+      TargetClassStruct.isTargetClassStruct(value)
+    ) {
+      if (!TargetClassStruct.filter(filter.on["TargetClassStruct"], value)) {
+        return false;
+      }
+    }
+    if (
       filter.on?.["TermsStruct"] !== undefined &&
       TermsStruct.isTermsStruct(value)
     ) {
@@ -52813,6 +53329,7 @@ export namespace $Object {
       readonly PropertyPathsStruct?: PropertyPathsStruct.Filter;
       readonly RecursiveUnionMember1?: RecursiveUnionMember1.Filter;
       readonly RecursiveUnionMember2?: RecursiveUnionMember2.Filter;
+      readonly TargetClassStruct?: TargetClassStruct.Filter;
       readonly TermsStruct?: TermsStruct.Filter;
       readonly UnionDiscriminantsStruct?: UnionDiscriminantsStruct.Filter;
       readonly UnionMember1?: UnionMember1.Filter;
@@ -53096,6 +53613,12 @@ export namespace $Object {
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}RecursiveUnionMember2`,
+      }).concat(),
+      ...TargetClassStruct.focusSparqlConstructTriples({
+        filter: filter?.on?.TargetClassStruct,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}TargetClassStruct`,
       }).concat(),
       ...TermsStruct.focusSparqlConstructTriples({
         filter: filter?.on?.TermsStruct,
@@ -53597,6 +54120,16 @@ export namespace $Object {
           type: "group",
         },
         {
+          patterns: TargetClassStruct.focusSparqlWherePatterns({
+            filter: filter?.on?.TargetClassStruct,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}TargetClassStruct`,
+          }).concat(),
+          type: "group",
+        },
+        {
           patterns: TermsStruct.focusSparqlWherePatterns({
             filter: filter?.on?.TermsStruct,
             focusIdentifier,
@@ -53860,6 +54393,11 @@ export namespace $Object {
       return RecursiveUnionMember2.fromJson(
         value as RecursiveUnionMember2.Json,
       ).map((value) => value);
+    }
+    if (value["@type"] === "TargetClassStruct") {
+      return TargetClassStruct.fromJson(value as TargetClassStruct.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "TermsStruct") {
       return TermsStruct.fromJson(value as TermsStruct.Json).map(
@@ -54195,6 +54733,13 @@ export namespace $Object {
       .altLazy(
         () =>
           RecursiveUnionMember2.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          TargetClassStruct.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -54561,6 +55106,13 @@ export namespace $Object {
         )
         .altLazy(
           () =>
+            TargetClassStruct.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["TargetClassStruct"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
+        .altLazy(
+          () =>
             TermsStruct.fromRdfResourceValues(valueAsValues, {
               ...options,
               schema: options.schema.members["TermsStruct"].type,
@@ -54739,6 +55291,9 @@ export namespace $Object {
     if (RecursiveUnionMember2.isRecursiveUnionMember2(value)) {
       return RecursiveUnionMember2.hash(hasher, value);
     }
+    if (TargetClassStruct.isTargetClassStruct(value)) {
+      return TargetClassStruct.hash(hasher, value);
+    }
     if (TermsStruct.isTermsStruct(value)) {
       return TermsStruct.hash(hasher, value);
     }
@@ -54808,6 +55363,7 @@ export namespace $Object {
           PropertyPathsStruct.Json.schema(),
           RecursiveUnionMember1.Json.schema(),
           RecursiveUnionMember2.Json.schema(),
+          TargetClassStruct.Json.schema(),
           TermsStruct.Json.schema(),
           UnionDiscriminantsStruct.Json.schema(),
           UnionMember1.Json.schema(),
@@ -54869,6 +55425,7 @@ export namespace $Object {
     | PropertyPathsStruct.Json
     | RecursiveUnionMember1.Json
     | RecursiveUnionMember2.Json
+    | TargetClassStruct.Json
     | TermsStruct.Json
     | UnionDiscriminantsStruct.Json
     | UnionMember1.Json
@@ -55049,6 +55606,10 @@ export namespace $Object {
       RecursiveUnionMember2: {
         discriminantValues: ["RecursiveUnionMember2"],
         type: RecursiveUnionMember2.schema,
+      },
+      TargetClassStruct: {
+        discriminantValues: ["TargetClassStruct"],
+        type: TargetClassStruct.schema,
       },
       TermsStruct: {
         discriminantValues: ["TermsStruct"],
@@ -55269,6 +55830,9 @@ export namespace $Object {
     if (RecursiveUnionMember2.isRecursiveUnionMember2(value)) {
       return RecursiveUnionMember2.toJson(value);
     }
+    if (TargetClassStruct.isTargetClassStruct(value)) {
+      return TargetClassStruct.toJson(value);
+    }
     if (TermsStruct.isTermsStruct(value)) {
       return TermsStruct.toJson(value);
     }
@@ -55433,6 +55997,9 @@ export namespace $Object {
     }
     if (RecursiveUnionMember2.isRecursiveUnionMember2(object)) {
       return RecursiveUnionMember2.toRdfResource(object, options);
+    }
+    if (TargetClassStruct.isTargetClassStruct(object)) {
+      return TargetClassStruct.toRdfResource(object, options);
     }
     if (TermsStruct.isTermsStruct(object)) {
       return TermsStruct.toRdfResource(object, options);
@@ -55810,6 +56377,14 @@ export namespace $Object {
     if (RecursiveUnionMember2.isRecursiveUnionMember2(value)) {
       return [
         RecursiveUnionMember2.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (TargetClassStruct.isTargetClassStruct(value)) {
+      return [
+        TargetClassStruct.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -56208,6 +56783,14 @@ export namespace $Object {
         filter: filter?.on?.["RecursiveUnionMember2"],
         ignoreRdfType: false,
         schema: schema.members["RecursiveUnionMember2"].type,
+      }),
+    );
+    triples = triples.concat(
+      TargetClassStruct.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["TargetClassStruct"],
+        ignoreRdfType: false,
+        schema: schema.members["TargetClassStruct"].type,
       }),
     );
     triples = triples.concat(
@@ -56650,6 +57233,15 @@ export namespace $Object {
         filter: filter?.on?.["RecursiveUnionMember2"],
         ignoreRdfType: false,
         schema: schema.members["RecursiveUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: TargetClassStruct.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["TargetClassStruct"],
+        ignoreRdfType: false,
+        schema: schema.members["TargetClassStruct"].type,
       }).concat(),
       type: "group",
     });
@@ -57898,6 +58490,32 @@ export interface $ObjectSet {
       RecursiveUnionMember2.Identifier
     >,
   ): Promise<Either<Error, readonly RecursiveUnionMember2[]>>;
+
+  targetClassStruct(
+    identifier: TargetClassStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, TargetClassStruct>>;
+
+  targetClassStructCount(
+    query?: Pick<
+      $ObjectSet.Query<TargetClassStruct.Filter, TargetClassStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  targetClassStructIdentifiers(
+    query?: $ObjectSet.Query<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly TargetClassStruct.Identifier[]>>;
+
+  targetClassStructs(
+    query?: $ObjectSet.Query<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly TargetClassStruct[]>>;
 
   termsStruct(
     identifier: TermsStruct.Identifier,
@@ -62040,6 +62658,90 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async targetClassStruct(
+    identifier: TargetClassStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, TargetClassStruct>> {
+    return this.targetClassStructSync(identifier, options);
+  }
+
+  targetClassStructSync(
+    identifier: TargetClassStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, TargetClassStruct> {
+    return this.targetClassStructsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async targetClassStructCount(
+    query?: Pick<
+      $ObjectSet.Query<TargetClassStruct.Filter, TargetClassStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.targetClassStructCountSync(query);
+  }
+
+  targetClassStructCountSync(
+    query?: Pick<
+      $ObjectSet.Query<TargetClassStruct.Filter, TargetClassStruct.Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.targetClassStructsSync(query).map((objects) => objects.length);
+  }
+
+  async targetClassStructIdentifiers(
+    query?: $ObjectSet.Query<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly TargetClassStruct.Identifier[]>> {
+    return this.targetClassStructIdentifiersSync(query);
+  }
+
+  targetClassStructIdentifiersSync(
+    query?: $ObjectSet.Query<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >,
+  ): Either<Error, readonly TargetClassStruct.Identifier[]> {
+    return this.targetClassStructsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async targetClassStructs(
+    query?: $ObjectSet.Query<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly TargetClassStruct[]>> {
+    return this.targetClassStructsSync(query);
+  }
+
+  targetClassStructsSync(
+    query?: $ObjectSet.Query<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >,
+  ): Either<Error, readonly TargetClassStruct[]> {
+    return this.#objectsSync<
+      TargetClassStruct,
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >(
+      {
+        filter: TargetClassStruct.filter,
+        fromRdfResource: TargetClassStruct.fromRdfResource,
+        fromRdfTypes: [TargetClassStruct.schema.fromRdfType],
+      },
+      query,
+    );
+  }
+
   async termsStruct(
     identifier: TermsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -63119,6 +63821,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           filter: $Object.filter,
           fromRdfResource: RecursiveUnionMember2.fromRdfResource,
           fromRdfTypes: [RecursiveUnionMember2.schema.fromRdfType],
+        },
+        {
+          filter: $Object.filter,
+          fromRdfResource: TargetClassStruct.fromRdfResource,
+          fromRdfTypes: [TargetClassStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -65717,6 +66424,58 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveUnionMember2.Filter,
       RecursiveUnionMember2.Identifier
     >(RecursiveUnionMember2, query);
+  }
+
+  async targetClassStruct(
+    identifier: TargetClassStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, TargetClassStruct>> {
+    return (
+      await this.targetClassStructs({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async targetClassStructCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        TargetClassStruct.Filter,
+        TargetClassStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >(TargetClassStruct, query);
+  }
+
+  async targetClassStructIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly TargetClassStruct.Identifier[]>> {
+    return this.#objectIdentifiers<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >(TargetClassStruct, query);
+  }
+
+  async targetClassStructs(
+    query?: $SparqlObjectSet.Query<
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly TargetClassStruct[]>> {
+    return this.#objects<
+      TargetClassStruct,
+      TargetClassStruct.Filter,
+      TargetClassStruct.Identifier
+    >(TargetClassStruct, query);
   }
 
   async termsStruct(

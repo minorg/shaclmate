@@ -56,7 +56,7 @@ describe("ShapesGraphToAstTransformer", () => {
             (_) => _.kind === "Struct",
           );
           if (id === "kitchenSinkExample") {
-            expect(namedObjectTypes).toHaveLength(50);
+            expect(namedObjectTypes).toHaveLength(51);
           } else {
             expect(namedObjectTypes).not.toHaveLength(0);
           }
