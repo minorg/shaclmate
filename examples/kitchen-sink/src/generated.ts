@@ -5124,6 +5124,9 @@ export namespace AnonymousTypesStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/AnonymousTypesStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -5223,7 +5226,7 @@ export namespace AnonymousTypesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/AnonymousTypesStruct"),
+        AnonymousTypesStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -5707,6 +5710,9 @@ export namespace BlankNodeIdentifierStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/BlankNodeIdentifierStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -5792,7 +5798,7 @@ export namespace BlankNodeIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/BlankNodeIdentifierStruct"),
+        BlankNodeIdentifierStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -6275,6 +6281,11 @@ export namespace BlankNodeOrIriIdentifierStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode(
+        "http://example.com/BlankNodeOrIriIdentifierStruct",
+      ),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -6365,9 +6376,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/BlankNodeOrIriIdentifierStruct",
-        ),
+        BlankNodeOrIriIdentifierStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -7279,6 +7288,9 @@ export namespace ClassConstraintsStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/ClassConstraintsStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -7386,7 +7398,7 @@ export namespace ClassConstraintsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ClassConstraintsStruct"),
+        ClassConstraintsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -9310,6 +9322,9 @@ export namespace ConvertibleTypesStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/ConvertibleTypesStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -9526,7 +9541,7 @@ export namespace ConvertibleTypesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ConvertibleTypesStruct"),
+        ConvertibleTypesStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -11731,6 +11746,7 @@ export namespace DateUnionsStruct {
         },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/DateUnionsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -11909,7 +11925,7 @@ export namespace DateUnionsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/DateUnionsStruct"),
+        DateUnionsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -12945,6 +12961,9 @@ export namespace DefaultValuesStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/DefaultValuesStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -13034,7 +13053,7 @@ export namespace DefaultValuesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/DefaultValuesStruct"),
+        DefaultValuesStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -13541,6 +13560,9 @@ export namespace DirectRecursiveStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/DirectRecursiveStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -13626,7 +13648,7 @@ export namespace DirectRecursiveStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/DirectRecursiveStruct"),
+        DirectRecursiveStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -14223,6 +14245,7 @@ export namespace DisplayStruct {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/DisplayStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -14306,7 +14329,7 @@ export namespace DisplayStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/DisplayStruct"),
+        DisplayStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -14775,6 +14798,10 @@ export namespace ExplicitFromToRdfTypesStruct {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/ToRdfType"),
+      dataFactory.namedNode("http://example.com/FromRdfType"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -14861,12 +14888,7 @@ export namespace ExplicitFromToRdfTypesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ToRdfType"),
-        parameters.graph,
-      );
-      parameters.resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/FromRdfType"),
+        ExplicitFromToRdfTypesStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -15308,6 +15330,7 @@ export namespace ExplicitRdfTypeStruct {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/RdfType")],
   } as const;
 
   export type Schema = typeof schema;
@@ -15391,7 +15414,7 @@ export namespace ExplicitRdfTypeStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/RdfType"),
+        ExplicitRdfTypeStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -15828,6 +15851,9 @@ export namespace FlattenUnionMember3 {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/FlattenUnionMember3"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -15910,7 +15936,7 @@ export namespace FlattenUnionMember3 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/FlattenUnionMember3"),
+        FlattenUnionMember3.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -17537,6 +17563,9 @@ export namespace IndirectRecursiveStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/IndirectRecursiveStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -17625,7 +17654,7 @@ export namespace IndirectRecursiveStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/IndirectRecursiveStruct"),
+        IndirectRecursiveStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -18076,6 +18105,9 @@ export namespace IndirectRecursiveStructHelper {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/IndirectRecursiveStructHelper"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -18163,9 +18195,7 @@ export namespace IndirectRecursiveStructHelper {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/IndirectRecursiveStructHelper",
-        ),
+        IndirectRecursiveStructHelper.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -18686,6 +18716,9 @@ export namespace InIdentifierStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/InIdentifierStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -18766,7 +18799,7 @@ export namespace InIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/InIdentifierStruct"),
+        InIdentifierStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -19841,6 +19874,9 @@ export namespace InPropertiesStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/InPropertiesStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -19938,7 +19974,7 @@ export namespace InPropertiesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/InPropertiesStruct"),
+        InPropertiesStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -20441,6 +20477,9 @@ export namespace IriIdentifierStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/IriIdentifierStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -20521,7 +20560,7 @@ export namespace IriIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/IriIdentifierStruct"),
+        IriIdentifierStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -21491,6 +21530,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode(
+        "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
+      ),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -21586,9 +21630,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
-        ),
+        LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -22467,6 +22509,9 @@ export namespace LazilyResolvedUnionMember1 {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/LazilyResolvedUnionMember1"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -22552,7 +22597,7 @@ export namespace LazilyResolvedUnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/LazilyResolvedUnionMember1"),
+        LazilyResolvedUnionMember1.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -22980,6 +23025,9 @@ export namespace LazilyResolvedUnionMember2 {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/LazilyResolvedUnionMember2"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -23065,7 +23113,7 @@ export namespace LazilyResolvedUnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/LazilyResolvedUnionMember2"),
+        LazilyResolvedUnionMember2.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -26548,6 +26596,7 @@ export namespace ListSetsStruct {
         },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/ListSetsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -26646,7 +26695,7 @@ export namespace ListSetsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ListSetsStruct"),
+        ListSetsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -27767,6 +27816,7 @@ export namespace ListsStruct {
         },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/ListsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -27859,7 +27909,7 @@ export namespace ListsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ListsStruct"),
+        ListsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -28812,6 +28862,9 @@ export namespace MutablePropertiesStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/MutablePropertiesStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -28903,7 +28956,7 @@ export namespace MutablePropertiesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/MutablePropertiesStruct"),
+        MutablePropertiesStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -29459,6 +29512,7 @@ export namespace NamedUnionsStruct {
         },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/NamedUnionsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -29541,7 +29595,7 @@ export namespace NamedUnionsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/NamedUnionsStruct"),
+        NamedUnionsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -30002,6 +30056,9 @@ export namespace NewName {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/OverrideNameStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -30081,7 +30138,7 @@ export namespace NewName {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/OverrideNameStruct"),
+        NewName.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -30985,6 +31042,7 @@ export namespace NodeKindsStruct {
         type: { kind: "Literal" as const },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/NodeKindsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -31122,7 +31180,7 @@ export namespace NodeKindsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/NodeKindsStruct"),
+        NodeKindsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -34379,6 +34437,7 @@ export namespace NumericsStruct {
         type: { kind: "Option" as const, itemType: { kind: "Int" as const } },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/NumericsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -34503,7 +34562,7 @@ export namespace NumericsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/NumericsStruct"),
+        NumericsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -36059,6 +36118,7 @@ export namespace PartialUnionMember1 {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember1")],
   } as const;
 
   export type Schema = typeof schema;
@@ -36140,7 +36200,7 @@ export namespace PartialUnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/UnionMember1"),
+        PartialUnionMember1.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -36559,6 +36619,7 @@ export namespace PartialUnionMember2 {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember2")],
   } as const;
 
   export type Schema = typeof schema;
@@ -36640,7 +36701,7 @@ export namespace PartialUnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/UnionMember2"),
+        PartialUnionMember2.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -38142,6 +38203,9 @@ export namespace PropertyNamesStruct {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/PropertyNamesStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -38227,7 +38291,7 @@ export namespace PropertyNamesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/PropertyNamesStruct"),
+        PropertyNamesStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -38799,6 +38863,9 @@ export namespace PropertyPathsStruct {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/PropertyPathsStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -38885,7 +38952,7 @@ export namespace PropertyPathsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/PropertyPathsStruct"),
+        PropertyPathsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -39339,6 +39406,9 @@ export namespace RecursiveUnionMember1 {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/RecursiveUnionMember1"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -39425,7 +39495,7 @@ export namespace RecursiveUnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/RecursiveUnionMember1"),
+        RecursiveUnionMember1.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -39884,6 +39954,9 @@ export namespace RecursiveUnionMember2 {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/RecursiveUnionMember2"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -39970,7 +40043,7 @@ export namespace RecursiveUnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/RecursiveUnionMember2"),
+        RecursiveUnionMember2.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -41260,6 +41333,7 @@ export namespace TermsStruct {
         },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/TermsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -41384,7 +41458,7 @@ export namespace TermsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/TermsStruct"),
+        TermsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -48826,6 +48900,7 @@ export namespace UnionMember1 {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember1")],
   } as const;
 
   export type Schema = typeof schema;
@@ -48908,7 +48983,7 @@ export namespace UnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/UnionMember1"),
+        UnionMember1.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -49400,6 +49475,7 @@ export namespace UnionMember2 {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember2")],
   } as const;
 
   export type Schema = typeof schema;
@@ -49482,7 +49558,7 @@ export namespace UnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/UnionMember2"),
+        UnionMember2.schema.toRdfTypes,
         parameters.graph,
       );
     }

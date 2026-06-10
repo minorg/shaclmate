@@ -2510,6 +2510,7 @@ export namespace NodeShape {
         },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape")],
   } as const;
 
   export type Schema = typeof schema;
@@ -2521,7 +2522,7 @@ export namespace NodeShape {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
+        NodeShape.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -3207,6 +3208,9 @@ export namespace Ontology {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://www.w3.org/2002/07/owl#Ontology"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -3218,7 +3222,7 @@ export namespace Ontology {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://www.w3.org/2002/07/owl#Ontology"),
+        Ontology.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -3421,6 +3425,9 @@ export namespace PropertyGroup {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyGroup"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -3432,7 +3439,7 @@ export namespace PropertyGroup {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyGroup"),
+        PropertyGroup.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -5514,6 +5521,9 @@ export namespace PropertyShape {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyShape"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -5525,7 +5535,7 @@ export namespace PropertyShape {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyShape"),
+        PropertyShape.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -6292,6 +6302,9 @@ export namespace ValidationReport {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationReport"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -6303,7 +6316,7 @@ export namespace ValidationReport {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationReport"),
+        ValidationReport.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -6765,6 +6778,9 @@ export namespace ValidationResult {
         },
       },
     },
+    toRdfTypes: [
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationResult"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -6776,7 +6792,7 @@ export namespace ValidationResult {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationResult"),
+        ValidationResult.schema.toRdfTypes,
         parameters.graph,
       );
     }

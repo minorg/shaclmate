@@ -41,7 +41,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
-import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 import { tsComment } from "./tsComment.js";
 
 export class ObjectType extends AbstractType {
@@ -516,6 +516,21 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return this.name
       .map((name) => code`${name}.toJson`)
       .orDefaultLazy(() => ObjectType_toJsonFunctionExpression.call(this));
+  }
+
+  @Memoize()
+  protected get toRdfTypesVariable(): Maybe<Code> {
+    if (this.toRdfTypes.length === 0) {
+      return Maybe.empty();
+    }
+    return Maybe.of(
+      this.name
+        .map((name) => code`${name}.schema.toRdfTypes`)
+        .orDefaultLazy(
+          () =>
+            code`${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
+        ),
+    );
   }
 
   @Memoize()
