@@ -472,6 +472,15 @@ export namespace $PropertyPath {
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
+function $rdfResourceIdentifierValues(resource: Resource): Resource.Values {
+  return new Resource.Value({
+    dataFactory: dataFactory,
+    focusResource: resource,
+    propertyPath: $RdfVocabularies.rdf.subject,
+    term: resource.identifier,
+  }).toValues();
+}
+
 namespace $RdfVocabularies {
   export const rdf = {
     first: dataFactory.namedNode(
@@ -1556,12 +1565,7 @@ export namespace NodeShape {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -3106,12 +3110,7 @@ export namespace Ontology {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -3323,12 +3322,7 @@ export namespace PropertyGroup {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -4303,12 +4297,7 @@ export namespace PropertyShape {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -6181,12 +6170,7 @@ export namespace ValidationReport {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,
@@ -6521,12 +6505,7 @@ export namespace ValidationResult {
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
+          $rdfResourceIdentifierValues($resource),
           {
             context: _$options.context,
             graph: _$options.graph,

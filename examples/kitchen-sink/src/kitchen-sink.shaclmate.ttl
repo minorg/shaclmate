@@ -46,6 +46,12 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :PartialStruct ;
+        sh:path :nodeClass2
+    ], [
         rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -67,12 +73,6 @@
         sh:maxCount 1 ;
         sh:node :NonClassStruct ;
         sh:path :nodeClass1
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:node :PartialStruct ;
-        sh:path :nodeClass2
     ] .
 
 :ConvertibleTypesStruct
@@ -367,11 +367,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:in properties." ;
     sh:property [
-        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDateTimes
-    ], [
         sh:in (1
             2
         ) ;
@@ -404,6 +399,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inBooleans
+    ], [
+        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDateTimes
     ] .
 
 :IndirectRecursiveStruct

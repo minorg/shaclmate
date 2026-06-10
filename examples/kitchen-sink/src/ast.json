@@ -257,140 +257,13 @@
       ],
       "properties": [
         {
-          "comment": "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          "name": "singleClass",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/singleClass)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_8"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_8"
-            },
-            "itemType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_8"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
-            }
-          }
-        },
-        {
-          "comment": "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          "name": "multiClass",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/multiClass)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_9"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_9"
-            },
-            "itemType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_9"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
-            }
-          }
-        },
-        {
-          "comment": "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
-          "name": "iriClass",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/iriClass)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_10"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_10"
-            },
-            "itemType": {
-              "kind": "Iri",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_10"
-              },
-              "nodeKinds": [
-                "IRI"
-              ]
-            }
-          }
-        },
-        {
-          "comment": "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
-          "name": "nodeClass1",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/nodeClass1)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_11"
-          },
-          "type": {
-            "comment": "Struct node shape that isn't an rdfs:Class.",
-            "kind": "Option",
-            "shapeIdentifier": {
-              "prefix": "",
-              "reference": "NonClassStruct",
-              "termType": "NamedNode",
-              "value": "http://example.com/NonClassStruct"
-            },
-            "itemType": {
-              "comment": "Struct node shape that isn't an rdfs:Class.",
-              "kind": "Struct",
-              "name": "NonClassStruct",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "NonClassStruct",
-                "termType": "NamedNode",
-                "value": "http://example.com/NonClassStruct"
-              },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "NonClassStruct",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/NonClassStruct"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
-              }
-            }
-          }
-        },
-        {
           "comment": "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
           "name": "nodeClass2",
           "order": 0,
           "path": "PredicatePath(http://example.com/nodeClass2)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_12"
+            "value": "df_0_8"
           },
           "type": {
             "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
@@ -426,55 +299,131 @@
               }
             }
           }
-        }
-      ]
-    },
-    {
-      "comment": "Struct node shape that isn't an rdfs:Class.",
-      "kind": "Struct",
-      "name": "NonClassStruct",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "NonClassStruct",
-        "termType": "NamedNode",
-        "value": "http://example.com/NonClassStruct"
-      },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "NonClassStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/NonClassStruct"
         },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "properties": [
         {
-          "name": "nonClassString",
+          "comment": "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          "name": "singleClass",
           "order": 0,
-          "path": "PredicatePath(http://example.com/nonClassString)",
+          "path": "PredicatePath(http://example.com/singleClass)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_163"
+            "value": "df_0_9"
           },
           "type": {
-            "kind": "Literal",
+            "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_163"
+              "value": "df_0_9"
             },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
+            "itemType": {
+              "kind": "Identifier",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_9"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI"
+              ]
+            }
+          }
+        },
+        {
+          "comment": "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          "name": "multiClass",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/multiClass)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_10"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_10"
+            },
+            "itemType": {
+              "kind": "Identifier",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_10"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI"
+              ]
+            }
+          }
+        },
+        {
+          "comment": "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
+          "name": "iriClass",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/iriClass)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_11"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_11"
+            },
+            "itemType": {
+              "kind": "Iri",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_11"
+              },
+              "nodeKinds": [
+                "IRI"
+              ]
+            }
+          }
+        },
+        {
+          "comment": "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
+          "name": "nodeClass1",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/nodeClass1)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_12"
+          },
+          "type": {
+            "comment": "Struct node shape that isn't an rdfs:Class.",
+            "kind": "Option",
+            "shapeIdentifier": {
+              "prefix": "",
+              "reference": "NonClassStruct",
               "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
+              "value": "http://example.com/NonClassStruct"
+            },
+            "itemType": {
+              "comment": "Struct node shape that isn't an rdfs:Class.",
+              "kind": "Struct",
+              "name": "NonClassStruct",
+              "shapeIdentifier": {
+                "prefix": "",
+                "reference": "NonClassStruct",
+                "termType": "NamedNode",
+                "value": "http://example.com/NonClassStruct"
+              },
+              "identifierType": {
+                "kind": "Identifier",
+                "shapeIdentifier": {
+                  "prefix": "",
+                  "reference": "NonClassStruct",
+                  "termType": "NamedNode",
+                  "value": "http://example.com/NonClassStruct"
+                },
+                "nodeKinds": [
+                  "BlankNode",
+                  "IRI"
+                ]
+              }
             }
           }
         }
@@ -517,6 +466,57 @@
             "shapeIdentifier": {
               "termType": "BlankNode",
               "value": "df_0_184"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Struct node shape that isn't an rdfs:Class.",
+      "kind": "Struct",
+      "name": "NonClassStruct",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "NonClassStruct",
+        "termType": "NamedNode",
+        "value": "http://example.com/NonClassStruct"
+      },
+      "identifierType": {
+        "kind": "Identifier",
+        "shapeIdentifier": {
+          "prefix": "",
+          "reference": "NonClassStruct",
+          "termType": "NamedNode",
+          "value": "http://example.com/NonClassStruct"
+        },
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "properties": [
+        {
+          "name": "nonClassString",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/nonClassString)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_163"
+          },
+          "type": {
+            "kind": "Literal",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_163"
             },
             "nodeKinds": [
               "Literal"
@@ -2367,9 +2367,9 @@
       ],
       "properties": [
         {
-          "name": "inDateTimes",
+          "name": "inIntegers",
           "order": 0,
-          "path": "PredicatePath(http://example.com/inDateTimes)",
+          "path": "PredicatePath(http://example.com/inIntegers)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_72"
@@ -2385,41 +2385,6 @@
               "shapeIdentifier": {
                 "termType": "BlankNode",
                 "value": "df_0_72"
-              },
-              "in": [
-                {
-                  "termType": "Literal",
-                  "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
-                  "direction": "",
-                  "language": "",
-                  "value": "2018-04-09T10:00:00.000Z"
-                }
-              ],
-              "nodeKinds": [
-                "Literal"
-              ]
-            }
-          }
-        },
-        {
-          "name": "inIntegers",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/inIntegers)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_74"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_74"
-            },
-            "itemType": {
-              "kind": "Literal",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_74"
               },
               "in": [
                 {
@@ -2449,19 +2414,19 @@
           "path": "PredicatePath(http://example.com/inIris)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_77"
+            "value": "df_0_75"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_77"
+              "value": "df_0_75"
             },
             "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_77"
+                "value": "df_0_75"
               },
               "in": [
                 {
@@ -2489,7 +2454,7 @@
           "path": "PredicatePath(http://example.com/reusableIn)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_80"
+            "value": "df_0_78"
           },
           "type": {
             "kind": "Option",
@@ -2536,19 +2501,19 @@
           "path": "PredicatePath(http://example.com/inDoubles)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_81"
+            "value": "df_0_79"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_81"
+              "value": "df_0_79"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_81"
+                "value": "df_0_79"
               },
               "in": [
                 {
@@ -2578,19 +2543,19 @@
           "path": "PredicatePath(http://example.com/inStrings)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_84"
+            "value": "df_0_82"
           },
           "type": {
             "kind": "Option",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_84"
+              "value": "df_0_82"
             },
             "itemType": {
               "kind": "Literal",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_84"
+                "value": "df_0_82"
               },
               "in": [
                 {
@@ -2620,6 +2585,41 @@
           "path": "PredicatePath(http://example.com/inBooleans)",
           "shapeIdentifier": {
             "termType": "BlankNode",
+            "value": "df_0_85"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_85"
+            },
+            "itemType": {
+              "kind": "Literal",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_85"
+              },
+              "in": [
+                {
+                  "termType": "Literal",
+                  "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
+                  "direction": "",
+                  "language": "",
+                  "value": "true"
+                }
+              ],
+              "nodeKinds": [
+                "Literal"
+              ]
+            }
+          }
+        },
+        {
+          "name": "inDateTimes",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/inDateTimes)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
             "value": "df_0_87"
           },
           "type": {
@@ -2637,10 +2637,10 @@
               "in": [
                 {
                   "termType": "Literal",
-                  "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
+                  "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
                   "direction": "",
                   "language": "",
-                  "value": "true"
+                  "value": "2018-04-09T10:00:00.000Z"
                 }
               ],
               "nodeKinds": [
