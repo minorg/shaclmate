@@ -233,24 +233,15 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<
     AbstractProperty<TypeT>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
-    const parameters: Record<string, Code | true> = {
-      context: variables.context,
-      graph: variables.graph,
-      focusResource: variables.focusResource,
-      // Assume the property has the correct range and ignore the object's RDF type.
-      // This also accommodates the case where the object of a property is a dangling identifier that's not the
-      // subject of any statements.
-      ignoreRdfType: true,
-      preferredLanguages: variables.preferredLanguages,
-      propertySchema: this.schemaVariable,
-      typeFromRdfResourceValues: this.type.fromRdfResourceValuesFunction,
-    };
-    if (this.configuration.features.has("ObjectSet")) {
-      parameters["objectSet"] = variables.objectSet;
-    }
-
     return Maybe.of(
-      code`${this.name}: ${this.reusables.snippets.shaclPropertyFromRdf}<${this.type.expression}, ${this.type.schemaType}>(${parameters})`,
+      code`${this.name}:
+        ${this.reusables.snippets.shaclPropertyFromRdf}<${this.type.expression}, ${this.type.schemaType}>({
+          ...${variables.options},
+          focusResource: ${variables.focusResource},
+          ignoreRdfType: true,
+          propertySchema: ${this.schemaVariable},
+          typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction} 
+        })`,
     );
   }
 
