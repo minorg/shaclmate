@@ -1445,6 +1445,7 @@ export namespace LazyObject {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/LazyObject")],
   } as const;
 
   export type Schema = typeof schema;
@@ -1456,7 +1457,7 @@ export namespace LazyObject {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/LazyObject"),
+        LazyObject.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -2224,6 +2225,7 @@ export namespace RootObject {
         type: { kind: "String" as const },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/RootObject")],
   } as const;
 
   export type Schema = typeof schema;
@@ -2235,7 +2237,7 @@ export namespace RootObject {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/RootObject"),
+        RootObject.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -2498,6 +2500,7 @@ export namespace UnionMember1 {
         type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember1")],
   } as const;
 
   export type Schema = typeof schema;
@@ -2509,7 +2512,7 @@ export namespace UnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/UnionMember1"),
+        UnionMember1.schema.toRdfTypes,
         parameters.graph,
       );
     }
@@ -2724,6 +2727,7 @@ export namespace UnionMember2 {
         },
       },
     },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember2")],
   } as const;
 
   export type Schema = typeof schema;
@@ -2735,7 +2739,7 @@ export namespace UnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/UnionMember2"),
+        UnionMember2.schema.toRdfTypes,
         parameters.graph,
       );
     }

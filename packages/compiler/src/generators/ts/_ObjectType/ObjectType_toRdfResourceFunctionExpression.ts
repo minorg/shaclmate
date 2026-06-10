@@ -7,17 +7,11 @@ export function ObjectType_toRdfResourceFunctionExpression(
 ): Code {
   const statements: Code[] = [];
 
-  if (this.toRdfTypes.length > 0) {
+  this.toRdfTypesVariable.ifJust((toRdfTypesVariable) => {
     statements.push(
-      code`if (!${variables.ignoreRdfType}) { ${joinCode(
-        this.toRdfTypes.map(
-          (toRdfType) =>
-            code`${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${this.reusables.imports.dataFactory}.namedNode("${toRdfType.value}"), ${variables.graph});`,
-        ),
-        { on: " " },
-      )} }`,
+      code`if (!${variables.ignoreRdfType}) { ${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${toRdfTypesVariable}, ${variables.graph}); }`,
     );
-  }
+  });
 
   for (const property of this.properties) {
     statements.push(
