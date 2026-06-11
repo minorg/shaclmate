@@ -155,15 +155,15 @@ export const harnesses = {
   ),
   explicitFromToRdfTypesStruct: new Harness(
     kitchenSink.ExplicitFromToRdfTypesStruct.createUnsafe({
-      explicitFromToRdfTypesString: "test",
       $identifier,
+      explicitFromToRdfTypesString: "test",
     }),
     kitchenSink.ExplicitFromToRdfTypesStruct,
   ),
   explicitRdfTypeStruct: new Harness(
     kitchenSink.ExplicitRdfTypeStruct.createUnsafe({
-      explicitRdfTypeString: "test",
       $identifier,
+      explicitRdfTypeString: "test",
     }),
     kitchenSink.ExplicitRdfTypeStruct,
   ),
@@ -572,6 +572,13 @@ export const harnesses = {
       nonClassString: "Test",
     }),
     kitchenSink.NonClassStruct,
+  ),
+  targetClassStruct: new Harness(
+    kitchenSink.TargetClassStruct.createUnsafe({
+      $identifier,
+      targetClassString: "test",
+    }),
+    kitchenSink.TargetClassStruct,
   ),
   termsStruct: new Harness(
     kitchenSink.TermsStruct.createUnsafe({
