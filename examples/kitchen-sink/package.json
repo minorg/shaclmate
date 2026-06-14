@@ -25,8 +25,11 @@
     "rdf-validate-shacl": "0.6.5"
   },
   "files": [
-    "dist/*.d.ts",
-    "dist/*.js"
+    "dist/index.ts.d.ts",
+    "dist/index.ts.js",
+    "dist/kitchen-sink.shaclmate.ts.d.ts",
+    "dist/kitchen-sink.shaclmate.ts.js",
+    "dist/kitchen-sink.shaclmate.ttl"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",

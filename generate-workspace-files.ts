@@ -420,17 +420,33 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
         withFileTypes: true,
         recursive: true,
       })) {
-        if (!dirent.name.endsWith(".ts") || !dirent.isFile()) {
+        if (!dirent.isFile()) {
           continue;
         }
-        for (const fileNameGlob of ["*.js", "*.d.ts"]) {
-          files.add(
-            path.join(
-              "dist",
-              path.relative(srcDirectoryPath, dirent.parentPath),
-              fileNameGlob,
-            ),
-          );
+        switch (path.extname(dirent.name)) {
+          case ".ts": {
+            for (const distFileExt of [".d.ts", ".js"]) {
+              files.add(
+                path.join(
+                  "dist",
+                  path.relative(srcDirectoryPath, dirent.parentPath),
+                  `${path.basename(dirent.name)}${distFileExt}`,
+                ),
+              );
+            }
+            break;
+          }
+          case ".ttl":
+            files.add(
+              path.join(
+                "dist",
+                path.relative(srcDirectoryPath, dirent.parentPath),
+                dirent.name,
+              ),
+            );
+            break;
+          default:
+            continue;
         }
       }
     }
