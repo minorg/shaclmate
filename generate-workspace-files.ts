@@ -97,7 +97,22 @@ interface Tsconfig {
   // references?: { path: string; prepend?: boolean }[];
 }
 
-const tsconfigDefault: Tsconfig = {
+const exampleTsconfig: Tsconfig = {
+  compilerOptions: {
+    exactOptionalPropertyTypes: false,
+    forceConsistentCasingInFileNames: true,
+    noEmit: true,
+    noUncheckedIndexedAccess: false,
+    types: ["node"],
+  },
+  extends: [
+    "@tsconfig/strictest/tsconfig.json",
+    "@tsconfig/node20/tsconfig.json",
+  ],
+  include: ["src/**/*.ts"],
+};
+
+const publishTsconfig: Tsconfig = {
   compilerOptions: {
     declaration: true,
     declarationMap: true,
@@ -131,7 +146,7 @@ interface Workspace {
   keywords?: readonly string[];
   homepage?: string;
   scripts?: Record<string, string>;
-  tsconfig?: Tsconfig;
+  tsconfig: Tsconfig;
 }
 
 const workspaces = {
@@ -169,6 +184,7 @@ const workspaces = {
         "Command line program to generate TypeScript code from SHACL shapes",
       homepage: "https://github.com/minorg/shaclmate",
       keywords: ["rdf", "shacl", "typescript"],
+      tsconfig: publishTsconfig,
     },
   } satisfies Record<string, Workspace>,
   examples: {
@@ -185,20 +201,7 @@ const workspaces = {
         compile: "NODE_ENV=development tsx src/compile.ts",
         dump: "NODE_ENV=development tsx src/dump.ts",
       },
-      tsconfig: {
-        compilerOptions: {
-          exactOptionalPropertyTypes: false,
-          forceConsistentCasingInFileNames: true,
-          noEmit: true,
-          noUncheckedIndexedAccess: false,
-          types: ["node"],
-        },
-        extends: [
-          "@tsconfig/strictest/tsconfig.json",
-          "@tsconfig/node20/tsconfig.json",
-        ],
-        include: ["src/**/*.ts"],
-      },
+      tsconfig: exampleTsconfig,
     },
     forms: {
       dependencies: {
@@ -275,22 +278,8 @@ const workspaces = {
       scripts: {
         start: "NODE_ENV=development tsx src/server.ts",
       },
-      tsconfig: {
-        compilerOptions: {
-          exactOptionalPropertyTypes: false,
-          forceConsistentCasingInFileNames: true,
-          noEmit: true,
-          noUncheckedIndexedAccess: false,
-          types: ["node"],
-        },
-        extends: [
-          "@tsconfig/strictest/tsconfig.json",
-          "@tsconfig/node20/tsconfig.json",
-        ],
-        include: ["src/**/*.ts"],
-      },
+      tsconfig: exampleTsconfig,
     },
-
     "kitchen-sink": {
       dependencies: {
         external: [
@@ -321,6 +310,7 @@ const workspaces = {
           "rdf-validate-shacl",
         ],
       },
+      tsconfig: exampleTsconfig,
     },
   } satisfies Record<string, Workspace>,
   packages: {
@@ -357,9 +347,9 @@ const workspaces = {
         // internal: ["kitchen-sink-example"],
       },
       tsconfig: {
-        ...tsconfigDefault,
+        ...publishTsconfig,
         compilerOptions: {
-          ...tsconfigDefault.compilerOptions,
+          ...publishTsconfig.compilerOptions,
           experimentalDecorators: true,
         },
       },
@@ -385,6 +375,7 @@ const workspaces = {
       devDependencies: {
         external: ["@rdfx/literal", "@types/n3", "n3", "ts-invariant"],
       },
+      tsconfig: publishTsconfig,
     },
   } satisfies Record<PackageName, Workspace>,
 } as const;
@@ -538,7 +529,11 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
           },
           scripts: {
             build: buildCommands.join(" && "),
-            clean: "rimraf dist",
+            ...(workspacesDirectoryName !== "examples"
+              ? {
+                  clean: "rimraf dist",
+                }
+              : {}),
             depcheck: "depcheck .",
             dev: "tsc -w --preserveWatchOutput",
             ...(testsDirectoryPath !== null
@@ -570,7 +565,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
 
     fs.writeFileSync(
       path.resolve(packageDirectoryPath, "tsconfig.json"),
-      JSON.stringify(workspace.tsconfig ?? tsconfigDefault, undefined, 2),
+      JSON.stringify(workspace.tsconfig, undefined, 2),
     );
 
     if (testsDirectoryPath !== null) {

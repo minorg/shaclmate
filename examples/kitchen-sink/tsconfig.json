@@ -1,14 +1,9 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
     "exactOptionalPropertyTypes": false,
     "forceConsistentCasingInFileNames": true,
-    "incremental": false,
+    "noEmit": true,
     "noUncheckedIndexedAccess": false,
-    "outDir": "dist",
-    "rootDir": "src",
-    "sourceMap": true,
     "types": [
       "node"
     ]

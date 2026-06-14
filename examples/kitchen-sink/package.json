@@ -41,7 +41,6 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
