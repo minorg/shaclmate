@@ -7,12 +7,12 @@
     "@types/rdfjs__namespace": "~2.0.10"
   },
   "files": [
-    "dist/compile.ts.d.ts",
-    "dist/compile.ts.js",
-    "dist/dump.ts.d.ts",
-    "dist/dump.ts.js",
-    "dist/shapesGraph.ts.d.ts",
-    "dist/shapesGraph.ts.js"
+    "dist/compile.d.ts",
+    "dist/compile.js",
+    "dist/dump.d.ts",
+    "dist/dump.js",
+    "dist/shapesGraph.d.ts",
+    "dist/shapesGraph.js"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",

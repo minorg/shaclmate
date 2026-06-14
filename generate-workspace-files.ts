@@ -432,7 +432,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
                 path.join(
                   "dist",
                   path.relative(srcDirectoryPath, dirent.parentPath),
-                  `${path.basename(dirent.name)}${distFileExt}`,
+                  `${path.basename(dirent.name, path.extname(dirent.name))}${distFileExt}`,
                 ),
               );
             }

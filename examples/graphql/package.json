@@ -12,12 +12,12 @@
     "@types/rdfjs__dataset": "~2.0.7"
   },
   "files": [
-    "dist/dataset.ts.d.ts",
-    "dist/dataset.ts.js",
-    "dist/graphql.shaclmate.ts.d.ts",
-    "dist/graphql.shaclmate.ts.js",
-    "dist/server.ts.d.ts",
-    "dist/server.ts.js"
+    "dist/dataset.d.ts",
+    "dist/dataset.js",
+    "dist/graphql.shaclmate.d.ts",
+    "dist/graphql.shaclmate.js",
+    "dist/server.d.ts",
+    "dist/server.js"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
