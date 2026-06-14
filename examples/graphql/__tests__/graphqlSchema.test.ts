@@ -1,7 +1,10 @@
 import { type ExecutionResult, graphql } from "graphql";
 import { describe, it } from "vitest";
 import { dataset } from "../src/dataset.js";
-import { $RdfjsDatasetObjectSet, graphqlSchema } from "../src/generated.js";
+import {
+  $RdfjsDatasetObjectSet,
+  graphqlSchema,
+} from "../src/graphql.shaclmate.js";
 
 describe("graphqlSchema", () => {
   const execute = async (query: string): Promise<ExecutionResult> => {

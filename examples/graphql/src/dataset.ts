@@ -6,7 +6,7 @@ import {
   RootObject,
   UnionMember1,
   UnionMember2,
-} from "./generated.js";
+} from "./graphql.shaclmate.js";
 
 export const dataset = datasetFactory.dataset();
 const resourceSet = new ResourceSet({
