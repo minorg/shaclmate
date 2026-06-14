@@ -5,7 +5,7 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.49";
+const VERSION = "4.0.50";
 
 const rdfxVersion = "0.0.19";
 const vitestVersion = "~4.1.5";
@@ -410,6 +410,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
 
     fs.mkdirSync(packageDirectoryPath, { recursive: true });
 
+    let buildCommands: string[] = ["tsc -b"];
     const files = new Set<string>();
     if (fs.existsSync(path.join(packageDirectoryPath, "README.md"))) {
       files.add("README.md");
@@ -420,19 +421,49 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
         withFileTypes: true,
         recursive: true,
       })) {
-        if (!dirent.name.endsWith(".ts") || !dirent.isFile()) {
+        if (!dirent.isFile()) {
           continue;
         }
-        for (const fileNameGlob of ["*.js", "*.d.ts"]) {
-          files.add(
-            path.join(
-              "dist",
-              path.relative(srcDirectoryPath, dirent.parentPath),
-              fileNameGlob,
-            ),
-          );
+        const direntPath = path.join(dirent.parentPath, dirent.name);
+        switch (path.extname(dirent.name)) {
+          case ".ts": {
+            for (const distFileExt of [".d.ts", ".js"]) {
+              files.add(
+                path.join(
+                  "dist",
+                  path.relative(srcDirectoryPath, dirent.parentPath),
+                  `${path.basename(dirent.name)}${distFileExt}`,
+                ),
+              );
+            }
+            break;
+          }
+          case ".ttl":
+            if (workspacesDirectoryName === "examples") {
+              continue;
+            }
+
+            buildCommands.push(
+              `cp src/${path.relative(srcDirectoryPath, direntPath)} dist/${path.relative(srcDirectoryPath, direntPath)}`,
+            );
+            files.add(
+              path.join(
+                "dist",
+                path.relative(srcDirectoryPath, dirent.parentPath),
+                dirent.name,
+              ),
+            );
+            break;
+          default:
+            continue;
         }
       }
+    }
+
+    if (workspace.bin) {
+      buildCommands = buildCommands.concat(
+        Object.values(workspace.bin).map((bin) => `chmod +x ${bin}`),
+      );
     }
 
     let testsDirectoryPath: string | null = path.join(
@@ -506,13 +537,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             url: "git+https://github.com/minorg/shaclmate.git",
           },
           scripts: {
-            build: `tsc -b${
-              workspace.bin
-                ? ` && ${Object.values(workspace.bin)
-                    .map((bin) => `chmod +x ${bin}`)
-                    .join(" && ")}`
-                : ""
-            }`,
+            build: buildCommands.join(" && "),
             clean: "rimraf dist",
             depcheck: "depcheck .",
             dev: "tsc -w --preserveWatchOutput",

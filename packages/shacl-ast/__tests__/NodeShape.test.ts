@@ -1,8 +1,8 @@
+import { rdfs, sh } from "@tpluscode/rdf-ns-builders";
 import { beforeAll, describe, it } from "vitest";
-import type { NodeShape } from "../src/generated.js";
+import type { NodeShape } from "../src/shacl-ast.shaclmate.js";
 import { ex } from "./namespaces.js";
 import { testData } from "./testData.js";
-import { rdfs, sh } from "@tpluscode/rdf-ns-builders";
 
 describe("NodeShape", () => {
   let sut: NodeShape;
@@ -33,9 +33,13 @@ describe("NodeShape", () => {
     expect(sut.properties).toHaveLength(1);
   });
 
-  it("types", ({expect}) => {
+  it("types", ({ expect }) => {
     expect(sut.types).toHaveLength(2);
-    expect(sut.types.some(type => type.equals(rdfs.Class))).toStrictEqual(true);
-    expect(sut.types.some(type => type.equals(sh.NodeShape))).toStrictEqual(true);
+    expect(sut.types.some((type) => type.equals(rdfs.Class))).toStrictEqual(
+      true,
+    );
+    expect(sut.types.some((type) => type.equals(sh.NodeShape))).toStrictEqual(
+      true,
+    );
   });
 });

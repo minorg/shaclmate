@@ -1,8 +1,8 @@
 import dataFactory from "@rdfx/data-factory";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
-import type { PropertyShape } from "../src/generated.js";
 import type { ShapesGraph } from "../src/ShapesGraph.js";
+import type { PropertyShape } from "../src/shacl-ast.shaclmate.js";
 import { ex } from "./namespaces.js";
 import { testData } from "./testData.js";
 

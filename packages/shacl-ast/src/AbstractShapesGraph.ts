@@ -16,7 +16,7 @@ import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left } from "purify-ts";
 import type { Curie } from "./Curie.js";
 import { CurieFactory } from "./CurieFactory.js";
-import type * as generated from "./generated.js";
+import type * as generated from "./shacl-ast.shaclmate.js";
 
 export abstract class AbstractShapesGraph<
   NodeShapeT extends generated.NodeShape,

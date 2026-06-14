@@ -5,6 +5,6 @@ set -e
 cd "$(dirname "$0")"
 
 rapper -i turtle -o turtle -q src/graphql.shaclmate.ttl | sponge src/graphql.shaclmate.ttl
-../../apps/cli/dist/cli.js generate ts --feature graphql --feature rdf src/graphql.shaclmate.ttl | sponge src/generated.ts
-npm exec biome -- check --write src/generated.ts
-npm exec biome -- check --write src/generated.ts
+npm exec @shaclmate/cli -- generate ts --feature graphql --feature rdf src/graphql.shaclmate.ttl | sponge src/graphql.shaclmate.ts
+npm exec biome -- check --write src/graphql.shaclmate.ts
+npm exec biome -- check --write src/graphql.shaclmate.ts

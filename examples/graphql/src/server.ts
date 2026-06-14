@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import { createYoga } from "graphql-yoga";
 import { dataset } from "./dataset.js";
-import { $RdfjsDatasetObjectSet, graphqlSchema } from "./generated.js";
+import { $RdfjsDatasetObjectSet, graphqlSchema } from "./graphql.shaclmate.js";
 
 const yoga = createYoga({
   context: {

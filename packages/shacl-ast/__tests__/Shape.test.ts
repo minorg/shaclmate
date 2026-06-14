@@ -1,6 +1,6 @@
 import dataFactory from "@rdfx/data-factory";
 import { beforeAll, describe, it } from "vitest";
-import type { Shape } from "../src/generated.js";
+import type { Shape } from "../src/shacl-ast.shaclmate.js";
 import { testData } from "./testData.js";
 import "@rdfx/testing";
 import { LiteralFactory } from "@rdfx/literal";

@@ -1759,23 +1759,21 @@ export namespace NodeShape {
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NodeShape> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [NodeShape.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [NodeShape.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: NodeShape.schema.properties.$identifier.type,
           },
@@ -1784,11 +1782,9 @@ export namespace NodeShape {
           Maybe<readonly (BlankNode | NamedNode)[]>,
           $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.and,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
@@ -1804,11 +1800,9 @@ export namespace NodeShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.classes,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -1819,11 +1813,9 @@ export namespace NodeShape {
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.closed,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
@@ -1834,11 +1826,9 @@ export namespace NodeShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.comment,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -1849,11 +1839,9 @@ export namespace NodeShape {
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.datatype,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
@@ -1864,11 +1852,9 @@ export namespace NodeShape {
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.deactivated,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
@@ -1879,11 +1865,9 @@ export namespace NodeShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.discriminantValue,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -1894,11 +1878,9 @@ export namespace NodeShape {
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.extern,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
@@ -1909,11 +1891,9 @@ export namespace NodeShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.flags,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -1924,11 +1904,9 @@ export namespace NodeShape {
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.fromRdfType,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
@@ -1939,11 +1917,9 @@ export namespace NodeShape {
           readonly (NamedNode | Literal)[],
           $CollectionSchema<$TermSchema<NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.hasValues,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode | Literal,
@@ -1954,11 +1930,9 @@ export namespace NodeShape {
           boolean,
           $DefaultValueSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.ignore,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             boolean,
@@ -1969,11 +1943,9 @@ export namespace NodeShape {
           Maybe<readonly NamedNode[]>,
           $MaybeSchema<$CollectionSchema<$IriSchema<string>>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.ignoredProperties,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly NamedNode[],
@@ -1988,11 +1960,9 @@ export namespace NodeShape {
           Maybe<readonly (NamedNode | Literal)[]>,
           $MaybeSchema<$CollectionSchema<$TermSchema<NamedNode | Literal>>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.in_,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (NamedNode | Literal)[],
@@ -2008,11 +1978,9 @@ export namespace NodeShape {
           Maybe<BlankNode | NamedNode>,
           $MaybeSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.isDefinedBy,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -2023,11 +1991,9 @@ export namespace NodeShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.label,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -2038,11 +2004,9 @@ export namespace NodeShape {
           Maybe<readonly string[]>,
           $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.languageIn,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly string[],
@@ -2057,11 +2021,9 @@ export namespace NodeShape {
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.maxExclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
@@ -2072,11 +2034,9 @@ export namespace NodeShape {
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.maxInclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
@@ -2087,11 +2047,9 @@ export namespace NodeShape {
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.maxLength,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
@@ -2102,11 +2060,9 @@ export namespace NodeShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.message,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -2117,11 +2073,9 @@ export namespace NodeShape {
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.minExclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
@@ -2132,11 +2086,9 @@ export namespace NodeShape {
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.minInclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
@@ -2147,11 +2099,9 @@ export namespace NodeShape {
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.minLength,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
@@ -2162,11 +2112,9 @@ export namespace NodeShape {
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.mutable,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
@@ -2177,11 +2125,9 @@ export namespace NodeShape {
           Maybe<BlankNode | NamedNode>,
           $MaybeSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.node,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -2210,11 +2156,9 @@ export namespace NodeShape {
             >
           >
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.nodeKind,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode<
@@ -2248,11 +2192,9 @@ export namespace NodeShape {
           readonly (BlankNode | NamedNode)[],
           $CollectionSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.not,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -2263,11 +2205,9 @@ export namespace NodeShape {
           Maybe<readonly (BlankNode | NamedNode)[]>,
           $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.or,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
@@ -2283,11 +2223,9 @@ export namespace NodeShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.pattern,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -2298,11 +2236,9 @@ export namespace NodeShape {
           readonly (BlankNode | NamedNode)[],
           $CollectionSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.properties,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -2313,11 +2249,9 @@ export namespace NodeShape {
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.rdfType,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
@@ -2334,11 +2268,9 @@ export namespace NodeShape {
             >
           >
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.severity,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Severity,
@@ -2359,11 +2291,9 @@ export namespace NodeShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.shaclmateName,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -2374,11 +2304,9 @@ export namespace NodeShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.subClassOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -2389,11 +2317,9 @@ export namespace NodeShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.targetClasses,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -2404,11 +2330,9 @@ export namespace NodeShape {
           readonly (NamedNode | Literal)[],
           $CollectionSchema<$TermSchema<NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.targetNodes,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode | Literal,
@@ -2419,11 +2343,9 @@ export namespace NodeShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.targetObjectsOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -2434,11 +2356,9 @@ export namespace NodeShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.targetSubjectsOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -2449,11 +2369,9 @@ export namespace NodeShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.toRdfTypes,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -2464,11 +2382,9 @@ export namespace NodeShape {
           readonly string[],
           $CollectionSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.tsImports,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             string,
@@ -2479,11 +2395,9 @@ export namespace NodeShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.types,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -2494,11 +2408,9 @@ export namespace NodeShape {
           Maybe<readonly (BlankNode | NamedNode)[]>,
           $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.xone,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
@@ -3588,23 +3500,21 @@ export namespace Ontology {
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<Ontology> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [Ontology.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [Ontology.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: Ontology.schema.properties.$identifier.type,
           },
@@ -3613,11 +3523,9 @@ export namespace Ontology {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.comment,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -3628,11 +3536,9 @@ export namespace Ontology {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.label,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -3800,23 +3706,21 @@ export namespace PropertyGroup {
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<PropertyGroup> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [PropertyGroup.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [PropertyGroup.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: PropertyGroup.schema.properties.$identifier.type,
           },
@@ -3825,11 +3729,9 @@ export namespace PropertyGroup {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.comment,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -3840,11 +3742,9 @@ export namespace PropertyGroup {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.label,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -4840,23 +4740,21 @@ export namespace PropertyShape {
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<PropertyShape> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
-      ? $ensureRdfResourceType($resource, [PropertyShape.schema.fromRdfType], {
-          graph: _$options.graph,
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [PropertyShape.schema.fromRdfType], {
+          graph: options.graph,
         })
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: PropertyShape.schema.properties.$identifier.type,
           },
@@ -4865,11 +4763,9 @@ export namespace PropertyShape {
           Maybe<readonly (BlankNode | NamedNode)[]>,
           $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.and,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
@@ -4885,11 +4781,9 @@ export namespace PropertyShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.classes,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -4900,11 +4794,9 @@ export namespace PropertyShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.comment,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -4915,11 +4807,9 @@ export namespace PropertyShape {
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.datatype,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode,
@@ -4930,11 +4820,9 @@ export namespace PropertyShape {
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.deactivated,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
@@ -4945,11 +4833,9 @@ export namespace PropertyShape {
           Maybe<NamedNode | Literal>,
           $MaybeSchema<$TermSchema<NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.defaultValue,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode | Literal,
@@ -4960,11 +4846,9 @@ export namespace PropertyShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.description,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -4975,11 +4859,9 @@ export namespace PropertyShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.disjoint,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -4990,11 +4872,9 @@ export namespace PropertyShape {
           boolean,
           $DefaultValueSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.display,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             boolean,
@@ -5005,11 +4885,9 @@ export namespace PropertyShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.equals,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -5020,11 +4898,9 @@ export namespace PropertyShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.flags,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -5035,11 +4911,9 @@ export namespace PropertyShape {
           readonly (BlankNode | NamedNode)[],
           $CollectionSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.groups,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -5050,11 +4924,9 @@ export namespace PropertyShape {
           readonly (NamedNode | Literal)[],
           $CollectionSchema<$TermSchema<NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.hasValues,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode | Literal,
@@ -5065,11 +4937,9 @@ export namespace PropertyShape {
           boolean,
           $DefaultValueSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.ignore,
           typeFromRdfResourceValues: $defaultValueFromRdfResourceValues<
             boolean,
@@ -5080,11 +4950,9 @@ export namespace PropertyShape {
           Maybe<readonly (NamedNode | Literal)[]>,
           $MaybeSchema<$CollectionSchema<$TermSchema<NamedNode | Literal>>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.in_,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (NamedNode | Literal)[],
@@ -5100,11 +4968,9 @@ export namespace PropertyShape {
           Maybe<BlankNode | NamedNode>,
           $MaybeSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.isDefinedBy,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -5115,11 +4981,9 @@ export namespace PropertyShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.label,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -5130,11 +4994,9 @@ export namespace PropertyShape {
           Maybe<readonly string[]>,
           $MaybeSchema<$CollectionSchema<$StringSchema<string>>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.languageIn,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly string[],
@@ -5149,11 +5011,9 @@ export namespace PropertyShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.lessThan,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -5164,11 +5024,9 @@ export namespace PropertyShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.lessThanOrEquals,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -5179,11 +5037,9 @@ export namespace PropertyShape {
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.maxCount,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
@@ -5194,11 +5050,9 @@ export namespace PropertyShape {
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.maxExclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
@@ -5209,11 +5063,9 @@ export namespace PropertyShape {
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.maxInclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
@@ -5224,11 +5076,9 @@ export namespace PropertyShape {
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.maxLength,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
@@ -5239,11 +5089,9 @@ export namespace PropertyShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.message,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -5254,11 +5102,9 @@ export namespace PropertyShape {
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.minCount,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
@@ -5269,11 +5115,9 @@ export namespace PropertyShape {
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.minExclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
@@ -5284,11 +5128,9 @@ export namespace PropertyShape {
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.minInclusive,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
@@ -5299,11 +5141,9 @@ export namespace PropertyShape {
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.minLength,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
@@ -5314,11 +5154,9 @@ export namespace PropertyShape {
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.mutable,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
@@ -5329,11 +5167,9 @@ export namespace PropertyShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.name,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -5344,11 +5180,9 @@ export namespace PropertyShape {
           Maybe<BlankNode | NamedNode>,
           $MaybeSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.node,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -5377,11 +5211,9 @@ export namespace PropertyShape {
             >
           >
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.nodeKind,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NamedNode<
@@ -5415,11 +5247,9 @@ export namespace PropertyShape {
           readonly (BlankNode | NamedNode)[],
           $CollectionSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.not,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -5430,11 +5260,9 @@ export namespace PropertyShape {
           Maybe<readonly (BlankNode | NamedNode)[]>,
           $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.or,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
@@ -5450,11 +5278,9 @@ export namespace PropertyShape {
           Maybe<number>,
           $MaybeSchema<$NumericSchema<number>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.order,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
@@ -5462,11 +5288,9 @@ export namespace PropertyShape {
           >($floatFromRdfResourceValues<number>),
         }),
         path: $shaclPropertyFromRdf<$PropertyPath, $PropertyPath.Schema>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.path,
           typeFromRdfResourceValues: $PropertyPath.fromRdfResourceValues,
         }),
@@ -5474,11 +5298,9 @@ export namespace PropertyShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.pattern,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -5489,11 +5311,9 @@ export namespace PropertyShape {
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.qualifiedMaxCount,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
@@ -5504,11 +5324,9 @@ export namespace PropertyShape {
           Maybe<bigint>,
           $MaybeSchema<$NumericSchema<bigint>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.qualifiedMinCount,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             bigint,
@@ -5519,11 +5337,9 @@ export namespace PropertyShape {
           Maybe<BlankNode | NamedNode>,
           $MaybeSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.qualifiedValueShape,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -5534,11 +5350,9 @@ export namespace PropertyShape {
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             PropertyShape.schema.properties.qualifiedValueShapesDisjoint,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
@@ -5550,11 +5364,9 @@ export namespace PropertyShape {
           Maybe<BlankNode | NamedNode>,
           $MaybeSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.resolve,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -5571,11 +5383,9 @@ export namespace PropertyShape {
             >
           >
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.severity,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Severity,
@@ -5596,11 +5406,9 @@ export namespace PropertyShape {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.shaclmateName,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -5611,11 +5419,9 @@ export namespace PropertyShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.targetClasses,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -5626,11 +5432,9 @@ export namespace PropertyShape {
           readonly (NamedNode | Literal)[],
           $CollectionSchema<$TermSchema<NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.targetNodes,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode | Literal,
@@ -5641,11 +5445,9 @@ export namespace PropertyShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.targetObjectsOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -5656,11 +5458,9 @@ export namespace PropertyShape {
           readonly NamedNode[],
           $CollectionSchema<$IriSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.targetSubjectsOf,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             NamedNode,
@@ -5671,11 +5471,9 @@ export namespace PropertyShape {
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: PropertyShape.schema.properties.uniqueLang,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             boolean,
@@ -5686,11 +5484,9 @@ export namespace PropertyShape {
           Maybe<readonly (BlankNode | NamedNode)[]>,
           $MaybeSchema<$CollectionSchema<$IdentifierSchema>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: NodeShape.schema.properties.xone,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             readonly (BlankNode | NamedNode)[],
@@ -6890,35 +6686,31 @@ export namespace ValidationReport {
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ValidationReport> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [ValidationReport.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: ValidationReport.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
         conforms: $shaclPropertyFromRdf<boolean, $BooleanSchema<boolean>>({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ValidationReport.schema.properties.conforms,
           typeFromRdfResourceValues: $booleanFromRdfResourceValues<boolean>,
         }),
@@ -6926,11 +6718,9 @@ export namespace ValidationReport {
           readonly ValidationResult[],
           $CollectionSchema<ValidationResult.Schema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ValidationReport.schema.properties.results,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             ValidationResult,
@@ -6941,11 +6731,9 @@ export namespace ValidationReport {
           Maybe<boolean>,
           $MaybeSchema<$BooleanSchema<boolean>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ValidationReport.schema.properties.shapesGraphWellFormed,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
@@ -7225,25 +7013,23 @@ export namespace ValidationResult {
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ValidationResult> = (
-    $resource,
-    _$options,
+    resource,
+    options,
   ) =>
-    (!_$options.ignoreRdfType
+    (!options.ignoreRdfType
       ? $ensureRdfResourceType(
-          $resource,
+          resource,
           [ValidationResult.schema.fromRdfType],
-          { graph: _$options.graph },
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
         $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues($resource),
+          $rdfResourceIdentifierValues(resource),
           {
-            context: _$options.context,
-            graph: _$options.graph,
-            focusResource: $resource,
-            preferredLanguages: _$options.preferredLanguages,
+            ...options,
+            focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
             schema: ValidationResult.schema.properties.$identifier.type,
           },
@@ -7252,11 +7038,9 @@ export namespace ValidationResult {
           readonly (BlankNode | NamedNode | Literal)[],
           $CollectionSchema<$TermSchema<BlankNode | NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ValidationResult.schema.properties.details,
           typeFromRdfResourceValues: $setFromRdfResourceValues<
             BlankNode | NamedNode | Literal,
@@ -7267,11 +7051,9 @@ export namespace ValidationResult {
           BlankNode | NamedNode | Literal,
           $TermSchema<BlankNode | NamedNode | Literal>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ValidationResult.schema.properties.focusNode,
           typeFromRdfResourceValues: $termFromRdfResourceValues<
             BlankNode | NamedNode | Literal
@@ -7281,11 +7063,9 @@ export namespace ValidationResult {
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ValidationResult.schema.properties.message,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
@@ -7296,11 +7076,9 @@ export namespace ValidationResult {
           Maybe<$PropertyPath>,
           $MaybeSchema<$PropertyPath.Schema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ValidationResult.schema.properties.path,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             $PropertyPath,
@@ -7315,11 +7093,9 @@ export namespace ValidationResult {
             | "http://www.w3.org/ns/shacl#Violation"
           >
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ValidationResult.schema.properties.severity,
           typeFromRdfResourceValues: $iriFromRdfResourceValues<
             | "http://www.w3.org/ns/shacl#Info"
@@ -7331,11 +7107,9 @@ export namespace ValidationResult {
           NamedNode,
           $IriSchema<string>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema:
             ValidationResult.schema.properties.sourceConstraintComponent,
           typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
@@ -7344,11 +7118,9 @@ export namespace ValidationResult {
           Maybe<BlankNode | NamedNode>,
           $MaybeSchema<$IdentifierSchema>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ValidationResult.schema.properties.sourceShape,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode,
@@ -7359,11 +7131,9 @@ export namespace ValidationResult {
           Maybe<BlankNode | NamedNode | Literal>,
           $MaybeSchema<$TermSchema<BlankNode | NamedNode | Literal>>
         >({
-          context: _$options.context,
-          graph: _$options.graph,
-          focusResource: $resource,
+          ...options,
+          focusResource: resource,
           ignoreRdfType: true,
-          preferredLanguages: _$options.preferredLanguages,
           propertySchema: ValidationResult.schema.properties.value,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             BlankNode | NamedNode | Literal,

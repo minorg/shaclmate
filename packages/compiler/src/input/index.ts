@@ -4,5 +4,5 @@ export {
   PropertyGroup,
   PropertyShape,
   Shape,
-} from "./generated.js";
+} from "./input.shaclmate.js";
 export * from "./ShapesGraph.js";

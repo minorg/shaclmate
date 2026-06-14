@@ -5,7 +5,7 @@ import type { Ast } from "../ast/Ast.js";
 import { Compiler } from "../Compiler.js";
 import type { Generator } from "../generators/Generator.js";
 import { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import * as generated from "./generated.js";
+import * as generated from "./input.shaclmate.js";
 
 const typeFunctions = {
   NodeShape: generated.NodeShape,

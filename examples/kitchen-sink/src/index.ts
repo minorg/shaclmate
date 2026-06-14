@@ -1,1 +1,1 @@
-export * from "./generated.js";
+export * from "./kitchen-sink.shaclmate.js";

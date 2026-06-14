@@ -3,7 +3,7 @@
     "shaclmate": "dist/cli.js"
   },
   "dependencies": {
-    "@shaclmate/compiler": "4.0.49",
+    "@shaclmate/compiler": "4.0.50",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/serializer-turtle": "~1.1.5",
@@ -26,10 +26,24 @@
   },
   "files": [
     "README.md",
-    "dist/*.d.ts",
-    "dist/*.js",
-    "dist/commands/*.d.ts",
-    "dist/commands/*.js"
+    "dist/cli.ts.d.ts",
+    "dist/cli.ts.js",
+    "dist/commands/generate.ts.d.ts",
+    "dist/commands/generate.ts.js",
+    "dist/commands/index.ts.d.ts",
+    "dist/commands/index.ts.js",
+    "dist/commands/merge.ts.d.ts",
+    "dist/commands/merge.ts.js",
+    "dist/commands/validate.ts.d.ts",
+    "dist/commands/validate.ts.js",
+    "dist/index.ts.d.ts",
+    "dist/index.ts.js",
+    "dist/logger.ts.d.ts",
+    "dist/logger.ts.js",
+    "dist/parseInputs.ts.d.ts",
+    "dist/parseInputs.ts.js",
+    "dist/shaclShaclDataset.ts.d.ts",
+    "dist/shaclShaclDataset.ts.js"
   ],
   "homepage": "https://github.com/minorg/shaclmate",
   "keywords": [
@@ -55,5 +69,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.49"
+  "version": "4.0.50"
 }

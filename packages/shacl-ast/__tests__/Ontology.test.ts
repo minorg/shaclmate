@@ -1,5 +1,5 @@
 import { beforeAll, describe, it } from "vitest";
-import type { Ontology } from "../src/generated.js";
+import type { Ontology } from "../src/shacl-ast.shaclmate.js";
 import { ex } from "./namespaces.js";
 import { testData } from "./testData.js";
 

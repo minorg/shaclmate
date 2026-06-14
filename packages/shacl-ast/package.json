@@ -22,8 +22,23 @@
   },
   "files": [
     "README.md",
-    "dist/*.d.ts",
-    "dist/*.js"
+    "dist/AbstractShapesGraph.ts.d.ts",
+    "dist/AbstractShapesGraph.ts.js",
+    "dist/Curie.ts.d.ts",
+    "dist/Curie.ts.js",
+    "dist/CurieFactory.ts.d.ts",
+    "dist/CurieFactory.ts.js",
+    "dist/IdentifierNodeKind.ts.d.ts",
+    "dist/IdentifierNodeKind.ts.js",
+    "dist/NodeKind.ts.d.ts",
+    "dist/NodeKind.ts.js",
+    "dist/ShapesGraph.ts.d.ts",
+    "dist/ShapesGraph.ts.js",
+    "dist/index.ts.d.ts",
+    "dist/index.ts.js",
+    "dist/shacl-ast.shaclmate.ts.d.ts",
+    "dist/shacl-ast.shaclmate.ts.js",
+    "dist/shacl-ast.shaclmate.ttl"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -34,7 +49,7 @@
     "url": "git+https://github.com/minorg/shaclmate.git"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && cp src/shacl-ast.shaclmate.ttl dist/shacl-ast.shaclmate.ttl",
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
@@ -45,5 +60,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.49"
+  "version": "4.0.50"
 }
