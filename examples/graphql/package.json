@@ -30,7 +30,7 @@
     "url": "git+https://github.com/minorg/shaclmate.git"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && cp src/graphql.shaclmate.ttl dist/graphql.shaclmate.ttl",
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",

@@ -410,6 +410,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
 
     fs.mkdirSync(packageDirectoryPath, { recursive: true });
 
+    let buildCommands: string[] = ["tsc -b"];
     const files = new Set<string>();
     if (fs.existsSync(path.join(packageDirectoryPath, "README.md"))) {
       files.add("README.md");
@@ -423,6 +424,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
         if (!dirent.isFile()) {
           continue;
         }
+        const direntPath = path.join(dirent.parentPath, dirent.name);
         switch (path.extname(dirent.name)) {
           case ".ts": {
             for (const distFileExt of [".d.ts", ".js"]) {
@@ -437,6 +439,9 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             break;
           }
           case ".ttl":
+            buildCommands.push(
+              `cp src/${path.relative(srcDirectoryPath, direntPath)} dist/${path.relative(srcDirectoryPath, direntPath)}`,
+            );
             files.add(
               path.join(
                 "dist",
@@ -449,6 +454,12 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             continue;
         }
       }
+    }
+
+    if (workspace.bin) {
+      buildCommands = buildCommands.concat(
+        Object.values(workspace.bin).map((bin) => `chmod +x ${bin}`),
+      );
     }
 
     let testsDirectoryPath: string | null = path.join(
@@ -522,13 +533,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             url: "git+https://github.com/minorg/shaclmate.git",
           },
           scripts: {
-            build: `tsc -b${
-              workspace.bin
-                ? ` && ${Object.values(workspace.bin)
-                    .map((bin) => `chmod +x ${bin}`)
-                    .join(" && ")}`
-                : ""
-            }`,
+            build: buildCommands.join(" && "),
             clean: "rimraf dist",
             depcheck: "depcheck .",
             dev: "tsc -w --preserveWatchOutput",

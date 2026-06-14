@@ -41,7 +41,7 @@
     "url": "git+https://github.com/minorg/shaclmate.git"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && cp src/kitchen-sink.shaclmate.ttl dist/kitchen-sink.shaclmate.ttl",
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
