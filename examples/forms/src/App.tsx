@@ -6,7 +6,7 @@ import { JsonForms } from "@jsonforms/react";
 import {Grid, Typography} from "@mui/material";
 import dataFactory from "@rdfx/data-factory";
 import { type FC, useMemo, useState } from "react";
-import * as generated from "./generated.js";
+import * as generated from "./forms.shaclmate.js";
 import { Writer } from "n3";
 import { z } from "zod";
 
