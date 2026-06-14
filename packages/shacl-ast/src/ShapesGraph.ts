@@ -1,5 +1,5 @@
 import { AbstractShapesGraph } from "./AbstractShapesGraph.js";
-import * as generated from "./generated.js";
+import * as generated from "./shacl-ast.shaclmate.js";
 
 const typeFunctions = {
   NodeShape: generated.NodeShape,
