@@ -439,6 +439,10 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             break;
           }
           case ".ttl":
+            if (workspacesDirectoryName === "examples") {
+              continue;
+            }
+
             buildCommands.push(
               `cp src/${path.relative(srcDirectoryPath, direntPath)} dist/${path.relative(srcDirectoryPath, direntPath)}`,
             );

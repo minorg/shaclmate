@@ -28,8 +28,7 @@
     "dist/index.ts.d.ts",
     "dist/index.ts.js",
     "dist/kitchen-sink.shaclmate.ts.d.ts",
-    "dist/kitchen-sink.shaclmate.ts.js",
-    "dist/kitchen-sink.shaclmate.ttl"
+    "dist/kitchen-sink.shaclmate.ts.js"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
@@ -41,7 +40,7 @@
     "url": "git+https://github.com/minorg/shaclmate.git"
   },
   "scripts": {
-    "build": "tsc -b && cp src/kitchen-sink.shaclmate.ttl dist/kitchen-sink.shaclmate.ttl",
+    "build": "tsc -b",
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
