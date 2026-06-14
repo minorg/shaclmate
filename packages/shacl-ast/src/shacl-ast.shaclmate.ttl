@@ -229,6 +229,7 @@ shaclmate:PropertyShape-uniqueLang
     sh:path sh:uniqueLang .
 
 shaclmate:Severity
+    shaclmate:name "Severity" ;
     a sh:NodeShape ;
     sh:in (sh:Info
         sh:Warning
@@ -236,6 +237,7 @@ shaclmate:Severity
     ) .
 
 shaclmate:Shape
+    shaclmate:name "Shape" ;
     a sh:NodeShape ;
     sh:xone (shaclmate:NodeShape
         shaclmate:PropertyShape
