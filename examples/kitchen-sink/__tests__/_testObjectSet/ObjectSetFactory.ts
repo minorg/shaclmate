@@ -1,5 +1,5 @@
 import type { DatasetCore, Quad_Graph, Variable } from "@rdfjs/types";
-import type * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import type * as kitchenSink from "../../src/index.js";
 
 export type ObjectSetFactory = (
   dataset: DatasetCore,

@@ -1,5 +1,5 @@
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe, it } from "vitest";
+import * as kitchenSink from "../src/index.js";
 
 describe("schema", () => {
   describe("fromRdfType", () => {

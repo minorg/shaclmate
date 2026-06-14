@@ -4,10 +4,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import datasetFactory from "@rdfjs/dataset";
 import dataFactory from "@rdfx/data-factory";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { Parser, Writer } from "n3";
 import SHACLValidator from "rdf-validate-shacl";
 import { describe, it } from "vitest";
+import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 import { quadsToTurtle } from "./quadsToTurtle.js";
 

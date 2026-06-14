@@ -1,9 +1,9 @@
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
 import { Maybe } from "purify-ts";
+import * as kitchenSink from "../src/index.js";
 import { Harness } from "./Harness.js";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");

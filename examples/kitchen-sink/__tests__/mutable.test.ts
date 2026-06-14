@@ -2,8 +2,8 @@ import { Maybe } from "purify-ts";
 import { describe, it } from "vitest";
 import "./harnesses.js"; // Must be imported before kitchenSink
 import dataFactory from "@rdfx/data-factory";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { sha256 } from "js-sha256";
+import * as kitchenSink from "../src/index.js";
 
 function $identifier(this: kitchenSink.MutablePropertiesStruct) {
   return dataFactory.namedNode(

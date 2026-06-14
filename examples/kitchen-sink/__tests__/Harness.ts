@@ -1,7 +1,7 @@
 import type { NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
 import type { Resource, ResourceSet } from "@rdfx/resource";
-import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type { Either } from "purify-ts";
+import type { $EqualsResult } from "../src/index.js";
 
 export class Harness<
   T extends {

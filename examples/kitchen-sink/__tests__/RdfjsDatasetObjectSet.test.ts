@@ -1,6 +1,6 @@
 import type { DatasetCore, Quad_Graph, Variable } from "@rdfjs/types";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe } from "vitest";
+import * as kitchenSink from "../src/index.js";
 import { testObjectSet } from "./testObjectSet.js";
 
 describe("RdfjsDatasetObjectSet", () => {

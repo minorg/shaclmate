@@ -1,6 +1,6 @@
 import dataFactory from "@rdfx/data-factory";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe, it } from "vitest";
+import * as kitchenSink from "../../src/index.js";
 import { data } from "./data.js";
 import type { ObjectSetFactory } from "./ObjectSetFactory.js";
 import { objectDataset } from "./objectDataset.js";

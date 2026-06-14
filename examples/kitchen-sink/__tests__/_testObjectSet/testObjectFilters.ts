@@ -1,9 +1,9 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
 import { describe, it } from "vitest";
+import * as kitchenSink from "../../src/index.js";
 import type { ObjectSetFactory } from "./ObjectSetFactory.js";
 import { objectDataset } from "./objectDataset.js";
 

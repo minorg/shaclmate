@@ -1,9 +1,9 @@
 import datasetFactory from "@rdfjs/dataset";
 import dataFactory from "@rdfx/data-factory";
 import { Resource, ResourceSet } from "@rdfx/resource";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { beforeAll, describe, it } from "vitest";
+import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 import "@rdfx/testing";
 

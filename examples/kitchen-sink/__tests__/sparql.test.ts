@@ -3,9 +3,9 @@ import datasetFactory from "@rdfjs/dataset";
 import type { NamedNode, Quad } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
 import { ResourceSet } from "@rdfx/resource";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import * as oxigraph from "oxigraph";
 import { beforeAll, describe, it } from "vitest";
+import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 import { quadsToTurtle } from "./quadsToTurtle.js";
 

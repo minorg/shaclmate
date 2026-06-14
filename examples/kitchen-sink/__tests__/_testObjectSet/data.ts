@@ -1,5 +1,5 @@
 import dataFactory from "@rdfx/data-factory";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import * as kitchenSink from "../../src/index.js";
 
 export const data = {
   blankNodeOrIriIdentifierObjects: [...new Array(4)].map((_, i) =>
