@@ -6,6 +6,8 @@ import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class LangStringType extends AbstractLiteralType {
+  private readonly languageIn: readonly string[];
+
   protected override readonly inlineExpression =
     code`${this.reusables.imports.Literal}`;
 
@@ -32,6 +34,16 @@ export class LangStringType extends AbstractLiteralType {
     code`${this.reusables.snippets.LangStringSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.langStringSparqlWherePatterns}`;
+
+  constructor({
+    languageIn,
+    ...superParameters
+  }: { languageIn: readonly string[] } & ConstructorParameters<
+    typeof AbstractLiteralType
+  >[0]) {
+    super(superParameters);
+    this.languageIn = languageIn;
+  }
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");

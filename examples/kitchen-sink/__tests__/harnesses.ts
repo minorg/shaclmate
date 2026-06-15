@@ -93,8 +93,10 @@ export const harnesses = {
         value: new Date("2025-12-08T21:17:27+00:00"),
       },
       dateOrString: new Date("2025-12-08"),
+      decimalOrString: new Decimal("1.0"),
       langStringOrString: dataFactory.literal("test", "en"),
       stringOrDate: "2025-12-08", // Shouldn't parse as a Date
+      stringOrDecimal: "test",
       stringOrLangString: "test",
     }),
     kitchenSink.DatatypeUnionsStruct,
@@ -108,8 +110,10 @@ export const harnesses = {
       },
       dateTimeOrDate: { type: "date", value: new Date("2025-12-08") },
       dateOrString: "2025-12-08", // Shouldn't parse as a Date
+      decimalOrString: "test",
       langStringOrString: "test",
       stringOrDate: new Date("2025-12-08"),
+      stringOrDecimal: new Decimal("1.0"),
       stringOrLangString: dataFactory.literal("test", "en"),
     }),
     kitchenSink.DatatypeUnionsStruct,

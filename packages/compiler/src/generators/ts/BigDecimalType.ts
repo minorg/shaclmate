@@ -1,4 +1,5 @@
 import type { Literal } from "@rdfjs/types";
+import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
@@ -7,6 +8,8 @@ import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
+  private readonly datatype = xsd.decimal;
+
   protected override readonly inlineExpression =
     code`${this.reusables.imports.BigDecimal}`;
 
@@ -40,7 +43,7 @@ export class BigDecimalType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.encase<Error, ${this.expression}>(() => new ${this.expression}(${variables.value}))`;
+    return code`${this.reusables.imports.Either}.encase<Error, ${this.expression}>(() => new ${this.expression}(${variables.value}["@value"]))`;
   }
 
   override graphqlResolveExpression({
@@ -49,14 +52,14 @@ export class BigDecimalType extends AbstractLiteralType {
     return code`${variables.value}.toFixed()`;
   }
 
-  @Memoize()
   override jsonSchema(): Code {
-    return code`${this.reusables.imports.z}.string()`;
+    return code`${this.reusables.imports.z}.object({ "@type": ${this.reusables.imports.z}.literal(${literalOf(this.datatype.value)}), "@value": ${this.reusables.imports.z}.iso.date() })`;
   }
 
-  @Memoize()
   override jsonType(): AbstractLiteralType.JsonType {
-    return new AbstractLiteralType.JsonType(code`string`);
+    return new AbstractLiteralType.JsonType(
+      code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": string }`,
+    );
   }
 
   override literalValueExpression(literal: Literal): Code {

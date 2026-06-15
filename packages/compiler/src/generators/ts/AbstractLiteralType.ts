@@ -7,19 +7,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
   Literal
 > {
-  protected readonly languageIn: readonly string[];
-
   override readonly nodeKinds = nodeKinds;
-
-  constructor({
-    languageIn,
-    ...superParameters
-  }: { languageIn: readonly string[] } & ConstructorParameters<
-    typeof AbstractTermType<Literal, Literal>
-  >[0]) {
-    super(superParameters);
-    this.languageIn = languageIn;
-  }
 
   /**
    * An expression that converts a compile-time RDF/JS Literal into a runtime TypeScript literal.

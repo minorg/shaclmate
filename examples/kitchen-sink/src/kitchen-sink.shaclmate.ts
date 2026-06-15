@@ -9570,6 +9570,11 @@ export type DatatypeUnionsStruct = {
     | { type: "date"; value: Date };
 
   /**
+   * Decimal or string. These don't need discriminant values because they're different types in TypeScript.
+   */
+  readonly decimalOrString: BigDecimal | string;
+
+  /**
    * rdf:langString or string. These don't need discriminant values because they're different types in TypeScript.
    */
   readonly langStringOrString: Literal | string;
@@ -9578,6 +9583,11 @@ export type DatatypeUnionsStruct = {
    * String or date. These don't need discriminant values because they're different types in TypeScript.
    */
   readonly stringOrDate: string | Date;
+
+  /**
+   * String or decimal. These don't need discriminant values because they're different types in TypeScript.
+   */
+  readonly stringOrDecimal: string | BigDecimal;
 
   /**
    * String or rdf:langString. These don't need discriminant values because they're different types in TypeScript.
@@ -9599,8 +9609,10 @@ export namespace DatatypeUnionsStruct {
     readonly dateTimeOrDate:
       | { type: "dateTime"; value: Date }
       | { type: "date"; value: Date };
+    readonly decimalOrString: BigDecimal | string;
     readonly langStringOrString: Literal | string;
     readonly stringOrDate: string | Date;
+    readonly stringOrDecimal: string | BigDecimal;
     readonly stringOrLangString: string | Literal;
   }) => Either<Error, DatatypeUnionsStruct> = (parameters) =>
     $sequenceRecord({
@@ -9608,10 +9620,12 @@ export namespace DatatypeUnionsStruct {
       dateOrDateTime: $identityConversionFunction(parameters.dateOrDateTime),
       dateOrString: $identityConversionFunction(parameters.dateOrString),
       dateTimeOrDate: $identityConversionFunction(parameters.dateTimeOrDate),
+      decimalOrString: $identityConversionFunction(parameters.decimalOrString),
       langStringOrString: $identityConversionFunction(
         parameters.langStringOrString,
       ),
       stringOrDate: $identityConversionFunction(parameters.stringOrDate),
+      stringOrDecimal: $identityConversionFunction(parameters.stringOrDecimal),
       stringOrLangString: $identityConversionFunction(
         parameters.stringOrLangString,
       ),
@@ -9640,8 +9654,10 @@ export namespace DatatypeUnionsStruct {
     readonly dateTimeOrDate:
       | { type: "dateTime"; value: Date }
       | { type: "date"; value: Date };
+    readonly decimalOrString: BigDecimal | string;
     readonly langStringOrString: Literal | string;
     readonly stringOrDate: string | Date;
+    readonly stringOrDecimal: string | BigDecimal;
     readonly stringOrLangString: string | Literal;
   }): DatatypeUnionsStruct {
     return create(parameters).unsafeCoerce();
@@ -9761,6 +9777,38 @@ export namespace DatatypeUnionsStruct {
         $propertyEquals(
           {
             equalsFunction: (
+              left: BigDecimal | string,
+              right: BigDecimal | string,
+            ) => {
+              if (typeof left === "object" && typeof right === "object") {
+                return $booleanEquals(left as BigDecimal, right as BigDecimal);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left as string, right as string);
+              }
+
+              return Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
+                },
+                type: "property" as const,
+              });
+            },
+            name: "decimalOrString",
+          },
+          [left, left.decimalOrString],
+          [right, right.decimalOrString],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (
               left: Literal | string,
               right: Literal | string,
             ) => {
@@ -9822,6 +9870,38 @@ export namespace DatatypeUnionsStruct {
         $propertyEquals(
           {
             equalsFunction: (
+              left: string | BigDecimal,
+              right: string | BigDecimal,
+            ) => {
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left as string, right as string);
+              }
+              if (typeof left === "object" && typeof right === "object") {
+                return $booleanEquals(left as BigDecimal, right as BigDecimal);
+              }
+
+              return Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
+                },
+                type: "property" as const,
+              });
+            },
+            name: "stringOrDecimal",
+          },
+          [left, left.stringOrDecimal],
+          [right, right.stringOrDecimal],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (
               left: string | Literal,
               right: string | Literal,
             ) => {
@@ -9871,6 +9951,12 @@ export namespace DatatypeUnionsStruct {
         readonly date?: $DateFilter;
       };
     };
+    readonly decimalOrString?: {
+      readonly on?: {
+        readonly object?: $NumericFilter<BigDecimal>;
+        readonly string?: $StringFilter;
+      };
+    };
     readonly langStringOrString?: {
       readonly on?: {
         readonly object?: $LiteralFilter;
@@ -9881,6 +9967,12 @@ export namespace DatatypeUnionsStruct {
       readonly on?: {
         readonly string?: $StringFilter;
         readonly object?: $DateFilter;
+      };
+    };
+    readonly stringOrDecimal?: {
+      readonly on?: {
+        readonly string?: $StringFilter;
+        readonly object?: $NumericFilter<BigDecimal>;
       };
     };
     readonly stringOrLangString?: {
@@ -9993,6 +10085,33 @@ export namespace DatatypeUnionsStruct {
       return false;
     }
     if (
+      filter.decimalOrString !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly object?: $NumericFilter<BigDecimal>;
+            readonly string?: $StringFilter;
+          };
+        },
+        value: BigDecimal | string,
+      ) => {
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterBigDecimal(filter.on["object"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.decimalOrString, value.decimalOrString)
+    ) {
+      return false;
+    }
+    if (
       filter.langStringOrString !== undefined &&
       !((
         filter: {
@@ -10043,6 +10162,33 @@ export namespace DatatypeUnionsStruct {
 
         return true;
       })(filter.stringOrDate, value.stringOrDate)
+    ) {
+      return false;
+    }
+    if (
+      filter.stringOrDecimal !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly string?: $StringFilter;
+            readonly object?: $NumericFilter<BigDecimal>;
+          };
+        },
+        value: string | BigDecimal,
+      ) => {
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterBigDecimal(filter.on["object"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.stringOrDecimal, value.stringOrDecimal)
     ) {
       return false;
     }
@@ -10267,6 +10413,63 @@ export namespace DatatypeUnionsStruct {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.decimalOrString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "decimalOrString",
+        propertySchema: DatatypeUnionsStruct.schema.properties.decimalOrString,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly object?: $NumericFilter<BigDecimal>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<BigDecimal>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.langStringOrString,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -10373,6 +10576,63 @@ export namespace DatatypeUnionsStruct {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $DateSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringOrDecimal,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringOrDecimal",
+        propertySchema: DatatypeUnionsStruct.schema.properties.stringOrDecimal,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly object?: $NumericFilter<BigDecimal>;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<BigDecimal>;
               };
             };
           }
@@ -10667,6 +10927,61 @@ export namespace DatatypeUnionsStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.decimalOrString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "decimalOrString",
+        propertySchema: DatatypeUnionsStruct.schema.properties.decimalOrString,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $bigDecimalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly object?: $NumericFilter<BigDecimal>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<BigDecimal>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.langStringOrString,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -10769,6 +11084,61 @@ export namespace DatatypeUnionsStruct {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $DateSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringOrDecimal,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringOrDecimal",
+        propertySchema: DatatypeUnionsStruct.schema.properties.stringOrDecimal,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $bigDecimalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly object?: $NumericFilter<BigDecimal>;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<BigDecimal>;
               };
             };
           }
@@ -10966,6 +11336,22 @@ export namespace DatatypeUnionsStruct {
 
         throw new Error("unable to deserialize JSON");
       })($json["dateTimeOrDate"]),
+      decimalOrString: ((
+        value: string | string,
+      ): Either<Error, BigDecimal | string> => {
+        if (typeof value === "object") {
+          return Either.encase<Error, BigDecimal>(
+            () => new BigDecimal(value as string),
+          ).map((value) => value);
+        }
+        if (typeof value === "string") {
+          return Either.of<Error, string>(value as string).map(
+            (value) => value,
+          );
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })($json["decimalOrString"]),
       langStringOrString: ((
         value:
           | { readonly "@language": string; readonly "@value": string }
@@ -11025,6 +11411,22 @@ export namespace DatatypeUnionsStruct {
 
         throw new Error("unable to deserialize JSON");
       })($json["stringOrDate"]),
+      stringOrDecimal: ((
+        value: string | string,
+      ): Either<Error, string | BigDecimal> => {
+        if (typeof value === "string") {
+          return Either.of<Error, string>(value as string).map(
+            (value) => value,
+          );
+        }
+        if (typeof value === "object") {
+          return Either.encase<Error, BigDecimal>(
+            () => new BigDecimal(value as string),
+          ).map((value) => value);
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })($json["stringOrDecimal"]),
       stringOrLangString: ((
         value:
           | string
@@ -11305,6 +11707,61 @@ export namespace DatatypeUnionsStruct {
             }
           >,
         }),
+        decimalOrString: $shaclPropertyFromRdf<
+          BigDecimal | string,
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<BigDecimal>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DatatypeUnionsStruct.schema.properties.decimalOrString,
+          typeFromRdfResourceValues: ((values, options) =>
+            values.chainMap((value) => {
+              const valueAsValues = value.toValues();
+              return (
+                $bigDecimalFromRdfResourceValues(valueAsValues, {
+                  ...options,
+                  schema: options.schema.members["object"].type,
+                }) as Either<Error, Resource.Values<BigDecimal | string>>
+              )
+                .altLazy(
+                  () =>
+                    $stringFromRdfResourceValues<string>(valueAsValues, {
+                      ...options,
+                      schema: options.schema.members["string"].type,
+                    }) as Either<Error, Resource.Values<BigDecimal | string>>,
+                )
+                .chain((values) => values.head());
+            })) satisfies $FromRdfResourceValuesFunction<
+            BigDecimal | string,
+            {
+              kind: "Union";
+              members: {
+                readonly object: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $NumericSchema<BigDecimal>;
+                };
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+              };
+            }
+          >,
+        }),
         langStringOrString: $shaclPropertyFromRdf<
           Literal | string,
           {
@@ -11409,6 +11866,61 @@ export namespace DatatypeUnionsStruct {
                 readonly object: {
                   discriminantValues: readonly (number | string)[];
                   type: $DateSchema;
+                };
+              };
+            }
+          >,
+        }),
+        stringOrDecimal: $shaclPropertyFromRdf<
+          string | BigDecimal,
+          {
+            kind: "Union";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<BigDecimal>;
+              };
+            };
+          }
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DatatypeUnionsStruct.schema.properties.stringOrDecimal,
+          typeFromRdfResourceValues: ((values, options) =>
+            values.chainMap((value) => {
+              const valueAsValues = value.toValues();
+              return (
+                $stringFromRdfResourceValues<string>(valueAsValues, {
+                  ...options,
+                  schema: options.schema.members["string"].type,
+                }) as Either<Error, Resource.Values<string | BigDecimal>>
+              )
+                .altLazy(
+                  () =>
+                    $bigDecimalFromRdfResourceValues(valueAsValues, {
+                      ...options,
+                      schema: options.schema.members["object"].type,
+                    }) as Either<Error, Resource.Values<string | BigDecimal>>,
+                )
+                .chain((values) => values.head());
+            })) satisfies $FromRdfResourceValuesFunction<
+            string | BigDecimal,
+            {
+              kind: "Union";
+              members: {
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+                readonly object: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $NumericSchema<BigDecimal>;
                 };
               };
             }
@@ -11539,6 +12051,18 @@ export namespace DatatypeUnionsStruct {
     })(hasher, _datatypeUnionsStruct.dateTimeOrDate);
     (<HasherT extends $Hasher>(
       hasher: HasherT,
+      value: BigDecimal | string,
+    ): HasherT => {
+      if (typeof value === "object") {
+        return $hashBigDecimal(hasher, value);
+      }
+      if (typeof value === "string") {
+        return $hashString(hasher, value);
+      }
+      return hasher;
+    })(hasher, _datatypeUnionsStruct.decimalOrString);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
       value: Literal | string,
     ): HasherT => {
       if (typeof value === "object") {
@@ -11561,6 +12085,18 @@ export namespace DatatypeUnionsStruct {
       }
       return hasher;
     })(hasher, _datatypeUnionsStruct.stringOrDate);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: string | BigDecimal,
+    ): HasherT => {
+      if (typeof value === "string") {
+        return $hashString(hasher, value);
+      }
+      if (typeof value === "object") {
+        return $hashBigDecimal(hasher, value);
+      }
+      return hasher;
+    })(hasher, _datatypeUnionsStruct.stringOrDecimal);
     (<HasherT extends $Hasher>(
       hasher: HasherT,
       value: string | Literal,
@@ -11628,6 +12164,7 @@ export namespace DatatypeUnionsStruct {
             readonly "@value": string;
           };
         };
+    readonly decimalOrString: string | string;
     readonly langStringOrString:
       | { readonly "@language": string; readonly "@value": string }
       | string;
@@ -11637,6 +12174,7 @@ export namespace DatatypeUnionsStruct {
           readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
           readonly "@value": string;
         };
+    readonly stringOrDecimal: string | string;
     readonly stringOrLangString:
       | string
       | { readonly "@language": string; readonly "@value": string };
@@ -11717,6 +12255,10 @@ export namespace DatatypeUnionsStruct {
               description:
                 "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
             }),
+          decimalOrString: z.union([z.string(), z.string()]).readonly().meta({
+            description:
+              "Decimal or string. These don't need discriminant values because they're different types in TypeScript.",
+          }),
           langStringOrString: z
             .union([
               z.object({ "@language": z.string(), "@value": z.string() }),
@@ -11740,6 +12282,10 @@ export namespace DatatypeUnionsStruct {
               description:
                 "String or date. These don't need discriminant values because they're different types in TypeScript.",
             }),
+          stringOrDecimal: z.union([z.string(), z.string()]).readonly().meta({
+            description:
+              "String or decimal. These don't need discriminant values because they're different types in TypeScript.",
+          }),
           stringOrLangString: z
             .union([
               z.string(),
@@ -11787,10 +12333,18 @@ export namespace DatatypeUnionsStruct {
             type: "Control",
           },
           {
+            scope: `${scopePrefix}/properties/decimalOrString`,
+            type: "Control",
+          },
+          {
             scope: `${scopePrefix}/properties/langStringOrString`,
             type: "Control",
           },
           { scope: `${scopePrefix}/properties/stringOrDate`, type: "Control" },
+          {
+            scope: `${scopePrefix}/properties/stringOrDecimal`,
+            type: "Control",
+          },
           {
             scope: `${scopePrefix}/properties/stringOrLangString`,
             type: "Control",
@@ -11862,6 +12416,23 @@ export namespace DatatypeUnionsStruct {
           },
         },
       },
+      decimalOrString: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/decimalOrString"),
+        type: {
+          kind: "Union" as const,
+          members: {
+            object: {
+              discriminantValues: ["object"],
+              type: { kind: "BigDecimal" as const },
+            },
+            string: {
+              discriminantValues: ["string"],
+              type: { kind: "String" as const },
+            },
+          },
+        },
+      },
       langStringOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/langStringOrString"),
@@ -11892,6 +12463,23 @@ export namespace DatatypeUnionsStruct {
             object: {
               discriminantValues: ["object"],
               type: { kind: "Date" as const },
+            },
+          },
+        },
+      },
+      stringOrDecimal: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/stringOrDecimal"),
+        type: {
+          kind: "Union" as const,
+          members: {
+            string: {
+              discriminantValues: ["string"],
+              type: { kind: "String" as const },
+            },
+            object: {
+              discriminantValues: ["object"],
+              type: { kind: "BigDecimal" as const },
             },
           },
         },
@@ -12089,6 +12677,16 @@ export namespace DatatypeUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeUnionsStruct.dateTimeOrDate),
+        decimalOrString: ((value: BigDecimal | string): string | string => {
+          if (typeof value === "object") {
+            return value.toFixed();
+          }
+          if (typeof value === "string") {
+            return value;
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeUnionsStruct.decimalOrString),
         langStringOrString: ((
           value: Literal | string,
         ):
@@ -12123,6 +12721,16 @@ export namespace DatatypeUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeUnionsStruct.stringOrDate),
+        stringOrDecimal: ((value: string | BigDecimal): string | string => {
+          if (typeof value === "string") {
+            return value;
+          }
+          if (typeof value === "object") {
+            return value.toFixed();
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeUnionsStruct.stringOrDecimal),
         stringOrLangString: ((
           value: string | Literal,
         ):
@@ -12229,6 +12837,28 @@ export namespace DatatypeUnionsStruct {
       parameters.graph,
     );
     parameters.resource.add(
+      DatatypeUnionsStruct.schema.properties.decimalOrString.path,
+      (
+        ((value, _options): Literal[] => {
+          if (typeof value === "object") {
+            return [$bigDecimalLiteral(value)];
+          }
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
+
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<BigDecimal | string>
+      )(parameters.object.decimalOrString, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          DatatypeUnionsStruct.schema.properties.decimalOrString.path,
+      }),
+      parameters.graph,
+    );
+    parameters.resource.add(
       DatatypeUnionsStruct.schema.properties.langStringOrString.path,
       (
         ((value, _options): Literal[] => {
@@ -12268,6 +12898,28 @@ export namespace DatatypeUnionsStruct {
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
         propertyPath: DatatypeUnionsStruct.schema.properties.stringOrDate.path,
+      }),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      DatatypeUnionsStruct.schema.properties.stringOrDecimal.path,
+      (
+        ((value, _options): Literal[] => {
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
+          if (typeof value === "object") {
+            return [$bigDecimalLiteral(value)];
+          }
+
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<string | BigDecimal>
+      )(parameters.object.stringOrDecimal, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          DatatypeUnionsStruct.schema.properties.stringOrDecimal.path,
       }),
       parameters.graph,
     );

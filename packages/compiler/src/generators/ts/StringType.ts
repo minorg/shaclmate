@@ -7,6 +7,8 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
+  private readonly languageIn: readonly string[];
+
   override readonly filterFunction =
     code`${this.reusables.snippets.filterString}`;
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
@@ -23,6 +25,16 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly kind = "String";
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
+
+  constructor({
+    languageIn,
+    ...superParameters
+  }: { languageIn: readonly string[] } & ConstructorParameters<
+    typeof AbstractPrimitiveType<string>
+  >[0]) {
+    super(superParameters);
+    this.languageIn = languageIn;
+  }
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {

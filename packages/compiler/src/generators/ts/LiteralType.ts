@@ -8,6 +8,8 @@ import type { Typeof } from "./Typeof.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class LiteralType extends AbstractLiteralType {
+  private readonly languageIn: readonly string[];
+
   protected override readonly inlineExpression =
     code`${this.reusables.imports.Literal}`;
 
@@ -43,6 +45,16 @@ export class LiteralType extends AbstractLiteralType {
   override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.literalSparqlWherePatterns}`;
+
+  constructor({
+    languageIn,
+    ...superParameters
+  }: { languageIn: readonly string[] } & ConstructorParameters<
+    typeof AbstractLiteralType
+  >[0]) {
+    super(superParameters);
+    this.languageIn = languageIn;
+  }
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
