@@ -225,7 +225,7 @@ describe("fromRdf", () => {
       new ResourceSet({ dataFactory, dataset }).resource(identifier),
     );
     expect(result).toBeLeft();
-    // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
+    // expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
   });
 
   it("reject invalid literal property values (sh:in)", ({ expect }) => {
@@ -250,7 +250,7 @@ describe("fromRdf", () => {
       new ResourceSet({ dataFactory, dataset }).resource(identifier),
     );
     expect(result).toBeLeft();
-    expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
+    expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
   });
 
   it("languageIn: valid", ({ expect }) => {
@@ -436,7 +436,7 @@ describe("fromRdf", () => {
     const result =
       kitchenSink.PropertyCardinalitiesStruct.fromRdfResource(instanceResource);
     expect(result).toBeLeft();
-    // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
+    // expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
   });
 
   it("accept unknown sub-class type", ({ expect }) => {

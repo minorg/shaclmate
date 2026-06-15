@@ -656,7 +656,7 @@ function $termFromRdfResourceValues<
           !schema.in.some((in_) => in_.equals(term))
         ) {
           return Left(
-            new Resource.MistypedTermValueError({
+            new Resource.MistypedValueError({
               actualValue: term,
               expectedValueType: "Term in",
               focusResource,
@@ -667,7 +667,7 @@ function $termFromRdfResourceValues<
 
         if (!schema.types.some((type) => term.termType === type)) {
           return Left(
-            new Resource.MistypedTermValueError({
+            new Resource.MistypedValueError({
               actualValue: term,
               expectedValueType: "Term types",
               focusResource,
@@ -708,7 +708,7 @@ const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
           languageIn.includes(literal.language)
             ? Right(value)
             : Left(
-                new Resource.MistypedTermValueError({
+                new Resource.MistypedValueError({
                   actualValue: literal,
                   expectedValueType: "Literal",
                   focusResource: value.focusResource,
