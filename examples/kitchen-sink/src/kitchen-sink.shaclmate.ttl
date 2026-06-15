@@ -46,16 +46,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
-        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:path :singleClass
-    ], [
-        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass1, :UndefinedClass2 ;
-        sh:maxCount 1 ;
-        sh:path :multiClass
-    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -73,6 +63,16 @@
         sh:maxCount 1 ;
         sh:node :PartialStruct ;
         sh:path :nodeClass2
+    ], [
+        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:path :singleClass
+    ], [
+        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass1, :UndefinedClass2 ;
+        sh:maxCount 1 ;
+        sh:path :multiClass
     ] .
 
 :ConvertibleTypesStruct
@@ -126,8 +126,9 @@
 
 :DatatypeUnionsStruct
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Struct node shape with sh:xone (union) properties over sh:datatype node shapes. These unions are common in actual models." ;
+    rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
+        rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :dateOrDateTime ;
@@ -141,6 +142,7 @@
             ]
         )
     ], [
+        rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :dateTimeOrDate ;
@@ -154,6 +156,7 @@
             ]
         )
     ], [
+        rdfs:comment "Date or string. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :dateOrString ;
@@ -165,6 +168,7 @@
             ]
         )
     ], [
+        rdfs:comment "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :langStringOrString ;
@@ -176,6 +180,7 @@
             ]
         )
     ], [
+        rdfs:comment "String or date. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :stringOrDate ;
@@ -187,6 +192,7 @@
             ]
         )
     ], [
+        rdfs:comment "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :stringOrLangString ;
@@ -389,6 +395,23 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:in properties." ;
     sh:property [
+        sh:in (1e0
+            2e0
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDoubles
+    ], [
+        sh:in ("text"
+            "html"
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inStrings
+    ], [
+        sh:in (true
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inBooleans
+    ], [
         sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
         ) ;
         sh:maxCount 1 ;
@@ -409,23 +432,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :ReusableIn ;
         sh:path :reusableIn
-    ], [
-        sh:in (1e0
-            2e0
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDoubles
-    ], [
-        sh:in ("text"
-            "html"
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inStrings
-    ], [
-        sh:in (true
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inBooleans
     ] .
 
 :IndirectRecursiveStruct

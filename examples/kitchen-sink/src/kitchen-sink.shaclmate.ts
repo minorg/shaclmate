@@ -9539,7 +9539,7 @@ export namespace ConvertibleTypesStruct {
       }),
     );
 } /**
- * Struct node shape with sh:xone (union) properties over sh:datatype node shapes. These unions are common in actual models.
+ * Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models.
  */
 
 export type DatatypeUnionsStruct = {
@@ -9547,20 +9547,38 @@ export type DatatypeUnionsStruct = {
 
   readonly $type: "DatatypeUnionsStruct";
 
+  /**
+   * Date or date time. These must have discriminant values because they're the same type in TypeScript.
+   */
   readonly dateOrDateTime:
     | { type: "date"; value: Date }
     | { type: "dateTime"; value: Date };
 
+  /**
+   * Date or string. These don't need discriminant values because they're different types in TypeScript.
+   */
   readonly dateOrString: Date | string;
 
+  /**
+   * Date or date time. These must have discriminant values because they're the same type in TypeScript.
+   */
   readonly dateTimeOrDate:
     | { type: "dateTime"; value: Date }
     | { type: "date"; value: Date };
 
+  /**
+   * rdf:langString or string. These don't need discriminant values because they're different types in TypeScript.
+   */
   readonly langStringOrString: Literal | string;
 
+  /**
+   * String or date. These don't need discriminant values because they're different types in TypeScript.
+   */
   readonly stringOrDate: string | Date;
 
+  /**
+   * String or rdf:langString. These don't need discriminant values because they're different types in TypeScript.
+   */
   readonly stringOrLangString: string | Literal;
 };
 
@@ -11541,8 +11559,15 @@ export namespace DatatypeUnionsStruct {
                 value: z.iso.datetime(),
               }),
             ])
-            .readonly(),
-          dateOrString: z.union([z.iso.date(), z.string()]).readonly(),
+            .readonly()
+            .meta({
+              description:
+                "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
+            }),
+          dateOrString: z.union([z.iso.date(), z.string()]).readonly().meta({
+            description:
+              "Date or string. These don't need discriminant values because they're different types in TypeScript.",
+          }),
           dateTimeOrDate: z
             .discriminatedUnion("type", [
               z.object({
@@ -11551,24 +11576,39 @@ export namespace DatatypeUnionsStruct {
               }),
               z.object({ type: z.literal("date"), value: z.iso.date() }),
             ])
-            .readonly(),
+            .readonly()
+            .meta({
+              description:
+                "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
+            }),
           langStringOrString: z
             .union([
               z.object({ "@language": z.string(), "@value": z.string() }),
               z.string(),
             ])
-            .readonly(),
-          stringOrDate: z.union([z.string(), z.iso.date()]).readonly(),
+            .readonly()
+            .meta({
+              description:
+                "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript.",
+            }),
+          stringOrDate: z.union([z.string(), z.iso.date()]).readonly().meta({
+            description:
+              "String or date. These don't need discriminant values because they're different types in TypeScript.",
+          }),
           stringOrLangString: z
             .union([
               z.string(),
               z.object({ "@language": z.string(), "@value": z.string() }),
             ])
-            .readonly(),
+            .readonly()
+            .meta({
+              description:
+                "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript.",
+            }),
         })
         .meta({
           description:
-            "Struct node shape with sh:xone (union) properties over sh:datatype node shapes. These unions are common in actual models.",
+            "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models.",
         }) satisfies z.ZodType<Json>;
     }
 
