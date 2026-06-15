@@ -11721,11 +11721,23 @@ export namespace DatatypeUnionsStruct {
         throw new Error("unable to deserialize JSON");
       })($json["decimalOrString"]),
       integerOrString: ((
-        value: string | string,
+        value:
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+              readonly "@value": string;
+            }
+          | string,
       ): Either<Error, bigint | string> => {
         if (typeof value === "bigint") {
           return Either.encase<Error, bigint>(() =>
-            BigInt(value as string),
+            BigInt(
+              (
+                value as {
+                  readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+                  readonly "@value": string;
+                }
+              )["@value"],
+            ),
           ).map((value) => value);
         }
         if (typeof value === "string") {
@@ -11825,7 +11837,12 @@ export namespace DatatypeUnionsStruct {
         throw new Error("unable to deserialize JSON");
       })($json["stringOrDecimal"]),
       stringOrInteger: ((
-        value: string | string,
+        value:
+          | string
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+              readonly "@value": string;
+            },
       ): Either<Error, string | bigint> => {
         if (typeof value === "string") {
           return Either.of<Error, string>(value as string).map(
@@ -11834,7 +11851,14 @@ export namespace DatatypeUnionsStruct {
         }
         if (typeof value === "bigint") {
           return Either.encase<Error, bigint>(() =>
-            BigInt(value as string),
+            BigInt(
+              (
+                value as {
+                  readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+                  readonly "@value": string;
+                }
+              )["@value"],
+            ),
           ).map((value) => value);
         }
 
@@ -12717,7 +12741,12 @@ export namespace DatatypeUnionsStruct {
           readonly "@value": string;
         }
       | string;
-    readonly integerOrString: string | string;
+    readonly integerOrString:
+      | {
+          readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+          readonly "@value": string;
+        }
+      | string;
     readonly langStringOrString:
       | { readonly "@language": string; readonly "@value": string }
       | string;
@@ -12733,7 +12762,12 @@ export namespace DatatypeUnionsStruct {
           readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
           readonly "@value": string;
         };
-    readonly stringOrInteger: string | string;
+    readonly stringOrInteger:
+      | string
+      | {
+          readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+          readonly "@value": string;
+        };
     readonly stringOrLangString:
       | string
       | { readonly "@language": string; readonly "@value": string };
@@ -12827,10 +12861,19 @@ export namespace DatatypeUnionsStruct {
               description:
                 "Decimal or string. These don't need discriminant values because they're different types in TypeScript.",
             }),
-          integerOrString: z.union([z.string(), z.string()]).readonly().meta({
-            description:
-              "Integer or string. These don't need discriminant values because they're different types in TypeScript.",
-          }),
+          integerOrString: z
+            .union([
+              z.object({
+                "@type": z.literal("http://www.w3.org/2001/XMLSchema#integer"),
+                "@value": z.string(),
+              }),
+              z.string(),
+            ])
+            .readonly()
+            .meta({
+              description:
+                "Integer or string. These don't need discriminant values because they're different types in TypeScript.",
+            }),
           langStringOrString: z
             .union([
               z.object({ "@language": z.string(), "@value": z.string() }),
@@ -12867,10 +12910,19 @@ export namespace DatatypeUnionsStruct {
               description:
                 "String or decimal. These don't need discriminant values because they're different types in TypeScript.",
             }),
-          stringOrInteger: z.union([z.string(), z.string()]).readonly().meta({
-            description:
-              "String or integer. These don't need discriminant values because they're different types in TypeScript.",
-          }),
+          stringOrInteger: z
+            .union([
+              z.string(),
+              z.object({
+                "@type": z.literal("http://www.w3.org/2001/XMLSchema#integer"),
+                "@value": z.string(),
+              }),
+            ])
+            .readonly()
+            .meta({
+              description:
+                "String or integer. These don't need discriminant values because they're different types in TypeScript.",
+            }),
           stringOrLangString: z
             .union([
               z.string(),
@@ -13324,9 +13376,19 @@ export namespace DatatypeUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeUnionsStruct.decimalOrString),
-        integerOrString: ((value: bigint | string): string | string => {
+        integerOrString: ((
+          value: bigint | string,
+        ):
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+              readonly "@value": string;
+            }
+          | string => {
           if (typeof value === "bigint") {
-            return value.toString();
+            return {
+              "@type": "http://www.w3.org/2001/XMLSchema#integer" as const,
+              "@value": value.toString(),
+            };
           }
           if (typeof value === "string") {
             return value;
@@ -13388,12 +13450,22 @@ export namespace DatatypeUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeUnionsStruct.stringOrDecimal),
-        stringOrInteger: ((value: string | bigint): string | string => {
+        stringOrInteger: ((
+          value: string | bigint,
+        ):
+          | string
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+              readonly "@value": string;
+            } => {
           if (typeof value === "string") {
             return value;
           }
           if (typeof value === "bigint") {
-            return value.toString();
+            return {
+              "@type": "http://www.w3.org/2001/XMLSchema#integer" as const,
+              "@value": value.toString(),
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -20826,9 +20898,9 @@ export namespace InPropertiesStruct {
         .orDefault(Either.of(Maybe.empty())),
       inIntegers: Maybe.fromNullable($json["inIntegers"])
         .map((item) =>
-          Either.encase<Error, 1n | 2n>(() => BigInt(item) as 1n | 2n).map(
-            Maybe.of,
-          ),
+          Either.encase<Error, 1n | 2n>(
+            () => BigInt(item["@value"]) as 1n | 2n,
+          ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       inIris: Maybe.fromNullable($json["inIris"])
@@ -21034,7 +21106,10 @@ export namespace InPropertiesStruct {
       readonly "@value": string;
     };
     readonly inDoubles?: 1 | 2;
-    readonly inIntegers?: string;
+    readonly inIntegers?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+      readonly "@value": "1" | "2";
+    };
     readonly inIris?: {
       readonly "@id": "http://example.com/InIri1" | "http://example.com/InIri2";
     };
@@ -21064,7 +21139,12 @@ export namespace InPropertiesStruct {
             })
             .optional(),
           inDoubles: z.union([z.literal(1), z.literal(2)]).optional(),
-          inIntegers: z.enum(["1", "2"]).optional(),
+          inIntegers: z
+            .object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#integer"),
+              "@value": z.enum(["1", "2"]),
+            })
+            .optional(),
           inIris: z
             .object({
               "@id": z.enum([
@@ -21276,7 +21356,10 @@ export namespace InPropertiesStruct {
           .extract(),
         inDoubles: _inPropertiesStruct.inDoubles.map((item) => item).extract(),
         inIntegers: _inPropertiesStruct.inIntegers
-          .map((item) => item.toString())
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#integer" as const,
+            "@value": item.toString() as "1" | "2",
+          }))
           .extract(),
         inIris: _inPropertiesStruct.inIris
           .map((item) => ({ "@id": item.value }))
@@ -34698,7 +34781,9 @@ export namespace NumericsStruct {
         .orDefault(Either.of(Maybe.empty())),
       integerNumeric: Maybe.fromNullable($json["integerNumeric"])
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
+            Maybe.of,
+          ),
         )
         .orDefault(Either.of(Maybe.empty())),
       intNumeric: Maybe.fromNullable($json["intNumeric"])
@@ -34706,35 +34791,45 @@ export namespace NumericsStruct {
         .orDefault(Either.of(Maybe.empty())),
       longNumeric: Maybe.fromNullable($json["longNumeric"])
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
+            Maybe.of,
+          ),
         )
         .orDefault(Either.of(Maybe.empty())),
       negativeIntegerNumeric: Maybe.fromNullable(
         $json["negativeIntegerNumeric"],
       )
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
+            Maybe.of,
+          ),
         )
         .orDefault(Either.of(Maybe.empty())),
       nonNegativeIntegerNumeric: Maybe.fromNullable(
         $json["nonNegativeIntegerNumeric"],
       )
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
+            Maybe.of,
+          ),
         )
         .orDefault(Either.of(Maybe.empty())),
       nonPositiveIntegerNumeric: Maybe.fromNullable(
         $json["nonPositiveIntegerNumeric"],
       )
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
+            Maybe.of,
+          ),
         )
         .orDefault(Either.of(Maybe.empty())),
       positiveIntegerNumeric: Maybe.fromNullable(
         $json["positiveIntegerNumeric"],
       )
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
+            Maybe.of,
+          ),
         )
         .orDefault(Either.of(Maybe.empty())),
       shortNumeric: Maybe.fromNullable($json["shortNumeric"])
@@ -34748,7 +34843,9 @@ export namespace NumericsStruct {
         .orDefault(Either.of(Maybe.empty())),
       unsignedLongNumeric: Maybe.fromNullable($json["unsignedLongNumeric"])
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
+            Maybe.of,
+          ),
         )
         .orDefault(Either.of(Maybe.empty())),
       unsignedShortNumeric: Maybe.fromNullable($json["unsignedShortNumeric"])
@@ -35057,17 +35154,38 @@ export namespace NumericsStruct {
     };
     readonly doubleNumeric?: number;
     readonly floatNumeric?: number;
-    readonly integerNumeric?: string;
+    readonly integerNumeric?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+      readonly "@value": string;
+    };
     readonly intNumeric?: number;
-    readonly longNumeric?: string;
-    readonly negativeIntegerNumeric?: string;
-    readonly nonNegativeIntegerNumeric?: string;
-    readonly nonPositiveIntegerNumeric?: string;
-    readonly positiveIntegerNumeric?: string;
+    readonly longNumeric?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#long";
+      readonly "@value": string;
+    };
+    readonly negativeIntegerNumeric?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#negativeInteger";
+      readonly "@value": string;
+    };
+    readonly nonNegativeIntegerNumeric?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger";
+      readonly "@value": string;
+    };
+    readonly nonPositiveIntegerNumeric?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#nonPositiveInteger";
+      readonly "@value": string;
+    };
+    readonly positiveIntegerNumeric?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#positiveInteger";
+      readonly "@value": string;
+    };
     readonly shortNumeric?: number;
     readonly unsignedByteNumeric?: number;
     readonly unsignedIntNumeric?: number;
-    readonly unsignedLongNumeric?: string;
+    readonly unsignedLongNumeric?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#unsignedLong";
+      readonly "@value": string;
+    };
     readonly unsignedShortNumeric?: number;
   };
 
@@ -35094,17 +35212,62 @@ export namespace NumericsStruct {
             .optional(),
           doubleNumeric: z.number().optional(),
           floatNumeric: z.number().optional(),
-          integerNumeric: z.string().optional(),
+          integerNumeric: z
+            .object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#integer"),
+              "@value": z.string(),
+            })
+            .optional(),
           intNumeric: z.number().optional(),
-          longNumeric: z.string().optional(),
-          negativeIntegerNumeric: z.string().optional(),
-          nonNegativeIntegerNumeric: z.string().optional(),
-          nonPositiveIntegerNumeric: z.string().optional(),
-          positiveIntegerNumeric: z.string().optional(),
+          longNumeric: z
+            .object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#long"),
+              "@value": z.string(),
+            })
+            .optional(),
+          negativeIntegerNumeric: z
+            .object({
+              "@type": z.literal(
+                "http://www.w3.org/2001/XMLSchema#negativeInteger",
+              ),
+              "@value": z.string(),
+            })
+            .optional(),
+          nonNegativeIntegerNumeric: z
+            .object({
+              "@type": z.literal(
+                "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+              ),
+              "@value": z.string(),
+            })
+            .optional(),
+          nonPositiveIntegerNumeric: z
+            .object({
+              "@type": z.literal(
+                "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+              ),
+              "@value": z.string(),
+            })
+            .optional(),
+          positiveIntegerNumeric: z
+            .object({
+              "@type": z.literal(
+                "http://www.w3.org/2001/XMLSchema#positiveInteger",
+              ),
+              "@value": z.string(),
+            })
+            .optional(),
           shortNumeric: z.number().optional(),
           unsignedByteNumeric: z.number().optional(),
           unsignedIntNumeric: z.number().optional(),
-          unsignedLongNumeric: z.string().optional(),
+          unsignedLongNumeric: z
+            .object({
+              "@type": z.literal(
+                "http://www.w3.org/2001/XMLSchema#unsignedLong",
+              ),
+              "@value": z.string(),
+            })
+            .optional(),
           unsignedShortNumeric: z.number().optional(),
         })
         .meta({
@@ -35391,23 +35554,45 @@ export namespace NumericsStruct {
           .map((item) => item)
           .extract(),
         integerNumeric: _numericsStruct.integerNumeric
-          .map((item) => item.toString())
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#integer" as const,
+            "@value": item.toString(),
+          }))
           .extract(),
         intNumeric: _numericsStruct.intNumeric.map((item) => item).extract(),
         longNumeric: _numericsStruct.longNumeric
-          .map((item) => item.toString())
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#long" as const,
+            "@value": item.toString(),
+          }))
           .extract(),
         negativeIntegerNumeric: _numericsStruct.negativeIntegerNumeric
-          .map((item) => item.toString())
+          .map((item) => ({
+            "@type":
+              "http://www.w3.org/2001/XMLSchema#negativeInteger" as const,
+            "@value": item.toString(),
+          }))
           .extract(),
         nonNegativeIntegerNumeric: _numericsStruct.nonNegativeIntegerNumeric
-          .map((item) => item.toString())
+          .map((item) => ({
+            "@type":
+              "http://www.w3.org/2001/XMLSchema#nonNegativeInteger" as const,
+            "@value": item.toString(),
+          }))
           .extract(),
         nonPositiveIntegerNumeric: _numericsStruct.nonPositiveIntegerNumeric
-          .map((item) => item.toString())
+          .map((item) => ({
+            "@type":
+              "http://www.w3.org/2001/XMLSchema#nonPositiveInteger" as const,
+            "@value": item.toString(),
+          }))
           .extract(),
         positiveIntegerNumeric: _numericsStruct.positiveIntegerNumeric
-          .map((item) => item.toString())
+          .map((item) => ({
+            "@type":
+              "http://www.w3.org/2001/XMLSchema#positiveInteger" as const,
+            "@value": item.toString(),
+          }))
           .extract(),
         shortNumeric: _numericsStruct.shortNumeric
           .map((item) => item)
@@ -35419,7 +35604,10 @@ export namespace NumericsStruct {
           .map((item) => item)
           .extract(),
         unsignedLongNumeric: _numericsStruct.unsignedLongNumeric
-          .map((item) => item.toString())
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#unsignedLong" as const,
+            "@value": item.toString(),
+          }))
           .extract(),
         unsignedShortNumeric: _numericsStruct.unsignedShortNumeric
           .map((item) => item)
