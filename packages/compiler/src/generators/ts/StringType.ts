@@ -46,14 +46,6 @@ export class StringType extends AbstractPrimitiveType<string> {
     return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
   }
 
-  @Memoize()
-  protected override get inlineExpression(): Code {
-    if (this.primitiveIn.length > 0) {
-      return code`${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
-    }
-    return code`string`;
-  }
-
   protected override get schemaInitializers(): readonly Code[] {
     let initializers = super.schemaInitializers;
     if (this.languageIn.length > 0) {
@@ -62,19 +54,6 @@ export class StringType extends AbstractPrimitiveType<string> {
       );
     }
     return initializers;
-  }
-
-  override jsonSchema(
-    _parameters: Parameters<AbstractPrimitiveType<string>["jsonSchema"]>[0],
-  ): Code {
-    switch (this.primitiveIn.length) {
-      case 0:
-        return code`${this.reusables.imports.z}.string()`;
-      case 1:
-        return code`${this.reusables.imports.z}.literal(${this.primitiveIn[0]})`;
-      default:
-        return code`${this.reusables.imports.z}.enum(${arrayOf(...this.primitiveIn)})`;
-    }
   }
 
   override literalValueExpression(literal: Literal | string): Code {

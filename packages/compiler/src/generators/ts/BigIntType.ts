@@ -27,7 +27,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
     variables,
   }: Parameters<AbstractNumericType<bigint>["fromJsonExpression"]>[0]): Code {
     let expression = code`BigInt(${variables.value})`;
-    if (this.primitiveIn.length > 0) {
+    if (this.decodedIn.length > 0) {
       expression = code`${expression} as ${this.expression}`;
     }
     return code`${this.reusables.imports.Either}.encase<Error, ${this.expression}>(() => ${expression})`;
@@ -36,14 +36,14 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override jsonSchema(
     _parameters: Parameters<AbstractNumericType<bigint>["jsonSchema"]>[0],
   ): Code {
-    switch (this.primitiveIn.length) {
+    switch (this.decodedIn.length) {
       case 0:
         return code`${this.reusables.imports.z}.string()`;
       case 1:
-        return code`${this.reusables.imports.z}.literal(${literalOf(this.primitiveIn[0].toString())})`;
+        return code`${this.reusables.imports.z}.literal(${literalOf(this.decodedIn[0].toString())})`;
       default:
         return code`${this.reusables.imports.z}.enum([${joinCode(
-          this.primitiveIn.map((value) => code`${literalOf(value.toString())}`),
+          this.decodedIn.map((value) => code`${literalOf(value.toString())}`),
           { on: "," },
         )}])`;
     }

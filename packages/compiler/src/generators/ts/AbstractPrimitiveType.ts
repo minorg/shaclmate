@@ -1,9 +1,11 @@
 import type { Primitive } from "@rdfx/literal";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class of typed literals whose datatype corresponds to a JavaScript primitive type.
@@ -16,10 +18,39 @@ export abstract class AbstractPrimitiveType<
   override readonly equalsFunction =
     code`${this.reusables.snippets.strictEquals}`;
 
+  @Memoize()
+  protected override get inlineExpression(): Code {
+    if (this.decodedIn.length > 0) {
+      return code`${joinCode(
+        this.decodedIn.map((value) => this.literalValueExpression(value)),
+        { on: " | " },
+      )}`;
+    }
+    return code`${this.jsTypes[0].typeof}`;
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
     return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${variables.value})`;
+  }
+
+  override jsonSchema(
+    _parameters: Parameters<AbstractTypedLiteralType<ValueT>["jsonSchema"]>[0],
+  ): Code {
+    switch (this.decodedIn.length) {
+      case 0:
+        return code`${this.reusables.imports.z}.${this.jsTypes[0].typeof}()`;
+      case 1:
+        return code`${this.reusables.imports.z}.literal(${this.literalValueExpression(this.decodedIn[0])})`;
+      default:
+        return code`${this.reusables.imports.z}.enum(${arrayOf(
+          ...this.decodedIn.map(
+            (value) =>
+              code`${this.reusables.imports.z}.literal(${this.literalValueExpression(value)})`,
+          ),
+        )})`;
+    }
   }
 
   @Memoize()
