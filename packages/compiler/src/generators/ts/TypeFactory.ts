@@ -470,7 +470,7 @@ export class TypeFactory {
               datatypeDefinition.kind === "date" ? DateType : DateTimeType
             )({
               ...typeParameters,
-              primitiveIn: astType.in_.map((value) =>
+              dateIn: astType.in_.map((value) =>
                 (datatypeDefinition.kind === "date"
                   ? LiteralDecoder.decodeDateLiteral
                   : LiteralDecoder.decodeDateTimeLiteral)(value).unsafeCoerce(),
