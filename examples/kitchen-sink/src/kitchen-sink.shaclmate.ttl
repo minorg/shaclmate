@@ -46,16 +46,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
-        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:path :singleClass
-    ], [
-        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass1, :UndefinedClass2 ;
-        sh:maxCount 1 ;
-        sh:path :multiClass
-    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -73,6 +63,16 @@
         sh:maxCount 1 ;
         sh:node :PartialStruct ;
         sh:path :nodeClass2
+    ], [
+        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:path :singleClass
+    ], [
+        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass1, :UndefinedClass2 ;
+        sh:maxCount 1 ;
+        sh:path :multiClass
     ] .
 
 :ConvertibleTypesStruct
@@ -352,20 +352,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Struct node shape that uses different methods to make SHACLmate ignore properties." ;
     sh:property [
-        rdfs:comment "A property with an explicit sh:severity sh:Violation is not ignored" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :severityViolationProperty ;
-        sh:severity sh:Violation
-    ], [
-        rdfs:comment "A property with an explicit sh:severity sh:Info is ignored" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :severityInfoProperty ;
-        sh:severity sh:Info
-    ], [
         rdfs:comment "A property with an explicit sh:severity sh:Warning is ignored" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -392,6 +378,20 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :severityDefaultProperty
+    ], [
+        rdfs:comment "A property with an explicit sh:severity sh:Violation is not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :severityViolationProperty ;
+        sh:severity sh:Violation
+    ], [
+        rdfs:comment "A property with an explicit sh:severity sh:Info is ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :severityInfoProperty ;
+        sh:severity sh:Info
     ] .
 
 :IgnoredStruct

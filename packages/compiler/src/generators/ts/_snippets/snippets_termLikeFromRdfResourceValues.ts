@@ -24,7 +24,7 @@ const ${syntheticNamePrefix}termLikeFromRdfResourceValues:
       chain = chain.chain(values => values.chainMap(value => value.toLiteral().chain(literal =>
         languageIn.includes(literal.language) ?
           ${imports.Right}(value) :
-          ${imports.Left}(new ${imports.Resource}.MistypedTermValueError(${{
+          ${imports.Left}(new ${imports.Resource}.MistypedValueError(${{
             actualValue: code`literal`,
             expectedValueType: "Literal",
             focusResource: code`value.focusResource`,

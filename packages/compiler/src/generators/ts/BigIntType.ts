@@ -4,7 +4,7 @@ import { LiteralDecoder } from "@rdfx/literal";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
-import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
   override readonly jsTypes = [{ typeof: "bigint" } as const];
@@ -42,10 +42,11 @@ export class BigIntType extends AbstractNumericType<bigint> {
       case 1:
         return code`${this.reusables.imports.z}.literal(${literalOf(this.decodedIn[0].toString())})`;
       default:
-        return code`${this.reusables.imports.z}.enum([${joinCode(
-          this.decodedIn.map((value) => code`${literalOf(value.toString())}`),
-          { on: "," },
-        )}])`;
+        return code`${this.reusables.imports.z}.enum(${arrayOf(
+          ...this.decodedIn.map(
+            (value) => code`${literalOf(value.toString())}`,
+          ),
+        )})`;
     }
   }
 

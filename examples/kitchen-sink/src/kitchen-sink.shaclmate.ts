@@ -139,9 +139,7 @@ function $bigDecimalFromRdfResourceValues(
   >[1],
 ): Either<Error, Resource.Values<BigDecimal>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) =>
-      value.toLiteral().chain($decodeBigDecimalLiteral),
-    ),
+    values.chainMap((value) => value.toBigDecimal(options.schema.in)),
   );
 }
 
@@ -849,13 +847,6 @@ function $dateTimeFromRdfResourceValues(
         : value.toDateTime(),
     ),
   );
-}
-
-/**
- * Decidoe a BigDecimal from a Literal.
- */
-function $decodeBigDecimalLiteral(literal: Literal): Either<Error, BigDecimal> {
-  return Either.encase(() => new BigDecimal(literal.value));
 }
 
 function $deduplicateSparqlPatterns(
@@ -3397,7 +3388,7 @@ function $termFromRdfResourceValues<
           return Left(
             new Resource.MistypedValueError({
               actualValue: term,
-              expectedValueType: "Term types",
+              expectedValueType: "BlankNode | Literal | NamedNode",
               focusResource,
               propertyPath,
             }),
@@ -11337,11 +11328,24 @@ export namespace DatatypeUnionsStruct {
         throw new Error("unable to deserialize JSON");
       })($json["dateTimeOrDate"]),
       decimalOrString: ((
-        value: string | string,
+        value:
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+              readonly "@value": string;
+            }
+          | string,
       ): Either<Error, BigDecimal | string> => {
         if (typeof value === "object") {
           return Either.encase<Error, BigDecimal>(
-            () => new BigDecimal(value as string),
+            () =>
+              new BigDecimal(
+                (
+                  value as {
+                    readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+                    readonly "@value": string;
+                  }
+                )["@value"],
+              ),
           ).map((value) => value);
         }
         if (typeof value === "string") {
@@ -11412,7 +11416,12 @@ export namespace DatatypeUnionsStruct {
         throw new Error("unable to deserialize JSON");
       })($json["stringOrDate"]),
       stringOrDecimal: ((
-        value: string | string,
+        value:
+          | string
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+              readonly "@value": string;
+            },
       ): Either<Error, string | BigDecimal> => {
         if (typeof value === "string") {
           return Either.of<Error, string>(value as string).map(
@@ -11421,7 +11430,15 @@ export namespace DatatypeUnionsStruct {
         }
         if (typeof value === "object") {
           return Either.encase<Error, BigDecimal>(
-            () => new BigDecimal(value as string),
+            () =>
+              new BigDecimal(
+                (
+                  value as {
+                    readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+                    readonly "@value": string;
+                  }
+                )["@value"],
+              ),
           ).map((value) => value);
         }
 
@@ -12164,7 +12181,12 @@ export namespace DatatypeUnionsStruct {
             readonly "@value": string;
           };
         };
-    readonly decimalOrString: string | string;
+    readonly decimalOrString:
+      | {
+          readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+          readonly "@value": string;
+        }
+      | string;
     readonly langStringOrString:
       | { readonly "@language": string; readonly "@value": string }
       | string;
@@ -12174,7 +12196,12 @@ export namespace DatatypeUnionsStruct {
           readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
           readonly "@value": string;
         };
-    readonly stringOrDecimal: string | string;
+    readonly stringOrDecimal:
+      | string
+      | {
+          readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+          readonly "@value": string;
+        };
     readonly stringOrLangString:
       | string
       | { readonly "@language": string; readonly "@value": string };
@@ -12255,10 +12282,19 @@ export namespace DatatypeUnionsStruct {
               description:
                 "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
             }),
-          decimalOrString: z.union([z.string(), z.string()]).readonly().meta({
-            description:
-              "Decimal or string. These don't need discriminant values because they're different types in TypeScript.",
-          }),
+          decimalOrString: z
+            .union([
+              z.object({
+                "@type": z.literal("http://www.w3.org/2001/XMLSchema#decimal"),
+                "@value": z.string(),
+              }),
+              z.string(),
+            ])
+            .readonly()
+            .meta({
+              description:
+                "Decimal or string. These don't need discriminant values because they're different types in TypeScript.",
+            }),
           langStringOrString: z
             .union([
               z.object({ "@language": z.string(), "@value": z.string() }),
@@ -12282,10 +12318,19 @@ export namespace DatatypeUnionsStruct {
               description:
                 "String or date. These don't need discriminant values because they're different types in TypeScript.",
             }),
-          stringOrDecimal: z.union([z.string(), z.string()]).readonly().meta({
-            description:
-              "String or decimal. These don't need discriminant values because they're different types in TypeScript.",
-          }),
+          stringOrDecimal: z
+            .union([
+              z.string(),
+              z.object({
+                "@type": z.literal("http://www.w3.org/2001/XMLSchema#decimal"),
+                "@value": z.string(),
+              }),
+            ])
+            .readonly()
+            .meta({
+              description:
+                "String or decimal. These don't need discriminant values because they're different types in TypeScript.",
+            }),
           stringOrLangString: z
             .union([
               z.string(),
@@ -12677,9 +12722,19 @@ export namespace DatatypeUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeUnionsStruct.dateTimeOrDate),
-        decimalOrString: ((value: BigDecimal | string): string | string => {
+        decimalOrString: ((
+          value: BigDecimal | string,
+        ):
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+              readonly "@value": string;
+            }
+          | string => {
           if (typeof value === "object") {
-            return value.toFixed();
+            return {
+              "@type": "http://www.w3.org/2001/XMLSchema#decimal" as const,
+              "@value": value.toFixed(),
+            };
           }
           if (typeof value === "string") {
             return value;
@@ -12721,12 +12776,22 @@ export namespace DatatypeUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeUnionsStruct.stringOrDate),
-        stringOrDecimal: ((value: string | BigDecimal): string | string => {
+        stringOrDecimal: ((
+          value: string | BigDecimal,
+        ):
+          | string
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+              readonly "@value": string;
+            } => {
           if (typeof value === "string") {
             return value;
           }
           if (typeof value === "object") {
-            return value.toFixed();
+            return {
+              "@type": "http://www.w3.org/2001/XMLSchema#decimal" as const,
+              "@value": value.toFixed(),
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -33970,9 +34035,9 @@ export namespace NumericsStruct {
         .orDefault(Either.of(Maybe.empty())),
       decimalNumeric: Maybe.fromNullable($json["decimalNumeric"])
         .map((item) =>
-          Either.encase<Error, BigDecimal>(() => new BigDecimal(item)).map(
-            Maybe.of,
-          ),
+          Either.encase<Error, BigDecimal>(
+            () => new BigDecimal(item["@value"]),
+          ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       doubleNumeric: Maybe.fromNullable($json["doubleNumeric"])
@@ -34336,7 +34401,10 @@ export namespace NumericsStruct {
     readonly "@id": string;
     readonly "@type": "NumericsStruct";
     readonly byteNumeric?: number;
-    readonly decimalNumeric?: string;
+    readonly decimalNumeric?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+      readonly "@value": string;
+    };
     readonly doubleNumeric?: number;
     readonly floatNumeric?: number;
     readonly integerNumeric?: string;
@@ -34368,7 +34436,12 @@ export namespace NumericsStruct {
           "@id": z.string().min(1),
           "@type": z.literal("NumericsStruct"),
           byteNumeric: z.number().optional(),
-          decimalNumeric: z.string().optional(),
+          decimalNumeric: z
+            .object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#decimal"),
+              "@value": z.string(),
+            })
+            .optional(),
           doubleNumeric: z.number().optional(),
           floatNumeric: z.number().optional(),
           integerNumeric: z.string().optional(),
@@ -34656,7 +34729,10 @@ export namespace NumericsStruct {
         "@type": _numericsStruct.$type,
         byteNumeric: _numericsStruct.byteNumeric.map((item) => item).extract(),
         decimalNumeric: _numericsStruct.decimalNumeric
-          .map((item) => item.toFixed())
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#decimal" as const,
+            "@value": item.toFixed(),
+          }))
           .extract(),
         doubleNumeric: _numericsStruct.doubleNumeric
           .map((item) => item)

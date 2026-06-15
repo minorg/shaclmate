@@ -257,10 +257,10 @@
       ],
       "properties": [
         {
-          "comment": "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          "name": "singleClass",
+          "comment": "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
+          "name": "iriClass",
           "order": 0,
-          "path": "PredicatePath(http://example.com/singleClass)",
+          "path": "PredicatePath(http://example.com/iriClass)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_8"
@@ -272,66 +272,10 @@
               "value": "df_0_8"
             },
             "itemType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_8"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
-            }
-          }
-        },
-        {
-          "comment": "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          "name": "multiClass",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/multiClass)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_9"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_9"
-            },
-            "itemType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "termType": "BlankNode",
-                "value": "df_0_9"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
-            }
-          }
-        },
-        {
-          "comment": "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
-          "name": "iriClass",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/iriClass)",
-          "shapeIdentifier": {
-            "termType": "BlankNode",
-            "value": "df_0_10"
-          },
-          "type": {
-            "kind": "Option",
-            "shapeIdentifier": {
-              "termType": "BlankNode",
-              "value": "df_0_10"
-            },
-            "itemType": {
               "kind": "Iri",
               "shapeIdentifier": {
                 "termType": "BlankNode",
-                "value": "df_0_10"
+                "value": "df_0_8"
               },
               "nodeKinds": [
                 "IRI"
@@ -346,7 +290,7 @@
           "path": "PredicatePath(http://example.com/nodeClass1)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_11"
+            "value": "df_0_9"
           },
           "type": {
             "comment": "Struct node shape that isn't an rdfs:Class.",
@@ -390,7 +334,7 @@
           "path": "PredicatePath(http://example.com/nodeClass2)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_12"
+            "value": "df_0_10"
           },
           "type": {
             "comment": "Struct node shape used as a partial by LazyPropertiesStruct",
@@ -424,6 +368,62 @@
                   "IRI"
                 ]
               }
+            }
+          }
+        },
+        {
+          "comment": "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          "name": "singleClass",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/singleClass)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_11"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_11"
+            },
+            "itemType": {
+              "kind": "Identifier",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_11"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI"
+              ]
+            }
+          }
+        },
+        {
+          "comment": "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          "name": "multiClass",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/multiClass)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_12"
+          },
+          "type": {
+            "kind": "Option",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_12"
+            },
+            "itemType": {
+              "kind": "Identifier",
+              "shapeIdentifier": {
+                "termType": "BlankNode",
+                "value": "df_0_12"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI"
+              ]
             }
           }
         }
@@ -2364,19 +2364,19 @@
       },
       "properties": [
         {
-          "comment": "A property with an explicit sh:severity sh:Violation is not ignored",
-          "name": "severityViolationProperty",
+          "comment": "A property with shaclmate:ignore set to false (the default) is not ignored",
+          "name": "shaclmateIgnoreFalseProperty",
           "order": 0,
-          "path": "PredicatePath(http://example.com/severityViolationProperty)",
+          "path": "PredicatePath(http://example.com/shaclmateIgnoreFalseProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_82"
+            "value": "df_0_83"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_82"
+              "value": "df_0_83"
             },
             "nodeKinds": [
               "Literal"
@@ -2390,10 +2390,10 @@
           }
         },
         {
-          "comment": "A property with shaclmate:ignore set to false (the default) is not ignored",
-          "name": "shaclmateIgnoreFalseProperty",
+          "comment": "A property without an sh:severity defaults to sh:Violation severity and is not ignored",
+          "name": "severityDefaultProperty",
           "order": 0,
-          "path": "PredicatePath(http://example.com/shaclmateIgnoreFalseProperty)",
+          "path": "PredicatePath(http://example.com/severityDefaultProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_85"
@@ -2416,19 +2416,19 @@
           }
         },
         {
-          "comment": "A property without an sh:severity defaults to sh:Violation severity and is not ignored",
-          "name": "severityDefaultProperty",
+          "comment": "A property with an explicit sh:severity sh:Violation is not ignored",
+          "name": "severityViolationProperty",
           "order": 0,
-          "path": "PredicatePath(http://example.com/severityDefaultProperty)",
+          "path": "PredicatePath(http://example.com/severityViolationProperty)",
           "shapeIdentifier": {
             "termType": "BlankNode",
-            "value": "df_0_87"
+            "value": "df_0_86"
           },
           "type": {
             "kind": "Literal",
             "shapeIdentifier": {
               "termType": "BlankNode",
-              "value": "df_0_87"
+              "value": "df_0_86"
             },
             "nodeKinds": [
               "Literal"

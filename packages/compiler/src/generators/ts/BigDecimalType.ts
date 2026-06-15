@@ -65,8 +65,10 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
-    return code`${variables.value}.toFixed()`;
+  }: Parameters<
+    AbstractTypedLiteralType<Decimal>["toJsonExpression"]
+  >[0]): Code {
+    return code`{ "@type": ${literalOf(this.datatype.value)} as const, "@value": ${variables.value}.toFixed() }`;
   }
 
   override toRdfResourceValuesExpression({

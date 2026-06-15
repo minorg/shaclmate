@@ -44,7 +44,7 @@ export abstract class AbstractPrimitiveType<
       case 1:
         return code`${this.reusables.imports.z}.literal(${this.literalValueExpression(this.decodedIn[0])})`;
       default:
-        return code`${this.reusables.imports.z}.enum(${arrayOf(
+        return code`${this.reusables.imports.z}.union(${arrayOf(
           ...this.decodedIn.map(
             (value) =>
               code`${this.reusables.imports.z}.literal(${this.literalValueExpression(value)})`,
