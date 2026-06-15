@@ -3153,8 +3153,11 @@ function $sparqlValueInPattern({
       args: [
         valueVariable,
         valueIn.map((inValue) => {
-          if (typeof inValue !== "object" || inValue instanceof Date) {
+          if (typeof inValue !== "object") {
             return $literalFactory.primitive(inValue);
+          }
+          if (inValue instanceof Date) {
+            return $literalFactory.date(inValue);
           }
           return inValue;
         }),
@@ -10843,36 +10846,70 @@ export namespace DatatypeUnionsStruct {
       ),
       dateOrDateTime: ((
         value:
-          | { type: "date"; value: string }
-          | { type: "dateTime"; value: string },
+          | {
+              type: "date";
+              value: {
+                readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+                readonly "@value": string;
+              };
+            }
+          | {
+              type: "dateTime";
+              value: {
+                readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+                readonly "@value": string;
+              };
+            },
       ): Either<
         Error,
         { type: "date"; value: Date } | { type: "dateTime"; value: Date }
       > => {
         if (value["type"] === "date") {
-          return Either.of<Error, Date>(new Date(value.value as string)).map(
-            (value) => ({
-              type: "date" as const,
-              value: value,
-            }),
-          );
+          return Either.of<Error, Date>(
+            new Date(
+              (
+                value.value as {
+                  readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+                  readonly "@value": string;
+                }
+              )["@value"],
+            ),
+          ).map((value) => ({ type: "date" as const, value: value }));
         }
         if (value["type"] === "dateTime") {
-          return Either.of<Error, Date>(new Date(value.value as string)).map(
-            (value) => ({
-              type: "dateTime" as const,
-              value: value,
-            }),
-          );
+          return Either.of<Error, Date>(
+            new Date(
+              (
+                value.value as {
+                  readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+                  readonly "@value": string;
+                }
+              )["@value"],
+            ),
+          ).map((value) => ({ type: "dateTime" as const, value: value }));
         }
 
         throw new Error("unable to deserialize JSON");
       })($json["dateOrDateTime"]),
-      dateOrString: ((value: string | string): Either<Error, Date | string> => {
+      dateOrString: ((
+        value:
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+              readonly "@value": string;
+            }
+          | string,
+      ): Either<Error, Date | string> => {
         if (typeof value === "object") {
-          return Either.of<Error, Date>(new Date(value as string)).map(
-            (value) => value,
-          );
+          return Either.of<Error, Date>(
+            new Date(
+              (
+                value as {
+                  readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+                  readonly "@value": string;
+                }
+              )["@value"],
+            ),
+          ).map((value) => value);
         }
         if (typeof value === "string") {
           return Either.of<Error, string>(value as string).map(
@@ -10884,27 +10921,47 @@ export namespace DatatypeUnionsStruct {
       })($json["dateOrString"]),
       dateTimeOrDate: ((
         value:
-          | { type: "dateTime"; value: string }
-          | { type: "date"; value: string },
+          | {
+              type: "dateTime";
+              value: {
+                readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+                readonly "@value": string;
+              };
+            }
+          | {
+              type: "date";
+              value: {
+                readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+                readonly "@value": string;
+              };
+            },
       ): Either<
         Error,
         { type: "dateTime"; value: Date } | { type: "date"; value: Date }
       > => {
         if (value["type"] === "dateTime") {
-          return Either.of<Error, Date>(new Date(value.value as string)).map(
-            (value) => ({
-              type: "dateTime" as const,
-              value: value,
-            }),
-          );
+          return Either.of<Error, Date>(
+            new Date(
+              (
+                value.value as {
+                  readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+                  readonly "@value": string;
+                }
+              )["@value"],
+            ),
+          ).map((value) => ({ type: "dateTime" as const, value: value }));
         }
         if (value["type"] === "date") {
-          return Either.of<Error, Date>(new Date(value.value as string)).map(
-            (value) => ({
-              type: "date" as const,
-              value: value,
-            }),
-          );
+          return Either.of<Error, Date>(
+            new Date(
+              (
+                value.value as {
+                  readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+                  readonly "@value": string;
+                }
+              )["@value"],
+            ),
+          ).map((value) => ({ type: "date" as const, value: value }));
         }
 
         throw new Error("unable to deserialize JSON");
@@ -10940,16 +10997,30 @@ export namespace DatatypeUnionsStruct {
 
         throw new Error("unable to deserialize JSON");
       })($json["langStringOrString"]),
-      stringOrDate: ((value: string | string): Either<Error, string | Date> => {
+      stringOrDate: ((
+        value:
+          | string
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+              readonly "@value": string;
+            },
+      ): Either<Error, string | Date> => {
         if (typeof value === "string") {
           return Either.of<Error, string>(value as string).map(
             (value) => value,
           );
         }
         if (typeof value === "object") {
-          return Either.of<Error, Date>(new Date(value as string)).map(
-            (value) => value,
-          );
+          return Either.of<Error, Date>(
+            new Date(
+              (
+                value as {
+                  readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+                  readonly "@value": string;
+                }
+              )["@value"],
+            ),
+          ).map((value) => value);
         }
 
         throw new Error("unable to deserialize JSON");
@@ -11522,16 +11593,50 @@ export namespace DatatypeUnionsStruct {
     readonly "@id": string;
     readonly "@type": "DatatypeUnionsStruct";
     readonly dateOrDateTime:
-      | { type: "date"; value: string }
-      | { type: "dateTime"; value: string };
-    readonly dateOrString: string | string;
+      | {
+          type: "date";
+          value: {
+            readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+            readonly "@value": string;
+          };
+        }
+      | {
+          type: "dateTime";
+          value: {
+            readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+            readonly "@value": string;
+          };
+        };
+    readonly dateOrString:
+      | {
+          readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+          readonly "@value": string;
+        }
+      | string;
     readonly dateTimeOrDate:
-      | { type: "dateTime"; value: string }
-      | { type: "date"; value: string };
+      | {
+          type: "dateTime";
+          value: {
+            readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+            readonly "@value": string;
+          };
+        }
+      | {
+          type: "date";
+          value: {
+            readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+            readonly "@value": string;
+          };
+        };
     readonly langStringOrString:
       | { readonly "@language": string; readonly "@value": string }
       | string;
-    readonly stringOrDate: string | string;
+    readonly stringOrDate:
+      | string
+      | {
+          readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+          readonly "@value": string;
+        };
     readonly stringOrLangString:
       | string
       | { readonly "@language": string; readonly "@value": string };
@@ -11553,10 +11658,21 @@ export namespace DatatypeUnionsStruct {
           "@type": z.literal("DatatypeUnionsStruct"),
           dateOrDateTime: z
             .discriminatedUnion("type", [
-              z.object({ type: z.literal("date"), value: z.iso.date() }),
+              z.object({
+                type: z.literal("date"),
+                value: z.object({
+                  "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
+                  "@value": z.iso.date(),
+                }),
+              }),
               z.object({
                 type: z.literal("dateTime"),
-                value: z.iso.datetime(),
+                value: z.object({
+                  "@type": z.literal(
+                    "http://www.w3.org/2001/XMLSchema#dateTime",
+                  ),
+                  "@value": z.iso.datetime(),
+                }),
               }),
             ])
             .readonly()
@@ -11564,17 +11680,37 @@ export namespace DatatypeUnionsStruct {
               description:
                 "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
             }),
-          dateOrString: z.union([z.iso.date(), z.string()]).readonly().meta({
-            description:
-              "Date or string. These don't need discriminant values because they're different types in TypeScript.",
-          }),
+          dateOrString: z
+            .union([
+              z.object({
+                "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
+                "@value": z.iso.date(),
+              }),
+              z.string(),
+            ])
+            .readonly()
+            .meta({
+              description:
+                "Date or string. These don't need discriminant values because they're different types in TypeScript.",
+            }),
           dateTimeOrDate: z
             .discriminatedUnion("type", [
               z.object({
                 type: z.literal("dateTime"),
-                value: z.iso.datetime(),
+                value: z.object({
+                  "@type": z.literal(
+                    "http://www.w3.org/2001/XMLSchema#dateTime",
+                  ),
+                  "@value": z.iso.datetime(),
+                }),
               }),
-              z.object({ type: z.literal("date"), value: z.iso.date() }),
+              z.object({
+                type: z.literal("date"),
+                value: z.object({
+                  "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
+                  "@value": z.iso.date(),
+                }),
+              }),
             ])
             .readonly()
             .meta({
@@ -11591,10 +11727,19 @@ export namespace DatatypeUnionsStruct {
               description:
                 "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript.",
             }),
-          stringOrDate: z.union([z.string(), z.iso.date()]).readonly().meta({
-            description:
-              "String or date. These don't need discriminant values because they're different types in TypeScript.",
-          }),
+          stringOrDate: z
+            .union([
+              z.string(),
+              z.object({
+                "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
+                "@value": z.iso.date(),
+              }),
+            ])
+            .readonly()
+            .meta({
+              description:
+                "String or date. These don't need discriminant values because they're different types in TypeScript.",
+            }),
           stringOrLangString: z
             .union([
               z.string(),
@@ -11849,26 +11994,54 @@ export namespace DatatypeUnionsStruct {
             | { type: "date"; value: Date }
             | { type: "dateTime"; value: Date },
         ):
-          | { type: "date"; value: string }
-          | { type: "dateTime"; value: string } => {
+          | {
+              type: "date";
+              value: {
+                readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+                readonly "@value": string;
+              };
+            }
+          | {
+              type: "dateTime";
+              value: {
+                readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+                readonly "@value": string;
+              };
+            } => {
           if (value["type"] === "date") {
             return {
               type: "date" as const,
-              value: $toIsoDateString(value.value),
+              value: {
+                "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+                "@value": $toIsoDateString(value.value),
+              },
             };
           }
           if (value["type"] === "dateTime") {
             return {
               type: "dateTime" as const,
-              value: value.value.toISOString(),
+              value: {
+                "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
+                "@value": value.value.toISOString(),
+              },
             };
           }
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeUnionsStruct.dateOrDateTime),
-        dateOrString: ((value: Date | string): string | string => {
+        dateOrString: ((
+          value: Date | string,
+        ):
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+              readonly "@value": string;
+            }
+          | string => {
           if (typeof value === "object") {
-            return $toIsoDateString(value);
+            return {
+              "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+              "@value": $toIsoDateString(value),
+            };
           }
           if (typeof value === "string") {
             return value;
@@ -11881,18 +12054,36 @@ export namespace DatatypeUnionsStruct {
             | { type: "dateTime"; value: Date }
             | { type: "date"; value: Date },
         ):
-          | { type: "dateTime"; value: string }
-          | { type: "date"; value: string } => {
+          | {
+              type: "dateTime";
+              value: {
+                readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+                readonly "@value": string;
+              };
+            }
+          | {
+              type: "date";
+              value: {
+                readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+                readonly "@value": string;
+              };
+            } => {
           if (value["type"] === "dateTime") {
             return {
               type: "dateTime" as const,
-              value: value.value.toISOString(),
+              value: {
+                "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
+                "@value": value.value.toISOString(),
+              },
             };
           }
           if (value["type"] === "date") {
             return {
               type: "date" as const,
-              value: $toIsoDateString(value.value),
+              value: {
+                "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+                "@value": $toIsoDateString(value.value),
+              },
             };
           }
 
@@ -11912,12 +12103,22 @@ export namespace DatatypeUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeUnionsStruct.langStringOrString),
-        stringOrDate: ((value: string | Date): string | string => {
+        stringOrDate: ((
+          value: string | Date,
+        ):
+          | string
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+              readonly "@value": string;
+            } => {
           if (typeof value === "string") {
             return value;
           }
           if (typeof value === "object") {
-            return $toIsoDateString(value);
+            return {
+              "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+              "@value": $toIsoDateString(value),
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -12609,10 +12810,10 @@ export namespace DefaultValuesStruct {
           : dataFactory.namedNode($json["@id"]),
       ),
       dateDefaultValue: Either.of<Error, Date>(
-        new Date($json["dateDefaultValue"]),
+        new Date($json["dateDefaultValue"]["@value"]),
       ),
       dateTimeDefaultValue: Either.of<Error, Date>(
-        new Date($json["dateTimeDefaultValue"]),
+        new Date($json["dateTimeDefaultValue"]["@value"]),
       ),
       falseBooleanDefaultValue: Either.of<Error, boolean>(
         $json["falseBooleanDefaultValue"],
@@ -12783,8 +12984,14 @@ export namespace DefaultValuesStruct {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "DefaultValuesStruct";
-    readonly dateDefaultValue: string;
-    readonly dateTimeDefaultValue: string;
+    readonly dateDefaultValue: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+      readonly "@value": string;
+    };
+    readonly dateTimeDefaultValue: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+      readonly "@value": string;
+    };
     readonly falseBooleanDefaultValue: boolean;
     readonly numberDefaultValue: number;
     readonly stringDefaultValue: string;
@@ -12805,8 +13012,14 @@ export namespace DefaultValuesStruct {
         .object({
           "@id": z.string().min(1),
           "@type": z.literal("DefaultValuesStruct"),
-          dateDefaultValue: z.iso.date(),
-          dateTimeDefaultValue: z.iso.datetime(),
+          dateDefaultValue: z.object({
+            "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
+            "@value": z.iso.date(),
+          }),
+          dateTimeDefaultValue: z.object({
+            "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
+            "@value": z.iso.datetime(),
+          }),
           falseBooleanDefaultValue: z.boolean(),
           numberDefaultValue: z.number(),
           stringDefaultValue: z.string(),
@@ -13024,11 +13237,14 @@ export namespace DefaultValuesStruct {
             ? `_:${_defaultValuesStruct.$identifier().value}`
             : _defaultValuesStruct.$identifier().value,
         "@type": _defaultValuesStruct.$type,
-        dateDefaultValue: $toIsoDateString(
-          _defaultValuesStruct.dateDefaultValue,
-        ),
-        dateTimeDefaultValue:
-          _defaultValuesStruct.dateTimeDefaultValue.toISOString(),
+        dateDefaultValue: {
+          "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+          "@value": $toIsoDateString(_defaultValuesStruct.dateDefaultValue),
+        },
+        dateTimeDefaultValue: {
+          "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
+          "@value": _defaultValuesStruct.dateTimeDefaultValue.toISOString(),
+        },
         falseBooleanDefaultValue: _defaultValuesStruct.falseBooleanDefaultValue,
         numberDefaultValue: _defaultValuesStruct.numberDefaultValue,
         stringDefaultValue: _defaultValuesStruct.stringDefaultValue,
@@ -19234,7 +19450,9 @@ export namespace InPropertiesStruct {
         .map((item) => Either.of<Error, true>(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
       inDateTimes: Maybe.fromNullable($json["inDateTimes"])
-        .map((item) => Either.of<Error, Date>(new Date(item)).map(Maybe.of))
+        .map((item) =>
+          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+        )
         .orDefault(Either.of(Maybe.empty())),
       inDoubles: Maybe.fromNullable($json["inDoubles"])
         .map((item) => Either.of<Error, 1 | 2>(item).map(Maybe.of))
@@ -19444,7 +19662,10 @@ export namespace InPropertiesStruct {
     readonly "@id": string;
     readonly "@type": "InPropertiesStruct";
     readonly inBooleans?: true;
-    readonly inDateTimes?: string;
+    readonly inDateTimes?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+      readonly "@value": string;
+    };
     readonly inDoubles?: 1 | 2;
     readonly inIntegers?: string;
     readonly inIris?: {
@@ -19469,7 +19690,12 @@ export namespace InPropertiesStruct {
           "@id": z.string().min(1),
           "@type": z.literal("InPropertiesStruct"),
           inBooleans: z.literal(true).optional(),
-          inDateTimes: z.iso.datetime().optional(),
+          inDateTimes: z
+            .object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
+              "@value": z.iso.datetime(),
+            })
+            .optional(),
           inDoubles: z.union([z.literal(1), z.literal(2)]).optional(),
           inIntegers: z.enum(["1", "2"]).optional(),
           inIris: z
@@ -19676,7 +19902,10 @@ export namespace InPropertiesStruct {
           .map((item) => item)
           .extract(),
         inDateTimes: _inPropertiesStruct.inDateTimes
-          .map((item) => item.toISOString())
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
+            "@value": item.toISOString(),
+          }))
           .extract(),
         inDoubles: _inPropertiesStruct.inDoubles.map((item) => item).extract(),
         inIntegers: _inPropertiesStruct.inIntegers
@@ -40464,10 +40693,14 @@ export namespace TermsStruct {
         .map((item) => Either.of<Error, boolean>(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
       dateTerm: Maybe.fromNullable($json["dateTerm"])
-        .map((item) => Either.of<Error, Date>(new Date(item)).map(Maybe.of))
+        .map((item) =>
+          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+        )
         .orDefault(Either.of(Maybe.empty())),
       dateTimeTerm: Maybe.fromNullable($json["dateTimeTerm"])
-        .map((item) => Either.of<Error, Date>(new Date(item)).map(Maybe.of))
+        .map((item) =>
+          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+        )
         .orDefault(Either.of(Maybe.empty())),
       iriTerm: Maybe.fromNullable($json["iriTerm"])
         .map((item) =>
@@ -40730,8 +40963,14 @@ export namespace TermsStruct {
     readonly "@type": "TermsStruct";
     readonly blankNodeTerm?: { readonly "@id": string };
     readonly booleanTerm?: boolean;
-    readonly dateTerm?: string;
-    readonly dateTimeTerm?: string;
+    readonly dateTerm?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+      readonly "@value": string;
+    };
+    readonly dateTimeTerm?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+      readonly "@value": string;
+    };
     readonly iriTerm?: { readonly "@id": string };
     readonly langStringTerm?: {
       readonly "@language": string;
@@ -40770,8 +41009,18 @@ export namespace TermsStruct {
           "@type": z.literal("TermsStruct"),
           blankNodeTerm: z.object({ "@id": z.string().min(1) }).optional(),
           booleanTerm: z.boolean().optional(),
-          dateTerm: z.iso.date().optional(),
-          dateTimeTerm: z.iso.datetime().optional(),
+          dateTerm: z
+            .object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
+              "@value": z.iso.date(),
+            })
+            .optional(),
+          dateTimeTerm: z
+            .object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
+              "@value": z.iso.datetime(),
+            })
+            .optional(),
           iriTerm: z.object({ "@id": z.string().min(1) }).optional(),
           langStringTerm: z
             .object({ "@language": z.string(), "@value": z.string() })
@@ -41008,10 +41257,16 @@ export namespace TermsStruct {
           .extract(),
         booleanTerm: _termsStruct.booleanTerm.map((item) => item).extract(),
         dateTerm: _termsStruct.dateTerm
-          .map((item) => $toIsoDateString(item))
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+            "@value": $toIsoDateString(item),
+          }))
           .extract(),
         dateTimeTerm: _termsStruct.dateTimeTerm
-          .map((item) => item.toISOString())
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
+            "@value": item.toISOString(),
+          }))
           .extract(),
         iriTerm: _termsStruct.iriTerm
           .map((item) => ({ "@id": item.value }))
@@ -50459,20 +50714,28 @@ export namespace NamedUnion2 {
     value: NamedUnion2.Json,
   ): Either<Error, NamedUnion2> => {
     if (value["type"] === "date") {
-      return Either.of<Error, Date>(new Date(value.value as string)).map(
-        (value) => ({
-          type: "date" as const,
-          value: value,
-        }),
-      );
+      return Either.of<Error, Date>(
+        new Date(
+          (
+            value.value as {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+              readonly "@value": string;
+            }
+          )["@value"],
+        ),
+      ).map((value) => ({ type: "date" as const, value: value }));
     }
     if (value["type"] === "dateTime") {
-      return Either.of<Error, Date>(new Date(value.value as string)).map(
-        (value) => ({
-          type: "dateTime" as const,
-          value: value,
-        }),
-      );
+      return Either.of<Error, Date>(
+        new Date(
+          (
+            value.value as {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+              readonly "@value": string;
+            }
+          )["@value"],
+        ),
+      ).map((value) => ({ type: "dateTime" as const, value: value }));
     }
 
     throw new Error("unable to deserialize JSON");
@@ -50529,8 +50792,20 @@ export namespace NamedUnion2 {
     export const schema = () =>
       z
         .discriminatedUnion("type", [
-          z.object({ type: z.literal("date"), value: z.iso.date() }),
-          z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+          z.object({
+            type: z.literal("date"),
+            value: z.object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
+              "@value": z.iso.date(),
+            }),
+          }),
+          z.object({
+            type: z.literal("dateTime"),
+            value: z.object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
+              "@value": z.iso.datetime(),
+            }),
+          }),
         ])
         .readonly()
         .meta({ description: "Named union of date and date-time" });
@@ -50545,8 +50820,20 @@ export namespace NamedUnion2 {
   }
 
   export type Json =
-    | { type: "date"; value: string }
-    | { type: "dateTime"; value: string };
+    | {
+        type: "date";
+        value: {
+          readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+          readonly "@value": string;
+        };
+      }
+    | {
+        type: "dateTime";
+        value: {
+          readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+          readonly "@value": string;
+        };
+      };
 
   export const schema = {
     kind: "Union" as const,
@@ -50561,10 +50848,22 @@ export namespace NamedUnion2 {
 
   export const toJson = (value: NamedUnion2): NamedUnion2.Json => {
     if (value["type"] === "date") {
-      return { type: "date" as const, value: $toIsoDateString(value.value) };
+      return {
+        type: "date" as const,
+        value: {
+          "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+          "@value": $toIsoDateString(value.value),
+        },
+      };
     }
     if (value["type"] === "dateTime") {
-      return { type: "dateTime" as const, value: value.value.toISOString() };
+      return {
+        type: "dateTime" as const,
+        value: {
+          "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
+          "@value": value.value.toISOString(),
+        },
+      };
     }
 
     throw new Error("unable to serialize to JSON");

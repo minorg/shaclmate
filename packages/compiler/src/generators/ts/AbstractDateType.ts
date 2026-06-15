@@ -1,11 +1,9 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
-import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractLiteralType {
   protected readonly datatype: NamedNode;
@@ -61,7 +59,7 @@ export abstract class AbstractDateType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, Date>(new Date(${variables.value}))`;
+    return code`${this.reusables.imports.Either}.of<Error, Date>(new Date(${variables.value}["@value"]))`;
   }
 
   override graphqlResolveExpression({
@@ -70,9 +68,10 @@ export abstract class AbstractDateType extends AbstractLiteralType {
     return variables.value;
   }
 
-  @Memoize()
-  override jsonType(): AbstractPrimitiveType.JsonType {
-    return new AbstractPrimitiveType.JsonType(code`string`);
+  override jsonType(): AbstractLiteralType.JsonType {
+    return new AbstractLiteralType.JsonType(
+      code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": string }`,
+    );
   }
 
   abstract override literalValueExpression(literal: Date | Literal): Code;
@@ -87,5 +86,5 @@ export abstract class AbstractDateType extends AbstractLiteralType {
 }
 
 export namespace AbstractDateType {
-  export type ConversionFunction = AbstractPrimitiveType.ConversionFunction;
+  export type ConversionFunction = AbstractLiteralType.ConversionFunction;
 }

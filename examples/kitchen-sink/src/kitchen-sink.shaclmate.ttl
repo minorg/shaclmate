@@ -46,6 +46,11 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass1, :UndefinedClass2 ;
+        sh:maxCount 1 ;
+        sh:path :multiClass
+    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -68,11 +73,6 @@
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
         sh:path :singleClass
-    ], [
-        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass1, :UndefinedClass2 ;
-        sh:maxCount 1 ;
-        sh:path :multiClass
     ] .
 
 :ConvertibleTypesStruct
