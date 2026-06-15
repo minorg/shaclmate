@@ -588,6 +588,7 @@ export const harnesses = {
       dateTimeTerm: new Date(1523268000000),
       $identifier,
       iriTerm: dataFactory.namedNode("http://example.com"),
+      langStringTerm: dataFactory.literal("test", "en"),
       literalTerm: dataFactory.literal("test"),
       numberTerm: 1.0,
       stringTerm: "test",
