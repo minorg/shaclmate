@@ -84,31 +84,35 @@ export const harnesses = {
     }),
     kitchenSink.ConvertibleTypesStruct,
   ),
-  dateUnionsStruct1: new Harness(
-    kitchenSink.DateUnionsStruct.createUnsafe({
+  datatypeUnionsStruct1: new Harness(
+    kitchenSink.DatatypeUnionsStruct.createUnsafe({
       $identifier,
       dateOrDateTime: { type: "date", value: new Date("2025-12-08") },
       dateTimeOrDate: {
         type: "dateTime",
         value: new Date("2025-12-08T21:17:27+00:00"),
       },
-      dateOrString: { type: "date", value: new Date("2025-12-08") },
-      stringOrDate: { type: "string", value: "2025-12-08" }, // Shouldn't parse as a Date
+      dateOrString: new Date("2025-12-08"),
+      langStringOrString: dataFactory.literal("test", "en"),
+      stringOrDate: "2025-12-08", // Shouldn't parse as a Date
+      stringOrLangString: "test",
     }),
-    kitchenSink.DateUnionsStruct,
+    kitchenSink.DatatypeUnionsStruct,
   ),
-  dateUnionsStruct2: new Harness(
-    kitchenSink.DateUnionsStruct.createUnsafe({
+  datatypeUnionsStruct2: new Harness(
+    kitchenSink.DatatypeUnionsStruct.createUnsafe({
       $identifier,
       dateOrDateTime: {
         type: "dateTime",
         value: new Date("2025-12-08T21:17:27+00:00"),
       },
       dateTimeOrDate: { type: "date", value: new Date("2025-12-08") },
-      dateOrString: { type: "string", value: "2025-12-08" }, // Shouldn't parse as a Date
-      stringOrDate: { type: "date", value: new Date("2025-12-08") },
+      dateOrString: "2025-12-08", // Shouldn't parse as a Date
+      langStringOrString: "test",
+      stringOrDate: new Date("2025-12-08"),
+      stringOrLangString: dataFactory.literal("test", "en"),
     }),
-    kitchenSink.DateUnionsStruct,
+    kitchenSink.DatatypeUnionsStruct,
   ),
   defaultValuesStruct: new Harness(
     kitchenSink.DefaultValuesStruct.createUnsafe({

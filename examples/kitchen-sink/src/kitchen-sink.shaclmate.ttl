@@ -46,18 +46,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
-        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:node :NonClassStruct ;
-        sh:path :nodeClass1
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:node :PartialStruct ;
-        sh:path :nodeClass2
-    ], [
         rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -73,6 +61,18 @@
         sh:maxCount 1 ;
         sh:nodeKind sh:IRI ;
         sh:path :iriClass
+    ], [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :NonClassStruct ;
+        sh:path :nodeClass1
+    ], [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :PartialStruct ;
+        sh:path :nodeClass2
     ] .
 
 :ConvertibleTypesStruct
@@ -124,11 +124,12 @@
         sh:path :convertibleIri
     ] .
 
-:DateUnionsStruct
+:DatatypeUnionsStruct
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Struct node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models." ;
+    rdfs:comment "Struct node shape with sh:xone (union) properties over sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
         sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:path :dateOrDateTime ;
         sh:xone ([
                 shaclmate:discriminantValue "date" ;
@@ -141,6 +142,7 @@
         )
     ], [
         sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:path :dateTimeOrDate ;
         sh:xone ([
                 shaclmate:discriminantValue "dateTime" ;
@@ -153,26 +155,46 @@
         )
     ], [
         sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:path :dateOrString ;
         sh:xone ([
-                shaclmate:discriminantValue "date" ;
                 sh:datatype xsd:date
             ]
             [
-                shaclmate:discriminantValue "string" ;
                 sh:datatype xsd:string
             ]
         )
     ], [
         sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :langStringOrString ;
+        sh:xone ([
+                sh:datatype rdf:langString
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:path :stringOrDate ;
         sh:xone ([
-                shaclmate:discriminantValue "string" ;
                 sh:datatype xsd:string
             ]
             [
-                shaclmate:discriminantValue "date" ;
                 sh:datatype xsd:date
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrLangString ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype rdf:langString
             ]
         )
     ] .
@@ -367,6 +389,23 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:in properties." ;
     sh:property [
+        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDateTimes
+    ], [
+        sh:in (1
+            2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIntegers
+    ], [
+        sh:in (:InIri1
+            :InIri2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIris
+    ], [
         sh:maxCount 1 ;
         sh:node :ReusableIn ;
         sh:path :reusableIn
@@ -387,23 +426,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inBooleans
-    ], [
-        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDateTimes
-    ], [
-        sh:in (1
-            2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIntegers
-    ], [
-        sh:in (:InIri1
-            :InIri2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIris
     ] .
 
 :IndirectRecursiveStruct

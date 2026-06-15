@@ -9539,138 +9539,96 @@ export namespace ConvertibleTypesStruct {
       }),
     );
 } /**
- * Struct node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.
+ * Struct node shape with sh:xone (union) properties over sh:datatype node shapes. These unions are common in actual models.
  */
 
-export type DateUnionsStruct = {
-  readonly $identifier: () => DateUnionsStruct.Identifier;
+export type DatatypeUnionsStruct = {
+  readonly $identifier: () => DatatypeUnionsStruct.Identifier;
 
-  readonly $type: "DateUnionsStruct";
+  readonly $type: "DatatypeUnionsStruct";
 
-  readonly dateOrDateTime: Maybe<
-    { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-  >;
+  readonly dateOrDateTime:
+    | { type: "date"; value: Date }
+    | { type: "dateTime"; value: Date };
 
-  readonly dateOrString: Maybe<
-    { type: "date"; value: Date } | { type: "string"; value: string }
-  >;
+  readonly dateOrString: Date | string;
 
-  readonly dateTimeOrDate: Maybe<
-    { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-  >;
+  readonly dateTimeOrDate:
+    | { type: "dateTime"; value: Date }
+    | { type: "date"; value: Date };
 
-  readonly stringOrDate: Maybe<
-    { type: "string"; value: string } | { type: "date"; value: Date }
-  >;
+  readonly langStringOrString: Literal | string;
+
+  readonly stringOrDate: string | Date;
+
+  readonly stringOrLangString: string | Literal;
 };
 
-export namespace DateUnionsStruct {
-  export const create: (parameters?: {
+export namespace DatatypeUnionsStruct {
+  export const create: (parameters: {
     readonly $identifier?:
-      | (() => DateUnionsStruct.Identifier)
+      | (() => DatatypeUnionsStruct.Identifier)
       | BlankNode
       | NamedNode
       | string;
-    readonly dateOrDateTime?:
-      | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date })
-      | Maybe<
-          { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-        >;
-    readonly dateOrString?:
-      | ({ type: "date"; value: Date } | { type: "string"; value: string })
-      | Maybe<
-          { type: "date"; value: Date } | { type: "string"; value: string }
-        >;
-    readonly dateTimeOrDate?:
-      | ({ type: "dateTime"; value: Date } | { type: "date"; value: Date })
-      | Maybe<
-          { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-        >;
-    readonly stringOrDate?:
-      | ({ type: "string"; value: string } | { type: "date"; value: Date })
-      | Maybe<
-          { type: "string"; value: string } | { type: "date"; value: Date }
-        >;
-  }) => Either<Error, DateUnionsStruct> = (parameters) =>
+    readonly dateOrDateTime:
+      | { type: "date"; value: Date }
+      | { type: "dateTime"; value: Date };
+    readonly dateOrString: Date | string;
+    readonly dateTimeOrDate:
+      | { type: "dateTime"; value: Date }
+      | { type: "date"; value: Date };
+    readonly langStringOrString: Literal | string;
+    readonly stringOrDate: string | Date;
+    readonly stringOrLangString: string | Literal;
+  }) => Either<Error, DatatypeUnionsStruct> = (parameters) =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      dateOrDateTime: $convertToMaybe($identityConversionFunction)(
-        parameters?.dateOrDateTime,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          DateUnionsStruct.schema.properties.dateOrDateTime.type,
-          value,
-        ),
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      dateOrDateTime: $identityConversionFunction(parameters.dateOrDateTime),
+      dateOrString: $identityConversionFunction(parameters.dateOrString),
+      dateTimeOrDate: $identityConversionFunction(parameters.dateTimeOrDate),
+      langStringOrString: $identityConversionFunction(
+        parameters.langStringOrString,
       ),
-      dateOrString: $convertToMaybe($identityConversionFunction)(
-        parameters?.dateOrString,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          DateUnionsStruct.schema.properties.dateOrString.type,
-          value,
-        ),
-      ),
-      dateTimeOrDate: $convertToMaybe($identityConversionFunction)(
-        parameters?.dateTimeOrDate,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          DateUnionsStruct.schema.properties.dateTimeOrDate.type,
-          value,
-        ),
-      ),
-      stringOrDate: $convertToMaybe($identityConversionFunction)(
-        parameters?.stringOrDate,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          DateUnionsStruct.schema.properties.stringOrDate.type,
-          value,
-        ),
+      stringOrDate: $identityConversionFunction(parameters.stringOrDate),
+      stringOrLangString: $identityConversionFunction(
+        parameters.stringOrLangString,
       ),
     })
       .map((properties) => ({
         ...properties,
-        $type: "DateUnionsStruct" as const,
+        $type: "DatatypeUnionsStruct" as const,
       }))
       .map((object) =>
         $monkeyPatchObject(object, {
-          toJson: DateUnionsStruct.toJson,
-          $toString: DateUnionsStruct.$toString,
+          toJson: DatatypeUnionsStruct.toJson,
+          $toString: DatatypeUnionsStruct.$toString,
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe(parameters: {
     readonly $identifier?:
-      | (() => DateUnionsStruct.Identifier)
+      | (() => DatatypeUnionsStruct.Identifier)
       | BlankNode
       | NamedNode
       | string;
-    readonly dateOrDateTime?:
-      | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date })
-      | Maybe<
-          { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-        >;
-    readonly dateOrString?:
-      | ({ type: "date"; value: Date } | { type: "string"; value: string })
-      | Maybe<
-          { type: "date"; value: Date } | { type: "string"; value: string }
-        >;
-    readonly dateTimeOrDate?:
-      | ({ type: "dateTime"; value: Date } | { type: "date"; value: Date })
-      | Maybe<
-          { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-        >;
-    readonly stringOrDate?:
-      | ({ type: "string"; value: string } | { type: "date"; value: Date })
-      | Maybe<
-          { type: "string"; value: string } | { type: "date"; value: Date }
-        >;
-  }): DateUnionsStruct {
+    readonly dateOrDateTime:
+      | { type: "date"; value: Date }
+      | { type: "dateTime"; value: Date };
+    readonly dateOrString: Date | string;
+    readonly dateTimeOrDate:
+      | { type: "dateTime"; value: Date }
+      | { type: "date"; value: Date };
+    readonly langStringOrString: Literal | string;
+    readonly stringOrDate: string | Date;
+    readonly stringOrLangString: string | Literal;
+  }): DatatypeUnionsStruct {
     return create(parameters).unsafeCoerce();
   }
 
   export const equals: (
-    left: DateUnionsStruct,
-    right: DateUnionsStruct,
+    left: DatatypeUnionsStruct,
+    right: DatatypeUnionsStruct,
   ) => $EqualsResult = (left, right) =>
     $propertyEquals(
       { equalsFunction: $booleanEquals, name: "$identifier" },
@@ -9680,41 +9638,33 @@ export namespace DateUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: (left, right) =>
-              $maybeEquals(
+            equalsFunction: (
+              left:
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date },
+              right:
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date },
+            ) => {
+              if (left["type"] === "date" && right["type"] === "date") {
+                return $dateEquals(left.value as Date, right.value as Date);
+              }
+              if (left["type"] === "dateTime" && right["type"] === "dateTime") {
+                return $dateEquals(left.value as Date, right.value as Date);
+              }
+
+              return Left({
                 left,
                 right,
-                (
-                  left:
-                    | { type: "date"; value: Date }
-                    | { type: "dateTime"; value: Date },
-                  right:
-                    | { type: "date"; value: Date }
-                    | { type: "dateTime"; value: Date },
-                ) => {
-                  if (left["type"] === "date" && right["type"] === "date") {
-                    return $dateEquals(left.value as Date, right.value as Date);
-                  }
-                  if (
-                    left["type"] === "dateTime" &&
-                    right["type"] === "dateTime"
-                  ) {
-                    return $dateEquals(left.value as Date, right.value as Date);
-                  }
-
-                  return Left({
-                    left,
-                    right,
-                    propertyName: "type",
-                    propertyValuesUnequal: {
-                      left: typeof left,
-                      right: typeof right,
-                      type: "boolean" as const,
-                    },
-                    type: "property" as const,
-                  });
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
                 },
-              ),
+                type: "property" as const,
+              });
+            },
             name: "dateOrDateTime",
           },
           [left, left.dateOrDateTime],
@@ -9724,41 +9674,26 @@ export namespace DateUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: (left, right) =>
-              $maybeEquals(
+            equalsFunction: (left: Date | string, right: Date | string) => {
+              if (typeof left === "object" && typeof right === "object") {
+                return $dateEquals(left as Date, right as Date);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left as string, right as string);
+              }
+
+              return Left({
                 left,
                 right,
-                (
-                  left:
-                    | { type: "date"; value: Date }
-                    | { type: "string"; value: string },
-                  right:
-                    | { type: "date"; value: Date }
-                    | { type: "string"; value: string },
-                ) => {
-                  if (left["type"] === "date" && right["type"] === "date") {
-                    return $dateEquals(left.value as Date, right.value as Date);
-                  }
-                  if (left["type"] === "string" && right["type"] === "string") {
-                    return $strictEquals(
-                      left.value as string,
-                      right.value as string,
-                    );
-                  }
-
-                  return Left({
-                    left,
-                    right,
-                    propertyName: "type",
-                    propertyValuesUnequal: {
-                      left: typeof left,
-                      right: typeof right,
-                      type: "boolean" as const,
-                    },
-                    type: "property" as const,
-                  });
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
                 },
-              ),
+                type: "property" as const,
+              });
+            },
             name: "dateOrString",
           },
           [left, left.dateOrString],
@@ -9768,41 +9703,33 @@ export namespace DateUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: (left, right) =>
-              $maybeEquals(
+            equalsFunction: (
+              left:
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date },
+              right:
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date },
+            ) => {
+              if (left["type"] === "dateTime" && right["type"] === "dateTime") {
+                return $dateEquals(left.value as Date, right.value as Date);
+              }
+              if (left["type"] === "date" && right["type"] === "date") {
+                return $dateEquals(left.value as Date, right.value as Date);
+              }
+
+              return Left({
                 left,
                 right,
-                (
-                  left:
-                    | { type: "dateTime"; value: Date }
-                    | { type: "date"; value: Date },
-                  right:
-                    | { type: "dateTime"; value: Date }
-                    | { type: "date"; value: Date },
-                ) => {
-                  if (
-                    left["type"] === "dateTime" &&
-                    right["type"] === "dateTime"
-                  ) {
-                    return $dateEquals(left.value as Date, right.value as Date);
-                  }
-                  if (left["type"] === "date" && right["type"] === "date") {
-                    return $dateEquals(left.value as Date, right.value as Date);
-                  }
-
-                  return Left({
-                    left,
-                    right,
-                    propertyName: "type",
-                    propertyValuesUnequal: {
-                      left: typeof left,
-                      right: typeof right,
-                      type: "boolean" as const,
-                    },
-                    type: "property" as const,
-                  });
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
                 },
-              ),
+                type: "property" as const,
+              });
+            },
             name: "dateTimeOrDate",
           },
           [left, left.dateTimeOrDate],
@@ -9812,79 +9739,140 @@ export namespace DateUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: (left, right) =>
-              $maybeEquals(
+            equalsFunction: (
+              left: Literal | string,
+              right: Literal | string,
+            ) => {
+              if (typeof left === "object" && typeof right === "object") {
+                return $booleanEquals(left as Literal, right as Literal);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left as string, right as string);
+              }
+
+              return Left({
                 left,
                 right,
-                (
-                  left:
-                    | { type: "string"; value: string }
-                    | { type: "date"; value: Date },
-                  right:
-                    | { type: "string"; value: string }
-                    | { type: "date"; value: Date },
-                ) => {
-                  if (left["type"] === "string" && right["type"] === "string") {
-                    return $strictEquals(
-                      left.value as string,
-                      right.value as string,
-                    );
-                  }
-                  if (left["type"] === "date" && right["type"] === "date") {
-                    return $dateEquals(left.value as Date, right.value as Date);
-                  }
-
-                  return Left({
-                    left,
-                    right,
-                    propertyName: "type",
-                    propertyValuesUnequal: {
-                      left: typeof left,
-                      right: typeof right,
-                      type: "boolean" as const,
-                    },
-                    type: "property" as const,
-                  });
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
                 },
-              ),
+                type: "property" as const,
+              });
+            },
+            name: "langStringOrString",
+          },
+          [left, left.langStringOrString],
+          [right, right.langStringOrString],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left: string | Date, right: string | Date) => {
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left as string, right as string);
+              }
+              if (typeof left === "object" && typeof right === "object") {
+                return $dateEquals(left as Date, right as Date);
+              }
+
+              return Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
+                },
+                type: "property" as const,
+              });
+            },
             name: "stringOrDate",
           },
           [left, left.stringOrDate],
           [right, right.stringOrDate],
         ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (
+              left: string | Literal,
+              right: string | Literal,
+            ) => {
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left as string, right as string);
+              }
+              if (typeof left === "object" && typeof right === "object") {
+                return $booleanEquals(left as Literal, right as Literal);
+              }
+
+              return Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
+                },
+                type: "property" as const,
+              });
+            },
+            name: "stringOrLangString",
+          },
+          [left, left.stringOrLangString],
+          [right, right.stringOrLangString],
+        ),
       );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly dateOrDateTime?: $MaybeFilter<{
+    readonly dateOrDateTime?: {
       readonly on?: {
         readonly date?: $DateFilter;
         readonly dateTime?: $DateFilter;
       };
-    }>;
-    readonly dateOrString?: $MaybeFilter<{
+    };
+    readonly dateOrString?: {
       readonly on?: {
-        readonly date?: $DateFilter;
+        readonly object?: $DateFilter;
         readonly string?: $StringFilter;
       };
-    }>;
-    readonly dateTimeOrDate?: $MaybeFilter<{
+    };
+    readonly dateTimeOrDate?: {
       readonly on?: {
         readonly dateTime?: $DateFilter;
         readonly date?: $DateFilter;
       };
-    }>;
-    readonly stringOrDate?: $MaybeFilter<{
+    };
+    readonly langStringOrString?: {
+      readonly on?: {
+        readonly object?: $LiteralFilter;
+        readonly string?: $StringFilter;
+      };
+    };
+    readonly stringOrDate?: {
       readonly on?: {
         readonly string?: $StringFilter;
-        readonly date?: $DateFilter;
+        readonly object?: $DateFilter;
       };
-    }>;
+    };
+    readonly stringOrLangString?: {
+      readonly on?: {
+        readonly string?: $StringFilter;
+        readonly object?: $LiteralFilter;
+      };
+    };
   };
 
   export const filter: (
-    filter: DateUnionsStruct.Filter,
-    value: DateUnionsStruct,
+    filter: DatatypeUnionsStruct.Filter,
+    value: DatatypeUnionsStruct,
   ) => boolean = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
@@ -9894,169 +9882,173 @@ export namespace DateUnionsStruct {
     }
     if (
       filter.dateOrDateTime !== undefined &&
-      !$filterMaybe<
-        { type: "date"; value: Date } | { type: "dateTime"; value: Date },
-        {
+      !((
+        filter: {
           readonly on?: {
             readonly date?: $DateFilter;
             readonly dateTime?: $DateFilter;
           };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          value:
-            | { type: "date"; value: Date }
-            | { type: "dateTime"; value: Date },
-        ) => {
-          if (filter.on?.["date"] !== undefined && value["type"] === "date") {
-            if (!$filterDate(filter.on["date"], value.value)) {
-              return false;
-            }
-          }
-          if (
-            filter.on?.["dateTime"] !== undefined &&
-            value["type"] === "dateTime"
-          ) {
-            if (!$filterDate(filter.on["dateTime"], value.value)) {
-              return false;
-            }
-          }
-
-          return true;
         },
-      )(filter.dateOrDateTime, value.dateOrDateTime)
+        value:
+          | { type: "date"; value: Date }
+          | { type: "dateTime"; value: Date },
+      ) => {
+        if (filter.on?.["date"] !== undefined && value["type"] === "date") {
+          if (!$filterDate(filter.on["date"], value.value)) {
+            return false;
+          }
+        }
+        if (
+          filter.on?.["dateTime"] !== undefined &&
+          value["type"] === "dateTime"
+        ) {
+          if (!$filterDate(filter.on["dateTime"], value.value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.dateOrDateTime, value.dateOrDateTime)
     ) {
       return false;
     }
     if (
       filter.dateOrString !== undefined &&
-      !$filterMaybe<
-        { type: "date"; value: Date } | { type: "string"; value: string },
-        {
+      !((
+        filter: {
           readonly on?: {
-            readonly date?: $DateFilter;
+            readonly object?: $DateFilter;
             readonly string?: $StringFilter;
           };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          value:
-            | { type: "date"; value: Date }
-            | { type: "string"; value: string },
-        ) => {
-          if (filter.on?.["date"] !== undefined && value["type"] === "date") {
-            if (!$filterDate(filter.on["date"], value.value)) {
-              return false;
-            }
-          }
-          if (
-            filter.on?.["string"] !== undefined &&
-            value["type"] === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value.value)) {
-              return false;
-            }
-          }
-
-          return true;
         },
-      )(filter.dateOrString, value.dateOrString)
+        value: Date | string,
+      ) => {
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterDate(filter.on["object"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.dateOrString, value.dateOrString)
     ) {
       return false;
     }
     if (
       filter.dateTimeOrDate !== undefined &&
-      !$filterMaybe<
-        { type: "dateTime"; value: Date } | { type: "date"; value: Date },
-        {
+      !((
+        filter: {
           readonly on?: {
             readonly dateTime?: $DateFilter;
             readonly date?: $DateFilter;
           };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly dateTime?: $DateFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          value:
-            | { type: "dateTime"; value: Date }
-            | { type: "date"; value: Date },
-        ) => {
-          if (
-            filter.on?.["dateTime"] !== undefined &&
-            value["type"] === "dateTime"
-          ) {
-            if (!$filterDate(filter.on["dateTime"], value.value)) {
-              return false;
-            }
-          }
-          if (filter.on?.["date"] !== undefined && value["type"] === "date") {
-            if (!$filterDate(filter.on["date"], value.value)) {
-              return false;
-            }
-          }
-
-          return true;
         },
-      )(filter.dateTimeOrDate, value.dateTimeOrDate)
+        value:
+          | { type: "dateTime"; value: Date }
+          | { type: "date"; value: Date },
+      ) => {
+        if (
+          filter.on?.["dateTime"] !== undefined &&
+          value["type"] === "dateTime"
+        ) {
+          if (!$filterDate(filter.on["dateTime"], value.value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["date"] !== undefined && value["type"] === "date") {
+          if (!$filterDate(filter.on["date"], value.value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.dateTimeOrDate, value.dateTimeOrDate)
+    ) {
+      return false;
+    }
+    if (
+      filter.langStringOrString !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly object?: $LiteralFilter;
+            readonly string?: $StringFilter;
+          };
+        },
+        value: Literal | string,
+      ) => {
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterLiteral(filter.on["object"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.langStringOrString, value.langStringOrString)
     ) {
       return false;
     }
     if (
       filter.stringOrDate !== undefined &&
-      !$filterMaybe<
-        { type: "string"; value: string } | { type: "date"; value: Date },
-        {
+      !((
+        filter: {
           readonly on?: {
             readonly string?: $StringFilter;
-            readonly date?: $DateFilter;
+            readonly object?: $DateFilter;
           };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          value:
-            | { type: "string"; value: string }
-            | { type: "date"; value: Date },
-        ) => {
-          if (
-            filter.on?.["string"] !== undefined &&
-            value["type"] === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value.value)) {
-              return false;
-            }
-          }
-          if (filter.on?.["date"] !== undefined && value["type"] === "date") {
-            if (!$filterDate(filter.on["date"], value.value)) {
-              return false;
-            }
-          }
-
-          return true;
         },
-      )(filter.stringOrDate, value.stringOrDate)
+        value: string | Date,
+      ) => {
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterDate(filter.on["object"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.stringOrDate, value.stringOrDate)
+    ) {
+      return false;
+    }
+    if (
+      filter.stringOrLangString !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly string?: $StringFilter;
+            readonly object?: $LiteralFilter;
+          };
+        },
+        value: string | Literal,
+      ) => {
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterLiteral(filter.on["object"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.stringOrLangString, value.stringOrLangString)
     ) {
       return false;
     }
@@ -10064,7 +10056,7 @@ export namespace DateUnionsStruct {
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    DateUnionsStruct.Filter
+    DatatypeUnionsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
@@ -10087,28 +10079,13 @@ export namespace DateUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateOrDateTime",
-        propertySchema: DateUnionsStruct.schema.properties.dateOrDateTime,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+        propertySchema: DatatypeUnionsStruct.schema.properties.dateOrDateTime,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
@@ -10149,7 +10126,7 @@ export namespace DateUnionsStruct {
               };
             };
           }
-        >),
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -10159,36 +10136,21 @@ export namespace DateUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateOrString",
-        propertySchema: DateUnionsStruct.schema.properties.dateOrString,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+        propertySchema: DatatypeUnionsStruct.schema.properties.dateOrString,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ((_: object) => [])({
               ...otherParameters,
-              filter: filter?.on?.["date"],
+              filter: filter?.on?.["object"],
               ignoreRdfType: false,
-              schema: schema.members["date"].type,
+              schema: schema.members["object"].type,
             }),
           );
           triples = triples.concat(
@@ -10204,14 +10166,14 @@ export namespace DateUnionsStruct {
         }) satisfies $ValueSparqlConstructTriplesFunction<
           {
             readonly on?: {
-              readonly date?: $DateFilter;
+              readonly object?: $DateFilter;
               readonly string?: $StringFilter;
             };
           },
           {
             kind: "Union";
             members: {
-              readonly date: {
+              readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $DateSchema;
               };
@@ -10221,7 +10183,7 @@ export namespace DateUnionsStruct {
               };
             };
           }
-        >),
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -10231,28 +10193,13 @@ export namespace DateUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "dateTimeOrDate",
-        propertySchema: DateUnionsStruct.schema.properties.dateTimeOrDate,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          {
-            readonly on?: {
-              readonly dateTime?: $DateFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+        propertySchema: DatatypeUnionsStruct.schema.properties.dateTimeOrDate,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
@@ -10293,7 +10240,65 @@ export namespace DateUnionsStruct {
               };
             };
           }
-        >),
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.langStringOrString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "langStringOrString",
+        propertySchema:
+          DatatypeUnionsStruct.schema.properties.langStringOrString,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly object?: $LiteralFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -10303,28 +10308,13 @@ export namespace DateUnionsStruct {
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "stringOrDate",
-        propertySchema: DateUnionsStruct.schema.properties.stringOrDate,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+        propertySchema: DatatypeUnionsStruct.schema.properties.stringOrDate,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
@@ -10338,9 +10328,9 @@ export namespace DateUnionsStruct {
           triples = triples.concat(
             ((_: object) => [])({
               ...otherParameters,
-              filter: filter?.on?.["date"],
+              filter: filter?.on?.["object"],
               ignoreRdfType: false,
-              schema: schema.members["date"].type,
+              schema: schema.members["object"].type,
             }),
           );
 
@@ -10349,7 +10339,7 @@ export namespace DateUnionsStruct {
           {
             readonly on?: {
               readonly string?: $StringFilter;
-              readonly date?: $DateFilter;
+              readonly object?: $DateFilter;
             };
           },
           {
@@ -10359,13 +10349,71 @@ export namespace DateUnionsStruct {
                 discriminantValues: readonly (number | string)[];
                 type: $StringSchema<string>;
               };
-              readonly date: {
+              readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $DateSchema;
               };
             };
           }
-        >),
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringOrLangString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringOrLangString",
+        propertySchema:
+          DatatypeUnionsStruct.schema.properties.stringOrLangString,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly object?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+            };
+          }
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -10373,7 +10421,7 @@ export namespace DateUnionsStruct {
   };
 
   export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    DateUnionsStruct.Filter
+    DatatypeUnionsStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
     const rdfTypeVariable = dataFactory.variable!(
@@ -10382,7 +10430,7 @@ export namespace DateUnionsStruct {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: DateUnionsStruct.schema.fromRdfType,
+          rdfType: DatatypeUnionsStruct.schema.fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -10425,7 +10473,7 @@ export namespace DateUnionsStruct {
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
           propertyPatterns: [],
-          schema: DateUnionsStruct.schema.properties.$identifier.type,
+          schema: DatatypeUnionsStruct.schema.properties.$identifier.type,
           valueVariable: parameters.focusIdentifier,
           variablePrefix: parameters.variablePrefix,
         }),
@@ -10438,28 +10486,8 @@ export namespace DateUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateOrDateTime",
-        propertySchema: DateUnionsStruct.schema.properties.dateOrDateTime,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >((({ filter, schema, ...otherParameters }) => {
+        propertySchema: DatatypeUnionsStruct.schema.properties.dateOrDateTime,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -10502,7 +10530,7 @@ export namespace DateUnionsStruct {
               };
             };
           }
-        >),
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -10513,36 +10541,16 @@ export namespace DateUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateOrString",
-        propertySchema: DateUnionsStruct.schema.properties.dateOrString,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >((({ filter, schema, ...otherParameters }) => {
+        propertySchema: DatatypeUnionsStruct.schema.properties.dateOrString,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
             patterns: $dateSparqlWherePatterns({
               ...otherParameters,
-              filter: filter?.on?.["date"],
+              filter: filter?.on?.["object"],
               ignoreRdfType: false,
-              schema: schema.members["date"].type,
+              schema: schema.members["object"].type,
             }).concat(),
             type: "group",
           });
@@ -10560,14 +10568,14 @@ export namespace DateUnionsStruct {
         }) satisfies $ValueSparqlWherePatternsFunction<
           {
             readonly on?: {
-              readonly date?: $DateFilter;
+              readonly object?: $DateFilter;
               readonly string?: $StringFilter;
             };
           },
           {
             kind: "Union";
             members: {
-              readonly date: {
+              readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $DateSchema;
               };
@@ -10577,7 +10585,7 @@ export namespace DateUnionsStruct {
               };
             };
           }
-        >),
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -10588,28 +10596,8 @@ export namespace DateUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "dateTimeOrDate",
-        propertySchema: DateUnionsStruct.schema.properties.dateTimeOrDate,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          {
-            readonly on?: {
-              readonly dateTime?: $DateFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >((({ filter, schema, ...otherParameters }) => {
+        propertySchema: DatatypeUnionsStruct.schema.properties.dateTimeOrDate,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -10652,7 +10640,63 @@ export namespace DateUnionsStruct {
               };
             };
           }
-        >),
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.langStringOrString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "langStringOrString",
+        propertySchema:
+          DatatypeUnionsStruct.schema.properties.langStringOrString,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $langStringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly object?: $LiteralFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -10663,28 +10707,8 @@ export namespace DateUnionsStruct {
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "stringOrDate",
-        propertySchema: DateUnionsStruct.schema.properties.stringOrDate,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >((({ filter, schema, ...otherParameters }) => {
+        propertySchema: DatatypeUnionsStruct.schema.properties.stringOrDate,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -10699,9 +10723,9 @@ export namespace DateUnionsStruct {
           unionPatterns.push({
             patterns: $dateSparqlWherePatterns({
               ...otherParameters,
-              filter: filter?.on?.["date"],
+              filter: filter?.on?.["object"],
               ignoreRdfType: false,
-              schema: schema.members["date"].type,
+              schema: schema.members["object"].type,
             }).concat(),
             type: "group",
           });
@@ -10711,7 +10735,7 @@ export namespace DateUnionsStruct {
           {
             readonly on?: {
               readonly string?: $StringFilter;
-              readonly date?: $DateFilter;
+              readonly object?: $DateFilter;
             };
           },
           {
@@ -10721,13 +10745,69 @@ export namespace DateUnionsStruct {
                 discriminantValues: readonly (number | string)[];
                 type: $StringSchema<string>;
               };
-              readonly date: {
+              readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $DateSchema;
               };
             };
           }
-        >),
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringOrLangString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringOrLangString",
+        propertySchema:
+          DatatypeUnionsStruct.schema.properties.stringOrLangString,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $langStringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly object?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+            };
+          }
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -10735,148 +10815,167 @@ export namespace DateUnionsStruct {
   };
 
   export const fromJson: (
-    json: DateUnionsStruct.Json,
-  ) => Either<Error, DateUnionsStruct> = ($json) =>
+    json: DatatypeUnionsStruct.Json,
+  ) => Either<Error, DatatypeUnionsStruct> = ($json) =>
     $sequenceRecord({
       $identifier: Either.of<Error, BlankNode | NamedNode>(
         $json["@id"].startsWith("_:")
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      dateOrDateTime: Maybe.fromNullable($json["dateOrDateTime"])
-        .map((item) =>
-          ((
-            value:
-              | { type: "date"; value: string }
-              | { type: "dateTime"; value: string },
-          ): Either<
-            Error,
-            { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-          > => {
-            if (value["type"] === "date") {
-              return Either.of<Error, Date>(
-                new Date(value.value as string),
-              ).map((value) => ({
-                type: "date" as const,
-                value: value,
-              }));
-            }
-            if (value["type"] === "dateTime") {
-              return Either.of<Error, Date>(
-                new Date(value.value as string),
-              ).map((value) => ({
-                type: "dateTime" as const,
-                value: value,
-              }));
-            }
+      dateOrDateTime: ((
+        value:
+          | { type: "date"; value: string }
+          | { type: "dateTime"; value: string },
+      ): Either<
+        Error,
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+      > => {
+        if (value["type"] === "date") {
+          return Either.of<Error, Date>(new Date(value.value as string)).map(
+            (value) => ({
+              type: "date" as const,
+              value: value,
+            }),
+          );
+        }
+        if (value["type"] === "dateTime") {
+          return Either.of<Error, Date>(new Date(value.value as string)).map(
+            (value) => ({
+              type: "dateTime" as const,
+              value: value,
+            }),
+          );
+        }
 
-            throw new Error("unable to deserialize JSON");
-          })(item).map(Maybe.of),
-        )
-        .orDefault(Either.of(Maybe.empty())),
-      dateOrString: Maybe.fromNullable($json["dateOrString"])
-        .map((item) =>
-          ((
-            value:
-              | { type: "date"; value: string }
-              | { type: "string"; value: string },
-          ): Either<
-            Error,
-            { type: "date"; value: Date } | { type: "string"; value: string }
-          > => {
-            if (value["type"] === "date") {
-              return Either.of<Error, Date>(
-                new Date(value.value as string),
-              ).map((value) => ({
-                type: "date" as const,
-                value: value,
-              }));
-            }
-            if (value["type"] === "string") {
-              return Either.of<Error, string>(value.value as string).map(
-                (value) => ({
-                  type: "string" as const,
-                  value: value,
-                }),
-              );
-            }
+        throw new Error("unable to deserialize JSON");
+      })($json["dateOrDateTime"]),
+      dateOrString: ((value: string | string): Either<Error, Date | string> => {
+        if (typeof value === "object") {
+          return Either.of<Error, Date>(new Date(value as string)).map(
+            (value) => value,
+          );
+        }
+        if (typeof value === "string") {
+          return Either.of<Error, string>(value as string).map(
+            (value) => value,
+          );
+        }
 
-            throw new Error("unable to deserialize JSON");
-          })(item).map(Maybe.of),
-        )
-        .orDefault(Either.of(Maybe.empty())),
-      dateTimeOrDate: Maybe.fromNullable($json["dateTimeOrDate"])
-        .map((item) =>
-          ((
-            value:
-              | { type: "dateTime"; value: string }
-              | { type: "date"; value: string },
-          ): Either<
-            Error,
-            { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-          > => {
-            if (value["type"] === "dateTime") {
-              return Either.of<Error, Date>(
-                new Date(value.value as string),
-              ).map((value) => ({
-                type: "dateTime" as const,
-                value: value,
-              }));
-            }
-            if (value["type"] === "date") {
-              return Either.of<Error, Date>(
-                new Date(value.value as string),
-              ).map((value) => ({
-                type: "date" as const,
-                value: value,
-              }));
-            }
+        throw new Error("unable to deserialize JSON");
+      })($json["dateOrString"]),
+      dateTimeOrDate: ((
+        value:
+          | { type: "dateTime"; value: string }
+          | { type: "date"; value: string },
+      ): Either<
+        Error,
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+      > => {
+        if (value["type"] === "dateTime") {
+          return Either.of<Error, Date>(new Date(value.value as string)).map(
+            (value) => ({
+              type: "dateTime" as const,
+              value: value,
+            }),
+          );
+        }
+        if (value["type"] === "date") {
+          return Either.of<Error, Date>(new Date(value.value as string)).map(
+            (value) => ({
+              type: "date" as const,
+              value: value,
+            }),
+          );
+        }
 
-            throw new Error("unable to deserialize JSON");
-          })(item).map(Maybe.of),
-        )
-        .orDefault(Either.of(Maybe.empty())),
-      stringOrDate: Maybe.fromNullable($json["stringOrDate"])
-        .map((item) =>
-          ((
-            value:
-              | { type: "string"; value: string }
-              | { type: "date"; value: string },
-          ): Either<
-            Error,
-            { type: "string"; value: string } | { type: "date"; value: Date }
-          > => {
-            if (value["type"] === "string") {
-              return Either.of<Error, string>(value.value as string).map(
-                (value) => ({
-                  type: "string" as const,
-                  value: value,
-                }),
-              );
-            }
-            if (value["type"] === "date") {
-              return Either.of<Error, Date>(
-                new Date(value.value as string),
-              ).map((value) => ({
-                type: "date" as const,
-                value: value,
-              }));
-            }
+        throw new Error("unable to deserialize JSON");
+      })($json["dateTimeOrDate"]),
+      langStringOrString: ((
+        value:
+          | { readonly "@language": string; readonly "@value": string }
+          | string,
+      ): Either<Error, Literal | string> => {
+        if (typeof value === "object") {
+          return Either.of<Error, Literal>(
+            dataFactory.literal(
+              (
+                value as {
+                  readonly "@language": string;
+                  readonly "@value": string;
+                }
+              )["@value"],
+              (
+                value as {
+                  readonly "@language": string;
+                  readonly "@value": string;
+                }
+              )["@language"],
+            ),
+          ).map((value) => value);
+        }
+        if (typeof value === "string") {
+          return Either.of<Error, string>(value as string).map(
+            (value) => value,
+          );
+        }
 
-            throw new Error("unable to deserialize JSON");
-          })(item).map(Maybe.of),
-        )
-        .orDefault(Either.of(Maybe.empty())),
-    }).chain(DateUnionsStruct.create);
+        throw new Error("unable to deserialize JSON");
+      })($json["langStringOrString"]),
+      stringOrDate: ((value: string | string): Either<Error, string | Date> => {
+        if (typeof value === "string") {
+          return Either.of<Error, string>(value as string).map(
+            (value) => value,
+          );
+        }
+        if (typeof value === "object") {
+          return Either.of<Error, Date>(new Date(value as string)).map(
+            (value) => value,
+          );
+        }
 
-  export const _fromRdfResource: $_FromRdfResourceFunction<DateUnionsStruct> = (
-    resource,
-    options,
-  ) =>
+        throw new Error("unable to deserialize JSON");
+      })($json["stringOrDate"]),
+      stringOrLangString: ((
+        value:
+          | string
+          | { readonly "@language": string; readonly "@value": string },
+      ): Either<Error, string | Literal> => {
+        if (typeof value === "string") {
+          return Either.of<Error, string>(value as string).map(
+            (value) => value,
+          );
+        }
+        if (typeof value === "object") {
+          return Either.of<Error, Literal>(
+            dataFactory.literal(
+              (
+                value as {
+                  readonly "@language": string;
+                  readonly "@value": string;
+                }
+              )["@value"],
+              (
+                value as {
+                  readonly "@language": string;
+                  readonly "@value": string;
+                }
+              )["@language"],
+            ),
+          ).map((value) => value);
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })($json["stringOrLangString"]),
+    }).chain(DatatypeUnionsStruct.create);
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    DatatypeUnionsStruct
+  > = (resource, options) =>
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [DateUnionsStruct.schema.fromRdfType],
+          [DatatypeUnionsStruct.schema.fromRdfType],
           { graph: options.graph },
         )
       : Right(true as const)
@@ -10888,14 +10987,12 @@ export namespace DateUnionsStruct {
             ...options,
             focusResource: resource,
             propertyPath: $RdfVocabularies.rdf.subject,
-            schema: DateUnionsStruct.schema.properties.$identifier.type,
+            schema: DatatypeUnionsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
         dateOrDateTime: $shaclPropertyFromRdf<
-          Maybe<
-            { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-          >,
-          $MaybeSchema<{
+          { type: "date"; value: Date } | { type: "dateTime"; value: Date },
+          {
             kind: "Union";
             members: {
               readonly date: {
@@ -10907,28 +11004,13 @@ export namespace DateUnionsStruct {
                 type: $DateSchema;
               };
             };
-          }>
+          }
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: DateUnionsStruct.schema.properties.dateOrDateTime,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            { type: "date"; value: Date } | { type: "dateTime"; value: Date },
-            {
-              kind: "Union";
-              members: {
-                readonly date: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-                readonly dateTime: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-              };
-            }
-          >(((values, options) =>
+          propertySchema: DatatypeUnionsStruct.schema.properties.dateOrDateTime,
+          typeFromRdfResourceValues: ((values, options) =>
             values.chainMap((value) => {
               const valueAsValues = value.toValues();
               return (
@@ -10992,16 +11074,14 @@ export namespace DateUnionsStruct {
                 };
               };
             }
-          >),
+          >,
         }),
         dateOrString: $shaclPropertyFromRdf<
-          Maybe<
-            { type: "date"; value: Date } | { type: "string"; value: string }
-          >,
-          $MaybeSchema<{
+          Date | string,
+          {
             kind: "Union";
             members: {
-              readonly date: {
+              readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $DateSchema;
               };
@@ -11010,82 +11090,35 @@ export namespace DateUnionsStruct {
                 type: $StringSchema<string>;
               };
             };
-          }>
+          }
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: DateUnionsStruct.schema.properties.dateOrString,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            { type: "date"; value: Date } | { type: "string"; value: string },
-            {
-              kind: "Union";
-              members: {
-                readonly date: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-              };
-            }
-          >(((values, options) =>
+          propertySchema: DatatypeUnionsStruct.schema.properties.dateOrString,
+          typeFromRdfResourceValues: ((values, options) =>
             values.chainMap((value) => {
               const valueAsValues = value.toValues();
               return (
                 $dateFromRdfResourceValues(valueAsValues, {
                   ...options,
-                  schema: options.schema.members["date"].type,
-                }).map((values) =>
-                  values.map(
-                    (value) =>
-                      ({
-                        type: "date" as const,
-                        value,
-                      }) as
-                        | { type: "date"; value: Date }
-                        | { type: "string"; value: string },
-                  ),
-                ) as Either<
-                  Error,
-                  Resource.Values<
-                    | { type: "date"; value: Date }
-                    | { type: "string"; value: string }
-                  >
-                >
+                  schema: options.schema.members["object"].type,
+                }) as Either<Error, Resource.Values<Date | string>>
               )
                 .altLazy(
                   () =>
                     $stringFromRdfResourceValues<string>(valueAsValues, {
                       ...options,
                       schema: options.schema.members["string"].type,
-                    }).map((values) =>
-                      values.map(
-                        (value) =>
-                          ({
-                            type: "string" as const,
-                            value,
-                          }) as
-                            | { type: "date"; value: Date }
-                            | { type: "string"; value: string },
-                      ),
-                    ) as Either<
-                      Error,
-                      Resource.Values<
-                        | { type: "date"; value: Date }
-                        | { type: "string"; value: string }
-                      >
-                    >,
+                    }) as Either<Error, Resource.Values<Date | string>>,
                 )
                 .chain((values) => values.head());
             })) satisfies $FromRdfResourceValuesFunction<
-            { type: "date"; value: Date } | { type: "string"; value: string },
+            Date | string,
             {
               kind: "Union";
               members: {
-                readonly date: {
+                readonly object: {
                   discriminantValues: readonly (number | string)[];
                   type: $DateSchema;
                 };
@@ -11095,13 +11128,11 @@ export namespace DateUnionsStruct {
                 };
               };
             }
-          >),
+          >,
         }),
         dateTimeOrDate: $shaclPropertyFromRdf<
-          Maybe<
-            { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-          >,
-          $MaybeSchema<{
+          { type: "dateTime"; value: Date } | { type: "date"; value: Date },
+          {
             kind: "Union";
             members: {
               readonly dateTime: {
@@ -11113,28 +11144,13 @@ export namespace DateUnionsStruct {
                 type: $DateSchema;
               };
             };
-          }>
+          }
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: DateUnionsStruct.schema.properties.dateTimeOrDate,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            { type: "dateTime"; value: Date } | { type: "date"; value: Date },
-            {
-              kind: "Union";
-              members: {
-                readonly dateTime: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-                readonly date: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-              };
-            }
-          >(((values, options) =>
+          propertySchema: DatatypeUnionsStruct.schema.properties.dateTimeOrDate,
+          typeFromRdfResourceValues: ((values, options) =>
             values.chainMap((value) => {
               const valueAsValues = value.toValues();
               return (
@@ -11198,96 +11214,102 @@ export namespace DateUnionsStruct {
                 };
               };
             }
-          >),
+          >,
+        }),
+        langStringOrString: $shaclPropertyFromRdf<
+          Literal | string,
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DatatypeUnionsStruct.schema.properties.langStringOrString,
+          typeFromRdfResourceValues: ((values, options) =>
+            values.chainMap((value) => {
+              const valueAsValues = value.toValues();
+              return (
+                $langStringFromRdfResourceValues(valueAsValues, {
+                  ...options,
+                  schema: options.schema.members["object"].type,
+                }) as Either<Error, Resource.Values<Literal | string>>
+              )
+                .altLazy(
+                  () =>
+                    $stringFromRdfResourceValues<string>(valueAsValues, {
+                      ...options,
+                      schema: options.schema.members["string"].type,
+                    }) as Either<Error, Resource.Values<Literal | string>>,
+                )
+                .chain((values) => values.head());
+            })) satisfies $FromRdfResourceValuesFunction<
+            Literal | string,
+            {
+              kind: "Union";
+              members: {
+                readonly object: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $LangStringSchema;
+                };
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+              };
+            }
+          >,
         }),
         stringOrDate: $shaclPropertyFromRdf<
-          Maybe<
-            { type: "string"; value: string } | { type: "date"; value: Date }
-          >,
-          $MaybeSchema<{
+          string | Date,
+          {
             kind: "Union";
             members: {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
                 type: $StringSchema<string>;
               };
-              readonly date: {
+              readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $DateSchema;
               };
             };
-          }>
+          }
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: DateUnionsStruct.schema.properties.stringOrDate,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            { type: "string"; value: string } | { type: "date"; value: Date },
-            {
-              kind: "Union";
-              members: {
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-                readonly date: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-              };
-            }
-          >(((values, options) =>
+          propertySchema: DatatypeUnionsStruct.schema.properties.stringOrDate,
+          typeFromRdfResourceValues: ((values, options) =>
             values.chainMap((value) => {
               const valueAsValues = value.toValues();
               return (
                 $stringFromRdfResourceValues<string>(valueAsValues, {
                   ...options,
                   schema: options.schema.members["string"].type,
-                }).map((values) =>
-                  values.map(
-                    (value) =>
-                      ({
-                        type: "string" as const,
-                        value,
-                      }) as
-                        | { type: "string"; value: string }
-                        | { type: "date"; value: Date },
-                  ),
-                ) as Either<
-                  Error,
-                  Resource.Values<
-                    | { type: "string"; value: string }
-                    | { type: "date"; value: Date }
-                  >
-                >
+                }) as Either<Error, Resource.Values<string | Date>>
               )
                 .altLazy(
                   () =>
                     $dateFromRdfResourceValues(valueAsValues, {
                       ...options,
-                      schema: options.schema.members["date"].type,
-                    }).map((values) =>
-                      values.map(
-                        (value) =>
-                          ({
-                            type: "date" as const,
-                            value,
-                          }) as
-                            | { type: "string"; value: string }
-                            | { type: "date"; value: Date },
-                      ),
-                    ) as Either<
-                      Error,
-                      Resource.Values<
-                        | { type: "string"; value: string }
-                        | { type: "date"; value: Date }
-                      >
-                    >,
+                      schema: options.schema.members["object"].type,
+                    }) as Either<Error, Resource.Values<string | Date>>,
                 )
                 .chain((values) => values.head());
             })) satisfies $FromRdfResourceValuesFunction<
-            { type: "string"; value: string } | { type: "date"; value: Date },
+            string | Date,
             {
               kind: "Union";
               members: {
@@ -11295,23 +11317,78 @@ export namespace DateUnionsStruct {
                   discriminantValues: readonly (number | string)[];
                   type: $StringSchema<string>;
                 };
-                readonly date: {
+                readonly object: {
                   discriminantValues: readonly (number | string)[];
                   type: $DateSchema;
                 };
               };
             }
-          >),
+          >,
         }),
-      }).chain((properties) => DateUnionsStruct.create(properties)),
+        stringOrLangString: $shaclPropertyFromRdf<
+          string | Literal,
+          {
+            kind: "Union";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+            };
+          }
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DatatypeUnionsStruct.schema.properties.stringOrLangString,
+          typeFromRdfResourceValues: ((values, options) =>
+            values.chainMap((value) => {
+              const valueAsValues = value.toValues();
+              return (
+                $stringFromRdfResourceValues<string>(valueAsValues, {
+                  ...options,
+                  schema: options.schema.members["string"].type,
+                }) as Either<Error, Resource.Values<string | Literal>>
+              )
+                .altLazy(
+                  () =>
+                    $langStringFromRdfResourceValues(valueAsValues, {
+                      ...options,
+                      schema: options.schema.members["object"].type,
+                    }) as Either<Error, Resource.Values<string | Literal>>,
+                )
+                .chain((values) => values.head());
+            })) satisfies $FromRdfResourceValuesFunction<
+            string | Literal,
+            {
+              kind: "Union";
+              members: {
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+                readonly object: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $LangStringSchema;
+                };
+              };
+            }
+          >,
+        }),
+      }).chain((properties) => DatatypeUnionsStruct.create(properties)),
     );
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    DateUnionsStruct,
-    DateUnionsStruct.Schema
+    DatatypeUnionsStruct,
+    DatatypeUnionsStruct.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -11321,81 +11398,92 @@ export namespace DateUnionsStruct {
 
   export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-    _dateUnionsStruct: Omit<DateUnionsStruct, "$identifier" | "$type"> & {
-      readonly $identifier?: () => DateUnionsStruct.Identifier;
-      readonly $type?: "DateUnionsStruct";
+    _datatypeUnionsStruct: Omit<
+      DatatypeUnionsStruct,
+      "$identifier" | "$type"
+    > & {
+      readonly $identifier?: () => DatatypeUnionsStruct.Identifier;
+      readonly $type?: "DatatypeUnionsStruct";
     },
   ): HasherT => {
-    if (_dateUnionsStruct.$identifier) {
-      hasher.update(_dateUnionsStruct.$identifier().value);
+    if (_datatypeUnionsStruct.$identifier) {
+      hasher.update(_datatypeUnionsStruct.$identifier().value);
     }
-    if (_dateUnionsStruct.$type) {
-      hasher.update(_dateUnionsStruct.$type);
+    if (_datatypeUnionsStruct.$type) {
+      hasher.update(_datatypeUnionsStruct.$type);
     }
-    $hashMaybe(
-      <HasherT extends $Hasher>(
-        hasher: HasherT,
-        value:
-          | { type: "date"; value: Date }
-          | { type: "dateTime"; value: Date },
-      ): HasherT => {
-        if (value["type"] === "date") {
-          return $hashDate(hasher, value.value);
-        }
-        if (value["type"] === "dateTime") {
-          return $hashDateTime(hasher, value.value);
-        }
-        return hasher;
-      },
-    )(hasher, _dateUnionsStruct.dateOrDateTime);
-    $hashMaybe(
-      <HasherT extends $Hasher>(
-        hasher: HasherT,
-        value:
-          | { type: "date"; value: Date }
-          | { type: "string"; value: string },
-      ): HasherT => {
-        if (value["type"] === "date") {
-          return $hashDate(hasher, value.value);
-        }
-        if (value["type"] === "string") {
-          return $hashString(hasher, value.value);
-        }
-        return hasher;
-      },
-    )(hasher, _dateUnionsStruct.dateOrString);
-    $hashMaybe(
-      <HasherT extends $Hasher>(
-        hasher: HasherT,
-        value:
-          | { type: "dateTime"; value: Date }
-          | { type: "date"; value: Date },
-      ): HasherT => {
-        if (value["type"] === "dateTime") {
-          return $hashDateTime(hasher, value.value);
-        }
-        if (value["type"] === "date") {
-          return $hashDate(hasher, value.value);
-        }
-        return hasher;
-      },
-    )(hasher, _dateUnionsStruct.dateTimeOrDate);
-    $hashMaybe(
-      <HasherT extends $Hasher>(
-        hasher: HasherT,
-        value:
-          | { type: "string"; value: string }
-          | { type: "date"; value: Date },
-      ): HasherT => {
-        if (value["type"] === "string") {
-          return $hashString(hasher, value.value);
-        }
-        if (value["type"] === "date") {
-          return $hashDate(hasher, value.value);
-        }
-        return hasher;
-      },
-    )(hasher, _dateUnionsStruct.stringOrDate);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: { type: "date"; value: Date } | { type: "dateTime"; value: Date },
+    ): HasherT => {
+      if (value["type"] === "date") {
+        return $hashDate(hasher, value.value);
+      }
+      if (value["type"] === "dateTime") {
+        return $hashDateTime(hasher, value.value);
+      }
+      return hasher;
+    })(hasher, _datatypeUnionsStruct.dateOrDateTime);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: Date | string,
+    ): HasherT => {
+      if (typeof value === "object") {
+        return $hashDate(hasher, value);
+      }
+      if (typeof value === "string") {
+        return $hashString(hasher, value);
+      }
+      return hasher;
+    })(hasher, _datatypeUnionsStruct.dateOrString);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: { type: "dateTime"; value: Date } | { type: "date"; value: Date },
+    ): HasherT => {
+      if (value["type"] === "dateTime") {
+        return $hashDateTime(hasher, value.value);
+      }
+      if (value["type"] === "date") {
+        return $hashDate(hasher, value.value);
+      }
+      return hasher;
+    })(hasher, _datatypeUnionsStruct.dateTimeOrDate);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: Literal | string,
+    ): HasherT => {
+      if (typeof value === "object") {
+        return $hashTerm(hasher, value);
+      }
+      if (typeof value === "string") {
+        return $hashString(hasher, value);
+      }
+      return hasher;
+    })(hasher, _datatypeUnionsStruct.langStringOrString);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: string | Date,
+    ): HasherT => {
+      if (typeof value === "string") {
+        return $hashString(hasher, value);
+      }
+      if (typeof value === "object") {
+        return $hashDate(hasher, value);
+      }
+      return hasher;
+    })(hasher, _datatypeUnionsStruct.stringOrDate);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: string | Literal,
+    ): HasherT => {
+      if (typeof value === "string") {
+        return $hashString(hasher, value);
+      }
+      if (typeof value === "object") {
+        return $hashTerm(hasher, value);
+      }
+      return hasher;
+    })(hasher, _datatypeUnionsStruct.stringOrLangString);
     return hasher;
   };
 
@@ -11406,27 +11494,29 @@ export namespace DateUnionsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isDateUnionsStruct(
+  export function isDatatypeUnionsStruct(
     object: $Object,
-  ): object is DateUnionsStruct {
-    return object.$type === "DateUnionsStruct";
+  ): object is DatatypeUnionsStruct {
+    return object.$type === "DatatypeUnionsStruct";
   }
 
   export type Json = {
     readonly "@id": string;
-    readonly "@type": "DateUnionsStruct";
-    readonly dateOrDateTime?:
+    readonly "@type": "DatatypeUnionsStruct";
+    readonly dateOrDateTime:
       | { type: "date"; value: string }
       | { type: "dateTime"; value: string };
-    readonly dateOrString?:
-      | { type: "date"; value: string }
-      | { type: "string"; value: string };
-    readonly dateTimeOrDate?:
+    readonly dateOrString: string | string;
+    readonly dateTimeOrDate:
       | { type: "dateTime"; value: string }
       | { type: "date"; value: string };
-    readonly stringOrDate?:
-      | { type: "string"; value: string }
-      | { type: "date"; value: string };
+    readonly langStringOrString:
+      | { readonly "@language": string; readonly "@value": string }
+      | string;
+    readonly stringOrDate: string | string;
+    readonly stringOrLangString:
+      | string
+      | { readonly "@language": string; readonly "@value": string };
   };
 
   export namespace Json {
@@ -11442,7 +11532,7 @@ export namespace DateUnionsStruct {
       return z
         .object({
           "@id": z.string().min(1),
-          "@type": z.literal("DateUnionsStruct"),
+          "@type": z.literal("DatatypeUnionsStruct"),
           dateOrDateTime: z
             .discriminatedUnion("type", [
               z.object({ type: z.literal("date"), value: z.iso.date() }),
@@ -11451,15 +11541,8 @@ export namespace DateUnionsStruct {
                 value: z.iso.datetime(),
               }),
             ])
-            .readonly()
-            .optional(),
-          dateOrString: z
-            .discriminatedUnion("type", [
-              z.object({ type: z.literal("date"), value: z.iso.date() }),
-              z.object({ type: z.literal("string"), value: z.string() }),
-            ])
-            .readonly()
-            .optional(),
+            .readonly(),
+          dateOrString: z.union([z.iso.date(), z.string()]).readonly(),
           dateTimeOrDate: z
             .discriminatedUnion("type", [
               z.object({
@@ -11468,19 +11551,24 @@ export namespace DateUnionsStruct {
               }),
               z.object({ type: z.literal("date"), value: z.iso.date() }),
             ])
-            .readonly()
-            .optional(),
-          stringOrDate: z
-            .discriminatedUnion("type", [
-              z.object({ type: z.literal("string"), value: z.string() }),
-              z.object({ type: z.literal("date"), value: z.iso.date() }),
+            .readonly(),
+          langStringOrString: z
+            .union([
+              z.object({ "@language": z.string(), "@value": z.string() }),
+              z.string(),
             ])
-            .readonly()
-            .optional(),
+            .readonly(),
+          stringOrDate: z.union([z.string(), z.iso.date()]).readonly(),
+          stringOrLangString: z
+            .union([
+              z.string(),
+              z.object({ "@language": z.string(), "@value": z.string() }),
+            ])
+            .readonly(),
         })
         .meta({
           description:
-            "Struct node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.",
+            "Struct node shape with sh:xone (union) properties over sh:datatype node shapes. These unions are common in actual models.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -11496,7 +11584,7 @@ export namespace DateUnionsStruct {
           {
             rule: {
               condition: {
-                schema: { const: "DateUnionsStruct" as const },
+                schema: { const: "DatatypeUnionsStruct" as const },
                 scope: `${scopePrefix}/properties/@type`,
               },
               effect: "HIDE",
@@ -11513,16 +11601,26 @@ export namespace DateUnionsStruct {
             scope: `${scopePrefix}/properties/dateTimeOrDate`,
             type: "Control",
           },
+          {
+            scope: `${scopePrefix}/properties/langStringOrString`,
+            type: "Control",
+          },
           { scope: `${scopePrefix}/properties/stringOrDate`, type: "Control" },
+          {
+            scope: `${scopePrefix}/properties/stringOrLangString`,
+            type: "Control",
+          },
         ],
         type: "Group",
-        label: "DateUnionsStruct",
+        label: "DatatypeUnionsStruct",
       };
     };
   }
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/DateUnionsStruct"),
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/DatatypeUnionsStruct",
+    ),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -11532,18 +11630,15 @@ export namespace DateUnionsStruct {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateOrDateTime"),
         type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "Union" as const,
-            members: {
-              date: {
-                discriminantValues: ["date"],
-                type: { kind: "Date" as const },
-              },
-              dateTime: {
-                discriminantValues: ["dateTime"],
-                type: { kind: "DateTime" as const },
-              },
+          kind: "Union" as const,
+          members: {
+            date: {
+              discriminantValues: ["date"],
+              type: { kind: "Date" as const },
+            },
+            dateTime: {
+              discriminantValues: ["dateTime"],
+              type: { kind: "DateTime" as const },
             },
           },
         },
@@ -11552,18 +11647,15 @@ export namespace DateUnionsStruct {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateOrString"),
         type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "Union" as const,
-            members: {
-              date: {
-                discriminantValues: ["date"],
-                type: { kind: "Date" as const },
-              },
-              string: {
-                discriminantValues: ["string"],
-                type: { kind: "String" as const },
-              },
+          kind: "Union" as const,
+          members: {
+            object: {
+              discriminantValues: ["object"],
+              type: { kind: "Date" as const },
+            },
+            string: {
+              discriminantValues: ["string"],
+              type: { kind: "String" as const },
             },
           },
         },
@@ -11572,18 +11664,32 @@ export namespace DateUnionsStruct {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateTimeOrDate"),
         type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "Union" as const,
-            members: {
-              dateTime: {
-                discriminantValues: ["dateTime"],
-                type: { kind: "DateTime" as const },
-              },
-              date: {
-                discriminantValues: ["date"],
-                type: { kind: "Date" as const },
-              },
+          kind: "Union" as const,
+          members: {
+            dateTime: {
+              discriminantValues: ["dateTime"],
+              type: { kind: "DateTime" as const },
+            },
+            date: {
+              discriminantValues: ["date"],
+              type: { kind: "Date" as const },
+            },
+          },
+        },
+      },
+      langStringOrString: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/langStringOrString"),
+        type: {
+          kind: "Union" as const,
+          members: {
+            object: {
+              discriminantValues: ["object"],
+              type: { kind: "LangString" as const },
+            },
+            string: {
+              discriminantValues: ["string"],
+              type: { kind: "String" as const },
             },
           },
         },
@@ -11592,24 +11698,40 @@ export namespace DateUnionsStruct {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/stringOrDate"),
         type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "Union" as const,
-            members: {
-              string: {
-                discriminantValues: ["string"],
-                type: { kind: "String" as const },
-              },
-              date: {
-                discriminantValues: ["date"],
-                type: { kind: "Date" as const },
-              },
+          kind: "Union" as const,
+          members: {
+            string: {
+              discriminantValues: ["string"],
+              type: { kind: "String" as const },
+            },
+            object: {
+              discriminantValues: ["object"],
+              type: { kind: "Date" as const },
+            },
+          },
+        },
+      },
+      stringOrLangString: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/stringOrLangString"),
+        type: {
+          kind: "Union" as const,
+          members: {
+            string: {
+              discriminantValues: ["string"],
+              type: { kind: "String" as const },
+            },
+            object: {
+              discriminantValues: ["object"],
+              type: { kind: "LangString" as const },
             },
           },
         },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/DateUnionsStruct")],
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/DatatypeUnionsStruct"),
+    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -11622,7 +11744,7 @@ export namespace DateUnionsStruct {
     subject,
     ...queryParameters
   }: {
-    filter?: DateUnionsStruct.Filter;
+    filter?: DatatypeUnionsStruct.Filter;
     ignoreRdfType?: boolean;
     prefixes?: { [prefix: string]: string };
     preferredLanguages?: readonly string[];
@@ -11632,14 +11754,14 @@ export namespace DateUnionsStruct {
     "prefixes" | "queryType" | "type"
   >): sparqljs.ConstructQuery {
     const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "dateUnionsStruct";
+      subject.termType === "Variable" ? subject.value : "datatypeUnionsStruct";
 
     return {
       ...queryParameters,
       prefixes: prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        DateUnionsStruct.focusSparqlConstructTriples({
+        DatatypeUnionsStruct.focusSparqlConstructTriples({
           filter,
           focusIdentifier: subject,
           ignoreRdfType: !!ignoreRdfType,
@@ -11649,7 +11771,7 @@ export namespace DateUnionsStruct {
       type: "query",
       where: (queryParameters.where ?? []).concat(
         $normalizeSparqlWherePatterns(
-          DateUnionsStruct.focusSparqlWherePatterns({
+          DatatypeUnionsStruct.focusSparqlWherePatterns({
             filter,
             focusIdentifier: subject,
             ignoreRdfType: !!ignoreRdfType,
@@ -11662,252 +11784,272 @@ export namespace DateUnionsStruct {
   }
 
   export function sparqlConstructQueryString(
-    parameters: Parameters<typeof DateUnionsStruct.sparqlConstructQuery>[0] &
+    parameters: Parameters<
+      typeof DatatypeUnionsStruct.sparqlConstructQuery
+    >[0] &
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      DateUnionsStruct.sparqlConstructQuery(parameters),
+      DatatypeUnionsStruct.sparqlConstructQuery(parameters),
     );
   }
 
   export const toJson: (
-    _dateUnionsStruct: DateUnionsStruct,
-  ) => DateUnionsStruct.Json = (_dateUnionsStruct) =>
+    _datatypeUnionsStruct: DatatypeUnionsStruct,
+  ) => DatatypeUnionsStruct.Json = (_datatypeUnionsStruct) =>
     JSON.parse(
       JSON.stringify({
         "@id":
-          _dateUnionsStruct.$identifier().termType === "BlankNode"
-            ? `_:${_dateUnionsStruct.$identifier().value}`
-            : _dateUnionsStruct.$identifier().value,
-        "@type": _dateUnionsStruct.$type,
-        dateOrDateTime: _dateUnionsStruct.dateOrDateTime
-          .map((item) =>
-            ((
-              value:
-                | { type: "date"; value: Date }
-                | { type: "dateTime"; value: Date },
-            ):
-              | { type: "date"; value: string }
-              | { type: "dateTime"; value: string } => {
-              if (value["type"] === "date") {
-                return {
-                  type: "date" as const,
-                  value: $toIsoDateString(value.value),
-                };
-              }
-              if (value["type"] === "dateTime") {
-                return {
-                  type: "dateTime" as const,
-                  value: value.value.toISOString(),
-                };
-              }
+          _datatypeUnionsStruct.$identifier().termType === "BlankNode"
+            ? `_:${_datatypeUnionsStruct.$identifier().value}`
+            : _datatypeUnionsStruct.$identifier().value,
+        "@type": _datatypeUnionsStruct.$type,
+        dateOrDateTime: ((
+          value:
+            | { type: "date"; value: Date }
+            | { type: "dateTime"; value: Date },
+        ):
+          | { type: "date"; value: string }
+          | { type: "dateTime"; value: string } => {
+          if (value["type"] === "date") {
+            return {
+              type: "date" as const,
+              value: $toIsoDateString(value.value),
+            };
+          }
+          if (value["type"] === "dateTime") {
+            return {
+              type: "dateTime" as const,
+              value: value.value.toISOString(),
+            };
+          }
 
-              throw new Error("unable to serialize to JSON");
-            })(item),
-          )
-          .extract(),
-        dateOrString: _dateUnionsStruct.dateOrString
-          .map((item) =>
-            ((
-              value:
-                | { type: "date"; value: Date }
-                | { type: "string"; value: string },
-            ):
-              | { type: "date"; value: string }
-              | { type: "string"; value: string } => {
-              if (value["type"] === "date") {
-                return {
-                  type: "date" as const,
-                  value: $toIsoDateString(value.value),
-                };
-              }
-              if (value["type"] === "string") {
-                return { type: "string" as const, value: value.value };
-              }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeUnionsStruct.dateOrDateTime),
+        dateOrString: ((value: Date | string): string | string => {
+          if (typeof value === "object") {
+            return $toIsoDateString(value);
+          }
+          if (typeof value === "string") {
+            return value;
+          }
 
-              throw new Error("unable to serialize to JSON");
-            })(item),
-          )
-          .extract(),
-        dateTimeOrDate: _dateUnionsStruct.dateTimeOrDate
-          .map((item) =>
-            ((
-              value:
-                | { type: "dateTime"; value: Date }
-                | { type: "date"; value: Date },
-            ):
-              | { type: "dateTime"; value: string }
-              | { type: "date"; value: string } => {
-              if (value["type"] === "dateTime") {
-                return {
-                  type: "dateTime" as const,
-                  value: value.value.toISOString(),
-                };
-              }
-              if (value["type"] === "date") {
-                return {
-                  type: "date" as const,
-                  value: $toIsoDateString(value.value),
-                };
-              }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeUnionsStruct.dateOrString),
+        dateTimeOrDate: ((
+          value:
+            | { type: "dateTime"; value: Date }
+            | { type: "date"; value: Date },
+        ):
+          | { type: "dateTime"; value: string }
+          | { type: "date"; value: string } => {
+          if (value["type"] === "dateTime") {
+            return {
+              type: "dateTime" as const,
+              value: value.value.toISOString(),
+            };
+          }
+          if (value["type"] === "date") {
+            return {
+              type: "date" as const,
+              value: $toIsoDateString(value.value),
+            };
+          }
 
-              throw new Error("unable to serialize to JSON");
-            })(item),
-          )
-          .extract(),
-        stringOrDate: _dateUnionsStruct.stringOrDate
-          .map((item) =>
-            ((
-              value:
-                | { type: "string"; value: string }
-                | { type: "date"; value: Date },
-            ):
-              | { type: "string"; value: string }
-              | { type: "date"; value: string } => {
-              if (value["type"] === "string") {
-                return { type: "string" as const, value: value.value };
-              }
-              if (value["type"] === "date") {
-                return {
-                  type: "date" as const,
-                  value: $toIsoDateString(value.value),
-                };
-              }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeUnionsStruct.dateTimeOrDate),
+        langStringOrString: ((
+          value: Literal | string,
+        ):
+          | { readonly "@language": string; readonly "@value": string }
+          | string => {
+          if (typeof value === "object") {
+            return { "@language": value.language, "@value": value.value };
+          }
+          if (typeof value === "string") {
+            return value;
+          }
 
-              throw new Error("unable to serialize to JSON");
-            })(item),
-          )
-          .extract(),
-      } satisfies DateUnionsStruct.Json),
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeUnionsStruct.langStringOrString),
+        stringOrDate: ((value: string | Date): string | string => {
+          if (typeof value === "string") {
+            return value;
+          }
+          if (typeof value === "object") {
+            return $toIsoDateString(value);
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeUnionsStruct.stringOrDate),
+        stringOrLangString: ((
+          value: string | Literal,
+        ):
+          | string
+          | { readonly "@language": string; readonly "@value": string } => {
+          if (typeof value === "string") {
+            return value;
+          }
+          if (typeof value === "object") {
+            return { "@language": value.language, "@value": value.value };
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeUnionsStruct.stringOrLangString),
+      } satisfies DatatypeUnionsStruct.Json),
     );
 
   export const _toRdfResource: $_ToRdfResourceFunction<
-    DateUnionsStruct.Identifier,
-    DateUnionsStruct
+    DatatypeUnionsStruct.Identifier,
+    DatatypeUnionsStruct
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        DateUnionsStruct.schema.toRdfTypes,
+        DatatypeUnionsStruct.schema.toRdfTypes,
         parameters.graph,
       );
     }
     parameters.resource.add(
-      DateUnionsStruct.schema.properties.dateOrDateTime.path,
-      parameters.object.dateOrDateTime.toList().flatMap((value) =>
-        (
-          ((value, _options): Literal[] => {
-            if (value["type"] === "date") {
-              return [
-                $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
-              ];
-            }
-            if (value["type"] === "dateTime") {
-              return [
-                $literalFactory.date(
-                  value.value,
-                  $RdfVocabularies.xsd.dateTime,
-                ),
-              ];
-            }
+      DatatypeUnionsStruct.schema.properties.dateOrDateTime.path,
+      (
+        ((value, _options): Literal[] => {
+          if (value["type"] === "date") {
+            return [
+              $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
+            ];
+          }
+          if (value["type"] === "dateTime") {
+            return [
+              $literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime),
+            ];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-          >
-        )(value, {
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath: DateUnionsStruct.schema.properties.dateOrDateTime.path,
-        }),
-      ),
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<
+          { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+        >
+      )(parameters.object.dateOrDateTime, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          DatatypeUnionsStruct.schema.properties.dateOrDateTime.path,
+      }),
       parameters.graph,
     );
     parameters.resource.add(
-      DateUnionsStruct.schema.properties.dateOrString.path,
-      parameters.object.dateOrString.toList().flatMap((value) =>
-        (
-          ((value, _options): Literal[] => {
-            if (value["type"] === "date") {
-              return [
-                $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
-              ];
-            }
-            if (value["type"] === "string") {
-              return [$literalFactory.string(value.value)];
-            }
+      DatatypeUnionsStruct.schema.properties.dateOrString.path,
+      (
+        ((value, _options): Literal[] => {
+          if (typeof value === "object") {
+            return [$literalFactory.date(value, $RdfVocabularies.xsd.date)];
+          }
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            { type: "date"; value: Date } | { type: "string"; value: string }
-          >
-        )(value, {
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath: DateUnionsStruct.schema.properties.dateOrString.path,
-        }),
-      ),
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<Date | string>
+      )(parameters.object.dateOrString, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath: DatatypeUnionsStruct.schema.properties.dateOrString.path,
+      }),
       parameters.graph,
     );
     parameters.resource.add(
-      DateUnionsStruct.schema.properties.dateTimeOrDate.path,
-      parameters.object.dateTimeOrDate.toList().flatMap((value) =>
-        (
-          ((value, _options): Literal[] => {
-            if (value["type"] === "dateTime") {
-              return [
-                $literalFactory.date(
-                  value.value,
-                  $RdfVocabularies.xsd.dateTime,
-                ),
-              ];
-            }
-            if (value["type"] === "date") {
-              return [
-                $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
-              ];
-            }
+      DatatypeUnionsStruct.schema.properties.dateTimeOrDate.path,
+      (
+        ((value, _options): Literal[] => {
+          if (value["type"] === "dateTime") {
+            return [
+              $literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime),
+            ];
+          }
+          if (value["type"] === "date") {
+            return [
+              $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
+            ];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-          >
-        )(value, {
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath: DateUnionsStruct.schema.properties.dateTimeOrDate.path,
-        }),
-      ),
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<
+          { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+        >
+      )(parameters.object.dateTimeOrDate, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          DatatypeUnionsStruct.schema.properties.dateTimeOrDate.path,
+      }),
       parameters.graph,
     );
     parameters.resource.add(
-      DateUnionsStruct.schema.properties.stringOrDate.path,
-      parameters.object.stringOrDate.toList().flatMap((value) =>
-        (
-          ((value, _options): Literal[] => {
-            if (value["type"] === "string") {
-              return [$literalFactory.string(value.value)];
-            }
-            if (value["type"] === "date") {
-              return [
-                $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
-              ];
-            }
+      DatatypeUnionsStruct.schema.properties.langStringOrString.path,
+      (
+        ((value, _options): Literal[] => {
+          if (typeof value === "object") {
+            return [value];
+          }
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            { type: "string"; value: string } | { type: "date"; value: Date }
-          >
-        )(value, {
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath: DateUnionsStruct.schema.properties.stringOrDate.path,
-        }),
-      ),
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<Literal | string>
+      )(parameters.object.langStringOrString, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          DatatypeUnionsStruct.schema.properties.langStringOrString.path,
+      }),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      DatatypeUnionsStruct.schema.properties.stringOrDate.path,
+      (
+        ((value, _options): Literal[] => {
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
+          if (typeof value === "object") {
+            return [$literalFactory.date(value, $RdfVocabularies.xsd.date)];
+          }
+
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<string | Date>
+      )(parameters.object.stringOrDate, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath: DatatypeUnionsStruct.schema.properties.stringOrDate.path,
+      }),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      DatatypeUnionsStruct.schema.properties.stringOrLangString.path,
+      (
+        ((value, _options): Literal[] => {
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
+          if (typeof value === "object") {
+            return [value];
+          }
+
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<string | Literal>
+      )(parameters.object.stringOrLangString, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          DatatypeUnionsStruct.schema.properties.stringOrLangString.path,
+      }),
       parameters.graph,
     );
     return parameters.resource;
@@ -11915,20 +12057,23 @@ export namespace DateUnionsStruct {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export const $toString: (_dateUnionsStruct: DateUnionsStruct) => string = (
-    _dateUnionsStruct,
-  ) => `DateUnionsStruct(${JSON.stringify(toStringRecord(_dateUnionsStruct))})`;
+  export const $toString: (
+    _datatypeUnionsStruct: DatatypeUnionsStruct,
+  ) => string = (_datatypeUnionsStruct) =>
+    `DatatypeUnionsStruct(${JSON.stringify(toStringRecord(_datatypeUnionsStruct))})`;
 
   export const toStringRecord: (
-    _dateUnionsStruct: DateUnionsStruct,
-  ) => Record<string, string> = (_dateUnionsStruct) =>
-    $compactRecord({ $identifier: _dateUnionsStruct.$identifier().toString() });
+    _datatypeUnionsStruct: DatatypeUnionsStruct,
+  ) => Record<string, string> = (_datatypeUnionsStruct) =>
+    $compactRecord({
+      $identifier: _datatypeUnionsStruct.$identifier().toString(),
+    });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    DateUnionsStruct.Filter,
-    DateUnionsStruct.Schema
+    DatatypeUnionsStruct.Filter,
+    DatatypeUnionsStruct.Schema
   > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    DateUnionsStruct.focusSparqlConstructTriples({
+    DatatypeUnionsStruct.focusSparqlConstructTriples({
       filter,
       focusIdentifier: valueVariable,
       ignoreRdfType,
@@ -11936,8 +12081,8 @@ export namespace DateUnionsStruct {
     });
 
   export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    DateUnionsStruct.Filter,
-    DateUnionsStruct.Schema
+    DatatypeUnionsStruct.Filter,
+    DatatypeUnionsStruct.Schema
   > = ({
     filter,
     ignoreRdfType,
@@ -11947,7 +12092,7 @@ export namespace DateUnionsStruct {
     variablePrefix,
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
-      DateUnionsStruct.focusSparqlWherePatterns({
+      DatatypeUnionsStruct.focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -52280,7 +52425,7 @@ export type $Object =
   | BlankNodeOrIriIdentifierStruct
   | ClassConstraintsStruct
   | ConvertibleTypesStruct
-  | DateUnionsStruct
+  | DatatypeUnionsStruct
   | DefaultValuesStruct
   | DirectRecursiveStruct
   | DisplayStruct
@@ -52344,8 +52489,8 @@ export namespace $Object {
     if (ConvertibleTypesStruct.isConvertibleTypesStruct(value)) {
       return ConvertibleTypesStruct.$toString(value);
     }
-    if (DateUnionsStruct.isDateUnionsStruct(value)) {
-      return DateUnionsStruct.$toString(value);
+    if (DatatypeUnionsStruct.isDatatypeUnionsStruct(value)) {
+      return DatatypeUnionsStruct.$toString(value);
     }
     if (DefaultValuesStruct.isDefaultValuesStruct(value)) {
       return DefaultValuesStruct.$toString(value);
@@ -52535,12 +52680,12 @@ export namespace $Object {
       );
     }
     if (
-      DateUnionsStruct.isDateUnionsStruct(left) &&
-      DateUnionsStruct.isDateUnionsStruct(right)
+      DatatypeUnionsStruct.isDatatypeUnionsStruct(left) &&
+      DatatypeUnionsStruct.isDatatypeUnionsStruct(right)
     ) {
-      return DateUnionsStruct.equals(
-        left as DateUnionsStruct,
-        right as DateUnionsStruct,
+      return DatatypeUnionsStruct.equals(
+        left as DatatypeUnionsStruct,
+        right as DatatypeUnionsStruct,
       );
     }
     if (
@@ -52998,10 +53143,12 @@ export namespace $Object {
       }
     }
     if (
-      filter.on?.["DateUnionsStruct"] !== undefined &&
-      DateUnionsStruct.isDateUnionsStruct(value)
+      filter.on?.["DatatypeUnionsStruct"] !== undefined &&
+      DatatypeUnionsStruct.isDatatypeUnionsStruct(value)
     ) {
-      if (!DateUnionsStruct.filter(filter.on["DateUnionsStruct"], value)) {
+      if (
+        !DatatypeUnionsStruct.filter(filter.on["DatatypeUnionsStruct"], value)
+      ) {
         return false;
       }
     }
@@ -53446,7 +53593,7 @@ export namespace $Object {
       readonly BlankNodeOrIriIdentifierStruct?: BlankNodeOrIriIdentifierStruct.Filter;
       readonly ClassConstraintsStruct?: ClassConstraintsStruct.Filter;
       readonly ConvertibleTypesStruct?: ConvertibleTypesStruct.Filter;
-      readonly DateUnionsStruct?: DateUnionsStruct.Filter;
+      readonly DatatypeUnionsStruct?: DatatypeUnionsStruct.Filter;
       readonly DefaultValuesStruct?: DefaultValuesStruct.Filter;
       readonly DirectRecursiveStruct?: DirectRecursiveStruct.Filter;
       readonly DisplayStruct?: DisplayStruct.Filter;
@@ -53534,11 +53681,11 @@ export namespace $Object {
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}ConvertibleTypesStruct`,
       }).concat(),
-      ...DateUnionsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.DateUnionsStruct,
+      ...DatatypeUnionsStruct.focusSparqlConstructTriples({
+        filter: filter?.on?.DatatypeUnionsStruct,
         focusIdentifier,
         ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DateUnionsStruct`,
+        variablePrefix: `${variablePrefix}DatatypeUnionsStruct`,
       }).concat(),
       ...DefaultValuesStruct.focusSparqlConstructTriples({
         filter: filter?.on?.DefaultValuesStruct,
@@ -53882,12 +54029,12 @@ export namespace $Object {
           type: "group",
         },
         {
-          patterns: DateUnionsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.DateUnionsStruct,
+          patterns: DatatypeUnionsStruct.focusSparqlWherePatterns({
+            filter: filter?.on?.DatatypeUnionsStruct,
             focusIdentifier,
             ignoreRdfType: false,
             preferredLanguages,
-            variablePrefix: `${variablePrefix}DateUnionsStruct`,
+            variablePrefix: `${variablePrefix}DatatypeUnionsStruct`,
           }).concat(),
           type: "group",
         },
@@ -54357,10 +54504,10 @@ export namespace $Object {
         value as ConvertibleTypesStruct.Json,
       ).map((value) => value);
     }
-    if (value["@type"] === "DateUnionsStruct") {
-      return DateUnionsStruct.fromJson(value as DateUnionsStruct.Json).map(
-        (value) => value,
-      );
+    if (value["@type"] === "DatatypeUnionsStruct") {
+      return DatatypeUnionsStruct.fromJson(
+        value as DatatypeUnionsStruct.Json,
+      ).map((value) => value);
     }
     if (value["@type"] === "DefaultValuesStruct") {
       return DefaultValuesStruct.fromJson(
@@ -54619,7 +54766,7 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          DateUnionsStruct.fromRdfResource(resource, {
+          DatatypeUnionsStruct.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -54975,9 +55122,9 @@ export namespace $Object {
         )
         .altLazy(
           () =>
-            DateUnionsStruct.fromRdfResourceValues(valueAsValues, {
+            DatatypeUnionsStruct.fromRdfResourceValues(valueAsValues, {
               ...options,
-              schema: options.schema.members["DateUnionsStruct"].type,
+              schema: options.schema.members["DatatypeUnionsStruct"].type,
             }) as Either<Error, Resource.Values<$Object>>,
         )
         .altLazy(
@@ -55322,8 +55469,8 @@ export namespace $Object {
     if (ConvertibleTypesStruct.isConvertibleTypesStruct(value)) {
       return ConvertibleTypesStruct.hash(hasher, value);
     }
-    if (DateUnionsStruct.isDateUnionsStruct(value)) {
-      return DateUnionsStruct.hash(hasher, value);
+    if (DatatypeUnionsStruct.isDatatypeUnionsStruct(value)) {
+      return DatatypeUnionsStruct.hash(hasher, value);
     }
     if (DefaultValuesStruct.isDefaultValuesStruct(value)) {
       return DefaultValuesStruct.hash(hasher, value);
@@ -55480,7 +55627,7 @@ export namespace $Object {
           BlankNodeOrIriIdentifierStruct.Json.schema(),
           ClassConstraintsStruct.Json.schema(),
           ConvertibleTypesStruct.Json.schema(),
-          DateUnionsStruct.Json.schema(),
+          DatatypeUnionsStruct.Json.schema(),
           DefaultValuesStruct.Json.schema(),
           DirectRecursiveStruct.Json.schema(),
           DisplayStruct.Json.schema(),
@@ -55542,7 +55689,7 @@ export namespace $Object {
     | BlankNodeOrIriIdentifierStruct.Json
     | ClassConstraintsStruct.Json
     | ConvertibleTypesStruct.Json
-    | DateUnionsStruct.Json
+    | DatatypeUnionsStruct.Json
     | DefaultValuesStruct.Json
     | DirectRecursiveStruct.Json
     | DisplayStruct.Json
@@ -55610,9 +55757,9 @@ export namespace $Object {
         discriminantValues: ["ConvertibleTypesStruct"],
         type: ConvertibleTypesStruct.schema,
       },
-      DateUnionsStruct: {
-        discriminantValues: ["DateUnionsStruct"],
-        type: DateUnionsStruct.schema,
+      DatatypeUnionsStruct: {
+        discriminantValues: ["DatatypeUnionsStruct"],
+        type: DatatypeUnionsStruct.schema,
       },
       DefaultValuesStruct: {
         discriminantValues: ["DefaultValuesStruct"],
@@ -55861,8 +56008,8 @@ export namespace $Object {
     if (ConvertibleTypesStruct.isConvertibleTypesStruct(value)) {
       return ConvertibleTypesStruct.toJson(value);
     }
-    if (DateUnionsStruct.isDateUnionsStruct(value)) {
-      return DateUnionsStruct.toJson(value);
+    if (DatatypeUnionsStruct.isDatatypeUnionsStruct(value)) {
+      return DatatypeUnionsStruct.toJson(value);
     }
     if (DefaultValuesStruct.isDefaultValuesStruct(value)) {
       return DefaultValuesStruct.toJson(value);
@@ -56026,8 +56173,8 @@ export namespace $Object {
     if (ConvertibleTypesStruct.isConvertibleTypesStruct(object)) {
       return ConvertibleTypesStruct.toRdfResource(object, options);
     }
-    if (DateUnionsStruct.isDateUnionsStruct(object)) {
-      return DateUnionsStruct.toRdfResource(object, options);
+    if (DatatypeUnionsStruct.isDatatypeUnionsStruct(object)) {
+      return DatatypeUnionsStruct.toRdfResource(object, options);
     }
     if (DefaultValuesStruct.isDefaultValuesStruct(object)) {
       return DefaultValuesStruct.toRdfResource(object, options);
@@ -56218,9 +56365,9 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (DateUnionsStruct.isDateUnionsStruct(value)) {
+    if (DatatypeUnionsStruct.isDatatypeUnionsStruct(value)) {
       return [
-        DateUnionsStruct.toRdfResource(value, {
+        DatatypeUnionsStruct.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -56629,11 +56776,11 @@ export namespace $Object {
       }),
     );
     triples = triples.concat(
-      DateUnionsStruct.valueSparqlConstructTriples({
+      DatatypeUnionsStruct.valueSparqlConstructTriples({
         ...otherParameters,
-        filter: filter?.on?.["DateUnionsStruct"],
+        filter: filter?.on?.["DatatypeUnionsStruct"],
         ignoreRdfType: false,
-        schema: schema.members["DateUnionsStruct"].type,
+        schema: schema.members["DatatypeUnionsStruct"].type,
       }),
     );
     triples = triples.concat(
@@ -57040,11 +57187,11 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
-      patterns: DateUnionsStruct.valueSparqlWherePatterns({
+      patterns: DatatypeUnionsStruct.valueSparqlWherePatterns({
         ...otherParameters,
-        filter: filter?.on?.["DateUnionsStruct"],
+        filter: filter?.on?.["DatatypeUnionsStruct"],
         ignoreRdfType: false,
-        schema: schema.members["DateUnionsStruct"].type,
+        schema: schema.members["DatatypeUnionsStruct"].type,
       }).concat(),
       type: "group",
     });
@@ -57592,31 +57739,34 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ConvertibleTypesStruct[]>>;
 
-  dateUnionsStruct(
-    identifier: DateUnionsStruct.Identifier,
+  datatypeUnionsStruct(
+    identifier: DatatypeUnionsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DateUnionsStruct>>;
+  ): Promise<Either<Error, DatatypeUnionsStruct>>;
 
-  dateUnionsStructCount(
+  datatypeUnionsStructCount(
     query?: Pick<
-      $ObjectSet.Query<DateUnionsStruct.Filter, DateUnionsStruct.Identifier>,
+      $ObjectSet.Query<
+        DatatypeUnionsStruct.Filter,
+        DatatypeUnionsStruct.Identifier
+      >,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
-  dateUnionsStructIdentifiers(
+  datatypeUnionsStructIdentifiers(
     query?: $ObjectSet.Query<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DateUnionsStruct.Identifier[]>>;
+  ): Promise<Either<Error, readonly DatatypeUnionsStruct.Identifier[]>>;
 
-  dateUnionsStructs(
+  datatypeUnionsStructs(
     query?: $ObjectSet.Query<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DateUnionsStruct[]>>;
+  ): Promise<Either<Error, readonly DatatypeUnionsStruct[]>>;
 
   defaultValuesStruct(
     identifier: DefaultValuesStruct.Identifier,
@@ -59410,85 +59560,93 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async dateUnionsStruct(
-    identifier: DateUnionsStruct.Identifier,
+  async datatypeUnionsStruct(
+    identifier: DatatypeUnionsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DateUnionsStruct>> {
-    return this.dateUnionsStructSync(identifier, options);
+  ): Promise<Either<Error, DatatypeUnionsStruct>> {
+    return this.datatypeUnionsStructSync(identifier, options);
   }
 
-  dateUnionsStructSync(
-    identifier: DateUnionsStruct.Identifier,
+  datatypeUnionsStructSync(
+    identifier: DatatypeUnionsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, DateUnionsStruct> {
-    return this.dateUnionsStructsSync({
+  ): Either<Error, DatatypeUnionsStruct> {
+    return this.datatypeUnionsStructsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
-  async dateUnionsStructCount(
+  async datatypeUnionsStructCount(
     query?: Pick<
-      $ObjectSet.Query<DateUnionsStruct.Filter, DateUnionsStruct.Identifier>,
+      $ObjectSet.Query<
+        DatatypeUnionsStruct.Filter,
+        DatatypeUnionsStruct.Identifier
+      >,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
-    return this.dateUnionsStructCountSync(query);
+    return this.datatypeUnionsStructCountSync(query);
   }
 
-  dateUnionsStructCountSync(
+  datatypeUnionsStructCountSync(
     query?: Pick<
-      $ObjectSet.Query<DateUnionsStruct.Filter, DateUnionsStruct.Identifier>,
+      $ObjectSet.Query<
+        DatatypeUnionsStruct.Filter,
+        DatatypeUnionsStruct.Identifier
+      >,
       "filter"
     >,
   ): Either<Error, number> {
-    return this.dateUnionsStructsSync(query).map((objects) => objects.length);
+    return this.datatypeUnionsStructsSync(query).map(
+      (objects) => objects.length,
+    );
   }
 
-  async dateUnionsStructIdentifiers(
+  async datatypeUnionsStructIdentifiers(
     query?: $ObjectSet.Query<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DateUnionsStruct.Identifier[]>> {
-    return this.dateUnionsStructIdentifiersSync(query);
+  ): Promise<Either<Error, readonly DatatypeUnionsStruct.Identifier[]>> {
+    return this.datatypeUnionsStructIdentifiersSync(query);
   }
 
-  dateUnionsStructIdentifiersSync(
+  datatypeUnionsStructIdentifiersSync(
     query?: $ObjectSet.Query<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
     >,
-  ): Either<Error, readonly DateUnionsStruct.Identifier[]> {
-    return this.dateUnionsStructsSync(query).map((objects) =>
+  ): Either<Error, readonly DatatypeUnionsStruct.Identifier[]> {
+    return this.datatypeUnionsStructsSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
   }
 
-  async dateUnionsStructs(
+  async datatypeUnionsStructs(
     query?: $ObjectSet.Query<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DateUnionsStruct[]>> {
-    return this.dateUnionsStructsSync(query);
+  ): Promise<Either<Error, readonly DatatypeUnionsStruct[]>> {
+    return this.datatypeUnionsStructsSync(query);
   }
 
-  dateUnionsStructsSync(
+  datatypeUnionsStructsSync(
     query?: $ObjectSet.Query<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
     >,
-  ): Either<Error, readonly DateUnionsStruct[]> {
+  ): Either<Error, readonly DatatypeUnionsStruct[]> {
     return this.#objectsSync<
-      DateUnionsStruct,
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
+      DatatypeUnionsStruct,
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
     >(
       {
-        filter: DateUnionsStruct.filter,
-        fromRdfResource: DateUnionsStruct.fromRdfResource,
-        fromRdfTypes: [DateUnionsStruct.schema.fromRdfType],
+        filter: DatatypeUnionsStruct.filter,
+        fromRdfResource: DatatypeUnionsStruct.fromRdfResource,
+        fromRdfTypes: [DatatypeUnionsStruct.schema.fromRdfType],
       },
       query,
     );
@@ -63782,8 +63940,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           filter: $Object.filter,
-          fromRdfResource: DateUnionsStruct.fromRdfResource,
-          fromRdfTypes: [DateUnionsStruct.schema.fromRdfType],
+          fromRdfResource: DatatypeUnionsStruct.fromRdfResource,
+          fromRdfTypes: [DatatypeUnionsStruct.schema.fromRdfType],
         },
         {
           filter: $Object.filter,
@@ -64578,56 +64736,56 @@ export class $SparqlObjectSet implements $ObjectSet {
     >(ConvertibleTypesStruct, query);
   }
 
-  async dateUnionsStruct(
-    identifier: DateUnionsStruct.Identifier,
+  async datatypeUnionsStruct(
+    identifier: DatatypeUnionsStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, DateUnionsStruct>> {
+  ): Promise<Either<Error, DatatypeUnionsStruct>> {
     return (
-      await this.dateUnionsStructs({
+      await this.datatypeUnionsStructs({
         identifiers: [identifier],
         preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
 
-  async dateUnionsStructCount(
+  async datatypeUnionsStructCount(
     query?: Pick<
       $SparqlObjectSet.Query<
-        DateUnionsStruct.Filter,
-        DateUnionsStruct.Identifier
+        DatatypeUnionsStruct.Filter,
+        DatatypeUnionsStruct.Identifier
       >,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
     return this.#objectCount<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
-    >(DateUnionsStruct, query);
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
+    >(DatatypeUnionsStruct, query);
   }
 
-  async dateUnionsStructIdentifiers(
+  async datatypeUnionsStructIdentifiers(
     query?: $SparqlObjectSet.Query<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DateUnionsStruct.Identifier[]>> {
+  ): Promise<Either<Error, readonly DatatypeUnionsStruct.Identifier[]>> {
     return this.#objectIdentifiers<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
-    >(DateUnionsStruct, query);
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
+    >(DatatypeUnionsStruct, query);
   }
 
-  async dateUnionsStructs(
+  async datatypeUnionsStructs(
     query?: $SparqlObjectSet.Query<
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
     >,
-  ): Promise<Either<Error, readonly DateUnionsStruct[]>> {
+  ): Promise<Either<Error, readonly DatatypeUnionsStruct[]>> {
     return this.#objects<
-      DateUnionsStruct,
-      DateUnionsStruct.Filter,
-      DateUnionsStruct.Identifier
-    >(DateUnionsStruct, query);
+      DatatypeUnionsStruct,
+      DatatypeUnionsStruct.Filter,
+      DatatypeUnionsStruct.Identifier
+    >(DatatypeUnionsStruct, query);
   }
 
   async defaultValuesStruct(
