@@ -478,6 +478,22 @@ function $convertToIriIdentifierProperty<IriT extends string = string>(
   }
 }
 
+function $convertToLangString(value: Literal): Either<Error, Literal> {
+  if (!value.datatype.equals($RdfVocabularies.rdf.langString)) {
+    return Left(
+      new Error(
+        `expected Literal to have rdf:langString datatype, not ${value.datatype.value}`,
+      ),
+    );
+  }
+
+  if (value.language.length === 0) {
+    return Left(new Error("expected Literal to have non-empty language"));
+  }
+
+  return Either.of(value);
+}
+
 function $convertToLazy<PartialT, ResolvedT>(
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
 ) {
@@ -1542,6 +1558,30 @@ const $iriSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
   });
 };
 
+function $langStringFromRdfResourceValues(
+  values: Resource.Values,
+  options: Parameters<
+    $FromRdfResourceValuesFunction<Literal, $LangStringSchema>
+  >[1],
+): Either<Error, Resource.Values<Literal>> {
+  return $termLikeFromRdfResourceValues(values, options).chain((values) =>
+    values.chainMap((value) => value.toLangString(options.schema.in)),
+  );
+}
+
+type $LangStringSchema = Omit<$LiteralSchema, "kind"> & {
+  readonly kind: "LangString";
+};
+
+const $langStringSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $LiteralFilter,
+  $LangStringSchema
+> = (parameters) =>
+  $literalSchemaSparqlPatterns({
+    filterPatterns: $termFilterSparqlPatterns(parameters),
+    ...parameters,
+  });
+
 /**
  * Type of lazy properties that return a single required value. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
@@ -1918,7 +1958,7 @@ function $literalFromRdfResourceValues(
   >[1],
 ): Either<Error, Resource.Values<Literal>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) => value.toLiteral()),
+    values.chainMap((value) => value.toLiteral(options.schema.in)),
   );
 }
 
@@ -2468,6 +2508,9 @@ namespace $RdfVocabularies {
   export const rdf = {
     first: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+    ),
+    langString: dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
     ),
     nil: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
@@ -39471,14 +39514,7 @@ export namespace TermsStruct {
     readonly dateTerm?: Date | Maybe<Date>;
     readonly dateTimeTerm?: Date | Maybe<Date>;
     readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
-    readonly langStringTerm?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
+    readonly langStringTerm?: Literal | Maybe<Literal>;
     readonly literalTerm?:
       | bigint
       | boolean
@@ -39535,7 +39571,7 @@ export namespace TermsStruct {
           value,
         ),
       ),
-      langStringTerm: $convertToMaybe($convertToLiteral)(
+      langStringTerm: $convertToMaybe($convertToLangString)(
         parameters?.langStringTerm,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
@@ -39595,14 +39631,7 @@ export namespace TermsStruct {
     readonly dateTerm?: Date | Maybe<Date>;
     readonly dateTimeTerm?: Date | Maybe<Date>;
     readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
-    readonly langStringTerm?:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | Maybe<Literal>;
+    readonly langStringTerm?: Literal | Maybe<Literal>;
     readonly literalTerm?:
       | bigint
       | boolean
@@ -39954,7 +39983,7 @@ export namespace TermsStruct {
         propertySchema: TermsStruct.schema.properties.langStringTerm,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $LiteralFilter,
-          $LiteralSchema
+          $LangStringSchema
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -40162,8 +40191,8 @@ export namespace TermsStruct {
         propertySchema: TermsStruct.schema.properties.langStringTerm,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $LiteralFilter,
-          $LiteralSchema
-        >($literalSparqlWherePatterns),
+          $LangStringSchema
+        >($langStringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -40265,14 +40294,7 @@ export namespace TermsStruct {
       langStringTerm: Maybe.fromNullable($json["langStringTerm"])
         .map((item) =>
           Either.of<Error, Literal>(
-            dataFactory.literal(
-              item["@value"],
-              item["@language"] !== undefined
-                ? item["@language"]
-                : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"]!)
-                  : undefined,
-            ),
+            dataFactory.literal(item["@value"], item["@language"]),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
@@ -40402,7 +40424,7 @@ export namespace TermsStruct {
         }),
         langStringTerm: $shaclPropertyFromRdf<
           Maybe<Literal>,
-          $MaybeSchema<$LiteralSchema>
+          $MaybeSchema<$LangStringSchema>
         >({
           ...options,
           focusResource: resource,
@@ -40410,8 +40432,8 @@ export namespace TermsStruct {
           propertySchema: TermsStruct.schema.properties.langStringTerm,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             Literal,
-            $LiteralSchema
-          >($literalFromRdfResourceValues),
+            $LangStringSchema
+          >($langStringFromRdfResourceValues),
         }),
         literalTerm: $shaclPropertyFromRdf<
           Maybe<Literal>,
@@ -40527,8 +40549,7 @@ export namespace TermsStruct {
     readonly dateTimeTerm?: string;
     readonly iriTerm?: { readonly "@id": string };
     readonly langStringTerm?: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
+      readonly "@language": string;
       readonly "@value": string;
     };
     readonly literalTerm?: {
@@ -40568,11 +40589,7 @@ export namespace TermsStruct {
           dateTimeTerm: z.iso.datetime().optional(),
           iriTerm: z.object({ "@id": z.string().min(1) }).optional(),
           langStringTerm: z
-            .object({
-              "@language": z.string().optional(),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-            })
+            .object({ "@language": z.string(), "@value": z.string() })
             .optional(),
           literalTerm: z
             .object({
@@ -40694,7 +40711,7 @@ export namespace TermsStruct {
         path: dataFactory.namedNode("http://example.com/langStringTerm"),
         type: {
           kind: "Option" as const,
-          itemType: { kind: "Literal" as const },
+          itemType: { kind: "LangString" as const },
         },
       },
       literalTerm: {
@@ -40816,11 +40833,7 @@ export namespace TermsStruct {
           .extract(),
         langStringTerm: _termsStruct.langStringTerm
           .map((item) => ({
-            "@language": item.language.length > 0 ? item.language : undefined,
-            "@type":
-              item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
-                ? item.datatype.value
-                : undefined,
+            "@language": item.language,
             "@value": item.value,
           }))
           .extract(),

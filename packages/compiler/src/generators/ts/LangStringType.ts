@@ -31,7 +31,7 @@ export class LangStringType extends AbstractLiteralType {
   override readonly schemaType =
     code`${this.reusables.snippets.LangStringSchema}`;
   override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.literalSparqlWherePatterns}`;
+    code`${this.reusables.snippets.langStringSparqlWherePatterns}`;
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");

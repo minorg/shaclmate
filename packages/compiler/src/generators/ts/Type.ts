@@ -9,6 +9,7 @@ import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
+import type { LangStringType } from "./LangStringType.js";
 import type { LazyOptionType } from "./LazyOptionType.js";
 import type { LazySetType } from "./LazySetType.js";
 import type { LazyType } from "./LazyType.js";
@@ -34,6 +35,7 @@ export type Type =
   | IdentifierType
   | IntType
   | IriType
+  | LangStringType
   | LazyOptionType
   | LazySetType
   | LazyType

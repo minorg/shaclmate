@@ -23,6 +23,7 @@ import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IntType } from "./IntType.js";
 import { IriType } from "./IriType.js";
+import { LangStringType } from "./LangStringType.js";
 import { LazyOptionType } from "./LazyOptionType.js";
 import { LazySetType } from "./LazySetType.js";
 import { LazyType } from "./LazyType.js";
@@ -426,126 +427,78 @@ export class TypeFactory {
     if (datatypes.size === 1) {
       const datatype = [...datatypes][0];
 
+      const typeParameters = {
+        comment: astType.comment,
+        configuration: this.configuration,
+        datatype,
+        hasValues: astType.hasValues,
+        in_: astType.in_,
+        label: astType.label,
+        languageIn: astType.languageIn,
+        logger: this.logger,
+        name: astType.name.map((name) => this.tsName(name)),
+        reusables: this.reusables,
+        shapeIdentifier: astType.shapeIdentifier,
+      };
+
+      if (datatype.equals(rdf.langString)) {
+        return new LangStringType(typeParameters);
+      }
+
       const datatypeDefinition = literalDatatypeDefinitions[datatype.value];
       if (datatypeDefinition) {
         switch (datatypeDefinition.kind) {
           case "bigdecimal":
-            return new BigDecimalType({
-              comment: astType.comment,
-              configuration: this.configuration,
-              hasValues: astType.hasValues,
-              in_: astType.in_,
-              label: astType.label,
-              languageIn: [],
-              logger: this.logger,
-              name: astType.name.map((name) => this.tsName(name)),
-              reusables: this.reusables,
-              shapeIdentifier: astType.shapeIdentifier,
-            });
+            return new BigDecimalType(typeParameters);
           case "bigint":
             return new BigIntType({
-              comment: astType.comment,
-              configuration: this.configuration,
-              datatype,
-              hasValues: astType.hasValues,
-              in_: astType.in_,
-              label: astType.label,
-              languageIn: [],
-              logger: this.logger,
-              name: astType.name.map((name) => this.tsName(name)),
+              ...typeParameters,
               primitiveIn: astType.in_.map((value) =>
                 LiteralDecoder.decodeBigIntLiteral(value).unsafeCoerce(),
               ),
-              reusables: this.reusables,
-              shapeIdentifier: astType.shapeIdentifier,
             });
           case "boolean":
             return new BooleanType({
-              comment: astType.comment,
-              configuration: this.configuration,
-              datatype,
-              hasValues: astType.hasValues,
-              label: astType.label,
-              languageIn: [],
-              in_: astType.in_,
-              logger: this.logger,
-              name: astType.name.map((name) => this.tsName(name)),
+              ...typeParameters,
               primitiveIn: astType.in_.map((value) =>
                 LiteralDecoder.decodeBooleanLiteral(value).unsafeCoerce(),
               ),
-              reusables: this.reusables,
-              shapeIdentifier: astType.shapeIdentifier,
             });
           case "date":
           case "datetime":
             return new (
               datatypeDefinition.kind === "date" ? DateType : DateTimeType
             )({
-              comment: astType.comment,
-              configuration: this.configuration,
-              datatype,
-              hasValues: astType.hasValues,
-              in_: astType.in_,
-              label: astType.label,
-              languageIn: [],
-              logger: this.logger,
-              name: astType.name.map((name) => this.tsName(name)),
+              ...typeParameters,
               primitiveIn: astType.in_.map((value) =>
                 (datatypeDefinition.kind === "date"
                   ? LiteralDecoder.decodeDateLiteral
                   : LiteralDecoder.decodeDateTimeLiteral)(value).unsafeCoerce(),
               ),
-              reusables: this.reusables,
-              shapeIdentifier: astType.shapeIdentifier,
             });
           case "float":
           case "int":
             return new (
               datatypeDefinition.kind === "float" ? FloatType : IntType
             )({
-              comment: astType.comment,
-              configuration: this.configuration,
-              datatype,
-              hasValues: astType.hasValues,
-              in_: astType.in_,
-              label: astType.label,
-              languageIn: [],
-              logger: this.logger,
-              name: astType.name.map((name) => this.tsName(name)),
+              ...typeParameters,
               primitiveIn: astType.in_.map((value) =>
                 (datatypeDefinition.kind === "float"
                   ? LiteralDecoder.decodeFloatLiteral
                   : LiteralDecoder.decodeIntLiteral)(value).unsafeCoerce(),
               ),
-              reusables: this.reusables,
-              shapeIdentifier: astType.shapeIdentifier,
             });
           case "string":
-            if (!datatype.equals(rdf.langString)) {
-              return new StringType({
-                comment: astType.comment,
-                configuration: this.configuration,
-                datatype,
-                hasValues: astType.hasValues,
-                in_: astType.in_,
-                label: astType.label,
-                languageIn: astType.languageIn,
-                logger: this.logger,
-                name: astType.name.map((name) => this.tsName(name)),
-                primitiveIn: astType.in_.map((value) => value.value),
-                reusables: this.reusables,
-                shapeIdentifier: astType.shapeIdentifier,
-              });
-            }
-            break;
+            return new StringType({
+              ...typeParameters,
+              primitiveIn: astType.in_.map((value) =>
+                LiteralDecoder.decodeStringLiteral(value).unsafeCoerce(),
+              ),
+            });
         }
       }
 
-      if (datatype.equals(rdf.langString)) {
-        // Drop down
-      } else {
-        this.logger.warn("unrecognized literal datatype: %s", datatype.value);
-      }
+      this.logger.warn("unrecognized literal datatype: %s", datatype.value);
     } else if (datatypes.size > 0) {
       this.logger.warn(
         "literal type has multiple datatypes: %s",

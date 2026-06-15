@@ -29,6 +29,7 @@ export function rdfjsTermExpression(
         const unqualifiedName = rdfjsTerm.value.substring(rdf[""].value.length);
         switch (unqualifiedName) {
           case "first":
+          case "langString":
           case "nil":
           case "rest":
           case "subject":

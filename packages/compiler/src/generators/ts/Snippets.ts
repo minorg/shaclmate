@@ -99,6 +99,7 @@ import { snippets_LazySet } from "./_snippets/snippets_LazySet.js";
 import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
 import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
 import { snippets_langStringFromRdfResourceValues } from "./_snippets/snippets_langStringFromRdfResourceValues.js";
+import { snippets_langStringSparqlWherePatterns } from "./_snippets/snippets_langStringSparqlWherePatterns.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
 import { snippets_listFromRdfResourceValues } from "./_snippets/snippets_listFromRdfResourceValues.js";
 import { snippets_listSparqlConstructTriples } from "./_snippets/snippets_listSparqlConstructTriples.js";
@@ -803,6 +804,11 @@ export class Snippets {
   @Memoize()
   get langStringFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_langStringFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get langStringSparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_langStringSparqlWherePatterns);
   }
 
   @Memoize()

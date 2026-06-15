@@ -16,6 +16,7 @@ import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
+import type { LangStringType } from "./LangStringType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -191,6 +192,7 @@ export namespace ListType {
     | IdentifierType
     | IntType
     | IriType
+    | LangStringType
     | ListType<ListType.ItemType>
     | LiteralType
     | ObjectUnionType
@@ -211,6 +213,7 @@ export namespace ListType {
       case "Identifier":
       case "Iri":
       case "Int":
+      case "LangString":
       case "List":
       case "Literal":
       case "ObjectUnion":

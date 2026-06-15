@@ -367,6 +367,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:in properties." ;
     sh:property [
+        sh:maxCount 1 ;
+        sh:node :ReusableIn ;
+        sh:path :reusableIn
+    ], [
+        sh:in (1e0
+            2e0
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDoubles
+    ], [
         sh:in ("text"
             "html"
         ) ;
@@ -394,16 +404,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inIris
-    ], [
-        sh:maxCount 1 ;
-        sh:node :ReusableIn ;
-        sh:path :reusableIn
-    ], [
-        sh:in (1e0
-            2e0
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDoubles
     ] .
 
 :IndirectRecursiveStruct
