@@ -46,6 +46,11 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass1, :UndefinedClass2 ;
+        sh:maxCount 1 ;
+        sh:path :multiClass
+    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -68,11 +73,6 @@
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
         sh:path :singleClass
-    ], [
-        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass1, :UndefinedClass2 ;
-        sh:maxCount 1 ;
-        sh:path :multiClass
     ] .
 
 :ConvertibleTypesStruct
@@ -128,6 +128,78 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
+        rdfs:comment "Integer or string. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :integerOrString ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :langStringOrString ;
+        sh:xone ([
+                sh:datatype rdf:langString
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "String or date. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrDate ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:date
+            ]
+        )
+    ], [
+        rdfs:comment "String or decimal. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrDecimal ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:decimal
+            ]
+        )
+    ], [
+        rdfs:comment "String or integer. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrInteger ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:integer
+            ]
+        )
+    ], [
+        rdfs:comment "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrLangString ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype rdf:langString
+            ]
+        )
+    ], [
         rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -177,54 +249,6 @@
             ]
             [
                 sh:datatype xsd:string
-            ]
-        )
-    ], [
-        rdfs:comment "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :langStringOrString ;
-        sh:xone ([
-                sh:datatype rdf:langString
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
-        rdfs:comment "String or date. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrDate ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype xsd:date
-            ]
-        )
-    ], [
-        rdfs:comment "String or decimal. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrDecimal ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype xsd:decimal
-            ]
-        )
-    ], [
-        rdfs:comment "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrLangString ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype rdf:langString
             ]
         )
     ] .

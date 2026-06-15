@@ -94,9 +94,11 @@ export const harnesses = {
       },
       dateOrString: new Date("2025-12-08"),
       decimalOrString: new Decimal("1.0"),
+      integerOrString: 1n,
       langStringOrString: dataFactory.literal("test", "en"),
       stringOrDate: "2025-12-08", // Shouldn't parse as a Date
       stringOrDecimal: "test",
+      stringOrInteger: "test",
       stringOrLangString: "test",
     }),
     kitchenSink.DatatypeUnionsStruct,
@@ -111,9 +113,11 @@ export const harnesses = {
       dateTimeOrDate: { type: "date", value: new Date("2025-12-08") },
       dateOrString: "2025-12-08", // Shouldn't parse as a Date
       decimalOrString: "test",
+      integerOrString: "test",
       langStringOrString: "test",
       stringOrDate: new Date("2025-12-08"),
       stringOrDecimal: new Decimal("1.0"),
+      stringOrInteger: 1n,
       stringOrLangString: dataFactory.literal("test", "en"),
     }),
     kitchenSink.DatatypeUnionsStruct,
