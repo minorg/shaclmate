@@ -11,6 +11,7 @@ export const snippets_RdfVocabularies: SnippetFactory = ({
 namespace ${syntheticNamePrefix}RdfVocabularies {
   export const rdf = {
     first: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first"),
+    langString: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"),
     nil: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"),
     rest: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"),
     subject: ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject"),

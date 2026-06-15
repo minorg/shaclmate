@@ -9,5 +9,5 @@ export const snippets_literalSparqlWherePatterns: SnippetFactory = ({
     `${syntheticNamePrefix}literalSparqlWherePatterns`,
     code`\
 const ${syntheticNamePrefix}literalSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.LiteralFilter}, ${snippets.LiteralSchema}> =
-  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlPatterns({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
+  (parameters) => ${snippets.literalSchemaSparqlPatterns}({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
   );
