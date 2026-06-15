@@ -92,11 +92,13 @@ import { snippets_identityValidationFunction } from "./_snippets/snippets_identi
 import { snippets_intFromRdfResourceValues } from "./_snippets/snippets_intFromRdfResourceValues.js";
 import { snippets_iriFromRdfResourceValues } from "./_snippets/snippets_iriFromRdfResourceValues.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
+import { snippets_LangStringSchema } from "./_snippets/snippets_LangStringSchema.js";
 import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
 import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
 import { snippets_LazySet } from "./_snippets/snippets_LazySet.js";
 import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
 import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
+import { snippets_langStringFromRdfResourceValues } from "./_snippets/snippets_langStringFromRdfResourceValues.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
 import { snippets_listFromRdfResourceValues } from "./_snippets/snippets_listFromRdfResourceValues.js";
 import { snippets_listSparqlConstructTriples } from "./_snippets/snippets_listSparqlConstructTriples.js";
@@ -302,6 +304,11 @@ export class Snippets {
   @Memoize()
   get IriSchema(): Snippet {
     return this.snippet(snippets_IriSchema);
+  }
+
+  @Memoize()
+  get LangStringSchema(): Snippet {
+    return this.snippet(snippets_LangStringSchema);
   }
 
   @Memoize()
@@ -791,6 +798,11 @@ export class Snippets {
   @Memoize()
   get iriSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_iriSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get langStringFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_langStringFromRdfResourceValues);
   }
 
   @Memoize()
