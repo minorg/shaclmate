@@ -39448,6 +39448,8 @@ export type TermsStruct = {
 
   readonly iriTerm: Maybe<NamedNode>;
 
+  readonly langStringTerm: Maybe<Literal>;
+
   readonly literalTerm: Maybe<Literal>;
 
   readonly numberTerm: Maybe<number>;
@@ -39469,6 +39471,14 @@ export namespace TermsStruct {
     readonly dateTerm?: Date | Maybe<Date>;
     readonly dateTimeTerm?: Date | Maybe<Date>;
     readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
+    readonly langStringTerm?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
     readonly literalTerm?:
       | bigint
       | boolean
@@ -39525,6 +39535,14 @@ export namespace TermsStruct {
           value,
         ),
       ),
+      langStringTerm: $convertToMaybe($convertToLiteral)(
+        parameters?.langStringTerm,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermsStruct.schema.properties.langStringTerm.type,
+          value,
+        ),
+      ),
       literalTerm: $convertToMaybe($convertToLiteral)(
         parameters?.literalTerm,
       ).chain((value) =>
@@ -39577,6 +39595,14 @@ export namespace TermsStruct {
     readonly dateTerm?: Date | Maybe<Date>;
     readonly dateTimeTerm?: Date | Maybe<Date>;
     readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
+    readonly langStringTerm?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
     readonly literalTerm?:
       | bigint
       | boolean
@@ -39663,6 +39689,17 @@ export namespace TermsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, $booleanEquals),
+            name: "langStringTerm",
+          },
+          [left, left.langStringTerm],
+          [right, right.langStringTerm],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
             name: "literalTerm",
           },
           [left, left.literalTerm],
@@ -39710,6 +39747,7 @@ export namespace TermsStruct {
     readonly dateTerm?: $MaybeFilter<$DateFilter>;
     readonly dateTimeTerm?: $MaybeFilter<$DateFilter>;
     readonly iriTerm?: $MaybeFilter<$IriFilter>;
+    readonly langStringTerm?: $MaybeFilter<$LiteralFilter>;
     readonly literalTerm?: $MaybeFilter<$LiteralFilter>;
     readonly numberTerm?: $MaybeFilter<$NumericFilter<number>>;
     readonly stringTerm?: $MaybeFilter<$StringFilter>;
@@ -39767,6 +39805,15 @@ export namespace TermsStruct {
       !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.iriTerm,
         value.iriTerm,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.langStringTerm !== undefined &&
+      !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
+        filter.langStringTerm,
+        value.langStringTerm,
       )
     ) {
       return false;
@@ -39894,6 +39941,20 @@ export namespace TermsStruct {
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
           $IriSchema<string>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.langStringTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "langStringTerm",
+        propertySchema: TermsStruct.schema.properties.langStringTerm,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $LiteralFilter,
+          $LiteralSchema
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -40093,6 +40154,21 @@ export namespace TermsStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.langStringTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "langStringTerm",
+        propertySchema: TermsStruct.schema.properties.langStringTerm,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.literalTerm,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -40184,6 +40260,20 @@ export namespace TermsStruct {
           Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
             Maybe.of,
           ),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      langStringTerm: Maybe.fromNullable($json["langStringTerm"])
+        .map((item) =>
+          Either.of<Error, Literal>(
+            dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"]!)
+                  : undefined,
+            ),
+          ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       literalTerm: Maybe.fromNullable($json["literalTerm"])
@@ -40310,6 +40400,19 @@ export namespace TermsStruct {
             $IriSchema<string>
           >($iriFromRdfResourceValues<string>),
         }),
+        langStringTerm: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LiteralSchema>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: TermsStruct.schema.properties.langStringTerm,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LiteralSchema
+          >($literalFromRdfResourceValues),
+        }),
         literalTerm: $shaclPropertyFromRdf<
           Maybe<Literal>,
           $MaybeSchema<$LiteralSchema>
@@ -40396,6 +40499,7 @@ export namespace TermsStruct {
     $hashMaybe($hashDate)(hasher, _termsStruct.dateTerm);
     $hashMaybe($hashDateTime)(hasher, _termsStruct.dateTimeTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.iriTerm);
+    $hashMaybe($hashTerm)(hasher, _termsStruct.langStringTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.literalTerm);
     $hashMaybe($hashNumeric)(hasher, _termsStruct.numberTerm);
     $hashMaybe($hashString)(hasher, _termsStruct.stringTerm);
@@ -40422,6 +40526,11 @@ export namespace TermsStruct {
     readonly dateTerm?: string;
     readonly dateTimeTerm?: string;
     readonly iriTerm?: { readonly "@id": string };
+    readonly langStringTerm?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
     readonly literalTerm?: {
       readonly "@language"?: string;
       readonly "@type"?: string;
@@ -40458,6 +40567,13 @@ export namespace TermsStruct {
           dateTerm: z.iso.date().optional(),
           dateTimeTerm: z.iso.datetime().optional(),
           iriTerm: z.object({ "@id": z.string().min(1) }).optional(),
+          langStringTerm: z
+            .object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            })
+            .optional(),
           literalTerm: z
             .object({
               "@language": z.string().optional(),
@@ -40517,6 +40633,10 @@ export namespace TermsStruct {
           { scope: `${scopePrefix}/properties/dateTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/dateTimeTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/iriTerm`, type: "Control" },
+          {
+            scope: `${scopePrefix}/properties/langStringTerm`,
+            type: "Control",
+          },
           { scope: `${scopePrefix}/properties/literalTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/numberTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/stringTerm`, type: "Control" },
@@ -40568,6 +40688,14 @@ export namespace TermsStruct {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriTerm"),
         type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
+      },
+      langStringTerm: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/langStringTerm"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Literal" as const },
+        },
       },
       literalTerm: {
         kind: "Shacl",
@@ -40686,6 +40814,16 @@ export namespace TermsStruct {
         iriTerm: _termsStruct.iriTerm
           .map((item) => ({ "@id": item.value }))
           .extract(),
+        langStringTerm: _termsStruct.langStringTerm
+          .map((item) => ({
+            "@language": item.language.length > 0 ? item.language : undefined,
+            "@type":
+              item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? item.datatype.value
+                : undefined,
+            "@value": item.value,
+          }))
+          .extract(),
         literalTerm: _termsStruct.literalTerm
           .map((item) => ({
             "@language": item.language.length > 0 ? item.language : undefined,
@@ -40766,6 +40904,11 @@ export namespace TermsStruct {
     parameters.resource.add(
       TermsStruct.schema.properties.iriTerm.path,
       parameters.object.iriTerm.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      TermsStruct.schema.properties.langStringTerm.path,
+      parameters.object.langStringTerm.toList(),
       parameters.graph,
     );
     parameters.resource.add(
