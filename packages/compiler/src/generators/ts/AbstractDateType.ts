@@ -1,16 +1,12 @@
-import type { Literal, NamedNode } from "@rdfjs/types";
-
 import { Maybe } from "purify-ts";
 
-import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
-export abstract class AbstractDateType extends AbstractLiteralType {
-  protected readonly datatype: NamedNode;
-  protected readonly dateIn: readonly Date[];
+export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   protected override readonly inlineExpression = code`Date`;
 
-  override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
+  override readonly conversionFunction: Maybe<AbstractTypedLiteralType.ConversionFunction> =
     Maybe.empty();
   override readonly equalsFunction =
     code`${this.reusables.snippets.dateEquals}`;
@@ -23,68 +19,33 @@ export abstract class AbstractDateType extends AbstractLiteralType {
       typeof: "object",
     },
   ] as const;
-  abstract override readonly kind: "DateTime" | "Date";
-  override readonly mutable = false;
   override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.dateSparqlWherePatterns}`;
 
-  constructor({
-    datatype,
-    dateIn,
-    ...superParameters
-  }: {
-    datatype: NamedNode;
-    dateIn: readonly Date[];
-  } & ConstructorParameters<typeof AbstractLiteralType>[0]) {
-    super(superParameters);
-    this.datatype = datatype;
-    this.dateIn = dateIn;
-  }
-
-  override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
-    return Maybe.empty();
-  }
-
-  protected override get schemaInitializers() {
-    let initializers = super.schemaInitializers;
-    if (this.dateIn.length > 0) {
-      initializers = initializers.concat(
-        code`in: ${arrayOf(...this.dateIn.map((in_) => this.literalValueExpression(in_)))} as const`,
-      );
-    }
-    return initializers;
-  }
-
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractTypedLiteralType<Date>["fromJsonExpression"]
+  >[0]): Code {
     return code`${this.reusables.imports.Either}.of<Error, Date>(new Date(${variables.value}["@value"]))`;
   }
 
-  override graphqlResolveExpression({
-    variables,
-  }: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0]): Code {
-    return variables.value;
-  }
-
-  override jsonType(): AbstractLiteralType.JsonType {
-    return new AbstractLiteralType.JsonType(
+  override jsonType(): AbstractTypedLiteralType.JsonType {
+    return new AbstractTypedLiteralType.JsonType(
       code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": string }`,
     );
   }
 
-  abstract override literalValueExpression(literal: Date | Literal): Code;
-
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractLiteralType["toRdfResourceValuesExpression"]
+    AbstractTypedLiteralType<Date>["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.date(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
 }
 
 export namespace AbstractDateType {
-  export type ConversionFunction = AbstractLiteralType.ConversionFunction;
+  export type ConversionFunction = AbstractTypedLiteralType.ConversionFunction;
 }

@@ -1,15 +1,12 @@
 import type { Literal } from "@rdfjs/types";
-import { xsd } from "@tpluscode/rdf-ns-builders";
-
+import type { Decimal } from "decimal.js";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
-export class BigDecimalType extends AbstractLiteralType {
-  private readonly datatype = xsd.decimal;
-
+export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   protected override readonly inlineExpression =
     code`${this.reusables.imports.BigDecimal}`;
 
@@ -53,7 +50,7 @@ export class BigDecimalType extends AbstractLiteralType {
   }
 
   override jsonSchema(): Code {
-    return code`${this.reusables.imports.z}.object({ "@type": ${this.reusables.imports.z}.literal(${literalOf(this.datatype.value)}), "@value": ${this.reusables.imports.z}.iso.date() })`;
+    return code`${this.reusables.imports.z}.object({ "@type": ${this.reusables.imports.z}.literal(${literalOf(this.datatype.value)}), "@value": ${this.reusables.imports.z}.string() })`;
   }
 
   override jsonType(): AbstractLiteralType.JsonType {

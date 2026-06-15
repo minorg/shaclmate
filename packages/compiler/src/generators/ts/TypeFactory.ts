@@ -449,18 +449,23 @@ export class TypeFactory {
       if (datatypeDefinition) {
         switch (datatypeDefinition.kind) {
           case "bigdecimal":
-            return new BigDecimalType(typeParameters);
+            return new BigDecimalType({
+              ...typeParameters,
+              decodedIn: astType.in_.map((value) =>
+                LiteralDecoder.decodeBigDecimalLiteral(value).unsafeCoerce(),
+              ),
+            });
           case "bigint":
             return new BigIntType({
               ...typeParameters,
-              primitiveIn: astType.in_.map((value) =>
+              decodedIn: astType.in_.map((value) =>
                 LiteralDecoder.decodeBigIntLiteral(value).unsafeCoerce(),
               ),
             });
           case "boolean":
             return new BooleanType({
               ...typeParameters,
-              primitiveIn: astType.in_.map((value) =>
+              decodedIn: astType.in_.map((value) =>
                 LiteralDecoder.decodeBooleanLiteral(value).unsafeCoerce(),
               ),
             });
@@ -470,7 +475,7 @@ export class TypeFactory {
               datatypeDefinition.kind === "date" ? DateType : DateTimeType
             )({
               ...typeParameters,
-              dateIn: astType.in_.map((value) =>
+              decodedIn: astType.in_.map((value) =>
                 (datatypeDefinition.kind === "date"
                   ? LiteralDecoder.decodeDateLiteral
                   : LiteralDecoder.decodeDateTimeLiteral)(value).unsafeCoerce(),
@@ -482,7 +487,7 @@ export class TypeFactory {
               datatypeDefinition.kind === "float" ? FloatType : IntType
             )({
               ...typeParameters,
-              primitiveIn: astType.in_.map((value) =>
+              decodedIn: astType.in_.map((value) =>
                 (datatypeDefinition.kind === "float"
                   ? LiteralDecoder.decodeFloatLiteral
                   : LiteralDecoder.decodeIntLiteral)(value).unsafeCoerce(),
@@ -491,7 +496,7 @@ export class TypeFactory {
           case "string":
             return new StringType({
               ...typeParameters,
-              primitiveIn: astType.in_.map((value) =>
+              decodedIn: astType.in_.map((value) =>
                 LiteralDecoder.decodeStringLiteral(value).unsafeCoerce(),
               ),
             });

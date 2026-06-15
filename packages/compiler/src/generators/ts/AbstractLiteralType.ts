@@ -3,6 +3,9 @@ import type { Literal } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
 import type { Code } from "./ts-poet-wrapper.js";
 
+/**
+ * Abstract base class of all types that are literals in RDF.
+ */
 export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
   Literal
