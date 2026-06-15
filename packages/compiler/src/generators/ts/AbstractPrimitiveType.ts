@@ -1,13 +1,12 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
-
+import type { Primitive } from "@rdfx/literal";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractPrimitiveType<
-  ValueT extends bigint | boolean | Date | string | number,
+  ValueT extends Primitive,
 > extends AbstractLiteralType {
   protected readonly datatype: NamedNode;
 
@@ -18,11 +17,8 @@ export abstract class AbstractPrimitiveType<
   abstract override readonly kind:
     | "BigInt"
     | "Boolean"
-    | "DateTime"
-    | "Date"
     | "Float"
     | "Int"
-    | "NumberType"
     | "String";
   readonly primitiveIn: readonly ValueT[];
 
