@@ -7,7 +7,7 @@ import type { CompilerOptions } from "typescript";
 
 const VERSION = "4.0.52";
 
-const rdfxVersion = "0.0.19";
+const rdfxVersion = "0.0.23";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -333,6 +333,7 @@ const workspaces = {
           "@types/rdfjs__term-map",
           "@types/rdfjs__term-set",
           "change-case",
+          "decimal.js",
           "plur",
           "purify-ts",
           "reserved-identifiers",

@@ -896,7 +896,7 @@ const $termLikeFromRdfResourceValues: $FromRdfResourceValuesFunction<
           languageIn.includes(literal.language)
             ? Right(value)
             : Left(
-                new Resource.MistypedTermValueError({
+                new Resource.MistypedValueError({
                   actualValue: literal,
                   expectedValueType: "Literal",
                   focusResource: value.focusResource,

@@ -1142,7 +1142,7 @@ export namespace Discriminant {
 export namespace AbstractUnionType {
   export interface Member<TypeT extends Type> {
     readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
-    readonly jsonType: Code | string;
+    readonly jsonType: Code;
     readonly jsonTypeCheck: (instance: Code) => Code;
     readonly primaryDiscriminantValue: AbstractType.DiscriminantProperty.Value;
     readonly type: TypeT;

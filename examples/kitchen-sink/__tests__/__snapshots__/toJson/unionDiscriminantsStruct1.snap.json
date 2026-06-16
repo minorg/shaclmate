@@ -1,0 +1,49 @@
+{
+  "@id": "http://example.com/instance",
+  "@type": "UnionDiscriminantsStruct",
+  "optionalIriOrLiteral": {
+    "@id": "http://example.com",
+    "termType": "NamedNode",
+  },
+  "optionalIriOrString": {
+    "@id": "http://example.com",
+  },
+  "optionalNodeOrNodeOrString": {
+    "type": "UnionMember1",
+    "value": {
+      "@id": "http://example.com/unionMember1a",
+      "@type": "UnionMember1",
+      "unionMember1Distinct": "test",
+      "unionMemberCommon": "test",
+    },
+  },
+  "requiredIriOrLiteral": {
+    "@id": "http://example.com",
+    "termType": "NamedNode",
+  },
+  "requiredIriOrString": {
+    "@id": "http://example.com",
+  },
+  "requiredNodeOrLiteral": {
+    "termType": "UnionMember1",
+    "value": {
+      "@id": "http://example.com/unionMember1c",
+      "@type": "UnionMember1",
+      "unionMember1Distinct": "test",
+      "unionMemberCommon": "test",
+    },
+  },
+  "requiredNodeOrNodeOrString": {
+    "type": "UnionMember1",
+    "value": {
+      "@id": "http://example.com/unionMember1b",
+      "@type": "UnionMember1",
+      "unionMember1Distinct": "test",
+      "unionMemberCommon": "test",
+    },
+  },
+  "setIriOrLiteral": [],
+  "setIriOrString": [],
+  "setNodeOrLiteral": [],
+  "setNodeOrNodeOrString": [],
+}

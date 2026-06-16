@@ -7,6 +7,8 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
+  private readonly languageIn: readonly string[];
+
   override readonly filterFunction =
     code`${this.reusables.snippets.filterString}`;
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
@@ -24,6 +26,16 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
 
+  constructor({
+    languageIn,
+    ...superParameters
+  }: { languageIn: readonly string[] } & ConstructorParameters<
+    typeof AbstractPrimitiveType<string>
+  >[0]) {
+    super(superParameters);
+    this.languageIn = languageIn;
+  }
+
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {
     return code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}>`;
@@ -32,14 +44,6 @@ export class StringType extends AbstractPrimitiveType<string> {
   @Memoize()
   override get schemaType(): Code {
     return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
-  }
-
-  @Memoize()
-  protected override get inlineExpression(): Code {
-    if (this.primitiveIn.length > 0) {
-      return code`${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
-    }
-    return code`string`;
   }
 
   protected override get schemaInitializers(): readonly Code[] {
@@ -53,16 +57,12 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   override jsonSchema(
-    _parameters: Parameters<AbstractPrimitiveType<string>["jsonSchema"]>[0],
+    parameters: Parameters<AbstractPrimitiveType<string>["jsonSchema"]>[0],
   ): Code {
-    switch (this.primitiveIn.length) {
-      case 0:
-        return code`${this.reusables.imports.z}.string()`;
-      case 1:
-        return code`${this.reusables.imports.z}.literal(${this.primitiveIn[0]})`;
-      default:
-        return code`${this.reusables.imports.z}.enum(${arrayOf(...this.primitiveIn)})`;
+    if (this.decodedIn.length > 1) {
+      return code`${this.reusables.imports.z}.enum(${arrayOf(...this.decodedIn)})`;
     }
+    return super.jsonSchema(parameters);
   }
 
   override literalValueExpression(literal: Literal | string): Code {

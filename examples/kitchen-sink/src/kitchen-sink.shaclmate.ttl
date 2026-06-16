@@ -124,11 +124,25 @@
         sh:path :convertibleIri
     ] .
 
-:DateUnionsStruct
+:DatatypeUnionsStruct
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Struct node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models." ;
+    rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
+        rdfs:comment "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrLangString ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype rdf:langString
+            ]
+        )
+    ], [
+        rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:path :dateOrDateTime ;
         sh:xone ([
                 shaclmate:discriminantValue "date" ;
@@ -140,7 +154,9 @@
             ]
         )
     ], [
+        rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
         sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:path :dateTimeOrDate ;
         sh:xone ([
                 shaclmate:discriminantValue "dateTime" ;
@@ -152,27 +168,63 @@
             ]
         )
     ], [
+        rdfs:comment "Date or string. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:path :dateOrString ;
         sh:xone ([
-                shaclmate:discriminantValue "date" ;
                 sh:datatype xsd:date
             ]
             [
-                shaclmate:discriminantValue "string" ;
                 sh:datatype xsd:string
             ]
         )
     ], [
+        rdfs:comment "Decimal or string. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :decimalOrString ;
+        sh:xone ([
+                sh:datatype xsd:decimal
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :langStringOrString ;
+        sh:xone ([
+                sh:datatype rdf:langString
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "String or date. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:path :stringOrDate ;
         sh:xone ([
-                shaclmate:discriminantValue "string" ;
                 sh:datatype xsd:string
             ]
             [
-                shaclmate:discriminantValue "date" ;
                 sh:datatype xsd:date
+            ]
+        )
+    ], [
+        rdfs:comment "String or decimal. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrDecimal ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:decimal
             ]
         )
     ] .
@@ -300,6 +352,20 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Struct node shape that uses different methods to make SHACLmate ignore properties." ;
     sh:property [
+        shaclmate:ignore false ;
+        rdfs:comment "A property with shaclmate:ignore set to false (the default) is not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :shaclmateIgnoreFalseProperty
+    ], [
+        shaclmate:ignore true ;
+        rdfs:comment "A property with shaclmate:ignore set to true not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :shaclmateIgnoreTrueProperty
+    ], [
         rdfs:comment "A property without an sh:severity defaults to sh:Violation severity and is not ignored" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -326,20 +392,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:path :severityWarningProperty ;
         sh:severity sh:Info
-    ], [
-        shaclmate:ignore false ;
-        rdfs:comment "A property with shaclmate:ignore set to false (the default) is not ignored" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :shaclmateIgnoreFalseProperty
-    ], [
-        shaclmate:ignore true ;
-        rdfs:comment "A property with shaclmate:ignore set to true not ignored" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :shaclmateIgnoreTrueProperty
     ] .
 
 :IgnoredStruct
@@ -1134,6 +1186,10 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         sh:maxCount 1 ;
         sh:nodeKind sh:IRI ;
         sh:path :iriTerm
+    ], [
+        sh:datatype rdf:langString ;
+        sh:maxCount 1 ;
+        sh:path :langStringTerm
     ], [
         sh:maxCount 1 ;
         sh:nodeKind sh:Literal ;

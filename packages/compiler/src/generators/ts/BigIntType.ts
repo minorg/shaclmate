@@ -4,7 +4,13 @@ import { LiteralDecoder } from "@rdfx/literal";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
-import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
   override readonly jsTypes = [{ typeof: "bigint" } as const];
@@ -26,8 +32,8 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractNumericType<bigint>["fromJsonExpression"]>[0]): Code {
-    let expression = code`BigInt(${variables.value})`;
-    if (this.primitiveIn.length > 0) {
+    let expression = code`BigInt(${variables.value}["@value"])`;
+    if (this.decodedIn.length > 0) {
       expression = code`${expression} as ${this.expression}`;
     }
     return code`${this.reusables.imports.Either}.encase<Error, ${this.expression}>(() => ${expression})`;
@@ -36,22 +42,38 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override jsonSchema(
     _parameters: Parameters<AbstractNumericType<bigint>["jsonSchema"]>[0],
   ): Code {
-    switch (this.primitiveIn.length) {
+    let valueJsonSchema: Code;
+    switch (this.decodedIn.length) {
       case 0:
-        return code`${this.reusables.imports.z}.string()`;
+        valueJsonSchema = code`${this.reusables.imports.z}.string()`;
+        break;
       case 1:
-        return code`${this.reusables.imports.z}.literal(${literalOf(this.primitiveIn[0].toString())})`;
+        valueJsonSchema = code`${this.reusables.imports.z}.literal(${literalOf(this.decodedIn[0].toString())})`;
+        break;
       default:
-        return code`${this.reusables.imports.z}.enum([${joinCode(
-          this.primitiveIn.map((value) => code`${literalOf(value.toString())}`),
-          { on: "," },
-        )}])`;
+        valueJsonSchema = code`${this.reusables.imports.z}.enum(${arrayOf(
+          ...this.decodedIn.map(
+            (value) => code`${literalOf(value.toString())}`,
+          ),
+        )})`;
+        break;
     }
+
+    return code`${this.reusables.imports.z}.object({ "@type": ${this.reusables.imports.z}.literal(${literalOf(this.datatype.value)}), "@value": ${valueJsonSchema} })`;
   }
 
   @Memoize()
   override jsonType(): AbstractNumericType.JsonType {
-    return new AbstractNumericType.JsonType(code`string`);
+    return new AbstractNumericType.JsonType(
+      code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": ${
+        this.decodedIn.length === 0
+          ? "string"
+          : joinCode(
+              this.decodedIn.map((in_) => code`${literalOf(in_.toString())}`),
+              { on: " | " },
+            )
+      } }`,
+    );
   }
 
   override literalValueExpression(literal: bigint | Literal): Code {
@@ -61,6 +83,14 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override toJsonExpression({
     variables,
   }: Parameters<AbstractNumericType<bigint>["toJsonExpression"]>[0]): Code {
-    return code`${variables.value}.toString()`;
+    let valueExpression = code`${variables.value}.toString()`;
+    if (this.decodedIn.length > 0) {
+      valueExpression = code`${valueExpression} as ${joinCode(
+        this.decodedIn.map((in_) => code`${literalOf(in_.toString())}`),
+        { on: " | " },
+      )}`;
+    }
+
+    return code`{ "@type": ${literalOf(this.datatype.value)} as const, "@value": ${valueExpression} }`;
   }
 }

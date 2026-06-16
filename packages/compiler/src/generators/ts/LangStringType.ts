@@ -1,13 +1,11 @@
 import type { Literal } from "@rdfjs/types";
-import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import type { Typeof } from "./Typeof.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
-export class LiteralType extends AbstractLiteralType {
+export class LangStringType extends AbstractLiteralType {
   private readonly languageIn: readonly string[];
 
   protected override readonly inlineExpression =
@@ -15,18 +13,8 @@ export class LiteralType extends AbstractLiteralType {
 
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.of({
-      code: code`${this.reusables.snippets.convertToLiteral}`,
+      code: code`${this.reusables.snippets.convertToLangString}`,
       sourceTypes: [
-        ...(
-          ["bigint", "boolean", "number", "string"] satisfies readonly Typeof[]
-        ).map((typeof_) => ({
-          expression: code`${typeof_}`,
-          jsType: { typeof: typeof_ },
-        })),
-        {
-          expression: code`Date`,
-          jsType: { instanceof: "Date", typeof: "object" },
-        },
         {
           expression: code`${this.reusables.imports.Literal}`,
           jsType: { instanceof: "Object", typeof: "object" },
@@ -37,14 +25,15 @@ export class LiteralType extends AbstractLiteralType {
     code`${this.reusables.snippets.filterLiteral}`;
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
   override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.literalFromRdfResourceValues}`;
+    code`${this.reusables.snippets.langStringFromRdfResourceValues}`;
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
-  override readonly kind = "Literal";
-  override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;
+  override readonly kind = "LangString";
+  override readonly schemaType =
+    code`${this.reusables.snippets.LangStringSchema}`;
   override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.literalSparqlWherePatterns}`;
+    code`${this.reusables.snippets.langStringSparqlWherePatterns}`;
 
   constructor({
     languageIn,
@@ -78,7 +67,7 @@ export class LiteralType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined)))`;
+    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"]))`;
   }
 
   override graphqlResolveExpression(
@@ -94,7 +83,7 @@ export class LiteralType extends AbstractLiteralType {
       ? code`, termType: ${this.reusables.imports.z}.literal("Literal")`
       : "";
 
-    return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string().optional()${discriminantProperty}, "@type": ${this.reusables.imports.z}.string().optional(), "@value": ${this.reusables.imports.z}.string() })`;
+    return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string()${discriminantProperty}, "@value": ${this.reusables.imports.z}.string() })`;
   }
 
   override jsonType(
@@ -104,7 +93,7 @@ export class LiteralType extends AbstractLiteralType {
       ? `, readonly termType: "Literal"`
       : "";
     return new AbstractLiteralType.JsonType(
-      code`{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
+      code`{ readonly "@language": string${discriminantProperty}, readonly "@value": string }`,
     );
   }
 
@@ -116,6 +105,6 @@ export class LiteralType extends AbstractLiteralType {
     includeDiscriminantProperty,
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
-    return code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
+    return code`{ "@language": ${variables.value}.language${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@value": ${variables.value}.value }`;
   }
 }

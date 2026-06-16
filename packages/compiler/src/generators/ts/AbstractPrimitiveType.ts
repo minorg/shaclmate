@@ -1,56 +1,32 @@
-import type { Literal, NamedNode } from "@rdfjs/types";
+import type { Primitive } from "@rdfx/literal";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
+import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
+/**
+ * Abstract base class of typed literals whose datatype corresponds to a JavaScript primitive type.
+ */
 export abstract class AbstractPrimitiveType<
-  ValueT extends bigint | boolean | Date | string | number,
-> extends AbstractLiteralType {
-  protected readonly datatype: NamedNode;
-
+  ValueT extends Primitive,
+> extends AbstractTypedLiteralType<ValueT> {
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.empty();
   override readonly equalsFunction =
     code`${this.reusables.snippets.strictEquals}`;
-  abstract override readonly kind:
-    | "BigInt"
-    | "Boolean"
-    | "DateTime"
-    | "Date"
-    | "Float"
-    | "Int"
-    | "NumberType"
-    | "String";
-  readonly primitiveIn: readonly ValueT[];
 
-  constructor({
-    datatype,
-    primitiveIn,
-    ...superParameters
-  }: {
-    datatype: NamedNode;
-    primitiveIn: readonly ValueT[];
-  } & ConstructorParameters<typeof AbstractLiteralType>[0]) {
-    super(superParameters);
-    this.datatype = datatype;
-    this.primitiveIn = primitiveIn;
-  }
-
-  override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
-    return Maybe.empty();
-  }
-
-  protected override get schemaInitializers() {
-    let initializers = super.schemaInitializers;
-    if (this.primitiveIn.length > 0) {
-      initializers = initializers.concat(
-        code`in: ${arrayOf(...this.primitiveIn.map((in_) => this.literalValueExpression(in_)))} as const`,
-      );
+  @Memoize()
+  protected override get inlineExpression(): Code {
+    if (this.decodedIn.length > 0) {
+      return code`${joinCode(
+        this.decodedIn.map((value) => this.literalValueExpression(value)),
+        { on: " | " },
+      )}`;
     }
-    return initializers;
+    return code`${this.jsTypes[0].typeof}`;
   }
 
   override fromJsonExpression({
@@ -59,18 +35,28 @@ export abstract class AbstractPrimitiveType<
     return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${variables.value})`;
   }
 
-  override graphqlResolveExpression({
-    variables,
-  }: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0]): Code {
-    return variables.value;
+  override jsonSchema(
+    _parameters: Parameters<AbstractTypedLiteralType<ValueT>["jsonSchema"]>[0],
+  ): Code {
+    switch (this.decodedIn.length) {
+      case 0:
+        return code`${this.reusables.imports.z}.${this.jsTypes[0].typeof}()`;
+      case 1:
+        return code`${this.reusables.imports.z}.literal(${this.literalValueExpression(this.decodedIn[0])})`;
+      default:
+        return code`${this.reusables.imports.z}.union(${arrayOf(
+          ...this.decodedIn.map(
+            (value) =>
+              code`${this.reusables.imports.z}.literal(${this.literalValueExpression(value)})`,
+          ),
+        )})`;
+    }
   }
 
   @Memoize()
   override jsonType(): AbstractLiteralType.JsonType {
     return new AbstractLiteralType.JsonType(this.expression);
   }
-
-  abstract override literalValueExpression(literal: Literal | ValueT): Code;
 
   override toJsonExpression({
     variables,

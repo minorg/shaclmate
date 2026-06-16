@@ -30,23 +30,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
   }
 
-  @Memoize()
-  protected override get inlineExpression(): Code {
-    if (this.primitiveIn.length > 0) {
-      return code`${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;
-    }
-    return code`boolean`;
-  }
-
-  override jsonSchema(
-    _parameters: Parameters<AbstractPrimitiveType<number>["jsonSchema"]>[0],
-  ): Code {
-    if (this.primitiveIn.length === 1) {
-      return code`${this.reusables.imports.z}.literal(${this.primitiveIn[0]})`;
-    }
-    return code`${this.reusables.imports.z}.boolean()`;
-  }
-
   override literalValueExpression(literal: boolean | Literal): Code {
     return code`${typeof literal === "boolean" ? literal : LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;
   }

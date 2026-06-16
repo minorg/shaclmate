@@ -12,6 +12,7 @@ import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
+import type { LangStringType } from "./LangStringType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -104,6 +105,7 @@ export namespace AbstractContainerType {
     | IdentifierType
     | IntType
     | IriType
+    | LangStringType
     | ListType<ListType.ItemType>
     | LiteralType
     | ObjectUnionType
@@ -124,6 +126,7 @@ export namespace AbstractContainerType {
       case "Identifier":
       case "Int":
       case "Iri":
+      case "LangString":
       case "List":
       case "Literal":
       case "Object":

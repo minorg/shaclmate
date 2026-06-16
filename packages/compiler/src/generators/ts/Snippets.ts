@@ -29,6 +29,7 @@ import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIden
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
 import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
+import { snippets_convertToLangString } from "./_snippets/snippets_convertToLangString.js";
 import { snippets_convertToLazy } from "./_snippets/snippets_convertToLazy.js";
 import { snippets_convertToLazyOption } from "./_snippets/snippets_convertToLazyOption.js";
 import { snippets_convertToLazySet } from "./_snippets/snippets_convertToLazySet.js";
@@ -44,7 +45,6 @@ import { snippets_dateEquals } from "./_snippets/snippets_dateEquals.js";
 import { snippets_dateFromRdfResourceValues } from "./_snippets/snippets_dateFromRdfResourceValues.js";
 import { snippets_dateSparqlWherePatterns } from "./_snippets/snippets_dateSparqlWherePatterns.js";
 import { snippets_dateTimeFromRdfResourceValues } from "./_snippets/snippets_dateTimeFromRdfResourceValues.js";
-import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBigDecimalLiteral.js";
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueFromRdfResourceValues } from "./_snippets/snippets_defaultValueFromRdfResourceValues.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
@@ -91,11 +91,14 @@ import { snippets_identityValidationFunction } from "./_snippets/snippets_identi
 import { snippets_intFromRdfResourceValues } from "./_snippets/snippets_intFromRdfResourceValues.js";
 import { snippets_iriFromRdfResourceValues } from "./_snippets/snippets_iriFromRdfResourceValues.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
+import { snippets_LangStringSchema } from "./_snippets/snippets_LangStringSchema.js";
 import { snippets_Lazy } from "./_snippets/snippets_Lazy.js";
 import { snippets_LazyOption } from "./_snippets/snippets_LazyOption.js";
 import { snippets_LazySet } from "./_snippets/snippets_LazySet.js";
 import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
 import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
+import { snippets_langStringFromRdfResourceValues } from "./_snippets/snippets_langStringFromRdfResourceValues.js";
+import { snippets_langStringSparqlWherePatterns } from "./_snippets/snippets_langStringSparqlWherePatterns.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
 import { snippets_listFromRdfResourceValues } from "./_snippets/snippets_listFromRdfResourceValues.js";
 import { snippets_listSparqlConstructTriples } from "./_snippets/snippets_listSparqlConstructTriples.js";
@@ -301,6 +304,11 @@ export class Snippets {
   @Memoize()
   get IriSchema(): Snippet {
     return this.snippet(snippets_IriSchema);
+  }
+
+  @Memoize()
+  get LangStringSchema(): Snippet {
+    return this.snippet(snippets_LangStringSchema);
   }
 
   @Memoize()
@@ -534,6 +542,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get convertToLangString(): Snippet {
+    return this.snippet(snippets_convertToLangString);
+  }
+
+  @Memoize()
   get convertToLazy(): Snippet {
     return this.snippet(snippets_convertToLazy);
   }
@@ -591,11 +604,6 @@ export class Snippets {
   @Memoize()
   get dateTimeFromRdfResourceValues(): Snippet {
     return this.snippet(snippets_dateTimeFromRdfResourceValues);
-  }
-
-  @Memoize()
-  get decodeBigDecimalLiteral(): Snippet {
-    return this.snippet(snippets_decodeBigDecimalLiteral);
   }
 
   @Memoize()
@@ -785,6 +793,16 @@ export class Snippets {
   @Memoize()
   get iriSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_iriSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get langStringFromRdfResourceValues(): Snippet {
+    return this.snippet(snippets_langStringFromRdfResourceValues);
+  }
+
+  @Memoize()
+  get langStringSparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_langStringSparqlWherePatterns);
   }
 
   @Memoize()

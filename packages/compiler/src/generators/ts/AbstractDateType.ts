@@ -1,11 +1,13 @@
-import { Memoize } from "typescript-memoize";
+import { Maybe } from "purify-ts";
 
-import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
-export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
+export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   protected override readonly inlineExpression = code`Date`;
 
+  override readonly conversionFunction: Maybe<AbstractTypedLiteralType.ConversionFunction> =
+    Maybe.empty();
   override readonly equalsFunction =
     code`${this.reusables.snippets.dateEquals}`;
   override readonly filterFunction =
@@ -17,32 +19,33 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
       typeof: "object",
     },
   ] as const;
-  abstract override readonly kind: "DateTime" | "Date";
-  override readonly mutable = false;
   override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.dateSparqlWherePatterns}`;
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<Date>["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, Date>(new Date(${variables.value}))`;
+  }: Parameters<
+    AbstractTypedLiteralType<Date>["fromJsonExpression"]
+  >[0]): Code {
+    return code`${this.reusables.imports.Either}.of<Error, Date>(new Date(${variables.value}["@value"]))`;
   }
 
-  @Memoize()
-  override jsonType(): AbstractPrimitiveType.JsonType {
-    return new AbstractPrimitiveType.JsonType(code`string`);
+  override jsonType(): AbstractTypedLiteralType.JsonType {
+    return new AbstractTypedLiteralType.JsonType(
+      code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": string }`,
+    );
   }
 
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractPrimitiveType<Date>["toRdfResourceValuesExpression"]
+    AbstractTypedLiteralType<Date>["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.date(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
 }
 
 export namespace AbstractDateType {
-  export type ConversionFunction = AbstractPrimitiveType.ConversionFunction;
+  export type ConversionFunction = AbstractTypedLiteralType.ConversionFunction;
 }

@@ -1,0 +1,90 @@
+{
+  "@id": "http://example.com/instance",
+  "@type": "UnionDiscriminantsStruct",
+  "optionalIriOrLiteral": {
+    "@value": "test",
+    "termType": "Literal",
+  },
+  "optionalIriOrString": "test",
+  "optionalNodeOrLiteral": {
+    "@value": "test",
+    "termType": "Literal",
+  },
+  "optionalNodeOrNodeOrString": {
+    "type": "UnionMember2",
+    "value": {
+      "@id": "http://example.com/unionMember2a",
+      "@type": "UnionMember2",
+      "unionMember2Distinct": "test",
+      "unionMemberCommon": "test",
+    },
+  },
+  "requiredIriOrLiteral": {
+    "@value": "test",
+    "termType": "Literal",
+  },
+  "requiredIriOrString": "test",
+  "requiredNodeOrLiteral": {
+    "@value": "test",
+    "termType": "Literal",
+  },
+  "requiredNodeOrNodeOrString": {
+    "type": "string",
+    "value": "test",
+  },
+  "setIriOrLiteral": [
+    {
+      "@value": "test",
+      "termType": "Literal",
+    },
+    {
+      "@id": "http://example.com",
+      "termType": "NamedNode",
+    },
+  ],
+  "setIriOrString": [
+    "test",
+    {
+      "@id": "http://example.com",
+    },
+  ],
+  "setNodeOrLiteral": [
+    {
+      "@value": "test",
+      "termType": "Literal",
+    },
+    {
+      "termType": "UnionMember1",
+      "value": {
+        "@id": "http://example.com/unionMember1c",
+        "@type": "UnionMember1",
+        "unionMember1Distinct": "test",
+        "unionMemberCommon": "test",
+      },
+    },
+  ],
+  "setNodeOrNodeOrString": [
+    {
+      "type": "string",
+      "value": "test",
+    },
+    {
+      "type": "UnionMember2",
+      "value": {
+        "@id": "http://example.com/unionMember2b",
+        "@type": "UnionMember2",
+        "unionMember2Distinct": "test",
+        "unionMemberCommon": "test",
+      },
+    },
+    {
+      "type": "UnionMember1",
+      "value": {
+        "@id": "http://example.com/unionMember1b",
+        "@type": "UnionMember1",
+        "unionMember1Distinct": "test",
+        "unionMemberCommon": "test",
+      },
+    },
+  ],
+}
