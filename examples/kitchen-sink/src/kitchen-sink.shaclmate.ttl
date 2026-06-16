@@ -46,6 +46,17 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :PartialStruct ;
+        sh:path :nodeClass2
+    ], [
+        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:path :singleClass
+    ], [
         rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
         sh:class :UndefinedClass1, :UndefinedClass2 ;
         sh:maxCount 1 ;
@@ -62,17 +73,6 @@
         sh:maxCount 1 ;
         sh:node :NonClassStruct ;
         sh:path :nodeClass1
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:node :PartialStruct ;
-        sh:path :nodeClass2
-    ], [
-        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:path :singleClass
     ] .
 
 :ConvertibleTypesStruct
@@ -128,66 +128,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
-        rdfs:comment "Integer or string. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :integerOrString ;
-        sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
-        rdfs:comment "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :langStringOrString ;
-        sh:xone ([
-                sh:datatype rdf:langString
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
-        rdfs:comment "String or date. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrDate ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype xsd:date
-            ]
-        )
-    ], [
-        rdfs:comment "String or decimal. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrDecimal ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype xsd:decimal
-            ]
-        )
-    ], [
-        rdfs:comment "String or integer. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrInteger ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype xsd:integer
-            ]
-        )
-    ], [
         rdfs:comment "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -249,6 +189,42 @@
             ]
             [
                 sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :langStringOrString ;
+        sh:xone ([
+                sh:datatype rdf:langString
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "String or date. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrDate ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:date
+            ]
+        )
+    ], [
+        rdfs:comment "String or decimal. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrDecimal ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:decimal
             ]
         )
     ] .
@@ -376,13 +352,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Struct node shape that uses different methods to make SHACLmate ignore properties." ;
     sh:property [
-        rdfs:comment "A property with an explicit sh:severity sh:Warning is ignored" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :severityWarningProperty ;
-        sh:severity sh:Info
-    ], [
         shaclmate:ignore false ;
         rdfs:comment "A property with shaclmate:ignore set to false (the default) is not ignored" ;
         sh:datatype xsd:string ;
@@ -415,6 +384,13 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :severityInfoProperty ;
+        sh:severity sh:Info
+    ], [
+        rdfs:comment "A property with an explicit sh:severity sh:Warning is ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :severityWarningProperty ;
         sh:severity sh:Info
     ] .
 
