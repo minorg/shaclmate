@@ -1,15 +1,15 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.52",
+    "@shaclmate/shacl-ast": "4.0.53",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/term-map": "~2.0.2",
     "@rdfjs/term-set": "~2.0.3",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/data-factory": "0.0.23",
-    "@rdfx/literal": "0.0.23",
-    "@rdfx/resource": "0.0.23",
-    "@rdfx/string": "0.0.23",
+    "@rdfx/data-factory": "0.0.24",
+    "@rdfx/literal": "0.0.24",
+    "@rdfx/resource": "0.0.24",
+    "@rdfx/string": "0.0.24",
     "@sindresorhus/base62": "~0.1.0",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "@types/rdfjs__dataset": "~2.0.7",
@@ -660,5 +660,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.52"
+  "version": "4.0.53"
 }
