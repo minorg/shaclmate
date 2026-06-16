@@ -1,5 +1,5 @@
 import { NodeKind } from "@shaclmate/shacl-ast";
-import { Either, Left } from "purify-ts";
+import { Either, Left, Maybe } from "purify-ts";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
@@ -102,6 +102,29 @@ export function shapeNodeKinds(
       {
         includeNodeKinds: shape.minInclusive
           .map(() => ["Literal"])
+          .orDefault([]) as readonly NodeKind[],
+      },
+    ],
+    [
+      "sh:node",
+      {
+        includeNodeKinds: shape.node
+          .chain((node) => this.shapesGraph.nodeShape(node).toMaybe())
+          .chain((nodeShape) => shapeNodeKinds.call(this, nodeShape).toMaybe())
+          .map((nodeKinds) => [...nodeKinds])
+          .orDefault([]) as readonly NodeKind[],
+      },
+    ],
+    [
+      "shaclmate:resolve",
+      {
+        includeNodeKinds: (shape.$type === "PropertyShape"
+          ? shape.resolve
+          : Maybe.empty()
+        )
+          .chain((resolve) => this.shapesGraph.nodeShape(resolve).toMaybe())
+          .chain((nodeShape) => shapeNodeKinds.call(this, nodeShape).toMaybe())
+          .map((nodeKinds) => [...nodeKinds])
           .orDefault([]) as readonly NodeKind[],
       },
     ],
