@@ -87,7 +87,7 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "compilerInput") {
+      // if (id !== "externalProject") {
       //   return;
       // }
 
