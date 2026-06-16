@@ -15,10 +15,7 @@ export class ShapesGraphToAstTransformer {
     BlankNode | NamedNode,
     ast.Type
   > = new TermMap();
-  protected readonly syntheticAstStructTypesByName: Map<
-    string,
-    ast.StructType
-  > = new Map();
+  protected readonly syntheticAstStructTypes: ast.StructType[] = [];
   protected readonly logger: Logger;
   protected readonly shapesGraph: input.ShapesGraph;
 
@@ -75,9 +72,7 @@ export class ShapesGraphToAstTransformer {
         },
         0,
       ),
-      namedTypes: astNamedTypes.concat([
-        ...this.syntheticAstStructTypesByName.values(),
-      ]),
+      namedTypes: astNamedTypes.concat(this.syntheticAstStructTypes),
     });
   }
 }

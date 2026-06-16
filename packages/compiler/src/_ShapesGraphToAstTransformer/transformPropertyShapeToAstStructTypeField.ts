@@ -90,8 +90,11 @@ function synthesizePartialAstStructType(
       break;
   }
 
-  let partialAstStructType =
-    this.syntheticAstStructTypesByName.get(syntheticName);
+  let partialAstStructType = this.syntheticAstStructTypes.find(
+    (syntheticAstStructType) =>
+      syntheticAstStructType.name.extract() === syntheticName &&
+      ast.Type.equals(syntheticAstStructType.identifierType, identifierType),
+  );
   if (partialAstStructType) {
     return partialAstStructType;
   }
@@ -111,7 +114,7 @@ function synthesizePartialAstStructType(
     tsImports: [],
   });
 
-  this.syntheticAstStructTypesByName.set(syntheticName, partialAstStructType);
+  this.syntheticAstStructTypes.push(partialAstStructType);
 
   return partialAstStructType;
 }
