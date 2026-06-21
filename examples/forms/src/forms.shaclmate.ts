@@ -177,6 +177,9 @@ namespace $RdfVocabularies {
     first: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
     ),
+    langString: dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
+    ),
     nil: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
     ),

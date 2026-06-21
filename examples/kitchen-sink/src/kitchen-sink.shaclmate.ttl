@@ -46,6 +46,18 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :iriClass
+    ], [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :NonClassStruct ;
+        sh:path :nodeClass1
+    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -61,18 +73,6 @@
         sh:class :UndefinedClass1, :UndefinedClass2 ;
         sh:maxCount 1 ;
         sh:path :multiClass
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:path :iriClass
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:node :NonClassStruct ;
-        sh:path :nodeClass1
     ] .
 
 :ConvertibleTypesStruct
@@ -124,7 +124,7 @@
         sh:path :convertibleIri
     ] .
 
-:DatatypeUnionsStruct
+:DatatypeDiscriminatedUnionsStruct
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
@@ -266,6 +266,39 @@
         sh:path :directRecursive
     ] .
 
+:DiscriminatedUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:DiscriminatedUnionMember1
+        :DiscriminatedUnionMember2
+    ) .
+
+:DiscriminatedUnionMember-common
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "discriminatedUnionMemberCommon" ;
+    sh:path :discriminatedUnionMemberCommon .
+
+:DiscriminatedUnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property :DiscriminatedUnionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :discriminatedUnionMember1Distinct
+    ] .
+
+:DiscriminatedUnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property :DiscriminatedUnionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :discriminatedUnionMember2Distinct
+    ] .
+
 :DisplayStruct
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Demonstrates the use of shaclmate:display for excluding/including properties from toString()-type display representations" ;
@@ -319,20 +352,20 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :explicitRdfTypeString
     ] .
 
-:FlattenUnion
+:FlattenDiscriminatedUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these." ;
-    sh:xone (:Union
-        :FlattenUnionMember3
+    sh:xone (:DiscriminatedUnion
+        :FlattenDiscriminatedUnionMember3
     ) .
 
-:FlattenUnionMember3
+:FlattenDiscriminatedUnionMember3
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :flattenUnionMember3String
+        sh:path :flattenDiscriminatedUnionMember3String
     ] .
 
 :HasValuesStruct
@@ -352,20 +385,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Struct node shape that uses different methods to make SHACLmate ignore properties." ;
     sh:property [
-        shaclmate:ignore false ;
-        rdfs:comment "A property with shaclmate:ignore set to false (the default) is not ignored" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :shaclmateIgnoreFalseProperty
-    ], [
-        shaclmate:ignore true ;
-        rdfs:comment "A property with shaclmate:ignore set to true not ignored" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :shaclmateIgnoreTrueProperty
-    ], [
         rdfs:comment "A property without an sh:severity defaults to sh:Violation severity and is not ignored" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -392,6 +411,20 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:path :severityWarningProperty ;
         sh:severity sh:Info
+    ], [
+        shaclmate:ignore false ;
+        rdfs:comment "A property with shaclmate:ignore set to false (the default) is not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :shaclmateIgnoreFalseProperty
+    ], [
+        shaclmate:ignore true ;
+        rdfs:comment "A property with shaclmate:ignore set to true not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :shaclmateIgnoreTrueProperty
     ] .
 
 :IgnoredStruct
@@ -543,35 +576,35 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazilyResolved
     ] .
 
+:LazilyResolvedDiscriminatedUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:LazilyResolvedDiscriminatedUnionMember1
+        :LazilyResolvedDiscriminatedUnionMember2
+    ) .
+
+:LazilyResolvedDiscriminatedUnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolved
+    ] .
+
+:LazilyResolvedDiscriminatedUnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolved
+    ] .
+
 :LazilyResolvedIriIdentifierStruct
     a sh:NodeShape ;
     rdfs:comment "Struct node shape resolved by LazyPropertiesStruct" ;
     sh:nodeKind sh:IRI ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolved
-    ] .
-
-:LazilyResolvedUnion
-    a sh:NodeShape ;
-    rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
-    sh:xone (:LazilyResolvedUnionMember1
-        :LazilyResolvedUnionMember2
-    ) .
-
-:LazilyResolvedUnionMember1
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolved
-    ] .
-
-:LazilyResolvedUnionMember2
-    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -594,10 +627,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:nodeKind sh:IRI ;
         sh:path :optionalLazyToResolvedIriIdentifier
     ], [
-        shaclmate:resolve :LazilyResolvedUnion ;
+        shaclmate:resolve :LazilyResolvedDiscriminatedUnion ;
         sh:maxCount 1 ;
         sh:nodeKind sh:BlankNodeOrIRI ;
-        sh:path :optionalLazyToResolvedUnion
+        sh:path :optionalLazyToResolvedDiscriminatedUnion
     ], [
         shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierStruct ;
         sh:maxCount 1 ;
@@ -615,15 +648,15 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:node :PartialStruct ;
         sh:path :requiredPartialToResolvedBlankNodeOrIriIdentifier
     ], [
-        shaclmate:resolve :LazilyResolvedUnion ;
+        shaclmate:resolve :LazilyResolvedDiscriminatedUnion ;
         sh:maxCount 1 ;
         sh:node :PartialStruct ;
-        sh:path :optionalPartialToResolvedUnion
+        sh:path :optionalPartialToResolvedDiscriminatedUnion
     ], [
-        shaclmate:resolve :LazilyResolvedUnion ;
+        shaclmate:resolve :LazilyResolvedDiscriminatedUnion ;
         sh:maxCount 1 ;
-        sh:node :PartialUnion ;
-        sh:path :optionalPartialUnionToResolvedUnion
+        sh:node :PartialDiscriminatedUnion ;
+        sh:path :optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion
     ], [
         shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierStruct ;
         sh:maxCount 1 ;
@@ -648,7 +681,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :listListSet
     ], [
         rdfs:comment "Set of typeof union that includes a list" ;
-        sh:path :listUnionSet ;
+        sh:path :listDiscriminatedUnionSet ;
         sh:xone ([
                 sh:node :StringList
             ]
@@ -722,7 +755,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
-:NamedUnion1
+:NamedDiscriminatedUnion1
     a sh:NodeShape ;
     rdfs:comment "Named union of IRI and string" ;
     sh:xone ([
@@ -733,7 +766,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
-:NamedUnion2
+:NamedDiscriminatedUnion2
     a sh:NodeShape ;
     rdfs:comment "Named union of date and date-time" ;
     sh:xone ([
@@ -746,43 +779,43 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
-:NamedUnionsStruct
+:NamedDiscriminatedUnionsStruct
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :NamedUnion1 ;
-        sh:path :namedUnion1
+        sh:node :NamedDiscriminatedUnion1 ;
+        sh:path :namedDiscriminatedUnion1
     ], [
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :NamedUnion2 ;
-        sh:path :namedUnion2
+        sh:node :NamedDiscriminatedUnion2 ;
+        sh:path :namedDiscriminatedUnion2
     ] .
 
-:NoRdfTypeUnion
+:NoRdfTypeDiscriminatedUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape that sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's" ;
-    sh:xone (:NoRdfTypeUnionMember1
-        :NoRdfTypeUnionMember2
+    sh:xone (:NoRdfTypeDiscriminatedUnionMember1
+        :NoRdfTypeDiscriminatedUnionMember2
     ) .
 
-:NoRdfTypeUnionMember1
+:NoRdfTypeDiscriminatedUnionMember1
     a sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :noRdfTypeUnionMember1String
+        sh:path :noRdfTypeDiscriminatedUnionMember1String
     ] .
 
-:NoRdfTypeUnionMember2
+:NoRdfTypeDiscriminatedUnionMember2
     a sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :noRdfTypeUnionMember2String
+        sh:path :noRdfTypeDiscriminatedUnionMember2String
     ] .
 
 :NodeKindsStruct
@@ -932,36 +965,36 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :newNameString
     ] .
 
+:PartialDiscriminatedUnion
+    a sh:NodeShape ;
+    rdfs:comment "Counterpart of DiscriminatedUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union." ;
+    sh:xone (:PartialDiscriminatedUnionMember1
+        :PartialDiscriminatedUnionMember2
+    ) .
+
+:PartialDiscriminatedUnionMember1
+    shaclmate:rdfType :DiscriminatedUnionMember1 ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolved
+    ] .
+
+:PartialDiscriminatedUnionMember2
+    shaclmate:rdfType :DiscriminatedUnionMember2 ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolved
+    ] .
+
 :PartialStruct
     a sh:NodeShape ;
     rdfs:comment "Struct node shape used as a partial by LazyPropertiesStruct" ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolved
-    ] .
-
-:PartialUnion
-    a sh:NodeShape ;
-    rdfs:comment "Counterpart of Union for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union." ;
-    sh:xone (:PartialUnionMember1
-        :PartialUnionMember2
-    ) .
-
-:PartialUnionMember1
-    shaclmate:rdfType :UnionMember1 ;
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolved
-    ] .
-
-:PartialUnionMember2
-    shaclmate:rdfType :UnionMember2 ;
-    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -1053,27 +1086,27 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :predicatePath
     ] .
 
-:RecursiveUnion
+:RecursiveDiscriminatedUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape that sh:xone's node shapes that have properties with the union's type" ;
-    sh:xone (:RecursiveUnionMember1
-        :RecursiveUnionMember2
+    sh:xone (:RecursiveDiscriminatedUnionMember1
+        :RecursiveDiscriminatedUnionMember2
     ) .
 
-:RecursiveUnionMember1
+:RecursiveDiscriminatedUnionMember1
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:maxCount 1 ;
-        sh:node :RecursiveUnion ;
-        sh:path :recursiveUnionMember1Property
+        sh:node :RecursiveDiscriminatedUnion ;
+        sh:path :recursiveDiscriminatedUnionMember1Property
     ] .
 
-:RecursiveUnionMember2
+:RecursiveDiscriminatedUnionMember2
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:maxCount 1 ;
-        sh:node :RecursiveUnion ;
-        sh:path :recursiveUnionMember2Property
+        sh:node :RecursiveDiscriminatedUnion ;
+        sh:path :recursiveDiscriminatedUnionMember2Property
     ] .
 
 :ReusableIn
@@ -1203,32 +1236,25 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         sh:path :term
     ] .
 
-:Union
-    a sh:NodeShape ;
-    rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
-    sh:xone (:UnionMember1
-        :UnionMember2
-    ) .
-
 :UnionDiscriminantsStruct
     a sh:NodeShape ;
     rdfs:comment "Struct node shape shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality." ;
     sh:property [
-        rdfs:comment "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property)." ;
+        rdfs:comment "Discriminated union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property)." ;
         sh:maxCount 1 ;
         sh:path :optionalNodeOrNodeOrString ;
         sh:xone ([
-                sh:node :UnionMember1
+                sh:node :DiscriminatedUnionMember1
             ]
             [
-                sh:node :UnionMember2
+                sh:node :DiscriminatedUnionMember2
             ]
             [
                 sh:datatype xsd:string
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
+        rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType)." ;
         sh:maxCount 1 ;
         sh:path :optionalIriOrLiteral ;
         sh:xone ([
@@ -1239,18 +1265,18 @@ The sh:targetClass is expected on deserialization and added on serialization."""
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
+        rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
         sh:maxCount 1 ;
         sh:path :optionalNodeOrLiteral ;
         sh:xone ([
-                sh:node :UnionMember1
+                sh:node :DiscriminatedUnionMember1
             ]
             [
                 sh:nodeKind sh:Literal
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by typeof." ;
+        rdfs:comment "Discriminated union that can be discriminated by typeof." ;
         sh:maxCount 1 ;
         sh:path :optionalIriOrString ;
         sh:xone ([
@@ -1261,44 +1287,44 @@ The sh:targetClass is expected on deserialization and added on serialization."""
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
+        rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :requiredNodeOrLiteral ;
         sh:xone ([
-                sh:node :UnionMember1
+                sh:node :DiscriminatedUnionMember1
             ]
             [
                 sh:nodeKind sh:Literal
             ]
         )
     ], [
-        rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
+        rdfs:comment "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :requiredNodeOrNodeOrString ;
         sh:xone ([
-                sh:node :UnionMember1
+                sh:node :DiscriminatedUnionMember1
             ]
             [
-                sh:node :UnionMember2
+                sh:node :DiscriminatedUnionMember2
             ]
             [
                 sh:datatype xsd:string
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
+        rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
         sh:path :setNodeOrLiteral ;
         sh:xone ([
-                sh:node :UnionMember1
+                sh:node :DiscriminatedUnionMember1
             ]
             [
                 sh:nodeKind sh:Literal
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
+        rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :requiredIriOrLiteral ;
@@ -1310,7 +1336,7 @@ The sh:targetClass is expected on deserialization and added on serialization."""
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by typeof." ;
+        rdfs:comment "Discriminated union that can be discriminated by typeof." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :requiredIriOrString ;
@@ -1322,20 +1348,20 @@ The sh:targetClass is expected on deserialization and added on serialization."""
             ]
         )
     ], [
-        rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
+        rdfs:comment "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
         sh:path :setNodeOrNodeOrString ;
         sh:xone ([
-                sh:node :UnionMember1
+                sh:node :DiscriminatedUnionMember1
             ]
             [
-                sh:node :UnionMember2
+                sh:node :DiscriminatedUnionMember2
             ]
             [
                 sh:datatype xsd:string
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
+        rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType)." ;
         sh:path :setIriOrLiteral ;
         sh:xone ([
                 sh:nodeKind sh:IRI
@@ -1345,7 +1371,7 @@ The sh:targetClass is expected on deserialization and added on serialization."""
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by typeof." ;
+        rdfs:comment "Discriminated union that can be discriminated by typeof." ;
         sh:path :setIriOrString ;
         sh:xone ([
                 sh:nodeKind sh:IRI
@@ -1355,598 +1381,3 @@ The sh:targetClass is expected on deserialization and added on serialization."""
             ]
         )
     ] .
-
-:UnionMember-common
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:name "unionMemberCommon" ;
-    sh:path :unionMemberCommon .
-
-:UnionMember1
-    a owl:Class, sh:NodeShape ;
-    sh:property :UnionMember-common, [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :unionMember1Distinct
-    ] .
-
-:UnionMember2
-    a owl:Class, sh:NodeShape ;
-    sh:property :UnionMember-common, [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :unionMember2Distinct
-    ] .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property)." ;
-    sh:maxCount 1 ;
-    sh:path :optionalNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:maxCount 1 ;
-    sh:path :optionalIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:maxCount 1 ;
-    sh:path :optionalNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by typeof." ;
-    sh:maxCount 1 ;
-    sh:path :optionalIriOrString ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:path :setNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by typeof." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredIriOrString ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
-    sh:path :setNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:path :setIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property)." ;
-    sh:maxCount 1 ;
-    sh:path :optionalNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:maxCount 1 ;
-    sh:path :optionalIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:maxCount 1 ;
-    sh:path :optionalNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by typeof." ;
-    sh:maxCount 1 ;
-    sh:path :optionalIriOrString ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:path :setNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by typeof." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredIriOrString ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
-    sh:path :setNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:path :setIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property)." ;
-    sh:maxCount 1 ;
-    sh:path :optionalNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:maxCount 1 ;
-    sh:path :optionalIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:maxCount 1 ;
-    sh:path :optionalNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by typeof." ;
-    sh:maxCount 1 ;
-    sh:path :optionalIriOrString ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:path :setNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by typeof." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredIriOrString ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
-    sh:path :setNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:path :setIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property)." ;
-    sh:maxCount 1 ;
-    sh:path :optionalNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:maxCount 1 ;
-    sh:path :optionalIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:maxCount 1 ;
-    sh:path :optionalNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by typeof." ;
-    sh:maxCount 1 ;
-    sh:path :optionalIriOrString ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-    sh:path :setNodeOrLiteral ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by typeof." ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path :requiredIriOrString ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
-    sh:path :setNodeOrNodeOrString ;
-    sh:xone ([
-            sh:node :UnionMember1
-        ]
-        [
-            sh:node :UnionMember2
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-[]
-    rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType)." ;
-    sh:path :setIriOrLiteral ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:nodeKind sh:Literal
-        ]
-    ) .
-

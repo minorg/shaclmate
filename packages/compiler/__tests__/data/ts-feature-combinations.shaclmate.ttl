@@ -24,28 +24,28 @@
         sh:path :stringProperty
     ] .
 
-:Union
+:DiscriminatedUnion
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:xone (:UnionMember1
-        :UnionMember2
+    sh:xone (:DiscriminatedUnionMember1
+        :DiscriminatedUnionMember2
     ) .
 
-:UnionMember1
+:DiscriminatedUnionMember1
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
         sh:datatype xsd:double ;
         sh:maxCount 1 ;
-        sh:path :unionMember1Property
+        sh:path :discriminatedUnionMember1Property
     ] .
 
-:UnionMember2
+:DiscriminatedUnionMember2
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
-        sh:path :unionMember2Property
+        sh:path :discriminatedUnionMember2Property
     ] .
 

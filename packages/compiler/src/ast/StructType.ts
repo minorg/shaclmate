@@ -383,7 +383,7 @@ export namespace StructType {
             return false;
           }
           case "Intersection":
-          case "Union": {
+          case "DiscriminatedUnion": {
             if (DEBUG) {
               process.stderr.write(`recurse into ${currentFieldType}`);
             }

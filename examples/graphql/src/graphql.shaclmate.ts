@@ -712,6 +712,9 @@ namespace $RdfVocabularies {
     first: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
     ),
+    langString: dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
+    ),
     nil: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
     ),
@@ -2800,7 +2803,7 @@ export namespace Union {
   }
 
   export const schema = {
-    kind: "ObjectUnion" as const,
+    kind: "ObjectDiscriminatedUnion" as const,
     members: {
       UnionMember1: {
         discriminantValues: ["UnionMember1"],
@@ -3002,7 +3005,7 @@ export namespace $Object {
   }
 
   export const schema = {
-    kind: "ObjectUnion" as const,
+    kind: "ObjectDiscriminatedUnion" as const,
     members: {
       LazyObject: {
         discriminantValues: ["LazyObject"],
@@ -3581,7 +3584,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   unionsSync(
     query?: $ObjectSet.Query<Union.Filter, Union.Identifier>,
   ): Either<Error, readonly Union[]> {
-    return this.#objectUnionsSync<Union, Union.Filter, Union.Identifier>(
+    return this.#objectDiscriminatedUnionsSync<
+      Union,
+      Union.Filter,
+      Union.Identifier
+    >(
       [
         {
           filter: Union.filter,
@@ -3656,7 +3663,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   $objectsSync(
     query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
   ): Either<Error, readonly $Object[]> {
-    return this.#objectUnionsSync<$Object, $Object.Filter, $Object.Identifier>(
+    return this.#objectDiscriminatedUnionsSync<
+      $Object,
+      $Object.Filter,
+      $Object.Identifier
+    >(
       [
         {
           filter: $Object.filter,
@@ -3805,7 +3816,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return Right(objects);
   }
 
-  #objectUnionsSync<
+  #objectDiscriminatedUnionsSync<
     ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,

@@ -1,5 +1,6 @@
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { DefaultValueType } from "./DefaultValueType.js";
+import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
@@ -12,7 +13,6 @@ import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
 import type { StructType } from "./StructType.js";
 import type { TermType } from "./TermType.js";
-import type { UnionType } from "./UnionType.js";
 
 export type Type =
   | BlankNodeType
@@ -29,7 +29,7 @@ export type Type =
   | OptionType
   | SetType
   | TermType
-  | UnionType;
+  | DiscriminatedUnionType;
 
 export namespace Type {
   export function equals(left: Type, right: Type): boolean {
@@ -64,8 +64,8 @@ export namespace Type {
         return left.equals(right as OptionType);
       case "Term":
         return left.equals(right as TermType);
-      case "Union":
-        return left.equals(right as UnionType);
+      case "DiscriminatedUnion":
+        return left.equals(right as DiscriminatedUnionType);
       case "Set":
         return left.equals(right as SetType);
     }

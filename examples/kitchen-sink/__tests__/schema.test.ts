@@ -33,13 +33,14 @@ describe("schema", () => {
       expect,
     }) => {
       expect(
-        kitchenSink.Union.schema.properties.unionMemberCommon.path.value,
-      ).toStrictEqual("http://example.com/unionMemberCommon");
+        kitchenSink.DiscriminatedUnion.schema.properties
+          .discriminatedUnionMemberCommon.path.value,
+      ).toStrictEqual("http://example.com/discriminatedUnionMemberCommon");
     });
 
     it("object union common properties", ({ expect }) => {
-      expect(kitchenSink.Union.schema.properties).toHaveProperty(
-        "unionMemberCommon",
+      expect(kitchenSink.DiscriminatedUnion.schema.properties).toHaveProperty(
+        "discriminatedUnionMemberCommon",
       );
     });
   });

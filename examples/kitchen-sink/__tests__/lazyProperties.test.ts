@@ -123,10 +123,10 @@ describe("lazyProperties", () => {
       ),
       lazilyResolved: "test",
     });
-  const expectedLazilyResolvedUnionInstance =
-    kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
+  const expectedLazilyResolvedDiscriminatedUnionInstance =
+    kitchenSink.LazilyResolvedDiscriminatedUnionMember1.createUnsafe({
       $identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedUnionInstance",
+        "http://example.com/lazilyResolvedDiscriminatedUnionInstance",
       ),
       lazilyResolved: "test",
     });
@@ -148,8 +148,8 @@ describe("lazyProperties", () => {
         resourceSet,
       },
     );
-    kitchenSink.LazilyResolvedUnion.toRdfResource(
-      expectedLazilyResolvedUnionInstance,
+    kitchenSink.LazilyResolvedDiscriminatedUnion.toRdfResource(
+      expectedLazilyResolvedDiscriminatedUnionInstance,
       { resourceSet },
     );
 
@@ -172,14 +172,16 @@ describe("lazyProperties", () => {
           kitchenSink.LazyPropertiesStruct.createUnsafe({
             optionalLazyToResolvedBlankNodeOrIriIdentifier:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
-            optionalLazyToResolvedUnion: expectedLazilyResolvedUnionInstance,
+            optionalLazyToResolvedDiscriminatedUnion:
+              expectedLazilyResolvedDiscriminatedUnionInstance,
             optionalLazyToResolvedIriIdentifier:
               expectedLazilyResolvedIriIdentifierInstance,
             optionalPartialToResolvedBlankNodeOrIriIdentifier:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
-            optionalPartialToResolvedUnion: expectedLazilyResolvedUnionInstance,
-            optionalPartialUnionToResolvedUnion:
-              expectedLazilyResolvedUnionInstance,
+            optionalPartialToResolvedDiscriminatedUnion:
+              expectedLazilyResolvedDiscriminatedUnionInstance,
+            optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
+              expectedLazilyResolvedDiscriminatedUnionInstance,
             requiredLazyToResolvedBlankNodeOrIriIdentifier:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
             requiredPartialToResolvedBlankNodeOrIriIdentifier:
@@ -223,17 +225,17 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "optionalLazyToResolvedUnion": {
+          case "optionalLazyToResolvedDiscriminatedUnion": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInstance.optionalLazyToResolvedUnion,
+                emptyLazyPropertiesInstance.optionalLazyToResolvedDiscriminatedUnion,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInstance.optionalLazyToResolvedUnion,
-                equals: kitchenSink.LazilyResolvedUnion.equals,
-                expected: expectedLazilyResolvedUnionInstance,
+                  nonEmptyLazyPropertiesInstance.optionalLazyToResolvedDiscriminatedUnion,
+                equals: kitchenSink.LazilyResolvedDiscriminatedUnion.equals,
+                expected: expectedLazilyResolvedDiscriminatedUnionInstance,
               });
             }
             break;
@@ -271,32 +273,32 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "optionalPartialToResolvedUnion": {
+          case "optionalPartialToResolvedDiscriminatedUnion": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInstance.optionalPartialToResolvedUnion,
+                emptyLazyPropertiesInstance.optionalPartialToResolvedDiscriminatedUnion,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInstance.optionalPartialToResolvedUnion,
-                equals: kitchenSink.LazilyResolvedUnion.equals,
-                expected: expectedLazilyResolvedUnionInstance,
+                  nonEmptyLazyPropertiesInstance.optionalPartialToResolvedDiscriminatedUnion,
+                equals: kitchenSink.LazilyResolvedDiscriminatedUnion.equals,
+                expected: expectedLazilyResolvedDiscriminatedUnionInstance,
               });
             }
             break;
           }
-          case "optionalPartialUnionToResolvedUnion": {
+          case "optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInstance.optionalPartialUnionToResolvedUnion,
+                emptyLazyPropertiesInstance.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInstance.optionalPartialUnionToResolvedUnion,
-                equals: kitchenSink.LazilyResolvedUnion.equals,
-                expected: expectedLazilyResolvedUnionInstance,
+                  nonEmptyLazyPropertiesInstance.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
+                equals: kitchenSink.LazilyResolvedDiscriminatedUnion.equals,
+                expected: expectedLazilyResolvedDiscriminatedUnionInstance,
               });
             }
             break;

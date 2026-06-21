@@ -70,11 +70,11 @@ describe("ShapesGraphToAstTransformer", () => {
         });
 
         it("should transform named union types", ({ expect }) => {
-          const namedUnionTypes = ast.namedTypes.filter(
-            (_) => _.kind === "Union",
+          const namedDiscriminatedUnionTypes = ast.namedTypes.filter(
+            (_) => _.kind === "DiscriminatedUnion",
           );
           if (id === "kitchenSinkExample") {
-            expect(namedUnionTypes).toHaveLength(8);
+            expect(namedDiscriminatedUnionTypes).toHaveLength(8);
           }
         });
 
@@ -89,12 +89,12 @@ describe("ShapesGraphToAstTransformer", () => {
               "http://example.com/indirectRecursiveHelper",
             ],
             [
-              "http://example.com/RecursiveUnionMember1",
-              "http://example.com/recursiveUnionMember1Property",
+              "http://example.com/RecursiveDiscriminatedUnionMember1",
+              "http://example.com/recursiveDiscriminatedUnionMember1Property",
             ],
             [
-              "http://example.com/RecursiveUnionMember2",
-              "http://example.com/recursiveUnionMember2Property",
+              "http://example.com/RecursiveDiscriminatedUnionMember2",
+              "http://example.com/recursiveDiscriminatedUnionMember2Property",
             ],
           ]) {
             it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({

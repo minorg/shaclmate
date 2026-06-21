@@ -15,8 +15,11 @@ export interface ${syntheticNamePrefix}ObjectSet {
         Object.values(this.methodSignatures(namedObjectType)),
       )
       .concat(
-        this.namedObjectUnionTypes.flatMap((namedObjectUnionType) =>
-          Object.values(this.methodSignatures(namedObjectUnionType)),
+        this.namedObjectDiscriminatedUnionTypes.flatMap(
+          (namedObjectDiscriminatedUnionType) =>
+            Object.values(
+              this.methodSignatures(namedObjectDiscriminatedUnionType),
+            ),
         ),
       )
       .map(

@@ -16,12 +16,15 @@ import {
   literalOf,
 } from "./ts-poet-wrapper.js";
 
-export class UnionType<MemberTypeT extends Type> extends AbstractType {
+export class DiscriminatedUnionType<
+  MemberTypeT extends Type,
+> extends AbstractType {
   private readonly discriminant: Discriminant;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: Maybe<BlankNodeType | IdentifierType | IriType>;
-  override readonly kind: "ObjectUnion" | "Union" = "Union";
+  override readonly kind: "ObjectDiscriminatedUnion" | "DiscriminatedUnion" =
+    "DiscriminatedUnion";
   override readonly recursive: boolean;
   readonly synthetic: boolean;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
@@ -34,7 +37,10 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
     ...superParameters
   }: {
     identifierType: Maybe<BlankNodeType | IdentifierType | IriType>;
-    members: readonly (Pick<AbstractUnionType.Member<MemberTypeT>, "type"> & {
+    members: readonly (Pick<
+      DiscriminatedUnionType.Member<MemberTypeT>,
+      "type"
+    > & {
       readonly discriminantValue: Maybe<number | string>;
     })[];
     recursive: boolean;
@@ -90,7 +96,7 @@ export class UnionType<MemberTypeT extends Type> extends AbstractType {
             if (discriminant.kind === "Intrinsic" && !json) {
               switch (member.type.kind) {
                 case "Object":
-                case "ObjectUnion":
+                case "ObjectDiscriminatedUnion":
                   return code`${member.type.name.unsafeCoerce()}.is${member.type.name.unsafeCoerce()}(${instance})`;
               }
             }
@@ -340,7 +346,7 @@ ${joinCode(
   }
 
   @Memoize()
-  get members(): readonly AbstractUnionType.Member<MemberTypeT>[] {
+  get members(): readonly DiscriminatedUnionType.Member<MemberTypeT>[] {
     return this.lazyMembers();
   }
 
@@ -937,7 +943,7 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
     return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(this.toStringFunctionExpression)}(${variables.value})`;
   }
 
-  private readonly lazyMembers: () => readonly AbstractUnionType.Member<MemberTypeT>[];
+  private readonly lazyMembers: () => readonly DiscriminatedUnionType.Member<MemberTypeT>[];
 }
 
 type Discriminant =
@@ -1139,7 +1145,7 @@ export namespace Discriminant {
   }
 }
 
-export namespace AbstractUnionType {
+export namespace DiscriminatedUnionType {
   export interface Member<TypeT extends Type> {
     readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
     readonly jsonType: Code;

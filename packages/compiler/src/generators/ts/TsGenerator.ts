@@ -9,9 +9,9 @@ import { BlankNodeType } from "./BlankNodeType.js";
 import { GraphqlSchema } from "./GraphqlSchema.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
+import { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { ObjectUnionType } from "./ObjectUnionType.js";
 import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
 import { SparqlObjectSetType } from "./SparqlObjectSetType.js";
@@ -56,7 +56,8 @@ export class TsGenerator implements Generator {
 
     const tsNamedTypes: Type[] = [];
     const tsNamedObjectTypes: ObjectType[] = [];
-    const tsNamedObjectUnionTypes: ObjectUnionType[] = [];
+    const tsNamedObjectDiscriminatedUnionTypes: ObjectDiscriminatedUnionType[] =
+      [];
     for (const astNamedType of ast_.namedTypes) {
       const tsNamedType = typeFactory.createType(astNamedType);
       tsNamedTypes.push(tsNamedType);
@@ -71,20 +72,22 @@ export class TsGenerator implements Generator {
         case "Object":
           tsNamedObjectTypes.push(tsNamedType);
           break;
-        case "ObjectUnion":
-          tsNamedObjectUnionTypes.push(tsNamedType as ObjectUnionType);
+        case "ObjectDiscriminatedUnion":
+          tsNamedObjectDiscriminatedUnionTypes.push(
+            tsNamedType as ObjectDiscriminatedUnionType,
+          );
           break;
       }
     }
 
     tsNamedTypes.sort(compareTsNamedType);
     tsNamedObjectTypes.sort(compareTsNamedType);
-    tsNamedObjectUnionTypes.sort(compareTsNamedType);
+    tsNamedObjectDiscriminatedUnionTypes.sort(compareTsNamedType);
 
     for (const tsNamedType of tsNamedTypes) {
       switch (tsNamedType.kind) {
-        case "ObjectUnion":
-        case "Union":
+        case "ObjectDiscriminatedUnion":
+        case "DiscriminatedUnion":
           continue; // Declare compound types last.
       }
 
@@ -96,8 +99,8 @@ export class TsGenerator implements Generator {
     // Declare compound types last.
     for (const tsNamedType of tsNamedTypes) {
       switch (tsNamedType.kind) {
-        case "ObjectUnion":
-        case "Union":
+        case "ObjectDiscriminatedUnion":
+        case "DiscriminatedUnion":
           break;
         default:
           continue;
@@ -117,15 +120,18 @@ export class TsGenerator implements Generator {
         );
         break;
       default: {
-        const uberObjectUnionType = this.synthesizeUberObjectUnionType({
-          configuration,
-          namedObjectTypes: tsNamedObjectTypes,
-          reusables,
-        });
+        const uberObjectDiscriminatedUnionType =
+          this.synthesizeUberObjectDiscriminatedUnionType({
+            configuration,
+            namedObjectTypes: tsNamedObjectTypes,
+            reusables,
+          });
         declarations = declarations.concat(
-          uberObjectUnionType.declaration.toList(),
+          uberObjectDiscriminatedUnionType.declaration.toList(),
         );
-        tsNamedObjectUnionTypes.push(uberObjectUnionType);
+        tsNamedObjectDiscriminatedUnionTypes.push(
+          uberObjectDiscriminatedUnionType,
+        );
       }
     }
 
@@ -133,7 +139,8 @@ export class TsGenerator implements Generator {
       ...this.objectSetTypeDeclarations({
         configuration,
         namedObjectTypes: tsNamedObjectTypes,
-        namedObjectUnionTypes: tsNamedObjectUnionTypes,
+        namedObjectDiscriminatedUnionTypes:
+          tsNamedObjectDiscriminatedUnionTypes,
         reusables,
       }),
     );
@@ -142,9 +149,11 @@ export class TsGenerator implements Generator {
       const graphqlNamedObjectTypes = tsNamedObjectTypes.filter(
         (tsNamedObjectType) => !tsNamedObjectType.synthetic,
       );
-      const graphqlNamedObjectUnionTypes = tsNamedObjectUnionTypes.filter(
-        (tsNamedObjectUnionType) => !tsNamedObjectUnionType.synthetic,
-      );
+      const graphqlNamedObjectDiscriminatedUnionTypes =
+        tsNamedObjectDiscriminatedUnionTypes.filter(
+          (tsNamedObjectDiscriminatedUnionType) =>
+            !tsNamedObjectDiscriminatedUnionType.synthetic,
+        );
 
       if (graphqlNamedObjectTypes.length > 0) {
         declarations.push(
@@ -152,7 +161,8 @@ export class TsGenerator implements Generator {
             configuration,
             logger: this.logger,
             namedObjectTypes: graphqlNamedObjectTypes,
-            namedObjectUnionTypes: graphqlNamedObjectUnionTypes,
+            namedObjectDiscriminatedUnionTypes:
+              graphqlNamedObjectDiscriminatedUnionTypes,
             reusables,
           }).declaration,
         );
@@ -171,12 +181,12 @@ export class TsGenerator implements Generator {
   private objectSetTypeDeclarations({
     configuration,
     namedObjectTypes,
-    namedObjectUnionTypes,
+    namedObjectDiscriminatedUnionTypes,
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
     namedObjectTypes: readonly ObjectType[];
-    namedObjectUnionTypes: readonly ObjectUnionType[];
+    namedObjectDiscriminatedUnionTypes: readonly ObjectDiscriminatedUnionType[];
     reusables: Reusables;
   }): readonly Code[] {
     const constructorParameters: ConstructorParameters<
@@ -188,7 +198,7 @@ export class TsGenerator implements Generator {
         (namedObjectType) =>
           !namedObjectType.extern && !namedObjectType.synthetic,
       ),
-      namedObjectUnionTypes,
+      namedObjectDiscriminatedUnionTypes,
       reusables,
     };
 
@@ -216,7 +226,7 @@ export class TsGenerator implements Generator {
   /**
    * Synthesize the $Object union.
    */
-  private synthesizeUberObjectUnionType({
+  private synthesizeUberObjectDiscriminatedUnionType({
     configuration,
     namedObjectTypes,
     reusables,
@@ -224,7 +234,7 @@ export class TsGenerator implements Generator {
     configuration: TsGenerator.Configuration;
     namedObjectTypes: readonly ObjectType[];
     reusables: Reusables;
-  }): ObjectUnionType {
+  }): ObjectDiscriminatedUnionType {
     const filteredNamedObjectTypes = namedObjectTypes.filter(
       (namedObjectType) =>
         !namedObjectType.extern && !namedObjectType.synthetic,
@@ -281,7 +291,7 @@ export class TsGenerator implements Generator {
       }
     }
 
-    return new ObjectUnionType({
+    return new ObjectDiscriminatedUnionType({
       name: Maybe.of(`${configuration.syntheticNamePrefix}Object`),
       comment: Maybe.empty(),
       configuration,

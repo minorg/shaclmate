@@ -31,7 +31,7 @@ export function transformShapeToAstCompoundType(
           .map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
       ),
     ).chain(([andConstraintShapes, xoneConstraintShapes]) => {
-      let compoundTypeKind: "Intersection" | "Union";
+      let compoundTypeKind: "Intersection" | "DiscriminatedUnion";
       // Distinguish constraints that take arbitrary shapes from those that only take node shapes
       // With the latter we'll do special transformations.
       let memberShapes: readonly input.Shape[];
@@ -41,7 +41,7 @@ export function transformShapeToAstCompoundType(
         compoundTypeKind = "Intersection";
       } else if (xoneConstraintShapes.length > 0) {
         memberShapes = xoneConstraintShapes;
-        compoundTypeKind = "Union";
+        compoundTypeKind = "DiscriminatedUnion";
       } else {
         return Either.of(Maybe.empty());
       }
@@ -49,17 +49,18 @@ export function transformShapeToAstCompoundType(
       invariant(memberShapes.length > 0);
 
       const memberDiscriminantValues = new Set<number | string>();
-      const compoundType: ast.IntersectionType | ast.UnionType = new (
-        compoundTypeKind === "Intersection"
-          ? ast.IntersectionType
-          : ast.UnionType
-      )({
-        comment: shape.comment,
-        label: shape.label,
-        name: shapeAstTypeName(shape),
-        shapeIdentifier: shape.$identifier(),
-        synthetic: false,
-      });
+      const compoundType: ast.IntersectionType | ast.DiscriminatedUnionType =
+        new (
+          compoundTypeKind === "Intersection"
+            ? ast.IntersectionType
+            : ast.DiscriminatedUnionType
+        )({
+          comment: shape.comment,
+          label: shape.label,
+          name: shapeAstTypeName(shape),
+          shapeIdentifier: shape.$identifier(),
+          synthetic: false,
+        });
 
       if (memberShapes.length === 1) {
         return transformShapeToAstType
@@ -81,7 +82,10 @@ export function transformShapeToAstCompoundType(
         .chain(
           (
             memberShapeTypes,
-          ): Either<Error, Maybe<ast.IntersectionType | ast.UnionType>> => {
+          ): Either<
+            Error,
+            Maybe<ast.IntersectionType | ast.DiscriminatedUnionType>
+          > => {
             for (let memberI = 0; memberI < memberShapes.length; memberI++) {
               const memberShape = memberShapes[memberI];
               const memberType = memberShapeTypes[memberI];
@@ -108,7 +112,7 @@ export function transformShapeToAstCompoundType(
               }
 
               let memberDiscriminantValue: number | string | undefined;
-              if (compoundTypeKind === "Union") {
+              if (compoundTypeKind === "DiscriminatedUnion") {
                 if (memberShape.$type === "NodeShape") {
                   memberDiscriminantValue =
                     memberShape.discriminantValue.extract();

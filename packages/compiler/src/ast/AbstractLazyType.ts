@@ -3,8 +3,8 @@ import type { NodeKind } from "@shaclmate/shacl-ast";
 import { AbstractType } from "./AbstractType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
+import type { StructDiscriminatedUnionType } from "./StructDiscriminatedUnionType.js";
 import type { StructType } from "./StructType.js";
-import type { StructUnionType } from "./StructUnionType.js";
 import { Type } from "./Type.js";
 
 /**
@@ -67,7 +67,7 @@ export abstract class AbstractLazyType<
 }
 
 export namespace AbstractLazyType {
-  export type ItemTypeConstraint = StructType | StructUnionType;
+  export type ItemTypeConstraint = StructType | StructDiscriminatedUnionType;
   export type PartialTypeConstraint =
     | ItemTypeConstraint
     | OptionType<ItemTypeConstraint>

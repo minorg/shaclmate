@@ -42,7 +42,7 @@ export function transformAstToLabeledPropertyGraph(
         switch (itemType.kind) {
           case "Intersection":
           case "Struct":
-          case "Union":
+          case "DiscriminatedUnion":
             if (itemType.name.isJust()) {
               relationships.push({
                 id: namedObjectTypeProperty.shapeIdentifier.toString(),
@@ -66,7 +66,7 @@ export function transformAstToLabeledPropertyGraph(
         label: typeName(namedStructType),
         properties: properties,
       });
-    } else if (namedType.kind === "Union") {
+    } else if (namedType.kind === "DiscriminatedUnion") {
       nodes.push({
         id: typeId(namedType),
         label: typeName(namedType),

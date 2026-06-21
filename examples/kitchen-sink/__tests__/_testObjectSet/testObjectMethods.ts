@@ -21,9 +21,9 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
         const objectSet = createObjectSet(objectDataset(data.unionObjects));
         for (const expectedUnion of data.unionObjects) {
           expect(
-            kitchenSink.Union.equals(
+            kitchenSink.DiscriminatedUnion.equals(
               (
-                await objectSet.union(expectedUnion.$identifier())
+                await objectSet.discriminatedUnion(expectedUnion.$identifier())
               ).unsafeCoerce(),
               expectedUnion as any,
             ).unsafeCoerce(),
@@ -33,13 +33,15 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
 
       it("without fromRdfType", async ({ expect }) => {
         const objectSet = createObjectSet(
-          objectDataset(data.noRdfTypeUnionObjects),
+          objectDataset(data.noRdfTypeDiscriminatedUnionObjects),
         );
-        for (const expectedUnion of data.noRdfTypeUnionObjects) {
+        for (const expectedUnion of data.noRdfTypeDiscriminatedUnionObjects) {
           const actualUnion = (
-            await objectSet.noRdfTypeUnion(expectedUnion.$identifier())
+            await objectSet.noRdfTypeDiscriminatedUnion(
+              expectedUnion.$identifier(),
+            )
           ).unsafeCoerce();
-          const equalsResult = kitchenSink.NoRdfTypeUnion.equals(
+          const equalsResult = kitchenSink.NoRdfTypeDiscriminatedUnion.equals(
             expectedUnion,
             actualUnion,
           );

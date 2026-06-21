@@ -12,19 +12,19 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
 import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
+import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import type { LangStringType } from "./LangStringType.js";
 import type { LiteralType } from "./LiteralType.js";
+import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
-import type { UnionType } from "./UnionType.js";
 
 export class ListType<
   ItemTypeT extends ListType.ItemType,
@@ -195,11 +195,11 @@ export namespace ListType {
     | LangStringType
     | ListType<ListType.ItemType>
     | LiteralType
-    | ObjectUnionType
+    | ObjectDiscriminatedUnionType
     | ObjectType
     | StringType
     | TermType
-    | UnionType<Type>;
+    | DiscriminatedUnionType<Type>;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
@@ -216,11 +216,11 @@ export namespace ListType {
       case "LangString":
       case "List":
       case "Literal":
-      case "ObjectUnion":
+      case "ObjectDiscriminatedUnion":
       case "Object":
       case "String":
       case "Term":
-      case "Union":
+      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

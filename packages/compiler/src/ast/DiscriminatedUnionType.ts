@@ -1,22 +1,27 @@
 import type { Maybe } from "purify-ts";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
-import type { StructUnionType } from "./StructUnionType.js";
+import type { StructDiscriminatedUnionType } from "./StructDiscriminatedUnionType.js";
 
 /**
  * A disjunction/union of types, corresponding to an sh:xone.
  */
-export class UnionType<
-  MemberTypeT extends UnionType.MemberType = UnionType.MemberType,
-> extends AbstractCompoundType<UnionType.Member<MemberTypeT>, MemberTypeT> {
-  override readonly kind = "Union";
+export class DiscriminatedUnionType<
+  MemberTypeT extends
+    DiscriminatedUnionType.MemberType = DiscriminatedUnionType.MemberType,
+> extends AbstractCompoundType<
+  DiscriminatedUnionType.Member<MemberTypeT>,
+  MemberTypeT
+> {
+  override readonly kind = "DiscriminatedUnion";
 
-  isStructUnionType(): this is StructUnionType {
+  isStructDiscriminatedUnionType(): this is StructDiscriminatedUnionType {
     return (
       this.members.length > 0 &&
       this.members.every(
         (member) =>
           member.type.kind === "Struct" ||
-          (member.type.kind === "Union" && member.type.isStructUnionType()),
+          (member.type.kind === "DiscriminatedUnion" &&
+            member.type.isStructDiscriminatedUnionType()),
       )
     );
   }
@@ -34,8 +39,8 @@ export class UnionType<
   }
 }
 
-export namespace UnionType {
-  export interface Member<TypeT extends UnionType.MemberType>
+export namespace DiscriminatedUnionType {
+  export interface Member<TypeT extends DiscriminatedUnionType.MemberType>
     extends AbstractCompoundType.Member<TypeT> {
     readonly discriminantValue: Maybe<number | string>;
   }

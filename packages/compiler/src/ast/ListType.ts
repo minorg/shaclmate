@@ -2,6 +2,7 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
@@ -9,7 +10,6 @@ import type { LiteralType } from "./LiteralType.js";
 import type { StructType } from "./StructType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
-import type { UnionType } from "./UnionType.js";
 
 /**
  * An ordered sequence of items with zero or one values of an item type.
@@ -66,7 +66,7 @@ export namespace ListType {
     | LiteralType
     | StructType
     | TermType
-    | UnionType;
+    | DiscriminatedUnionType;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
@@ -78,7 +78,7 @@ export namespace ListType {
       case "Literal":
       case "Struct":
       case "Term":
-      case "Union":
+      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

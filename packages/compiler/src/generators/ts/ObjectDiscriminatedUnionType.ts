@@ -5,14 +5,14 @@ import { Memoize } from "typescript-memoize";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
+import { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
-import { UnionType } from "./UnionType.js";
 
-export class ObjectUnionType extends UnionType<ObjectType> {
-  override readonly kind = "ObjectUnion";
+export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectType> {
+  override readonly kind = "ObjectDiscriminatedUnion";
 
   @Memoize()
   get identifierTypeAlias(): Code {

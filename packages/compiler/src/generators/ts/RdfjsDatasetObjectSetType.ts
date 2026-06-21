@@ -48,73 +48,75 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
 
   ${joinCode(
     [
-      ...[...this.namedObjectTypes, ...this.namedObjectUnionTypes].flatMap(
-        (namedObjectType): readonly Code[] => {
-          const methodSignatures = this.methodSignatures(namedObjectType);
+      ...[
+        ...this.namedObjectTypes,
+        ...this.namedObjectDiscriminatedUnionTypes,
+      ].flatMap((namedObjectType): readonly Code[] => {
+        const methodSignatures = this.methodSignatures(namedObjectType);
 
-          const delegatingMethods: Code[] = [
-            // object
-            code`\
+        const delegatingMethods: Code[] = [
+          // object
+          code`\
 async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
   return this.${methodSignatures.object.name}Sync(identifier, options);
 }`,
-            // objectSync
-            code`\
+          // objectSync
+          code`\
 ${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${this.reusables.imports.Either}<Error, ${namedObjectType.expression}> {
   return this.${methodSignatures.objects.name}Sync({ identifiers: [identifier], preferredLanguages: options?.preferredLanguages }).map(objects => objects[0]);
 }`,
 
-            // objectCount
-            code`\
+          // objectCount
+          code`\
 async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.returnType} {
   return this.${methodSignatures.objectCount.name}Sync(query);
 }`,
-            // objectCountSync
-            code`\
+          // objectCountSync
+          code`\
 ${methodSignatures.objectCount.name}Sync(${methodSignatures.objectCount.parameters}): ${this.reusables.imports.Either}<Error, number> {
   return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.length);
 }`,
 
-            // objectIdentifiers
-            code`\
+          // objectIdentifiers
+          code`\
 async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
   return this.${methodSignatures.objectIdentifiers.name}Sync(query);
 }`,
-            // objectIdentifiersSync
-            code`\
+          // objectIdentifiersSync
+          code`\
 ${methodSignatures.objectIdentifiers.name}Sync(${methodSignatures.objectIdentifiers.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.identifierTypeAlias}[]> {
   return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier()));
 }`,
 
-            // objects
-            code`\
+          // objects
+          code`\
 async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.returnType} {
   return this.${methodSignatures.objects.name}Sync(query);
 }`,
-            // objectsSync has per-object type logic, not just forwarding
-          ];
+          // objectsSync has per-object type logic, not just forwarding
+        ];
 
-          const runtimeObjectType = (
-            filterFunction: Code,
-            namedObjectType: {
-              expression: Code;
-              fromRdfTypeVariable: Maybe<Code>;
-            },
-          ): Code => {
-            return code`{ filter: ${filterFunction}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
-          };
+        const runtimeObjectType = (
+          filterFunction: Code,
+          namedObjectType: {
+            expression: Code;
+            fromRdfTypeVariable: Maybe<Code>;
+          },
+        ): Code => {
+          return code`{ filter: ${filterFunction}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
+        };
 
-          switch (namedObjectType.kind) {
-            case "Object": {
-              return delegatingMethods.concat(code`\
+        switch (namedObjectType.kind) {
+          case "Object": {
+            return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
   return this.#objectsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType.filterFunction, namedObjectType)}, query);
 }`);
-            }
-            case "ObjectUnion":
-              return delegatingMethods.concat(code`\
+          }
+          case "ObjectDiscriminatedUnion":
+            return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
-  return this.#objectUnionsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
+  return this.#objectDiscriminatedUnionsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
     ${joinCode(
       namedObjectType.members.map((member) =>
         runtimeObjectType(namedObjectType.filterFunction, member.type),
@@ -123,12 +125,11 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
     )}
   ], query);
 }`);
-            default:
-              namedObjectType satisfies never;
-              return [];
-          }
-        },
-      ),
+          default:
+            namedObjectType satisfies never;
+            return [];
+        }
+      }),
 
       ...(this.namedObjectTypes.length > 0
         ? [
@@ -223,10 +224,10 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
           ]
         : []),
 
-      ...(this.namedObjectUnionTypes.length > 0
+      ...(this.namedObjectDiscriminatedUnionTypes.length > 0
         ? [
             code`\
-#objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
+#objectDiscriminatedUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
   const graph = query?.graph ?? this.#graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
