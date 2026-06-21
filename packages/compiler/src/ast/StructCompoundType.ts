@@ -75,7 +75,7 @@ export namespace StructCompoundType {
           memberStructTypes_.push(member.type);
           break;
         case "Intersection":
-        case "Union": {
+        case "DiscriminatedUnion": {
           invariant(member.type.kind === objectCompoundType.kind);
           memberStructTypes_.push(...memberStructTypes(member.type));
           break;

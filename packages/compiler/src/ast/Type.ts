@@ -64,7 +64,7 @@ export namespace Type {
         return left.equals(right as OptionType);
       case "Term":
         return left.equals(right as TermType);
-      case "Union":
+      case "DiscriminatedUnion":
         return left.equals(right as DiscriminatedUnionType);
       case "Set":
         return left.equals(right as SetType);

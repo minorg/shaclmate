@@ -216,11 +216,11 @@ export namespace ListType {
       case "LangString":
       case "List":
       case "Literal":
-      case "ObjectUnion":
+      case "ObjectDiscriminatedUnion":
       case "Object":
       case "String":
       case "Term":
-      case "Union":
+      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

@@ -71,7 +71,7 @@ export class TsGenerator implements Generator {
         case "Object":
           tsNamedObjectTypes.push(tsNamedType);
           break;
-        case "ObjectUnion":
+        case "ObjectDiscriminatedUnion":
           tsNamedObjectUnionTypes.push(tsNamedType as ObjectUnionType);
           break;
       }
@@ -83,8 +83,8 @@ export class TsGenerator implements Generator {
 
     for (const tsNamedType of tsNamedTypes) {
       switch (tsNamedType.kind) {
-        case "ObjectUnion":
-        case "Union":
+        case "ObjectDiscriminatedUnion":
+        case "DiscriminatedUnion":
           continue; // Declare compound types last.
       }
 
@@ -96,8 +96,8 @@ export class TsGenerator implements Generator {
     // Declare compound types last.
     for (const tsNamedType of tsNamedTypes) {
       switch (tsNamedType.kind) {
-        case "ObjectUnion":
-        case "Union":
+        case "ObjectDiscriminatedUnion":
+        case "DiscriminatedUnion":
           break;
         default:
           continue;

@@ -26,7 +26,7 @@ function isStructTypeFieldRequired(field: {
       return false;
     case "Set":
       return field.type.minCount > 0;
-    case "Union":
+    case "DiscriminatedUnion":
       return field.type.members.every((member) =>
         isStructTypeFieldRequired({ type: member.type }),
       );

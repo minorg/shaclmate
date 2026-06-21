@@ -116,8 +116,8 @@ export class DefaultValueType<
         return this.rdfjsTermExpression(this.defaultValue);
       case "List":
       case "Object":
-      case "ObjectUnion":
-      case "Union":
+      case "ObjectDiscriminatedUnion":
+      case "DiscriminatedUnion":
         throw new RangeError(`not implemented ${this.itemType.kind}`);
     }
 

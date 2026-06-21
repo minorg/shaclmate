@@ -23,7 +23,8 @@ export class DiscriminatedUnionType<
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: Maybe<BlankNodeType | IdentifierType | IriType>;
-  override readonly kind: "ObjectUnion" | "Union" = "Union";
+  override readonly kind: "ObjectDiscriminatedUnion" | "DiscriminatedUnion" =
+    "DiscriminatedUnion";
   override readonly recursive: boolean;
   readonly synthetic: boolean;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
@@ -92,7 +93,7 @@ export class DiscriminatedUnionType<
             if (discriminant.kind === "Intrinsic" && !json) {
               switch (member.type.kind) {
                 case "Object":
-                case "ObjectUnion":
+                case "ObjectDiscriminatedUnion":
                   return code`${member.type.name.unsafeCoerce()}.is${member.type.name.unsafeCoerce()}(${instance})`;
               }
             }

@@ -235,7 +235,7 @@ export class TypeFactory {
         return this.createObjectType(astType);
       case "Term":
         return this.createTermType(astType);
-      case "Union":
+      case "DiscriminatedUnion":
         return this.createUnionType(astType);
     }
   }

@@ -34,7 +34,7 @@ export abstract class AbstractCompoundType<
   /**
    * Type discriminant
    */
-  abstract override readonly kind: "Intersection" | "Union";
+  abstract override readonly kind: "Intersection" | "DiscriminatedUnion";
 
   /**
    * Was this type synthesized or did it come from SHACL?
@@ -107,7 +107,7 @@ export namespace AbstractCompoundType {
       case "Literal":
       case "Struct":
       case "Term":
-      case "Union":
+      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

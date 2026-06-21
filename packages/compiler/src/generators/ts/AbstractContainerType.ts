@@ -130,10 +130,10 @@ export namespace AbstractContainerType {
       case "List":
       case "Literal":
       case "Object":
-      case "ObjectUnion":
+      case "ObjectDiscriminatedUnion":
       case "String":
       case "Term":
-      case "Union":
+      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

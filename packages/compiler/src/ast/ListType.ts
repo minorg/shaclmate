@@ -78,7 +78,7 @@ export namespace ListType {
       case "Literal":
       case "Struct":
       case "Term":
-      case "Union":
+      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

@@ -12,7 +12,7 @@ export class DiscriminatedUnionType<
   DiscriminatedUnionType.Member<MemberTypeT>,
   MemberTypeT
 > {
-  override readonly kind = "Union";
+  override readonly kind = "DiscriminatedUnion";
 
   isStructUnionType(): this is StructUnionType {
     return (
@@ -20,7 +20,8 @@ export class DiscriminatedUnionType<
       this.members.every(
         (member) =>
           member.type.kind === "Struct" ||
-          (member.type.kind === "Union" && member.type.isStructUnionType()),
+          (member.type.kind === "DiscriminatedUnion" &&
+            member.type.isStructUnionType()),
       )
     );
   }

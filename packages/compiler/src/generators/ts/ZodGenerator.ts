@@ -45,7 +45,7 @@ export namespace ${tsNamedObjectType.name.unsafeCoerce()} {
 }`);
           break;
         }
-        case "Union": {
+        case "DiscriminatedUnion": {
           const tsNamedUnionType = typeFactory.createUnionType(astNamedType);
           declarations.push(code`\
 export namespace ${tsNamedUnionType.name.unsafeCoerce()} {

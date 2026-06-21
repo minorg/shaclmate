@@ -252,7 +252,7 @@ export function transformPropertyShapeToAstStructTypeField(
               return Either.of<Error, ast.StructType | ast.StructUnionType>(
                 astResolveType,
               );
-            case "Union":
+            case "DiscriminatedUnion":
               if (
                 // This check relies on .members being populated, which may not happen in cycles
                 astResolveType.members.length > 0 &&
@@ -314,7 +314,7 @@ export function transformPropertyShapeToAstStructTypeField(
         case "Struct":
           astPartialItemType = astItemType;
           break;
-        case "Union":
+        case "DiscriminatedUnion":
           if (!astItemType.isStructUnionType()) {
             return Left(
               new Error(
@@ -344,7 +344,7 @@ export function transformPropertyShapeToAstStructTypeField(
         case "Identifier":
         case "Iri":
         case "Struct":
-        case "Union":
+        case "DiscriminatedUnion":
           astType = new ast.LazyType({
             ...astAbstractTypeProperties,
             partialType: astPartialItemType,

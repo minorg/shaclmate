@@ -71,7 +71,7 @@ describe("ShapesGraphToAstTransformer", () => {
 
         it("should transform named union types", ({ expect }) => {
           const namedUnionTypes = ast.namedTypes.filter(
-            (_) => _.kind === "Union",
+            (_) => _.kind === "DiscriminatedUnion",
           );
           if (id === "kitchenSinkExample") {
             expect(namedUnionTypes).toHaveLength(8);
