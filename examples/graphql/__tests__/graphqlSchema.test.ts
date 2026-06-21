@@ -182,17 +182,17 @@ describe("graphqlSchema", () => {
     });
   });
 
-  describe("discriminated union", () => {
+  describe("union", () => {
     it("object", async ({ expect }) => {
       const result = await execute(
         `\
   query {
-    discriminatedUnion(identifier: "<http://example.com/discriminatedUnion0>") {
-      ... on DiscriminatedUnionMember1 {
+    union(identifier: "<http://example.com/union0>") {
+      ... on UnionMember1 {
         _identifier
         optionalNumberProperty
       }
-      ... on DiscriminatedUnionMember2 {
+      ... on UnionMember2 {
         _identifier
         optionalStringProperty
       }
@@ -201,19 +201,19 @@ describe("graphqlSchema", () => {
       );
       expect(result.errors).toBeUndefined();
       expect(result.data).toEqual({
-        discriminatedUnion: {
-          _identifier: "<http://example.com/discriminatedUnion0>",
+        union: {
+          _identifier: "<http://example.com/union0>",
           optionalNumberProperty: 1,
         },
       });
     });
 
     it("object identifiers (all)", async ({ expect }) => {
-      const result = await execute("query { discriminatedUnionIdentifiers }");
+      const result = await execute("query { unionIdentifiers }");
       expect(result.errors).toBeUndefined();
       expect(result.data).toEqual({
-        discriminatedUnionIdentifiers: [...new Array(4)].map(
-          (_, i) => `<http://example.com/discriminatedUnion${i}>`,
+        unionIdentifiers: [...new Array(4)].map(
+          (_, i) => `<http://example.com/union${i}>`,
         ),
       });
     });
@@ -222,12 +222,12 @@ describe("graphqlSchema", () => {
       const result = await execute(
         `\
 query {
-  discriminatedUnions {
-    ... on DiscriminatedUnionMember1 {
+  unions {
+    ... on UnionMember1 {
       _identifier
       optionalNumberProperty
     }
-    ... on DiscriminatedUnionMember2 {
+    ... on UnionMember2 {
       _identifier
       optionalStringProperty
     }
@@ -236,8 +236,8 @@ query {
       );
       expect(result.errors).toBeUndefined();
       expect(result.data).toEqual({
-        discriminatedUnions: [...new Array(4)].map((_, i) => {
-          const _identifier = `<http://example.com/discriminatedUnion${i}>`;
+        unions: [...new Array(4)].map((_, i) => {
+          const _identifier = `<http://example.com/union${i}>`;
           if (i % 2 === 0) {
             return { _identifier, optionalNumberProperty: 1 };
           }
@@ -247,10 +247,10 @@ query {
     });
 
     it("objectCount", async ({ expect }) => {
-      const result = await execute("query { discriminatedUnionCount }");
+      const result = await execute("query { unionCount }");
       expect(result.errors).toBeUndefined();
       expect(result.data).toEqual({
-        discriminatedUnionCount: 4,
+        unionCount: 4,
       });
     });
   });
