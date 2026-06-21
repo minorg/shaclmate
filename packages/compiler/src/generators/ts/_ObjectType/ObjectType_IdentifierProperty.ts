@@ -15,9 +15,9 @@ import {
   joinCode,
   literalOf,
 } from "../ts-poet-wrapper.js";
-import { AbstractProperty } from "./AbstractProperty.js";
+import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
-export class IdentifierProperty extends AbstractProperty<
+export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
   BlankNodeType | IdentifierType | IriType
 > {
   override readonly kind = "Identifier";
@@ -60,7 +60,7 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get graphqlField(): AbstractProperty<IdentifierType>["graphqlField"] {
+  override get graphqlField(): ObjectType_AbstractProperty<IdentifierType>["graphqlField"] {
     const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     invariant(this.name.startsWith(syntheticNamePrefix));
     return Maybe.of({
@@ -78,7 +78,7 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get jsonSchema(): AbstractProperty<IdentifierType>["jsonSchema"] {
+  override get jsonSchema(): ObjectType_AbstractProperty<IdentifierType>["jsonSchema"] {
     let schema: Code;
     if (this.type.in_.length > 0 && this.type.kind === "Iri") {
       // Treat sh:in as a union of the IRIs
@@ -142,7 +142,7 @@ export class IdentifierProperty extends AbstractProperty<
   override accessExpression({
     variables,
   }: Parameters<
-    AbstractProperty<
+    ObjectType_AbstractProperty<
       BlankNodeType | IdentifierType | IriType
     >["accessExpression"]
   >[0]): Code {
@@ -152,7 +152,7 @@ export class IdentifierProperty extends AbstractProperty<
   override constructorInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["constructorInitializer"]
+    ObjectType_AbstractProperty<IdentifierType>["constructorInitializer"]
   >[0]): Maybe<Code> {
     const nodeKinds = this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>;
 
@@ -183,7 +183,7 @@ export class IdentifierProperty extends AbstractProperty<
   override fromJsonInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["fromJsonInitializer"]
+    ObjectType_AbstractProperty<IdentifierType>["fromJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: ${this.type.fromJsonExpression({
@@ -195,7 +195,7 @@ export class IdentifierProperty extends AbstractProperty<
   override fromRdfResourceValuesInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["fromRdfResourceValuesInitializer"]
+    ObjectType_AbstractProperty<IdentifierType>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: ${this.type.fromRdfResourceValuesFunction}(
@@ -208,7 +208,7 @@ export class IdentifierProperty extends AbstractProperty<
   override hashStatements({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["hashStatements"]
+    ObjectType_AbstractProperty<IdentifierType>["hashStatements"]
   >[0]): readonly Code[] {
     return [
       code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}().value); }`,
@@ -218,7 +218,7 @@ export class IdentifierProperty extends AbstractProperty<
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["jsonUiSchemaElement"]
+    ObjectType_AbstractProperty<IdentifierType>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
@@ -232,7 +232,7 @@ export class IdentifierProperty extends AbstractProperty<
   override sparqlWherePatternsExpression({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["sparqlWherePatternsExpression"]
+    ObjectType_AbstractProperty<IdentifierType>["sparqlWherePatternsExpression"]
   >[0]) {
     return Maybe.of({
       condition: code`${variables.focusIdentifier}.termType === "Variable"`,
@@ -251,7 +251,7 @@ export class IdentifierProperty extends AbstractProperty<
   override toJsonInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["toJsonInitializer"]
+    ObjectType_AbstractProperty<IdentifierType>["toJsonInitializer"]
   >[0]): Maybe<Code> {
     const nodeKinds = [...this.type.nodeKinds];
     const valueToNodeKinds = nodeKinds.map((nodeKind) => {
@@ -279,7 +279,7 @@ export class IdentifierProperty extends AbstractProperty<
 
   override toStringInitializer(
     parameters: Parameters<
-      AbstractProperty<IdentifierType>["toStringInitializer"]
+      ObjectType_AbstractProperty<IdentifierType>["toStringInitializer"]
     >[0],
   ): Maybe<Code> {
     return Maybe.of(

@@ -5,9 +5,8 @@ import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { DiscriminantProperty as _DiscriminantProperty } from "./_ObjectType/DiscriminantProperty.js";
-import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
 import { ObjectType_createFunctionExpression } from "./_ObjectType/ObjectType_createFunctionExpression.js";
+import { ObjectType_DiscriminantProperty } from "./_ObjectType/ObjectType_DiscriminantProperty.js";
 import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
 import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunctionExpression.js";
 import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterTypeExpression.js";
@@ -17,6 +16,7 @@ import { ObjectType_fromJsonFunctionExpression } from "./_ObjectType/ObjectType_
 import { ObjectType_fromRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceFunctionExpression.js";
 import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
 import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
+import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
 import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
@@ -24,6 +24,8 @@ import { ObjectType_jsonSchemaExpression } from "./_ObjectType/ObjectType_jsonSc
 import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonTypeExpression.js";
 import { ObjectType_jsonUiSchemaFunctionExpression } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionExpression.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
+import type { ObjectType_Property } from "./_ObjectType/ObjectType_Property.js";
+import { ObjectType_ShaclProperty } from "./_ObjectType/ObjectType_ShaclProperty.js";
 import { ObjectType_schemaExpression } from "./_ObjectType/ObjectType_schemaExpression.js";
 import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schemaTypeExpression.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
@@ -34,8 +36,6 @@ import { ObjectType_toStringFunctionExpression } from "./_ObjectType/ObjectType_
 import { ObjectType_toStringRecordFunctionExpression } from "./_ObjectType/ObjectType_toStringRecordFunctionExpression.js";
 import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.js";
 import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.js";
-import type { Property as _Property } from "./_ObjectType/Property.js";
-import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -663,17 +663,18 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }
 
 export namespace ObjectType {
-  export const IdentifierProperty = _IdentifierProperty;
-  export type IdentifierProperty = _IdentifierProperty;
+  export const IdentifierProperty = ObjectType_IdentifierProperty;
+  export type IdentifierProperty = ObjectType_IdentifierProperty;
   export type ObjectSetMethodNames = {
     readonly object: string;
     readonly objectCount: string;
     readonly objectIdentifiers: string;
     readonly objects: string;
   };
-  export type Property = _Property;
-  export const ShaclProperty = _ShaclProperty;
-  export type ShaclProperty<TypeT extends Type> = _ShaclProperty<TypeT>;
-  export const DiscriminantProperty = _DiscriminantProperty;
-  export type DiscriminantProperty = _DiscriminantProperty;
+  export type Property = ObjectType_Property;
+  export const ShaclProperty = ObjectType_ShaclProperty;
+  export type ShaclProperty<TypeT extends Type> =
+    ObjectType_ShaclProperty<TypeT>;
+  export const DiscriminantProperty = ObjectType_DiscriminantProperty;
+  export type DiscriminantProperty = ObjectType_DiscriminantProperty;
 }
