@@ -565,7 +565,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.unionIdentifiers({
+            await objectSet.discriminatedUnionIdentifiers({
               filter,
             })
           ).unsafeCoerce();

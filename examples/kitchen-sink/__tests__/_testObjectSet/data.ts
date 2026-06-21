@@ -27,26 +27,26 @@ export const data = {
   //     }),
   // ),
 
-  noRdfTypeUnionObjects: [...new Array(4)].map((_, i) => {
+  noRdfTypeDiscriminatedUnionObjects: [...new Array(4)].map((_, i) => {
     switch (i % 2) {
       case 0:
         return kitchenSink.NoRdfTypeDiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
-            `http://example.com/noRdfTypeUnion${i}`,
+            `http://example.com/noRdfTypeDiscriminatedUnion${i}`,
           ),
           noRdfTypeDiscriminatedUnionMember1String: `member ${i}`,
         });
       case 1:
         return kitchenSink.NoRdfTypeDiscriminatedUnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(
-            `http://example.com/noRdfTypeUnion${i}`,
+            `http://example.com/noRdfTypeDiscriminatedUnion${i}`,
           ),
           noRdfTypeDiscriminatedUnionMember2String: `member ${i}`,
         });
       default:
         throw new RangeError(i.toString());
     }
-  }) as readonly kitchenSink.NoRdfTypeUnion[],
+  }) as readonly kitchenSink.NoRdfTypeDiscriminatedUnion[],
 
   termObjects: [...new Array(4)].map((_, i) =>
     kitchenSink.TermsStruct.createUnsafe({

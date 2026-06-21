@@ -5,12 +5,12 @@ import { harnesses } from "./harnesses.js";
 describe("isType", () => {
   it("should work on a union", ({ expect }) => {
     expect(
-      kitchenSink.DiscriminatedUnion.isUnion(
+      kitchenSink.DiscriminatedUnion.isDiscriminatedUnion(
         harnesses.discriminatedUnionMember1.instance,
       ),
     ).toStrictEqual(true);
     expect(
-      kitchenSink.DiscriminatedUnion.isUnion(
+      kitchenSink.DiscriminatedUnion.isDiscriminatedUnion(
         harnesses.discriminatedUnionMember2.instance,
       ),
     ).toStrictEqual(true);

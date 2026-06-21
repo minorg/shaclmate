@@ -15,18 +15,18 @@ export function testObjectCountMethods(createObjectSet: ObjectSetFactory) {
     describe("union", () => {
       it("with fromRdfTypes", async ({ expect }) => {
         const objectSet = createObjectSet(objectDataset(data.unionObjects));
-        expect((await objectSet.unionCount()).unsafeCoerce()).toStrictEqual(
-          data.unionObjects.length,
-        );
+        expect(
+          (await objectSet.discriminatedUnionCount()).unsafeCoerce(),
+        ).toStrictEqual(data.unionObjects.length);
       });
 
       it("without fromRdfTypes", async ({ expect }) => {
         const objectSet = createObjectSet(
-          objectDataset(data.noRdfTypeUnionObjects),
+          objectDataset(data.noRdfTypeDiscriminatedUnionObjects),
         );
         expect(
-          (await objectSet.noRdfTypeUnionCount()).unsafeCoerce(),
-        ).toStrictEqual(data.noRdfTypeUnionObjects.length);
+          (await objectSet.noRdfTypeDiscriminatedUnionCount()).unsafeCoerce(),
+        ).toStrictEqual(data.noRdfTypeDiscriminatedUnionObjects.length);
       });
     });
   });

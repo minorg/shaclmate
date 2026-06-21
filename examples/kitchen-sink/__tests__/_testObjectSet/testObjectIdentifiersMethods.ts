@@ -192,7 +192,7 @@ export function testObjectIdentifiersMethods(
         const objectSet = createObjectSet(objectDataset(data.unionObjects));
         expect(
           new Set(
-            (await objectSet.unionIdentifiers())
+            (await objectSet.discriminatedUnionIdentifiers())
               .unsafeCoerce()
               .map((identifier) => identifier.value),
           ),
@@ -206,7 +206,7 @@ export function testObjectIdentifiersMethods(
       it("class union limit 1", async ({ expect }) => {
         const objectSet = createObjectSet(objectDataset(data.unionObjects));
         expect(
-          (await objectSet.unionIdentifiers({ limit: 1 }))
+          (await objectSet.discriminatedUnionIdentifiers({ limit: 1 }))
             .unsafeCoerce()
             .map((identifier) => identifier.value),
         ).toStrictEqual([data.unionObjects[0].$identifier().value]);
