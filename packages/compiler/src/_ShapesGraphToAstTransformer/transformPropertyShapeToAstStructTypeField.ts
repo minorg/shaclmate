@@ -241,7 +241,10 @@ export function transformPropertyShapeToAstStructTypeField(
       : Either.of(Maybe.empty()),
     transformPropertyShapeToAstType.call(this, propertyShape, shapeStack),
   ).chain(([propertyShapeResolve, astType]) => {
-    let astResolveItemType: ast.StructType | ast.StructUnionType | undefined;
+    let astResolveItemType:
+      | ast.StructType
+      | ast.StructDiscriminatedUnionType
+      | undefined;
 
     if (propertyShapeResolve.isJust()) {
       const astResolveTypeEither = transformShapeToAstType
@@ -249,14 +252,15 @@ export function transformPropertyShapeToAstStructTypeField(
         .chain((astResolveType) => {
           switch (astResolveType.kind) {
             case "Struct":
-              return Either.of<Error, ast.StructType | ast.StructUnionType>(
-                astResolveType,
-              );
+              return Either.of<
+                Error,
+                ast.StructType | ast.StructDiscriminatedUnionType
+              >(astResolveType);
             case "DiscriminatedUnion":
               if (
                 // This check relies on .members being populated, which may not happen in cycles
                 astResolveType.members.length > 0 &&
-                !astResolveType.isStructUnionType()
+                !astResolveType.isStructDiscriminatedUnionType()
               ) {
                 return Left(
                   new Error(
@@ -264,9 +268,10 @@ export function transformPropertyShapeToAstStructTypeField(
                   ),
                 );
               }
-              return Either.of<Error, ast.StructType | ast.StructUnionType>(
-                astResolveType as ast.StructUnionType,
-              );
+              return Either.of<
+                Error,
+                ast.StructType | ast.StructDiscriminatedUnionType
+              >(astResolveType as ast.StructDiscriminatedUnionType);
             default:
               return Left(
                 new Error(
@@ -302,7 +307,7 @@ export function transformPropertyShapeToAstStructTypeField(
           break;
       }
 
-      let astPartialItemType: ast.StructType | ast.StructUnionType;
+      let astPartialItemType: ast.StructType | ast.StructDiscriminatedUnionType;
       switch (astItemType.kind) {
         case "BlankNode":
         case "Identifier":
@@ -315,7 +320,7 @@ export function transformPropertyShapeToAstStructTypeField(
           astPartialItemType = astItemType;
           break;
         case "DiscriminatedUnion":
-          if (!astItemType.isStructUnionType()) {
+          if (!astItemType.isStructDiscriminatedUnionType()) {
             return Left(
               new Error(
                 `${propertyShape} partial type cannot be a ${astItemType.kind} with non-StructType members`,

@@ -6,11 +6,13 @@ import { invariant } from "ts-invariant";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
+import type { StructDiscriminatedUnionType } from "./StructDiscriminatedUnionType.js";
 import type { StructIntersectionType } from "./StructIntersectionType.js";
 import type { StructType } from "./StructType.js";
-import type { StructUnionType } from "./StructUnionType.js";
 
-export type StructCompoundType = StructIntersectionType | StructUnionType;
+export type StructCompoundType =
+  | StructIntersectionType
+  | StructDiscriminatedUnionType;
 
 export namespace StructCompoundType {
   export function identifierType(

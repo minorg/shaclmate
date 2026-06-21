@@ -16,8 +16,8 @@ import type { LazySetType } from "./LazySetType.js";
 import type { LazyType } from "./LazyType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
+import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
 import type { StringType } from "./StringType.js";
@@ -41,7 +41,7 @@ export type Type =
   | LazyType
   | ListType<ListType.ItemType>
   | LiteralType
-  | ObjectUnionType
+  | ObjectDiscriminatedUnionType
   | ObjectType
   | OptionType<OptionType.ItemType>
   | SetType<SetType.ItemType>

@@ -38,34 +38,35 @@ export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePre
   }
 
 ${joinCode(
-  [...this.namedObjectTypes, ...this.namedObjectUnionTypes].flatMap(
-    (namedObjectType): readonly Code[] => {
-      const methodSignatures = this.methodSignatures(namedObjectType, {
-        queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,
-      });
+  [
+    ...this.namedObjectTypes,
+    ...this.namedObjectDiscriminatedUnionTypes,
+  ].flatMap((namedObjectType): readonly Code[] => {
+    const methodSignatures = this.methodSignatures(namedObjectType, {
+      queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,
+    });
 
-      const runtimeObjectType = namedObjectType.expression;
+    const runtimeObjectType = namedObjectType.expression;
 
-      return [
-        code`\
+    return [
+      code`\
 async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
   return (await this.${methodSignatures.objects.name}({ identifiers: [identifier], preferredLanguages: options?.preferredLanguages })).map(objects => objects[0]);
 }`,
-        code`\
+      code`\
 async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.returnType} {
   return this.#objectCount<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
-        code`\
+      code`\
 async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
   return this.#objectIdentifiers<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
-        code`\
+      code`\
 async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.returnType} {
   return this.#objects<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
-      ];
-    },
-  ),
+    ];
+  }),
   { on: "\n\n" },
 )}
 

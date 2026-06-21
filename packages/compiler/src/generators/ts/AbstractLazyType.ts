@@ -3,8 +3,8 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -194,34 +194,34 @@ export abstract class AbstractLazyType<
     return code`((resolved: ${resolveType.expression}) => { switch (resolved.${resolveType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} } })`;
   }
 
-  protected resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({
-    resolvedObjectUnionType,
-    partialObjectUnionType,
+  protected resolvedObjectDiscriminatedUnionTypeToPartialObjectDiscriminatedUnionTypeConversion({
+    resolvedObjectDiscriminatedUnionType,
+    partialObjectDiscriminatedUnionType,
     variables,
   }: {
-    resolvedObjectUnionType: ObjectUnionType;
-    partialObjectUnionType: ObjectUnionType;
+    resolvedObjectDiscriminatedUnionType: ObjectDiscriminatedUnionType;
+    partialObjectDiscriminatedUnionType: ObjectDiscriminatedUnionType;
     variables: { resolvedObjectUnion: Code };
   }) {
     invariant(
-      resolvedObjectUnionType.members.length ===
-        partialObjectUnionType.members.length,
+      resolvedObjectDiscriminatedUnionType.members.length ===
+        partialObjectDiscriminatedUnionType.members.length,
     );
 
-    const caseBlocks = resolvedObjectUnionType.members.map(
+    const caseBlocks = resolvedObjectDiscriminatedUnionType.members.map(
       ({ discriminantValues }, memberI) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.members[memberI].type.name.unsafeCoerce()}.create(${variables.resolvedObjectUnion});`;
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectDiscriminatedUnionType.members[memberI].type.name.unsafeCoerce()}.create(${variables.resolvedObjectUnion});`;
       },
     );
     caseBlocks.push(
       code`default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
     );
-    return code`switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
+    return code`switch (${variables.resolvedObjectUnion}.${resolvedObjectDiscriminatedUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
   }
 }
 
 export namespace AbstractLazyType {
-  export type ItemTypeConstraint = ObjectType | ObjectUnionType;
+  export type ItemTypeConstraint = ObjectType | ObjectDiscriminatedUnionType;
   export type PartialTypeConstraint =
     | ItemTypeConstraint
     | OptionType<ItemTypeConstraint>

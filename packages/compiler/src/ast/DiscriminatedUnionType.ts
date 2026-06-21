@@ -1,6 +1,6 @@
 import type { Maybe } from "purify-ts";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
-import type { StructUnionType } from "./StructUnionType.js";
+import type { StructDiscriminatedUnionType } from "./StructDiscriminatedUnionType.js";
 
 /**
  * A disjunction/union of types, corresponding to an sh:xone.
@@ -14,14 +14,14 @@ export class DiscriminatedUnionType<
 > {
   override readonly kind = "DiscriminatedUnion";
 
-  isStructUnionType(): this is StructUnionType {
+  isStructDiscriminatedUnionType(): this is StructDiscriminatedUnionType {
     return (
       this.members.length > 0 &&
       this.members.every(
         (member) =>
           member.type.kind === "Struct" ||
           (member.type.kind === "DiscriminatedUnion" &&
-            member.type.isStructUnionType()),
+            member.type.isStructDiscriminatedUnionType()),
       )
     );
   }

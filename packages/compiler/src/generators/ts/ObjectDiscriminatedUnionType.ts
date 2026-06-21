@@ -11,7 +11,7 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
-export class ObjectUnionType extends DiscriminatedUnionType<ObjectType> {
+export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectType> {
   override readonly kind = "ObjectDiscriminatedUnion";
 
   @Memoize()

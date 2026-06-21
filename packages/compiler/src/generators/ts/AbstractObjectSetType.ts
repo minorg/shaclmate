@@ -1,7 +1,7 @@
 import type { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
+import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { Reusables } from "./Reusables.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -11,25 +11,26 @@ export abstract class AbstractObjectSetType {
   protected readonly logger: Logger;
   protected readonly reusables: Reusables;
   protected readonly namedObjectTypes: readonly ObjectType[];
-  protected readonly namedObjectUnionTypes: readonly ObjectUnionType[];
+  protected readonly namedObjectDiscriminatedUnionTypes: readonly ObjectDiscriminatedUnionType[];
 
   constructor({
     configuration,
     logger,
     namedObjectTypes,
-    namedObjectUnionTypes,
+    namedObjectDiscriminatedUnionTypes,
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
     logger: Logger;
     namedObjectTypes: readonly ObjectType[];
-    namedObjectUnionTypes: readonly ObjectUnionType[];
+    namedObjectDiscriminatedUnionTypes: readonly ObjectDiscriminatedUnionType[];
     reusables: Reusables;
   }) {
     this.configuration = configuration;
     this.logger = logger;
     this.namedObjectTypes = namedObjectTypes;
-    this.namedObjectUnionTypes = namedObjectUnionTypes;
+    this.namedObjectDiscriminatedUnionTypes =
+      namedObjectDiscriminatedUnionTypes;
     this.reusables = reusables;
   }
 

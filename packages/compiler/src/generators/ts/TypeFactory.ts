@@ -30,8 +30,8 @@ import { LazySetType } from "./LazySetType.js";
 import { LazyType } from "./LazyType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
+import { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import { ObjectType } from "./ObjectType.js";
-import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
 import type { Reusables } from "./Reusables.js";
 import { SetType } from "./SetType.js";
@@ -45,9 +45,9 @@ export class TypeFactory {
   private readonly logger: Logger;
   private readonly reusables: Reusables;
 
-  private cachedObjectUnionTypesByShapeIdentifier: TermMap<
+  private cachedObjectDiscriminatedUnionTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
-    ObjectUnionType
+    ObjectDiscriminatedUnionType
   > = new TermMap();
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
@@ -160,18 +160,20 @@ export class TypeFactory {
     return objectType;
   }
 
-  createObjectUnionType(astType: ast.StructUnionType): ObjectUnionType {
+  createObjectDiscriminatedUnionType(
+    astType: ast.StructDiscriminatedUnionType,
+  ): ObjectDiscriminatedUnionType {
     {
-      const cachedObjectUnionType =
-        this.cachedObjectUnionTypesByShapeIdentifier.get(
+      const cachedObjectDiscriminatedUnionType =
+        this.cachedObjectDiscriminatedUnionTypesByShapeIdentifier.get(
           astType.shapeIdentifier,
         );
-      if (cachedObjectUnionType) {
-        return cachedObjectUnionType;
+      if (cachedObjectDiscriminatedUnionType) {
+        return cachedObjectDiscriminatedUnionType;
       }
     }
 
-    const objectUnionType = new ObjectUnionType({
+    const objectUnionType = new ObjectDiscriminatedUnionType({
       comment: astType.comment,
       configuration: this.configuration,
       identifierType: Maybe.of(
@@ -194,7 +196,7 @@ export class TypeFactory {
       synthetic: astType.synthetic,
     });
 
-    this.cachedObjectUnionTypesByShapeIdentifier.set(
+    this.cachedObjectDiscriminatedUnionTypesByShapeIdentifier.set(
       astType.shapeIdentifier,
       objectUnionType,
     );
@@ -242,9 +244,9 @@ export class TypeFactory {
 
   createUnionType(
     astType: ast.DiscriminatedUnionType,
-  ): ObjectUnionType | DiscriminatedUnionType<Type> {
-    if (astType.isStructUnionType()) {
-      return this.createObjectUnionType(astType);
+  ): ObjectDiscriminatedUnionType | DiscriminatedUnionType<Type> {
+    if (astType.isStructDiscriminatedUnionType()) {
+      return this.createObjectDiscriminatedUnionType(astType);
     }
 
     return new DiscriminatedUnionType<Type>({
@@ -338,10 +340,10 @@ export class TypeFactory {
       logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       partialType: this.createOptionType(astType.partialType) as OptionType<
-        ObjectType | ObjectUnionType
+        ObjectType | ObjectDiscriminatedUnionType
       >,
       resolveType: this.createOptionType(astType.resolveType) as OptionType<
-        ObjectType | ObjectUnionType
+        ObjectType | ObjectDiscriminatedUnionType
       >,
       reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
@@ -356,10 +358,10 @@ export class TypeFactory {
       logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       partialType: this.createSetType(astType.partialType) as SetType<
-        ObjectType | ObjectUnionType
+        ObjectType | ObjectDiscriminatedUnionType
       >,
       resolveType: this.createSetType(astType.resolveType) as SetType<
-        ObjectType | ObjectUnionType
+        ObjectType | ObjectDiscriminatedUnionType
       >,
       reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
@@ -375,10 +377,10 @@ export class TypeFactory {
       name: astType.name.map((name) => this.tsName(name)),
       partialType: this.createType(astType.partialType) as
         | ObjectType
-        | ObjectUnionType,
+        | ObjectDiscriminatedUnionType,
       resolveType: this.createType(astType.resolveType) as
         | ObjectType
-        | ObjectUnionType,
+        | ObjectDiscriminatedUnionType,
       reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });

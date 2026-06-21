@@ -16,8 +16,8 @@ import type { IriType } from "./IriType.js";
 import type { LangStringType } from "./LangStringType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
+import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -108,7 +108,7 @@ export namespace AbstractContainerType {
     | LangStringType
     | ListType<ListType.ItemType>
     | LiteralType
-    | ObjectUnionType
+    | ObjectDiscriminatedUnionType
     | ObjectType
     | StringType
     | TermType
