@@ -2,16 +2,16 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
-import { AbstractProperty } from "./AbstractProperty.js";
+import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
-export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
-  override readonly constructorParameter: AbstractProperty<DiscriminantProperty.Type>["constructorParameter"] =
+export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type> {
+  override readonly constructorParameter: ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["constructorParameter"] =
     Maybe.empty();
   override readonly declaration =
     code`readonly ${this.name}: ${this.type.expression};`;
-  override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =
+  override readonly filterProperty: ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
-  override readonly graphqlField: AbstractProperty<DiscriminantProperty.Type>["graphqlField"] =
+  override readonly graphqlField: ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["graphqlField"] =
     Maybe.empty();
   override readonly hashFunctionParameter =
     code`readonly ${this.name}?: ${this.type.expression};`;
@@ -31,13 +31,19 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     ...superParameters
   }: {
     value: string;
-  } & Omit<ConstructorParameters<typeof AbstractProperty>[0], "type">) {
-    super({ ...superParameters, type: new DiscriminantProperty.Type(value) });
+  } & Omit<
+    ConstructorParameters<typeof ObjectType_AbstractProperty>[0],
+    "type"
+  >) {
+    super({
+      ...superParameters,
+      type: new ObjectType_DiscriminantProperty.Type(value),
+    });
     this.value = value;
   }
 
   @Memoize()
-  override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
+  override get jsonSchema(): ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["jsonSchema"] {
     return Maybe.of({
       key: this.jsonName,
       schema: code`${this.reusables.imports.z}.literal(${literalOf(this.value)})`,
@@ -68,7 +74,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override hashStatements({
     variables,
   }: Parameters<
-    AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
+    ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
     return [
       code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}); }`,
@@ -78,7 +84,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
-    AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
+    ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
     const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
     return Maybe.of(
@@ -91,7 +97,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   override sparqlWherePatternsExpression(): ReturnType<
-    AbstractProperty<DiscriminantProperty.Type>["sparqlWherePatternsExpression"]
+    ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["sparqlWherePatternsExpression"]
   > {
     return Maybe.empty();
   }
@@ -99,7 +105,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override toJsonInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<DiscriminantProperty.Type>["toJsonInitializer"]
+    ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["toJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(code`"${this.jsonName}": ${variables.value}`);
   }
@@ -113,7 +119,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 }
 
-export namespace DiscriminantProperty {
+export namespace ObjectType_DiscriminantProperty {
   export class Type {
     readonly filterFunction = code`nonextant`;
     readonly mutable = false;

@@ -7,7 +7,7 @@ import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export abstract class AbstractProperty<
+export abstract class ObjectType_AbstractProperty<
   TypeT extends Pick<
     Type,
     "expression" | "filterFunction" | "mutable" | "schema"
