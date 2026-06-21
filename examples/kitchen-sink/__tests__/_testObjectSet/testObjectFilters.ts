@@ -482,15 +482,15 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
             i === 0
-              ? kitchenSink.UnionMember1.createUnsafe({
+              ? kitchenSink.DiscriminatedUnionMember1.createUnsafe({
                   $identifier: identifiers[i],
-                  unionMember1Distinct: `test${i}`,
-                  unionMemberCommon: `test${i}`,
+                  discriminatedDiscriminatedUnionMember1Distinct: `test${i}`,
+                  discriminatedUnionMemberCommon: `test${i}`,
                 })
-              : kitchenSink.UnionMember2.createUnsafe({
+              : kitchenSink.DiscriminatedUnionMember2.createUnsafe({
                   $identifier: identifiers[i],
-                  unionMember2Distinct: `test${i}`,
-                  unionMemberCommon: `test${i}`,
+                  discriminatedDiscriminatedUnionMember2Distinct: `test${i}`,
+                  discriminatedUnionMemberCommon: `test${i}`,
                 }),
           ),
           kitchenSink.TermsStruct.createUnsafe({
@@ -509,11 +509,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onBothMembersPositive: [
           {
             on: {
-              UnionMember1: {
-                unionMemberCommon: { in: ["test0"] },
+              DiscriminatedUnionMember1: {
+                discriminatedUnionMemberCommon: { in: ["test0"] },
               },
-              UnionMember2: {
-                unionMemberCommon: { in: ["test1"] },
+              DiscriminatedUnionMember2: {
+                discriminatedUnionMemberCommon: { in: ["test1"] },
               },
             },
           },
@@ -522,8 +522,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onMember1Negative: [
           {
             on: {
-              UnionMember1: {
-                unionMemberCommon: { in: ["test1"] },
+              DiscriminatedUnionMember1: {
+                discriminatedUnionMemberCommon: { in: ["test1"] },
               },
             },
           },
@@ -532,8 +532,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onMember1Positive: [
           {
             on: {
-              UnionMember1: {
-                unionMemberCommon: { in: ["test0"] },
+              DiscriminatedUnionMember1: {
+                discriminatedUnionMemberCommon: { in: ["test0"] },
               },
             },
           },
@@ -542,8 +542,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onMember2Negative: [
           {
             on: {
-              UnionMember2: {
-                unionMemberCommon: { in: ["test0"] },
+              DiscriminatedUnionMember2: {
+                discriminatedUnionMemberCommon: { in: ["test0"] },
               },
             },
           },
@@ -552,8 +552,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         onMember2Positive: [
           {
             on: {
-              UnionMember2: {
-                unionMemberCommon: { in: ["test1"] },
+              DiscriminatedUnionMember2: {
+                discriminatedUnionMemberCommon: { in: ["test1"] },
               },
             },
           },
@@ -740,23 +740,25 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           kitchenSink.UnionDiscriminantsStruct.createUnsafe({
             $identifier: identifiers[0],
             requiredNodeOrNodeOrString: {
-              type: "UnionMember1",
-              value: kitchenSink.UnionMember1.createUnsafe({
+              type: "DiscriminatedUnionMember1",
+              value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
                 $identifier: dataFactory.namedNode(
-                  "http://example.com/unionMember1",
+                  "http://example.com/discriminatedDiscriminatedUnionMember1",
                 ),
-                unionMember1Distinct: "http://example.com/test0",
-                unionMemberCommon: "http://example.com/test0",
+                discriminatedDiscriminatedUnionMember1Distinct:
+                  "http://example.com/test0",
+                discriminatedUnionMemberCommon: "http://example.com/test0",
               }),
             },
             requiredNodeOrLiteral: {
-              termType: "UnionMember1",
-              value: kitchenSink.UnionMember1.createUnsafe({
+              termType: "DiscriminatedUnionMember1",
+              value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
                 $identifier: dataFactory.namedNode(
-                  "http://example.com/unionMember1",
+                  "http://example.com/discriminatedDiscriminatedUnionMember1",
                 ),
-                unionMember1Distinct: "http://example.com/test0",
-                unionMemberCommon: "http://example.com/test0",
+                discriminatedDiscriminatedUnionMember1Distinct:
+                  "http://example.com/test0",
+                discriminatedUnionMemberCommon: "http://example.com/test0",
               }),
             },
             requiredIriOrLiteral: dataFactory.namedNode(
@@ -788,13 +790,13 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredNodeOrNodeOrString: {
               on: {
-                UnionMember1: {
-                  unionMember1Distinct: {
+                DiscriminatedUnionMember1: {
+                  discriminatedDiscriminatedUnionMember1Distinct: {
                     in: ["http://example.com/test0"],
                   },
                 },
-                UnionMember2: {
-                  unionMember2Distinct: {
+                DiscriminatedUnionMember2: {
+                  discriminatedDiscriminatedUnionMember2Distinct: {
                     in: ["http://example.com/test0"],
                   },
                 },
@@ -808,13 +810,13 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredNodeOrNodeOrString: {
               on: {
-                UnionMember1: {
-                  unionMember1Distinct: {
+                DiscriminatedUnionMember1: {
+                  discriminatedDiscriminatedUnionMember1Distinct: {
                     in: ["http://example.com/testx"],
                   },
                 },
-                UnionMember2: {
-                  unionMember2Distinct: {
+                DiscriminatedUnionMember2: {
+                  discriminatedDiscriminatedUnionMember2Distinct: {
                     in: ["http://example.com/testx"],
                   },
                 },
@@ -828,8 +830,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredNodeOrLiteral: {
               on: {
-                UnionMember1: {
-                  unionMember1Distinct: {
+                DiscriminatedUnionMember1: {
+                  discriminatedDiscriminatedUnionMember1Distinct: {
                     in: ["http://example.com/test0"],
                   },
                 },
@@ -845,8 +847,8 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredNodeOrLiteral: {
               on: {
-                UnionMember1: {
-                  unionMember1Distinct: {
+                DiscriminatedUnionMember1: {
+                  discriminatedDiscriminatedUnionMember1Distinct: {
                     in: ["http://example.com/testx"],
                   },
                 },

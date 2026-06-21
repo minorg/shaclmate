@@ -183,11 +183,11 @@ describe("graphqlSchema", () => {
       `\
 query {
   union(identifier: "<http://example.com/union0>") {
-    ... on UnionMember1 {
+    ... on DiscriminatedUnionMember1 {
       _identifier
       optionalNumberProperty
     }
-    ... on UnionMember2 {
+    ... on DiscriminatedUnionMember2 {
       _identifier
       optionalStringProperty
     }
@@ -218,11 +218,11 @@ query {
       `\
 query {
   unions {
-    ... on UnionMember1 {
+    ... on DiscriminatedUnionMember1 {
       _identifier
       optionalNumberProperty
     }
-    ... on UnionMember2 {
+    ... on DiscriminatedUnionMember2 {
       _identifier
       optionalStringProperty
     }

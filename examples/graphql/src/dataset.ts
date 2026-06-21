@@ -2,10 +2,10 @@ import datasetFactory from "@rdfjs/dataset";
 import dataFactory from "@rdfx/data-factory";
 import { ResourceSet } from "@rdfx/resource";
 import {
+  DiscriminatedUnionMember1,
+  DiscriminatedUnionMember2,
   LazyObject,
   RootObject,
-  UnionMember1,
-  UnionMember2,
 } from "./graphql.shaclmate.js";
 
 export const dataset = datasetFactory.dataset();
@@ -42,16 +42,16 @@ for (let i = 0; i < 4; i++) {
   );
 
   if (i % 2 === 0) {
-    UnionMember1.toRdfResource(
-      UnionMember1.createUnsafe({
+    DiscriminatedUnionMember1.toRdfResource(
+      DiscriminatedUnionMember1.createUnsafe({
         $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
         optionalNumberProperty: 1,
       }),
       { resourceSet },
     );
   } else {
-    UnionMember2.toRdfResource(
-      UnionMember2.createUnsafe({
+    DiscriminatedUnionMember2.toRdfResource(
+      DiscriminatedUnionMember2.createUnsafe({
         $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
         optionalStringProperty: "test",
       }),

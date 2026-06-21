@@ -19,16 +19,16 @@
 :Union
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:xone (:UnionMember1
-        :UnionMember2
+    sh:xone (:DiscriminatedUnionMember1
+        :DiscriminatedUnionMember2
     ) .
 
-:UnionMember1
+:DiscriminatedUnionMember1
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalNumberProperty .
 
-:UnionMember2
+:DiscriminatedUnionMember2
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalStringProperty .

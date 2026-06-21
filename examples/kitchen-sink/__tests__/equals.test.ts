@@ -141,13 +141,13 @@ describe("equals", () => {
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrString: {
-            type: "UnionMember1",
-            value: kitchenSink.UnionMember1.createUnsafe({
+            type: "DiscriminatedUnionMember1",
+            value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
-                "http://example.com/unionMember1",
+                "http://example.com/discriminatedDiscriminatedUnionMember1",
               ),
-              unionMember1Distinct: "test",
-              unionMemberCommon: "test",
+              discriminatedDiscriminatedUnionMember1Distinct: "test",
+              discriminatedUnionMemberCommon: "test",
             }),
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
@@ -208,13 +208,13 @@ describe("equals", () => {
         kitchenSink.UnionDiscriminantsStruct.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrString: {
-            type: "UnionMember1",
-            value: kitchenSink.UnionMember1.createUnsafe({
+            type: "DiscriminatedUnionMember1",
+            value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
-                "http://example.com/unionMember1",
+                "http://example.com/discriminatedDiscriminatedUnionMember1",
               ),
-              unionMember1Distinct: "test",
-              unionMemberCommon: "test",
+              discriminatedDiscriminatedUnionMember1Distinct: "test",
+              discriminatedUnionMemberCommon: "test",
             }),
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),

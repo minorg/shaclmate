@@ -124,7 +124,7 @@ describe("lazyProperties", () => {
       lazilyResolved: "test",
     });
   const expectedLazilyResolvedUnionInstance =
-    kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
+    kitchenSink.LazilyResolvedDiscriminatedUnionMember1.createUnsafe({
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedUnionInstance",
       ),
