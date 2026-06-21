@@ -6,17 +6,7 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-:LazyObject
-    a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
-
-:RootObject
-    a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:IRI ;
-    sh:property :lazyObjectSetProperty, :optionalLazyProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty .
-
-:Union
+:DiscriminatedUnion
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:xone (:DiscriminatedUnionMember1
@@ -32,6 +22,16 @@
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalStringProperty .
+
+:LazyObject
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
+
+:RootObject
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:property :lazyObjectSetProperty, :optionalLazyProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty .
 
 :lazyObjectSetProperty
     shaclmate:resolve :LazyObject ;

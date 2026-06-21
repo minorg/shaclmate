@@ -44,7 +44,9 @@ for (let i = 0; i < 4; i++) {
   if (i % 2 === 0) {
     DiscriminatedUnionMember1.toRdfResource(
       DiscriminatedUnionMember1.createUnsafe({
-        $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
+        $identifier: dataFactory.namedNode(
+          `http://example.com/discriminatedUnion${i}`,
+        ),
         optionalNumberProperty: 1,
       }),
       { resourceSet },
@@ -52,7 +54,9 @@ for (let i = 0; i < 4; i++) {
   } else {
     DiscriminatedUnionMember2.toRdfResource(
       DiscriminatedUnionMember2.createUnsafe({
-        $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
+        $identifier: dataFactory.namedNode(
+          `http://example.com/discriminatedUnion${i}`,
+        ),
         optionalStringProperty: "test",
       }),
       { resourceSet },

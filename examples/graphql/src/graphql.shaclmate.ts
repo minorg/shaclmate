@@ -712,6 +712,9 @@ namespace $RdfVocabularies {
     first: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
     ),
+    langString: dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
+    ),
     nil: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
     ),
@@ -1157,6 +1160,469 @@ export namespace $DefaultPartial {
   ) => Record<string, string> = (_defaultPartial) =>
     $compactRecord({ $identifier: _defaultPartial.$identifier().toString() });
 }
+export type DiscriminatedUnionMember1 = {
+  readonly $identifier: () => DiscriminatedUnionMember1.Identifier;
+
+  readonly $type: "DiscriminatedUnionMember1";
+
+  /**
+   * Optional number property
+   */
+  readonly optionalNumberProperty: Maybe<number>;
+};
+
+export namespace DiscriminatedUnionMember1 {
+  export const create: (parameters?: {
+    readonly $identifier?:
+      | (() => DiscriminatedUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalNumberProperty?: number | Maybe<number>;
+  }) => Either<Error, DiscriminatedUnionMember1> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
+        parameters?.optionalNumberProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DiscriminatedUnionMember1.schema.properties.optionalNumberProperty
+            .type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "DiscriminatedUnionMember1" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          $toString: DiscriminatedUnionMember1.$toString,
+        }),
+      );
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => DiscriminatedUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalNumberProperty?: number | Maybe<number>;
+  }): DiscriminatedUnionMember1 {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
+  };
+
+  export const filter: (
+    filter: DiscriminatedUnionMember1.Filter,
+    value: DiscriminatedUnionMember1,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalNumberProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.optionalNumberProperty,
+        value.optionalNumberProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export const GraphQL = new GraphQLObjectType<
+    DiscriminatedUnionMember1,
+    { objectSet: $ObjectSet }
+  >({
+    description: undefined,
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      optionalNumberProperty: {
+        args: undefined,
+        description: '"Optional number property"',
+        name: "optionalNumberProperty",
+        resolve: (source, _args) =>
+          source.optionalNumberProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLFloat),
+      },
+    }),
+    name: "DiscriminatedUnionMember1",
+  });
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    DiscriminatedUnionMember1
+  > = (resource, options) =>
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(
+          resource,
+          [DiscriminatedUnionMember1.schema.fromRdfType],
+          { graph: options.graph },
+        )
+      : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: $identifierFromRdfResourceValues(
+          $rdfResourceIdentifierValues(resource),
+          {
+            ...options,
+            focusResource: resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema:
+              DiscriminatedUnionMember1.schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        optionalNumberProperty: $shaclPropertyFromRdf<
+          Maybe<number>,
+          $MaybeSchema<$NumericSchema<number>>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DiscriminatedUnionMember1.schema.properties.optionalNumberProperty,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            number,
+            $NumericSchema<number>
+          >($floatFromRdfResourceValues<number>),
+        }),
+      }).chain((properties) => DiscriminatedUnionMember1.create(properties)),
+    );
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    DiscriminatedUnionMember1,
+    DiscriminatedUnionMember1.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export function isDiscriminatedUnionMember1(
+    object: $Object,
+  ): object is DiscriminatedUnionMember1 {
+    return object.$type === "DiscriminatedUnionMember1";
+  }
+
+  export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/DiscriminatedUnionMember1",
+    ),
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      optionalNumberProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/optionalNumberProperty",
+        ),
+        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
+      },
+    },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/DiscriminatedUnionMember1"),
+    ],
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    DiscriminatedUnionMember1.Identifier,
+    DiscriminatedUnionMember1
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        DiscriminatedUnionMember1.schema.toRdfTypes,
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      DiscriminatedUnionMember1.schema.properties.optionalNumberProperty.path,
+      parameters.object.optionalNumberProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
+        ]),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export const $toString: (
+    _discriminatedUnionMember1: DiscriminatedUnionMember1,
+  ) => string = (_discriminatedUnionMember1) =>
+    `DiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_discriminatedUnionMember1))})`;
+
+  export const toStringRecord: (
+    _discriminatedUnionMember1: DiscriminatedUnionMember1,
+  ) => Record<string, string> = (_discriminatedUnionMember1) =>
+    $compactRecord({
+      $identifier: _discriminatedUnionMember1.$identifier().toString(),
+    });
+}
+export type DiscriminatedUnionMember2 = {
+  readonly $identifier: () => DiscriminatedUnionMember2.Identifier;
+
+  readonly $type: "DiscriminatedUnionMember2";
+
+  /**
+   * Optional string property
+   */
+  readonly optionalStringProperty: Maybe<string>;
+};
+
+export namespace DiscriminatedUnionMember2 {
+  export const create: (parameters?: {
+    readonly $identifier?:
+      | (() => DiscriminatedUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalStringProperty?: string | Maybe<string>;
+  }) => Either<Error, DiscriminatedUnionMember2> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
+        parameters?.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DiscriminatedUnionMember2.schema.properties.optionalStringProperty
+            .type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "DiscriminatedUnionMember2" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          $toString: DiscriminatedUnionMember2.$toString,
+        }),
+      );
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => DiscriminatedUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalStringProperty?: string | Maybe<string>;
+  }): DiscriminatedUnionMember2 {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+  };
+
+  export const filter: (
+    filter: DiscriminatedUnionMember2.Filter,
+    value: DiscriminatedUnionMember2,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export const GraphQL = new GraphQLObjectType<
+    DiscriminatedUnionMember2,
+    { objectSet: $ObjectSet }
+  >({
+    description: undefined,
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      optionalStringProperty: {
+        args: undefined,
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    }),
+    name: "DiscriminatedUnionMember2",
+  });
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    DiscriminatedUnionMember2
+  > = (resource, options) =>
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(
+          resource,
+          [DiscriminatedUnionMember2.schema.fromRdfType],
+          { graph: options.graph },
+        )
+      : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: $identifierFromRdfResourceValues(
+          $rdfResourceIdentifierValues(resource),
+          {
+            ...options,
+            focusResource: resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema:
+              DiscriminatedUnionMember2.schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        optionalStringProperty: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DiscriminatedUnionMember2.schema.properties.optionalStringProperty,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
+        }),
+      }).chain((properties) => DiscriminatedUnionMember2.create(properties)),
+    );
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    DiscriminatedUnionMember2,
+    DiscriminatedUnionMember2.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export function isDiscriminatedUnionMember2(
+    object: $Object,
+  ): object is DiscriminatedUnionMember2 {
+    return object.$type === "DiscriminatedUnionMember2";
+  }
+
+  export const schema = {
+    fromRdfType: dataFactory.namedNode(
+      "http://example.com/DiscriminatedUnionMember2",
+    ),
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      optionalStringProperty: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/optionalStringProperty",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
+    },
+    toRdfTypes: [
+      dataFactory.namedNode("http://example.com/DiscriminatedUnionMember2"),
+    ],
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    DiscriminatedUnionMember2.Identifier,
+    DiscriminatedUnionMember2
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        DiscriminatedUnionMember2.schema.toRdfTypes,
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      DiscriminatedUnionMember2.schema.properties.optionalStringProperty.path,
+      parameters.object.optionalStringProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export const $toString: (
+    _discriminatedUnionMember2: DiscriminatedUnionMember2,
+  ) => string = (_discriminatedUnionMember2) =>
+    `DiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_discriminatedUnionMember2))})`;
+
+  export const toStringRecord: (
+    _discriminatedUnionMember2: DiscriminatedUnionMember2,
+  ) => Record<string, string> = (_discriminatedUnionMember2) =>
+    $compactRecord({
+      $identifier: _discriminatedUnionMember2.$identifier().toString(),
+    });
+}
 export type LazyObject = {
   readonly $identifier: () => LazyObject.Identifier;
 
@@ -1195,7 +1661,8 @@ export namespace LazyObject {
         parameters.optionalNumberProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalNumberProperty.type,
+          DiscriminatedUnionMember1.schema.properties.optionalNumberProperty
+            .type,
           value,
         ),
       ),
@@ -1203,7 +1670,8 @@ export namespace LazyObject {
         parameters.optionalStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalStringProperty.type,
+          DiscriminatedUnionMember2.schema.properties.optionalStringProperty
+            .type,
           value,
         ),
       ),
@@ -1341,7 +1809,8 @@ export namespace LazyObject {
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: LazyObject.schema.properties.optionalNumberProperty,
+          propertySchema:
+            DiscriminatedUnionMember1.schema.properties.optionalNumberProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             number,
             $NumericSchema<number>
@@ -1354,7 +1823,8 @@ export namespace LazyObject {
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: LazyObject.schema.properties.optionalStringProperty,
+          propertySchema:
+            DiscriminatedUnionMember2.schema.properties.optionalStringProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -1446,7 +1916,7 @@ export namespace LazyObject {
       );
     }
     parameters.resource.add(
-      LazyObject.schema.properties.optionalNumberProperty.path,
+      DiscriminatedUnionMember1.schema.properties.optionalNumberProperty.path,
       parameters.object.optionalNumberProperty
         .toList()
         .flatMap((value) => [
@@ -1455,7 +1925,7 @@ export namespace LazyObject {
       parameters.graph,
     );
     parameters.resource.add(
-      LazyObject.schema.properties.optionalStringProperty.path,
+      DiscriminatedUnionMember2.schema.properties.optionalStringProperty.path,
       parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -1591,7 +2061,8 @@ export namespace RootObject {
         parameters.optionalStringProperty,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalStringProperty.type,
+          DiscriminatedUnionMember2.schema.properties.optionalStringProperty
+            .type,
           value,
         ),
       ),
@@ -2052,7 +2523,8 @@ export namespace RootObject {
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: LazyObject.schema.properties.optionalStringProperty,
+          propertySchema:
+            DiscriminatedUnionMember2.schema.properties.optionalStringProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             string,
             $StringSchema<string>
@@ -2241,7 +2713,7 @@ export namespace RootObject {
       parameters.graph,
     );
     parameters.resource.add(
-      LazyObject.schema.properties.optionalStringProperty.path,
+      DiscriminatedUnionMember2.schema.properties.optionalStringProperty.path,
       parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -2265,448 +2737,26 @@ export namespace RootObject {
   ) => Record<string, string> = (_rootObject) =>
     $compactRecord({ $identifier: _rootObject.$identifier().toString() });
 }
-export type UnionMember1 = {
-  readonly $identifier: () => UnionMember1.Identifier;
+export type DiscriminatedUnion =
+  | DiscriminatedUnionMember1
+  | DiscriminatedUnionMember2;
 
-  readonly $type: "UnionMember1";
-
-  /**
-   * Optional number property
-   */
-  readonly optionalNumberProperty: Maybe<number>;
-};
-
-export namespace UnionMember1 {
-  export const create: (parameters?: {
-    readonly $identifier?:
-      | (() => UnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalNumberProperty?: number | Maybe<number>;
-  }) => Either<Error, UnionMember1> = (parameters) =>
-    $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
-        parameters?.optionalNumberProperty,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalNumberProperty.type,
-          value,
-        ),
-      ),
-    })
-      .map((properties) => ({ ...properties, $type: "UnionMember1" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: UnionMember1.$toString }),
-      );
-
-  export function createUnsafe(parameters?: {
-    readonly $identifier?:
-      | (() => UnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalNumberProperty?: number | Maybe<number>;
-  }): UnionMember1 {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
-  };
-
-  export const filter: (
-    filter: UnionMember1.Filter,
-    value: UnionMember1,
-  ) => boolean = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
+export namespace DiscriminatedUnion {
+  export const $toString = (value: DiscriminatedUnion): string => {
+    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+      return DiscriminatedUnionMember1.$toString(value);
     }
-    if (
-      filter.optionalNumberProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.optionalNumberProperty,
-        value.optionalNumberProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  };
-
-  export const GraphQL = new GraphQLObjectType<
-    UnionMember1,
-    { objectSet: $ObjectSet }
-  >({
-    description: undefined,
-    fields: () => ({
-      _identifier: {
-        args: undefined,
-        description: undefined,
-        name: "_identifier",
-        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-      optionalNumberProperty: {
-        args: undefined,
-        description: '"Optional number property"',
-        name: "optionalNumberProperty",
-        resolve: (source, _args) =>
-          source.optionalNumberProperty.extractNullable(),
-        type: new GraphQLNonNull(GraphQLFloat),
-      },
-    }),
-    name: "UnionMember1",
-  });
-
-  export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember1> = (
-    resource,
-    options,
-  ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [UnionMember1.schema.fromRdfType], {
-          graph: options.graph,
-        })
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema: UnionMember1.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        optionalNumberProperty: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: LazyObject.schema.properties.optionalNumberProperty,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($floatFromRdfResourceValues<number>),
-        }),
-      }).chain((properties) => UnionMember1.create(properties)),
-    );
-
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    UnionMember1,
-    UnionMember1.Schema
-  > = (values, options) =>
-    values.chainMap((value) =>
-      value
-        .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
-    );
-
-  export type Identifier = BlankNode | NamedNode;
-
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export function isUnionMember1(object: $Object): object is UnionMember1 {
-    return object.$type === "UnionMember1";
-  }
-
-  export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember1"),
-    properties: {
-      $identifier: {
-        kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
-      optionalNumberProperty: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/optionalNumberProperty",
-        ),
-        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
-      },
-    },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember1")],
-  } as const;
-
-  export type Schema = typeof schema;
-
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    UnionMember1.Identifier,
-    UnionMember1
-  > = (parameters) => {
-    if (!parameters.ignoreRdfType) {
-      parameters.resource.add(
-        $RdfVocabularies.rdf.type,
-        UnionMember1.schema.toRdfTypes,
-        parameters.graph,
-      );
-    }
-    parameters.resource.add(
-      LazyObject.schema.properties.optionalNumberProperty.path,
-      parameters.object.optionalNumberProperty
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export const $toString: (_unionMember1: UnionMember1) => string = (
-    _unionMember1,
-  ) => `UnionMember1(${JSON.stringify(toStringRecord(_unionMember1))})`;
-
-  export const toStringRecord: (
-    _unionMember1: UnionMember1,
-  ) => Record<string, string> = (_unionMember1) =>
-    $compactRecord({ $identifier: _unionMember1.$identifier().toString() });
-}
-export type UnionMember2 = {
-  readonly $identifier: () => UnionMember2.Identifier;
-
-  readonly $type: "UnionMember2";
-
-  /**
-   * Optional string property
-   */
-  readonly optionalStringProperty: Maybe<string>;
-};
-
-export namespace UnionMember2 {
-  export const create: (parameters?: {
-    readonly $identifier?:
-      | (() => UnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalStringProperty?: string | Maybe<string>;
-  }) => Either<Error, UnionMember2> = (parameters) =>
-    $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
-        parameters?.optionalStringProperty,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalStringProperty.type,
-          value,
-        ),
-      ),
-    })
-      .map((properties) => ({ ...properties, $type: "UnionMember2" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: UnionMember2.$toString }),
-      );
-
-  export function createUnsafe(parameters?: {
-    readonly $identifier?:
-      | (() => UnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalStringProperty?: string | Maybe<string>;
-  }): UnionMember2 {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-  };
-
-  export const filter: (
-    filter: UnionMember2.Filter,
-    value: UnionMember2,
-  ) => boolean = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  };
-
-  export const GraphQL = new GraphQLObjectType<
-    UnionMember2,
-    { objectSet: $ObjectSet }
-  >({
-    description: undefined,
-    fields: () => ({
-      _identifier: {
-        args: undefined,
-        description: undefined,
-        name: "_identifier",
-        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-      optionalStringProperty: {
-        args: undefined,
-        description: '"Optional string property"',
-        name: "optionalStringProperty",
-        resolve: (source, _args) =>
-          source.optionalStringProperty.extractNullable(),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-    }),
-    name: "UnionMember2",
-  });
-
-  export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember2> = (
-    resource,
-    options,
-  ) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [UnionMember2.schema.fromRdfType], {
-          graph: options.graph,
-        })
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema: UnionMember2.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        optionalStringProperty: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: LazyObject.schema.properties.optionalStringProperty,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => UnionMember2.create(properties)),
-    );
-
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    UnionMember2,
-    UnionMember2.Schema
-  > = (values, options) =>
-    values.chainMap((value) =>
-      value
-        .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
-    );
-
-  export type Identifier = BlankNode | NamedNode;
-
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export function isUnionMember2(object: $Object): object is UnionMember2 {
-    return object.$type === "UnionMember2";
-  }
-
-  export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember2"),
-    properties: {
-      $identifier: {
-        kind: "Identifier",
-        type: { kind: "Identifier" as const },
-      },
-      optionalStringProperty: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/optionalStringProperty",
-        ),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const },
-        },
-      },
-    },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember2")],
-  } as const;
-
-  export type Schema = typeof schema;
-
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    UnionMember2.Identifier,
-    UnionMember2
-  > = (parameters) => {
-    if (!parameters.ignoreRdfType) {
-      parameters.resource.add(
-        $RdfVocabularies.rdf.type,
-        UnionMember2.schema.toRdfTypes,
-        parameters.graph,
-      );
-    }
-    parameters.resource.add(
-      LazyObject.schema.properties.optionalStringProperty.path,
-      parameters.object.optionalStringProperty
-        .toList()
-        .flatMap((value) => [$literalFactory.string(value)]),
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export const $toString: (_unionMember2: UnionMember2) => string = (
-    _unionMember2,
-  ) => `UnionMember2(${JSON.stringify(toStringRecord(_unionMember2))})`;
-
-  export const toStringRecord: (
-    _unionMember2: UnionMember2,
-  ) => Record<string, string> = (_unionMember2) =>
-    $compactRecord({ $identifier: _unionMember2.$identifier().toString() });
-}
-export type Union = UnionMember1 | UnionMember2;
-
-export namespace Union {
-  export const $toString = (value: Union): string => {
-    if (UnionMember1.isUnionMember1(value)) {
-      return UnionMember1.$toString(value);
-    }
-    if (UnionMember2.isUnionMember2(value)) {
-      return UnionMember2.$toString(value);
+    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+      return DiscriminatedUnionMember2.$toString(value);
     }
 
     throw new Error("unable to serialize to string");
   };
 
-  export const filter = (filter: Union.Filter, value: Union) => {
+  export const filter = (
+    filter: DiscriminatedUnion.Filter,
+    value: DiscriminatedUnion,
+  ) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -2714,18 +2764,28 @@ export namespace Union {
       return false;
     }
     if (
-      filter.on?.["UnionMember1"] !== undefined &&
-      UnionMember1.isUnionMember1(value)
+      filter.on?.["DiscriminatedUnionMember1"] !== undefined &&
+      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)
     ) {
-      if (!UnionMember1.filter(filter.on["UnionMember1"], value)) {
+      if (
+        !DiscriminatedUnionMember1.filter(
+          filter.on["DiscriminatedUnionMember1"],
+          value,
+        )
+      ) {
         return false;
       }
     }
     if (
-      filter.on?.["UnionMember2"] !== undefined &&
-      UnionMember2.isUnionMember2(value)
+      filter.on?.["DiscriminatedUnionMember2"] !== undefined &&
+      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)
     ) {
-      if (!UnionMember2.filter(filter.on["UnionMember2"], value)) {
+      if (
+        !DiscriminatedUnionMember2.filter(
+          filter.on["DiscriminatedUnionMember2"],
+          value,
+        )
+      ) {
         return false;
       }
     }
@@ -2736,55 +2796,61 @@ export namespace Union {
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
-      readonly UnionMember1?: UnionMember1.Filter;
-      readonly UnionMember2?: UnionMember2.Filter;
+      readonly DiscriminatedUnionMember1?: DiscriminatedUnionMember1.Filter;
+      readonly DiscriminatedUnionMember2?: DiscriminatedUnionMember2.Filter;
     };
   };
 
-  export const fromRdfResource: $FromRdfResourceFunction<Union> = (
+  export const fromRdfResource: $FromRdfResourceFunction<DiscriminatedUnion> = (
     resource,
     options,
   ) =>
     (
-      UnionMember1.fromRdfResource(resource, {
+      DiscriminatedUnionMember1.fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
-      }) as Either<Error, Union>
+      }) as Either<Error, DiscriminatedUnion>
     ).altLazy(
       () =>
-        UnionMember2.fromRdfResource(resource, {
+        DiscriminatedUnionMember2.fromRdfResource(resource, {
           ...options,
           ignoreRdfType: false,
-        }) as Either<Error, Union>,
+        }) as Either<Error, DiscriminatedUnion>,
     );
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    Union,
-    typeof Union.schema
+    DiscriminatedUnion,
+    typeof DiscriminatedUnion.schema
   > = ((values, options) =>
     values.chainMap((value) => {
       const valueAsValues = value.toValues();
       return (
-        UnionMember1.fromRdfResourceValues(valueAsValues, {
+        DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
           ...options,
-          schema: options.schema.members["UnionMember1"].type,
-        }) as Either<Error, Resource.Values<Union>>
+          schema: options.schema.members["DiscriminatedUnionMember1"].type,
+        }) as Either<Error, Resource.Values<DiscriminatedUnion>>
       )
         .altLazy(
           () =>
-            UnionMember2.fromRdfResourceValues(valueAsValues, {
+            DiscriminatedUnionMember2.fromRdfResourceValues(valueAsValues, {
               ...options,
-              schema: options.schema.members["UnionMember2"].type,
-            }) as Either<Error, Resource.Values<Union>>,
+              schema: options.schema.members["DiscriminatedUnionMember2"].type,
+            }) as Either<Error, Resource.Values<DiscriminatedUnion>>,
         )
         .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<Union, typeof Union.schema>;
+    })) satisfies $FromRdfResourceValuesFunction<
+    DiscriminatedUnion,
+    typeof DiscriminatedUnion.schema
+  >;
 
   export const GraphQL = new GraphQLUnionType({
     description: undefined,
-    name: "Union",
-    resolveType: (value: Union) => value.$type,
-    types: [UnionMember1.GraphQL, UnionMember2.GraphQL],
+    name: "DiscriminatedUnion",
+    resolveType: (value: DiscriminatedUnion) => value.$type,
+    types: [
+      DiscriminatedUnionMember1.GraphQL,
+      DiscriminatedUnionMember2.GraphQL,
+    ],
   });
 
   export type Identifier = BlankNode | NamedNode;
@@ -2793,36 +2859,39 @@ export namespace Union {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isUnion(object: $Object): object is Union {
+  export function isDiscriminatedUnion(
+    object: $Object,
+  ): object is DiscriminatedUnion {
     return (
-      UnionMember1.isUnionMember1(object) || UnionMember2.isUnionMember2(object)
+      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(object) ||
+      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(object)
     );
   }
 
   export const schema = {
-    kind: "ObjectUnion" as const,
+    kind: "ObjectDiscriminatedUnion" as const,
     members: {
-      UnionMember1: {
-        discriminantValues: ["UnionMember1"],
-        type: UnionMember1.schema,
+      DiscriminatedUnionMember1: {
+        discriminantValues: ["DiscriminatedUnionMember1"],
+        type: DiscriminatedUnionMember1.schema,
       },
-      UnionMember2: {
-        discriminantValues: ["UnionMember2"],
-        type: UnionMember2.schema,
+      DiscriminatedUnionMember2: {
+        discriminantValues: ["DiscriminatedUnionMember2"],
+        type: DiscriminatedUnionMember2.schema,
       },
     },
     properties: {},
   } as const;
 
-  export const toRdfResource: $ToRdfResourceFunction<Union> = (
+  export const toRdfResource: $ToRdfResourceFunction<DiscriminatedUnion> = (
     object,
     options,
   ) => {
-    if (UnionMember1.isUnionMember1(object)) {
-      return UnionMember1.toRdfResource(object, options);
+    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(object)) {
+      return DiscriminatedUnionMember1.toRdfResource(object, options);
     }
-    if (UnionMember2.isUnionMember2(object)) {
-      return UnionMember2.toRdfResource(object, options);
+    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(object)) {
+      return DiscriminatedUnionMember2.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -2831,17 +2900,17 @@ export namespace Union {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (UnionMember1.isUnionMember1(value)) {
+    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
       return [
-        UnionMember1.toRdfResource(value, {
+        DiscriminatedUnionMember1.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
-    if (UnionMember2.isUnionMember2(value)) {
+    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
       return [
-        UnionMember2.toRdfResource(value, {
+        DiscriminatedUnionMember2.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -2849,23 +2918,27 @@ export namespace Union {
     }
 
     throw new Error("unable to serialize to RDF");
-  }) satisfies $ToRdfResourceValuesFunction<Union>;
+  }) satisfies $ToRdfResourceValuesFunction<DiscriminatedUnion>;
 }
-export type $Object = LazyObject | RootObject | UnionMember1 | UnionMember2;
+export type $Object =
+  | DiscriminatedUnionMember1
+  | DiscriminatedUnionMember2
+  | LazyObject
+  | RootObject;
 
 export namespace $Object {
   export const $toString = (value: $Object): string => {
+    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+      return DiscriminatedUnionMember1.$toString(value);
+    }
+    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+      return DiscriminatedUnionMember2.$toString(value);
+    }
     if (LazyObject.isLazyObject(value)) {
       return LazyObject.$toString(value);
     }
     if (RootObject.isRootObject(value)) {
       return RootObject.$toString(value);
-    }
-    if (UnionMember1.isUnionMember1(value)) {
-      return UnionMember1.$toString(value);
-    }
-    if (UnionMember2.isUnionMember2(value)) {
-      return UnionMember2.$toString(value);
     }
 
     throw new Error("unable to serialize to string");
@@ -2877,6 +2950,32 @@ export namespace $Object {
       !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
+    }
+    if (
+      filter.on?.["DiscriminatedUnionMember1"] !== undefined &&
+      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)
+    ) {
+      if (
+        !DiscriminatedUnionMember1.filter(
+          filter.on["DiscriminatedUnionMember1"],
+          value,
+        )
+      ) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["DiscriminatedUnionMember2"] !== undefined &&
+      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)
+    ) {
+      if (
+        !DiscriminatedUnionMember2.filter(
+          filter.on["DiscriminatedUnionMember2"],
+          value,
+        )
+      ) {
+        return false;
+      }
     }
     if (
       filter.on?.["LazyObject"] !== undefined &&
@@ -2894,22 +2993,6 @@ export namespace $Object {
         return false;
       }
     }
-    if (
-      filter.on?.["UnionMember1"] !== undefined &&
-      UnionMember1.isUnionMember1(value)
-    ) {
-      if (!UnionMember1.filter(filter.on["UnionMember1"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["UnionMember2"] !== undefined &&
-      UnionMember2.isUnionMember2(value)
-    ) {
-      if (!UnionMember2.filter(filter.on["UnionMember2"], value)) {
-        return false;
-      }
-    }
 
     return true;
   };
@@ -2917,10 +3000,10 @@ export namespace $Object {
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
+      readonly DiscriminatedUnionMember1?: DiscriminatedUnionMember1.Filter;
+      readonly DiscriminatedUnionMember2?: DiscriminatedUnionMember2.Filter;
       readonly LazyObject?: LazyObject.Filter;
       readonly RootObject?: RootObject.Filter;
-      readonly UnionMember1?: UnionMember1.Filter;
-      readonly UnionMember2?: UnionMember2.Filter;
     };
   };
 
@@ -2929,28 +3012,28 @@ export namespace $Object {
     options,
   ) =>
     (
-      LazyObject.fromRdfResource(resource, {
+      DiscriminatedUnionMember1.fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
       }) as Either<Error, $Object>
     )
       .altLazy(
         () =>
+          DiscriminatedUnionMember2.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazyObject.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
           RootObject.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UnionMember1.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UnionMember2.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -2963,30 +3046,30 @@ export namespace $Object {
     values.chainMap((value) => {
       const valueAsValues = value.toValues();
       return (
-        LazyObject.fromRdfResourceValues(valueAsValues, {
+        DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
           ...options,
-          schema: options.schema.members["LazyObject"].type,
+          schema: options.schema.members["DiscriminatedUnionMember1"].type,
         }) as Either<Error, Resource.Values<$Object>>
       )
+        .altLazy(
+          () =>
+            DiscriminatedUnionMember2.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["DiscriminatedUnionMember2"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
+        .altLazy(
+          () =>
+            LazyObject.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["LazyObject"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
         .altLazy(
           () =>
             RootObject.fromRdfResourceValues(valueAsValues, {
               ...options,
               schema: options.schema.members["RootObject"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            UnionMember1.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["UnionMember1"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            UnionMember2.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["UnionMember2"].type,
             }) as Either<Error, Resource.Values<$Object>>,
         )
         .chain((values) => values.head());
@@ -3002,8 +3085,16 @@ export namespace $Object {
   }
 
   export const schema = {
-    kind: "ObjectUnion" as const,
+    kind: "ObjectDiscriminatedUnion" as const,
     members: {
+      DiscriminatedUnionMember1: {
+        discriminantValues: ["DiscriminatedUnionMember1"],
+        type: DiscriminatedUnionMember1.schema,
+      },
+      DiscriminatedUnionMember2: {
+        discriminantValues: ["DiscriminatedUnionMember2"],
+        type: DiscriminatedUnionMember2.schema,
+      },
       LazyObject: {
         discriminantValues: ["LazyObject"],
         type: LazyObject.schema,
@@ -3011,14 +3102,6 @@ export namespace $Object {
       RootObject: {
         discriminantValues: ["RootObject"],
         type: RootObject.schema,
-      },
-      UnionMember1: {
-        discriminantValues: ["UnionMember1"],
-        type: UnionMember1.schema,
-      },
-      UnionMember2: {
-        discriminantValues: ["UnionMember2"],
-        type: UnionMember2.schema,
       },
     },
     properties: {},
@@ -3028,17 +3111,17 @@ export namespace $Object {
     object,
     options,
   ) => {
+    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(object)) {
+      return DiscriminatedUnionMember1.toRdfResource(object, options);
+    }
+    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(object)) {
+      return DiscriminatedUnionMember2.toRdfResource(object, options);
+    }
     if (LazyObject.isLazyObject(object)) {
       return LazyObject.toRdfResource(object, options);
     }
     if (RootObject.isRootObject(object)) {
       return RootObject.toRdfResource(object, options);
-    }
-    if (UnionMember1.isUnionMember1(object)) {
-      return UnionMember1.toRdfResource(object, options);
-    }
-    if (UnionMember2.isUnionMember2(object)) {
-      return UnionMember2.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -3047,6 +3130,22 @@ export namespace $Object {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
+    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+      return [
+        DiscriminatedUnionMember1.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+      return [
+        DiscriminatedUnionMember2.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
     if (LazyObject.isLazyObject(value)) {
       return [
         LazyObject.toRdfResource(value, {
@@ -3063,27 +3162,69 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (UnionMember1.isUnionMember1(value)) {
-      return [
-        UnionMember1.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (UnionMember2.isUnionMember2(value)) {
-      return [
-        UnionMember2.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
 }
 export interface $ObjectSet {
+  discriminatedUnionMember1(
+    identifier: DiscriminatedUnionMember1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DiscriminatedUnionMember1>>;
+
+  discriminatedUnionMember1Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        DiscriminatedUnionMember1.Filter,
+        DiscriminatedUnionMember1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  discriminatedUnionMember1Identifiers(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember1.Filter,
+      DiscriminatedUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnionMember1.Identifier[]>>;
+
+  discriminatedUnionMember1s(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember1.Filter,
+      DiscriminatedUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnionMember1[]>>;
+
+  discriminatedUnionMember2(
+    identifier: DiscriminatedUnionMember2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DiscriminatedUnionMember2>>;
+
+  discriminatedUnionMember2Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        DiscriminatedUnionMember2.Filter,
+        DiscriminatedUnionMember2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  discriminatedUnionMember2Identifiers(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember2.Filter,
+      DiscriminatedUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnionMember2.Identifier[]>>;
+
+  discriminatedUnionMember2s(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember2.Filter,
+      DiscriminatedUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnionMember2[]>>;
+
   lazyObject(
     identifier: LazyObject.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -3124,62 +3265,34 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<RootObject.Filter, RootObject.Identifier>,
   ): Promise<Either<Error, readonly RootObject[]>>;
 
-  unionMember1(
-    identifier: UnionMember1.Identifier,
+  discriminatedUnion(
+    identifier: DiscriminatedUnion.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionMember1>>;
+  ): Promise<Either<Error, DiscriminatedUnion>>;
 
-  unionMember1Count(
+  discriminatedUnionCount(
     query?: Pick<
-      $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
+      $ObjectSet.Query<
+        DiscriminatedUnion.Filter,
+        DiscriminatedUnion.Identifier
+      >,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
-  unionMember1Identifiers(
-    query?: $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember1.Identifier[]>>;
-
-  unionMember1s(
-    query?: $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember1[]>>;
-
-  unionMember2(
-    identifier: UnionMember2.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionMember2>>;
-
-  unionMember2Count(
-    query?: Pick<
-      $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-      "filter"
+  discriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnion.Filter,
+      DiscriminatedUnion.Identifier
     >,
-  ): Promise<Either<Error, number>>;
+  ): Promise<Either<Error, readonly DiscriminatedUnion.Identifier[]>>;
 
-  unionMember2Identifiers(
-    query?: $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember2.Identifier[]>>;
-
-  unionMember2s(
-    query?: $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember2[]>>;
-
-  union(
-    identifier: Union.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, Union>>;
-
-  unionCount(
-    query?: Pick<$ObjectSet.Query<Union.Filter, Union.Identifier>, "filter">,
-  ): Promise<Either<Error, number>>;
-
-  unionIdentifiers(
-    query?: $ObjectSet.Query<Union.Filter, Union.Identifier>,
-  ): Promise<Either<Error, readonly Union.Identifier[]>>;
-
-  unions(
-    query?: $ObjectSet.Query<Union.Filter, Union.Identifier>,
-  ): Promise<Either<Error, readonly Union[]>>;
+  discriminatedUnions(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnion.Filter,
+      DiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnion[]>>;
 
   $object(
     identifier: $Object.Identifier,
@@ -3239,6 +3352,190 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       dataFactory: dataFactory,
       dataset: this.$dataset(),
     });
+  }
+
+  async discriminatedUnionMember1(
+    identifier: DiscriminatedUnionMember1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DiscriminatedUnionMember1>> {
+    return this.discriminatedUnionMember1Sync(identifier, options);
+  }
+
+  discriminatedUnionMember1Sync(
+    identifier: DiscriminatedUnionMember1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, DiscriminatedUnionMember1> {
+    return this.discriminatedUnionMember1sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async discriminatedUnionMember1Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        DiscriminatedUnionMember1.Filter,
+        DiscriminatedUnionMember1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.discriminatedUnionMember1CountSync(query);
+  }
+
+  discriminatedUnionMember1CountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        DiscriminatedUnionMember1.Filter,
+        DiscriminatedUnionMember1.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.discriminatedUnionMember1sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async discriminatedUnionMember1Identifiers(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember1.Filter,
+      DiscriminatedUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnionMember1.Identifier[]>> {
+    return this.discriminatedUnionMember1IdentifiersSync(query);
+  }
+
+  discriminatedUnionMember1IdentifiersSync(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember1.Filter,
+      DiscriminatedUnionMember1.Identifier
+    >,
+  ): Either<Error, readonly DiscriminatedUnionMember1.Identifier[]> {
+    return this.discriminatedUnionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async discriminatedUnionMember1s(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember1.Filter,
+      DiscriminatedUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnionMember1[]>> {
+    return this.discriminatedUnionMember1sSync(query);
+  }
+
+  discriminatedUnionMember1sSync(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember1.Filter,
+      DiscriminatedUnionMember1.Identifier
+    >,
+  ): Either<Error, readonly DiscriminatedUnionMember1[]> {
+    return this.#objectsSync<
+      DiscriminatedUnionMember1,
+      DiscriminatedUnionMember1.Filter,
+      DiscriminatedUnionMember1.Identifier
+    >(
+      {
+        filter: DiscriminatedUnionMember1.filter,
+        fromRdfResource: DiscriminatedUnionMember1.fromRdfResource,
+        fromRdfTypes: [DiscriminatedUnionMember1.schema.fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async discriminatedUnionMember2(
+    identifier: DiscriminatedUnionMember2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DiscriminatedUnionMember2>> {
+    return this.discriminatedUnionMember2Sync(identifier, options);
+  }
+
+  discriminatedUnionMember2Sync(
+    identifier: DiscriminatedUnionMember2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, DiscriminatedUnionMember2> {
+    return this.discriminatedUnionMember2sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async discriminatedUnionMember2Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        DiscriminatedUnionMember2.Filter,
+        DiscriminatedUnionMember2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.discriminatedUnionMember2CountSync(query);
+  }
+
+  discriminatedUnionMember2CountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        DiscriminatedUnionMember2.Filter,
+        DiscriminatedUnionMember2.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.discriminatedUnionMember2sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async discriminatedUnionMember2Identifiers(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember2.Filter,
+      DiscriminatedUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnionMember2.Identifier[]>> {
+    return this.discriminatedUnionMember2IdentifiersSync(query);
+  }
+
+  discriminatedUnionMember2IdentifiersSync(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember2.Filter,
+      DiscriminatedUnionMember2.Identifier
+    >,
+  ): Either<Error, readonly DiscriminatedUnionMember2.Identifier[]> {
+    return this.discriminatedUnionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async discriminatedUnionMember2s(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember2.Filter,
+      DiscriminatedUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnionMember2[]>> {
+    return this.discriminatedUnionMember2sSync(query);
+  }
+
+  discriminatedUnionMember2sSync(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnionMember2.Filter,
+      DiscriminatedUnionMember2.Identifier
+    >,
+  ): Either<Error, readonly DiscriminatedUnionMember2[]> {
+    return this.#objectsSync<
+      DiscriminatedUnionMember2,
+      DiscriminatedUnionMember2.Filter,
+      DiscriminatedUnionMember2.Identifier
+    >(
+      {
+        filter: DiscriminatedUnionMember2.filter,
+        fromRdfResource: DiscriminatedUnionMember2.fromRdfResource,
+        fromRdfTypes: [DiscriminatedUnionMember2.schema.fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazyObject(
@@ -3385,213 +3682,97 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async unionMember1(
-    identifier: UnionMember1.Identifier,
+  async discriminatedUnion(
+    identifier: DiscriminatedUnion.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionMember1>> {
-    return this.unionMember1Sync(identifier, options);
+  ): Promise<Either<Error, DiscriminatedUnion>> {
+    return this.discriminatedUnionSync(identifier, options);
   }
 
-  unionMember1Sync(
-    identifier: UnionMember1.Identifier,
+  discriminatedUnionSync(
+    identifier: DiscriminatedUnion.Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, UnionMember1> {
-    return this.unionMember1sSync({
+  ): Either<Error, DiscriminatedUnion> {
+    return this.discriminatedUnionsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
-  async unionMember1Count(
+  async discriminatedUnionCount(
     query?: Pick<
-      $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
+      $ObjectSet.Query<
+        DiscriminatedUnion.Filter,
+        DiscriminatedUnion.Identifier
+      >,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
-    return this.unionMember1CountSync(query);
+    return this.discriminatedUnionCountSync(query);
   }
 
-  unionMember1CountSync(
+  discriminatedUnionCountSync(
     query?: Pick<
-      $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
+      $ObjectSet.Query<
+        DiscriminatedUnion.Filter,
+        DiscriminatedUnion.Identifier
+      >,
       "filter"
     >,
   ): Either<Error, number> {
-    return this.unionMember1sSync(query).map((objects) => objects.length);
+    return this.discriminatedUnionsSync(query).map((objects) => objects.length);
   }
 
-  async unionMember1Identifiers(
-    query?: $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember1.Identifier[]>> {
-    return this.unionMember1IdentifiersSync(query);
+  async discriminatedUnionIdentifiers(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnion.Filter,
+      DiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnion.Identifier[]>> {
+    return this.discriminatedUnionIdentifiersSync(query);
   }
 
-  unionMember1IdentifiersSync(
-    query?: $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
-  ): Either<Error, readonly UnionMember1.Identifier[]> {
-    return this.unionMember1sSync(query).map((objects) =>
+  discriminatedUnionIdentifiersSync(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnion.Filter,
+      DiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly DiscriminatedUnion.Identifier[]> {
+    return this.discriminatedUnionsSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
   }
 
-  async unionMember1s(
-    query?: $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember1[]>> {
-    return this.unionMember1sSync(query);
+  async discriminatedUnions(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnion.Filter,
+      DiscriminatedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly DiscriminatedUnion[]>> {
+    return this.discriminatedUnionsSync(query);
   }
 
-  unionMember1sSync(
-    query?: $ObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
-  ): Either<Error, readonly UnionMember1[]> {
-    return this.#objectsSync<
-      UnionMember1,
-      UnionMember1.Filter,
-      UnionMember1.Identifier
+  discriminatedUnionsSync(
+    query?: $ObjectSet.Query<
+      DiscriminatedUnion.Filter,
+      DiscriminatedUnion.Identifier
+    >,
+  ): Either<Error, readonly DiscriminatedUnion[]> {
+    return this.#objectDiscriminatedUnionsSync<
+      DiscriminatedUnion,
+      DiscriminatedUnion.Filter,
+      DiscriminatedUnion.Identifier
     >(
-      {
-        filter: UnionMember1.filter,
-        fromRdfResource: UnionMember1.fromRdfResource,
-        fromRdfTypes: [UnionMember1.schema.fromRdfType],
-      },
-      query,
-    );
-  }
-
-  async unionMember2(
-    identifier: UnionMember2.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UnionMember2>> {
-    return this.unionMember2Sync(identifier, options);
-  }
-
-  unionMember2Sync(
-    identifier: UnionMember2.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, UnionMember2> {
-    return this.unionMember2sSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async unionMember2Count(
-    query?: Pick<
-      $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.unionMember2CountSync(query);
-  }
-
-  unionMember2CountSync(
-    query?: Pick<
-      $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.unionMember2sSync(query).map((objects) => objects.length);
-  }
-
-  async unionMember2Identifiers(
-    query?: $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember2.Identifier[]>> {
-    return this.unionMember2IdentifiersSync(query);
-  }
-
-  unionMember2IdentifiersSync(
-    query?: $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-  ): Either<Error, readonly UnionMember2.Identifier[]> {
-    return this.unionMember2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async unionMember2s(
-    query?: $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-  ): Promise<Either<Error, readonly UnionMember2[]>> {
-    return this.unionMember2sSync(query);
-  }
-
-  unionMember2sSync(
-    query?: $ObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
-  ): Either<Error, readonly UnionMember2[]> {
-    return this.#objectsSync<
-      UnionMember2,
-      UnionMember2.Filter,
-      UnionMember2.Identifier
-    >(
-      {
-        filter: UnionMember2.filter,
-        fromRdfResource: UnionMember2.fromRdfResource,
-        fromRdfTypes: [UnionMember2.schema.fromRdfType],
-      },
-      query,
-    );
-  }
-
-  async union(
-    identifier: Union.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, Union>> {
-    return this.unionSync(identifier, options);
-  }
-
-  unionSync(
-    identifier: Union.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, Union> {
-    return this.unionsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async unionCount(
-    query?: Pick<$ObjectSet.Query<Union.Filter, Union.Identifier>, "filter">,
-  ): Promise<Either<Error, number>> {
-    return this.unionCountSync(query);
-  }
-
-  unionCountSync(
-    query?: Pick<$ObjectSet.Query<Union.Filter, Union.Identifier>, "filter">,
-  ): Either<Error, number> {
-    return this.unionsSync(query).map((objects) => objects.length);
-  }
-
-  async unionIdentifiers(
-    query?: $ObjectSet.Query<Union.Filter, Union.Identifier>,
-  ): Promise<Either<Error, readonly Union.Identifier[]>> {
-    return this.unionIdentifiersSync(query);
-  }
-
-  unionIdentifiersSync(
-    query?: $ObjectSet.Query<Union.Filter, Union.Identifier>,
-  ): Either<Error, readonly Union.Identifier[]> {
-    return this.unionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async unions(
-    query?: $ObjectSet.Query<Union.Filter, Union.Identifier>,
-  ): Promise<Either<Error, readonly Union[]>> {
-    return this.unionsSync(query);
-  }
-
-  unionsSync(
-    query?: $ObjectSet.Query<Union.Filter, Union.Identifier>,
-  ): Either<Error, readonly Union[]> {
-    return this.#objectUnionsSync<Union, Union.Filter, Union.Identifier>(
       [
         {
-          filter: Union.filter,
-          fromRdfResource: UnionMember1.fromRdfResource,
-          fromRdfTypes: [UnionMember1.schema.fromRdfType],
+          filter: DiscriminatedUnion.filter,
+          fromRdfResource: DiscriminatedUnionMember1.fromRdfResource,
+          fromRdfTypes: [DiscriminatedUnionMember1.schema.fromRdfType],
         },
         {
-          filter: Union.filter,
-          fromRdfResource: UnionMember2.fromRdfResource,
-          fromRdfTypes: [UnionMember2.schema.fromRdfType],
+          filter: DiscriminatedUnion.filter,
+          fromRdfResource: DiscriminatedUnionMember2.fromRdfResource,
+          fromRdfTypes: [DiscriminatedUnionMember2.schema.fromRdfType],
         },
       ],
       query,
@@ -3656,8 +3837,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   $objectsSync(
     query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
   ): Either<Error, readonly $Object[]> {
-    return this.#objectUnionsSync<$Object, $Object.Filter, $Object.Identifier>(
+    return this.#objectDiscriminatedUnionsSync<
+      $Object,
+      $Object.Filter,
+      $Object.Identifier
+    >(
       [
+        {
+          filter: $Object.filter,
+          fromRdfResource: DiscriminatedUnionMember1.fromRdfResource,
+          fromRdfTypes: [DiscriminatedUnionMember1.schema.fromRdfType],
+        },
+        {
+          filter: $Object.filter,
+          fromRdfResource: DiscriminatedUnionMember2.fromRdfResource,
+          fromRdfTypes: [DiscriminatedUnionMember2.schema.fromRdfType],
+        },
         {
           filter: $Object.filter,
           fromRdfResource: LazyObject.fromRdfResource,
@@ -3667,16 +3862,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           filter: $Object.filter,
           fromRdfResource: RootObject.fromRdfResource,
           fromRdfTypes: [RootObject.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: UnionMember1.fromRdfResource,
-          fromRdfTypes: [UnionMember1.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: UnionMember2.fromRdfResource,
-          fromRdfTypes: [UnionMember2.schema.fromRdfType],
         },
       ],
       query,
@@ -3805,7 +3990,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return Right(objects);
   }
 
-  #objectUnionsSync<
+  #objectDiscriminatedUnionsSync<
     ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
@@ -3970,6 +4155,194 @@ export const graphqlSchema = new GraphQLSchema({
   query: new GraphQLObjectType<null, { objectSet: $ObjectSet }>({
     name: "Query",
     fields: {
+      discriminatedUnionMember1: {
+        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
+        resolve: async (
+          _source,
+          args: { identifier: string },
+          { objectSet },
+        ): Promise<DiscriminatedUnionMember1> =>
+          (
+            await EitherAsync<Error, DiscriminatedUnionMember1>(
+              async ({ liftEither }) =>
+                liftEither(
+                  await objectSet.discriminatedUnionMember1(
+                    await liftEither(
+                      DiscriminatedUnionMember1.Identifier.parse(
+                        args.identifier,
+                      ),
+                    ),
+                  ),
+                ),
+            )
+          ).unsafeCoerce(),
+        type: new GraphQLNonNull(DiscriminatedUnionMember1.GraphQL),
+      },
+      discriminatedUnionMember1Identifiers: {
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
+        resolve: async (
+          _source,
+          args: { limit: number | null; offset: number | null },
+          { objectSet },
+        ): Promise<readonly string[]> =>
+          (
+            await objectSet.discriminatedUnionMember1Identifiers({
+              limit: args.limit !== null ? args.limit : undefined,
+              offset: args.offset !== null ? args.offset : undefined,
+            })
+          )
+            .unsafeCoerce()
+            .map(DiscriminatedUnionMember1.Identifier.stringify),
+        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+      },
+      discriminatedUnionMember1s: {
+        args: {
+          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+          limit: { type: GraphQLInt },
+          offset: { type: GraphQLInt },
+        },
+        resolve: async (
+          _source,
+          args: {
+            identifiers: readonly string[] | null;
+            limit: number | null;
+            offset: number | null;
+          },
+          { objectSet },
+        ): Promise<readonly DiscriminatedUnionMember1[]> =>
+          (
+            await EitherAsync<Error, readonly DiscriminatedUnionMember1[]>(
+              async ({ liftEither }) => {
+                let filter: DiscriminatedUnionMember1.Filter | undefined;
+                if (args.identifiers) {
+                  const identifiers: DiscriminatedUnionMember1.Identifier[] =
+                    [];
+                  for (const identifierArg of args.identifiers) {
+                    identifiers.push(
+                      await liftEither(
+                        DiscriminatedUnionMember1.Identifier.parse(
+                          identifierArg,
+                        ),
+                      ),
+                    );
+                  }
+                  filter = { $identifier: { in: identifiers } };
+                }
+                return await liftEither(
+                  await objectSet.discriminatedUnionMember1s({
+                    filter,
+                    limit: args.limit !== null ? args.limit : undefined,
+                    offset: args.offset !== null ? args.offset : undefined,
+                  }),
+                );
+              },
+            )
+          ).unsafeCoerce(),
+        type: new GraphQLNonNull(
+          new GraphQLList(
+            new GraphQLNonNull(DiscriminatedUnionMember1.GraphQL),
+          ),
+        ),
+      },
+      discriminatedUnionMember1Count: {
+        resolve: async (_source, _args, { objectSet }): Promise<number> =>
+          (await objectSet.discriminatedUnionMember1Count()).unsafeCoerce(),
+        type: new GraphQLNonNull(GraphQLInt),
+      },
+      discriminatedUnionMember2: {
+        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
+        resolve: async (
+          _source,
+          args: { identifier: string },
+          { objectSet },
+        ): Promise<DiscriminatedUnionMember2> =>
+          (
+            await EitherAsync<Error, DiscriminatedUnionMember2>(
+              async ({ liftEither }) =>
+                liftEither(
+                  await objectSet.discriminatedUnionMember2(
+                    await liftEither(
+                      DiscriminatedUnionMember2.Identifier.parse(
+                        args.identifier,
+                      ),
+                    ),
+                  ),
+                ),
+            )
+          ).unsafeCoerce(),
+        type: new GraphQLNonNull(DiscriminatedUnionMember2.GraphQL),
+      },
+      discriminatedUnionMember2Identifiers: {
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
+        resolve: async (
+          _source,
+          args: { limit: number | null; offset: number | null },
+          { objectSet },
+        ): Promise<readonly string[]> =>
+          (
+            await objectSet.discriminatedUnionMember2Identifiers({
+              limit: args.limit !== null ? args.limit : undefined,
+              offset: args.offset !== null ? args.offset : undefined,
+            })
+          )
+            .unsafeCoerce()
+            .map(DiscriminatedUnionMember2.Identifier.stringify),
+        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+      },
+      discriminatedUnionMember2s: {
+        args: {
+          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+          limit: { type: GraphQLInt },
+          offset: { type: GraphQLInt },
+        },
+        resolve: async (
+          _source,
+          args: {
+            identifiers: readonly string[] | null;
+            limit: number | null;
+            offset: number | null;
+          },
+          { objectSet },
+        ): Promise<readonly DiscriminatedUnionMember2[]> =>
+          (
+            await EitherAsync<Error, readonly DiscriminatedUnionMember2[]>(
+              async ({ liftEither }) => {
+                let filter: DiscriminatedUnionMember2.Filter | undefined;
+                if (args.identifiers) {
+                  const identifiers: DiscriminatedUnionMember2.Identifier[] =
+                    [];
+                  for (const identifierArg of args.identifiers) {
+                    identifiers.push(
+                      await liftEither(
+                        DiscriminatedUnionMember2.Identifier.parse(
+                          identifierArg,
+                        ),
+                      ),
+                    );
+                  }
+                  filter = { $identifier: { in: identifiers } };
+                }
+                return await liftEither(
+                  await objectSet.discriminatedUnionMember2s({
+                    filter,
+                    limit: args.limit !== null ? args.limit : undefined,
+                    offset: args.offset !== null ? args.offset : undefined,
+                  }),
+                );
+              },
+            )
+          ).unsafeCoerce(),
+        type: new GraphQLNonNull(
+          new GraphQLList(
+            new GraphQLNonNull(DiscriminatedUnionMember2.GraphQL),
+          ),
+        ),
+      },
+      discriminatedUnionMember2Count: {
+        resolve: async (_source, _args, { objectSet }): Promise<number> =>
+          (await objectSet.discriminatedUnionMember2Count()).unsafeCoerce(),
+        type: new GraphQLNonNull(GraphQLInt),
+      },
       lazyObject: {
         args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
         resolve: async (
@@ -4142,27 +4515,28 @@ export const graphqlSchema = new GraphQLSchema({
           (await objectSet.rootObjectCount()).unsafeCoerce(),
         type: new GraphQLNonNull(GraphQLInt),
       },
-      unionMember1: {
+      discriminatedUnion: {
         args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
         resolve: async (
           _source,
           args: { identifier: string },
           { objectSet },
-        ): Promise<UnionMember1> =>
+        ): Promise<DiscriminatedUnion> =>
           (
-            await EitherAsync<Error, UnionMember1>(async ({ liftEither }) =>
-              liftEither(
-                await objectSet.unionMember1(
-                  await liftEither(
-                    UnionMember1.Identifier.parse(args.identifier),
+            await EitherAsync<Error, DiscriminatedUnion>(
+              async ({ liftEither }) =>
+                liftEither(
+                  await objectSet.discriminatedUnion(
+                    await liftEither(
+                      DiscriminatedUnion.Identifier.parse(args.identifier),
+                    ),
                   ),
                 ),
-              ),
             )
           ).unsafeCoerce(),
-        type: new GraphQLNonNull(UnionMember1.GraphQL),
+        type: new GraphQLNonNull(DiscriminatedUnion.GraphQL),
       },
-      unionMember1Identifiers: {
+      discriminatedUnionIdentifiers: {
         args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
         resolve: async (
           _source,
@@ -4170,16 +4544,16 @@ export const graphqlSchema = new GraphQLSchema({
           { objectSet },
         ): Promise<readonly string[]> =>
           (
-            await objectSet.unionMember1Identifiers({
+            await objectSet.discriminatedUnionIdentifiers({
               limit: args.limit !== null ? args.limit : undefined,
               offset: args.offset !== null ? args.offset : undefined,
             })
           )
             .unsafeCoerce()
-            .map(UnionMember1.Identifier.stringify),
+            .map(DiscriminatedUnion.Identifier.stringify),
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
-      unionMember1s: {
+      discriminatedUnions: {
         args: {
           identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
           limit: { type: GraphQLInt },
@@ -4193,24 +4567,24 @@ export const graphqlSchema = new GraphQLSchema({
             offset: number | null;
           },
           { objectSet },
-        ): Promise<readonly UnionMember1[]> =>
+        ): Promise<readonly DiscriminatedUnion[]> =>
           (
-            await EitherAsync<Error, readonly UnionMember1[]>(
+            await EitherAsync<Error, readonly DiscriminatedUnion[]>(
               async ({ liftEither }) => {
-                let filter: UnionMember1.Filter | undefined;
+                let filter: DiscriminatedUnion.Filter | undefined;
                 if (args.identifiers) {
-                  const identifiers: UnionMember1.Identifier[] = [];
+                  const identifiers: DiscriminatedUnion.Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        UnionMember1.Identifier.parse(identifierArg),
+                        DiscriminatedUnion.Identifier.parse(identifierArg),
                       ),
                     );
                   }
                   filter = { $identifier: { in: identifiers } };
                 }
                 return await liftEither(
-                  await objectSet.unionMember1s({
+                  await objectSet.discriminatedUnions({
                     filter,
                     limit: args.limit !== null ? args.limit : undefined,
                     offset: args.offset !== null ? args.offset : undefined,
@@ -4220,180 +4594,12 @@ export const graphqlSchema = new GraphQLSchema({
             )
           ).unsafeCoerce(),
         type: new GraphQLNonNull(
-          new GraphQLList(new GraphQLNonNull(UnionMember1.GraphQL)),
+          new GraphQLList(new GraphQLNonNull(DiscriminatedUnion.GraphQL)),
         ),
       },
-      unionMember1Count: {
+      discriminatedUnionCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
-          (await objectSet.unionMember1Count()).unsafeCoerce(),
-        type: new GraphQLNonNull(GraphQLInt),
-      },
-      unionMember2: {
-        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
-        resolve: async (
-          _source,
-          args: { identifier: string },
-          { objectSet },
-        ): Promise<UnionMember2> =>
-          (
-            await EitherAsync<Error, UnionMember2>(async ({ liftEither }) =>
-              liftEither(
-                await objectSet.unionMember2(
-                  await liftEither(
-                    UnionMember2.Identifier.parse(args.identifier),
-                  ),
-                ),
-              ),
-            )
-          ).unsafeCoerce(),
-        type: new GraphQLNonNull(UnionMember2.GraphQL),
-      },
-      unionMember2Identifiers: {
-        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
-        resolve: async (
-          _source,
-          args: { limit: number | null; offset: number | null },
-          { objectSet },
-        ): Promise<readonly string[]> =>
-          (
-            await objectSet.unionMember2Identifiers({
-              limit: args.limit !== null ? args.limit : undefined,
-              offset: args.offset !== null ? args.offset : undefined,
-            })
-          )
-            .unsafeCoerce()
-            .map(UnionMember2.Identifier.stringify),
-        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
-      },
-      unionMember2s: {
-        args: {
-          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
-          limit: { type: GraphQLInt },
-          offset: { type: GraphQLInt },
-        },
-        resolve: async (
-          _source,
-          args: {
-            identifiers: readonly string[] | null;
-            limit: number | null;
-            offset: number | null;
-          },
-          { objectSet },
-        ): Promise<readonly UnionMember2[]> =>
-          (
-            await EitherAsync<Error, readonly UnionMember2[]>(
-              async ({ liftEither }) => {
-                let filter: UnionMember2.Filter | undefined;
-                if (args.identifiers) {
-                  const identifiers: UnionMember2.Identifier[] = [];
-                  for (const identifierArg of args.identifiers) {
-                    identifiers.push(
-                      await liftEither(
-                        UnionMember2.Identifier.parse(identifierArg),
-                      ),
-                    );
-                  }
-                  filter = { $identifier: { in: identifiers } };
-                }
-                return await liftEither(
-                  await objectSet.unionMember2s({
-                    filter,
-                    limit: args.limit !== null ? args.limit : undefined,
-                    offset: args.offset !== null ? args.offset : undefined,
-                  }),
-                );
-              },
-            )
-          ).unsafeCoerce(),
-        type: new GraphQLNonNull(
-          new GraphQLList(new GraphQLNonNull(UnionMember2.GraphQL)),
-        ),
-      },
-      unionMember2Count: {
-        resolve: async (_source, _args, { objectSet }): Promise<number> =>
-          (await objectSet.unionMember2Count()).unsafeCoerce(),
-        type: new GraphQLNonNull(GraphQLInt),
-      },
-      union: {
-        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
-        resolve: async (
-          _source,
-          args: { identifier: string },
-          { objectSet },
-        ): Promise<Union> =>
-          (
-            await EitherAsync<Error, Union>(async ({ liftEither }) =>
-              liftEither(
-                await objectSet.union(
-                  await liftEither(Union.Identifier.parse(args.identifier)),
-                ),
-              ),
-            )
-          ).unsafeCoerce(),
-        type: new GraphQLNonNull(Union.GraphQL),
-      },
-      unionIdentifiers: {
-        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
-        resolve: async (
-          _source,
-          args: { limit: number | null; offset: number | null },
-          { objectSet },
-        ): Promise<readonly string[]> =>
-          (
-            await objectSet.unionIdentifiers({
-              limit: args.limit !== null ? args.limit : undefined,
-              offset: args.offset !== null ? args.offset : undefined,
-            })
-          )
-            .unsafeCoerce()
-            .map(Union.Identifier.stringify),
-        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
-      },
-      unions: {
-        args: {
-          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
-          limit: { type: GraphQLInt },
-          offset: { type: GraphQLInt },
-        },
-        resolve: async (
-          _source,
-          args: {
-            identifiers: readonly string[] | null;
-            limit: number | null;
-            offset: number | null;
-          },
-          { objectSet },
-        ): Promise<readonly Union[]> =>
-          (
-            await EitherAsync<Error, readonly Union[]>(
-              async ({ liftEither }) => {
-                let filter: Union.Filter | undefined;
-                if (args.identifiers) {
-                  const identifiers: Union.Identifier[] = [];
-                  for (const identifierArg of args.identifiers) {
-                    identifiers.push(
-                      await liftEither(Union.Identifier.parse(identifierArg)),
-                    );
-                  }
-                  filter = { $identifier: { in: identifiers } };
-                }
-                return await liftEither(
-                  await objectSet.unions({
-                    filter,
-                    limit: args.limit !== null ? args.limit : undefined,
-                    offset: args.offset !== null ? args.offset : undefined,
-                  }),
-                );
-              },
-            )
-          ).unsafeCoerce(),
-        type: new GraphQLNonNull(
-          new GraphQLList(new GraphQLNonNull(Union.GraphQL)),
-        ),
-      },
-      unionCount: {
-        resolve: async (_source, _args, { objectSet }): Promise<number> =>
-          (await objectSet.unionCount()).unsafeCoerce(),
+          (await objectSet.discriminatedUnionCount()).unsafeCoerce(),
         type: new GraphQLNonNull(GraphQLInt),
       },
     },
