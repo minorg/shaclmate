@@ -5,10 +5,14 @@ import { harnesses } from "./harnesses.js";
 describe("isType", () => {
   it("should work on a union", ({ expect }) => {
     expect(
-      kitchenSink.Union.isUnion(harnesses.discriminatedUnionMember1.instance),
+      kitchenSink.DiscriminatedUnion.isUnion(
+        harnesses.discriminatedUnionMember1.instance,
+      ),
     ).toStrictEqual(true);
     expect(
-      kitchenSink.Union.isUnion(harnesses.discriminatedUnionMember2.instance),
+      kitchenSink.DiscriminatedUnion.isUnion(
+        harnesses.discriminatedUnionMember2.instance,
+      ),
     ).toStrictEqual(true);
   });
 });

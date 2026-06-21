@@ -324,12 +324,13 @@ export const harnesses = {
       optionalPartialToResolvedDiscriminatedUnion:
         kitchenSink.LazilyResolvedDiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance5"),
-          lazilyResolved: "optionalPartialToResolvedUnionProperty",
+          lazilyResolved: "optionalPartialToResolvedDiscriminatedUnionProperty",
         }),
       optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
         kitchenSink.LazilyResolvedDiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance6"),
-          lazilyResolved: "optionalPartialUnionToResolvedUnionProperty",
+          lazilyResolved:
+            "optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnionProperty",
         }),
       requiredLazyToResolvedBlankNodeOrIriIdentifier:
         kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct.createUnsafe({

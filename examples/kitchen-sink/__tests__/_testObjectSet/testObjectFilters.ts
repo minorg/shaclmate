@@ -561,7 +561,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.Union.Filter, readonly NamedNode[]]
+        [kitchenSink.DiscriminatedUnion.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (

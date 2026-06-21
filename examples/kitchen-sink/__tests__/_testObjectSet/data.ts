@@ -74,5 +74,5 @@ export const data = {
       default:
         throw new RangeError(i.toString());
     }
-  }) as readonly kitchenSink.Union[],
+  }) as readonly kitchenSink.DiscriminatedUnion[],
 };
