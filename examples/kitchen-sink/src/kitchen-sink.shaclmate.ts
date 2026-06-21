@@ -66641,7 +66641,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DiscriminatedUnion.Identifier
     >,
   ): Either<Error, readonly DiscriminatedUnion[]> {
-    return this.#objectUnionsSync<
+    return this.#objectDiscriminatedUnionsSync<
       DiscriminatedUnion,
       DiscriminatedUnion.Filter,
       DiscriminatedUnion.Identifier
@@ -66740,7 +66740,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       FlattenDiscriminatedUnion.Identifier
     >,
   ): Either<Error, readonly FlattenDiscriminatedUnion[]> {
-    return this.#objectUnionsSync<
+    return this.#objectDiscriminatedUnionsSync<
       FlattenDiscriminatedUnion,
       FlattenDiscriminatedUnion.Filter,
       FlattenDiscriminatedUnion.Identifier
@@ -66846,7 +66846,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedDiscriminatedUnion.Identifier
     >,
   ): Either<Error, readonly LazilyResolvedDiscriminatedUnion[]> {
-    return this.#objectUnionsSync<
+    return this.#objectDiscriminatedUnionsSync<
       LazilyResolvedDiscriminatedUnion,
       LazilyResolvedDiscriminatedUnion.Filter,
       LazilyResolvedDiscriminatedUnion.Identifier
@@ -66951,7 +66951,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NoRdfTypeDiscriminatedUnion.Identifier
     >,
   ): Either<Error, readonly NoRdfTypeDiscriminatedUnion[]> {
-    return this.#objectUnionsSync<
+    return this.#objectDiscriminatedUnionsSync<
       NoRdfTypeDiscriminatedUnion,
       NoRdfTypeDiscriminatedUnion.Filter,
       NoRdfTypeDiscriminatedUnion.Identifier
@@ -67050,7 +67050,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialDiscriminatedUnion.Identifier
     >,
   ): Either<Error, readonly PartialDiscriminatedUnion[]> {
-    return this.#objectUnionsSync<
+    return this.#objectDiscriminatedUnionsSync<
       PartialDiscriminatedUnion,
       PartialDiscriminatedUnion.Filter,
       PartialDiscriminatedUnion.Identifier
@@ -67149,7 +67149,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       RecursiveDiscriminatedUnion.Identifier
     >,
   ): Either<Error, readonly RecursiveDiscriminatedUnion[]> {
-    return this.#objectUnionsSync<
+    return this.#objectDiscriminatedUnionsSync<
       RecursiveDiscriminatedUnion,
       RecursiveDiscriminatedUnion.Filter,
       RecursiveDiscriminatedUnion.Identifier
@@ -67228,7 +67228,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   $objectsSync(
     query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
   ): Either<Error, readonly $Object[]> {
-    return this.#objectUnionsSync<$Object, $Object.Filter, $Object.Identifier>(
+    return this.#objectDiscriminatedUnionsSync<
+      $Object,
+      $Object.Filter,
+      $Object.Identifier
+    >(
       [
         {
           filter: $Object.filter,
@@ -67611,7 +67615,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return Right(objects);
   }
 
-  #objectUnionsSync<
+  #objectDiscriminatedUnionsSync<
     ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,

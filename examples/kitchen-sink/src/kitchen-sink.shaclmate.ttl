@@ -46,6 +46,12 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :iriClass
+    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -67,12 +73,6 @@
         sh:class :UndefinedClass1, :UndefinedClass2 ;
         sh:maxCount 1 ;
         sh:path :multiClass
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:path :iriClass
     ] .
 
 :ConvertibleTypesStruct
@@ -385,13 +385,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Struct node shape that uses different methods to make SHACLmate ignore properties." ;
     sh:property [
-        shaclmate:ignore true ;
-        rdfs:comment "A property with shaclmate:ignore set to true not ignored" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :shaclmateIgnoreTrueProperty
-    ], [
         rdfs:comment "A property without an sh:severity defaults to sh:Violation severity and is not ignored" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -425,6 +418,13 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :shaclmateIgnoreFalseProperty
+    ], [
+        shaclmate:ignore true ;
+        rdfs:comment "A property with shaclmate:ignore set to true not ignored" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :shaclmateIgnoreTrueProperty
     ] .
 
 :IgnoredStruct
@@ -1381,4 +1381,3 @@ The sh:targetClass is expected on deserialization and added on serialization."""
             ]
         )
     ] .
-
