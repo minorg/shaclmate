@@ -37,7 +37,10 @@ export class DiscriminatedUnionType<
     ...superParameters
   }: {
     identifierType: Maybe<BlankNodeType | IdentifierType | IriType>;
-    members: readonly (Pick<AbstractUnionType.Member<MemberTypeT>, "type"> & {
+    members: readonly (Pick<
+      DiscriminatedUnionType.Member<MemberTypeT>,
+      "type"
+    > & {
       readonly discriminantValue: Maybe<number | string>;
     })[];
     recursive: boolean;
@@ -343,7 +346,7 @@ ${joinCode(
   }
 
   @Memoize()
-  get members(): readonly AbstractUnionType.Member<MemberTypeT>[] {
+  get members(): readonly DiscriminatedUnionType.Member<MemberTypeT>[] {
     return this.lazyMembers();
   }
 
@@ -940,7 +943,7 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
     return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(this.toStringFunctionExpression)}(${variables.value})`;
   }
 
-  private readonly lazyMembers: () => readonly AbstractUnionType.Member<MemberTypeT>[];
+  private readonly lazyMembers: () => readonly DiscriminatedUnionType.Member<MemberTypeT>[];
 }
 
 type Discriminant =
@@ -1142,7 +1145,7 @@ export namespace Discriminant {
   }
 }
 
-export namespace AbstractUnionType {
+export namespace DiscriminatedUnionType {
   export interface Member<TypeT extends Type> {
     readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
     readonly jsonType: Code;

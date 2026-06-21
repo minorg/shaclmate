@@ -46,12 +46,13 @@ export namespace ${tsNamedObjectType.name.unsafeCoerce()} {
           break;
         }
         case "DiscriminatedUnion": {
-          const tsNamedUnionType = typeFactory.createUnionType(astNamedType);
+          const tsNamedDiscriminatedUnionType =
+            typeFactory.createDiscriminatedUnionType(astNamedType);
           declarations.push(code`\
-export namespace ${tsNamedUnionType.name.unsafeCoerce()} {
-  ${tsNamedUnionType.jsonTypeAliasDeclaration}
+export namespace ${tsNamedDiscriminatedUnionType.name.unsafeCoerce()} {
+  ${tsNamedDiscriminatedUnionType.jsonTypeAliasDeclaration}
   export namespace Json {
-    ${tsNamedUnionType.jsonSchemaFunctionDeclaration}
+    ${tsNamedDiscriminatedUnionType.jsonSchemaFunctionDeclaration}
   }
 }`);
           break;

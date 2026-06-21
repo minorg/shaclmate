@@ -116,7 +116,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
           case "ObjectDiscriminatedUnion":
             return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
-  return this.#objectUnionsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
+  return this.#objectDiscriminatedUnionsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
     ${joinCode(
       namedObjectType.members.map((member) =>
         runtimeObjectType(namedObjectType.filterFunction, member.type),
@@ -227,7 +227,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
       ...(this.namedObjectDiscriminatedUnionTypes.length > 0
         ? [
             code`\
-#objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
+#objectDiscriminatedUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
   const graph = query?.graph ?? this.#graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;

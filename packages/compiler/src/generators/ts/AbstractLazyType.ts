@@ -201,7 +201,7 @@ export abstract class AbstractLazyType<
   }: {
     resolvedObjectDiscriminatedUnionType: ObjectDiscriminatedUnionType;
     partialObjectDiscriminatedUnionType: ObjectDiscriminatedUnionType;
-    variables: { resolvedObjectUnion: Code };
+    variables: { resolvedObjectDiscriminatedUnion: Code };
   }) {
     invariant(
       resolvedObjectDiscriminatedUnionType.members.length ===
@@ -210,13 +210,13 @@ export abstract class AbstractLazyType<
 
     const caseBlocks = resolvedObjectDiscriminatedUnionType.members.map(
       ({ discriminantValues }, memberI) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectDiscriminatedUnionType.members[memberI].type.name.unsafeCoerce()}.create(${variables.resolvedObjectUnion});`;
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectDiscriminatedUnionType.members[memberI].type.name.unsafeCoerce()}.create(${variables.resolvedObjectDiscriminatedUnion});`;
       },
     );
     caseBlocks.push(
-      code`default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
+      code`default: ${variables.resolvedObjectDiscriminatedUnion} satisfies never; throw new Error("unrecognized type");`,
     );
-    return code`switch (${variables.resolvedObjectUnion}.${resolvedObjectDiscriminatedUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
+    return code`switch (${variables.resolvedObjectDiscriminatedUnion}.${resolvedObjectDiscriminatedUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
   }
 }
 

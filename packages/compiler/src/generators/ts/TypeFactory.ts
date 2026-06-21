@@ -173,7 +173,7 @@ export class TypeFactory {
       }
     }
 
-    const objectUnionType = new ObjectDiscriminatedUnionType({
+    const objectDiscriminatedUnionType = new ObjectDiscriminatedUnionType({
       comment: astType.comment,
       configuration: this.configuration,
       identifierType: Maybe.of(
@@ -198,10 +198,10 @@ export class TypeFactory {
 
     this.cachedObjectDiscriminatedUnionTypesByShapeIdentifier.set(
       astType.shapeIdentifier,
-      objectUnionType,
+      objectDiscriminatedUnionType,
     );
 
-    return objectUnionType;
+    return objectDiscriminatedUnionType;
   }
 
   createType(
@@ -238,11 +238,11 @@ export class TypeFactory {
       case "Term":
         return this.createTermType(astType);
       case "DiscriminatedUnion":
-        return this.createUnionType(astType);
+        return this.createDiscriminatedUnionType(astType);
     }
   }
 
-  createUnionType(
+  createDiscriminatedUnionType(
     astType: ast.DiscriminatedUnionType,
   ): ObjectDiscriminatedUnionType | DiscriminatedUnionType<Type> {
     if (astType.isStructDiscriminatedUnionType()) {
