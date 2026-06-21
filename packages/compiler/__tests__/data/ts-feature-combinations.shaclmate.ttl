@@ -37,7 +37,7 @@
     sh:property [
         sh:datatype xsd:double ;
         sh:maxCount 1 ;
-        sh:path :discriminatedDiscriminatedUnionMember1Property
+        sh:path :discriminatedUnionMember1Property
     ] .
 
 :DiscriminatedUnionMember2
@@ -46,6 +46,6 @@
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
-        sh:path :discriminatedDiscriminatedUnionMember2Property
+        sh:path :discriminatedUnionMember2Property
     ] .
 

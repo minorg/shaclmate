@@ -144,9 +144,9 @@ describe("equals", () => {
             type: "DiscriminatedUnionMember1",
             value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
-                "http://example.com/discriminatedDiscriminatedUnionMember1",
+                "http://example.com/discriminatedUnionMember1",
               ),
-              discriminatedDiscriminatedUnionMember1Distinct: "test",
+              discriminatedUnionMember1Distinct: "test",
               discriminatedUnionMemberCommon: "test",
             }),
           },
@@ -211,9 +211,9 @@ describe("equals", () => {
             type: "DiscriminatedUnionMember1",
             value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
-                "http://example.com/discriminatedDiscriminatedUnionMember1",
+                "http://example.com/discriminatedUnionMember1",
               ),
-              discriminatedDiscriminatedUnionMember1Distinct: "test",
+              discriminatedUnionMember1Distinct: "test",
               discriminatedUnionMemberCommon: "test",
             }),
           },

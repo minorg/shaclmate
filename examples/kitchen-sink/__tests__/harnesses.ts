@@ -183,7 +183,7 @@ export const harnesses = {
     kitchenSink.DiscriminatedUnionMember1.createUnsafe({
       $identifier,
       discriminatedUnionMemberCommon: "test common property",
-      discriminatedDiscriminatedUnionMember1Distinct: "test member 1",
+      discriminatedUnionMember1Distinct: "test member 1",
     }),
     kitchenSink.FlattenDiscriminatedUnion,
     "FlattenDiscriminatedUnion",
@@ -192,7 +192,7 @@ export const harnesses = {
     kitchenSink.DiscriminatedUnionMember2.createUnsafe({
       $identifier,
       discriminatedUnionMemberCommon: "test common property",
-      discriminatedDiscriminatedUnionMember2Distinct: "test member 2",
+      discriminatedUnionMember2Distinct: "test member 2",
     }),
     kitchenSink.FlattenDiscriminatedUnion,
     "FlattenDiscriminatedUnion",
@@ -620,9 +620,9 @@ export const harnesses = {
         type: "DiscriminatedUnionMember1",
         value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
-            "http://example.com/discriminatedDiscriminatedUnionMember1a",
+            "http://example.com/discriminatedUnionMember1a",
           ),
-          discriminatedDiscriminatedUnionMember1Distinct: "test",
+          discriminatedUnionMember1Distinct: "test",
           discriminatedUnionMemberCommon: "test",
         }),
       },
@@ -632,9 +632,9 @@ export const harnesses = {
         type: "DiscriminatedUnionMember1",
         value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
-            "http://example.com/discriminatedDiscriminatedUnionMember1b",
+            "http://example.com/discriminatedUnionMember1b",
           ),
-          discriminatedDiscriminatedUnionMember1Distinct: "test",
+          discriminatedUnionMember1Distinct: "test",
           discriminatedUnionMemberCommon: "test",
         }),
       },
@@ -642,9 +642,9 @@ export const harnesses = {
         termType: "DiscriminatedUnionMember1",
         value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
-            "http://example.com/discriminatedDiscriminatedUnionMember1c",
+            "http://example.com/discriminatedUnionMember1c",
           ),
-          discriminatedDiscriminatedUnionMember1Distinct: "test",
+          discriminatedUnionMember1Distinct: "test",
           discriminatedUnionMemberCommon: "test",
         }),
       },
@@ -661,9 +661,9 @@ export const harnesses = {
         type: "DiscriminatedUnionMember2",
         value: kitchenSink.DiscriminatedUnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(
-            "http://example.com/discriminatedDiscriminatedUnionMember2a",
+            "http://example.com/discriminatedUnionMember2a",
           ),
-          discriminatedDiscriminatedUnionMember2Distinct: "test",
+          discriminatedUnionMember2Distinct: "test",
           discriminatedUnionMemberCommon: "test",
         }),
       },
@@ -687,9 +687,9 @@ export const harnesses = {
           type: "DiscriminatedUnionMember2",
           value: kitchenSink.DiscriminatedUnionMember2.createUnsafe({
             $identifier: dataFactory.namedNode(
-              "http://example.com/discriminatedDiscriminatedUnionMember2b",
+              "http://example.com/discriminatedUnionMember2b",
             ),
-            discriminatedDiscriminatedUnionMember2Distinct: "test",
+            discriminatedUnionMember2Distinct: "test",
             discriminatedUnionMemberCommon: "test",
           }),
         },
@@ -697,9 +697,9 @@ export const harnesses = {
           type: "DiscriminatedUnionMember1",
           value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
             $identifier: dataFactory.namedNode(
-              "http://example.com/discriminatedDiscriminatedUnionMember1b",
+              "http://example.com/discriminatedUnionMember1b",
             ),
-            discriminatedDiscriminatedUnionMember1Distinct: "test",
+            discriminatedUnionMember1Distinct: "test",
             discriminatedUnionMemberCommon: "test",
           }),
         },
@@ -711,9 +711,9 @@ export const harnesses = {
           termType: "DiscriminatedUnionMember1",
           value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
             $identifier: dataFactory.namedNode(
-              "http://example.com/discriminatedDiscriminatedUnionMember1c",
+              "http://example.com/discriminatedUnionMember1c",
             ),
-            discriminatedDiscriminatedUnionMember1Distinct: "test",
+            discriminatedUnionMember1Distinct: "test",
             discriminatedUnionMemberCommon: "test",
           }),
         },
@@ -726,20 +726,20 @@ export const harnesses = {
     }),
     kitchenSink.UnionDiscriminantsStruct,
   ),
-  discriminatedDiscriminatedUnionMember1: new Harness(
+  discriminatedUnionMember1: new Harness(
     kitchenSink.DiscriminatedUnionMember1.createUnsafe({
       $identifier,
       discriminatedUnionMemberCommon: "test common parent",
-      discriminatedDiscriminatedUnionMember1Distinct: "test",
+      discriminatedUnionMember1Distinct: "test",
     }),
     kitchenSink.DiscriminatedUnion,
     "DiscriminatedUnion",
   ),
-  discriminatedDiscriminatedUnionMember2: new Harness(
+  discriminatedUnionMember2: new Harness(
     kitchenSink.DiscriminatedUnionMember2.createUnsafe({
       $identifier,
       discriminatedUnionMemberCommon: "test common parent",
-      discriminatedDiscriminatedUnionMember2Distinct: "test",
+      discriminatedUnionMember2Distinct: "test",
     }),
     kitchenSink.DiscriminatedUnion,
     "DiscriminatedUnion",

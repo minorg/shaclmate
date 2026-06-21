@@ -63,13 +63,13 @@ export const data = {
         return kitchenSink.DiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
           discriminatedUnionMemberCommon: `common parent ${i}`,
-          discriminatedDiscriminatedUnionMember1Distinct: `member ${i}`,
+          discriminatedUnionMember1Distinct: `member ${i}`,
         });
       case 1:
         return kitchenSink.DiscriminatedUnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
           discriminatedUnionMemberCommon: `common parent ${i}`,
-          discriminatedDiscriminatedUnionMember2Distinct: `member ${i}`,
+          discriminatedUnionMember2Distinct: `member ${i}`,
         });
       default:
         throw new RangeError(i.toString());
