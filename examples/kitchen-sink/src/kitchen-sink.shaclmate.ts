@@ -14669,9 +14669,9 @@ export type DiscriminatedUnionMember1 = {
 
   readonly $type: "DiscriminatedUnionMember1";
 
-  readonly unionMember1Distinct: string;
+  readonly discriminatedUnionMember1Distinct: string;
 
-  readonly unionMemberCommon: string;
+  readonly discriminatedUnionMemberCommon: string;
 };
 
 export namespace DiscriminatedUnionMember1 {
@@ -14681,13 +14681,17 @@ export namespace DiscriminatedUnionMember1 {
       | BlankNode
       | NamedNode
       | string;
-    readonly unionMember1Distinct: string;
-    readonly unionMemberCommon: string;
+    readonly discriminatedUnionMember1Distinct: string;
+    readonly discriminatedUnionMemberCommon: string;
   }) => Either<Error, DiscriminatedUnionMember1> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      unionMember1Distinct: Either.of(parameters.unionMember1Distinct),
-      unionMemberCommon: Either.of(parameters.unionMemberCommon),
+      discriminatedUnionMember1Distinct: Either.of(
+        parameters.discriminatedUnionMember1Distinct,
+      ),
+      discriminatedUnionMemberCommon: Either.of(
+        parameters.discriminatedUnionMemberCommon,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -14706,8 +14710,8 @@ export namespace DiscriminatedUnionMember1 {
       | BlankNode
       | NamedNode
       | string;
-    readonly unionMember1Distinct: string;
-    readonly unionMemberCommon: string;
+    readonly discriminatedUnionMember1Distinct: string;
+    readonly discriminatedUnionMemberCommon: string;
   }): DiscriminatedUnionMember1 {
     return create(parameters).unsafeCoerce();
   }
@@ -14723,23 +14727,29 @@ export namespace DiscriminatedUnionMember1 {
     )
       .chain(() =>
         $propertyEquals(
-          { equalsFunction: $strictEquals, name: "unionMember1Distinct" },
-          [left, left.unionMember1Distinct],
-          [right, right.unionMember1Distinct],
+          {
+            equalsFunction: $strictEquals,
+            name: "discriminatedUnionMember1Distinct",
+          },
+          [left, left.discriminatedUnionMember1Distinct],
+          [right, right.discriminatedUnionMember1Distinct],
         ),
       )
       .chain(() =>
         $propertyEquals(
-          { equalsFunction: $strictEquals, name: "unionMemberCommon" },
-          [left, left.unionMemberCommon],
-          [right, right.unionMemberCommon],
+          {
+            equalsFunction: $strictEquals,
+            name: "discriminatedUnionMemberCommon",
+          },
+          [left, left.discriminatedUnionMemberCommon],
+          [right, right.discriminatedUnionMemberCommon],
         ),
       );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly unionMember1Distinct?: $StringFilter;
-    readonly unionMemberCommon?: $StringFilter;
+    readonly discriminatedUnionMember1Distinct?: $StringFilter;
+    readonly discriminatedUnionMemberCommon?: $StringFilter;
   };
 
   export const filter: (
@@ -14753,14 +14763,20 @@ export namespace DiscriminatedUnionMember1 {
       return false;
     }
     if (
-      filter.unionMember1Distinct !== undefined &&
-      !$filterString(filter.unionMember1Distinct, value.unionMember1Distinct)
+      filter.discriminatedUnionMember1Distinct !== undefined &&
+      !$filterString(
+        filter.discriminatedUnionMember1Distinct,
+        value.discriminatedUnionMember1Distinct,
+      )
     ) {
       return false;
     }
     if (
-      filter.unionMemberCommon !== undefined &&
-      !$filterString(filter.unionMemberCommon, value.unionMemberCommon)
+      filter.discriminatedUnionMemberCommon !== undefined &&
+      !$filterString(
+        filter.discriminatedUnionMemberCommon,
+        value.discriminatedUnionMemberCommon,
+      )
     ) {
       return false;
     }
@@ -14787,24 +14803,26 @@ export namespace DiscriminatedUnionMember1 {
     }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.unionMember1Distinct,
+        filter: parameters.filter?.discriminatedUnionMember1Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "unionMember1Distinct",
+        propertyName: "discriminatedUnionMember1Distinct",
         propertySchema:
-          DiscriminatedUnionMember1.schema.properties.unionMember1Distinct,
+          DiscriminatedUnionMember1.schema.properties
+            .discriminatedUnionMember1Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.unionMemberCommon,
+        filter: parameters.filter?.discriminatedUnionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "unionMemberCommon",
+        propertyName: "discriminatedUnionMemberCommon",
         propertySchema:
-          DiscriminatedUnionMember1.schema.properties.unionMemberCommon,
+          DiscriminatedUnionMember1.schema.properties
+            .discriminatedUnionMemberCommon,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14873,26 +14891,28 @@ export namespace DiscriminatedUnionMember1 {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.unionMember1Distinct,
+        filter: parameters.filter?.discriminatedUnionMember1Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "unionMember1Distinct",
+        propertyName: "discriminatedUnionMember1Distinct",
         propertySchema:
-          DiscriminatedUnionMember1.schema.properties.unionMember1Distinct,
+          DiscriminatedUnionMember1.schema.properties
+            .discriminatedUnionMember1Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.unionMemberCommon,
+        filter: parameters.filter?.discriminatedUnionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "unionMemberCommon",
+        propertyName: "discriminatedUnionMemberCommon",
         propertySchema:
-          DiscriminatedUnionMember1.schema.properties.unionMemberCommon,
+          DiscriminatedUnionMember1.schema.properties
+            .discriminatedUnionMemberCommon,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14909,10 +14929,12 @@ export namespace DiscriminatedUnionMember1 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      unionMember1Distinct: Either.of<Error, string>(
-        $json["unionMember1Distinct"],
+      discriminatedUnionMember1Distinct: Either.of<Error, string>(
+        $json["discriminatedUnionMember1Distinct"],
       ),
-      unionMemberCommon: Either.of<Error, string>($json["unionMemberCommon"]),
+      discriminatedUnionMemberCommon: Either.of<Error, string>(
+        $json["discriminatedUnionMemberCommon"],
+      ),
     }).chain(DiscriminatedUnionMember1.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -14937,7 +14959,7 @@ export namespace DiscriminatedUnionMember1 {
               DiscriminatedUnionMember1.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
-        unionMember1Distinct: $shaclPropertyFromRdf<
+        discriminatedUnionMember1Distinct: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
@@ -14945,19 +14967,22 @@ export namespace DiscriminatedUnionMember1 {
           focusResource: resource,
           ignoreRdfType: true,
           propertySchema:
-            DiscriminatedUnionMember1.schema.properties.unionMember1Distinct,
+            DiscriminatedUnionMember1.schema.properties
+              .discriminatedUnionMember1Distinct,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         }),
-        unionMemberCommon: $shaclPropertyFromRdf<string, $StringSchema<string>>(
-          {
-            ...options,
-            focusResource: resource,
-            ignoreRdfType: true,
-            propertySchema:
-              DiscriminatedUnionMember1.schema.properties.unionMemberCommon,
-            typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          },
-        ),
+        discriminatedUnionMemberCommon: $shaclPropertyFromRdf<
+          string,
+          $StringSchema<string>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DiscriminatedUnionMember1.schema.properties
+              .discriminatedUnionMemberCommon,
+          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+        }),
       }).chain((properties) => DiscriminatedUnionMember1.create(properties)),
     );
 
@@ -14990,8 +15015,14 @@ export namespace DiscriminatedUnionMember1 {
     if (_discriminatedUnionMember1.$type) {
       hasher.update(_discriminatedUnionMember1.$type);
     }
-    $hashString(hasher, _discriminatedUnionMember1.unionMember1Distinct);
-    $hashString(hasher, _discriminatedUnionMember1.unionMemberCommon);
+    $hashString(
+      hasher,
+      _discriminatedUnionMember1.discriminatedUnionMember1Distinct,
+    );
+    $hashString(
+      hasher,
+      _discriminatedUnionMember1.discriminatedUnionMemberCommon,
+    );
     return hasher;
   };
 
@@ -15011,8 +15042,8 @@ export namespace DiscriminatedUnionMember1 {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "DiscriminatedUnionMember1";
-    readonly unionMember1Distinct: string;
-    readonly unionMemberCommon: string;
+    readonly discriminatedUnionMember1Distinct: string;
+    readonly discriminatedUnionMemberCommon: string;
   };
 
   export namespace Json {
@@ -15028,8 +15059,8 @@ export namespace DiscriminatedUnionMember1 {
       return z.object({
         "@id": z.string().min(1),
         "@type": z.literal("DiscriminatedUnionMember1"),
-        unionMember1Distinct: z.string(),
-        unionMemberCommon: z.string(),
+        discriminatedUnionMember1Distinct: z.string(),
+        discriminatedUnionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -15054,11 +15085,11 @@ export namespace DiscriminatedUnionMember1 {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/unionMember1Distinct`,
+            scope: `${scopePrefix}/properties/discriminatedUnionMember1Distinct`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/unionMemberCommon`,
+            scope: `${scopePrefix}/properties/discriminatedUnionMemberCommon`,
             type: "Control",
           },
         ],
@@ -15077,14 +15108,18 @@ export namespace DiscriminatedUnionMember1 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      unionMember1Distinct: {
+      discriminatedUnionMember1Distinct: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/unionMember1Distinct"),
+        path: dataFactory.namedNode(
+          "http://example.com/discriminatedUnionMember1Distinct",
+        ),
         type: { kind: "String" as const },
       },
-      unionMemberCommon: {
+      discriminatedUnionMemberCommon: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/unionMemberCommon"),
+        path: dataFactory.namedNode(
+          "http://example.com/discriminatedUnionMemberCommon",
+        ),
         type: { kind: "String" as const },
       },
     },
@@ -15165,8 +15200,10 @@ export namespace DiscriminatedUnionMember1 {
             ? `_:${_discriminatedUnionMember1.$identifier().value}`
             : _discriminatedUnionMember1.$identifier().value,
         "@type": _discriminatedUnionMember1.$type,
-        unionMember1Distinct: _discriminatedUnionMember1.unionMember1Distinct,
-        unionMemberCommon: _discriminatedUnionMember1.unionMemberCommon,
+        discriminatedUnionMember1Distinct:
+          _discriminatedUnionMember1.discriminatedUnionMember1Distinct,
+        discriminatedUnionMemberCommon:
+          _discriminatedUnionMember1.discriminatedUnionMemberCommon,
       } satisfies DiscriminatedUnionMember1.Json),
     );
 
@@ -15182,13 +15219,23 @@ export namespace DiscriminatedUnionMember1 {
       );
     }
     parameters.resource.add(
-      DiscriminatedUnionMember1.schema.properties.unionMember1Distinct.path,
-      [$literalFactory.string(parameters.object.unionMember1Distinct)],
+      DiscriminatedUnionMember1.schema.properties
+        .discriminatedUnionMember1Distinct.path,
+      [
+        $literalFactory.string(
+          parameters.object.discriminatedUnionMember1Distinct,
+        ),
+      ],
       parameters.graph,
     );
     parameters.resource.add(
-      DiscriminatedUnionMember1.schema.properties.unionMemberCommon.path,
-      [$literalFactory.string(parameters.object.unionMemberCommon)],
+      DiscriminatedUnionMember1.schema.properties.discriminatedUnionMemberCommon
+        .path,
+      [
+        $literalFactory.string(
+          parameters.object.discriminatedUnionMemberCommon,
+        ),
+      ],
       parameters.graph,
     );
     return parameters.resource;
@@ -15245,9 +15292,9 @@ export type DiscriminatedUnionMember2 = {
 
   readonly $type: "DiscriminatedUnionMember2";
 
-  readonly unionMember2Distinct: string;
+  readonly discriminatedUnionMember2Distinct: string;
 
-  readonly unionMemberCommon: string;
+  readonly discriminatedUnionMemberCommon: string;
 };
 
 export namespace DiscriminatedUnionMember2 {
@@ -15257,13 +15304,17 @@ export namespace DiscriminatedUnionMember2 {
       | BlankNode
       | NamedNode
       | string;
-    readonly unionMember2Distinct: string;
-    readonly unionMemberCommon: string;
+    readonly discriminatedUnionMember2Distinct: string;
+    readonly discriminatedUnionMemberCommon: string;
   }) => Either<Error, DiscriminatedUnionMember2> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      unionMember2Distinct: Either.of(parameters.unionMember2Distinct),
-      unionMemberCommon: Either.of(parameters.unionMemberCommon),
+      discriminatedUnionMember2Distinct: Either.of(
+        parameters.discriminatedUnionMember2Distinct,
+      ),
+      discriminatedUnionMemberCommon: Either.of(
+        parameters.discriminatedUnionMemberCommon,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -15282,8 +15333,8 @@ export namespace DiscriminatedUnionMember2 {
       | BlankNode
       | NamedNode
       | string;
-    readonly unionMember2Distinct: string;
-    readonly unionMemberCommon: string;
+    readonly discriminatedUnionMember2Distinct: string;
+    readonly discriminatedUnionMemberCommon: string;
   }): DiscriminatedUnionMember2 {
     return create(parameters).unsafeCoerce();
   }
@@ -15299,23 +15350,29 @@ export namespace DiscriminatedUnionMember2 {
     )
       .chain(() =>
         $propertyEquals(
-          { equalsFunction: $strictEquals, name: "unionMember2Distinct" },
-          [left, left.unionMember2Distinct],
-          [right, right.unionMember2Distinct],
+          {
+            equalsFunction: $strictEquals,
+            name: "discriminatedUnionMember2Distinct",
+          },
+          [left, left.discriminatedUnionMember2Distinct],
+          [right, right.discriminatedUnionMember2Distinct],
         ),
       )
       .chain(() =>
         $propertyEquals(
-          { equalsFunction: $strictEquals, name: "unionMemberCommon" },
-          [left, left.unionMemberCommon],
-          [right, right.unionMemberCommon],
+          {
+            equalsFunction: $strictEquals,
+            name: "discriminatedUnionMemberCommon",
+          },
+          [left, left.discriminatedUnionMemberCommon],
+          [right, right.discriminatedUnionMemberCommon],
         ),
       );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly unionMember2Distinct?: $StringFilter;
-    readonly unionMemberCommon?: $StringFilter;
+    readonly discriminatedUnionMember2Distinct?: $StringFilter;
+    readonly discriminatedUnionMemberCommon?: $StringFilter;
   };
 
   export const filter: (
@@ -15329,14 +15386,20 @@ export namespace DiscriminatedUnionMember2 {
       return false;
     }
     if (
-      filter.unionMember2Distinct !== undefined &&
-      !$filterString(filter.unionMember2Distinct, value.unionMember2Distinct)
+      filter.discriminatedUnionMember2Distinct !== undefined &&
+      !$filterString(
+        filter.discriminatedUnionMember2Distinct,
+        value.discriminatedUnionMember2Distinct,
+      )
     ) {
       return false;
     }
     if (
-      filter.unionMemberCommon !== undefined &&
-      !$filterString(filter.unionMemberCommon, value.unionMemberCommon)
+      filter.discriminatedUnionMemberCommon !== undefined &&
+      !$filterString(
+        filter.discriminatedUnionMemberCommon,
+        value.discriminatedUnionMemberCommon,
+      )
     ) {
       return false;
     }
@@ -15363,24 +15426,26 @@ export namespace DiscriminatedUnionMember2 {
     }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.unionMember2Distinct,
+        filter: parameters.filter?.discriminatedUnionMember2Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "unionMember2Distinct",
+        propertyName: "discriminatedUnionMember2Distinct",
         propertySchema:
-          DiscriminatedUnionMember2.schema.properties.unionMember2Distinct,
+          DiscriminatedUnionMember2.schema.properties
+            .discriminatedUnionMember2Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.unionMemberCommon,
+        filter: parameters.filter?.discriminatedUnionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "unionMemberCommon",
+        propertyName: "discriminatedUnionMemberCommon",
         propertySchema:
-          DiscriminatedUnionMember1.schema.properties.unionMemberCommon,
+          DiscriminatedUnionMember1.schema.properties
+            .discriminatedUnionMemberCommon,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15449,26 +15514,28 @@ export namespace DiscriminatedUnionMember2 {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.unionMember2Distinct,
+        filter: parameters.filter?.discriminatedUnionMember2Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "unionMember2Distinct",
+        propertyName: "discriminatedUnionMember2Distinct",
         propertySchema:
-          DiscriminatedUnionMember2.schema.properties.unionMember2Distinct,
+          DiscriminatedUnionMember2.schema.properties
+            .discriminatedUnionMember2Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.unionMemberCommon,
+        filter: parameters.filter?.discriminatedUnionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "unionMemberCommon",
+        propertyName: "discriminatedUnionMemberCommon",
         propertySchema:
-          DiscriminatedUnionMember1.schema.properties.unionMemberCommon,
+          DiscriminatedUnionMember1.schema.properties
+            .discriminatedUnionMemberCommon,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15485,10 +15552,12 @@ export namespace DiscriminatedUnionMember2 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      unionMember2Distinct: Either.of<Error, string>(
-        $json["unionMember2Distinct"],
+      discriminatedUnionMember2Distinct: Either.of<Error, string>(
+        $json["discriminatedUnionMember2Distinct"],
       ),
-      unionMemberCommon: Either.of<Error, string>($json["unionMemberCommon"]),
+      discriminatedUnionMemberCommon: Either.of<Error, string>(
+        $json["discriminatedUnionMemberCommon"],
+      ),
     }).chain(DiscriminatedUnionMember2.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -15513,7 +15582,7 @@ export namespace DiscriminatedUnionMember2 {
               DiscriminatedUnionMember2.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
-        unionMember2Distinct: $shaclPropertyFromRdf<
+        discriminatedUnionMember2Distinct: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
@@ -15521,19 +15590,22 @@ export namespace DiscriminatedUnionMember2 {
           focusResource: resource,
           ignoreRdfType: true,
           propertySchema:
-            DiscriminatedUnionMember2.schema.properties.unionMember2Distinct,
+            DiscriminatedUnionMember2.schema.properties
+              .discriminatedUnionMember2Distinct,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         }),
-        unionMemberCommon: $shaclPropertyFromRdf<string, $StringSchema<string>>(
-          {
-            ...options,
-            focusResource: resource,
-            ignoreRdfType: true,
-            propertySchema:
-              DiscriminatedUnionMember1.schema.properties.unionMemberCommon,
-            typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
-          },
-        ),
+        discriminatedUnionMemberCommon: $shaclPropertyFromRdf<
+          string,
+          $StringSchema<string>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DiscriminatedUnionMember1.schema.properties
+              .discriminatedUnionMemberCommon,
+          typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+        }),
       }).chain((properties) => DiscriminatedUnionMember2.create(properties)),
     );
 
@@ -15566,8 +15638,14 @@ export namespace DiscriminatedUnionMember2 {
     if (_discriminatedUnionMember2.$type) {
       hasher.update(_discriminatedUnionMember2.$type);
     }
-    $hashString(hasher, _discriminatedUnionMember2.unionMember2Distinct);
-    $hashString(hasher, _discriminatedUnionMember2.unionMemberCommon);
+    $hashString(
+      hasher,
+      _discriminatedUnionMember2.discriminatedUnionMember2Distinct,
+    );
+    $hashString(
+      hasher,
+      _discriminatedUnionMember2.discriminatedUnionMemberCommon,
+    );
     return hasher;
   };
 
@@ -15587,8 +15665,8 @@ export namespace DiscriminatedUnionMember2 {
   export type Json = {
     readonly "@id": string;
     readonly "@type": "DiscriminatedUnionMember2";
-    readonly unionMember2Distinct: string;
-    readonly unionMemberCommon: string;
+    readonly discriminatedUnionMember2Distinct: string;
+    readonly discriminatedUnionMemberCommon: string;
   };
 
   export namespace Json {
@@ -15604,8 +15682,8 @@ export namespace DiscriminatedUnionMember2 {
       return z.object({
         "@id": z.string().min(1),
         "@type": z.literal("DiscriminatedUnionMember2"),
-        unionMember2Distinct: z.string(),
-        unionMemberCommon: z.string(),
+        discriminatedUnionMember2Distinct: z.string(),
+        discriminatedUnionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -15630,11 +15708,11 @@ export namespace DiscriminatedUnionMember2 {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/unionMember2Distinct`,
+            scope: `${scopePrefix}/properties/discriminatedUnionMember2Distinct`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/unionMemberCommon`,
+            scope: `${scopePrefix}/properties/discriminatedUnionMemberCommon`,
             type: "Control",
           },
         ],
@@ -15653,14 +15731,18 @@ export namespace DiscriminatedUnionMember2 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      unionMember2Distinct: {
+      discriminatedUnionMember2Distinct: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/unionMember2Distinct"),
+        path: dataFactory.namedNode(
+          "http://example.com/discriminatedUnionMember2Distinct",
+        ),
         type: { kind: "String" as const },
       },
-      unionMemberCommon: {
+      discriminatedUnionMemberCommon: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/unionMemberCommon"),
+        path: dataFactory.namedNode(
+          "http://example.com/discriminatedUnionMemberCommon",
+        ),
         type: { kind: "String" as const },
       },
     },
@@ -15741,8 +15823,10 @@ export namespace DiscriminatedUnionMember2 {
             ? `_:${_discriminatedUnionMember2.$identifier().value}`
             : _discriminatedUnionMember2.$identifier().value,
         "@type": _discriminatedUnionMember2.$type,
-        unionMember2Distinct: _discriminatedUnionMember2.unionMember2Distinct,
-        unionMemberCommon: _discriminatedUnionMember2.unionMemberCommon,
+        discriminatedUnionMember2Distinct:
+          _discriminatedUnionMember2.discriminatedUnionMember2Distinct,
+        discriminatedUnionMemberCommon:
+          _discriminatedUnionMember2.discriminatedUnionMemberCommon,
       } satisfies DiscriminatedUnionMember2.Json),
     );
 
@@ -15758,13 +15842,23 @@ export namespace DiscriminatedUnionMember2 {
       );
     }
     parameters.resource.add(
-      DiscriminatedUnionMember2.schema.properties.unionMember2Distinct.path,
-      [$literalFactory.string(parameters.object.unionMember2Distinct)],
+      DiscriminatedUnionMember2.schema.properties
+        .discriminatedUnionMember2Distinct.path,
+      [
+        $literalFactory.string(
+          parameters.object.discriminatedUnionMember2Distinct,
+        ),
+      ],
       parameters.graph,
     );
     parameters.resource.add(
-      DiscriminatedUnionMember1.schema.properties.unionMemberCommon.path,
-      [$literalFactory.string(parameters.object.unionMemberCommon)],
+      DiscriminatedUnionMember1.schema.properties.discriminatedUnionMemberCommon
+        .path,
+      [
+        $literalFactory.string(
+          parameters.object.discriminatedUnionMemberCommon,
+        ),
+      ],
       parameters.graph,
     );
     return parameters.resource;
@@ -51591,9 +51685,11 @@ export namespace DiscriminatedUnion {
       },
     },
     properties: {
-      unionMemberCommon: {
+      discriminatedUnionMemberCommon: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/unionMemberCommon"),
+        path: dataFactory.namedNode(
+          "http://example.com/discriminatedUnionMemberCommon",
+        ),
         type: { kind: "String" as const },
       },
     },

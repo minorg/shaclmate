@@ -1833,9 +1833,9 @@
       ],
       "properties": [
         {
-          "name": "unionMemberCommon",
+          "name": "discriminatedUnionMemberCommon",
           "order": 0,
-          "path": "PredicatePath(http://example.com/unionMemberCommon)",
+          "path": "PredicatePath(http://example.com/discriminatedUnionMemberCommon)",
           "shapeIdentifier": {
             "prefix": "",
             "reference": "DiscriminatedUnionMember-common",
@@ -1862,9 +1862,9 @@
           }
         },
         {
-          "name": "unionMember1Distinct",
+          "name": "discriminatedUnionMember1Distinct",
           "order": 0,
-          "path": "PredicatePath(http://example.com/unionMember1Distinct)",
+          "path": "PredicatePath(http://example.com/discriminatedUnionMember1Distinct)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_74"
@@ -1926,9 +1926,9 @@
       ],
       "properties": [
         {
-          "name": "unionMemberCommon",
+          "name": "discriminatedUnionMemberCommon",
           "order": 0,
-          "path": "PredicatePath(http://example.com/unionMemberCommon)",
+          "path": "PredicatePath(http://example.com/discriminatedUnionMemberCommon)",
           "shapeIdentifier": {
             "prefix": "",
             "reference": "DiscriminatedUnionMember-common",
@@ -1955,9 +1955,9 @@
           }
         },
         {
-          "name": "unionMember2Distinct",
+          "name": "discriminatedUnionMember2Distinct",
           "order": 0,
-          "path": "PredicatePath(http://example.com/unionMember2Distinct)",
+          "path": "PredicatePath(http://example.com/discriminatedUnionMember2Distinct)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_75"
