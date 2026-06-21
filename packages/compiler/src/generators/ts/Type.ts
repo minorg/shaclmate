@@ -5,6 +5,7 @@ import type { BooleanType } from "./BooleanType.js";
 import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
 import type { DefaultValueType } from "./DefaultValueType.js";
+import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
@@ -21,7 +22,6 @@ import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
-import type { UnionType } from "./UnionType.js";
 
 export type Type =
   | BigDecimalType
@@ -47,4 +47,4 @@ export type Type =
   | SetType<SetType.ItemType>
   | StringType
   | TermType
-  | UnionType<Type>;
+  | DiscriminatedUnionType<Type>;

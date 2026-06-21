@@ -19,6 +19,7 @@ import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { DateType } from "./DateType.js";
 import { DefaultValueType } from "./DefaultValueType.js";
+import { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IntType } from "./IntType.js";
@@ -38,7 +39,6 @@ import { StringType } from "./StringType.js";
 import { TermType } from "./TermType.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import type { Type } from "./Type.js";
-import { UnionType } from "./UnionType.js";
 
 export class TypeFactory {
   private readonly configuration: TsGenerator.Configuration;
@@ -240,12 +240,14 @@ export class TypeFactory {
     }
   }
 
-  createUnionType(astType: ast.UnionType): ObjectUnionType | UnionType<Type> {
+  createUnionType(
+    astType: ast.DiscriminatedUnionType,
+  ): ObjectUnionType | DiscriminatedUnionType<Type> {
     if (astType.isStructUnionType()) {
       return this.createObjectUnionType(astType);
     }
 
-    return new UnionType<Type>({
+    return new DiscriminatedUnionType<Type>({
       comment: astType.comment,
       configuration: this.configuration,
       identifierType: Maybe.empty(),

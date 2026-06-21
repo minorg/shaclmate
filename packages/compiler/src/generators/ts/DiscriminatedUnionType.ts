@@ -16,7 +16,9 @@ import {
   literalOf,
 } from "./ts-poet-wrapper.js";
 
-export class UnionType<MemberTypeT extends Type> extends AbstractType {
+export class DiscriminatedUnionType<
+  MemberTypeT extends Type,
+> extends AbstractType {
   private readonly discriminant: Discriminant;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();

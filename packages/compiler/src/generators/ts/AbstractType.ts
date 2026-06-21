@@ -274,7 +274,7 @@ export abstract class AbstractType {
    *
    * This method is called in two contexts:
    * "property": from a ShaclProperty, while generating the z.object properties of an ObjectType
-   * "type": from another Type e.g., an OptionType or UnionType
+   * "type": from another Type e.g., an OptionType or DiscriminatedUnionType
    *
    * z.lazy() should only be returned for "property".
    */

@@ -8,6 +8,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
 import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
+import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
@@ -21,7 +22,6 @@ import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
-import type { UnionType } from "./UnionType.js";
 
 /**
  * Abstract base class for types that contain other types e.g., ListType, OptionType, SetType.
@@ -112,7 +112,7 @@ export namespace AbstractContainerType {
     | ObjectType
     | StringType
     | TermType
-    | UnionType<Type>;
+    | DiscriminatedUnionType<Type>;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {

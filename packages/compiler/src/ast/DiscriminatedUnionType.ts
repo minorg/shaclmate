@@ -5,9 +5,13 @@ import type { StructUnionType } from "./StructUnionType.js";
 /**
  * A disjunction/union of types, corresponding to an sh:xone.
  */
-export class UnionType<
-  MemberTypeT extends UnionType.MemberType = UnionType.MemberType,
-> extends AbstractCompoundType<UnionType.Member<MemberTypeT>, MemberTypeT> {
+export class DiscriminatedUnionType<
+  MemberTypeT extends
+    DiscriminatedUnionType.MemberType = DiscriminatedUnionType.MemberType,
+> extends AbstractCompoundType<
+  DiscriminatedUnionType.Member<MemberTypeT>,
+  MemberTypeT
+> {
   override readonly kind = "Union";
 
   isStructUnionType(): this is StructUnionType {
@@ -34,8 +38,8 @@ export class UnionType<
   }
 }
 
-export namespace UnionType {
-  export interface Member<TypeT extends UnionType.MemberType>
+export namespace DiscriminatedUnionType {
+  export interface Member<TypeT extends DiscriminatedUnionType.MemberType>
     extends AbstractCompoundType.Member<TypeT> {
     readonly discriminantValue: Maybe<number | string>;
   }

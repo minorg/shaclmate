@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
@@ -12,7 +13,6 @@ import type { LiteralType } from "./LiteralType.js";
 import type { StructType } from "./StructType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
-import type { UnionType } from "./UnionType.js";
 
 /**
  * A compound of types, such as an intersection or union.
@@ -95,7 +95,7 @@ export namespace AbstractCompoundType {
     | LiteralType
     | StructType
     | TermType
-    | UnionType;
+    | DiscriminatedUnionType;
 
   export function isMemberType(type: Type): type is MemberType {
     switch (type.kind) {

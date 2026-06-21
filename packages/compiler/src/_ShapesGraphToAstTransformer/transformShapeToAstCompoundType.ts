@@ -49,17 +49,18 @@ export function transformShapeToAstCompoundType(
       invariant(memberShapes.length > 0);
 
       const memberDiscriminantValues = new Set<number | string>();
-      const compoundType: ast.IntersectionType | ast.UnionType = new (
-        compoundTypeKind === "Intersection"
-          ? ast.IntersectionType
-          : ast.UnionType
-      )({
-        comment: shape.comment,
-        label: shape.label,
-        name: shapeAstTypeName(shape),
-        shapeIdentifier: shape.$identifier(),
-        synthetic: false,
-      });
+      const compoundType: ast.IntersectionType | ast.DiscriminatedUnionType =
+        new (
+          compoundTypeKind === "Intersection"
+            ? ast.IntersectionType
+            : ast.DiscriminatedUnionType
+        )({
+          comment: shape.comment,
+          label: shape.label,
+          name: shapeAstTypeName(shape),
+          shapeIdentifier: shape.$identifier(),
+          synthetic: false,
+        });
 
       if (memberShapes.length === 1) {
         return transformShapeToAstType
@@ -81,7 +82,10 @@ export function transformShapeToAstCompoundType(
         .chain(
           (
             memberShapeTypes,
-          ): Either<Error, Maybe<ast.IntersectionType | ast.UnionType>> => {
+          ): Either<
+            Error,
+            Maybe<ast.IntersectionType | ast.DiscriminatedUnionType>
+          > => {
             for (let memberI = 0; memberI < memberShapes.length; memberI++) {
               const memberShape = memberShapes[memberI];
               const memberType = memberShapeTypes[memberI];

@@ -1,6 +1,7 @@
 export * from "./Ast.js";
 export * from "./BlankNodeType.js";
 export * from "./DefaultValueType.js";
+export * from "./DiscriminatedUnionType.js";
 export * from "./IdentifierType.js";
 export * from "./IntersectionType.js";
 export * from "./IriType.js";
@@ -17,4 +18,3 @@ export * from "./StructType.js";
 export * from "./StructUnionType.js";
 export * from "./TermType.js";
 export * from "./Type.js";
-export * from "./UnionType.js";
