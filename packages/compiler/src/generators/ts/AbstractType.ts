@@ -3,7 +3,11 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
-
+import type { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
+import type { AbstractType_DiscriminantProperty } from "./_AbstractType/AbstractType_DiscriminantProperty.js";
+import { AbstractType_GraphqlType } from "./_AbstractType/AbstractType_GraphqlType.js";
+import { AbstractType_JsonType } from "./_AbstractType/AbstractType_JsonType.js";
+import { AbstractType_JsType } from "./_AbstractType/AbstractType_JsType.js";
 import type { Reusables } from "./Reusables.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { TsGenerator } from "./TsGenerator.js";
@@ -340,140 +344,15 @@ export abstract class AbstractType {
 }
 
 export namespace AbstractType {
-  export interface ConversionFunction {
-    readonly code: Code;
-    readonly sourceTypes: {
-      readonly expression: Code;
-      readonly jsType: JsType;
-    }[];
-  }
-
-  export interface DiscriminantProperty {
-    readonly jsonName: string;
-    readonly name: string;
-    readonly values: readonly DiscriminantProperty.Value[];
-  }
-
+  export type ConversionFunction = AbstractType_ConversionFunction;
+  export type DiscriminantProperty = AbstractType_DiscriminantProperty;
   export namespace DiscriminantProperty {
-    export type Value = number | string;
+    export type Value = AbstractType_DiscriminantProperty.Value;
   }
-
-  export class GraphqlType {
-    /**
-     * Is the type nullable in GraphQL?
-     */
-    readonly nullable: boolean;
-
-    /**
-     * The expression of the type when it's nullable -- so it should never include "new graphql.GraphQLNonNull(...)" around it.
-     */
-    readonly nullableExpression: Code;
-
-    private readonly reusables: Reusables;
-
-    constructor(
-      nullableExpression: Code,
-      reusables: Reusables,
-      options?: { nullable: boolean },
-    ) {
-      this.nullable = !!options?.nullable;
-      this.nullableExpression = nullableExpression;
-      this.reusables = reusables;
-    }
-
-    @Memoize()
-    get expression(): Code {
-      return this.nullable
-        ? this.nullableExpression
-        : code`new ${this.reusables.imports.GraphQLNonNull}(${this.nullableExpression})`;
-    }
-  }
-
-  export type JsType =
-    | {
-        typeof: "bigint";
-      }
-    | {
-        typeof: "boolean";
-      }
-    | {
-        typeof: "function";
-      }
-    | {
-        typeof: "number";
-      }
-    | {
-        instanceof: "Array";
-        typeof: "object";
-      }
-    | {
-        className: Code;
-        instanceof: "class";
-        typeof: "object";
-      }
-    | {
-        instanceof: "Date";
-        typeof: "object";
-      }
-    | {
-        instanceof: "Maybe";
-        typeof: "object";
-      }
-    | {
-        instanceof: "Object";
-        typeof: "object";
-      }
-    | {
-        typeof: "string";
-      }
-    | {
-        typeof: "undefined";
-      };
-
-  export namespace JsType {
-    export function equals(left: JsType, right: JsType): boolean {
-      if (left.typeof !== right.typeof) {
-        return false;
-      }
-
-      if (
-        left.typeof === "object" &&
-        right.typeof === "object" &&
-        left.instanceof !== right.instanceof
-      ) {
-        return false;
-      }
-
-      return true;
-    }
-  }
-
-  export class JsonType {
-    /**
-     * Is the type optional in JSON? Equivalent to ? in TypeScript or | undefined.
-     */
-    readonly optional: boolean;
-
-    /**
-     * The expression of the type when it's required i.e. -- so it should never include "| undefined".
-     */
-    readonly requiredExpression: Code;
-
-    constructor(
-      requiredExpression: Code,
-      parameters?: {
-        optional: boolean;
-      },
-    ) {
-      this.optional = !!parameters?.optional;
-      this.requiredExpression = requiredExpression;
-    }
-
-    @Memoize()
-    get expression(): Code {
-      return this.optional
-        ? code`(${this.requiredExpression}) | undefined`
-        : this.requiredExpression;
-    }
-  }
+  export const GraphqlType = AbstractType_GraphqlType;
+  export type GraphqlType = AbstractType_GraphqlType;
+  export type JsType = AbstractType_JsType;
+  export const JsType = AbstractType_JsType;
+  export const JsonType = AbstractType_JsonType;
+  export type JsonType = AbstractType_JsonType;
 }
