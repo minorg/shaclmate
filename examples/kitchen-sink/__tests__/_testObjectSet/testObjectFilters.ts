@@ -740,7 +740,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           kitchenSink.UnionDiscriminantsStruct.createUnsafe({
             $identifier: identifiers[0],
             requiredNodeOrNodeOrString: {
-              type: "DiscriminatedUnionMember1",
+              $type: "DiscriminatedUnionMember1",
               value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/discriminatedUnionMember1",
@@ -769,7 +769,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           kitchenSink.UnionDiscriminantsStruct.createUnsafe({
             $identifier: identifiers[1],
             requiredNodeOrNodeOrString: {
-              type: "string",
+              $type: "string",
               value: "http://example.com/test1",
             },
             requiredNodeOrLiteral: dataFactory.literal(
