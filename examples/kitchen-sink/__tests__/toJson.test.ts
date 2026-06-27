@@ -19,7 +19,7 @@ describe("toJson", () => {
       path.join(
         snapshotsDirectoryPath,
         "toJson",
-        "unionDiscriminantsStruct1.json",
+        "unionDiscriminantsStruct1.snap.json",
       ),
     );
 
@@ -31,14 +31,14 @@ describe("toJson", () => {
       path.join(
         snapshotsDirectoryPath,
         "toJson",
-        "unionDiscriminantsStruct2.json",
+        "unionDiscriminantsStruct2.snap.json",
       ),
     );
   });
 
   it("toJSON", ({ expect }) => {
     expect(JSON.stringify(harnesses.termsStruct.instance)).toMatchFileSnapshot(
-      path.join(snapshotsDirectoryPath, "toJson", "toJSON.json"),
+      path.join(snapshotsDirectoryPath, "toJson", "toJSON.snap.json"),
     );
   });
 
