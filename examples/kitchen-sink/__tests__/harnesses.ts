@@ -87,9 +87,9 @@ export const harnesses = {
   datatypeUnionsStruct1: new Harness(
     kitchenSink.DatatypeDiscriminatedUnionsStruct.createUnsafe({
       $identifier,
-      dateOrDateTime: { type: "date", value: new Date("2025-12-08") },
+      dateOrDateTime: { $type: "date", value: new Date("2025-12-08") },
       dateTimeOrDate: {
-        type: "dateTime",
+        $type: "dateTime",
         value: new Date("2025-12-08T21:17:27+00:00"),
       },
       dateOrString: new Date("2025-12-08"),
@@ -107,10 +107,10 @@ export const harnesses = {
     kitchenSink.DatatypeDiscriminatedUnionsStruct.createUnsafe({
       $identifier,
       dateOrDateTime: {
-        type: "dateTime",
+        $type: "dateTime",
         value: new Date("2025-12-08T21:17:27+00:00"),
       },
-      dateTimeOrDate: { type: "date", value: new Date("2025-12-08") },
+      dateTimeOrDate: { $type: "date", value: new Date("2025-12-08") },
       dateOrString: "2025-12-08", // Shouldn't parse as a Date
       decimalOrString: "test",
       // integerOrString: "test",
@@ -425,7 +425,10 @@ export const harnesses = {
     kitchenSink.NamedDiscriminatedUnionsStruct.createUnsafe({
       $identifier,
       namedDiscriminatedUnion1: "test",
-      namedDiscriminatedUnion2: { type: "date", value: new Date("2025-12-08") },
+      namedDiscriminatedUnion2: {
+        $type: "date",
+        value: new Date("2025-12-08"),
+      },
     }),
     kitchenSink.NamedDiscriminatedUnionsStruct,
   ),
@@ -434,7 +437,7 @@ export const harnesses = {
       $identifier,
       namedDiscriminatedUnion1: dataFactory.namedNode("http://example.com"),
       namedDiscriminatedUnion2: {
-        type: "dateTime",
+        $type: "dateTime",
         value: new Date("2025-12-08T21:17:27+00:00"),
       },
     }),
@@ -618,7 +621,7 @@ export const harnesses = {
     kitchenSink.UnionDiscriminantsStruct.createUnsafe({
       $identifier,
       optionalNodeOrNodeOrString: {
-        type: "DiscriminatedUnionMember1",
+        $type: "DiscriminatedUnionMember1",
         value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/discriminatedUnionMember1a",
@@ -630,7 +633,7 @@ export const harnesses = {
       optionalIriOrLiteral: dataFactory.namedNode("http://example.com"),
       optionalIriOrString: dataFactory.namedNode("http://example.com"),
       requiredNodeOrNodeOrString: {
-        type: "DiscriminatedUnionMember1",
+        $type: "DiscriminatedUnionMember1",
         value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/discriminatedUnionMember1b",
@@ -659,7 +662,7 @@ export const harnesses = {
     kitchenSink.UnionDiscriminantsStruct.createUnsafe({
       $identifier,
       optionalNodeOrNodeOrString: {
-        type: "DiscriminatedUnionMember2",
+        $type: "DiscriminatedUnionMember2",
         value: kitchenSink.DiscriminatedUnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/discriminatedUnionMember2a",
@@ -672,7 +675,7 @@ export const harnesses = {
       optionalIriOrLiteral: dataFactory.literal("test"),
       optionalIriOrString: "test",
       requiredNodeOrNodeOrString: {
-        type: "string",
+        $type: "string",
         value: "test",
       },
       requiredNodeOrLiteral: dataFactory.literal("test"),
@@ -681,11 +684,11 @@ export const harnesses = {
       setNodeOrNodeOrString: [
         // Opposite order
         {
-          type: "string",
+          $type: "string",
           value: "test",
         },
         {
-          type: "DiscriminatedUnionMember2",
+          $type: "DiscriminatedUnionMember2",
           value: kitchenSink.DiscriminatedUnionMember2.createUnsafe({
             $identifier: dataFactory.namedNode(
               "http://example.com/discriminatedUnionMember2b",
@@ -695,7 +698,7 @@ export const harnesses = {
           }),
         },
         {
-          type: "DiscriminatedUnionMember1",
+          $type: "DiscriminatedUnionMember1",
           value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
             $identifier: dataFactory.namedNode(
               "http://example.com/discriminatedUnionMember1b",

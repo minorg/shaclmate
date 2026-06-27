@@ -123,6 +123,22 @@ run(
                 },
               }),
               inputPaths,
+              objectDiscriminantPropertyJsonName: option({
+                defaultValue: () =>
+                  TsGenerator.Configuration.default_.objectDiscriminantProperty
+                    .jsonName,
+                description:
+                  "name of the property to use to discriminate object types (in JSON)",
+                long: "object-discriminant-property-json-name",
+              }),
+              objectDiscriminantPropertyName: option({
+                defaultValue: () =>
+                  TsGenerator.Configuration.default_.objectDiscriminantProperty
+                    .name,
+                description:
+                  "name of the property to use to discriminate object types",
+                long: "object-discriminant-property-name",
+              }),
               outputFilePath,
               syntheticNamePrefix: option({
                 defaultValue: () =>
@@ -134,6 +150,8 @@ run(
             handler: async ({
               features,
               inputPaths,
+              objectDiscriminantPropertyJsonName,
+              objectDiscriminantPropertyName,
               outputFilePath,
               syntheticNamePrefix,
             }) => {
@@ -142,6 +160,10 @@ run(
                   generator: new TsGenerator({
                     configuration: {
                       features: new Set(features),
+                      objectDiscriminantProperty: {
+                        jsonName: objectDiscriminantPropertyJsonName,
+                        name: objectDiscriminantPropertyName,
+                      },
                       syntheticNamePrefix,
                     },
                     logger,

@@ -1,6 +1,6 @@
 {
+  "$type": "UnionDiscriminantsStruct",
   "@id": "http://example.com/instance",
-  "@type": "UnionDiscriminantsStruct",
   "optionalIriOrLiteral": {
     "@id": "http://example.com",
     "termType": "NamedNode",
@@ -9,10 +9,10 @@
     "@id": "http://example.com",
   },
   "optionalNodeOrNodeOrString": {
-    "type": "DiscriminatedUnionMember1",
+    "$type": "DiscriminatedUnionMember1",
     "value": {
+      "$type": "DiscriminatedUnionMember1",
       "@id": "http://example.com/discriminatedUnionMember1a",
-      "@type": "DiscriminatedUnionMember1",
       "discriminatedUnionMember1Distinct": "test",
       "discriminatedUnionMemberCommon": "test",
     },
@@ -27,17 +27,17 @@
   "requiredNodeOrLiteral": {
     "termType": "DiscriminatedUnionMember1",
     "value": {
+      "$type": "DiscriminatedUnionMember1",
       "@id": "http://example.com/discriminatedUnionMember1c",
-      "@type": "DiscriminatedUnionMember1",
       "discriminatedUnionMember1Distinct": "test",
       "discriminatedUnionMemberCommon": "test",
     },
   },
   "requiredNodeOrNodeOrString": {
-    "type": "DiscriminatedUnionMember1",
+    "$type": "DiscriminatedUnionMember1",
     "value": {
+      "$type": "DiscriminatedUnionMember1",
       "@id": "http://example.com/discriminatedUnionMember1b",
-      "@type": "DiscriminatedUnionMember1",
       "discriminatedUnionMember1Distinct": "test",
       "discriminatedUnionMemberCommon": "test",
     },

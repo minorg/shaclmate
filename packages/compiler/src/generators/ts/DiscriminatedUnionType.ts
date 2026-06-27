@@ -50,7 +50,7 @@ export class DiscriminatedUnionType<
     this.identifierType = identifierType;
     invariant(members.length >= 2);
     this.recursive = recursive;
-    this.discriminant = Discriminant.infer(members);
+    this.discriminant = this.inferDiscriminant(members);
     this.synthetic = synthetic;
 
     this.lazyMembers = () =>
@@ -943,64 +943,7 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
     return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(this.toStringFunctionExpression)}(${variables.value})`;
   }
 
-  private readonly lazyMembers: () => readonly DiscriminatedUnionType.Member<MemberTypeT>[];
-}
-
-type Discriminant =
-  | ExtrinsicDiscriminant
-  | HybridDiscriminant
-  | IntrinsicDiscriminant
-  | TypeofDiscriminant;
-
-type ExtrinsicDiscriminant = {
-  readonly jsonName: string;
-  readonly kind: "Extrinsic";
-  readonly memberValues: readonly AbstractType.DiscriminantProperty.Value[];
-  readonly name: string;
-};
-
-type HybridDiscriminant = {
-  readonly jsonName: string;
-  readonly kind: "Hybrid";
-  readonly memberValues: readonly {
-    readonly kind: "Extrinsic" | "Intrinsic";
-    readonly values: readonly AbstractType.DiscriminantProperty.Value[];
-  }[];
-  readonly name: string;
-};
-
-type IntrinsicDiscriminant = {
-  readonly jsonName: string;
-  readonly kind: "Intrinsic";
-  readonly memberValues: readonly AbstractType.DiscriminantProperty.Value[];
-  readonly name: string;
-};
-
-type TypeofDiscriminant = {
-  readonly kind: "Typeof";
-  readonly memberValues: readonly Typeof[];
-};
-
-function termTypes(
-  type: Type,
-): ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> {
-  switch (type.kind) {
-    case "BlankNode":
-    case "Iri":
-    case "Identifier":
-    case "Literal":
-    case "Term":
-      return type.termTypes;
-    default:
-      return emptyTermTypesSet;
-  }
-}
-
-const emptyTermTypesSet: ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> =
-  new Set();
-
-export namespace Discriminant {
-  export function infer(
+  private inferDiscriminant(
     members: readonly {
       readonly discriminantValue: Maybe<number | string>;
       readonly type: Type;
@@ -1009,12 +952,12 @@ export namespace Discriminant {
     // extrinsic with user-specified values
     if (members.some((member) => member.discriminantValue.isJust())) {
       return {
-        jsonName: "type",
+        jsonName: this.configuration.objectDiscriminantProperty.jsonName,
         kind: "Extrinsic",
         memberValues: members.map((member, memberI) =>
           member.discriminantValue.orDefault(memberI),
         ),
-        name: "type",
+        name: this.configuration.objectDiscriminantProperty.name,
       };
     }
 
@@ -1022,7 +965,7 @@ export namespace Discriminant {
 
     // intrinsic
     {
-      let inlineDiscriminantProperty:
+      let intrinsicDiscriminantProperty:
         | AbstractType.DiscriminantProperty
         | undefined;
       let memberValues: AbstractType.DiscriminantProperty.Value[] = [];
@@ -1030,16 +973,16 @@ export namespace Discriminant {
         const memberTypeDiscriminantProperty =
           memberType.discriminantProperty.extract();
         if (!memberTypeDiscriminantProperty) {
-          inlineDiscriminantProperty = undefined;
+          intrinsicDiscriminantProperty = undefined;
           break;
         }
-        if (!inlineDiscriminantProperty) {
-          inlineDiscriminantProperty = memberTypeDiscriminantProperty;
+        if (!intrinsicDiscriminantProperty) {
+          intrinsicDiscriminantProperty = memberTypeDiscriminantProperty;
         } else if (
           memberTypeDiscriminantProperty.name !==
-          inlineDiscriminantProperty.name
+          intrinsicDiscriminantProperty.name
         ) {
-          inlineDiscriminantProperty = undefined;
+          intrinsicDiscriminantProperty = undefined;
           break;
         }
         memberValues = memberValues.concat(
@@ -1047,12 +990,12 @@ export namespace Discriminant {
         );
       }
 
-      if (inlineDiscriminantProperty) {
+      if (intrinsicDiscriminantProperty) {
         return {
-          jsonName: inlineDiscriminantProperty.jsonName,
+          jsonName: intrinsicDiscriminantProperty.jsonName,
           kind: "Intrinsic",
           memberValues,
-          name: inlineDiscriminantProperty.name,
+          name: intrinsicDiscriminantProperty.name,
         };
       }
     }
@@ -1136,14 +1079,69 @@ export namespace Discriminant {
       }
       invariant(memberValues.length === memberTypes.length);
       return {
-        jsonName: "type",
+        jsonName: this.configuration.objectDiscriminantProperty.jsonName,
         kind: "Extrinsic",
-        name: "type",
         memberValues,
+        name: this.configuration.objectDiscriminantProperty.name,
       };
     }
   }
+
+  private readonly lazyMembers: () => readonly DiscriminatedUnionType.Member<MemberTypeT>[];
 }
+
+type Discriminant =
+  | ExtrinsicDiscriminant
+  | HybridDiscriminant
+  | IntrinsicDiscriminant
+  | TypeofDiscriminant;
+
+type ExtrinsicDiscriminant = {
+  readonly jsonName: string;
+  readonly kind: "Extrinsic";
+  readonly memberValues: readonly AbstractType.DiscriminantProperty.Value[];
+  readonly name: string;
+};
+
+type HybridDiscriminant = {
+  readonly jsonName: string;
+  readonly kind: "Hybrid";
+  readonly memberValues: readonly {
+    readonly kind: "Extrinsic" | "Intrinsic";
+    readonly values: readonly AbstractType.DiscriminantProperty.Value[];
+  }[];
+  readonly name: string;
+};
+
+type IntrinsicDiscriminant = {
+  readonly jsonName: string;
+  readonly kind: "Intrinsic";
+  readonly memberValues: readonly AbstractType.DiscriminantProperty.Value[];
+  readonly name: string;
+};
+
+type TypeofDiscriminant = {
+  readonly kind: "Typeof";
+  readonly memberValues: readonly Typeof[];
+};
+
+function termTypes(
+  type: Type,
+): ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> {
+  switch (type.kind) {
+    case "BlankNode":
+    case "Iri":
+    case "Identifier":
+    case "Literal":
+    case "Term":
+      return type.termTypes;
+    default:
+      return emptyTermTypesSet;
+  }
+}
+
+const emptyTermTypesSet: ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> =
+  new Set();
 
 export namespace DiscriminatedUnionType {
   export interface Member<TypeT extends Type> {
