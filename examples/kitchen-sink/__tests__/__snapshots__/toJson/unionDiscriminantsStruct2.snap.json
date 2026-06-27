@@ -1,6 +1,6 @@
 {
+  "$type": "UnionDiscriminantsStruct",
   "@id": "http://example.com/instance",
-  "@type": "UnionDiscriminantsStruct",
   "optionalIriOrLiteral": {
     "@value": "test",
     "termType": "Literal",
@@ -11,10 +11,10 @@
     "termType": "Literal",
   },
   "optionalNodeOrNodeOrString": {
-    "type": "DiscriminatedUnionMember2",
+    "$type": "DiscriminatedUnionMember2",
     "value": {
+      "$type": "DiscriminatedUnionMember2",
       "@id": "http://example.com/discriminatedUnionMember2a",
-      "@type": "DiscriminatedUnionMember2",
       "discriminatedUnionMember2Distinct": "test",
       "discriminatedUnionMemberCommon": "test",
     },
@@ -29,7 +29,7 @@
     "termType": "Literal",
   },
   "requiredNodeOrNodeOrString": {
-    "type": "string",
+    "$type": "string",
     "value": "test",
   },
   "setIriOrLiteral": [
@@ -56,8 +56,8 @@
     {
       "termType": "DiscriminatedUnionMember1",
       "value": {
+        "$type": "DiscriminatedUnionMember1",
         "@id": "http://example.com/discriminatedUnionMember1c",
-        "@type": "DiscriminatedUnionMember1",
         "discriminatedUnionMember1Distinct": "test",
         "discriminatedUnionMemberCommon": "test",
       },
@@ -65,23 +65,23 @@
   ],
   "setNodeOrNodeOrString": [
     {
-      "type": "string",
+      "$type": "string",
       "value": "test",
     },
     {
-      "type": "DiscriminatedUnionMember2",
+      "$type": "DiscriminatedUnionMember2",
       "value": {
+        "$type": "DiscriminatedUnionMember2",
         "@id": "http://example.com/discriminatedUnionMember2b",
-        "@type": "DiscriminatedUnionMember2",
         "discriminatedUnionMember2Distinct": "test",
         "discriminatedUnionMemberCommon": "test",
       },
     },
     {
-      "type": "DiscriminatedUnionMember1",
+      "$type": "DiscriminatedUnionMember1",
       "value": {
+        "$type": "DiscriminatedUnionMember1",
         "@id": "http://example.com/discriminatedUnionMember1b",
-        "@type": "DiscriminatedUnionMember1",
         "discriminatedUnionMember1Distinct": "test",
         "discriminatedUnionMemberCommon": "test",
       },
