@@ -593,7 +593,7 @@ export namespace FormStruct {
 
   export type Json = {
     readonly "@id": string;
-    readonly "@type": "FormStruct";
+    readonly $type: "FormStruct";
     readonly emptyStringSetProperty?: readonly string[];
     readonly nestedStructProperty: {
       readonly "@id": string;
@@ -617,7 +617,7 @@ export namespace FormStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        "@type": z.literal("FormStruct"),
+        $type: z.literal("FormStruct"),
         emptyStringSetProperty: z
           .string()
           .array()
@@ -663,11 +663,11 @@ export namespace FormStruct {
             rule: {
               condition: {
                 schema: { const: "FormStruct" as const },
-                scope: `${scopePrefix}/properties/@type`,
+                scope: `${scopePrefix}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/@type`,
+            scope: `${scopePrefix}/properties/$type`,
             type: "Control",
           },
           {
@@ -799,7 +799,7 @@ export namespace FormStruct {
           _formStruct.$identifier().termType === "BlankNode"
             ? `_:${_formStruct.$identifier().value}`
             : _formStruct.$identifier().value,
-        "@type": _formStruct.$type,
+        $type: _formStruct.$type,
         emptyStringSetProperty: _formStruct.emptyStringSetProperty.map(
           (item) => item,
         ),
