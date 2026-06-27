@@ -17,6 +17,7 @@
   "include": [
     "*.ts",
     "apps/cli/src/**/*.ts*",
+    "apps/cli/__tests__/**/*.ts",
     "examples/api/src/**/*.ts*",
     "examples/forms/src/**/*.ts*",
     "examples/graphql/src/**/*.ts*",
