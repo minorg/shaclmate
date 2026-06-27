@@ -89,7 +89,9 @@ export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectT
             ),
           }
         : {}),
-      ...ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration,
+      ...ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration.call(
+        this,
+      ),
     };
   }
 }
