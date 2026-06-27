@@ -22,6 +22,7 @@
     "purify-ts": "~2.1.4",
     "reserved-identifiers": "~1.0.0",
     "ts-invariant": "~0.10.3",
+    "ts-log": "~3.0.2",
     "ts-poet": "~6.12.0",
     "typescript-memoize": "~1.1.1"
   },
