@@ -101,6 +101,26 @@ describe("TsGenerator", () => {
     }, 60000);
   }
 
+  describe("objectDiscriminantPropertyName", () => {
+    const shapesGraph =
+      testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
+    const sourceDirectoryPath = undefined;
+
+    for (const objectDiscriminantPropertyName of ["termType"]) {
+      it(objectDiscriminantPropertyName, ({ expect }) => {
+        const source = generate(shapesGraph, {
+          objectDiscriminantPropertyName,
+        });
+        const diagnostics = compileTs(source, sourceDirectoryPath);
+        if (diagnostics.length > 0) {
+          // biome-ignore lint/suspicious/noDebugger: allow in a test
+          debugger;
+        }
+        expect(diagnostics).toHaveLength(0);
+      });
+    }
+  });
+
   describe("TsFeature combinations", () => {
     const shapesGraph =
       testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
@@ -114,19 +134,9 @@ describe("TsGenerator", () => {
       ...TS_FEATURES.map((_, i) => TS_FEATURES.filter((_, j) => i !== j)),
     ] as const) {
       it(tsFeatureCombination.join("+"), () => {
-        const source = new TsGenerator({
-          configuration: {
-            features: new Set(tsFeatureCombination),
-          },
-          logger,
-        }).generate(
-          new ShapesGraphToAstTransformer({
-            logger,
-            shapesGraph,
-          })
-            .transform()
-            .unsafeCoerce(),
-        );
+        const source = generate(shapesGraph, {
+          features: new Set(tsFeatureCombination),
+        });
         const diagnostics = compileTs(source, sourceDirectoryPath);
         if (diagnostics.length > 0) {
           // biome-ignore lint/suspicious/noDebugger: allow in a test

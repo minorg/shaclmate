@@ -314,6 +314,7 @@ export namespace TsGenerator {
   export interface Configuration {
     readonly features: ReadonlySet<TsFeature>;
     readonly finalized: true;
+    readonly objectDiscriminantPropertyName: string;
     readonly syntheticNamePrefix: string;
   }
 
@@ -326,6 +327,8 @@ export namespace TsGenerator {
         "JSON",
         "RDF",
       ]),
+
+      objectDiscriminantPropertyName: "$type",
 
       syntheticNamePrefix: "$",
     };
@@ -430,6 +433,9 @@ export namespace TsGenerator {
       return {
         features: inferredFeatures,
         finalized: true,
+        objectDiscriminantPropertyName:
+          partialConfiguration?.objectDiscriminantPropertyName ??
+          default_.objectDiscriminantPropertyName,
         syntheticNamePrefix:
           partialConfiguration?.syntheticNamePrefix ??
           default_.syntheticNamePrefix!,
