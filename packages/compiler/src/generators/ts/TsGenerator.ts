@@ -332,7 +332,7 @@ export namespace TsGenerator {
       ]),
 
       objectDiscriminantProperty: {
-        jsonName: "type",
+        jsonName: "$type",
         name: "$type",
       },
 
