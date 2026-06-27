@@ -87,7 +87,6 @@ export class TypeFactory {
         new ObjectType.DiscriminantProperty({
           configuration: this.configuration,
           logger: this.logger,
-          name: `${this.configuration.syntheticNamePrefix}type`,
           objectType: { name: astType.name },
           reusables: this.reusables,
           value: name,

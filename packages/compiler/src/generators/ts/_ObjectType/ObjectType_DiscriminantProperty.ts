@@ -15,10 +15,6 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     Maybe.empty();
   override readonly hashFunctionParameter =
     code`readonly ${this.name}?: ${this.type.expression};`;
-  readonly jsonName = "@type";
-  override readonly jsonSignature = Maybe.of(
-    code`readonly "${this.jsonName}": ${this.type.expression}`,
-  );
   override readonly kind = "Discriminant";
   override readonly mutable = false;
   override readonly recursive = false;
@@ -27,19 +23,27 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   readonly value: string;
 
   constructor({
+    configuration,
     value,
     ...superParameters
   }: {
     value: string;
   } & Omit<
     ConstructorParameters<typeof ObjectType_AbstractProperty>[0],
-    "type"
+    "name" | "type"
   >) {
     super({
       ...superParameters,
+      configuration,
+      name: configuration.objectDiscriminantProperty.name,
       type: new ObjectType_DiscriminantProperty.Type(value),
     });
     this.value = value;
+  }
+
+  @Memoize()
+  get jsonName(): string {
+    return this.configuration.objectDiscriminantProperty.jsonName;
   }
 
   @Memoize()
@@ -48,6 +52,11 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
       key: this.jsonName,
       schema: code`${this.reusables.imports.z}.literal(${literalOf(this.value)})`,
     });
+  }
+
+  @Memoize()
+  override get jsonSignature(): Maybe<Code> {
+    return Maybe.of(code`readonly "${this.jsonName}": ${this.type.expression}`);
   }
 
   @Memoize()

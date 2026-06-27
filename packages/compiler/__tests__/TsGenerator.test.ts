@@ -101,7 +101,7 @@ describe("TsGenerator", () => {
     }, 60000);
   }
 
-  describe("objectDiscriminantPropertyName", () => {
+  describe("objectDiscriminantProperty", () => {
     const shapesGraph =
       testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
     const sourceDirectoryPath = undefined;
@@ -109,7 +109,12 @@ describe("TsGenerator", () => {
     for (const objectDiscriminantPropertyName of ["termType"]) {
       it(objectDiscriminantPropertyName, ({ expect }) => {
         const source = generate(shapesGraph, {
-          objectDiscriminantPropertyName,
+          objectDiscriminantProperty: {
+            jsonName:
+              TsGenerator.Configuration.default_.objectDiscriminantProperty
+                .jsonName,
+            name: objectDiscriminantPropertyName,
+          },
         });
         const diagnostics = compileTs(source, sourceDirectoryPath);
         if (diagnostics.length > 0) {
