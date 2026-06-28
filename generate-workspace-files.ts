@@ -406,15 +406,15 @@ const workspaces = {
           default: "./dist/index.js",
           types: "./dist/index.d.ts",
         },
-        JenaValidator: {
+        "./JenaValidator": {
           default: "./dist/JenaValidator.js",
           types: "./dist/JenaValidator.d.ts",
         },
-        PyShaclValidator: {
+        "./PyShaclValidator": {
           default: "./dist/PyShaclValidator.js",
           types: "./dist/PyShaclValidator.d.ts",
         },
-        ZazukoValidator: {
+        "./ZazukoValidator": {
           default: "./dist/ZazukoValidator.js",
           types: "./dist/ZazukoValidator.d.ts",
         },
