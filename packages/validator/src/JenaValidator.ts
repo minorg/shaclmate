@@ -9,7 +9,7 @@ import { ResourceSet } from "@rdfx/resource";
 import { TurtleSerializer } from "@rdfx/serializers";
 import { ValidationReport } from "@shaclmate/shacl-ast";
 import { getStreamAsArray } from "get-stream";
-import { type Either, EitherAsync } from "purify-ts";
+import { type Either, EitherAsync, Maybe } from "purify-ts";
 import tmp from "tmp-promise";
 import { dummyLogger, type Logger } from "ts-log";
 import which from "which";
@@ -35,14 +35,19 @@ export class JenaValidator extends Validator {
   }: {
     logger?: Logger;
     shapesGraph: DatasetCore;
-  }): Promise<Either<Error, JenaValidator>> {
+  }): Promise<Either<Error, Maybe<JenaValidator>>> {
     return EitherAsync(async () => {
-      const jenaShaclFilePath = await which("shacl");
-      return new JenaValidator({
-        jenaShaclFilePath,
-        logger,
-        shapesGraph,
-      });
+      const jenaShaclFilePath = await which("shacl", { nothrow: true });
+      if (jenaShaclFilePath === null) {
+        return Maybe.empty();
+      }
+      return Maybe.of(
+        new JenaValidator({
+          jenaShaclFilePath,
+          logger,
+          shapesGraph,
+        }),
+      );
     });
   }
 

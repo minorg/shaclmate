@@ -1,7 +1,7 @@
 import datasetFactory from "@rdfjs/dataset";
 import type { DatasetCore } from "@rdfjs/types";
 import { RdfFile } from "@rdfx/fs";
-import type { Either } from "purify-ts";
+import type { Either, Maybe } from "purify-ts";
 import { it } from "vitest";
 import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import { shaclShaclDataset } from "../src/shaclShaclDataset.js";
@@ -10,7 +10,7 @@ import type { Validator } from "../src/Validator.js";
 export function testValidator(
   validatorFactory: (
     shapesGraph: DatasetCore,
-  ) => Promise<Either<Error, Validator>>,
+  ) => Promise<Either<Error, Maybe<Validator>>>,
 ) {
   for (const [id, testShapesGraph] of Object.entries(testShapesGraphs)) {
     switch (testShapesGraph.kind) {
@@ -29,11 +29,12 @@ export function testValidator(
 
       const shapesGraph = shaclShaclDataset;
 
-      const validatorEither = await validatorFactory(shapesGraph);
-      if (validatorEither.isLeft()) {
+      const validator = (await validatorFactory(shapesGraph))
+        .unsafeCoerce()
+        .extractNullable();
+      if (validator === null) {
         return;
       }
-      const validator = validatorEither.unsafeCoerce();
 
       const validationReport = (
         await validator.validate(dataGraph)

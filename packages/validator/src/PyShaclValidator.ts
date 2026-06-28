@@ -9,7 +9,7 @@ import { ResourceSet } from "@rdfx/resource";
 import { TurtleSerializer } from "@rdfx/serializers";
 import { ValidationReport } from "@shaclmate/shacl-ast";
 import { getStreamAsArray } from "get-stream";
-import { type Either, EitherAsync } from "purify-ts";
+import { type Either, EitherAsync, Maybe } from "purify-ts";
 import tmp from "tmp-promise";
 import { dummyLogger, type Logger } from "ts-log";
 import which from "which";
@@ -33,14 +33,19 @@ export class PyShaclValidator extends Validator {
   }: {
     logger?: Logger;
     shapesGraph: DatasetCore;
-  }): Promise<Either<Error, PyShaclValidator>> {
+  }): Promise<Either<Error, Maybe<PyShaclValidator>>> {
     return EitherAsync(async () => {
-      const pyShaclFilePath = await which("pyshacl");
-      return new PyShaclValidator({
-        pyShaclFilePath,
-        logger,
-        shapesGraph,
-      });
+      const pyShaclFilePath = await which("pyshacl", { nothrow: true });
+      if (pyShaclFilePath === null) {
+        return Maybe.empty();
+      }
+      return Maybe.of(
+        new PyShaclValidator({
+          pyShaclFilePath,
+          logger,
+          shapesGraph,
+        }),
+      );
     });
   }
 
