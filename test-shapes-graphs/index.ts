@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+// @ts-expect-error: this script will never be built into CommonJS, can ignore this error
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 interface TestShapesGraph {
