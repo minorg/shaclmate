@@ -21,9 +21,29 @@
     "@types/rdfjs__dataset": "~2.0.7",
     "@types/which": "~3.0.4"
   },
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "JenaValidator": {
+      "default": "./dist/JenaValidator.js",
+      "types": "./dist/JenaValidator.d.ts"
+    },
+    "PyShaclValidator": {
+      "default": "./dist/PyShaclValidator.js",
+      "types": "./dist/PyShaclValidator.d.ts"
+    },
+    "ZazukoValidator": {
+      "default": "./dist/ZazukoValidator.js",
+      "types": "./dist/ZazukoValidator.d.ts"
+    }
+  },
   "files": [
     "dist/JenaValidator.d.ts",
     "dist/JenaValidator.js",
+    "dist/PyShaclValidator.d.ts",
+    "dist/PyShaclValidator.js",
     "dist/Validator.d.ts",
     "dist/Validator.js",
     "dist/ZazukoValidator.d.ts",

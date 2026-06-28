@@ -142,9 +142,17 @@ interface Workspace {
     external?: readonly (keyof typeof externalDependencies)[];
     internal?: readonly PackageName[];
   };
+  exports?: Record<
+    string,
+    {
+      readonly default: string;
+      readonly types: string;
+    }
+  >;
   keywords?: readonly string[];
   homepage?: string;
   scripts?: Record<string, string>;
+  sideEffects?: boolean;
   tsconfig: Tsconfig;
 }
 
@@ -254,7 +262,6 @@ const workspaces = {
         include: ["src"],
       },
     },
-
     graphql: {
       dependencies: {
         external: [
@@ -394,6 +401,25 @@ const workspaces = {
       devDependencies: {
         external: ["@rdfx/fs", "@types/rdfjs__dataset", "@types/which"],
       },
+      exports: {
+        ".": {
+          default: "./dist/index.js",
+          types: "./dist/index.d.ts",
+        },
+        JenaValidator: {
+          default: "./dist/JenaValidator.js",
+          types: "./dist/JenaValidator.d.ts",
+        },
+        PyShaclValidator: {
+          default: "./dist/PyShaclValidator.js",
+          types: "./dist/PyShaclValidator.d.ts",
+        },
+        ZazukoValidator: {
+          default: "./dist/ZazukoValidator.js",
+          types: "./dist/ZazukoValidator.d.ts",
+        },
+      },
+      sideEffects: false,
       tsconfig: publishTsconfig,
     },
   } satisfies Record<PackageName, Workspace>,
@@ -524,16 +550,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
               {} as Record<string, string>,
             ),
           },
-          // 20251022: switch back to main + types to enable downstream "node" resolution
-          // exports:
-          //   files.size > 0
-          //     ? {
-          //         ".": {
-          //           types: "./dist/index.d.ts",
-          //           default: "./dist/index.js",
-          //         },
-          //       }
-          //     : undefined,
+          exports: workspace.exports,
           files: files.size > 0 ? [...files].sort() : undefined,
           homepage: workspace.homepage,
           keywords: workspace.keywords,
