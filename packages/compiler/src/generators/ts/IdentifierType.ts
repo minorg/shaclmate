@@ -81,7 +81,7 @@ export class IdentifierType extends AbstractIdentifierType<
     AbstractIdentifierType<BlankNode | NamedNode>["jsonSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.enum(${arrayOf(...this.nodeKinds)})`
+      ? code`, termType: ${this.reusables.imports.z}.enum(${arrayOf(...[...this.nodeKinds].map(NodeKind.toTermType))})`
       : "";
 
     return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1)${discriminantProperty} })`;

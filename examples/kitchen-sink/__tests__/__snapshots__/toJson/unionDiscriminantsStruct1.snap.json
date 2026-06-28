@@ -1,10 +1,6 @@
 {
   "$type": "UnionDiscriminantsStruct",
   "@id": "http://example.com/instance",
-  "optionalIriOrLiteral": {
-    "@id": "http://example.com",
-    "termType": "NamedNode",
-  },
   "optionalIriOrString": {
     "@id": "http://example.com",
   },
@@ -17,7 +13,7 @@
       "discriminatedUnionMemberCommon": "test",
     },
   },
-  "requiredIriOrLiteral": {
+  "optionalTerm": {
     "@id": "http://example.com",
     "termType": "NamedNode",
   },
@@ -42,8 +38,12 @@
       "discriminatedUnionMemberCommon": "test",
     },
   },
-  "setIriOrLiteral": [],
+  "requiredTerm": {
+    "@id": "http://example.com",
+    "termType": "NamedNode",
+  },
   "setIriOrString": [],
   "setNodeOrLiteral": [],
   "setNodeOrNodeOrString": [],
+  "setTerm": [],
 }
