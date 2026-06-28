@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import datasetFactory from "@rdfjs/dataset";
+import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { DatasetCore } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
 import parsers from "@rdfx/parsers";
@@ -29,9 +30,11 @@ export class PyShaclValidator extends Validator {
 
   static async create({
     logger = dummyLogger,
+    prefixMap,
     shapesGraph,
   }: {
     logger?: Logger;
+    prefixMap?: PrefixMap;
     shapesGraph: DatasetCore;
   }): Promise<Either<Error, Maybe<PyShaclValidator>>> {
     return EitherAsync(async () => {
@@ -41,6 +44,7 @@ export class PyShaclValidator extends Validator {
       }
       return Maybe.of(
         new PyShaclValidator({
+          prefixMap,
           pyShaclFilePath,
           logger,
           shapesGraph,
@@ -90,12 +94,12 @@ export class PyShaclValidator extends Validator {
               shapesGraphFilePath,
               dataGraphFilePath,
             ];
-            this.logger.info("validating with pyshacl (args=%s)", args);
+            this.logger.debug("validating with pyshacl (args=%s)", args);
             const { code, stdout } = await execPromisified(
               this.pyShaclFilePath,
               args,
             );
-            this.logger.info(
+            this.logger.debug(
               "validated with pyshacl: %s",
               code === 0 ? "conforms" : "does not conform",
             );

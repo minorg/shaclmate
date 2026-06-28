@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import datasetFactory from "@rdfjs/dataset";
+import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { DatasetCore } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
 import parsers from "@rdfx/parsers";
@@ -31,9 +32,11 @@ export class JenaValidator extends Validator {
 
   static async create({
     logger = dummyLogger,
+    prefixMap,
     shapesGraph,
   }: {
     logger?: Logger;
+    prefixMap?: PrefixMap;
     shapesGraph: DatasetCore;
   }): Promise<Either<Error, Maybe<JenaValidator>>> {
     return EitherAsync(async () => {
@@ -45,6 +48,7 @@ export class JenaValidator extends Validator {
         new JenaValidator({
           jenaShaclFilePath,
           logger,
+          prefixMap,
           shapesGraph,
         }),
       );
@@ -92,12 +96,12 @@ export class JenaValidator extends Validator {
               "--shapes",
               shapesGraphFilePath,
             ];
-            this.logger.info("validating with Jena (args=%s)", args);
+            this.logger.debug("validating with Jena (args=%s)", args);
             const { code, stdout } = await execPromisified(
               this.jenaShaclFilePath,
               args,
             );
-            this.logger.info(
+            this.logger.debug(
               "validated with Jena: %s",
               code === 0 ? "conforms" : "does not conform",
             );
