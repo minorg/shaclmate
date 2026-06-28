@@ -74,7 +74,6 @@ export class DiscriminatedUnionType<
     this.lazyMembers = () =>
       members.map((member, memberI) => {
         let discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
-        invariant(this.discriminant.memberValues.length === members.length);
         switch (this.discriminant.kind) {
           case "Extrinsic":
             discriminantValues = [this.discriminant.memberValues[memberI]];
