@@ -1,7 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DatasetCore } from "@rdfjs/types";
-import { Parser } from "n3";
 import { it } from "vitest";
 import type { Validator } from "../src/Validator.js";
 
