@@ -373,6 +373,7 @@ const workspaces = {
     validator: {
       dependencies: {
         external: [
+          "@rdfjs/dataset",
           "@rdfjs/types",
           "@rdfx/data-factory",
           "@rdfx/resource",
@@ -385,7 +386,7 @@ const workspaces = {
         internal: ["shacl-ast"],
       },
       devDependencies: {
-        external: ["@rdfx/fs", "@types/which"],
+        external: ["@rdfx/fs", "@types/rdfjs__dataset", "@types/which"],
       },
       tsconfig: publishTsconfig,
     },

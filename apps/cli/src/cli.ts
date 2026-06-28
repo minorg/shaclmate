@@ -10,7 +10,6 @@ import { TS_FEATURES } from "@shaclmate/compiler/dist/generators/ts/TsFeature.js
 import {
   command,
   multioption,
-  oneOf,
   option,
   restPositionals,
   run,
@@ -204,7 +203,7 @@ run(
             defaultValue: () => "application/n-quads",
             description: "output RDF format",
             long: "output-format",
-            short: "o",
+            short: "f",
             type: string,
           }),
         },

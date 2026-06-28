@@ -18,10 +18,10 @@ export async function merge({
       await parseInputs(inputPaths),
     );
 
-    const outputStream = serializers({ prefixes: prefixMap }).import(
-      outputFormat,
-      Readable.from([...dataset]),
-    ) as Readable | null;
+    const outputStream = serializers({
+      prefixes: prefixMap,
+      rdfjs: { module: "ts" },
+    }).import(outputFormat, Readable.from([...dataset])) as Readable | null;
     if (outputStream === null) {
       throw new RangeError(`invalid output format: ${outputFormat}`);
     }
