@@ -1,10 +1,10 @@
 import { fail } from "node:assert";
-import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import datasetFactory from "@rdfjs/dataset";
 import dataFactory from "@rdfx/data-factory";
-import { Parser, Writer } from "n3";
+import { RdfFile } from "@rdfx/fs";
+import { TurtleSerializer } from "@rdfx/serializers";
 import SHACLValidator from "rdf-validate-shacl";
 import { describe, it } from "vitest";
 import * as kitchenSink from "../src/index.js";
@@ -12,28 +12,24 @@ import { harnesses } from "./harnesses.js";
 import { quadsToTurtle } from "./quadsToTurtle.js";
 
 describe("toRdf", async () => {
-  const shapesGraph = datasetFactory.dataset(
-    new Parser({ format: "Turtle" }).parse(
-      (
-        await fs.readFile(
-          path.join(
-            path.dirname(fileURLToPath(import.meta.url)),
-            "..",
-            "src",
-            "kitchen-sink.shaclmate.ttl",
-          ),
-        )
-      ).toString(),
-    ),
-  );
+  const shapesGraph = (
+    await RdfFile.fromPath(
+      path.join(
+        path.dirname(fileURLToPath(import.meta.url)),
+        "..",
+        "src",
+        "kitchen-sink.shaclmate.ttl",
+      ),
+    )
+      .unsafeCoerce()
+      .parseInto(datasetFactory.dataset())
+  ).unsafeCoerce();
 
   it("should produce serializable RDF", ({ expect }) => {
     const resource = kitchenSink.NonClassStruct.toRdfResource(
       harnesses.nonClassStruct.instance,
     );
-    const ttl = new Writer({ format: "text/turtle" }).quadsToString([
-      ...resource.dataset,
-    ]);
+    const ttl = new TurtleSerializer().transform([...resource.dataset]);
     expect(ttl).not.toHaveLength(0);
   });
 
