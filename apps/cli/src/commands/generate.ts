@@ -1,12 +1,9 @@
 import * as fs from "node:fs";
-import Serializer from "@rdfjs/serializer-turtle";
 import type { Generator } from "@shaclmate/compiler";
 import { Compiler, ShapesGraph } from "@shaclmate/compiler";
 import { type Either, EitherAsync } from "purify-ts";
-import SHACLValidator from "rdf-validate-shacl";
 import { logger } from "../logger.js";
 import { parseInputs } from "../parseInputs.js";
-import { shaclShaclDataset } from "../shaclShaclDataset.js";
 
 export async function generate({
   generator,
@@ -26,21 +23,21 @@ export async function generate({
       await parseInputs(inputPaths),
     );
 
-    {
-      const validationReport = await new SHACLValidator(
-        shaclShaclDataset,
-        {},
-      ).validate(dataset);
-      if (!validationReport.conforms) {
-        process.stderr.write("input is not valid SHACL:\n");
-        process.stderr.write(
-          new Serializer({
-            prefixes: prefixMap,
-          }).transform(validationReport.dataset),
-        );
-        return;
-      }
-    }
+    // {
+    //   const validationReport = await new SHACLValidator(
+    //     shaclShaclDataset,
+    //     {},
+    //   ).validate(dataset);
+    //   if (!validationReport.conforms) {
+    //     process.stderr.write("input is not valid SHACL:\n");
+    //     process.stderr.write(
+    //       new Serializer({
+    //         prefixes: prefixMap,
+    //       }).transform(validationReport.dataset),
+    //     );
+    //     return;
+    //   }
+    // }
 
     const output = await liftEither(
       ShapesGraph.builder()
