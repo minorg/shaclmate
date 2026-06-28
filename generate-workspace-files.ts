@@ -687,7 +687,10 @@ fs.writeFileSync(
         "@tsconfig/node20/tsconfig.json",
         "@tsconfig/strictest/tsconfig.json",
       ],
-      include: ["*.ts"].concat(
+      include: [
+        "generate-workspace-files.ts",
+        "test-shapes-graphs/index.ts",
+      ].concat(
         Object.entries(workspaces).flatMap(
           ([workspacesDirectoryName, workspaces]) =>
             Object.keys(workspaces).flatMap((workspaceName) => {

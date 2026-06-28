@@ -15,7 +15,8 @@
     "@tsconfig/strictest/tsconfig.json"
   ],
   "include": [
-    "*.ts",
+    "generate-workspace-files.ts",
+    "test-shapes-graphs/index.ts",
     "apps/cli/src/**/*.ts*",
     "examples/api/src/**/*.ts*",
     "examples/forms/src/**/*.ts*",
