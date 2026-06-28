@@ -1,0 +1,48 @@
+{
+  "dependencies": {
+    "@shaclmate/shacl-ast": "4.0.60",
+    "@rdfjs/types": "~2.0.1",
+    "@rdfx/data-factory": "0.0.30",
+    "@rdfx/resource": "0.0.30",
+    "purify-ts": "~2.1.4",
+    "rdf-validate-shacl": "0.6.5",
+    "tmp-promise": "~3.0.3",
+    "ts-log": "~3.0.2",
+    "which": "~6.0.1"
+  },
+  "devDependencies": {
+    "@rdfx/fs": "0.0.30",
+    "@types/which": "~3.0.4"
+  },
+  "files": [
+    "dist/Validator.d.ts",
+    "dist/Validator.js",
+    "dist/ZazukoValidator.d.ts",
+    "dist/ZazukoValidator.js",
+    "dist/index.d.ts",
+    "dist/index.js",
+    "dist/shaclShaclDataset.d.ts",
+    "dist/shaclShaclDataset.js"
+  ],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "name": "@shaclmate/validator",
+  "packageManager": "npm@11.11.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minorg/shaclmate.git"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist",
+    "depcheck": "depcheck .",
+    "dev": "tsc -w --preserveWatchOutput",
+    "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
+    "test": "cd ../.. && vitest run /Users/minor/projects/shaclmate/packages/validator/__tests__",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "version": "4.0.60"
+}
