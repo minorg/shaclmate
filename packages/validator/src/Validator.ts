@@ -13,7 +13,7 @@ export abstract class Validator {
   constructor({
     logger = dummyLogger,
     shapesGraph,
-  }: { logger: Logger; shapesGraph: DatasetCore }) {
+  }: { logger?: Logger; shapesGraph: DatasetCore }) {
     this.logger = logger;
     this.shapesGraph = shapesGraph;
   }
