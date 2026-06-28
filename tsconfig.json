@@ -17,7 +17,6 @@
   "include": [
     "*.ts",
     "apps/cli/src/**/*.ts*",
-    "apps/cli/__tests__/**/*.ts",
     "examples/api/src/**/*.ts*",
     "examples/forms/src/**/*.ts*",
     "examples/graphql/src/**/*.ts*",
@@ -27,6 +26,8 @@
     "packages/compiler/src/**/*.ts*",
     "packages/compiler/__tests__/**/*.ts",
     "packages/shacl-ast/src/**/*.ts*",
-    "packages/shacl-ast/__tests__/**/*.ts"
+    "packages/shacl-ast/__tests__/**/*.ts",
+    "packages/validator/src/**/*.ts*",
+    "packages/validator/__tests__/**/*.ts"
   ]
 }

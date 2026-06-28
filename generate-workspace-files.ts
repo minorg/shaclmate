@@ -22,7 +22,6 @@ const externalDependencies = {
   "@rdfjs/dataset": "~2.0.2",
   "@rdfjs/namespace": "~2.0.1",
   "@rdfjs/prefix-map": "~0.1.2",
-  "@rdfjs/serializer-turtle": "~1.1.5",
   "@rdfjs/term-map": "~2.0.2",
   "@rdfjs/term-set": "~2.0.3",
   "@rdfjs/types": "~2.0.1",
@@ -31,6 +30,7 @@ const externalDependencies = {
   "@rdfx/literal": rdfxVersion,
   "@rdfx/resource": rdfxVersion,
   "@rdfx/sparql-client": rdfxVersion,
+  "@rdfx/serializers": rdfxVersion,
   "@rdfx/string": rdfxVersion,
   "@rdfx/testing": rdfxVersion,
   "@sindresorhus/base62": "~0.1.0",
@@ -42,7 +42,6 @@ const externalDependencies = {
   "@types/rdfjs__dataset": "~2.0.7",
   "@types/rdfjs__namespace": "~2.0.10",
   "@types/rdfjs__prefix-map": "~0.1.5",
-  "@types/rdfjs__serializer-turtle": "~1.1.0",
   "@types/rdfjs__term-map": "~2.0.10",
   "@types/rdfjs__term-set": "~2.0.9",
   "@types/react": "~18",
@@ -59,7 +58,6 @@ const externalDependencies = {
   "graphql-scalars": "1.24.2",
   "graphql-yoga": "5.14.0",
   "js-sha256": "~0.11.0",
-  n3: "~1.26.0",
   oxigraph: "0.5.8",
   pino: "~9.1.0",
   "pino-pretty": "~13.1.2",
@@ -86,7 +84,7 @@ const externalDependencies = {
   zod: "~4.1.12",
 };
 
-type PackageName = "compiler" | "shacl-ast";
+type PackageName = "compiler" | "shacl-ast" | "validator";
 
 interface Tsconfig {
   compilerOptions?: CompilerOptions;
@@ -159,27 +157,22 @@ const workspaces = {
         external: [
           "@rdfjs/dataset",
           "@rdfjs/prefix-map",
-          "@rdfjs/serializer-turtle",
           "@rdfx/data-factory",
-          "@rdfx/resource",
           "@rdfx/fs",
+          "@rdfx/serializers",
           "cmd-ts",
-          "tmp-promise",
           "pino",
           "pino-pretty",
           "purify-ts",
-          "rdf-validate-shacl",
           "ts-log",
-          "which",
         ],
-        internal: ["compiler"],
+        internal: ["compiler", "validator"],
       },
       devDependencies: {
         external: [
           "@rdfjs/types",
           "@types/rdfjs__dataset",
           "@types/rdfjs__prefix-map",
-          "@types/which",
         ],
       },
       description:
@@ -217,13 +210,12 @@ const workspaces = {
           "@mui/x-date-pickers",
           "@rdfx/data-factory",
           "@rdfx/resource",
+          "@rdfx/serializers",
           "@rdfjs/dataset",
           "@rdfjs/types",
           "@types/rdfjs__dataset",
-          "@types/n3",
           "react",
           "react-dom",
-          "n3",
           "purify-ts",
           "zod",
         ],
@@ -298,18 +290,15 @@ const workspaces = {
       devDependencies: {
         external: [
           "@rdfjs/prefix-map",
-          "@rdfjs/serializer-turtle",
+          "@rdfx/fs",
+          "@rdfx/serializers",
           "@rdfx/sparql-client",
           "@tpluscode/rdf-ns-builders",
-          "@types/n3",
           "@types/rdfjs__dataset",
           "@types/rdfjs__prefix-map",
-          "@types/rdfjs__serializer-turtle",
           "@types/sparqljs",
           "js-sha256",
-          "n3",
           "oxigraph",
-          "rdf-validate-shacl",
         ],
       },
       tsconfig: exampleTsconfig,
@@ -347,7 +336,7 @@ const workspaces = {
         internal: ["shacl-ast"],
       },
       devDependencies: {
-        external: ["@types/n3", "n3"],
+        external: ["@rdfx/fs", "@rdfx/serializers"],
         // internal: ["kitchen-sink-example"],
       },
       tsconfig: {
@@ -377,7 +366,26 @@ const workspaces = {
         ],
       },
       devDependencies: {
-        external: ["@rdfx/literal", "@types/n3", "n3", "ts-invariant"],
+        external: ["@rdfx/literal", "ts-invariant"],
+      },
+      tsconfig: publishTsconfig,
+    },
+    validator: {
+      dependencies: {
+        external: [
+          "@rdfjs/types",
+          "@rdfx/data-factory",
+          "@rdfx/resource",
+          "purify-ts",
+          "rdf-validate-shacl",
+          "tmp-promise",
+          "ts-log",
+          "which",
+        ],
+        internal: ["shacl-ast"],
+      },
+      devDependencies: {
+        external: ["@rdfx/fs", "@types/which"],
       },
       tsconfig: publishTsconfig,
     },

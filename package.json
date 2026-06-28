@@ -41,6 +41,7 @@
     "examples/graphql",
     "examples/kitchen-sink",
     "packages/compiler",
-    "packages/shacl-ast"
+    "packages/shacl-ast",
+    "packages/validator"
   ]
 }
