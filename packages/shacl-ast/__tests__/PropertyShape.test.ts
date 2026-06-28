@@ -1,17 +1,20 @@
 import dataFactory from "@rdfx/data-factory";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
+import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import type { ShapesGraph } from "../src/ShapesGraph.js";
 import type { PropertyShape } from "../src/shacl-ast.shaclmate.js";
 import { ex } from "./namespaces.js";
-import { testData } from "./testData.js";
+import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 describe("PropertyShape", () => {
   let sut: PropertyShape;
   let shapesGraph: ShapesGraph;
 
-  beforeAll(() => {
-    shapesGraph = testData.shapesGraphs.wellFormed.syntax.unsafeCoerce();
+  beforeAll(async () => {
+    shapesGraph = (
+      await parseTestShapesGraph(testShapesGraphs.syntax)
+    ).unsafeCoerce();
     sut = shapesGraph.propertyShape(ex("PropertyShape")).unsafeCoerce();
   });
 

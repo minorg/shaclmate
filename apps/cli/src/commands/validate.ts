@@ -1,25 +1,9 @@
-import { spawn } from "node:child_process";
-import fs from "node:fs/promises";
-import path from "node:path";
-import Serializer from "@rdfjs/serializer-turtle";
+import { ZazukoValidator } from "@shaclmate/validator";
+import { JenaValidator } from "@shaclmate/validator/JenaValidator";
+import { PyShaclValidator } from "@shaclmate/validator/PyShaclValidator";
 import { type Either, EitherAsync } from "purify-ts";
-import SHACLValidator from "rdf-validate-shacl";
-import * as tmp from "tmp-promise";
-import which from "which";
 import { logger } from "../logger.js";
 import { parseInputs } from "../parseInputs.js";
-
-function execFileStreaming(
-  cmd: string,
-  args: string[],
-): Promise<number | null> {
-  return new Promise((resolve) => {
-    const child = spawn(cmd, args, { stdio: "inherit" });
-    child.on("close", (code) => {
-      resolve(code);
-    });
-  });
-}
 
 export async function validate({
   dataGraphPaths,
@@ -29,103 +13,48 @@ export async function validate({
   shapesGraphPaths: readonly string[];
 }): Promise<Either<Error, void>> {
   return EitherAsync(async ({ liftEither }) => {
-    const { dataset: dataGraphDataset, prefixMap: dataGraphPrefixMap } =
-      await liftEither(await parseInputs(dataGraphPaths));
-    if (dataGraphDataset.size === 0) {
+    const { dataset: dataGraph, prefixMap } = await liftEither(
+      await parseInputs(dataGraphPaths),
+    );
+    if (dataGraph.size === 0) {
       throw new Error("data graph is empty!");
     }
-    logger.info("data graph size: %d", dataGraphDataset.size);
+    logger.debug("data graph size: %d", dataGraph.size);
 
-    const { dataset: shapesGraphDataset } = await liftEither(
+    const { dataset: shapesGraph } = await liftEither(
       await parseInputs(shapesGraphPaths),
     );
-    if (shapesGraphDataset.size === 0) {
+    if (shapesGraph.size === 0) {
       throw new Error("shapes graph is empty!");
     }
-    logger.info("shapes graph size: %d", shapesGraphDataset.size);
+    logger.debug("shapes graph size: %d", shapesGraph.size);
 
-    const serializer = new Serializer({
-      prefixes: dataGraphPrefixMap,
-    });
+    for (const [validatorId, validator] of Object.entries({
+      zazuko: new ZazukoValidator({ logger, prefixMap, shapesGraph }),
+      jena: (
+        await liftEither(
+          await JenaValidator.create({ logger, prefixMap, shapesGraph }),
+        )
+      ).extractNullable(),
+      pyshacl: (
+        await liftEither(
+          await PyShaclValidator.create({ logger, prefixMap, shapesGraph }),
+        )
+      ).extractNullable(),
+    })) {
+      if (validator === null) {
+        continue;
+      }
 
-    logger.info("validating with rdf-shacl-validate");
-    const validationReport = await new SHACLValidator(
-      shapesGraphDataset,
-      {},
-    ).validate(dataGraphDataset);
-    if (validationReport.conforms) {
-      logger.info("validated with rdf-shacl-validate: conforms");
-    } else {
-      logger.info("validated with rdf-shacl-validate: does not conform");
-      process.stderr.write(serializer.transform(validationReport.dataset));
-      return;
+      logger.debug("validating with %s", validatorId);
+      const validationReport = await liftEither(
+        await validator.validate(dataGraph),
+      );
+      if (!validationReport.conforms) {
+        logger.warn(validationReport.toString());
+        process.exit(1);
+      }
+      logger.info("validated with %s", validatorId);
     }
-
-    const jenaShaclFilePath = await which("shacl", { nothrow: true });
-    const pyshaclFilePath = await which("pyshacl", { nothrow: true });
-
-    if (jenaShaclFilePath === null && pyshaclFilePath === null) {
-      logger.debug("neither Jena nor pyshacl found on PATH");
-      return;
-    }
-
-    await tmp.withDir(
-      async ({ path: tmpDirectoryPath }) => {
-        const dataGraphFilePath = path.join(tmpDirectoryPath, "data.ttl");
-        logger.debug("writing data graph to %s", dataGraphFilePath);
-        await fs.writeFile(
-          dataGraphFilePath,
-          serializer.transform(dataGraphDataset),
-        );
-        logger.debug("wrote data graph to %s", dataGraphFilePath);
-
-        const shapesGraphFilePath = path.join(tmpDirectoryPath, "shapes.ttl");
-        logger.debug("writing shapes graph to %s", shapesGraphFilePath);
-        await fs.writeFile(
-          shapesGraphFilePath,
-          serializer.transform(shapesGraphDataset),
-        );
-        logger.debug("wrote shapes graph to %s", shapesGraphFilePath);
-
-        if (jenaShaclFilePath !== null) {
-          const args = [
-            "validate",
-            "--data",
-            dataGraphFilePath,
-            "--shapes",
-            shapesGraphFilePath,
-          ];
-          logger.info("validating with Jena (args=%s)", args);
-          const code = await execFileStreaming(jenaShaclFilePath, args);
-          logger.info(
-            "validated with Jena: %s",
-            code === 0 ? "conforms" : "does not conform",
-          );
-          if (code !== 0) {
-            return;
-          }
-        } else {
-          logger.info("Jena not found on PATH, skipping");
-        }
-
-        if (pyshaclFilePath !== null) {
-          const args = ["-s", shapesGraphFilePath, dataGraphFilePath];
-          logger.info("validating with pyshacl (args=%s)", args);
-          const code = await execFileStreaming(pyshaclFilePath, args);
-          logger.info(
-            "validated with pyshacl: %s",
-            code === 0 ? "conforms" : "does not conform",
-          );
-          if (code !== 0) {
-            return;
-          }
-        } else {
-          logger.info("pyshacl not found on PATH, skipping");
-        }
-      },
-      {
-        unsafeCleanup: true,
-      },
-    );
   });
 }

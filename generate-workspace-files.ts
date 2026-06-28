@@ -22,27 +22,26 @@ const externalDependencies = {
   "@rdfjs/dataset": "~2.0.2",
   "@rdfjs/namespace": "~2.0.1",
   "@rdfjs/prefix-map": "~0.1.2",
-  "@rdfjs/serializer-turtle": "~1.1.5",
   "@rdfjs/term-map": "~2.0.2",
   "@rdfjs/term-set": "~2.0.3",
   "@rdfjs/types": "~2.0.1",
   "@rdfx/data-factory": rdfxVersion,
   "@rdfx/fs": rdfxVersion,
   "@rdfx/literal": rdfxVersion,
+  "@rdfx/parsers": rdfxVersion,
   "@rdfx/resource": rdfxVersion,
   "@rdfx/sparql-client": rdfxVersion,
+  "@rdfx/serializers": rdfxVersion,
   "@rdfx/string": rdfxVersion,
   "@rdfx/testing": rdfxVersion,
   "@sindresorhus/base62": "~0.1.0",
   "@tpluscode/rdf-ns-builders": "~4.3.0",
   "@tsconfig/node20": "^20",
   "@tsconfig/strictest": "~2.0.8",
-  "@types/n3": "~1.26.0",
   "@types/node": "^20",
   "@types/rdfjs__dataset": "~2.0.7",
   "@types/rdfjs__namespace": "~2.0.10",
   "@types/rdfjs__prefix-map": "~0.1.5",
-  "@types/rdfjs__serializer-turtle": "~1.1.0",
   "@types/rdfjs__term-map": "~2.0.10",
   "@types/rdfjs__term-set": "~2.0.9",
   "@types/react": "~18",
@@ -55,11 +54,11 @@ const externalDependencies = {
   "cmd-ts": "~0.15.0",
   "decimal.js": "~10.6.0",
   depcheck: "~1.4.7",
+  "get-stream": "~9.0.1",
   graphql: "16.11.0",
   "graphql-scalars": "1.24.2",
   "graphql-yoga": "5.14.0",
   "js-sha256": "~0.11.0",
-  n3: "~1.26.0",
   oxigraph: "0.5.8",
   pino: "~9.1.0",
   "pino-pretty": "~13.1.2",
@@ -86,7 +85,7 @@ const externalDependencies = {
   zod: "~4.1.12",
 };
 
-type PackageName = "compiler" | "shacl-ast";
+type PackageName = "compiler" | "shacl-ast" | "validator";
 
 interface Tsconfig {
   compilerOptions?: CompilerOptions;
@@ -143,9 +142,17 @@ interface Workspace {
     external?: readonly (keyof typeof externalDependencies)[];
     internal?: readonly PackageName[];
   };
+  exports?: Record<
+    string,
+    {
+      readonly default: string;
+      readonly types: string;
+    }
+  >;
   keywords?: readonly string[];
   homepage?: string;
   scripts?: Record<string, string>;
+  sideEffects?: boolean;
   tsconfig: Tsconfig;
 }
 
@@ -159,27 +166,22 @@ const workspaces = {
         external: [
           "@rdfjs/dataset",
           "@rdfjs/prefix-map",
-          "@rdfjs/serializer-turtle",
           "@rdfx/data-factory",
-          "@rdfx/resource",
           "@rdfx/fs",
+          "@rdfx/serializers",
           "cmd-ts",
-          "tmp-promise",
           "pino",
           "pino-pretty",
           "purify-ts",
-          "rdf-validate-shacl",
           "ts-log",
-          "which",
         ],
-        internal: ["compiler"],
+        internal: ["compiler", "validator"],
       },
       devDependencies: {
         external: [
           "@rdfjs/types",
           "@types/rdfjs__dataset",
           "@types/rdfjs__prefix-map",
-          "@types/which",
         ],
       },
       description:
@@ -217,13 +219,12 @@ const workspaces = {
           "@mui/x-date-pickers",
           "@rdfx/data-factory",
           "@rdfx/resource",
+          "@rdfx/serializers",
           "@rdfjs/dataset",
           "@rdfjs/types",
           "@types/rdfjs__dataset",
-          "@types/n3",
           "react",
           "react-dom",
-          "n3",
           "purify-ts",
           "zod",
         ],
@@ -261,7 +262,6 @@ const workspaces = {
         include: ["src"],
       },
     },
-
     graphql: {
       dependencies: {
         external: [
@@ -298,18 +298,15 @@ const workspaces = {
       devDependencies: {
         external: [
           "@rdfjs/prefix-map",
-          "@rdfjs/serializer-turtle",
+          "@rdfx/fs",
+          "@rdfx/serializers",
           "@rdfx/sparql-client",
           "@tpluscode/rdf-ns-builders",
-          "@types/n3",
           "@types/rdfjs__dataset",
           "@types/rdfjs__prefix-map",
-          "@types/rdfjs__serializer-turtle",
           "@types/sparqljs",
           "js-sha256",
-          "n3",
           "oxigraph",
-          "rdf-validate-shacl",
         ],
       },
       tsconfig: exampleTsconfig,
@@ -347,7 +344,7 @@ const workspaces = {
         internal: ["shacl-ast"],
       },
       devDependencies: {
-        external: ["@types/n3", "n3"],
+        external: ["@rdfx/fs", "@rdfx/serializers"],
         // internal: ["kitchen-sink-example"],
       },
       tsconfig: {
@@ -377,8 +374,52 @@ const workspaces = {
         ],
       },
       devDependencies: {
-        external: ["@rdfx/literal", "@types/n3", "n3", "ts-invariant"],
+        external: ["@rdfx/literal", "ts-invariant"],
       },
+      tsconfig: publishTsconfig,
+    },
+    validator: {
+      dependencies: {
+        external: [
+          "@rdfjs/dataset",
+          "@rdfjs/prefix-map",
+          "@rdfjs/types",
+          "@rdfx/data-factory",
+          "@rdfx/parsers",
+          "@rdfx/resource",
+          "@rdfx/serializers",
+          "@types/rdfjs__prefix-map",
+          "get-stream",
+          "purify-ts",
+          "rdf-validate-shacl",
+          "tmp-promise",
+          "ts-log",
+          "which",
+        ],
+        internal: ["shacl-ast"],
+      },
+      devDependencies: {
+        external: ["@rdfx/fs", "@types/rdfjs__dataset", "@types/which"],
+      },
+      exports: {
+        ".": {
+          default: "./dist/index.js",
+          types: "./dist/index.d.ts",
+        },
+        "./JenaValidator": {
+          default: "./dist/JenaValidator.js",
+          types: "./dist/JenaValidator.d.ts",
+        },
+        "./PyShaclValidator": {
+          default: "./dist/PyShaclValidator.js",
+          types: "./dist/PyShaclValidator.d.ts",
+        },
+        "./ZazukoValidator": {
+          default: "./dist/ZazukoValidator.js",
+          types: "./dist/ZazukoValidator.d.ts",
+        },
+      },
+      sideEffects: false,
       tsconfig: publishTsconfig,
     },
   } satisfies Record<PackageName, Workspace>,
@@ -509,16 +550,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
               {} as Record<string, string>,
             ),
           },
-          // 20251022: switch back to main + types to enable downstream "node" resolution
-          // exports:
-          //   files.size > 0
-          //     ? {
-          //         ".": {
-          //           types: "./dist/index.d.ts",
-          //           default: "./dist/index.js",
-          //         },
-          //       }
-          //     : undefined,
+          exports: workspace.exports,
           files: files.size > 0 ? [...files].sort() : undefined,
           homepage: workspace.homepage,
           keywords: workspace.keywords,
@@ -641,7 +673,7 @@ fs.writeFileSync(
         "check:write:unsafe": "biome check --write --unsafe",
         clean: "turbo run clean",
         depcheck: "turbo run depcheck",
-        dev: "turbo run --concurrency 12 dev dev:tests",
+        dev: "turbo run --concurrency 14 dev dev:tests",
         test: "vitest run",
         "test:coverage": "vitest run --coverage",
         "test:watch": "vitest watch",
@@ -679,7 +711,10 @@ fs.writeFileSync(
         "@tsconfig/node20/tsconfig.json",
         "@tsconfig/strictest/tsconfig.json",
       ],
-      include: ["*.ts"].concat(
+      include: [
+        "generate-workspace-files.ts",
+        "test-shapes-graphs/index.ts",
+      ].concat(
         Object.entries(workspaces).flatMap(
           ([workspacesDirectoryName, workspaces]) =>
             Object.keys(workspaces).flatMap((workspaceName) => {

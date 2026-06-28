@@ -1,13 +1,16 @@
 import { type ShapesGraph, TsGenerator } from "@shaclmate/compiler";
 import { beforeAll, describe, it } from "vitest";
+import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import { logger } from "./logger.js";
-import { testData } from "./testData.js";
+import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 describe("ShapesGraph", () => {
   let sut: ShapesGraph;
 
-  beforeAll(() => {
-    sut = testData.shapesGraphs.wellFormed.compilerInput.unsafeCoerce();
+  beforeAll(async () => {
+    sut = (
+      await parseTestShapesGraph(testShapesGraphs.shaclShacl)
+    ).unsafeCoerce();
   });
 
   it("compile", ({ expect }) => {

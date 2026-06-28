@@ -27,8 +27,8 @@
     "typescript-memoize": "~1.1.1"
   },
   "devDependencies": {
-    "@types/n3": "~1.26.0",
-    "n3": "~1.26.0"
+    "@rdfx/fs": "0.0.30",
+    "@rdfx/serializers": "0.0.30"
   },
   "files": [
     "dist/Compiler.d.ts",

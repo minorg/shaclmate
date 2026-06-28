@@ -7,8 +7,8 @@ import {Grid, Typography} from "@mui/material";
 import dataFactory from "@rdfx/data-factory";
 import { type FC, useMemo, useState } from "react";
 import * as generated from "./forms.shaclmate.js";
-import { Writer } from "n3";
 import { z } from "zod";
+import { TurtleSerializer } from "@rdfx/serializers";
 
 const classes = {
   container: {
@@ -64,7 +64,7 @@ const App: FC = () => {
       generated.FormStruct.Json.parse(data)
         .chain(generated.FormStruct.fromJson)
         .map((instance) => {
-          return new Writer({ format: "N-Triples" }).quadsToString([
+          return new TurtleSerializer().transform([
             ...generated.FormStruct.toRdfResource(instance).dataset,
           ]);
         })
