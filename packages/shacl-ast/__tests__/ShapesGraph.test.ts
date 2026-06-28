@@ -1,8 +1,7 @@
-import datasetFactory from "@rdfjs/dataset";
-import { RdfFile } from "@rdfx/fs";
 import { beforeAll, describe, it } from "vitest";
 import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
-import { ShapesGraph } from "../src/ShapesGraph.js";
+import type { ShapesGraph } from "../src/ShapesGraph.js";
+import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 describe("ShapesGraph", () => {
   describe("well-formed", () => {
@@ -15,14 +14,9 @@ describe("ShapesGraph", () => {
         let shapesGraph: ShapesGraph;
 
         beforeAll(async () => {
-          const dataset = datasetFactory.dataset();
-          for (const filePath of testShapesGraph.filePaths) {
-            await RdfFile.fromPath(filePath).unsafeCoerce().parseInto(dataset);
-          }
-          shapesGraph = ShapesGraph.builder()
-            .parseDataset(dataset)
-            .unsafeCoerce()
-            .build();
+          shapesGraph = (
+            await parseTestShapesGraph(testShapesGraph)
+          ).unsafeCoerce();
         });
 
         it("nodeShapes", ({ expect }) => {
@@ -58,15 +52,9 @@ describe("ShapesGraph", () => {
 
   describe("ill-formed", () => {
     it("undefined shape", async ({ expect }) => {
-      const error = ShapesGraph.builder()
-        .parseDataset(
-          (
-            await RdfFile.fromPath(testShapesGraphs.undefinedShape.filePaths[0])
-              .unsafeCoerce()
-              .parseInto(datasetFactory.dataset())
-          ).unsafeCoerce(),
-        )
-        .extract();
+      const error = (
+        await parseTestShapesGraph(testShapesGraphs.undefinedShape)
+      ).extract();
       expect(error).toBeInstanceOf(Error);
       expect((error as Error).message).includes("undefined shape");
     });

@@ -1,14 +1,15 @@
 import { rdfs, sh } from "@tpluscode/rdf-ns-builders";
 import { beforeAll, describe, it } from "vitest";
+import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import type { NodeShape } from "../src/shacl-ast.shaclmate.js";
 import { ex } from "./namespaces.js";
-import { testData } from "./testData.js";
+import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 describe("NodeShape", () => {
   let sut: NodeShape;
 
-  beforeAll(() => {
-    sut = testData.shapesGraphs.wellFormed.syntax
+  beforeAll(async () => {
+    sut = (await parseTestShapesGraph(testShapesGraphs.syntax))
       .unsafeCoerce()
       .nodeShape(ex("NodeShape"))
       .unsafeCoerce();

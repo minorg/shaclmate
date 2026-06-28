@@ -1,17 +1,18 @@
 import dataFactory from "@rdfx/data-factory";
 import { beforeAll, describe, it } from "vitest";
 import type { Shape } from "../src/shacl-ast.shaclmate.js";
-import { testData } from "./testData.js";
 import "@rdfx/testing";
 import { LiteralFactory } from "@rdfx/literal";
 import { sh } from "@tpluscode/rdf-ns-builders";
+import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import type { ShapesGraph } from "../src/ShapesGraph.js";
 import { ex } from "./namespaces.js";
+import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 const literalFactory = new LiteralFactory({ dataFactory });
 
-describe("Shape", () => {
-  const shapesGraphEither = testData.shapesGraphs.wellFormed.syntax;
+describe("Shape", async () => {
+  const shapesGraphEither = await parseTestShapesGraph(testShapesGraphs.syntax);
 
   for (const [id, shapeEither] of Object.entries({
     "node shape": shapesGraphEither.chain((shapesGraph) =>
