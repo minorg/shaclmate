@@ -10,6 +10,7 @@ import { TS_FEATURES } from "@shaclmate/compiler/dist/generators/ts/TsFeature.js
 import {
   command,
   multioption,
+  oneOf,
   option,
   restPositionals,
   run,
@@ -33,7 +34,7 @@ const outputFilePath = option({
   defaultValue: () => "",
   description:
     "path to a file to write output to; if not specified, write to stdout",
-  long: "output-path",
+  long: "output-file-path",
   short: "o",
   type: string,
 });
@@ -199,12 +200,20 @@ run(
         args: {
           inputPaths,
           outputFilePath,
+          outputFormat: option({
+            defaultValue: () => "application/n-quads",
+            description: "output RDF format",
+            long: "output-format",
+            short: "o",
+            type: string,
+          }),
         },
-        handler: async ({ inputPaths, outputFilePath }) => {
+        handler: async ({ inputPaths, outputFilePath, outputFormat }) => {
           (
             await merge({
               inputPaths,
               outputFilePath,
+              outputFormat,
             })
           ).unsafeCoerce();
         },
