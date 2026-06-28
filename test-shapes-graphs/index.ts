@@ -17,6 +17,7 @@ export const testShapesGraphs = {
     filePaths: [
       path.join(
         thisDirectoryPath,
+        "..",
         "packages",
         "shacl-ast",
         "src",
@@ -24,6 +25,7 @@ export const testShapesGraphs = {
       ),
       path.join(
         thisDirectoryPath,
+        "..",
         "packages",
         "compiler",
         "src",
@@ -90,6 +92,7 @@ export const testShapesGraphs = {
     filePaths: [
       path.join(
         thisDirectoryPath,
+        "..",
         "examples",
         "graphql",
         "src",
@@ -130,6 +133,7 @@ export const testShapesGraphs = {
     filePaths: [
       path.join(
         thisDirectoryPath,
+        "..",
         "examples",
         "kitchen-sink",
         "src",
@@ -172,6 +176,7 @@ export const testShapesGraphs = {
     filePaths: [
       path.join(
         thisDirectoryPath,
+        "..",
         "packages",
         "shacl-ast",
         "src",
@@ -201,4 +206,18 @@ export const testShapesGraphs = {
   //       .map(parseShapesGraph)
   //       .extractNullable();
   //   },
+
+  syntax: {
+    description: "SHACL Core syntax testing",
+    filePaths: [path.join(thisDirectoryPath, "syntax.ttl")],
+    validShacl: true,
+    validShaclmate: false,
+  },
+
+  undefinedShape: {
+    description: "Error: reference to an undefined shape",
+    filePaths: [path.join(thisDirectoryPath, "undefined-shape.ttl")],
+    validShacl: true,
+    validShaclmate: false,
+  },
 } as const satisfies Record<string, TestShapesGraph>;
