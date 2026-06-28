@@ -45,7 +45,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "test",
@@ -57,7 +57,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "test",
@@ -74,7 +74,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "test",
@@ -86,7 +86,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.literal("test"),
+          requiredTerm: dataFactory.literal("test"),
           requiredIriOrString: "test",
         }),
       ).extract(),
@@ -104,7 +104,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "test",
@@ -116,7 +116,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "test",
@@ -133,7 +133,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "test",
@@ -151,7 +151,7 @@ describe("equals", () => {
             }),
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "test",
@@ -171,7 +171,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "test",
@@ -183,7 +183,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "test",
@@ -200,7 +200,7 @@ describe("equals", () => {
             value: "test",
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: dataFactory.namedNode("http://example.com"),
@@ -218,7 +218,7 @@ describe("equals", () => {
             }),
           },
           requiredNodeOrLiteral: dataFactory.literal("test"),
-          requiredIriOrLiteral: dataFactory.namedNode(
+          requiredTerm: dataFactory.namedNode(
             "http://example.com/term",
           ),
           requiredIriOrString: "http://example.com",

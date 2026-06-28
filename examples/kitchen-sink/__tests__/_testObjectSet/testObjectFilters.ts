@@ -759,7 +759,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
                 discriminatedUnionMemberCommon: "http://example.com/test0",
               }),
             },
-            requiredIriOrLiteral: dataFactory.namedNode(
+            requiredTerm: dataFactory.namedNode(
               "http://example.com/test0",
             ),
             requiredIriOrString: dataFactory.namedNode(
@@ -775,7 +775,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
             requiredNodeOrLiteral: dataFactory.literal(
               "http://example.com/test1",
             ),
-            requiredIriOrLiteral: dataFactory.literal(
+            requiredTerm: dataFactory.literal(
               "http://example.com/test1",
             ),
             requiredIriOrString: "http://example.com/test1",
@@ -860,13 +860,13 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
         intrinsicPositive: [
           {
-            requiredIriOrLiteral: {
+            requiredTerm: {
               on: {
+                BlankNode: {
+                  in: [dataFactory.namedNode("http://example.com/test0")],
+                },
                 Literal: {
                   in: [dataFactory.literal("http://example.com/test0")],
-                },
-                NamedNode: {
-                  in: [dataFactory.namedNode("http://example.com/test0")],
                 },
               },
             },
@@ -875,13 +875,13 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
         intrinsicNegative: [
           {
-            requiredIriOrLiteral: {
+            requiredTerm: {
               on: {
+                BlankNode: {
+                  in: [dataFactory.namedNode("http://example.com/testXXX")],
+                },
                 Literal: {
                   in: [dataFactory.literal("http://example.com/testXXX")],
-                },
-                NamedNode: {
-                  in: [dataFactory.namedNode("http://example.com/testXXX")],
                 },
               },
             },
