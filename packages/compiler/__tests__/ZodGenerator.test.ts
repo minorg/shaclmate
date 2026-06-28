@@ -1,37 +1,21 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  type ShapesGraph,
-  ShapesGraphToAstTransformer,
-  ZodGenerator,
-} from "@shaclmate/compiler";
-import type { Either } from "purify-ts";
+import { ShapesGraphToAstTransformer, ZodGenerator } from "@shaclmate/compiler";
 import { describe, expect, it } from "vitest";
+import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import { compileTs } from "./compileTs.js";
 import { logger } from "./logger.js";
-import { testData } from "./testData.js";
+import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 describe("ZodGenerator", () => {
-  for (const [id, shapesGraphEither] of Object.entries(
-    testData.shapesGraphs.wellFormed,
-  ) as [
-    keyof typeof testData.shapesGraphs.wellFormed,
-    Either<Error, ShapesGraph>,
-  ][]) {
-    if (shapesGraphEither === null) {
+  for (const [id, testShapesGraph] of Object.entries(testShapesGraphs)) {
+    if (testShapesGraph.kind !== "example") {
       continue;
     }
 
-    switch (id) {
-      case "compilerInput":
-      case "shaclAst":
-      case "tsFeatureCombinations":
-        continue;
-    }
-
-    it(id, () => {
+    it(id, async () => {
       let sourceDirectoryPath: string | undefined;
       switch (id) {
         case "kitchenSinkExample":
@@ -47,10 +31,13 @@ describe("ZodGenerator", () => {
           break;
       }
 
+      const shapesGraph = (
+        await parseTestShapesGraph(testShapesGraph)
+      ).unsafeCoerce();
       const source = new ZodGenerator({ logger }).generate(
         new ShapesGraphToAstTransformer({
           logger,
-          shapesGraph: shapesGraphEither.unsafeCoerce(),
+          shapesGraph,
         })
           .transform()
           .unsafeCoerce(),

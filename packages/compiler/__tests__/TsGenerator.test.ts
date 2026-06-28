@@ -5,12 +5,12 @@ import {
   ShapesGraphToAstTransformer,
   TsGenerator,
 } from "@shaclmate/compiler";
-import type { Either } from "purify-ts";
 import { describe, expect, it } from "vitest";
+import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import { TS_FEATURES } from "../src/generators/ts/TsFeature.js";
 import { compileTs } from "./compileTs.js";
 import { logger } from "./logger.js";
-import { testData } from "./testData.js";
+import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
@@ -28,18 +28,18 @@ function generate(
 }
 
 describe("TsGenerator", () => {
-  for (const [idString, shapesGraphEither] of Object.entries(
-    testData.shapesGraphs.wellFormed,
-  ) as [
-    keyof typeof testData.shapesGraphs.wellFormed,
-    Either<Error, ShapesGraph>,
-  ][]) {
-    if (shapesGraphEither === null) {
-      continue;
+  for (const [idString, testShapesGraph] of Object.entries(testShapesGraphs)) {
+    switch (testShapesGraph.kind) {
+      case "dogfood":
+      case "example":
+        break;
+      default:
+        continue;
     }
-    const id = idString as keyof typeof testData.shapesGraphs.wellFormed;
 
-    it(id, () => {
+    const id = idString as keyof typeof testShapesGraphs;
+
+    it(id, async () => {
       let configuration: Partial<TsGenerator.Configuration> | undefined;
       let sourceDirectoryPath: string | undefined;
       switch (id) {
@@ -72,7 +72,7 @@ describe("TsGenerator", () => {
             "src",
           );
           break;
-        case "shaclAst":
+        case "shaclShacl":
           configuration = {
             ...TsGenerator.Configuration.default_,
             features: new Set(["Object.RDF"]),
@@ -91,7 +91,10 @@ describe("TsGenerator", () => {
       //   return;
       // }
 
-      const source = generate(shapesGraphEither.unsafeCoerce(), configuration);
+      const shapesGraph = (
+        await parseTestShapesGraph(testShapesGraph)
+      ).unsafeCoerce();
+      const source = generate(shapesGraph, configuration);
       const diagnostics = compileTs(source, sourceDirectoryPath);
       if (diagnostics.length > 0) {
         // biome-ignore lint/suspicious/noDebugger: allow in a test
@@ -101,9 +104,10 @@ describe("TsGenerator", () => {
     }, 60000);
   }
 
-  describe("objectDiscriminantProperty", () => {
-    const shapesGraph =
-      testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
+  describe("objectDiscriminantProperty", async () => {
+    const shapesGraph = (
+      await parseTestShapesGraph(testShapesGraphs.featureCombinations)
+    ).unsafeCoerce();
     const sourceDirectoryPath = undefined;
 
     for (const objectDiscriminantPropertyName of ["termType"]) {
@@ -126,9 +130,10 @@ describe("TsGenerator", () => {
     }
   });
 
-  describe("TsFeature combinations", () => {
-    const shapesGraph =
-      testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
+  describe("TsFeature combinations", async () => {
+    const shapesGraph = (
+      await parseTestShapesGraph(testShapesGraphs.featureCombinations)
+    ).unsafeCoerce();
     const sourceDirectoryPath = undefined; //path.join(thisDirectoryPath);
 
     for (const tsFeatureCombination of [

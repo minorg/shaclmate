@@ -1,24 +1,21 @@
 import {
   // biome-ignore lint/correctness/noUnusedImports: ast gets removed for no reason
   type ast,
-  type ShapesGraph,
   ShapesGraphToAstTransformer,
 } from "@shaclmate/compiler";
-import type { Either } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
+import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import { logger } from "./logger.js";
-import { testData } from "./testData.js";
+import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 describe("ShapesGraphToAstTransformer", () => {
   describe("well-formed", () => {
-    for (const [id, shapesGraphEither] of Object.entries(
-      testData.shapesGraphs.wellFormed,
-    ) as [
-      keyof typeof testData.shapesGraphs.wellFormed,
-      Either<Error, ShapesGraph> | null,
-    ][]) {
-      if (shapesGraphEither === null) {
+    for (const [id, testShapesGraph] of Object.entries(testShapesGraphs)) {
+      if (
+        testShapesGraph.kind === "error" ||
+        testShapesGraph.kind === "stress"
+      ) {
         continue;
       }
 
@@ -27,10 +24,12 @@ describe("ShapesGraphToAstTransformer", () => {
         const astStructTypesByShapeIdentifier: Record<string, ast.StructType> =
           {};
 
-        beforeAll(() => {
+        beforeAll(async () => {
           ast = new ShapesGraphToAstTransformer({
             logger,
-            shapesGraph: shapesGraphEither.unsafeCoerce(),
+            shapesGraph: (
+              await parseTestShapesGraph(testShapesGraph)
+            ).unsafeCoerce(),
           })
             .transform()
             .unsafeCoerce();
@@ -117,11 +116,14 @@ describe("ShapesGraphToAstTransformer", () => {
   });
 
   describe("ill-formed", () => {
-    it("sh:defaultValue and sh:hasValue conflict", ({ expect }) => {
+    it("sh:defaultValue and sh:hasValue conflict", async ({ expect }) => {
       const error = new ShapesGraphToAstTransformer({
         logger,
-        shapesGraph:
-          testData.shapesGraphs.illFormed.defaultValueHasValueConflict.unsafeCoerce(),
+        shapesGraph: (
+          await parseTestShapesGraph(
+            testShapesGraphs.defaultValueHasValueConflict,
+          )
+        ).unsafeCoerce(),
       })
         .transform()
         .extract();
@@ -131,11 +133,14 @@ describe("ShapesGraphToAstTransformer", () => {
       );
     });
 
-    it("sh:defaultValue and multiple sh:hasValue", ({ expect }) => {
+    it("sh:defaultValue and multiple sh:hasValue", async ({ expect }) => {
       const error = new ShapesGraphToAstTransformer({
         logger,
-        shapesGraph:
-          testData.shapesGraphs.illFormed.defaultValueMultipleHasValues.unsafeCoerce(),
+        shapesGraph: (
+          await parseTestShapesGraph(
+            testShapesGraphs.defaultValueMultipleHasValues,
+          )
+        ).unsafeCoerce(),
       })
         .transform()
         .extract();
@@ -145,11 +150,12 @@ describe("ShapesGraphToAstTransformer", () => {
       );
     });
 
-    it("sh:defaultValue and sh:in conflict", ({ expect }) => {
+    it("sh:defaultValue and sh:in conflict", async ({ expect }) => {
       const error = new ShapesGraphToAstTransformer({
         logger,
-        shapesGraph:
-          testData.shapesGraphs.illFormed.defaultValueInConflict.unsafeCoerce(),
+        shapesGraph: (
+          await parseTestShapesGraph(testShapesGraphs.defaultValueInConflict)
+        ).unsafeCoerce(),
       })
         .transform()
         .extract();
@@ -159,11 +165,12 @@ describe("ShapesGraphToAstTransformer", () => {
       );
     });
 
-    it("ignored node shape reference", ({ expect }) => {
+    it("ignored node shape reference", async ({ expect }) => {
       const error = new ShapesGraphToAstTransformer({
         logger,
-        shapesGraph:
-          testData.shapesGraphs.illFormed.ignoredNodeShapeReference.unsafeCoerce(),
+        shapesGraph: (
+          await parseTestShapesGraph(testShapesGraphs.ignoredNodeShapeReference)
+        ).unsafeCoerce(),
       })
         .transform()
         .extract();
@@ -171,11 +178,16 @@ describe("ShapesGraphToAstTransformer", () => {
       expect((error as Error).message).includes("reference to ignored");
     });
 
-    it("inverse paths can only have blank or IRI node kinds", ({ expect }) => {
+    it("inverse paths can only have blank or IRI node kinds", async ({
+      expect,
+    }) => {
       const error = new ShapesGraphToAstTransformer({
         logger,
-        shapesGraph:
-          testData.shapesGraphs.illFormed.inversePathNodeKindConflict.unsafeCoerce(),
+        shapesGraph: (
+          await parseTestShapesGraph(
+            testShapesGraphs.inversePathNodeKindConflict,
+          )
+        ).unsafeCoerce(),
       })
         .transform()
         .extract();
@@ -183,11 +195,12 @@ describe("ShapesGraphToAstTransformer", () => {
       expect((error as Error).message).includes("inverse paths can only");
     });
 
-    it("no required property property", ({ expect }) => {
+    it("no required property property", async ({ expect }) => {
       const error = new ShapesGraphToAstTransformer({
         logger,
-        shapesGraph:
-          testData.shapesGraphs.illFormed.noRequiredProperty.unsafeCoerce(),
+        shapesGraph: (
+          await parseTestShapesGraph(testShapesGraphs.noRequiredProperty)
+        ).unsafeCoerce(),
       })
         .transform()
         .extract();

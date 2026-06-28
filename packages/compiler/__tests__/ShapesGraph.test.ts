@@ -1,24 +1,16 @@
-import datasetFactory from "@rdfjs/dataset";
-import { RdfFile } from "@rdfx/fs";
-import { ShapesGraph, TsGenerator } from "@shaclmate/compiler";
+import { type ShapesGraph, TsGenerator } from "@shaclmate/compiler";
 import { beforeAll, describe, it } from "vitest";
 import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import { logger } from "./logger.js";
+import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 describe("ShapesGraph", () => {
   let sut: ShapesGraph;
 
   beforeAll(async () => {
-    sut = ShapesGraph.builder()
-      .parseDataset(
-        (
-          await RdfFile.fromPath(testShapesGraphs.shaclShacl.filePaths[0])
-            .unsafeCoerce()
-            .parseInto(datasetFactory.dataset())
-        ).unsafeCoerce(),
-      )
-      .unsafeCoerce()
-      .build();
+    sut = (
+      await parseTestShapesGraph(testShapesGraphs.shaclShacl)
+    ).unsafeCoerce();
   });
 
   it("compile", ({ expect }) => {
