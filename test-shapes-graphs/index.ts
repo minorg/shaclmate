@@ -6,8 +6,7 @@ const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 interface TestShapesGraph {
   readonly description: string;
   readonly filePaths: readonly string[];
-  readonly validShacl: boolean;
-  readonly validShaclmate: boolean;
+  readonly kind: "dogfood" | "error" | "example" | "stress";
 }
 
 export const testShapesGraphs = {
@@ -33,8 +32,7 @@ export const testShapesGraphs = {
         "input.shaclmate.ttl",
       ),
     ],
-    validShacl: true,
-    validShaclmate: true,
+    kind: "dogfood",
   },
 
   defaultValueHasValueConflict: {
@@ -46,8 +44,7 @@ export const testShapesGraphs = {
         "default-value-has-value-conflict.shaclmate.ttl",
       ),
     ],
-    validShacl: true,
-    validShaclmate: false,
+    kind: "error",
   },
 
   defaultValueMultipleHasValues: {
@@ -59,8 +56,7 @@ export const testShapesGraphs = {
         "default-value-multiple-has-values.shaclmate.ttl",
       ),
     ],
-    validShacl: true,
-    validShaclmate: false,
+    kind: "error",
   },
 
   defaultValueInConflict: {
@@ -69,8 +65,7 @@ export const testShapesGraphs = {
     filePaths: [
       path.join(thisDirectoryPath, "default-value-in-conflict.shaclmate.ttl"),
     ],
-    validShacl: true,
-    validShaclmate: false,
+    kind: "error",
   },
 
   featureCombinations: {
@@ -83,8 +78,7 @@ export const testShapesGraphs = {
         "feature-combinations.shaclmate.ttl",
       ),
     ],
-    validShacl: true,
-    validShaclmate: true,
+    kind: "stress",
   },
 
   graphqlExample: {
@@ -99,8 +93,7 @@ export const testShapesGraphs = {
         "graphql.shaclmate.ttl",
       ),
     ],
-    validShacl: true,
-    validShaclmate: true,
+    kind: "example",
   },
 
   ignoredNodeShapeReference: {
@@ -111,8 +104,7 @@ export const testShapesGraphs = {
         "ignored-node-shape-reference.shaclmate.ttl",
       ),
     ],
-    validShacl: true,
-    validShaclmate: false,
+    kind: "error",
   },
 
   inversePathNodeKindConflict: {
@@ -124,8 +116,7 @@ export const testShapesGraphs = {
         "inverse-path-node-kind-conflict.shaclmate.ttl",
       ),
     ],
-    validShacl: true,
-    validShaclmate: false,
+    kind: "error",
   },
 
   kitchenSinkExample: {
@@ -140,16 +131,14 @@ export const testShapesGraphs = {
         "kitchen-sink.shaclmate.ttl",
       ),
     ],
-    validShacl: true,
-    validShaclmate: true,
+    kind: "example",
   },
 
   nodeShapeNameConflicts: {
     description:
       "Node shape names that might conflict with names synthesized by the generator",
     filePaths: [path.join(thisDirectoryPath, "node-shape-name-conflicts.ttl")],
-    validShacl: true,
-    validShaclmate: true,
+    kind: "stress",
   },
 
   noRequiredProperty: {
@@ -157,8 +146,7 @@ export const testShapesGraphs = {
     filePaths: [
       path.join(thisDirectoryPath, "no-required-property.shaclmate.ttl"),
     ],
-    validShacl: true,
-    validShaclmate: false,
+    kind: "error",
   },
 
   propertyShapeNameConflicts: {
@@ -167,8 +155,7 @@ export const testShapesGraphs = {
     filePaths: [
       path.join(thisDirectoryPath, "property-shape-name-conflicts.ttl"),
     ],
-    validShacl: true,
-    validShaclmate: true,
+    kind: "stress",
   },
 
   shaclShacl: {
@@ -183,8 +170,7 @@ export const testShapesGraphs = {
         "shacl-ast.shaclmate.ttl",
       ),
     ],
-    validShacl: true,
-    validShaclmate: true,
+    kind: "dogfood",
   },
 
   //   get skos() {
@@ -210,14 +196,12 @@ export const testShapesGraphs = {
   syntax: {
     description: "SHACL Core syntax testing",
     filePaths: [path.join(thisDirectoryPath, "syntax.ttl")],
-    validShacl: true,
-    validShaclmate: false,
+    kind: "stress",
   },
 
   undefinedShape: {
     description: "Error: reference to an undefined shape",
-    filePaths: [path.join(thisDirectoryPath, "undefined-shape.ttl")],
-    validShacl: true,
-    validShaclmate: false,
+    filePaths: [path.join(thisDirectoryPath, "undefined-shape.shaclmate.ttl")],
+    kind: "error",
   },
 } as const satisfies Record<string, TestShapesGraph>;

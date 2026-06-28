@@ -1,13 +1,24 @@
-import { type ShapesGraph, TsGenerator } from "@shaclmate/compiler";
+import datasetFactory from "@rdfjs/dataset";
+import { RdfFile } from "@rdfx/fs";
+import { ShapesGraph, TsGenerator } from "@shaclmate/compiler";
 import { beforeAll, describe, it } from "vitest";
+import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
 import { logger } from "./logger.js";
-import { testData } from "./testData.js";
 
 describe("ShapesGraph", () => {
   let sut: ShapesGraph;
 
-  beforeAll(() => {
-    sut = testData.shapesGraphs.wellFormed.compilerInput.unsafeCoerce();
+  beforeAll(async () => {
+    sut = ShapesGraph.builder()
+      .parseDataset(
+        (
+          await RdfFile.fromPath(testShapesGraphs.shaclShacl.filePaths[0])
+            .unsafeCoerce()
+            .parseInto(datasetFactory.dataset())
+        ).unsafeCoerce(),
+      )
+      .unsafeCoerce()
+      .build();
   });
 
   it("compile", ({ expect }) => {

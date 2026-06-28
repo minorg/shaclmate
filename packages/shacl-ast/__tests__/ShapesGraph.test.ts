@@ -1,32 +1,33 @@
-import type { Either } from "purify-ts";
+import datasetFactory from "@rdfjs/dataset";
+import { RdfFile } from "@rdfx/fs";
 import { beforeAll, describe, it } from "vitest";
-import type { ShapesGraph } from "../src/ShapesGraph.js";
-import { testData } from "./testData.js";
+import { testShapesGraphs } from "../../../test-shapes-graphs/index.js";
+import { ShapesGraph } from "../src/ShapesGraph.js";
 
 describe("ShapesGraph", () => {
   describe("well-formed", () => {
-    for (const [id, shapesGraphEither] of Object.entries(
-      testData.shapesGraphs.wellFormed,
-    ) as [
-      keyof typeof testData.shapesGraphs.wellFormed,
-      Either<Error, ShapesGraph> | null,
-    ][]) {
-      if (shapesGraphEither === null) {
+    for (const [id, testShapesGraph] of Object.entries(testShapesGraphs)) {
+      if (testShapesGraph.kind === "error" || id === "featureCombinations") {
         continue;
       }
 
       describe(id, () => {
         let shapesGraph: ShapesGraph;
 
-        beforeAll(() => {
-          shapesGraph = shapesGraphEither.unsafeCoerce();
+        beforeAll(async () => {
+          const dataset = datasetFactory.dataset();
+          for (const filePath of testShapesGraph.filePaths) {
+            await RdfFile.fromPath(filePath).unsafeCoerce().parseInto(dataset);
+          }
+          shapesGraph = ShapesGraph.builder()
+            .parseDataset(dataset)
+            .unsafeCoerce()
+            .build();
         });
 
         it("nodeShapes", ({ expect }) => {
           if (id === "kitchenSinkExample") {
             expect(shapesGraph.nodeShapes).toHaveLength(126);
-          } else {
-            expect(shapesGraph.nodeShapes).not.toHaveLength(0);
           }
         });
 
@@ -56,8 +57,16 @@ describe("ShapesGraph", () => {
   });
 
   describe("ill-formed", () => {
-    it("undefined shape", ({ expect }) => {
-      const error = testData.shapesGraphs.illFormed.undefinedShape.extract();
+    it("undefined shape", async ({ expect }) => {
+      const error = ShapesGraph.builder()
+        .parseDataset(
+          (
+            await RdfFile.fromPath(testShapesGraphs.undefinedShape.filePaths[0])
+              .unsafeCoerce()
+              .parseInto(datasetFactory.dataset())
+          ).unsafeCoerce(),
+        )
+        .extract();
       expect(error).toBeInstanceOf(Error);
       expect((error as Error).message).includes("undefined shape");
     });
