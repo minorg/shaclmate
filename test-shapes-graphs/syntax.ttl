@@ -10,6 +10,8 @@
 
 :NodeShape
     a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "comment" ;
+    rdfs:label "label" ;
     sh:and ([
             sh:datatype :andDatatype1
         ]
@@ -17,7 +19,6 @@
             sh:datatype :andDatatype2
         ]
     ) ;
-    rdfs:comment "comment" ;
     sh:class :Class ;
     sh:closed true ;
     sh:datatype :datatype ;
@@ -32,7 +33,6 @@
     sh:in (:in1
         :in2
     ) ;
-    rdfs:label "label" ;
     sh:languageIn ("en"
         "fr"
     ) ;
@@ -78,6 +78,8 @@
 
 :PropertyShape
     a sh:PropertyShape ;
+    rdfs:comment "comment" ;
+    rdfs:label "label" ;
     sh:and ([
             sh:datatype :andDatatype1
         ]
@@ -86,7 +88,6 @@
         ]
     ) ;
     sh:class :Class ;
-    rdfs:comment "comment" ;
     sh:datatype :datatype ;
     sh:deactivated true ;
     sh:defaultValue "defaultValue" ;
@@ -102,7 +103,6 @@
     sh:in (:in1
         :in2
     ) ;
-    rdfs:label "label" ;
     sh:languageIn ("en"
         "fr"
     ) ;
