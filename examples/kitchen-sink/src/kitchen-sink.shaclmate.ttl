@@ -1253,12 +1253,13 @@ The sh:targetClass is expected on deserialization and added on serialization."""
                 sh:datatype xsd:string
             ]
         )
-    ], [
+    ], 
+    [
         rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType)." ;
         sh:maxCount 1 ;
-        sh:path :optionalIriOrLiteral ;
+        sh:path :optionalTerm ;
         sh:xone ([
-                sh:nodeKind sh:IRI
+                sh:nodeKind sh:BlankNodeOrIRI
             ]
             [
                 sh:nodeKind sh:Literal
@@ -1327,9 +1328,9 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :requiredIriOrLiteral ;
+        sh:path :requiredTerm ;
         sh:xone ([
-                sh:nodeKind sh:IRI
+                sh:nodeKind sh:BlankNodeOrIRI
             ]
             [
                 sh:nodeKind sh:Literal
@@ -1362,9 +1363,9 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         )
     ], [
         rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType)." ;
-        sh:path :setIriOrLiteral ;
+        sh:path :setTerm ;
         sh:xone ([
-                sh:nodeKind sh:IRI
+                sh:nodeKind sh:BlankNodeOrIRI
             ]
             [
                 sh:nodeKind sh:Literal
