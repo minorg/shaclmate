@@ -16,17 +16,15 @@ import which from "which";
 import { execPromisified } from "./execPromisified.js";
 import { Validator } from "./Validator.js";
 
-export class JenaValidator extends Validator {
-  private jenaShaclFilePath: string;
+export class PyShaclValidator extends Validator {
+  private pyShaclFilePath: string;
 
   private constructor({
-    jenaShaclFilePath,
+    pyShaclFilePath,
     ...superParameters
-  }: { jenaShaclFilePath: string } & ConstructorParameters<
-    typeof Validator
-  >[0]) {
+  }: { pyShaclFilePath: string } & ConstructorParameters<typeof Validator>[0]) {
     super(superParameters);
-    this.jenaShaclFilePath = jenaShaclFilePath;
+    this.pyShaclFilePath = pyShaclFilePath;
   }
 
   static async create({
@@ -35,11 +33,11 @@ export class JenaValidator extends Validator {
   }: {
     logger?: Logger;
     shapesGraph: DatasetCore;
-  }): Promise<Either<Error, JenaValidator>> {
+  }): Promise<Either<Error, PyShaclValidator>> {
     return EitherAsync(async () => {
-      const jenaShaclFilePath = await which("shacl");
-      return new JenaValidator({
-        jenaShaclFilePath,
+      const pyShaclFilePath = await which("pyshacl");
+      return new PyShaclValidator({
+        pyShaclFilePath,
         logger,
         shapesGraph,
       });
@@ -81,19 +79,19 @@ export class JenaValidator extends Validator {
             this.logger.debug("wrote shapes graph to %s", shapesGraphFilePath);
 
             const args = [
-              "validate",
-              "--data",
-              dataGraphFilePath,
-              "--shapes",
+              "-f",
+              "turtle",
+              "-s",
               shapesGraphFilePath,
+              dataGraphFilePath,
             ];
-            this.logger.info("validating with Jena (args=%s)", args);
+            this.logger.info("validating with pyshacl (args=%s)", args);
             const { code, stdout } = await execPromisified(
-              this.jenaShaclFilePath,
+              this.pyShaclFilePath,
               args,
             );
             this.logger.info(
-              "validated with Jena: %s",
+              "validated with pyshacl: %s",
               code === 0 ? "conforms" : "does not conform",
             );
 
@@ -121,7 +119,7 @@ export class JenaValidator extends Validator {
               );
             }
             throw new Error(
-              "unable to parse validation report from Jena shacl output",
+              "unable to parse validation report from pySHACL shacl output",
             );
           },
           {
