@@ -630,8 +630,8 @@ export const harnesses = {
           discriminatedUnionMemberCommon: "test",
         }),
       },
-      optionalIriOrLiteral: dataFactory.namedNode("http://example.com"),
       optionalIriOrString: dataFactory.namedNode("http://example.com"),
+      optionalTerm: dataFactory.namedNode("http://example.com"),
       requiredNodeOrNodeOrString: {
         $type: "DiscriminatedUnionMember1",
         value: kitchenSink.DiscriminatedUnionMember1.createUnsafe({
@@ -652,8 +652,8 @@ export const harnesses = {
           discriminatedUnionMemberCommon: "test",
         }),
       },
-      requiredIriOrLiteral: dataFactory.namedNode("http://example.com"),
       requiredIriOrString: dataFactory.namedNode("http://example.com"),
+      requiredTerm: dataFactory.namedNode("http://example.com"),
       // Don't specify the set properties to test undefined
     }),
     kitchenSink.UnionDiscriminantsStruct,
@@ -672,15 +672,15 @@ export const harnesses = {
         }),
       },
       optionalNodeOrLiteral: dataFactory.literal("test"),
-      optionalIriOrLiteral: dataFactory.literal("test"),
       optionalIriOrString: "test",
+      optionalTerm: dataFactory.literal("test"),
       requiredNodeOrNodeOrString: {
         $type: "string",
         value: "test",
       },
       requiredNodeOrLiteral: dataFactory.literal("test"),
-      requiredIriOrLiteral: dataFactory.literal("test"),
       requiredIriOrString: "test",
+      requiredTerm: dataFactory.literal("test"),
       setNodeOrNodeOrString: [
         // Opposite order
         {
@@ -722,11 +722,11 @@ export const harnesses = {
           }),
         },
       ],
-      setIriOrLiteral: [
+      setIriOrString: ["test", dataFactory.namedNode("http://example.com")],
+      setTerm: [
         dataFactory.literal("test"),
         dataFactory.namedNode("http://example.com"),
       ],
-      setIriOrString: ["test", dataFactory.namedNode("http://example.com")],
     }),
     kitchenSink.UnionDiscriminantsStruct,
   ),
