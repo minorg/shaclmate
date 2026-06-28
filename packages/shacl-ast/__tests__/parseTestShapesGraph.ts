@@ -1,6 +1,7 @@
 import datasetFactory from "@rdfjs/dataset";
 import { RdfFile } from "@rdfx/fs";
 import { type Either, EitherAsync } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { ShapesGraph } from "../src/ShapesGraph.js";
 
 export async function parseTestShapesGraph(testShapesGraph: {
@@ -11,6 +12,7 @@ export async function parseTestShapesGraph(testShapesGraph: {
     for (const filePath of testShapesGraph.filePaths) {
       await RdfFile.fromPath(filePath).unsafeCoerce().parseInto(dataset);
     }
+    invariant(dataset.size > 0);
     return (
       await liftEither(ShapesGraph.builder().parseDataset(dataset))
     ).build();

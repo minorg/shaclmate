@@ -72,11 +72,7 @@ export const testShapesGraphs = {
     description:
       "Minimal shapes graph to stress generator feature combinations",
     filePaths: [
-      path.join(
-        thisDirectoryPath,
-        "data",
-        "feature-combinations.shaclmate.ttl",
-      ),
+      path.join(thisDirectoryPath, "feature-combinations.shaclmate.ttl"),
     ],
     kind: "stress",
   },
