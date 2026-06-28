@@ -43993,11 +43993,6 @@ export type UnionDiscriminantsStruct = {
   readonly $type: "UnionDiscriminantsStruct";
 
   /**
-   * Discriminated union that can be discriminated by an intrinsic discriminant property (termType).
-   */
-  readonly optionalIriOrLiteral: Maybe<NamedNode | Literal>;
-
-  /**
    * Discriminated union that can be discriminated by typeof.
    */
   readonly optionalIriOrString: Maybe<NamedNode | string>;
@@ -44028,7 +44023,7 @@ export type UnionDiscriminantsStruct = {
   /**
    * Discriminated union that can be discriminated by an intrinsic discriminant property (termType).
    */
-  readonly requiredIriOrLiteral: NamedNode | Literal;
+  readonly optionalTerm: Maybe<(BlankNode | NamedNode) | Literal>;
 
   /**
    * Discriminated union that can be discriminated by typeof.
@@ -44059,7 +44054,7 @@ export type UnionDiscriminantsStruct = {
   /**
    * Discriminated union that can be discriminated by an intrinsic discriminant property (termType).
    */
-  readonly setIriOrLiteral: readonly (NamedNode | Literal)[];
+  readonly requiredTerm: (BlankNode | NamedNode) | Literal;
 
   /**
    * Discriminated union that can be discriminated by typeof.
@@ -44088,6 +44083,11 @@ export type UnionDiscriminantsStruct = {
       }
     | { $type: "string"; value: string }
   )[];
+
+  /**
+   * Discriminated union that can be discriminated by an intrinsic discriminant property (termType).
+   */
+  readonly setTerm: readonly ((BlankNode | NamedNode) | Literal)[];
 };
 
 export namespace UnionDiscriminantsStruct {
@@ -44097,9 +44097,6 @@ export namespace UnionDiscriminantsStruct {
       | BlankNode
       | NamedNode
       | string;
-    readonly optionalIriOrLiteral?:
-      | (NamedNode | Literal)
-      | Maybe<NamedNode | Literal>;
     readonly optionalIriOrString?:
       | NamedNode
       | string
@@ -44142,7 +44139,9 @@ export namespace UnionDiscriminantsStruct {
             }
           | { $type: "string"; value: string }
         >;
-    readonly requiredIriOrLiteral: NamedNode | Literal;
+    readonly optionalTerm?:
+      | ((BlankNode | NamedNode) | Literal)
+      | Maybe<(BlankNode | NamedNode) | Literal>;
     readonly requiredIriOrString: NamedNode | string;
     readonly requiredNodeOrLiteral:
       | {
@@ -44157,9 +44156,7 @@ export namespace UnionDiscriminantsStruct {
           value: DiscriminatedUnionMember2;
         }
       | { $type: "string"; value: string };
-    readonly setIriOrLiteral?:
-      | (NamedNode | Literal)
-      | readonly (NamedNode | Literal)[];
+    readonly requiredTerm: (BlankNode | NamedNode) | Literal;
     readonly setIriOrString?:
       | NamedNode
       | string
@@ -44202,17 +44199,12 @@ export namespace UnionDiscriminantsStruct {
             }
           | { $type: "string"; value: string }
         )[];
+    readonly setTerm?:
+      | ((BlankNode | NamedNode) | Literal)
+      | readonly ((BlankNode | NamedNode) | Literal)[];
   }) => Either<Error, UnionDiscriminantsStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      optionalIriOrLiteral: $convertToMaybe($identityConversionFunction)(
-        parameters.optionalIriOrLiteral,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral.type,
-          value,
-        ),
-      ),
       optionalIriOrString: $convertToMaybe($identityConversionFunction)(
         parameters.optionalIriOrString,
       ).chain((value) =>
@@ -44238,8 +44230,13 @@ export namespace UnionDiscriminantsStruct {
           value,
         ),
       ),
-      requiredIriOrLiteral: $identityConversionFunction(
-        parameters.requiredIriOrLiteral,
+      optionalTerm: $convertToMaybe($identityConversionFunction)(
+        parameters.optionalTerm,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionDiscriminantsStruct.schema.properties.optionalTerm.type,
+          value,
+        ),
       ),
       requiredIriOrString: $identityConversionFunction(
         parameters.requiredIriOrString,
@@ -44250,15 +44247,7 @@ export namespace UnionDiscriminantsStruct {
       requiredNodeOrNodeOrString: $identityConversionFunction(
         parameters.requiredNodeOrNodeOrString,
       ),
-      setIriOrLiteral: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.setIriOrLiteral).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
-          UnionDiscriminantsStruct.schema.properties.setIriOrLiteral.type,
-          value,
-        ),
-      ),
+      requiredTerm: $identityConversionFunction(parameters.requiredTerm),
       setIriOrString: $convertToScalarSet(
         $identityConversionFunction,
         true,
@@ -44286,6 +44275,15 @@ export namespace UnionDiscriminantsStruct {
           value,
         ),
       ),
+      setTerm: $convertToScalarSet(
+        $identityConversionFunction,
+        true,
+      )(parameters.setTerm).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          UnionDiscriminantsStruct.schema.properties.setTerm.type,
+          value,
+        ),
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -44304,9 +44302,6 @@ export namespace UnionDiscriminantsStruct {
       | BlankNode
       | NamedNode
       | string;
-    readonly optionalIriOrLiteral?:
-      | (NamedNode | Literal)
-      | Maybe<NamedNode | Literal>;
     readonly optionalIriOrString?:
       | NamedNode
       | string
@@ -44349,7 +44344,9 @@ export namespace UnionDiscriminantsStruct {
             }
           | { $type: "string"; value: string }
         >;
-    readonly requiredIriOrLiteral: NamedNode | Literal;
+    readonly optionalTerm?:
+      | ((BlankNode | NamedNode) | Literal)
+      | Maybe<(BlankNode | NamedNode) | Literal>;
     readonly requiredIriOrString: NamedNode | string;
     readonly requiredNodeOrLiteral:
       | {
@@ -44364,9 +44361,7 @@ export namespace UnionDiscriminantsStruct {
           value: DiscriminatedUnionMember2;
         }
       | { $type: "string"; value: string };
-    readonly setIriOrLiteral?:
-      | (NamedNode | Literal)
-      | readonly (NamedNode | Literal)[];
+    readonly requiredTerm: (BlankNode | NamedNode) | Literal;
     readonly setIriOrString?:
       | NamedNode
       | string
@@ -44409,6 +44404,9 @@ export namespace UnionDiscriminantsStruct {
             }
           | { $type: "string"; value: string }
         )[];
+    readonly setTerm?:
+      | ((BlankNode | NamedNode) | Literal)
+      | readonly ((BlankNode | NamedNode) | Literal)[];
   }): UnionDiscriminantsStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -44422,49 +44420,6 @@ export namespace UnionDiscriminantsStruct {
       [left, left.$identifier()],
       [right, right.$identifier()],
     )
-      .chain(() =>
-        $propertyEquals(
-          {
-            equalsFunction: (left, right) =>
-              $maybeEquals(
-                left,
-                right,
-                (left: NamedNode | Literal, right: NamedNode | Literal) => {
-                  if (
-                    left["termType"] === "NamedNode" &&
-                    right["termType"] === "NamedNode"
-                  ) {
-                    return $booleanEquals(
-                      left as NamedNode,
-                      right as NamedNode,
-                    );
-                  }
-                  if (
-                    left["termType"] === "Literal" &&
-                    right["termType"] === "Literal"
-                  ) {
-                    return $booleanEquals(left as Literal, right as Literal);
-                  }
-
-                  return Left({
-                    left,
-                    right,
-                    propertyName: "type",
-                    propertyValuesUnequal: {
-                      left: typeof left,
-                      right: typeof right,
-                      type: "boolean" as const,
-                    },
-                    type: "property" as const,
-                  });
-                },
-              ),
-            name: "optionalIriOrLiteral",
-          },
-          [left, left.optionalIriOrLiteral],
-          [right, right.optionalIriOrLiteral],
-        ),
-      )
       .chain(() =>
         $propertyEquals(
           {
@@ -44637,39 +44592,49 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: (
-              left: NamedNode | Literal,
-              right: NamedNode | Literal,
-            ) => {
-              if (
-                left["termType"] === "NamedNode" &&
-                right["termType"] === "NamedNode"
-              ) {
-                return $booleanEquals(left as NamedNode, right as NamedNode);
-              }
-              if (
-                left["termType"] === "Literal" &&
-                right["termType"] === "Literal"
-              ) {
-                return $booleanEquals(left as Literal, right as Literal);
-              }
-
-              return Left({
+            equalsFunction: (left, right) =>
+              $maybeEquals(
                 left,
                 right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "boolean" as const,
+                (
+                  left: (BlankNode | NamedNode) | Literal,
+                  right: (BlankNode | NamedNode) | Literal,
+                ) => {
+                  if (
+                    (left["termType"] === "BlankNode" ||
+                      left["termType"] === "NamedNode") &&
+                    (right["termType"] === "BlankNode" ||
+                      right["termType"] === "NamedNode")
+                  ) {
+                    return $booleanEquals(
+                      left as BlankNode | NamedNode,
+                      right as BlankNode | NamedNode,
+                    );
+                  }
+                  if (
+                    left["termType"] === "Literal" &&
+                    right["termType"] === "Literal"
+                  ) {
+                    return $booleanEquals(left as Literal, right as Literal);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
                 },
-                type: "property" as const,
-              });
-            },
-            name: "requiredIriOrLiteral",
+              ),
+            name: "optionalTerm",
           },
-          [left, left.requiredIriOrLiteral],
-          [right, right.requiredIriOrLiteral],
+          [left, left.optionalTerm],
+          [right, right.optionalTerm],
         ),
       )
       .chain(() =>
@@ -44826,44 +44791,44 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: (left, right) =>
-              $arrayEquals(
+            equalsFunction: (
+              left: (BlankNode | NamedNode) | Literal,
+              right: (BlankNode | NamedNode) | Literal,
+            ) => {
+              if (
+                (left["termType"] === "BlankNode" ||
+                  left["termType"] === "NamedNode") &&
+                (right["termType"] === "BlankNode" ||
+                  right["termType"] === "NamedNode")
+              ) {
+                return $booleanEquals(
+                  left as BlankNode | NamedNode,
+                  right as BlankNode | NamedNode,
+                );
+              }
+              if (
+                left["termType"] === "Literal" &&
+                right["termType"] === "Literal"
+              ) {
+                return $booleanEquals(left as Literal, right as Literal);
+              }
+
+              return Left({
                 left,
                 right,
-                (left: NamedNode | Literal, right: NamedNode | Literal) => {
-                  if (
-                    left["termType"] === "NamedNode" &&
-                    right["termType"] === "NamedNode"
-                  ) {
-                    return $booleanEquals(
-                      left as NamedNode,
-                      right as NamedNode,
-                    );
-                  }
-                  if (
-                    left["termType"] === "Literal" &&
-                    right["termType"] === "Literal"
-                  ) {
-                    return $booleanEquals(left as Literal, right as Literal);
-                  }
-
-                  return Left({
-                    left,
-                    right,
-                    propertyName: "type",
-                    propertyValuesUnequal: {
-                      left: typeof left,
-                      right: typeof right,
-                      type: "boolean" as const,
-                    },
-                    type: "property" as const,
-                  });
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
                 },
-              ),
-            name: "setIriOrLiteral",
+                type: "property" as const,
+              });
+            },
+            name: "requiredTerm",
           },
-          [left, left.setIriOrLiteral],
-          [right, right.setIriOrLiteral],
+          [left, left.requiredTerm],
+          [right, right.requiredTerm],
         ),
       )
       .chain(() =>
@@ -45034,16 +44999,58 @@ export namespace UnionDiscriminantsStruct {
           [left, left.setNodeOrNodeOrString],
           [right, right.setNodeOrNodeOrString],
         ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $arrayEquals(
+                left,
+                right,
+                (
+                  left: (BlankNode | NamedNode) | Literal,
+                  right: (BlankNode | NamedNode) | Literal,
+                ) => {
+                  if (
+                    (left["termType"] === "BlankNode" ||
+                      left["termType"] === "NamedNode") &&
+                    (right["termType"] === "BlankNode" ||
+                      right["termType"] === "NamedNode")
+                  ) {
+                    return $booleanEquals(
+                      left as BlankNode | NamedNode,
+                      right as BlankNode | NamedNode,
+                    );
+                  }
+                  if (
+                    left["termType"] === "Literal" &&
+                    right["termType"] === "Literal"
+                  ) {
+                    return $booleanEquals(left as Literal, right as Literal);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
+                },
+              ),
+            name: "setTerm",
+          },
+          [left, left.setTerm],
+          [right, right.setTerm],
+        ),
       );
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly optionalIriOrLiteral?: $MaybeFilter<{
-      readonly on?: {
-        readonly NamedNode?: $IriFilter;
-        readonly Literal?: $LiteralFilter;
-      };
-    }>;
     readonly optionalIriOrString?: $MaybeFilter<{
       readonly on?: {
         readonly object?: $IriFilter;
@@ -45063,12 +45070,12 @@ export namespace UnionDiscriminantsStruct {
         readonly string?: $StringFilter;
       };
     }>;
-    readonly requiredIriOrLiteral?: {
+    readonly optionalTerm?: $MaybeFilter<{
       readonly on?: {
-        readonly NamedNode?: $IriFilter;
+        readonly BlankNode?: $IdentifierFilter;
         readonly Literal?: $LiteralFilter;
       };
-    };
+    }>;
     readonly requiredIriOrString?: {
       readonly on?: {
         readonly object?: $IriFilter;
@@ -45088,12 +45095,12 @@ export namespace UnionDiscriminantsStruct {
         readonly string?: $StringFilter;
       };
     };
-    readonly setIriOrLiteral?: $CollectionFilter<{
+    readonly requiredTerm?: {
       readonly on?: {
-        readonly NamedNode?: $IriFilter;
+        readonly BlankNode?: $IdentifierFilter;
         readonly Literal?: $LiteralFilter;
       };
-    }>;
+    };
     readonly setIriOrString?: $CollectionFilter<{
       readonly on?: {
         readonly object?: $IriFilter;
@@ -45113,6 +45120,12 @@ export namespace UnionDiscriminantsStruct {
         readonly string?: $StringFilter;
       };
     }>;
+    readonly setTerm?: $CollectionFilter<{
+      readonly on?: {
+        readonly BlankNode?: $IdentifierFilter;
+        readonly Literal?: $LiteralFilter;
+      };
+    }>;
   };
 
   export const filter: (
@@ -45122,49 +45135,6 @@ export namespace UnionDiscriminantsStruct {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalIriOrLiteral !== undefined &&
-      !$filterMaybe<
-        NamedNode | Literal,
-        {
-          readonly on?: {
-            readonly NamedNode?: $IriFilter;
-            readonly Literal?: $LiteralFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          value: NamedNode | Literal,
-        ) => {
-          if (
-            filter.on?.["NamedNode"] !== undefined &&
-            value["termType"] === "NamedNode"
-          ) {
-            if (!$filterIri(filter.on["NamedNode"], value)) {
-              return false;
-            }
-          }
-          if (
-            filter.on?.["Literal"] !== undefined &&
-            value["termType"] === "Literal"
-          ) {
-            if (!$filterLiteral(filter.on["Literal"], value)) {
-              return false;
-            }
-          }
-
-          return true;
-        },
-      )(filter.optionalIriOrLiteral, value.optionalIriOrLiteral)
     ) {
       return false;
     }
@@ -45349,35 +45319,46 @@ export namespace UnionDiscriminantsStruct {
       return false;
     }
     if (
-      filter.requiredIriOrLiteral !== undefined &&
-      !((
-        filter: {
+      filter.optionalTerm !== undefined &&
+      !$filterMaybe<
+        (BlankNode | NamedNode) | Literal,
+        {
           readonly on?: {
-            readonly NamedNode?: $IriFilter;
+            readonly BlankNode?: $IdentifierFilter;
             readonly Literal?: $LiteralFilter;
           };
-        },
-        value: NamedNode | Literal,
-      ) => {
-        if (
-          filter.on?.["NamedNode"] !== undefined &&
-          value["termType"] === "NamedNode"
-        ) {
-          if (!$filterIri(filter.on["NamedNode"], value)) {
-            return false;
-          }
         }
-        if (
-          filter.on?.["Literal"] !== undefined &&
-          value["termType"] === "Literal"
-        ) {
-          if (!$filterLiteral(filter.on["Literal"], value)) {
-            return false;
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly BlankNode?: $IdentifierFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          value: (BlankNode | NamedNode) | Literal,
+        ) => {
+          if (
+            filter.on?.["BlankNode"] !== undefined &&
+            (value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode")
+          ) {
+            if (!$filterIdentifier(filter.on["BlankNode"], value)) {
+              return false;
+            }
           }
-        }
+          if (
+            filter.on?.["Literal"] !== undefined &&
+            value["termType"] === "Literal"
+          ) {
+            if (!$filterLiteral(filter.on["Literal"], value)) {
+              return false;
+            }
+          }
 
-        return true;
-      })(filter.requiredIriOrLiteral, value.requiredIriOrLiteral)
+          return true;
+        },
+      )(filter.optionalTerm, value.optionalTerm)
     ) {
       return false;
     }
@@ -45513,45 +45494,36 @@ export namespace UnionDiscriminantsStruct {
       return false;
     }
     if (
-      filter.setIriOrLiteral !== undefined &&
-      !$filterArray<
-        NamedNode | Literal,
-        {
+      filter.requiredTerm !== undefined &&
+      !((
+        filter: {
           readonly on?: {
-            readonly NamedNode?: $IriFilter;
+            readonly BlankNode?: $IdentifierFilter;
             readonly Literal?: $LiteralFilter;
           };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          value: NamedNode | Literal,
-        ) => {
-          if (
-            filter.on?.["NamedNode"] !== undefined &&
-            value["termType"] === "NamedNode"
-          ) {
-            if (!$filterIri(filter.on["NamedNode"], value)) {
-              return false;
-            }
-          }
-          if (
-            filter.on?.["Literal"] !== undefined &&
-            value["termType"] === "Literal"
-          ) {
-            if (!$filterLiteral(filter.on["Literal"], value)) {
-              return false;
-            }
-          }
-
-          return true;
         },
-      )(filter.setIriOrLiteral, value.setIriOrLiteral)
+        value: (BlankNode | NamedNode) | Literal,
+      ) => {
+        if (
+          filter.on?.["BlankNode"] !== undefined &&
+          (value["termType"] === "BlankNode" ||
+            value["termType"] === "NamedNode")
+        ) {
+          if (!$filterIdentifier(filter.on["BlankNode"], value)) {
+            return false;
+          }
+        }
+        if (
+          filter.on?.["Literal"] !== undefined &&
+          value["termType"] === "Literal"
+        ) {
+          if (!$filterLiteral(filter.on["Literal"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.requiredTerm, value.requiredTerm)
     ) {
       return false;
     }
@@ -45735,6 +45707,50 @@ export namespace UnionDiscriminantsStruct {
     ) {
       return false;
     }
+    if (
+      filter.setTerm !== undefined &&
+      !$filterArray<
+        (BlankNode | NamedNode) | Literal,
+        {
+          readonly on?: {
+            readonly BlankNode?: $IdentifierFilter;
+            readonly Literal?: $LiteralFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly BlankNode?: $IdentifierFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          value: (BlankNode | NamedNode) | Literal,
+        ) => {
+          if (
+            filter.on?.["BlankNode"] !== undefined &&
+            (value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode")
+          ) {
+            if (!$filterIdentifier(filter.on["BlankNode"], value)) {
+              return false;
+            }
+          }
+          if (
+            filter.on?.["Literal"] !== undefined &&
+            value["termType"] === "Literal"
+          ) {
+            if (!$filterLiteral(filter.on["Literal"], value)) {
+              return false;
+            }
+          }
+
+          return true;
+        },
+      )(filter.setTerm, value.setTerm)
+    ) {
+      return false;
+    }
     return true;
   };
 
@@ -45742,79 +45758,6 @@ export namespace UnionDiscriminantsStruct {
     UnionDiscriminantsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.optionalIriOrLiteral,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "optionalIriOrLiteral",
-        propertySchema:
-          UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly NamedNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
-          let triples: sparqljs.Triple[] = [];
-
-          triples = triples.concat(
-            ((_: object) => [])({
-              ...otherParameters,
-              filter: filter?.on?.["NamedNode"],
-              ignoreRdfType: false,
-              schema: schema.members["NamedNode"].type,
-            }),
-          );
-          triples = triples.concat(
-            ((_: object) => [])({
-              ...otherParameters,
-              filter: filter?.on?.["Literal"],
-              ignoreRdfType: false,
-              schema: schema.members["Literal"].type,
-            }),
-          );
-
-          return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly NamedNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.optionalIriOrString,
@@ -46054,26 +45997,40 @@ export namespace UnionDiscriminantsStruct {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.requiredIriOrLiteral,
+        filter: parameters.filter?.optionalTerm,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "requiredIriOrLiteral",
-        propertySchema:
-          UnionDiscriminantsStruct.schema.properties.requiredIriOrLiteral,
-        typeSparqlConstructTriples: (({
-          ignoreRdfType,
-          filter,
-          schema,
-          ...otherParameters
-        }) => {
+        propertyName: "optionalTerm",
+        propertySchema: UnionDiscriminantsStruct.schema.properties.optionalTerm,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly BlankNode?: $IdentifierFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly BlankNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IdentifierSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ((_: object) => [])({
               ...otherParameters,
-              filter: filter?.on?.["NamedNode"],
+              filter: filter?.on?.["BlankNode"],
               ignoreRdfType: false,
-              schema: schema.members["NamedNode"].type,
+              schema: schema.members["BlankNode"].type,
             }),
           );
           triples = triples.concat(
@@ -46089,16 +46046,16 @@ export namespace UnionDiscriminantsStruct {
         }) satisfies $ValueSparqlConstructTriplesFunction<
           {
             readonly on?: {
-              readonly NamedNode?: $IriFilter;
+              readonly BlankNode?: $IdentifierFilter;
               readonly Literal?: $LiteralFilter;
             };
           },
           {
             kind: "DiscriminatedUnion";
             members: {
-              readonly NamedNode: {
+              readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
+                type: $IdentifierSchema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -46106,7 +46063,7 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >,
+        >),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -46299,41 +46256,25 @@ export namespace UnionDiscriminantsStruct {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.setIriOrLiteral,
+        filter: parameters.filter?.requiredTerm,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "setIriOrLiteral",
-        propertySchema:
-          UnionDiscriminantsStruct.schema.properties.setIriOrLiteral,
-        typeSparqlConstructTriples: $setSparqlConstructTriples<
-          {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly NamedNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+        propertyName: "requiredTerm",
+        propertySchema: UnionDiscriminantsStruct.schema.properties.requiredTerm,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ((_: object) => [])({
               ...otherParameters,
-              filter: filter?.on?.["NamedNode"],
+              filter: filter?.on?.["BlankNode"],
               ignoreRdfType: false,
-              schema: schema.members["NamedNode"].type,
+              schema: schema.members["BlankNode"].type,
             }),
           );
           triples = triples.concat(
@@ -46349,16 +46290,16 @@ export namespace UnionDiscriminantsStruct {
         }) satisfies $ValueSparqlConstructTriplesFunction<
           {
             readonly on?: {
-              readonly NamedNode?: $IriFilter;
+              readonly BlankNode?: $IdentifierFilter;
               readonly Literal?: $LiteralFilter;
             };
           },
           {
             kind: "DiscriminatedUnion";
             members: {
-              readonly NamedNode: {
+              readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
+                type: $IdentifierSchema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -46366,7 +46307,7 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >),
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -46600,6 +46541,78 @@ export namespace UnionDiscriminantsStruct {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
                 type: $StringSchema<string>;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.setTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "setTerm",
+        propertySchema: UnionDiscriminantsStruct.schema.properties.setTerm,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly BlankNode?: $IdentifierFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly BlankNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IdentifierSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["BlankNode"],
+              ignoreRdfType: false,
+              schema: schema.members["BlankNode"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly BlankNode?: $IdentifierFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly BlankNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IdentifierSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
               };
             };
           }
@@ -46629,82 +46642,6 @@ export namespace UnionDiscriminantsStruct {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.optionalIriOrLiteral,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "optionalIriOrLiteral",
-        propertySchema:
-          UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly NamedNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >((({ filter, schema, ...otherParameters }) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
-
-          unionPatterns.push({
-            patterns: $iriSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["NamedNode"],
-              ignoreRdfType: false,
-              schema: schema.members["NamedNode"].type,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $literalSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["Literal"],
-              ignoreRdfType: false,
-              schema: schema.members["Literal"].type,
-            }).concat(),
-            type: "group",
-          });
-
-          return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly NamedNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.optionalIriOrString,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -46952,22 +46889,41 @@ export namespace UnionDiscriminantsStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.requiredIriOrLiteral,
+        filter: parameters.filter?.optionalTerm,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "requiredIriOrLiteral",
-        propertySchema:
-          UnionDiscriminantsStruct.schema.properties.requiredIriOrLiteral,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        propertyName: "optionalTerm",
+        propertySchema: UnionDiscriminantsStruct.schema.properties.optionalTerm,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly BlankNode?: $IdentifierFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly BlankNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IdentifierSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
-            patterns: $iriSparqlWherePatterns({
+            patterns: $identifierSparqlWherePatterns({
               ...otherParameters,
-              filter: filter?.on?.["NamedNode"],
+              filter: filter?.on?.["BlankNode"],
               ignoreRdfType: false,
-              schema: schema.members["NamedNode"].type,
+              schema: schema.members["BlankNode"].type,
             }).concat(),
             type: "group",
           });
@@ -46985,16 +46941,16 @@ export namespace UnionDiscriminantsStruct {
         }) satisfies $ValueSparqlWherePatternsFunction<
           {
             readonly on?: {
-              readonly NamedNode?: $IriFilter;
+              readonly BlankNode?: $IdentifierFilter;
               readonly Literal?: $LiteralFilter;
             };
           },
           {
             kind: "DiscriminatedUnion";
             members: {
-              readonly NamedNode: {
+              readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
+                type: $IdentifierSchema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -47002,7 +46958,7 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >,
+        >),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -47190,42 +47146,21 @@ export namespace UnionDiscriminantsStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.setIriOrLiteral,
+        filter: parameters.filter?.requiredTerm,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "setIriOrLiteral",
-        propertySchema:
-          UnionDiscriminantsStruct.schema.properties.setIriOrLiteral,
-        typeSparqlWherePatterns: $setSparqlWherePatterns<
-          {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly NamedNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >((({ filter, schema, ...otherParameters }) => {
+        propertyName: "requiredTerm",
+        propertySchema: UnionDiscriminantsStruct.schema.properties.requiredTerm,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
-            patterns: $iriSparqlWherePatterns({
+            patterns: $identifierSparqlWherePatterns({
               ...otherParameters,
-              filter: filter?.on?.["NamedNode"],
+              filter: filter?.on?.["BlankNode"],
               ignoreRdfType: false,
-              schema: schema.members["NamedNode"].type,
+              schema: schema.members["BlankNode"].type,
             }).concat(),
             type: "group",
           });
@@ -47243,16 +47178,16 @@ export namespace UnionDiscriminantsStruct {
         }) satisfies $ValueSparqlWherePatternsFunction<
           {
             readonly on?: {
-              readonly NamedNode?: $IriFilter;
+              readonly BlankNode?: $IdentifierFilter;
               readonly Literal?: $LiteralFilter;
             };
           },
           {
             kind: "DiscriminatedUnion";
             members: {
-              readonly NamedNode: {
+              readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
+                type: $IdentifierSchema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -47260,7 +47195,7 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >),
+        >,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -47511,6 +47446,81 @@ export namespace UnionDiscriminantsStruct {
         variablePrefix: parameters.variablePrefix,
       }),
     );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.setTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "setTerm",
+        propertySchema: UnionDiscriminantsStruct.schema.properties.setTerm,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly BlankNode?: $IdentifierFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly BlankNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IdentifierSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $identifierSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["BlankNode"],
+              ignoreRdfType: false,
+              schema: schema.members["BlankNode"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly BlankNode?: $IdentifierFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly BlankNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IdentifierSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
     return patterns;
   };
 
@@ -47523,84 +47533,6 @@ export namespace UnionDiscriminantsStruct {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      optionalIriOrLiteral: Maybe.fromNullable($json["optionalIriOrLiteral"])
-        .map((item) =>
-          ((
-            value:
-              | { readonly "@id": string; readonly termType: "NamedNode" }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                },
-          ): Either<Error, NamedNode | Literal> => {
-            if (value["termType"] === "NamedNode") {
-              return Either.of<Error, NamedNode>(
-                dataFactory.namedNode(
-                  (
-                    value as {
-                      readonly "@id": string;
-                      readonly termType: "NamedNode";
-                    }
-                  )["@id"],
-                ),
-              ).map((value) => value);
-            }
-            if (value["termType"] === "Literal") {
-              return Either.of<Error, Literal>(
-                dataFactory.literal(
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@value"],
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@language"] !== undefined
-                    ? (
-                        value as {
-                          readonly "@language"?: string;
-                          readonly termType: "Literal";
-                          readonly "@type"?: string;
-                          readonly "@value": string;
-                        }
-                      )["@language"]
-                    : (
-                          value as {
-                            readonly "@language"?: string;
-                            readonly termType: "Literal";
-                            readonly "@type"?: string;
-                            readonly "@value": string;
-                          }
-                        )["@type"] !== undefined
-                      ? dataFactory.namedNode(
-                          (
-                            value as {
-                              readonly "@language"?: string;
-                              readonly termType: "Literal";
-                              readonly "@type"?: string;
-                              readonly "@value": string;
-                            }
-                          )["@type"]!,
-                        )
-                      : undefined,
-                ),
-              ).map((value) => value);
-            }
-
-            throw new Error("unable to deserialize JSON");
-          })(item).map(Maybe.of),
-        )
-        .orDefault(Either.of(Maybe.empty())),
       optionalIriOrString: Maybe.fromNullable($json["optionalIriOrString"])
         .map((item) =>
           ((
@@ -47763,80 +47695,104 @@ export namespace UnionDiscriminantsStruct {
           })(item).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
-      requiredIriOrLiteral: ((
-        value:
-          | { readonly "@id": string; readonly termType: "NamedNode" }
-          | {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
-            },
-      ): Either<Error, NamedNode | Literal> => {
-        if (value["termType"] === "NamedNode") {
-          return Either.of<Error, NamedNode>(
-            dataFactory.namedNode(
-              (
-                value as {
+      optionalTerm: Maybe.fromNullable($json["optionalTerm"])
+        .map((item) =>
+          ((
+            value:
+              | {
                   readonly "@id": string;
-                  readonly termType: "NamedNode";
+                  readonly termType: "BlankNode" | "NamedNode";
                 }
-              )["@id"],
-            ),
-          ).map((value) => value);
-        }
-        if (value["termType"] === "Literal") {
-          return Either.of<Error, Literal>(
-            dataFactory.literal(
-              (
-                value as {
+              | {
                   readonly "@language"?: string;
                   readonly termType: "Literal";
                   readonly "@type"?: string;
                   readonly "@value": string;
-                }
-              )["@value"],
-              (
-                value as {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                }
-              )["@language"] !== undefined
-                ? (
+                },
+          ): Either<Error, (BlankNode | NamedNode) | Literal> => {
+            if (
+              value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode"
+            ) {
+              return Either.of<Error, BlankNode | NamedNode>(
+                (
+                  value as {
+                    readonly "@id": string;
+                    readonly termType: "BlankNode" | "NamedNode";
+                  }
+                )["@id"].startsWith("_:")
+                  ? dataFactory.blankNode(
+                      (
+                        value as {
+                          readonly "@id": string;
+                          readonly termType: "BlankNode" | "NamedNode";
+                        }
+                      )["@id"].substring(2),
+                    )
+                  : dataFactory.namedNode(
+                      (
+                        value as {
+                          readonly "@id": string;
+                          readonly termType: "BlankNode" | "NamedNode";
+                        }
+                      )["@id"],
+                    ),
+              ).map((value) => value);
+            }
+            if (value["termType"] === "Literal") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  (
                     value as {
                       readonly "@language"?: string;
                       readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
-                  )["@language"]
-                : (
-                      value as {
-                        readonly "@language"?: string;
-                        readonly termType: "Literal";
-                        readonly "@type"?: string;
-                        readonly "@value": string;
-                      }
-                    )["@type"] !== undefined
-                  ? dataFactory.namedNode(
-                      (
+                  )["@value"],
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@language"] !== undefined
+                    ? (
                         value as {
                           readonly "@language"?: string;
                           readonly termType: "Literal";
                           readonly "@type"?: string;
                           readonly "@value": string;
                         }
-                      )["@type"]!,
-                    )
-                  : undefined,
-            ),
-          ).map((value) => value);
-        }
+                      )["@language"]
+                    : (
+                          value as {
+                            readonly "@language"?: string;
+                            readonly termType: "Literal";
+                            readonly "@type"?: string;
+                            readonly "@value": string;
+                          }
+                        )["@type"] !== undefined
+                      ? dataFactory.namedNode(
+                          (
+                            value as {
+                              readonly "@language"?: string;
+                              readonly termType: "Literal";
+                              readonly "@type"?: string;
+                              readonly "@value": string;
+                            }
+                          )["@type"]!,
+                        )
+                      : undefined,
+                ),
+              ).map((value) => value);
+            }
 
-        throw new Error("unable to deserialize JSON");
-      })($json["requiredIriOrLiteral"]),
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       requiredIriOrString: ((
         value: { readonly "@id": string } | string,
       ): Either<Error, NamedNode | string> => {
@@ -47983,84 +47939,100 @@ export namespace UnionDiscriminantsStruct {
 
         throw new Error("unable to deserialize JSON");
       })($json["requiredNodeOrNodeOrString"]),
-      setIriOrLiteral: Either.sequence<Error, NamedNode | Literal>(
-        ($json["setIriOrLiteral"] ?? []).map((item) =>
-          ((
-            value:
-              | { readonly "@id": string; readonly termType: "NamedNode" }
-              | {
+      requiredTerm: ((
+        value:
+          | {
+              readonly "@id": string;
+              readonly termType: "BlankNode" | "NamedNode";
+            }
+          | {
+              readonly "@language"?: string;
+              readonly termType: "Literal";
+              readonly "@type"?: string;
+              readonly "@value": string;
+            },
+      ): Either<Error, (BlankNode | NamedNode) | Literal> => {
+        if (
+          value["termType"] === "BlankNode" ||
+          value["termType"] === "NamedNode"
+        ) {
+          return Either.of<Error, BlankNode | NamedNode>(
+            (
+              value as {
+                readonly "@id": string;
+                readonly termType: "BlankNode" | "NamedNode";
+              }
+            )["@id"].startsWith("_:")
+              ? dataFactory.blankNode(
+                  (
+                    value as {
+                      readonly "@id": string;
+                      readonly termType: "BlankNode" | "NamedNode";
+                    }
+                  )["@id"].substring(2),
+                )
+              : dataFactory.namedNode(
+                  (
+                    value as {
+                      readonly "@id": string;
+                      readonly termType: "BlankNode" | "NamedNode";
+                    }
+                  )["@id"],
+                ),
+          ).map((value) => value);
+        }
+        if (value["termType"] === "Literal") {
+          return Either.of<Error, Literal>(
+            dataFactory.literal(
+              (
+                value as {
                   readonly "@language"?: string;
                   readonly termType: "Literal";
                   readonly "@type"?: string;
                   readonly "@value": string;
-                },
-          ): Either<Error, NamedNode | Literal> => {
-            if (value["termType"] === "NamedNode") {
-              return Either.of<Error, NamedNode>(
-                dataFactory.namedNode(
-                  (
-                    value as {
-                      readonly "@id": string;
-                      readonly termType: "NamedNode";
-                    }
-                  )["@id"],
-                ),
-              ).map((value) => value);
-            }
-            if (value["termType"] === "Literal") {
-              return Either.of<Error, Literal>(
-                dataFactory.literal(
-                  (
+                }
+              )["@value"],
+              (
+                value as {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                }
+              )["@language"] !== undefined
+                ? (
                     value as {
                       readonly "@language"?: string;
                       readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
-                  )["@value"],
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@language"] !== undefined
-                    ? (
+                  )["@language"]
+                : (
+                      value as {
+                        readonly "@language"?: string;
+                        readonly termType: "Literal";
+                        readonly "@type"?: string;
+                        readonly "@value": string;
+                      }
+                    )["@type"] !== undefined
+                  ? dataFactory.namedNode(
+                      (
                         value as {
                           readonly "@language"?: string;
                           readonly termType: "Literal";
                           readonly "@type"?: string;
                           readonly "@value": string;
                         }
-                      )["@language"]
-                    : (
-                          value as {
-                            readonly "@language"?: string;
-                            readonly termType: "Literal";
-                            readonly "@type"?: string;
-                            readonly "@value": string;
-                          }
-                        )["@type"] !== undefined
-                      ? dataFactory.namedNode(
-                          (
-                            value as {
-                              readonly "@language"?: string;
-                              readonly termType: "Literal";
-                              readonly "@type"?: string;
-                              readonly "@value": string;
-                            }
-                          )["@type"]!,
-                        )
-                      : undefined,
-                ),
-              ).map((value) => value);
-            }
+                      )["@type"]!,
+                    )
+                  : undefined,
+            ),
+          ).map((value) => value);
+        }
 
-            throw new Error("unable to deserialize JSON");
-          })(item),
-        ),
-      ),
+        throw new Error("unable to deserialize JSON");
+      })($json["requiredTerm"]),
       setIriOrString: Either.sequence<Error, NamedNode | string>(
         ($json["setIriOrString"] ?? []).map((item) =>
           ((
@@ -48239,6 +48211,104 @@ export namespace UnionDiscriminantsStruct {
           })(item),
         ),
       ),
+      setTerm: Either.sequence<Error, (BlankNode | NamedNode) | Literal>(
+        ($json["setTerm"] ?? []).map((item) =>
+          ((
+            value:
+              | {
+                  readonly "@id": string;
+                  readonly termType: "BlankNode" | "NamedNode";
+                }
+              | {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                },
+          ): Either<Error, (BlankNode | NamedNode) | Literal> => {
+            if (
+              value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode"
+            ) {
+              return Either.of<Error, BlankNode | NamedNode>(
+                (
+                  value as {
+                    readonly "@id": string;
+                    readonly termType: "BlankNode" | "NamedNode";
+                  }
+                )["@id"].startsWith("_:")
+                  ? dataFactory.blankNode(
+                      (
+                        value as {
+                          readonly "@id": string;
+                          readonly termType: "BlankNode" | "NamedNode";
+                        }
+                      )["@id"].substring(2),
+                    )
+                  : dataFactory.namedNode(
+                      (
+                        value as {
+                          readonly "@id": string;
+                          readonly termType: "BlankNode" | "NamedNode";
+                        }
+                      )["@id"],
+                    ),
+              ).map((value) => value);
+            }
+            if (value["termType"] === "Literal") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@value"],
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@language"] !== undefined
+                    ? (
+                        value as {
+                          readonly "@language"?: string;
+                          readonly termType: "Literal";
+                          readonly "@type"?: string;
+                          readonly "@value": string;
+                        }
+                      )["@language"]
+                    : (
+                          value as {
+                            readonly "@language"?: string;
+                            readonly termType: "Literal";
+                            readonly "@type"?: string;
+                            readonly "@value": string;
+                          }
+                        )["@type"] !== undefined
+                      ? dataFactory.namedNode(
+                          (
+                            value as {
+                              readonly "@language"?: string;
+                              readonly termType: "Literal";
+                              readonly "@type"?: string;
+                              readonly "@value": string;
+                            }
+                          )["@type"]!,
+                        )
+                      : undefined,
+                ),
+              ).map((value) => value);
+            }
+
+            throw new Error("unable to deserialize JSON");
+          })(item),
+        ),
+      ),
     }).chain(UnionDiscriminantsStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -48254,76 +48324,6 @@ export namespace UnionDiscriminantsStruct {
           schema: UnionDiscriminantsStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
-      optionalIriOrLiteral: $shaclPropertyFromRdf<
-        Maybe<NamedNode | Literal>,
-        $MaybeSchema<{
-          kind: "DiscriminatedUnion";
-          members: {
-            readonly NamedNode: {
-              discriminantValues: readonly (number | string)[];
-              type: $IriSchema<string>;
-            };
-            readonly Literal: {
-              discriminantValues: readonly (number | string)[];
-              type: $LiteralSchema;
-            };
-          };
-        }>
-      >({
-        ...options,
-        focusResource: resource,
-        ignoreRdfType: true,
-        propertySchema:
-          UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral,
-        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          NamedNode | Literal,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly NamedNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >(((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              $iriFromRdfResourceValues<string>(valueAsValues, {
-                ...options,
-                schema: options.schema.members["NamedNode"].type,
-              }) as Either<Error, Resource.Values<NamedNode | Literal>>
-            )
-              .altLazy(
-                () =>
-                  $literalFromRdfResourceValues(valueAsValues, {
-                    ...options,
-                    schema: options.schema.members["Literal"].type,
-                  }) as Either<Error, Resource.Values<NamedNode | Literal>>,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
-          NamedNode | Literal,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly NamedNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >),
-      }),
       optionalIriOrString: $shaclPropertyFromRdf<
         Maybe<NamedNode | string>,
         $MaybeSchema<{
@@ -48721,52 +48721,34 @@ export namespace UnionDiscriminantsStruct {
           }
         >),
       }),
-      requiredIriOrLiteral: $shaclPropertyFromRdf<
-        NamedNode | Literal,
-        {
+      optionalTerm: $shaclPropertyFromRdf<
+        Maybe<(BlankNode | NamedNode) | Literal>,
+        $MaybeSchema<{
           kind: "DiscriminatedUnion";
           members: {
-            readonly NamedNode: {
+            readonly BlankNode: {
               discriminantValues: readonly (number | string)[];
-              type: $IriSchema<string>;
+              type: $IdentifierSchema;
             };
             readonly Literal: {
               discriminantValues: readonly (number | string)[];
               type: $LiteralSchema;
             };
           };
-        }
+        }>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
-        propertySchema:
-          UnionDiscriminantsStruct.schema.properties.requiredIriOrLiteral,
-        typeFromRdfResourceValues: ((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              $iriFromRdfResourceValues<string>(valueAsValues, {
-                ...options,
-                schema: options.schema.members["NamedNode"].type,
-              }) as Either<Error, Resource.Values<NamedNode | Literal>>
-            )
-              .altLazy(
-                () =>
-                  $literalFromRdfResourceValues(valueAsValues, {
-                    ...options,
-                    schema: options.schema.members["Literal"].type,
-                  }) as Either<Error, Resource.Values<NamedNode | Literal>>,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
-          NamedNode | Literal,
+        propertySchema: UnionDiscriminantsStruct.schema.properties.optionalTerm,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          (BlankNode | NamedNode) | Literal,
           {
             kind: "DiscriminatedUnion";
             members: {
-              readonly NamedNode: {
+              readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
+                type: $IdentifierSchema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -48774,7 +48756,45 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >,
+        >(((values, options) =>
+          values.chainMap((value) => {
+            const valueAsValues = value.toValues();
+            return (
+              $identifierFromRdfResourceValues(valueAsValues, {
+                ...options,
+                schema: options.schema.members["BlankNode"].type,
+              }) as Either<
+                Error,
+                Resource.Values<(BlankNode | NamedNode) | Literal>
+              >
+            )
+              .altLazy(
+                () =>
+                  $literalFromRdfResourceValues(valueAsValues, {
+                    ...options,
+                    schema: options.schema.members["Literal"].type,
+                  }) as Either<
+                    Error,
+                    Resource.Values<(BlankNode | NamedNode) | Literal>
+                  >,
+              )
+              .chain((values) => values.head());
+          })) satisfies $FromRdfResourceValuesFunction<
+          (BlankNode | NamedNode) | Literal,
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly BlankNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IdentifierSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
       }),
       requiredIriOrString: $shaclPropertyFromRdf<
         NamedNode | string,
@@ -49108,67 +49128,57 @@ export namespace UnionDiscriminantsStruct {
           }
         >,
       }),
-      setIriOrLiteral: $shaclPropertyFromRdf<
-        readonly (NamedNode | Literal)[],
-        $CollectionSchema<{
+      requiredTerm: $shaclPropertyFromRdf<
+        (BlankNode | NamedNode) | Literal,
+        {
           kind: "DiscriminatedUnion";
           members: {
-            readonly NamedNode: {
+            readonly BlankNode: {
               discriminantValues: readonly (number | string)[];
-              type: $IriSchema<string>;
+              type: $IdentifierSchema;
             };
             readonly Literal: {
               discriminantValues: readonly (number | string)[];
               type: $LiteralSchema;
             };
           };
-        }>
+        }
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
-        propertySchema:
-          UnionDiscriminantsStruct.schema.properties.setIriOrLiteral,
-        typeFromRdfResourceValues: $setFromRdfResourceValues<
-          NamedNode | Literal,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly NamedNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >(((values, options) =>
+        propertySchema: UnionDiscriminantsStruct.schema.properties.requiredTerm,
+        typeFromRdfResourceValues: ((values, options) =>
           values.chainMap((value) => {
             const valueAsValues = value.toValues();
             return (
-              $iriFromRdfResourceValues<string>(valueAsValues, {
+              $identifierFromRdfResourceValues(valueAsValues, {
                 ...options,
-                schema: options.schema.members["NamedNode"].type,
-              }) as Either<Error, Resource.Values<NamedNode | Literal>>
+                schema: options.schema.members["BlankNode"].type,
+              }) as Either<
+                Error,
+                Resource.Values<(BlankNode | NamedNode) | Literal>
+              >
             )
               .altLazy(
                 () =>
                   $literalFromRdfResourceValues(valueAsValues, {
                     ...options,
                     schema: options.schema.members["Literal"].type,
-                  }) as Either<Error, Resource.Values<NamedNode | Literal>>,
+                  }) as Either<
+                    Error,
+                    Resource.Values<(BlankNode | NamedNode) | Literal>
+                  >,
               )
               .chain((values) => values.head());
           })) satisfies $FromRdfResourceValuesFunction<
-          NamedNode | Literal,
+          (BlankNode | NamedNode) | Literal,
           {
             kind: "DiscriminatedUnion";
             members: {
-              readonly NamedNode: {
+              readonly BlankNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
+                type: $IdentifierSchema;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -49176,7 +49186,7 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >),
+        >,
       }),
       setIriOrString: $shaclPropertyFromRdf<
         readonly (NamedNode | string)[],
@@ -49575,6 +49585,81 @@ export namespace UnionDiscriminantsStruct {
           }
         >),
       }),
+      setTerm: $shaclPropertyFromRdf<
+        readonly ((BlankNode | NamedNode) | Literal)[],
+        $CollectionSchema<{
+          kind: "DiscriminatedUnion";
+          members: {
+            readonly BlankNode: {
+              discriminantValues: readonly (number | string)[];
+              type: $IdentifierSchema;
+            };
+            readonly Literal: {
+              discriminantValues: readonly (number | string)[];
+              type: $LiteralSchema;
+            };
+          };
+        }>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: UnionDiscriminantsStruct.schema.properties.setTerm,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          (BlankNode | NamedNode) | Literal,
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly BlankNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IdentifierSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >(((values, options) =>
+          values.chainMap((value) => {
+            const valueAsValues = value.toValues();
+            return (
+              $identifierFromRdfResourceValues(valueAsValues, {
+                ...options,
+                schema: options.schema.members["BlankNode"].type,
+              }) as Either<
+                Error,
+                Resource.Values<(BlankNode | NamedNode) | Literal>
+              >
+            )
+              .altLazy(
+                () =>
+                  $literalFromRdfResourceValues(valueAsValues, {
+                    ...options,
+                    schema: options.schema.members["Literal"].type,
+                  }) as Either<
+                    Error,
+                    Resource.Values<(BlankNode | NamedNode) | Literal>
+                  >,
+              )
+              .chain((values) => values.head());
+          })) satisfies $FromRdfResourceValuesFunction<
+          (BlankNode | NamedNode) | Literal,
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly BlankNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IdentifierSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+      }),
     }).chain((properties) => UnionDiscriminantsStruct.create(properties));
 
   export const fromRdfResource =
@@ -49606,20 +49691,6 @@ export namespace UnionDiscriminantsStruct {
     if (_unionDiscriminantsStruct.$type) {
       hasher.update(_unionDiscriminantsStruct.$type);
     }
-    $hashMaybe(
-      <HasherT extends $Hasher>(
-        hasher: HasherT,
-        value: NamedNode | Literal,
-      ): HasherT => {
-        if (value["termType"] === "NamedNode") {
-          return $hashTerm(hasher, value);
-        }
-        if (value["termType"] === "Literal") {
-          return $hashTerm(hasher, value);
-        }
-        return hasher;
-      },
-    )(hasher, _unionDiscriminantsStruct.optionalIriOrLiteral);
     $hashMaybe(
       <HasherT extends $Hasher>(
         hasher: HasherT,
@@ -49679,18 +49750,23 @@ export namespace UnionDiscriminantsStruct {
         return hasher;
       },
     )(hasher, _unionDiscriminantsStruct.optionalNodeOrNodeOrString);
-    (<HasherT extends $Hasher>(
-      hasher: HasherT,
-      value: NamedNode | Literal,
-    ): HasherT => {
-      if (value["termType"] === "NamedNode") {
-        return $hashTerm(hasher, value);
-      }
-      if (value["termType"] === "Literal") {
-        return $hashTerm(hasher, value);
-      }
-      return hasher;
-    })(hasher, _unionDiscriminantsStruct.requiredIriOrLiteral);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: (BlankNode | NamedNode) | Literal,
+      ): HasherT => {
+        if (
+          value["termType"] === "BlankNode" ||
+          value["termType"] === "NamedNode"
+        ) {
+          return $hashTerm(hasher, value);
+        }
+        if (value["termType"] === "Literal") {
+          return $hashTerm(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminantsStruct.optionalTerm);
     (<HasherT extends $Hasher>(
       hasher: HasherT,
       value: NamedNode | string,
@@ -49744,20 +49820,21 @@ export namespace UnionDiscriminantsStruct {
       }
       return hasher;
     })(hasher, _unionDiscriminantsStruct.requiredNodeOrNodeOrString);
-    $hashArray(
-      <HasherT extends $Hasher>(
-        hasher: HasherT,
-        value: NamedNode | Literal,
-      ): HasherT => {
-        if (value["termType"] === "NamedNode") {
-          return $hashTerm(hasher, value);
-        }
-        if (value["termType"] === "Literal") {
-          return $hashTerm(hasher, value);
-        }
-        return hasher;
-      },
-    )(hasher, _unionDiscriminantsStruct.setIriOrLiteral);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: (BlankNode | NamedNode) | Literal,
+    ): HasherT => {
+      if (
+        value["termType"] === "BlankNode" ||
+        value["termType"] === "NamedNode"
+      ) {
+        return $hashTerm(hasher, value);
+      }
+      if (value["termType"] === "Literal") {
+        return $hashTerm(hasher, value);
+      }
+      return hasher;
+    })(hasher, _unionDiscriminantsStruct.requiredTerm);
     $hashArray(
       <HasherT extends $Hasher>(
         hasher: HasherT,
@@ -49817,6 +49894,23 @@ export namespace UnionDiscriminantsStruct {
         return hasher;
       },
     )(hasher, _unionDiscriminantsStruct.setNodeOrNodeOrString);
+    $hashArray(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: (BlankNode | NamedNode) | Literal,
+      ): HasherT => {
+        if (
+          value["termType"] === "BlankNode" ||
+          value["termType"] === "NamedNode"
+        ) {
+          return $hashTerm(hasher, value);
+        }
+        if (value["termType"] === "Literal") {
+          return $hashTerm(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminantsStruct.setTerm);
     return hasher;
   };
 
@@ -49836,14 +49930,6 @@ export namespace UnionDiscriminantsStruct {
   export type Json = {
     readonly "@id": string;
     readonly $type: "UnionDiscriminantsStruct";
-    readonly optionalIriOrLiteral?:
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        };
     readonly optionalIriOrString?: { readonly "@id": string } | string;
     readonly optionalNodeOrLiteral?:
       | {
@@ -49866,8 +49952,8 @@ export namespace UnionDiscriminantsStruct {
           value: DiscriminatedUnionMember2.Json;
         }
       | { $type: "string"; value: string };
-    readonly requiredIriOrLiteral:
-      | { readonly "@id": string; readonly termType: "NamedNode" }
+    readonly optionalTerm?:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
           readonly "@language"?: string;
           readonly termType: "Literal";
@@ -49896,15 +49982,14 @@ export namespace UnionDiscriminantsStruct {
           value: DiscriminatedUnionMember2.Json;
         }
       | { $type: "string"; value: string };
-    readonly setIriOrLiteral?: readonly (
-      | { readonly "@id": string; readonly termType: "NamedNode" }
+    readonly requiredTerm:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
           readonly "@language"?: string;
           readonly termType: "Literal";
           readonly "@type"?: string;
           readonly "@value": string;
-        }
-    )[];
+        };
     readonly setIriOrString?: readonly ({ readonly "@id": string } | string)[];
     readonly setNodeOrLiteral?: readonly (
       | {
@@ -49929,6 +50014,15 @@ export namespace UnionDiscriminantsStruct {
         }
       | { $type: "string"; value: string }
     )[];
+    readonly setTerm?: readonly (
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        }
+    )[];
   };
 
   export namespace Json {
@@ -49945,25 +50039,6 @@ export namespace UnionDiscriminantsStruct {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("UnionDiscriminantsStruct"),
-          optionalIriOrLiteral: z
-            .discriminatedUnion("termType", [
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("NamedNode"),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                termType: z.literal("Literal"),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-              }),
-            ])
-            .readonly()
-            .optional()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
-            }),
           optionalIriOrString: z
             .union([z.object({ "@id": z.string().min(1) }), z.string()])
             .readonly()
@@ -50009,11 +50084,11 @@ export namespace UnionDiscriminantsStruct {
               description:
                 "Discriminated union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
             }),
-          requiredIriOrLiteral: z
+          optionalTerm: z
             .discriminatedUnion("termType", [
               z.object({
                 "@id": z.string().min(1),
-                termType: z.literal("NamedNode"),
+                termType: z.enum(["BlankNode", "IRI"]),
               }),
               z.object({
                 "@language": z.string().optional(),
@@ -50023,6 +50098,7 @@ export namespace UnionDiscriminantsStruct {
               }),
             ])
             .readonly()
+            .optional()
             .meta({
               description:
                 "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
@@ -50069,11 +50145,11 @@ export namespace UnionDiscriminantsStruct {
               description:
                 "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             }),
-          setIriOrLiteral: z
+          requiredTerm: z
             .discriminatedUnion("termType", [
               z.object({
                 "@id": z.string().min(1),
-                termType: z.literal("NamedNode"),
+                termType: z.enum(["BlankNode", "IRI"]),
               }),
               z.object({
                 "@language": z.string().optional(),
@@ -50082,9 +50158,6 @@ export namespace UnionDiscriminantsStruct {
                 "@value": z.string(),
               }),
             ])
-            .readonly()
-            .array()
-            .optional()
             .readonly()
             .meta({
               description:
@@ -50141,6 +50214,27 @@ export namespace UnionDiscriminantsStruct {
               description:
                 "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             }),
+          setTerm: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.enum(["BlankNode", "IRI"]),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                termType: z.literal("Literal"),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+              }),
+            ])
+            .readonly()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              description:
+                "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
+            }),
         })
         .meta({
           description:
@@ -50169,10 +50263,6 @@ export namespace UnionDiscriminantsStruct {
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/optionalIriOrLiteral`,
-            type: "Control",
-          },
-          {
             scope: `${scopePrefix}/properties/optionalIriOrString`,
             type: "Control",
           },
@@ -50184,10 +50274,7 @@ export namespace UnionDiscriminantsStruct {
             scope: `${scopePrefix}/properties/optionalNodeOrNodeOrString`,
             type: "Control",
           },
-          {
-            scope: `${scopePrefix}/properties/requiredIriOrLiteral`,
-            type: "Control",
-          },
+          { scope: `${scopePrefix}/properties/optionalTerm`, type: "Control" },
           {
             scope: `${scopePrefix}/properties/requiredIriOrString`,
             type: "Control",
@@ -50200,10 +50287,7 @@ export namespace UnionDiscriminantsStruct {
             scope: `${scopePrefix}/properties/requiredNodeOrNodeOrString`,
             type: "Control",
           },
-          {
-            scope: `${scopePrefix}/properties/setIriOrLiteral`,
-            type: "Control",
-          },
+          { scope: `${scopePrefix}/properties/requiredTerm`, type: "Control" },
           {
             scope: `${scopePrefix}/properties/setIriOrString`,
             type: "Control",
@@ -50216,6 +50300,7 @@ export namespace UnionDiscriminantsStruct {
             scope: `${scopePrefix}/properties/setNodeOrNodeOrString`,
             type: "Control",
           },
+          { scope: `${scopePrefix}/properties/setTerm`, type: "Control" },
         ],
         type: "Group",
         label: "UnionDiscriminantsStruct",
@@ -50228,26 +50313,6 @@ export namespace UnionDiscriminantsStruct {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
-      },
-      optionalIriOrLiteral: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/optionalIriOrLiteral"),
-        type: {
-          kind: "Option" as const,
-          itemType: {
-            kind: "DiscriminatedUnion" as const,
-            members: {
-              NamedNode: {
-                discriminantValues: ["NamedNode"],
-                type: { kind: "Iri" as const },
-              },
-              Literal: {
-                discriminantValues: ["Literal"],
-                type: { kind: "Literal" as const },
-              },
-            },
-          },
-        },
       },
       optionalIriOrString: {
         kind: "Shacl",
@@ -50323,19 +50388,22 @@ export namespace UnionDiscriminantsStruct {
           };
         },
       },
-      requiredIriOrLiteral: {
+      optionalTerm: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/requiredIriOrLiteral"),
+        path: dataFactory.namedNode("http://example.com/optionalTerm"),
         type: {
-          kind: "DiscriminatedUnion" as const,
-          members: {
-            NamedNode: {
-              discriminantValues: ["NamedNode"],
-              type: { kind: "Iri" as const },
-            },
-            Literal: {
-              discriminantValues: ["Literal"],
-              type: { kind: "Literal" as const },
+          kind: "Option" as const,
+          itemType: {
+            kind: "DiscriminatedUnion" as const,
+            members: {
+              BlankNode: {
+                discriminantValues: ["BlankNode", "NamedNode"],
+                type: { kind: "Identifier" as const },
+              },
+              Literal: {
+                discriminantValues: ["Literal"],
+                type: { kind: "Literal" as const },
+              },
             },
           },
         },
@@ -50401,22 +50469,19 @@ export namespace UnionDiscriminantsStruct {
           };
         },
       },
-      setIriOrLiteral: {
+      requiredTerm: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/setIriOrLiteral"),
+        path: dataFactory.namedNode("http://example.com/requiredTerm"),
         type: {
-          kind: "Set" as const,
-          itemType: {
-            kind: "DiscriminatedUnion" as const,
-            members: {
-              NamedNode: {
-                discriminantValues: ["NamedNode"],
-                type: { kind: "Iri" as const },
-              },
-              Literal: {
-                discriminantValues: ["Literal"],
-                type: { kind: "Literal" as const },
-              },
+          kind: "DiscriminatedUnion" as const,
+          members: {
+            BlankNode: {
+              discriminantValues: ["BlankNode", "NamedNode"],
+              type: { kind: "Identifier" as const },
+            },
+            Literal: {
+              discriminantValues: ["Literal"],
+              type: { kind: "Literal" as const },
             },
           },
         },
@@ -50491,6 +50556,26 @@ export namespace UnionDiscriminantsStruct {
               };
             },
           };
+        },
+      },
+      setTerm: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/setTerm"),
+        type: {
+          kind: "Set" as const,
+          itemType: {
+            kind: "DiscriminatedUnion" as const,
+            members: {
+              BlankNode: {
+                discriminantValues: ["BlankNode", "NamedNode"],
+                type: { kind: "Identifier" as const },
+              },
+              Literal: {
+                discriminantValues: ["Literal"],
+                type: { kind: "Literal" as const },
+              },
+            },
+          },
         },
       },
     },
@@ -50568,39 +50653,6 @@ export namespace UnionDiscriminantsStruct {
             ? `_:${_unionDiscriminantsStruct.$identifier().value}`
             : _unionDiscriminantsStruct.$identifier().value,
         $type: _unionDiscriminantsStruct.$type,
-        optionalIriOrLiteral: _unionDiscriminantsStruct.optionalIriOrLiteral
-          .map((item) =>
-            ((
-              value: NamedNode | Literal,
-            ):
-              | { readonly "@id": string; readonly termType: "NamedNode" }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                } => {
-              if (value["termType"] === "NamedNode") {
-                return { "@id": value.value, termType: value.termType };
-              }
-              if (value["termType"] === "Literal") {
-                return {
-                  "@language":
-                    value.language.length > 0 ? value.language : undefined,
-                  termType: "Literal" as const,
-                  "@type":
-                    value.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? value.datatype.value
-                      : undefined,
-                  "@value": value.value,
-                };
-              }
-
-              throw new Error("unable to serialize to JSON");
-            })(item),
-          )
-          .extract(),
         optionalIriOrString: _unionDiscriminantsStruct.optionalIriOrString
           .map((item) =>
             ((
@@ -50705,35 +50757,53 @@ export namespace UnionDiscriminantsStruct {
               })(item),
             )
             .extract(),
-        requiredIriOrLiteral: ((
-          value: NamedNode | Literal,
-        ):
-          | { readonly "@id": string; readonly termType: "NamedNode" }
-          | {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
-            } => {
-          if (value["termType"] === "NamedNode") {
-            return { "@id": value.value, termType: value.termType };
-          }
-          if (value["termType"] === "Literal") {
-            return {
-              "@language":
-                value.language.length > 0 ? value.language : undefined,
-              termType: "Literal" as const,
-              "@type":
-                value.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? value.datatype.value
-                  : undefined,
-              "@value": value.value,
-            };
-          }
+        optionalTerm: _unionDiscriminantsStruct.optionalTerm
+          .map((item) =>
+            ((
+              value: (BlankNode | NamedNode) | Literal,
+            ):
+              | {
+                  readonly "@id": string;
+                  readonly termType: "BlankNode" | "NamedNode";
+                }
+              | {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                } => {
+              if (
+                value["termType"] === "BlankNode" ||
+                value["termType"] === "NamedNode"
+              ) {
+                return value.termType === "BlankNode"
+                  ? {
+                      "@id": `_:${value.value}`,
+                      termType: value.termType as "BlankNode" | "NamedNode",
+                    }
+                  : {
+                      "@id": value.value,
+                      termType: value.termType as "BlankNode" | "NamedNode",
+                    };
+              }
+              if (value["termType"] === "Literal") {
+                return {
+                  "@language":
+                    value.language.length > 0 ? value.language : undefined,
+                  termType: "Literal" as const,
+                  "@type":
+                    value.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? value.datatype.value
+                      : undefined,
+                  "@value": value.value,
+                };
+              }
 
-          throw new Error("unable to serialize to JSON");
-        })(_unionDiscriminantsStruct.requiredIriOrLiteral),
+              throw new Error("unable to serialize to JSON");
+            })(item),
+          )
+          .extract(),
         requiredIriOrString: ((
           value: NamedNode | string,
         ): { readonly "@id": string } | string => {
@@ -50825,37 +50895,49 @@ export namespace UnionDiscriminantsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_unionDiscriminantsStruct.requiredNodeOrNodeOrString),
-        setIriOrLiteral: _unionDiscriminantsStruct.setIriOrLiteral.map((item) =>
-          ((
-            value: NamedNode | Literal,
-          ):
-            | { readonly "@id": string; readonly termType: "NamedNode" }
-            | {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              } => {
-            if (value["termType"] === "NamedNode") {
-              return { "@id": value.value, termType: value.termType };
+        requiredTerm: ((
+          value: (BlankNode | NamedNode) | Literal,
+        ):
+          | {
+              readonly "@id": string;
+              readonly termType: "BlankNode" | "NamedNode";
             }
-            if (value["termType"] === "Literal") {
-              return {
-                "@language":
-                  value.language.length > 0 ? value.language : undefined,
-                termType: "Literal" as const,
-                "@type":
-                  value.datatype.value !==
-                  "http://www.w3.org/2001/XMLSchema#string"
-                    ? value.datatype.value
-                    : undefined,
-                "@value": value.value,
-              };
-            }
+          | {
+              readonly "@language"?: string;
+              readonly termType: "Literal";
+              readonly "@type"?: string;
+              readonly "@value": string;
+            } => {
+          if (
+            value["termType"] === "BlankNode" ||
+            value["termType"] === "NamedNode"
+          ) {
+            return value.termType === "BlankNode"
+              ? {
+                  "@id": `_:${value.value}`,
+                  termType: value.termType as "BlankNode" | "NamedNode",
+                }
+              : {
+                  "@id": value.value,
+                  termType: value.termType as "BlankNode" | "NamedNode",
+                };
+          }
+          if (value["termType"] === "Literal") {
+            return {
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              termType: "Literal" as const,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          })(item),
-        ),
+          throw new Error("unable to serialize to JSON");
+        })(_unionDiscriminantsStruct.requiredTerm),
         setIriOrString: _unionDiscriminantsStruct.setIriOrString.map((item) =>
           ((value: NamedNode | string): { readonly "@id": string } | string => {
             if (typeof value === "object") {
@@ -50953,6 +51035,51 @@ export namespace UnionDiscriminantsStruct {
               throw new Error("unable to serialize to JSON");
             })(item),
           ),
+        setTerm: _unionDiscriminantsStruct.setTerm.map((item) =>
+          ((
+            value: (BlankNode | NamedNode) | Literal,
+          ):
+            | {
+                readonly "@id": string;
+                readonly termType: "BlankNode" | "NamedNode";
+              }
+            | {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              } => {
+            if (
+              value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode"
+            ) {
+              return value.termType === "BlankNode"
+                ? {
+                    "@id": `_:${value.value}`,
+                    termType: value.termType as "BlankNode" | "NamedNode",
+                  }
+                : {
+                    "@id": value.value,
+                    termType: value.termType as "BlankNode" | "NamedNode",
+                  };
+            }
+            if (value["termType"] === "Literal") {
+              return {
+                "@language":
+                  value.language.length > 0 ? value.language : undefined,
+                termType: "Literal" as const,
+                "@type":
+                  value.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? value.datatype.value
+                    : undefined,
+                "@value": value.value,
+              };
+            }
+
+            throw new Error("unable to serialize to JSON");
+          })(item),
+        ),
       } satisfies UnionDiscriminantsStruct.Json),
     );
 
@@ -50960,31 +51087,6 @@ export namespace UnionDiscriminantsStruct {
     UnionDiscriminantsStruct.Identifier,
     UnionDiscriminantsStruct
   > = (parameters) => {
-    parameters.resource.add(
-      UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral.path,
-      parameters.object.optionalIriOrLiteral.toList().flatMap((value) =>
-        (
-          ((value, _options): (NamedNode | Literal)[] => {
-            if (value["termType"] === "NamedNode") {
-              return [value];
-            }
-            if (value["termType"] === "Literal") {
-              return [value];
-            }
-
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
-        )(value, {
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath:
-            UnionDiscriminantsStruct.schema.properties.optionalIriOrLiteral
-              .path,
-        }),
-      ),
-      parameters.graph,
-    );
     parameters.resource.add(
       UnionDiscriminantsStruct.schema.properties.optionalIriOrString.path,
       parameters.object.optionalIriOrString.toList().flatMap((value) =>
@@ -51095,25 +51197,32 @@ export namespace UnionDiscriminantsStruct {
       parameters.graph,
     );
     parameters.resource.add(
-      UnionDiscriminantsStruct.schema.properties.requiredIriOrLiteral.path,
-      (
-        ((value, _options): (NamedNode | Literal)[] => {
-          if (value["termType"] === "NamedNode") {
-            return [value];
-          }
-          if (value["termType"] === "Literal") {
-            return [value];
-          }
+      UnionDiscriminantsStruct.schema.properties.optionalTerm.path,
+      parameters.object.optionalTerm.toList().flatMap((value) =>
+        (
+          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+            if (
+              value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode"
+            ) {
+              return [value];
+            }
+            if (value["termType"] === "Literal") {
+              return [value];
+            }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
-      )(parameters.object.requiredIriOrLiteral, {
-        graph: parameters.graph,
-        resource: parameters.resource,
-        resourceSet: parameters.resourceSet,
-        propertyPath:
-          UnionDiscriminantsStruct.schema.properties.requiredIriOrLiteral.path,
-      }),
+            throw new Error("unable to serialize to RDF");
+          }) satisfies $ToRdfResourceValuesFunction<
+            (BlankNode | NamedNode) | Literal
+          >
+        )(value, {
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            UnionDiscriminantsStruct.schema.properties.optionalTerm.path,
+        }),
+      ),
       parameters.graph,
     );
     parameters.resource.add(
@@ -51219,27 +51328,30 @@ export namespace UnionDiscriminantsStruct {
       parameters.graph,
     );
     parameters.resource.add(
-      UnionDiscriminantsStruct.schema.properties.setIriOrLiteral.path,
-      parameters.object.setIriOrLiteral.flatMap((item) =>
-        (
-          ((value, _options): (NamedNode | Literal)[] => {
-            if (value["termType"] === "NamedNode") {
-              return [value];
-            }
-            if (value["termType"] === "Literal") {
-              return [value];
-            }
+      UnionDiscriminantsStruct.schema.properties.requiredTerm.path,
+      (
+        ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+          if (
+            value["termType"] === "BlankNode" ||
+            value["termType"] === "NamedNode"
+          ) {
+            return [value];
+          }
+          if (value["termType"] === "Literal") {
+            return [value];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
-        )(item, {
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath:
-            UnionDiscriminantsStruct.schema.properties.setIriOrLiteral.path,
-        }),
-      ),
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<
+          (BlankNode | NamedNode) | Literal
+        >
+      )(parameters.object.requiredTerm, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          UnionDiscriminantsStruct.schema.properties.requiredTerm.path,
+      }),
       parameters.graph,
     );
     parameters.resource.add(
@@ -51345,6 +51457,34 @@ export namespace UnionDiscriminantsStruct {
           propertyPath:
             UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString
               .path,
+        }),
+      ),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      UnionDiscriminantsStruct.schema.properties.setTerm.path,
+      parameters.object.setTerm.flatMap((item) =>
+        (
+          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+            if (
+              value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode"
+            ) {
+              return [value];
+            }
+            if (value["termType"] === "Literal") {
+              return [value];
+            }
+
+            throw new Error("unable to serialize to RDF");
+          }) satisfies $ToRdfResourceValuesFunction<
+            (BlankNode | NamedNode) | Literal
+          >
+        )(item, {
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath: UnionDiscriminantsStruct.schema.properties.setTerm.path,
         }),
       ),
       parameters.graph,
