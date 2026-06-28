@@ -50088,7 +50088,7 @@ export namespace UnionDiscriminantsStruct {
             .discriminatedUnion("termType", [
               z.object({
                 "@id": z.string().min(1),
-                termType: z.enum(["BlankNode", "IRI"]),
+                termType: z.enum(["BlankNode", "NamedNode"]),
               }),
               z.object({
                 "@language": z.string().optional(),
@@ -50149,7 +50149,7 @@ export namespace UnionDiscriminantsStruct {
             .discriminatedUnion("termType", [
               z.object({
                 "@id": z.string().min(1),
-                termType: z.enum(["BlankNode", "IRI"]),
+                termType: z.enum(["BlankNode", "NamedNode"]),
               }),
               z.object({
                 "@language": z.string().optional(),
@@ -50218,7 +50218,7 @@ export namespace UnionDiscriminantsStruct {
             .discriminatedUnion("termType", [
               z.object({
                 "@id": z.string().min(1),
-                termType: z.enum(["BlankNode", "IRI"]),
+                termType: z.enum(["BlankNode", "NamedNode"]),
               }),
               z.object({
                 "@language": z.string().optional(),
