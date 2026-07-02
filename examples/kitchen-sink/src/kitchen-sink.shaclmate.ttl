@@ -227,6 +227,29 @@
                 sh:datatype xsd:decimal
             ]
         )
+    ], [
+        rdfs:comment "JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :jsPrimitive ;
+        sh:xone (
+            [
+                rdfs:comment "JavaScript boolean" ;
+                sh:datatype xsd:boolean
+            ]
+            [
+                rdfs:comment "JavaScript number" ;
+                sh:datatype xsd:double
+            ]
+            [
+                rdfs:comment "JavaScript bigint" ;
+                sh:datatype xsd:integer
+            ]
+            [
+                rdfs:comment "JavaScript string" ;
+                sh:datatype xsd:string
+            ]
+        )
     ] .
 
 :DefaultValuesStruct
