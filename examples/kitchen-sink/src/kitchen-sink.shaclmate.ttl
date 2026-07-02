@@ -807,9 +807,20 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
-:NamedDiscriminatedUnionsStruct
+:NamedInLiteral
+    a sh:NodeShape ;
+    rdfs:comment "Named sh:in of literals" ;
+    sh:in ( "test1" "test2" ) .
+
+:NamedTypesStruct
     a owl:Class, sh:NodeShape ;
+    rdfs:comment "Struct node shape that uses named types in properties with sh:node" ;
     sh:property [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :NamedDatatype ;
+        sh:path :namedDatatype
+    ], [
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:node :NamedDiscriminatedUnion1 ;
@@ -819,12 +830,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:node :NamedDiscriminatedUnion2 ;
         sh:path :namedDiscriminatedUnion2
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :NamedInLiteral ;
+        sh:path :namedInLiteral
     ] .
-
-:NamedInLiteral
-    a sh:NodeShape ;
-    rdfs:comment "Named sh:in of literals" ;
-    sh:in ( "test1" "test2" ) .
 
 :NoRdfTypeDiscriminatedUnion
     a sh:NodeShape ;
