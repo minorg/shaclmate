@@ -94,6 +94,7 @@ export const harnesses = {
       },
       dateOrString: new Date("2025-12-08"),
       decimalOrString: new Decimal("1.0"),
+      jsPrimitive: true,
       // integerOrString: 1n,
       langStringOrString: dataFactory.literal("test", "en"),
       stringOrDate: "2025-12-08", // Shouldn't parse as a Date
@@ -113,6 +114,7 @@ export const harnesses = {
       dateTimeOrDate: { $type: "date", value: new Date("2025-12-08") },
       dateOrString: "2025-12-08", // Shouldn't parse as a Date
       decimalOrString: "test",
+      jsPrimitive: "test",
       // integerOrString: "test",
       langStringOrString: "test",
       stringOrDate: new Date("2025-12-08"),
@@ -421,27 +423,31 @@ export const harnesses = {
     }),
     kitchenSink.MutablePropertiesStruct,
   ),
-  namedDiscriminatedUnionsStruct1: new Harness(
-    kitchenSink.NamedDiscriminatedUnionsStruct.createUnsafe({
+  namedTypesStruct1: new Harness(
+    kitchenSink.NamedTypesStruct.createUnsafe({
       $identifier,
+      namedDatatype: "test",
       namedDiscriminatedUnion1: "test",
       namedDiscriminatedUnion2: {
         $type: "date",
         value: new Date("2025-12-08"),
       },
+      namedInLiteral: "test1",
     }),
-    kitchenSink.NamedDiscriminatedUnionsStruct,
+    kitchenSink.NamedTypesStruct,
   ),
-  namedDiscriminatedUnionsStruct2: new Harness(
-    kitchenSink.NamedDiscriminatedUnionsStruct.createUnsafe({
+  namedTypesStruct2: new Harness(
+    kitchenSink.NamedTypesStruct.createUnsafe({
       $identifier,
+      namedDatatype: "test",
       namedDiscriminatedUnion1: dataFactory.namedNode("http://example.com"),
       namedDiscriminatedUnion2: {
         $type: "dateTime",
         value: new Date("2025-12-08T21:17:27+00:00"),
       },
+      namedInLiteral: "test2",
     }),
-    kitchenSink.NamedDiscriminatedUnionsStruct,
+    kitchenSink.NamedTypesStruct,
   ),
   // nodeKindsStruct1 = use the first of the node kinds when there are two (e.g., sh:nodeKind sh:BlankNodeOrIRI)
   nodeKindsStruct1: new Harness(
