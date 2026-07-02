@@ -9566,6 +9566,11 @@ export type DatatypeDiscriminatedUnionsStruct = {
   readonly decimalOrString: BigDecimal | string;
 
   /**
+   * JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript.
+   */
+  readonly jsPrimitive: boolean | number | bigint | string;
+
+  /**
    * rdf:langString or string. These don't need discriminant values because they're different types in TypeScript.
    */
   readonly langStringOrString: Literal | string;
@@ -9601,6 +9606,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       | { $type: "dateTime"; value: Date }
       | { $type: "date"; value: Date };
     readonly decimalOrString: BigDecimal | string;
+    readonly jsPrimitive: boolean | number | bigint | string;
     readonly langStringOrString: Literal | string;
     readonly stringOrDate: string | Date;
     readonly stringOrDecimal: string | BigDecimal;
@@ -9612,6 +9618,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       dateOrString: $identityConversionFunction(parameters.dateOrString),
       dateTimeOrDate: $identityConversionFunction(parameters.dateTimeOrDate),
       decimalOrString: $identityConversionFunction(parameters.decimalOrString),
+      jsPrimitive: $identityConversionFunction(parameters.jsPrimitive),
       langStringOrString: $identityConversionFunction(
         parameters.langStringOrString,
       ),
@@ -9646,6 +9653,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       | { $type: "dateTime"; value: Date }
       | { $type: "date"; value: Date };
     readonly decimalOrString: BigDecimal | string;
+    readonly jsPrimitive: boolean | number | bigint | string;
     readonly langStringOrString: Literal | string;
     readonly stringOrDate: string | Date;
     readonly stringOrDecimal: string | BigDecimal;
@@ -9806,6 +9814,44 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         $propertyEquals(
           {
             equalsFunction: (
+              left: boolean | number | bigint | string,
+              right: boolean | number | bigint | string,
+            ) => {
+              if (typeof left === "boolean" && typeof right === "boolean") {
+                return $strictEquals(left as boolean, right as boolean);
+              }
+              if (typeof left === "number" && typeof right === "number") {
+                return $strictEquals(left as number, right as number);
+              }
+              if (typeof left === "bigint" && typeof right === "bigint") {
+                return $strictEquals(left as bigint, right as bigint);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left as string, right as string);
+              }
+
+              return Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
+                },
+                type: "property" as const,
+              });
+            },
+            name: "jsPrimitive",
+          },
+          [left, left.jsPrimitive],
+          [right, right.jsPrimitive],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (
               left: Literal | string,
               right: Literal | string,
             ) => {
@@ -9951,6 +9997,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly decimalOrString?: {
       readonly on?: {
         readonly object?: $NumericFilter<BigDecimal>;
+        readonly string?: $StringFilter;
+      };
+    };
+    readonly jsPrimitive?: {
+      readonly on?: {
+        readonly boolean?: $BooleanFilter;
+        readonly number?: $NumericFilter<number>;
+        readonly bigint?: $NumericFilter<bigint>;
         readonly string?: $StringFilter;
       };
     };
@@ -10105,6 +10159,48 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
         return true;
       })(filter.decimalOrString, value.decimalOrString)
+    ) {
+      return false;
+    }
+    if (
+      filter.jsPrimitive !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly boolean?: $BooleanFilter;
+            readonly number?: $NumericFilter<number>;
+            readonly bigint?: $NumericFilter<bigint>;
+            readonly string?: $StringFilter;
+          };
+        },
+        value: boolean | number | bigint | string,
+      ) => {
+        if (
+          filter.on?.["boolean"] !== undefined &&
+          typeof value === "boolean"
+        ) {
+          if (!$filterBoolean(filter.on["boolean"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["number"] !== undefined && typeof value === "number") {
+          if (!$filterNumeric<number>(filter.on["number"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["bigint"] !== undefined && typeof value === "bigint") {
+          if (!$filterNumeric<bigint>(filter.on["bigint"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.jsPrimitive, value.jsPrimitive)
     ) {
       return false;
     }
@@ -10458,6 +10554,90 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $NumericSchema<BigDecimal>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.jsPrimitive,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "jsPrimitive",
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["boolean"],
+              ignoreRdfType: false,
+              schema: schema.members["boolean"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["number"],
+              ignoreRdfType: false,
+              schema: schema.members["number"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["bigint"],
+              ignoreRdfType: false,
+              schema: schema.members["bigint"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly boolean?: $BooleanFilter;
+              readonly number?: $NumericFilter<number>;
+              readonly bigint?: $NumericFilter<bigint>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly boolean: {
+                discriminantValues: readonly (number | string)[];
+                type: $BooleanSchema<boolean>;
+              };
+              readonly number: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<number>;
+              };
+              readonly bigint: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<bigint>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
@@ -10993,6 +11173,90 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.jsPrimitive,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "jsPrimitive",
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $booleanSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["boolean"],
+              ignoreRdfType: false,
+              schema: schema.members["boolean"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $numericSparqlWherePatterns<number>({
+              ...otherParameters,
+              filter: filter?.on?.["number"],
+              ignoreRdfType: false,
+              schema: schema.members["number"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $numericSparqlWherePatterns<bigint>({
+              ...otherParameters,
+              filter: filter?.on?.["bigint"],
+              ignoreRdfType: false,
+              schema: schema.members["bigint"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly boolean?: $BooleanFilter;
+              readonly number?: $NumericFilter<number>;
+              readonly bigint?: $NumericFilter<bigint>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly boolean: {
+                discriminantValues: readonly (number | string)[];
+                type: $BooleanSchema<boolean>;
+              };
+              readonly number: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<number>;
+              };
+              readonly bigint: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<bigint>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.langStringOrString,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -11380,6 +11644,46 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
         throw new Error("unable to deserialize JSON");
       })($json["decimalOrString"]),
+      jsPrimitive: ((
+        value:
+          | boolean
+          | number
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+              readonly "@value": string;
+            }
+          | string,
+      ): Either<Error, boolean | number | bigint | string> => {
+        if (typeof value === "boolean") {
+          return Either.of<Error, boolean>(value as boolean).map(
+            (value) => value,
+          );
+        }
+        if (typeof value === "number") {
+          return Either.of<Error, number>(value as number).map(
+            (value) => value,
+          );
+        }
+        if (typeof value === "bigint") {
+          return Either.encase<Error, bigint>(() =>
+            BigInt(
+              (
+                value as {
+                  readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+                  readonly "@value": string;
+                }
+              )["@value"],
+            ),
+          ).map((value) => value);
+        }
+        if (typeof value === "string") {
+          return Either.of<Error, string>(value as string).map(
+            (value) => value,
+          );
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })($json["jsPrimitive"]),
       langStringOrString: ((
         value:
           | { readonly "@language": string; readonly "@value": string }
@@ -11810,6 +12114,103 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             }
           >,
         }),
+        jsPrimitive: $shaclPropertyFromRdf<
+          boolean | number | bigint | string,
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly boolean: {
+                discriminantValues: readonly (number | string)[];
+                type: $BooleanSchema<boolean>;
+              };
+              readonly number: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<number>;
+              };
+              readonly bigint: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<bigint>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive,
+          typeFromRdfResourceValues: ((values, options) =>
+            values.chainMap((value) => {
+              const valueAsValues = value.toValues();
+              return (
+                $booleanFromRdfResourceValues<boolean>(valueAsValues, {
+                  ...options,
+                  schema: options.schema.members["boolean"].type,
+                }) as Either<
+                  Error,
+                  Resource.Values<boolean | number | bigint | string>
+                >
+              )
+                .altLazy(
+                  () =>
+                    $floatFromRdfResourceValues<number>(valueAsValues, {
+                      ...options,
+                      schema: options.schema.members["number"].type,
+                    }) as Either<
+                      Error,
+                      Resource.Values<boolean | number | bigint | string>
+                    >,
+                )
+                .altLazy(
+                  () =>
+                    $bigIntFromRdfResourceValues<bigint>(valueAsValues, {
+                      ...options,
+                      schema: options.schema.members["bigint"].type,
+                    }) as Either<
+                      Error,
+                      Resource.Values<boolean | number | bigint | string>
+                    >,
+                )
+                .altLazy(
+                  () =>
+                    $stringFromRdfResourceValues<string>(valueAsValues, {
+                      ...options,
+                      schema: options.schema.members["string"].type,
+                    }) as Either<
+                      Error,
+                      Resource.Values<boolean | number | bigint | string>
+                    >,
+                )
+                .chain((values) => values.head());
+            })) satisfies $FromRdfResourceValuesFunction<
+            boolean | number | bigint | string,
+            {
+              kind: "DiscriminatedUnion";
+              members: {
+                readonly boolean: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $BooleanSchema<boolean>;
+                };
+                readonly number: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $NumericSchema<number>;
+                };
+                readonly bigint: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $NumericSchema<bigint>;
+                };
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+              };
+            }
+          >,
+        }),
         langStringOrString: $shaclPropertyFromRdf<
           Literal | string,
           {
@@ -12120,6 +12521,24 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     })(hasher, _datatypeDiscriminatedUnionsStruct.decimalOrString);
     (<HasherT extends $Hasher>(
       hasher: HasherT,
+      value: boolean | number | bigint | string,
+    ): HasherT => {
+      if (typeof value === "boolean") {
+        return $hashBoolean(hasher, value);
+      }
+      if (typeof value === "number") {
+        return $hashNumeric(hasher, value);
+      }
+      if (typeof value === "bigint") {
+        return $hashNumeric(hasher, value);
+      }
+      if (typeof value === "string") {
+        return $hashString(hasher, value);
+      }
+      return hasher;
+    })(hasher, _datatypeDiscriminatedUnionsStruct.jsPrimitive);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
       value: Literal | string,
     ): HasherT => {
       if (typeof value === "object") {
@@ -12224,6 +12643,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly decimalOrString:
       | {
           readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
+          readonly "@value": string;
+        }
+      | string;
+    readonly jsPrimitive:
+      | boolean
+      | number
+      | {
+          readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
           readonly "@value": string;
         }
       | string;
@@ -12335,6 +12762,21 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               description:
                 "Decimal or string. These don't need discriminant values because they're different types in TypeScript.",
             }),
+          jsPrimitive: z
+            .union([
+              z.boolean(),
+              z.number(),
+              z.object({
+                "@type": z.literal("http://www.w3.org/2001/XMLSchema#integer"),
+                "@value": z.string(),
+              }),
+              z.string(),
+            ])
+            .readonly()
+            .meta({
+              description:
+                "JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript.",
+            }),
           langStringOrString: z
             .union([
               z.object({ "@language": z.string(), "@value": z.string() }),
@@ -12421,6 +12863,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             scope: `${scopePrefix}/properties/decimalOrString`,
             type: "Control",
           },
+          { scope: `${scopePrefix}/properties/jsPrimitive`, type: "Control" },
           {
             scope: `${scopePrefix}/properties/langStringOrString`,
             type: "Control",
@@ -12510,6 +12953,31 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             object: {
               discriminantValues: ["object"],
               type: { kind: "BigDecimal" as const },
+            },
+            string: {
+              discriminantValues: ["string"],
+              type: { kind: "String" as const },
+            },
+          },
+        },
+      },
+      jsPrimitive: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/jsPrimitive"),
+        type: {
+          kind: "DiscriminatedUnion" as const,
+          members: {
+            boolean: {
+              discriminantValues: ["boolean"],
+              type: { kind: "Boolean" as const },
+            },
+            number: {
+              discriminantValues: ["number"],
+              type: { kind: "Float" as const },
+            },
+            bigint: {
+              discriminantValues: ["bigint"],
+              type: { kind: "BigInt" as const },
             },
             string: {
               discriminantValues: ["string"],
@@ -12789,6 +13257,34 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeDiscriminatedUnionsStruct.decimalOrString),
+        jsPrimitive: ((
+          value: boolean | number | bigint | string,
+        ):
+          | boolean
+          | number
+          | {
+              readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
+              readonly "@value": string;
+            }
+          | string => {
+          if (typeof value === "boolean") {
+            return value;
+          }
+          if (typeof value === "number") {
+            return value;
+          }
+          if (typeof value === "bigint") {
+            return {
+              "@type": "http://www.w3.org/2001/XMLSchema#integer" as const,
+              "@value": value.toString(),
+            };
+          }
+          if (typeof value === "string") {
+            return value;
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.jsPrimitive),
         langStringOrString: ((
           value: Literal | string,
         ):
@@ -12971,6 +13467,40 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyPath:
           DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString
             .path,
+      }),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive.path,
+      (
+        ((value, _options): Literal[] => {
+          if (typeof value === "boolean") {
+            return [
+              $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
+            ];
+          }
+          if (typeof value === "number") {
+            return [$literalFactory.number(value, $RdfVocabularies.xsd.double)];
+          }
+          if (typeof value === "bigint") {
+            return [
+              $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
+            ];
+          }
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
+
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<
+          boolean | number | bigint | string
+        >
+      )(parameters.object.jsPrimitive, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive.path,
       }),
       parameters.graph,
     );
@@ -31003,6 +31533,7 @@ export namespace MutablePropertiesStruct {
       }),
     );
 }
+export type NamedDatatype = string;
 export type NamedDiscriminatedUnionsStruct = {
   readonly $identifier: () => NamedDiscriminatedUnionsStruct.Identifier;
 
@@ -31658,7 +32189,8 @@ export namespace NamedDiscriminatedUnionsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+export type NamedInLiteral = "test1" | "test2"; /**
  * Struct node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes
  */
 
@@ -53309,7 +53841,7 @@ export namespace NamedDiscriminatedUnion1 {
         .union([z.object({ "@id": z.string().min(1) }), z.string()])
         .readonly()
         .meta({
-          description: "Named union of IRI and string",
+          description: "Named discriminated union of IRI and string",
         });
 
     export function parse(json: unknown): Either<Error, Json> {
@@ -53594,7 +54126,9 @@ export namespace NamedDiscriminatedUnion2 {
           }),
         ])
         .readonly()
-        .meta({ description: "Named union of date and date-time" });
+        .meta({
+          description: "Named discriminated union of date and date-time",
+        });
 
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
