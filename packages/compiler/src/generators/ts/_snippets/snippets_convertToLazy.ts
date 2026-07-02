@@ -10,8 +10,8 @@ export const snippets_convertToLazy: SnippetFactory = ({
     `${syntheticNamePrefix}convertToLazy`,
     code`\
 function ${syntheticNamePrefix}convertToLazy<PartialSourceT, PartialTargetT, ResolvedSourceT, ResolvedTargetT>(
-  convertToPartial: (object: PartialSourceT) => PartialTargetT,
-  convertToResolved: (object: ResolvedSourceT) => ResolvedTargetT,
+  convertToPartial: (object: PartialSourceT) => ${imports.Either}<Error, PartialTargetT>,
+  convertToResolved: (object: ResolvedSourceT) => ${imports.Either}<Error, ResolvedTargetT>,
   isPartialSource: (object: PartialSourceT | ResolvedSourceT) => object is PartialSourceT,
   resolvedToPartial: (resolved: ResolvedTargetT) => PartialTargetT
 ) {
@@ -21,17 +21,20 @@ function ${syntheticNamePrefix}convertToLazy<PartialSourceT, PartialTargetT, Res
     }
 
     if (isPartialSource(value)) {
-      return ${imports.Either}.of(new ${snippets.Lazy}({
-        partial: convertToPartial(value),
-        resolver: async () => ${imports.Left}(new Error("unable to resolve"))
-      }));
+      return convertToPartial(value).map(partial => 
+        new ${snippets.Lazy}({
+          partial,
+          resolver: async () => ${imports.Left}(new Error("unable to resolve"))
+        })
+      );
     }
 
-    const resolved = convertToResolved(value);
-    return ${imports.Either}.of(new ${snippets.Lazy}({
-      partial: resolvedToPartial(resolved),
-      resolver: async () => ${imports.Right}(resolved)
-    }));
+    return convertToResolved(value).map(resolved =>
+      new ${snippets.Lazy}({
+        partial: resolvedToPartial(resolved),
+        resolver: async () => ${imports.Right}(resolved)
+      })
+    );
   };
 }`,
   );

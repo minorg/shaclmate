@@ -9,10 +9,6 @@ export function ObjectType_typeGuardFunctionExpression(
     return Maybe.empty();
   }
 
-  if (this.synthetic) {
-    return Maybe.empty();
-  }
-
   const discriminantProperty = this.discriminantProperty.extract();
   if (!discriminantProperty) {
     return Maybe.empty();
