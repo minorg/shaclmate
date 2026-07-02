@@ -1396,9 +1396,8 @@ export namespace LazyObject {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isLazyObject(object: $Object): object is LazyObject {
-    return object.$type === "LazyObject";
-  }
+  export const isLazyObject = (object: $Object): object is LazyObject =>
+    object.$type === "LazyObject";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode("http://example.com/LazyObject"),
@@ -1817,7 +1816,7 @@ export namespace RootObject {
                 type: new GraphQLNonNull(GraphQLString),
               },
             }),
-            name: "df_0_5",
+            name: "df_0_135",
           }),
         ),
       },
@@ -2094,9 +2093,8 @@ export namespace RootObject {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isRootObject(object: $Object): object is RootObject {
-    return object.$type === "RootObject";
-  }
+  export const isRootObject = (object: $Object): object is RootObject =>
+    object.$type === "RootObject";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode("http://example.com/RootObject"),
@@ -2423,9 +2421,8 @@ export namespace UnionMember1 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isUnionMember1(object: $Object): object is UnionMember1 {
-    return object.$type === "UnionMember1";
-  }
+  export const isUnionMember1 = (object: $Object): object is UnionMember1 =>
+    object.$type === "UnionMember1";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode("http://example.com/UnionMember1"),
@@ -2636,9 +2633,8 @@ export namespace UnionMember2 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isUnionMember2(object: $Object): object is UnionMember2 {
-    return object.$type === "UnionMember2";
-  }
+  export const isUnionMember2 = (object: $Object): object is UnionMember2 =>
+    object.$type === "UnionMember2";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode("http://example.com/UnionMember2"),

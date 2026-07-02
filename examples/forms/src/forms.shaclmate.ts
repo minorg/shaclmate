@@ -587,9 +587,8 @@ export namespace FormStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isFormStruct(object: $Object): object is FormStruct {
-    return object.$type === "FormStruct";
-  }
+  export const isFormStruct = (object: $Object): object is FormStruct =>
+    object.$type === "FormStruct";
 
   export type Json = {
     readonly "@id": string;

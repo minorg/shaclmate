@@ -18,7 +18,6 @@ import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graph
 import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
 import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
-import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
 import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
 import { ObjectType_jsonSchemaExpression } from "./_ObjectType/ObjectType_jsonSchemaExpression.js";
 import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonTypeExpression.js";
@@ -34,6 +33,7 @@ import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_to
 import { ObjectType_toRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceFunctionExpression.js";
 import { ObjectType_toStringFunctionExpression } from "./_ObjectType/ObjectType_toStringFunctionExpression.js";
 import { ObjectType_toStringRecordFunctionExpression } from "./_ObjectType/ObjectType_toStringRecordFunctionExpression.js";
+import { ObjectType_typeGuardFunctionExpression } from "./_ObjectType/ObjectType_typeGuardFunctionExpression.js";
 import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.js";
 import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.js";
 import { AbstractType } from "./AbstractType.js";
@@ -206,9 +206,13 @@ export class ObjectType extends AbstractType {
         );
       }
 
-      // isType
-      staticModuleDeclarations = staticModuleDeclarations.concat(
-        ObjectType_isTypeFunctionDeclaration.call(this).toList(),
+      // Type guard
+      ObjectType_typeGuardFunctionExpression.call(this).ifJust(
+        (typeGuardFunctionExpression) => {
+          staticModuleDeclarations.push(
+            code`export const is${name} = ${typeGuardFunctionExpression};`,
+          );
+        },
       );
 
       // type Json
@@ -445,6 +449,13 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   get toRdfjsResourceType(): Code {
     return code`${this.reusables.imports.Resource}${this.identifierType.kind === "Iri" ? code`<${this.reusables.imports.NamedNode}>` : ""}`;
+  }
+
+  @Memoize()
+  get typeGuardFunction(): Maybe<Code> {
+    return ObjectType_typeGuardFunctionExpression.call(this).map((expression) =>
+      this.name.map((name) => code`${name}.is${name}`).orDefault(expression),
+    );
   }
 
   @Memoize()
