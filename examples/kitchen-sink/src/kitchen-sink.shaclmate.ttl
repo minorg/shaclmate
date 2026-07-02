@@ -755,9 +755,14 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
+:NamedDatatype
+    a sh:NodeShape ;
+    rdfs:comment "Named sh:datatype" ;
+    sh:datatype xsd:string .
+
 :NamedDiscriminatedUnion1
     a sh:NodeShape ;
-    rdfs:comment "Named union of IRI and string" ;
+    rdfs:comment "Named discriminated union of IRI and string" ;
     sh:xone ([
             sh:nodeKind sh:IRI
         ]
@@ -768,7 +773,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :NamedDiscriminatedUnion2
     a sh:NodeShape ;
-    rdfs:comment "Named union of date and date-time" ;
+    rdfs:comment "Named discriminated union of date and date-time" ;
     sh:xone ([
             shaclmate:discriminantValue "date" ;
             sh:datatype xsd:date
@@ -792,6 +797,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:node :NamedDiscriminatedUnion2 ;
         sh:path :namedDiscriminatedUnion2
     ] .
+
+:NamedInLiteral
+    a sh:NodeShape ;
+    rdfs:comment "Named sh:in of literals" ;
+    sh:in ( "test1" "test2" ) .
 
 :NoRdfTypeDiscriminatedUnion
     a sh:NodeShape ;
