@@ -2,14 +2,17 @@ import type { ObjectDiscriminatedUnionType } from "../ObjectDiscriminatedUnionTy
 import { singleEntryRecord } from "../singleEntryRecord.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectDiscriminatedUnionType_isTypeFunctionDeclaration(
+export function ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration(
   this: ObjectDiscriminatedUnionType,
 ): Record<string, Code> {
   if (!this.configuration.features.has("Object.type")) {
     return {};
   }
 
-  const name = this.name.unsafeCoerce();
+  const name = this.name.extract();
+  if (!name) {
+    return {};
+  }
 
   if (name === `${this.configuration.syntheticNamePrefix}Object`) {
     return {};

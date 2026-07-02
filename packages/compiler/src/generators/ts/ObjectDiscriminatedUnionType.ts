@@ -1,12 +1,13 @@
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunctionDeclaration.js";
 import { ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunctionDeclaration.js";
 import { ObjectDiscriminatedUnionType_fromRdfResourceFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_fromRdfResourceFunctionDeclaration.js";
 import { ObjectDiscriminatedUnionType_graphqlTypeVariableStatement } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_graphqlTypeVariableStatement.js";
 import { ObjectDiscriminatedUnionType_identifierTypeDeclarations } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_identifierTypeDeclarations.js";
-import { ObjectDiscriminatedUnionType_isTypeFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_isTypeFunctionDeclaration.js";
 import { ObjectDiscriminatedUnionType_schemaVariableStatement } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_schemaVariableStatement.js";
 import { ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration.js";
+import { ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
@@ -49,6 +50,18 @@ export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectT
       .orDefault(super.schemaType);
   }
 
+  @Memoize()
+  get typeGuardFunction(): Maybe<Code> {
+    if (
+      Object.keys(
+        ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration.call(this),
+      ).length === 0
+    ) {
+      return Maybe.empty();
+    }
+    return this.name.map((name) => code`${name}.is${name}`);
+  }
+
   protected override get staticModuleDeclarations(): Record<string, Code> {
     const name = this.name.unsafeCoerce();
 
@@ -65,7 +78,7 @@ export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectT
         this,
       ),
       ...ObjectDiscriminatedUnionType_graphqlTypeVariableStatement.call(this),
-      ...ObjectDiscriminatedUnionType_isTypeFunctionDeclaration.call(this),
+      ...ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration.call(this),
       ...ObjectDiscriminatedUnionType_schemaVariableStatement.call(this),
       ...(this.configuration.features.has("Object.SPARQL")
         ? {
