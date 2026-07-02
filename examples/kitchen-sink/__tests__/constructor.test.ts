@@ -32,13 +32,6 @@ describe("constructor", () => {
     });
 
     describe("lazy properties", () => {
-      const expectedDefaultPartialInstance =
-        kitchenSink.$DefaultPartial.createUnsafe({
-          $identifier: dataFactory.namedNode(
-            "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance",
-          ),
-        });
-
       const expectedLazilyResolvedBlankNodeOrIriIdentifierInstance =
         kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct.createUnsafe({
           $identifier: dataFactory.namedNode(
@@ -48,19 +41,12 @@ describe("constructor", () => {
         });
 
       const expectedLazilyResolvedDiscriminatedUnionInstance =
-        kitchenSink.LazilyResolvedDiscriminatedUnionMember1.createUnsafe({
+        kitchenSink.LazilyResolvedDiscriminatedUnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/lazilyResolvedDiscriminatedUnionInstance",
           ),
           lazilyResolved: "test",
         });
-
-      const expectedPartialInstance = kitchenSink.PartialStruct.createUnsafe({
-        $identifier: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance",
-        ),
-        lazilyResolved: "test",
-      });
 
       it("from undefined", async ({ expect }) => {
         const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
@@ -134,9 +120,13 @@ describe("constructor", () => {
       it("from partial type instance", async ({ expect }) => {
         const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
           requiredLazyToResolvedBlankNodeOrIriIdentifier:
-            expectedDefaultPartialInstance,
+            kitchenSink.$DefaultPartial.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
           requiredPartialToResolvedBlankNodeOrIriIdentifier:
-            expectedPartialInstance,
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
         });
 
         expect(
@@ -172,11 +162,53 @@ describe("constructor", () => {
 
       it("from resolved type instance", async ({ expect }) => {
         const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
+          optionalLazyToResolvedDiscriminatedUnion:
+            expectedLazilyResolvedDiscriminatedUnionInstance,
+          optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
+            expectedLazilyResolvedDiscriminatedUnionInstance,
           requiredLazyToResolvedBlankNodeOrIriIdentifier:
             expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
           requiredPartialToResolvedBlankNodeOrIriIdentifier:
             expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
         });
+
+        expect(
+          kitchenSink.$DefaultPartial
+            .equals(
+              instance.optionalLazyToResolvedDiscriminatedUnion.partial.unsafeCoerce(),
+              kitchenSink.$DefaultPartial.createUnsafe(
+                expectedLazilyResolvedDiscriminatedUnionInstance,
+              ),
+            )
+            .extract(),
+        ).toStrictEqual(true);
+        expect(
+          kitchenSink.LazilyResolvedDiscriminatedUnion.equals(
+            (await instance.optionalLazyToResolvedDiscriminatedUnion.resolve())
+              .unsafeCoerce()
+              .unsafeCoerce(),
+            expectedLazilyResolvedDiscriminatedUnionInstance,
+          ).extract(),
+        ).toStrictEqual(true);
+
+        expect(
+          kitchenSink.PartialDiscriminatedUnion.equals(
+            instance.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion.partial.unsafeCoerce(),
+            kitchenSink.PartialDiscriminatedUnionMember2.createUnsafe(
+              expectedLazilyResolvedDiscriminatedUnionInstance,
+            ),
+          ).extract(),
+        ).toStrictEqual(true);
+        expect(
+          kitchenSink.LazilyResolvedDiscriminatedUnion.equals(
+            (
+              await instance.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion.resolve()
+            )
+              .unsafeCoerce()
+              .unsafeCoerce(),
+            expectedLazilyResolvedDiscriminatedUnionInstance,
+          ).extract(),
+        ).toStrictEqual(true);
 
         expect(
           kitchenSink.$DefaultPartial
