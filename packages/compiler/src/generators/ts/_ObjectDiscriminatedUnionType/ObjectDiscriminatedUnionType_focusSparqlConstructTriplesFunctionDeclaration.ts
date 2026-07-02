@@ -17,7 +17,7 @@ export function focusSparqlConstructTriples({ filter, focusIdentifier, variableP
   return [${joinCode(
     this.members.map(
       (member) =>
-        code`...${member.type.name.unsafeCoerce()}.focusSparqlConstructTriples({ filter: filter?.on?.${member.type.name.unsafeCoerce()}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name.unsafeCoerce())}\` }).concat()`,
+        code`...${member.type.name.unsafeCoerce()}.focusSparqlConstructTriples({ filter: filter?.on?.${member.primaryDiscriminantValue}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name.unsafeCoerce())}\` }).concat()`,
     ),
     { on: ", " },
   )}];
