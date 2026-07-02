@@ -119,6 +119,14 @@ describe("constructor", () => {
 
       it("from partial type instance", async ({ expect }) => {
         const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
+          optionalLazyToResolvedBlankNodeOrIriIdentifier:
+            kitchenSink.$DefaultPartial.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
+          optionalPartialToResolvedBlankNodeOrIriIdentifier:
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
           requiredLazyToResolvedBlankNodeOrIriIdentifier:
             kitchenSink.$DefaultPartial.createUnsafe(
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
@@ -128,6 +136,36 @@ describe("constructor", () => {
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
             ),
         });
+
+        expect(
+          kitchenSink.$DefaultPartial
+            .equals(
+              instance.optionalLazyToResolvedBlankNodeOrIriIdentifier.partial.unsafeCoerce(),
+              kitchenSink.$DefaultPartial.createUnsafe(
+                expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+              ),
+            )
+            .extract(),
+        ).toStrictEqual(true);
+        expect(
+          (
+            await instance.optionalLazyToResolvedBlankNodeOrIriIdentifier.resolve()
+          ).extract(),
+        ).toBeInstanceOf(Error);
+
+        expect(
+          kitchenSink.PartialStruct.equals(
+            instance.optionalPartialToResolvedBlankNodeOrIriIdentifier.partial.unsafeCoerce(),
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
+          ).extract(),
+        ).toStrictEqual(true);
+        expect(
+          (
+            await instance.optionalPartialToResolvedBlankNodeOrIriIdentifier.resolve()
+          ).extract(),
+        ).toBeInstanceOf(Error);
 
         expect(
           kitchenSink.$DefaultPartial
@@ -162,6 +200,10 @@ describe("constructor", () => {
 
       it("from resolved type instance", async ({ expect }) => {
         const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
+          optionalLazyToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          optionalPartialToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
           optionalLazyToResolvedDiscriminatedUnion:
             expectedLazilyResolvedDiscriminatedUnionInstance,
           optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
@@ -171,6 +213,46 @@ describe("constructor", () => {
           requiredPartialToResolvedBlankNodeOrIriIdentifier:
             expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
         });
+
+        expect(
+          kitchenSink.$DefaultPartial
+            .equals(
+              instance.optionalLazyToResolvedBlankNodeOrIriIdentifier.partial.unsafeCoerce(),
+              kitchenSink.$DefaultPartial.createUnsafe(
+                expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+              ),
+            )
+            .extract(),
+        ).toStrictEqual(true);
+        expect(
+          kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct.equals(
+            (
+              await instance.optionalLazyToResolvedBlankNodeOrIriIdentifier.resolve()
+            )
+              .unsafeCoerce()
+              .unsafeCoerce(),
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          ).extract(),
+        ).toStrictEqual(true);
+
+        expect(
+          kitchenSink.PartialStruct.equals(
+            instance.optionalPartialToResolvedBlankNodeOrIriIdentifier.partial.unsafeCoerce(),
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
+          ).extract(),
+        ).toStrictEqual(true);
+        expect(
+          kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct.equals(
+            (
+              await instance.optionalPartialToResolvedBlankNodeOrIriIdentifier.resolve()
+            )
+              .unsafeCoerce()
+              .unsafeCoerce(),
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          ).extract(),
+        ).toStrictEqual(true);
 
         expect(
           kitchenSink.$DefaultPartial

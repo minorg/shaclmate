@@ -537,49 +537,70 @@ function $convertToLazy<
   };
 }
 
-function $convertToLazyOption<PartialT, ResolvedT>(
-  resolvedToPartial: (resolved: ResolvedT) => PartialT,
+function $convertToLazyOption<
+  PartialSourceT,
+  PartialTargetT,
+  ResolvedSourceT,
+  ResolvedTargetT,
+>(
+  convertToPartial: (object: PartialSourceT) => Either<Error, PartialTargetT>,
+  convertToResolved: (
+    object: ResolvedSourceT,
+  ) => Either<Error, ResolvedTargetT>,
+  isPartialSource: (
+    object: PartialSourceT | ResolvedSourceT,
+  ) => object is PartialSourceT,
+  resolvedToPartial: (resolved: ResolvedTargetT) => PartialTargetT,
 ) {
   return (
     value:
-      | $LazyOption<PartialT, ResolvedT>
-      | Maybe<ResolvedT>
-      | ResolvedT
+      | $LazyOption<PartialTargetT, ResolvedTargetT>
+      | Maybe<PartialSourceT>
+      | Maybe<ResolvedSourceT>
+      | PartialSourceT
+      | ResolvedSourceT
       | undefined,
-  ): Either<Error, $LazyOption<PartialT, ResolvedT>> => {
-    switch (typeof value) {
-      case "object": {
-        if (value instanceof $LazyOption) {
-          return Either.of(value);
-        }
-
-        if (Maybe.isMaybe(value)) {
-          return Either.of(
-            new $LazyOption<PartialT, ResolvedT>({
-              partial: value.map(resolvedToPartial),
-              resolver: async () => Right(value.unsafeCoerce()),
-            }),
-          );
-        }
-
-        break;
-      }
-      case "undefined":
-        return Either.of(
-          new $LazyOption<PartialT, ResolvedT>({
-            partial: Maybe.empty(),
-            resolver: async () => {
-              throw new Error("should never be called");
-            },
-          }),
-        );
+  ): Either<Error, $LazyOption<PartialTargetT, ResolvedTargetT>> => {
+    if (value instanceof $LazyOption) {
+      return Either.of(value);
     }
 
-    return Either.of(
-      new $LazyOption<PartialT, ResolvedT>({
-        partial: Maybe.of(resolvedToPartial(value)),
-        resolver: async () => Right(value),
-      }),
+    let extractedValue: PartialSourceT | ResolvedSourceT | undefined;
+    if (typeof value === "undefined") {
+      extractedValue = value;
+    } else if (Maybe.isMaybe(value)) {
+      extractedValue = value.extract();
+    } else {
+      extractedValue = value;
+    }
+
+    if (typeof extractedValue === "undefined") {
+      return Either.of(
+        new $LazyOption<PartialTargetT, ResolvedTargetT>({
+          partial: Maybe.empty(),
+          resolver: async () => {
+            throw new Error("should never be called");
+          },
+        }),
+      );
+    }
+
+    if (isPartialSource(extractedValue)) {
+      return convertToPartial(extractedValue).map(
+        (partial) =>
+          new $LazyOption({
+            partial: Maybe.of(partial),
+            resolver: async () => Left(new Error("unable to resolve")),
+          }),
+      );
+    }
+
+    return convertToResolved(extractedValue).map(
+      (resolved) =>
+        new $LazyOption({
+          partial: Maybe.of(resolvedToPartial(resolved)),
+          resolver: async () => Right(resolved),
+        }),
     );
   };
 }
@@ -25737,27 +25758,39 @@ export namespace LazyPropertiesStruct {
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >
+      | Maybe<$DefaultPartial>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalLazyToResolvedDiscriminatedUnion?:
       | $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
+      | Maybe<$DefaultPartial>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | $DefaultPartial
       | LazilyResolvedDiscriminatedUnion;
     readonly optionalLazyToResolvedIriIdentifier?:
       | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
+      | Maybe<$NamedDefaultPartial>
       | Maybe<LazilyResolvedIriIdentifierStruct>
+      | $NamedDefaultPartial
       | LazilyResolvedIriIdentifierStruct;
     readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?:
       | $LazyOption<PartialDiscriminatedUnion, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialDiscriminatedUnion>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialDiscriminatedUnion
       | LazilyResolvedDiscriminatedUnion;
     readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?:
       | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | Maybe<PartialStruct>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalPartialToResolvedDiscriminatedUnion?:
       | $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialStruct>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialStruct
       | LazilyResolvedDiscriminatedUnion;
     readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
@@ -25778,51 +25811,83 @@ export namespace LazyPropertiesStruct {
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         $DefaultPartial,
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >($DefaultPartial.createUnsafe)(
-        parameters.optionalLazyToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        $identityConversionFunction,
+        $identityConversionFunction,
+        $DefaultPartial.is$DefaultPartial,
+        $DefaultPartial.createUnsafe,
+      )(parameters.optionalLazyToResolvedBlankNodeOrIriIdentifier),
       optionalLazyToResolvedDiscriminatedUnion: $convertToLazyOption<
         $DefaultPartial,
+        $DefaultPartial,
+        LazilyResolvedDiscriminatedUnion,
         LazilyResolvedDiscriminatedUnion
-      >($DefaultPartial.createUnsafe)(
-        parameters.optionalLazyToResolvedDiscriminatedUnion,
-      ),
+      >(
+        $identityConversionFunction,
+        $identityConversionFunction,
+        $DefaultPartial.is$DefaultPartial,
+        $DefaultPartial.createUnsafe,
+      )(parameters.optionalLazyToResolvedDiscriminatedUnion),
       optionalLazyToResolvedIriIdentifier: $convertToLazyOption<
         $NamedDefaultPartial,
+        $NamedDefaultPartial,
+        LazilyResolvedIriIdentifierStruct,
         LazilyResolvedIriIdentifierStruct
-      >($NamedDefaultPartial.createUnsafe)(
-        parameters.optionalLazyToResolvedIriIdentifier,
-      ),
+      >(
+        $identityConversionFunction,
+        $identityConversionFunction,
+        $NamedDefaultPartial.is$NamedDefaultPartial,
+        $NamedDefaultPartial.createUnsafe,
+      )(parameters.optionalLazyToResolvedIriIdentifier),
       optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
         $convertToLazyOption<
           PartialDiscriminatedUnion,
+          PartialDiscriminatedUnion,
+          LazilyResolvedDiscriminatedUnion,
           LazilyResolvedDiscriminatedUnion
-        >((resolved: LazilyResolvedDiscriminatedUnion) => {
-          switch (resolved.$type) {
-            case "LazilyResolvedDiscriminatedUnionMember1":
-              return PartialDiscriminatedUnionMember1.createUnsafe(resolved);
-            case "LazilyResolvedDiscriminatedUnionMember2":
-              return PartialDiscriminatedUnionMember2.createUnsafe(resolved);
-            default:
-              resolved satisfies never;
-              throw new Error("unrecognized type");
-          }
-        })(
+        >(
+          $identityConversionFunction,
+          $identityConversionFunction,
+          PartialDiscriminatedUnion.isPartialDiscriminatedUnion,
+          (resolved: LazilyResolvedDiscriminatedUnion) => {
+            switch (resolved.$type) {
+              case "LazilyResolvedDiscriminatedUnionMember1":
+                return PartialDiscriminatedUnionMember1.createUnsafe(resolved);
+              case "LazilyResolvedDiscriminatedUnionMember2":
+                return PartialDiscriminatedUnionMember2.createUnsafe(resolved);
+              default:
+                resolved satisfies never;
+                throw new Error("unrecognized type");
+            }
+          },
+        )(
           parameters.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
         ),
       optionalPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         PartialStruct,
+        PartialStruct,
+        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(PartialStruct.createUnsafe)(
-        parameters.optionalPartialToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        $identityConversionFunction,
+        $identityConversionFunction,
+        PartialStruct.isPartialStruct,
+        PartialStruct.createUnsafe,
+      )(parameters.optionalPartialToResolvedBlankNodeOrIriIdentifier),
       optionalPartialToResolvedDiscriminatedUnion: $convertToLazyOption<
         PartialStruct,
+        PartialStruct,
+        LazilyResolvedDiscriminatedUnion,
         LazilyResolvedDiscriminatedUnion
-      >(PartialStruct.createUnsafe)(
-        parameters.optionalPartialToResolvedDiscriminatedUnion,
-      ),
+      >(
+        $identityConversionFunction,
+        $identityConversionFunction,
+        PartialStruct.isPartialStruct,
+        PartialStruct.createUnsafe,
+      )(parameters.optionalPartialToResolvedDiscriminatedUnion),
       requiredLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazy<
         $DefaultPartial,
         $DefaultPartial,
@@ -25880,27 +25945,39 @@ export namespace LazyPropertiesStruct {
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >
+      | Maybe<$DefaultPartial>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalLazyToResolvedDiscriminatedUnion?:
       | $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
+      | Maybe<$DefaultPartial>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | $DefaultPartial
       | LazilyResolvedDiscriminatedUnion;
     readonly optionalLazyToResolvedIriIdentifier?:
       | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
+      | Maybe<$NamedDefaultPartial>
       | Maybe<LazilyResolvedIriIdentifierStruct>
+      | $NamedDefaultPartial
       | LazilyResolvedIriIdentifierStruct;
     readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?:
       | $LazyOption<PartialDiscriminatedUnion, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialDiscriminatedUnion>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialDiscriminatedUnion
       | LazilyResolvedDiscriminatedUnion;
     readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?:
       | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | Maybe<PartialStruct>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalPartialToResolvedDiscriminatedUnion?:
       | $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialStruct>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialStruct
       | LazilyResolvedDiscriminatedUnion;
     readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
