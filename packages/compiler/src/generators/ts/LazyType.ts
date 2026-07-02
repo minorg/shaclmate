@@ -26,6 +26,7 @@ ${this.reusables.snippets.convertToLazy}<
 >(
   ${this.reusables.snippets.identityConversionFunction},
   ${this.reusables.snippets.identityConversionFunction},
+  ${this.partialType.typeGuardFunction.unsafeCoerce()},
   ${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })}
 )`,
       sourceTypes: [

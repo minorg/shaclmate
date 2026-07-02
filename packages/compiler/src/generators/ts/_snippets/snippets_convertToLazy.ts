@@ -12,7 +12,7 @@ export const snippets_convertToLazy: SnippetFactory = ({
 function ${syntheticNamePrefix}convertToLazy<PartialSourceT, PartialTargetT, ResolvedSourceT, ResolvedTargetT>(
   convertToPartial: (object: PartialSourceT) => PartialTargetT,
   convertToResolved: (object: ResolvedSourceT) => ResolvedTargetT,
-  isPartialSource: (object: PartialSourceT | ResolvedSourceT): object is PartialSourceT,
+  isPartialSource: (object: PartialSourceT | ResolvedSourceT) => object is PartialSourceT,
   resolvedToPartial: (resolved: ResolvedTargetT) => PartialTargetT
 ) {
   return (value: ${snippets.Lazy}<PartialTargetT, ResolvedTargetT> | PartialSourceT | ResolvedSourceT): ${imports.Either}<Error, ${snippets.Lazy}<PartialTargetT, ResolvedTargetT>> => {
