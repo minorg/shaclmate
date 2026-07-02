@@ -25761,9 +25761,11 @@ export namespace LazyPropertiesStruct {
       | LazilyResolvedDiscriminatedUnion;
     readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly requiredPartialToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
@@ -25902,9 +25904,11 @@ export namespace LazyPropertiesStruct {
       | LazilyResolvedDiscriminatedUnion;
     readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly requiredPartialToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>

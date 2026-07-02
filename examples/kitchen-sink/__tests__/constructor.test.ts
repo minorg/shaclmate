@@ -1,13 +1,220 @@
 import { describe, it } from "vitest";
+import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
+import "@rdfx/testing";
+import dataFactory from "@rdfx/data-factory";
+import { Maybe } from "purify-ts";
 
 describe("constructor", () => {
-  it("construct a class instance from convertible parameters", ({ expect }) => {
-    const instance = harnesses.propertyCardinalitiesStruct1.instance;
-    expect(instance.emptySet).toHaveLength(0);
-    expect(instance.nonEmptySet).toStrictEqual(["test"]);
-    expect(instance.optional.isNothing()).toStrictEqual(true);
-    expect(instance.required).toStrictEqual("test");
+  describe("conversions", () => {
+    it("undefined to []/Nothing", ({ expect }) => {
+      const instance = harnesses.propertyCardinalitiesStruct1.instance;
+      expect(instance.emptySet).toHaveLength(0);
+      expect(instance.nonEmptySet).toStrictEqual(["test"]);
+      expect(instance.optional.isNothing()).toStrictEqual(true);
+      expect(instance.required).toStrictEqual("test");
+    });
+
+    it("Arrays and Maybes", ({ expect }) => {
+      const instance = harnesses.propertyCardinalitiesStruct2.instance;
+      expect(instance.emptySet).toEqual([]);
+      expect(instance.nonEmptySet).toEqual(["test"]);
+      expect(instance.optional.extract()).toStrictEqual("test");
+      expect(instance.required).toStrictEqual("test");
+    });
+
+    it("scalar to container", ({ expect }) => {
+      const instance = harnesses.propertyCardinalitiesStruct3.instance;
+      expect(instance.emptySet).toEqual(["test"]);
+      expect(instance.nonEmptySet).toEqual(["test"]);
+      expect(instance.optional.extract()).toStrictEqual("test");
+      expect(instance.required).toStrictEqual("test");
+    });
+
+    describe("lazy properties", () => {
+      const expectedDefaultPartialInstance =
+        kitchenSink.$DefaultPartial.createUnsafe({
+          $identifier: dataFactory.namedNode(
+            "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance",
+          ),
+        });
+
+      const expectedLazilyResolvedBlankNodeOrIriIdentifierInstance =
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct.createUnsafe({
+          $identifier: dataFactory.namedNode(
+            "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance",
+          ),
+          lazilyResolved: "test",
+        });
+
+      const expectedLazilyResolvedDiscriminatedUnionInstance =
+        kitchenSink.LazilyResolvedDiscriminatedUnionMember1.createUnsafe({
+          $identifier: dataFactory.namedNode(
+            "http://example.com/lazilyResolvedDiscriminatedUnionInstance",
+          ),
+          lazilyResolved: "test",
+        });
+
+      const expectedPartialInstance = kitchenSink.PartialStruct.createUnsafe({
+        $identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance",
+        ),
+        lazilyResolved: "test",
+      });
+
+      it("from undefined", async ({ expect }) => {
+        const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
+          requiredLazyToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          requiredPartialToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+        });
+
+        expect(
+          instance.optionalLazyToResolvedBlankNodeOrIriIdentifier.partial.isNothing(),
+        ).toStrictEqual(true);
+        expect(
+          (
+            await instance.optionalLazyToResolvedBlankNodeOrIriIdentifier.resolve()
+          )
+            .unsafeCoerce()
+            .isNothing(),
+        ).toStrictEqual(true);
+
+        expect(
+          instance.setLazyToResolvedBlankNodeOrIriIdentifier.partials,
+        ).toHaveLength(0);
+        expect(
+          (
+            await instance.setLazyToResolvedBlankNodeOrIriIdentifier.resolve()
+          ).unsafeCoerce(),
+        ).toHaveLength(0);
+      });
+
+      it("from Maybe", async ({ expect }) => {
+        const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
+          optionalLazyToResolvedBlankNodeOrIriIdentifier: Maybe.empty(),
+          requiredLazyToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          requiredPartialToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+        });
+
+        expect(
+          instance.optionalLazyToResolvedBlankNodeOrIriIdentifier.partial.isNothing(),
+        ).toStrictEqual(true);
+        expect(
+          (
+            await instance.optionalLazyToResolvedBlankNodeOrIriIdentifier.resolve()
+          )
+            .unsafeCoerce()
+            .isNothing(),
+        ).toStrictEqual(true);
+      });
+
+      it("from []", async ({ expect }) => {
+        const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
+          setLazyToResolvedBlankNodeOrIriIdentifier: [],
+          requiredLazyToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          requiredPartialToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+        });
+
+        expect(
+          instance.setLazyToResolvedBlankNodeOrIriIdentifier.partials,
+        ).toHaveLength(0);
+        expect(
+          (
+            await instance.setLazyToResolvedBlankNodeOrIriIdentifier.resolve()
+          ).unsafeCoerce(),
+        ).toHaveLength(0);
+      });
+
+      it("from partial type instance", async ({ expect }) => {
+        const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
+          requiredLazyToResolvedBlankNodeOrIriIdentifier:
+            expectedDefaultPartialInstance,
+          requiredPartialToResolvedBlankNodeOrIriIdentifier:
+            expectedPartialInstance,
+        });
+
+        expect(
+          kitchenSink.$DefaultPartial
+            .equals(
+              instance.requiredLazyToResolvedBlankNodeOrIriIdentifier.partial,
+              kitchenSink.$DefaultPartial.createUnsafe(
+                expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+              ),
+            )
+            .extract(),
+        ).toStrictEqual(true);
+        expect(
+          (
+            await instance.requiredLazyToResolvedBlankNodeOrIriIdentifier.resolve()
+          ).extract(),
+        ).toBeInstanceOf(Error);
+
+        expect(
+          kitchenSink.PartialStruct.equals(
+            instance.requiredPartialToResolvedBlankNodeOrIriIdentifier.partial,
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
+          ).extract(),
+        ).toStrictEqual(true);
+        expect(
+          (
+            await instance.requiredPartialToResolvedBlankNodeOrIriIdentifier.resolve()
+          ).extract(),
+        ).toBeInstanceOf(Error);
+      });
+
+      it("from resolved type instance", async ({ expect }) => {
+        const instance = kitchenSink.LazyPropertiesStruct.createUnsafe({
+          requiredLazyToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          requiredPartialToResolvedBlankNodeOrIriIdentifier:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+        });
+
+        expect(
+          kitchenSink.$DefaultPartial
+            .equals(
+              instance.requiredLazyToResolvedBlankNodeOrIriIdentifier.partial,
+              kitchenSink.$DefaultPartial.createUnsafe(
+                expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+              ),
+            )
+            .extract(),
+        ).toStrictEqual(true);
+        expect(
+          kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct.equals(
+            (
+              await instance.requiredLazyToResolvedBlankNodeOrIriIdentifier.resolve()
+            ).unsafeCoerce(),
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          ).extract(),
+        ).toStrictEqual(true);
+
+        expect(
+          kitchenSink.PartialStruct.equals(
+            instance.requiredPartialToResolvedBlankNodeOrIriIdentifier.partial,
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
+          ).extract(),
+        ).toStrictEqual(true);
+        expect(
+          kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierStruct.equals(
+            (
+              await instance.requiredPartialToResolvedBlankNodeOrIriIdentifier.resolve()
+            ).unsafeCoerce(),
+            expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+          ).extract(),
+        ).toStrictEqual(true);
+      });
+    });
   });
 
   it("default values", ({ expect }) => {
