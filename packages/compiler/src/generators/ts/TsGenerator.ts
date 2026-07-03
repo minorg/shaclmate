@@ -1,6 +1,7 @@
 import dataFactory from "@rdfx/data-factory";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
@@ -234,12 +235,20 @@ export class TsGenerator implements Generator {
     namedObjectTypes: readonly ObjectType[];
     reusables: Reusables;
   }): ObjectDiscriminatedUnionType {
-    const nodeKinds = namedObjectTypes.reduce((nodeKinds, namedObjectType) => {
-      for (const nodeKind of namedObjectType.identifierType.nodeKinds) {
-        nodeKinds.add(nodeKind);
-      }
-      return nodeKinds;
-    }, new Set<IdentifierNodeKind>());
+    const filteredNamedObjectTypes = namedObjectTypes.filter(
+      (namedObjectType) => !namedObjectType.extern,
+    );
+    invariant(filteredNamedObjectTypes.length > 0);
+
+    const nodeKinds = filteredNamedObjectTypes.reduce(
+      (nodeKinds, namedObjectType) => {
+        for (const nodeKind of namedObjectType.identifierType.nodeKinds) {
+          nodeKinds.add(nodeKind);
+        }
+        return nodeKinds;
+      },
+      new Set<IdentifierNodeKind>(),
+    );
 
     let identifierType: BlankNodeType | IdentifierType | IriType;
     if (nodeKinds.size === 2) {
@@ -288,7 +297,7 @@ export class TsGenerator implements Generator {
       identifierType: Maybe.of(identifierType),
       label: Maybe.empty(),
       logger: this.logger,
-      members: namedObjectTypes.map((namedObjectType) => ({
+      members: filteredNamedObjectTypes.map((namedObjectType) => ({
         discriminantValue: Maybe.empty(),
         type: namedObjectType,
       })),
