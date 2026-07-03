@@ -135,6 +135,14 @@ describe("constructor", () => {
             kitchenSink.PartialStruct.createUnsafe(
               expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
             ),
+          setLazyToResolvedBlankNodeOrIriIdentifier:
+            kitchenSink.$DefaultPartial.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
+          setPartialToResolvedBlankNodeOrIriIdentifier:
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
         });
 
         expect(
@@ -194,6 +202,42 @@ describe("constructor", () => {
         expect(
           (
             await instance.requiredPartialToResolvedBlankNodeOrIriIdentifier.resolve()
+          ).extract(),
+        ).toBeInstanceOf(Error);
+
+        expect(
+          instance.setLazyToResolvedBlankNodeOrIriIdentifier.partials,
+        ).toHaveLength(1);
+        expect(
+          kitchenSink.$DefaultPartial
+            .equals(
+              instance.setLazyToResolvedBlankNodeOrIriIdentifier.partials[0],
+              kitchenSink.$DefaultPartial.createUnsafe(
+                expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+              ),
+            )
+            .extract(),
+        ).toStrictEqual(true);
+        expect(
+          (
+            await instance.setLazyToResolvedBlankNodeOrIriIdentifier.resolve()
+          ).extract(),
+        ).toBeInstanceOf(Error);
+
+        expect(
+          instance.setPartialToResolvedBlankNodeOrIriIdentifier.partials,
+        ).toHaveLength(1);
+        expect(
+          kitchenSink.PartialStruct.equals(
+            instance.setPartialToResolvedBlankNodeOrIriIdentifier.partials[0],
+            kitchenSink.PartialStruct.createUnsafe(
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
+            ),
+          ).extract(),
+        ).toStrictEqual(true);
+        expect(
+          (
+            await instance.setPartialToResolvedBlankNodeOrIriIdentifier.resolve()
           ).extract(),
         ).toBeInstanceOf(Error);
       });

@@ -605,35 +605,63 @@ function $convertToLazyOption<
   };
 }
 
-function $convertToLazySet<PartialT, ResolvedT>(
-  resolvedToPartial: (resolved: ResolvedT) => PartialT,
+function $convertToLazySet<
+  PartialSourceT,
+  PartialTargetT,
+  ResolvedSourceT,
+  ResolvedTargetT,
+>(
+  convertToPartial: (object: PartialSourceT) => Either<Error, PartialTargetT>,
+  convertToResolved: (
+    object: ResolvedSourceT,
+  ) => Either<Error, ResolvedTargetT>,
+  isPartialSource: (
+    object: PartialSourceT | ResolvedSourceT,
+  ) => object is PartialSourceT,
+  resolvedToPartial: (resolved: ResolvedTargetT) => PartialTargetT,
 ) {
   return (
-    value: $LazySet<PartialT, ResolvedT> | readonly ResolvedT[] | undefined,
-  ): Either<Error, $LazySet<PartialT, ResolvedT>> => {
-    switch (typeof value) {
-      case "object": {
-        if (value instanceof $LazySet) {
-          return Either.of(value);
-        }
-
-        break;
-      }
-      case "undefined":
-        return Either.of(
-          new $LazySet<PartialT, ResolvedT>({
-            partials: [],
-            resolver: async () => Right([]),
-          }),
-        );
+    value:
+      | $LazySet<PartialTargetT, ResolvedTargetT>
+      | readonly PartialSourceT[]
+      | readonly ResolvedSourceT[]
+      | PartialSourceT
+      | ResolvedSourceT
+      | undefined,
+  ): Either<Error, $LazySet<PartialTargetT, ResolvedTargetT>> => {
+    if (typeof value === "undefined") {
+      return Either.of(
+        new $LazySet<PartialTargetT, ResolvedTargetT>({
+          partials: [],
+          resolver: async () => Right([]),
+        }),
+      );
     }
 
-    const captureValue = value;
-    return Either.of(
-      new $LazySet<PartialT, ResolvedT>({
-        partials: value.map(resolvedToPartial),
-        resolver: async () => Right(captureValue),
-      }),
+    if (value instanceof $LazySet) {
+      return Either.of(value);
+    }
+
+    const arrayValue = (Array.isArray(value) ? value : [value]) as
+      | readonly PartialSourceT[]
+      | readonly ResolvedSourceT[];
+
+    if (arrayValue.every(isPartialSource)) {
+      return Either.sequence(arrayValue.map(convertToPartial)).map(
+        (partials) =>
+          new $LazySet<PartialTargetT, ResolvedTargetT>({
+            partials,
+            resolver: async () => Left(new Error("unable to resolve")),
+          }),
+      );
+    }
+
+    return Either.sequence(arrayValue.map(convertToResolved)).map(
+      (resolved) =>
+        new $LazySet<PartialTargetT, ResolvedTargetT>({
+          partials: resolved.map(resolvedToPartial),
+          resolver: async () => Right(resolved),
+        }),
     );
   };
 }
@@ -25802,10 +25830,16 @@ export namespace LazyPropertiesStruct {
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
+      | readonly $DefaultPartial[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | $DefaultPartial
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setPartialToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
+      | readonly PartialStruct[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | PartialStruct
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
   }) => Either<Error, LazyPropertiesStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
@@ -25912,16 +25946,26 @@ export namespace LazyPropertiesStruct {
       )(parameters.requiredPartialToResolvedBlankNodeOrIriIdentifier),
       setLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         $DefaultPartial,
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >($DefaultPartial.createUnsafe)(
-        parameters.setLazyToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        $identityConversionFunction,
+        $identityConversionFunction,
+        $DefaultPartial.is$DefaultPartial,
+        $DefaultPartial.createUnsafe,
+      )(parameters.setLazyToResolvedBlankNodeOrIriIdentifier),
       setPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         PartialStruct,
+        PartialStruct,
+        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(PartialStruct.createUnsafe)(
-        parameters.setPartialToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        $identityConversionFunction,
+        $identityConversionFunction,
+        PartialStruct.isPartialStruct,
+        PartialStruct.createUnsafe,
+      )(parameters.setPartialToResolvedBlankNodeOrIriIdentifier),
     })
       .map((properties) => ({
         ...properties,
@@ -25989,10 +26033,16 @@ export namespace LazyPropertiesStruct {
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
+      | readonly $DefaultPartial[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | $DefaultPartial
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setPartialToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
+      | readonly PartialStruct[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | PartialStruct
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
   }): LazyPropertiesStruct {
     return create(parameters).unsafeCoerce();
   }

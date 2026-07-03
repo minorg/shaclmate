@@ -45,7 +45,7 @@ ${this.reusables.snippets.convertToLazyOption}<
         },
         {
           expression: this.partialType.expression,
-          jsType: this.resolveType.jsTypes[0],
+          jsType: this.partialType.jsTypes[0],
         },
         {
           expression: this.resolveType.expression,
