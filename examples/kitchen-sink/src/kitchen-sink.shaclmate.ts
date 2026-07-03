@@ -3915,6 +3915,7 @@ export namespace $DefaultPartial {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "DefaultPartial" },
     },
   } as const;
 
@@ -4246,6 +4247,7 @@ export namespace $NamedDefaultPartial {
   export const schema = {
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $type: { kind: "Discriminant", value: "NamedDefaultPartial" },
     },
   } as const;
 
@@ -5156,6 +5158,7 @@ export namespace AnonymousTypesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "AnonymousTypesStruct" },
       anonymousStruct: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/anonymousStruct"),
@@ -5737,6 +5740,7 @@ export namespace BlankNodeIdentifierStruct {
     ),
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "BlankNode" as const } },
+      $type: { kind: "Discriminant", value: "BlankNodeIdentifierStruct" },
       blankNodeIdentifierString: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -6291,6 +6295,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "BlankNodeOrIriIdentifierStruct" },
       blankNodeOrIriIdentifierString: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -7231,6 +7236,7 @@ export namespace ClassConstraintsStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "ClassConstraintsStruct" },
       iriClass: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriClass"),
@@ -9139,6 +9145,7 @@ export namespace ConvertibleTypesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "ConvertibleTypesStruct" },
       convertibleIri: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/convertibleIri"),
@@ -12933,6 +12940,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: {
+        kind: "Discriminant",
+        value: "DatatypeDiscriminatedUnionsStruct",
+      },
       dateOrDateTime: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateOrDateTime"),
@@ -14432,6 +14443,7 @@ export namespace DefaultValuesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "DefaultValuesStruct" },
       dateDefaultValue: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/dateDefaultValue"),
@@ -15077,6 +15089,7 @@ export namespace DirectRecursiveStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "DirectRecursiveStruct" },
       directRecursive: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/directRecursive"),
@@ -15684,6 +15697,7 @@ export namespace DiscriminatedUnionMember1 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "DiscriminatedUnionMember1" },
       discriminatedUnionMember1Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -16306,6 +16320,7 @@ export namespace DiscriminatedUnionMember2 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "DiscriminatedUnionMember2" },
       discriminatedUnionMember2Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -16967,6 +16982,7 @@ export namespace DisplayStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "DisplayStruct" },
       explicitFalseDisplay: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/explicitFalseDisplay"),
@@ -17505,6 +17521,7 @@ export namespace ExplicitFromToRdfTypesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "ExplicitFromToRdfTypesStruct" },
       explicitFromToRdfTypesString: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -18018,6 +18035,7 @@ export namespace ExplicitRdfTypeStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "ExplicitRdfTypeStruct" },
       explicitRdfTypeString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/explicitRdfTypeString"),
@@ -18535,6 +18553,10 @@ export namespace FlattenDiscriminatedUnionMember3 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: {
+        kind: "Discriminant",
+        value: "FlattenDiscriminatedUnionMember3",
+      },
       flattenDiscriminatedUnionMember3String: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -19033,6 +19055,7 @@ export namespace HasValuesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "HasValuesStruct" },
       hasIriValue: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/hasIriValue"),
@@ -19643,6 +19666,7 @@ export namespace IgnoredPropertiesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "IgnoredPropertiesStruct" },
       severityDefaultProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -20176,6 +20200,7 @@ export namespace IndirectRecursiveStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "IndirectRecursiveStruct" },
       indirectRecursiveHelper: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -20700,6 +20725,7 @@ export namespace IndirectRecursiveStructHelper {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "IndirectRecursiveStructHelper" },
       indirectRecursive: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/indirectRecursive"),
@@ -21294,6 +21320,7 @@ export namespace InIdentifierStruct {
           ],
         },
       },
+      $type: { kind: "Discriminant", value: "InIdentifierStruct" },
       inIdentifierString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inIdentifierString"),
@@ -22368,6 +22395,7 @@ export namespace InPropertiesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "InPropertiesStruct" },
       inBooleans: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inBooleans"),
@@ -23020,6 +23048,7 @@ export namespace IriIdentifierStruct {
     ),
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $type: { kind: "Discriminant", value: "IriIdentifierStruct" },
       iriIdentifierString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriIdentifierString"),
@@ -23520,6 +23549,7 @@ export namespace LanguageInStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "LanguageInStruct" },
       languageInLiteral: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/languageInLiteral"),
@@ -24037,6 +24067,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $type: {
+        kind: "Discriminant",
+        value: "LazilyResolvedBlankNodeOrIriIdentifierStruct",
       },
       lazilyResolved: {
         kind: "Shacl",
@@ -24570,6 +24604,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: {
+        kind: "Discriminant",
+        value: "LazilyResolvedDiscriminatedUnionMember1",
+      },
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
@@ -25093,6 +25131,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: {
+        kind: "Discriminant",
+        value: "LazilyResolvedDiscriminatedUnionMember2",
+      },
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
@@ -25538,6 +25580,10 @@ export namespace LazilyResolvedIriIdentifierStruct {
   export const schema = {
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $type: {
+        kind: "Discriminant",
+        value: "LazilyResolvedIriIdentifierStruct",
+      },
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
@@ -27683,6 +27729,7 @@ export namespace LazyPropertiesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "LazyPropertiesStruct" },
       optionalLazyToResolvedBlankNodeOrIriIdentifier: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -29107,6 +29154,7 @@ export namespace ListSetsStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "ListSetsStruct" },
       listDiscriminatedUnionSet: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -30302,6 +30350,7 @@ export namespace ListsStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "ListsStruct" },
       iriList: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriList"),
@@ -31353,6 +31402,7 @@ export namespace MutablePropertiesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "MutablePropertiesStruct" },
       mutableList: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/mutableList"),
@@ -32160,6 +32210,7 @@ export namespace NamedTypesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "NamedTypesStruct" },
       namedDatatype: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedDatatype"),
@@ -32732,6 +32783,7 @@ export namespace NewName {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "NewName" },
       newNameString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/newNameString"),
@@ -33635,6 +33687,7 @@ export namespace NodeKindsStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "NodeKindsStruct" },
       blankNodeKind: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/blankNodeKind"),
@@ -34163,6 +34216,7 @@ export namespace NonClassStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "NonClassStruct" },
       nonClassString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nonClassString"),
@@ -34599,6 +34653,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $type: {
+        kind: "Discriminant",
+        value: "NoRdfTypeDiscriminatedUnionMember1",
       },
       noRdfTypeDiscriminatedUnionMember1String: {
         kind: "Shacl",
@@ -35054,6 +35112,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $type: {
+        kind: "Discriminant",
+        value: "NoRdfTypeDiscriminatedUnionMember2",
       },
       noRdfTypeDiscriminatedUnionMember2String: {
         kind: "Shacl",
@@ -36956,6 +37018,7 @@ export namespace NumericsStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "NumericsStruct" },
       byteNumeric: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/byteNumeric"),
@@ -37799,6 +37862,7 @@ export namespace OrderedStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "OrderedStruct" },
       orderedC: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/orderedC"),
@@ -38306,6 +38370,10 @@ export namespace PartialDiscriminatedUnionMember1 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: {
+        kind: "Discriminant",
+        value: "PartialDiscriminatedUnionMember1",
+      },
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
@@ -38811,6 +38879,10 @@ export namespace PartialDiscriminatedUnionMember2 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: {
+        kind: "Discriminant",
+        value: "PartialDiscriminatedUnionMember2",
+      },
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
@@ -39239,6 +39311,7 @@ export namespace PartialStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "PartialStruct" },
       lazilyResolved: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazilyResolved"),
@@ -39926,6 +39999,7 @@ export namespace PropertyCardinalitiesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "PropertyCardinalitiesStruct" },
       emptySet: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/emptySet"),
@@ -40713,6 +40787,7 @@ export namespace PropertyNamesStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "PropertyNamesStruct" },
       actualName1: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/actualName1"),
@@ -41361,6 +41436,7 @@ export namespace PropertyPathsStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "PropertyPathsStruct" },
       inversePath: {
         kind: "Shacl",
         path: {
@@ -41900,6 +41976,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $type: {
+        kind: "Discriminant",
+        value: "RecursiveDiscriminatedUnionMember1",
       },
       recursiveDiscriminatedUnionMember1Property: {
         kind: "Shacl",
@@ -42451,6 +42531,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: {
+        kind: "Discriminant",
+        value: "RecursiveDiscriminatedUnionMember2",
+      },
       recursiveDiscriminatedUnionMember2Property: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -42980,6 +43064,7 @@ export namespace TargetClassStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "TargetClassStruct" },
       targetClassString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/targetClassString"),
@@ -44344,6 +44429,7 @@ export namespace TermsStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "TermsStruct" },
       blankNodeTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/blankNodeTerm"),
@@ -51003,6 +51089,7 @@ export namespace UnionDiscriminantsStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "UnionDiscriminantsStruct" },
       optionalIriOrString: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/optionalIriOrString"),

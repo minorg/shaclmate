@@ -18,8 +18,6 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   override readonly kind = "Discriminant";
   override readonly mutable = false;
   override readonly recursive = false;
-  override readonly schema: Maybe<Code> = Maybe.empty();
-  override readonly schemaType: Maybe<Code> = Maybe.empty();
   readonly value: string;
 
   constructor({
@@ -57,6 +55,14 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
     return Maybe.of(code`readonly "${this.jsonName}": ${this.type.expression}`);
+  }
+
+  override get schema(): Maybe<Code> {
+    return Maybe.of(code`${{ kind: this.kind, value: this.value }}`);
+  }
+
+  override get schemaType(): Maybe<Code> {
+    return Maybe.of(code`${{ kind: this.kind, value: this.value }}`);
   }
 
   @Memoize()
