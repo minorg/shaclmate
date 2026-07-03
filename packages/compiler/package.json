@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.63",
+    "@shaclmate/shacl-ast": "4.0.64",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/term-map": "~2.0.2",
@@ -283,12 +283,12 @@
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_graphqlTypeVariableStatement.js",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_identifierTypeDeclarations.d.ts",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_identifierTypeDeclarations.js",
-    "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_isTypeFunctionDeclaration.d.ts",
-    "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_isTypeFunctionDeclaration.js",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_schemaVariableStatement.d.ts",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_schemaVariableStatement.js",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration.d.ts",
     "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration.js",
+    "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration.d.ts",
+    "dist/generators/ts/_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration.js",
     "dist/generators/ts/_ObjectType/ObjectType_AbstractProperty.d.ts",
     "dist/generators/ts/_ObjectType/ObjectType_AbstractProperty.js",
     "dist/generators/ts/_ObjectType/ObjectType_DiscriminantProperty.d.ts",
@@ -321,8 +321,6 @@
     "dist/generators/ts/_ObjectType/ObjectType_hashFunctionExpression.js",
     "dist/generators/ts/_ObjectType/ObjectType_identifierTypeDeclarations.d.ts",
     "dist/generators/ts/_ObjectType/ObjectType_identifierTypeDeclarations.js",
-    "dist/generators/ts/_ObjectType/ObjectType_isTypeFunctionDeclaration.d.ts",
-    "dist/generators/ts/_ObjectType/ObjectType_isTypeFunctionDeclaration.js",
     "dist/generators/ts/_ObjectType/ObjectType_jsonParseFunctionDeclaration.d.ts",
     "dist/generators/ts/_ObjectType/ObjectType_jsonParseFunctionDeclaration.js",
     "dist/generators/ts/_ObjectType/ObjectType_jsonSchemaExpression.d.ts",
@@ -349,6 +347,8 @@
     "dist/generators/ts/_ObjectType/ObjectType_toStringFunctionExpression.js",
     "dist/generators/ts/_ObjectType/ObjectType_toStringRecordFunctionExpression.d.ts",
     "dist/generators/ts/_ObjectType/ObjectType_toStringRecordFunctionExpression.js",
+    "dist/generators/ts/_ObjectType/ObjectType_typeGuardFunctionExpression.d.ts",
+    "dist/generators/ts/_ObjectType/ObjectType_typeGuardFunctionExpression.js",
     "dist/generators/ts/_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.d.ts",
     "dist/generators/ts/_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.js",
     "dist/generators/ts/_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.d.ts",
@@ -721,5 +721,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.63"
+  "version": "4.0.64"
 }
