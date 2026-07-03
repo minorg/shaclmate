@@ -198,9 +198,13 @@ describe("lazyProperties", () => {
       ).unsafeCoerce();
   });
 
-  for (const propertyNameString of Object.keys(
+  for (const [propertyNameString, propertySchema] of Object.entries(
     kitchenSink.LazyPropertiesStruct.schema.properties,
   )) {
+    if (propertySchema.kind !== "Shacl") {
+      continue;
+    }
+
     const propertyName =
       propertyNameString as keyof typeof kitchenSink.LazyPropertiesStruct.schema.properties;
 
@@ -371,8 +375,6 @@ describe("lazyProperties", () => {
                 });
               }
             }
-            break;
-          case "$identifier":
             break;
           default:
             throw new Error(`not implemented: ${propertyName}`);
