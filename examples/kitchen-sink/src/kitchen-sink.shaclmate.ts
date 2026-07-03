@@ -492,80 +492,55 @@ function $convertToLangString(value: Literal): Either<Error, Literal> {
   return Either.of(value);
 }
 
-function $convertToLazy<
-  PartialSourceT,
-  PartialTargetT,
-  ResolvedSourceT,
-  ResolvedTargetT,
->(
-  convertToPartial: (object: PartialSourceT) => Either<Error, PartialTargetT>,
-  convertToResolved: (
-    object: ResolvedSourceT,
-  ) => Either<Error, ResolvedTargetT>,
-  isPartialSource: (
-    object: PartialSourceT | ResolvedSourceT,
-  ) => object is PartialSourceT,
-  resolvedToPartial: (resolved: ResolvedTargetT) => PartialTargetT,
+function $convertToLazy<PartialT, ResolvedT>(
+  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
+  resolvedToPartial: (resolved: ResolvedT) => PartialT,
 ) {
   return (
-    value:
-      | $Lazy<PartialTargetT, ResolvedTargetT>
-      | PartialSourceT
-      | ResolvedSourceT,
-  ): Either<Error, $Lazy<PartialTargetT, ResolvedTargetT>> => {
+    value: $Lazy<PartialT, ResolvedT> | PartialT | ResolvedT,
+  ): Either<Error, $Lazy<PartialT, ResolvedT>> => {
     if (value instanceof $Lazy) {
       return Either.of(value);
     }
 
-    if (isPartialSource(value)) {
-      return convertToPartial(value).map(
-        (partial) =>
-          new $Lazy({
-            partial,
-            resolver: async () => Left(new Error("unable to resolve")),
-          }),
+    if (isPartial(value)) {
+      const partial: PartialT = value;
+      return Either.of(
+        new $Lazy({
+          partial,
+          resolver: async () => Left(new Error("unable to resolve")),
+        }),
       );
     }
 
-    return convertToResolved(value).map(
-      (resolved) =>
-        new $Lazy({
-          partial: resolvedToPartial(resolved),
-          resolver: async () => Right(resolved),
-        }),
+    const resolved: ResolvedT = value;
+    return Either.of(
+      new $Lazy({
+        partial: resolvedToPartial(resolved),
+        resolver: async () => Right(resolved),
+      }),
     );
   };
 }
 
-function $convertToLazyOption<
-  PartialSourceT,
-  PartialTargetT,
-  ResolvedSourceT,
-  ResolvedTargetT,
->(
-  convertToPartial: (object: PartialSourceT) => Either<Error, PartialTargetT>,
-  convertToResolved: (
-    object: ResolvedSourceT,
-  ) => Either<Error, ResolvedTargetT>,
-  isPartialSource: (
-    object: PartialSourceT | ResolvedSourceT,
-  ) => object is PartialSourceT,
-  resolvedToPartial: (resolved: ResolvedTargetT) => PartialTargetT,
+function $convertToLazyOption<PartialT, ResolvedT>(
+  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
+  resolvedToPartial: (resolved: ResolvedT) => PartialT,
 ) {
   return (
     value:
-      | $LazyOption<PartialTargetT, ResolvedTargetT>
-      | Maybe<PartialSourceT>
-      | Maybe<ResolvedSourceT>
-      | PartialSourceT
-      | ResolvedSourceT
+      | $LazyOption<PartialT, ResolvedT>
+      | Maybe<PartialT>
+      | Maybe<ResolvedT>
+      | PartialT
+      | ResolvedT
       | undefined,
-  ): Either<Error, $LazyOption<PartialTargetT, ResolvedTargetT>> => {
+  ): Either<Error, $LazyOption<PartialT, ResolvedT>> => {
     if (value instanceof $LazyOption) {
       return Either.of(value);
     }
 
-    let extractedValue: PartialSourceT | ResolvedSourceT | undefined;
+    let extractedValue: PartialT | ResolvedT | undefined;
     if (typeof value === "undefined") {
       extractedValue = value;
     } else if (Maybe.isMaybe(value)) {
@@ -576,7 +551,7 @@ function $convertToLazyOption<
 
     if (typeof extractedValue === "undefined") {
       return Either.of(
-        new $LazyOption<PartialTargetT, ResolvedTargetT>({
+        new $LazyOption<PartialT, ResolvedT>({
           partial: Maybe.empty(),
           resolver: async () => {
             throw new Error("should never be called");
@@ -585,53 +560,42 @@ function $convertToLazyOption<
       );
     }
 
-    if (isPartialSource(extractedValue)) {
-      return convertToPartial(extractedValue).map(
-        (partial) =>
-          new $LazyOption({
-            partial: Maybe.of(partial),
-            resolver: async () => Left(new Error("unable to resolve")),
-          }),
+    if (isPartial(extractedValue)) {
+      const partial: PartialT = extractedValue;
+      return Either.of(
+        new $LazyOption({
+          partial: Maybe.of(partial),
+          resolver: async () => Left(new Error("unable to resolve")),
+        }),
       );
     }
 
-    return convertToResolved(extractedValue).map(
-      (resolved) =>
-        new $LazyOption({
-          partial: Maybe.of(resolvedToPartial(resolved)),
-          resolver: async () => Right(resolved),
-        }),
+    const resolved: ResolvedT = extractedValue;
+    return Either.of(
+      new $LazyOption({
+        partial: Maybe.of(resolvedToPartial(resolved)),
+        resolver: async () => Right(resolved),
+      }),
     );
   };
 }
 
-function $convertToLazySet<
-  PartialSourceT,
-  PartialTargetT,
-  ResolvedSourceT,
-  ResolvedTargetT,
->(
-  convertToPartial: (object: PartialSourceT) => Either<Error, PartialTargetT>,
-  convertToResolved: (
-    object: ResolvedSourceT,
-  ) => Either<Error, ResolvedTargetT>,
-  isPartialSource: (
-    object: PartialSourceT | ResolvedSourceT,
-  ) => object is PartialSourceT,
-  resolvedToPartial: (resolved: ResolvedTargetT) => PartialTargetT,
+function $convertToLazySet<PartialT, ResolvedT>(
+  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
+  resolvedToPartial: (resolved: ResolvedT) => PartialT,
 ) {
   return (
     value:
-      | $LazySet<PartialTargetT, ResolvedTargetT>
-      | readonly PartialSourceT[]
-      | readonly ResolvedSourceT[]
-      | PartialSourceT
-      | ResolvedSourceT
+      | $LazySet<PartialT, ResolvedT>
+      | readonly PartialT[]
+      | readonly ResolvedT[]
+      | PartialT
+      | ResolvedT
       | undefined,
-  ): Either<Error, $LazySet<PartialTargetT, ResolvedTargetT>> => {
+  ): Either<Error, $LazySet<PartialT, ResolvedT>> => {
     if (typeof value === "undefined") {
       return Either.of(
-        new $LazySet<PartialTargetT, ResolvedTargetT>({
+        new $LazySet<PartialT, ResolvedT>({
           partials: [],
           resolver: async () => Right([]),
         }),
@@ -643,25 +607,25 @@ function $convertToLazySet<
     }
 
     const arrayValue = (Array.isArray(value) ? value : [value]) as
-      | readonly PartialSourceT[]
-      | readonly ResolvedSourceT[];
+      | readonly PartialT[]
+      | readonly ResolvedT[];
 
-    if (arrayValue.every(isPartialSource)) {
-      return Either.sequence(arrayValue.map(convertToPartial)).map(
-        (partials) =>
-          new $LazySet<PartialTargetT, ResolvedTargetT>({
-            partials,
-            resolver: async () => Left(new Error("unable to resolve")),
-          }),
+    if (arrayValue.every(isPartial)) {
+      const partials: readonly PartialT[] = arrayValue;
+      return Either.of(
+        new $LazySet<PartialT, ResolvedT>({
+          partials,
+          resolver: async () => Left(new Error("unable to resolve")),
+        }),
       );
     }
 
-    return Either.sequence(arrayValue.map(convertToResolved)).map(
-      (resolved) =>
-        new $LazySet<PartialTargetT, ResolvedTargetT>({
-          partials: resolved.map(resolvedToPartial),
-          resolver: async () => Right(resolved),
-        }),
+    const resolved: readonly ResolvedT[] = arrayValue;
+    return Either.of(
+      new $LazySet<PartialT, ResolvedT>({
+        partials: resolved.map(resolvedToPartial),
+        resolver: async () => Right(resolved),
+      }),
     );
   };
 }
@@ -25845,46 +25809,30 @@ export namespace LazyPropertiesStruct {
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         $DefaultPartial,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >(
-        $identityConversionFunction,
-        $identityConversionFunction,
         $DefaultPartial.is$DefaultPartial,
         $DefaultPartial.createUnsafe,
       )(parameters.optionalLazyToResolvedBlankNodeOrIriIdentifier),
       optionalLazyToResolvedDiscriminatedUnion: $convertToLazyOption<
         $DefaultPartial,
-        $DefaultPartial,
-        LazilyResolvedDiscriminatedUnion,
         LazilyResolvedDiscriminatedUnion
       >(
-        $identityConversionFunction,
-        $identityConversionFunction,
         $DefaultPartial.is$DefaultPartial,
         $DefaultPartial.createUnsafe,
       )(parameters.optionalLazyToResolvedDiscriminatedUnion),
       optionalLazyToResolvedIriIdentifier: $convertToLazyOption<
         $NamedDefaultPartial,
-        $NamedDefaultPartial,
-        LazilyResolvedIriIdentifierStruct,
         LazilyResolvedIriIdentifierStruct
       >(
-        $identityConversionFunction,
-        $identityConversionFunction,
         $NamedDefaultPartial.is$NamedDefaultPartial,
         $NamedDefaultPartial.createUnsafe,
       )(parameters.optionalLazyToResolvedIriIdentifier),
       optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
         $convertToLazyOption<
           PartialDiscriminatedUnion,
-          PartialDiscriminatedUnion,
-          LazilyResolvedDiscriminatedUnion,
           LazilyResolvedDiscriminatedUnion
         >(
-          $identityConversionFunction,
-          $identityConversionFunction,
           PartialDiscriminatedUnion.isPartialDiscriminatedUnion,
           (resolved: LazilyResolvedDiscriminatedUnion) => {
             switch (resolved.$type) {
@@ -25902,67 +25850,43 @@ export namespace LazyPropertiesStruct {
         ),
       optionalPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         PartialStruct,
-        PartialStruct,
-        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >(
-        $identityConversionFunction,
-        $identityConversionFunction,
         PartialStruct.isPartialStruct,
         PartialStruct.createUnsafe,
       )(parameters.optionalPartialToResolvedBlankNodeOrIriIdentifier),
       optionalPartialToResolvedDiscriminatedUnion: $convertToLazyOption<
         PartialStruct,
-        PartialStruct,
-        LazilyResolvedDiscriminatedUnion,
         LazilyResolvedDiscriminatedUnion
       >(
-        $identityConversionFunction,
-        $identityConversionFunction,
         PartialStruct.isPartialStruct,
         PartialStruct.createUnsafe,
       )(parameters.optionalPartialToResolvedDiscriminatedUnion),
       requiredLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazy<
         $DefaultPartial,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >(
-        $identityConversionFunction,
-        $identityConversionFunction,
         $DefaultPartial.is$DefaultPartial,
         $DefaultPartial.createUnsafe,
       )(parameters.requiredLazyToResolvedBlankNodeOrIriIdentifier),
       requiredPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazy<
         PartialStruct,
-        PartialStruct,
-        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >(
-        $identityConversionFunction,
-        $identityConversionFunction,
         PartialStruct.isPartialStruct,
         PartialStruct.createUnsafe,
       )(parameters.requiredPartialToResolvedBlankNodeOrIriIdentifier),
       setLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         $DefaultPartial,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >(
-        $identityConversionFunction,
-        $identityConversionFunction,
         $DefaultPartial.is$DefaultPartial,
         $DefaultPartial.createUnsafe,
       )(parameters.setLazyToResolvedBlankNodeOrIriIdentifier),
       setPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         PartialStruct,
-        PartialStruct,
-        LazilyResolvedBlankNodeOrIriIdentifierStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
       >(
-        $identityConversionFunction,
-        $identityConversionFunction,
         PartialStruct.isPartialStruct,
         PartialStruct.createUnsafe,
       )(parameters.setPartialToResolvedBlankNodeOrIriIdentifier),

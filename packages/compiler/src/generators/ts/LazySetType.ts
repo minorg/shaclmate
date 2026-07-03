@@ -28,12 +28,8 @@ export class LazySetType extends AbstractLazyType<
       code: code`\
 ${this.reusables.snippets.convertToLazySet}<
   ${this.partialType.itemType.expression},
-  ${this.partialType.itemType.expression},
-  ${this.resolveType.itemType.expression},
   ${this.resolveType.itemType.expression}
 >(
-  ${this.reusables.snippets.identityConversionFunction},
-  ${this.reusables.snippets.identityConversionFunction},
   ${this.partialType.itemType.typeGuardFunction.unsafeCoerce()},
   ${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })}
 )`,

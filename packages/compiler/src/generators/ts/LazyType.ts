@@ -20,12 +20,8 @@ export class LazyType extends AbstractLazyType<
       code: code`\
 ${this.reusables.snippets.convertToLazy}<
   ${this.partialType.expression},
-  ${this.partialType.expression},
-  ${this.resolveType.expression},
   ${this.resolveType.expression}
 >(
-  ${this.reusables.snippets.identityConversionFunction},
-  ${this.reusables.snippets.identityConversionFunction},
   ${this.partialType.typeGuardFunction.unsafeCoerce()},
   ${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })}
 )`,
