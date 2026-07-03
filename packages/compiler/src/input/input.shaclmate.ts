@@ -461,7 +461,7 @@ function $literalFromRdfResourceValues(
   >[1],
 ): Either<Error, Resource.Values<Literal>> {
   return $termLikeFromRdfResourceValues(values, options).chain((values) =>
-    values.chainMap((value) => value.toLiteral()),
+    values.chainMap((value) => value.toLiteral(options.schema.in)),
   );
 }
 
@@ -571,6 +571,9 @@ namespace $RdfVocabularies {
   export const rdf = {
     first: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+    ),
+    langString: dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
     ),
     nil: dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
@@ -765,7 +768,7 @@ function $termFromRdfResourceValues<
           return Left(
             new Resource.MistypedValueError({
               actualValue: term,
-              expectedValueType: "Term types",
+              expectedValueType: "BlankNode | Literal | NamedNode",
               focusResource,
               propertyPath,
             }),
@@ -2445,9 +2448,8 @@ export namespace NodeShape {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isNodeShape(object: $Object): object is NodeShape {
-    return object.$type === "NodeShape";
-  }
+  export const isNodeShape = (object: $Object): object is NodeShape =>
+    object.$type === "NodeShape";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
@@ -3568,9 +3570,8 @@ export namespace Ontology {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isOntology(object: $Object): object is Ontology {
-    return object.$type === "Ontology";
-  }
+  export const isOntology = (object: $Object): object is Ontology =>
+    object.$type === "Ontology";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode(
@@ -3774,9 +3775,8 @@ export namespace PropertyGroup {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isPropertyGroup(object: $Object): object is PropertyGroup {
-    return object.$type === "PropertyGroup";
-  }
+  export const isPropertyGroup = (object: $Object): object is PropertyGroup =>
+    object.$type === "PropertyGroup";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode(
@@ -5521,9 +5521,8 @@ export namespace PropertyShape {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isPropertyShape(object: $Object): object is PropertyShape {
-    return object.$type === "PropertyShape";
-  }
+  export const isPropertyShape = (object: $Object): object is PropertyShape =>
+    object.$type === "PropertyShape";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode(
@@ -6764,11 +6763,9 @@ export namespace ValidationReport {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isValidationReport(
+  export const isValidationReport = (
     object: $Object,
-  ): object is ValidationReport {
-    return object.$type === "ValidationReport";
-  }
+  ): object is ValidationReport => object.$type === "ValidationReport";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode(
@@ -7163,11 +7160,9 @@ export namespace ValidationResult {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isValidationResult(
+  export const isValidationResult = (
     object: $Object,
-  ): object is ValidationResult {
-    return object.$type === "ValidationResult";
-  }
+  ): object is ValidationResult => object.$type === "ValidationResult";
 
   export const schema = {
     fromRdfType: dataFactory.namedNode(
@@ -7405,7 +7400,7 @@ export namespace Shape {
   }
 
   export const schema = {
-    kind: "ObjectUnion" as const,
+    kind: "ObjectDiscriminatedUnion" as const,
     members: {
       NodeShape: { discriminantValues: ["NodeShape"], type: NodeShape.schema },
       PropertyShape: {
@@ -7894,7 +7889,7 @@ export namespace $Object {
   }
 
   export const schema = {
-    kind: "ObjectUnion" as const,
+    kind: "ObjectDiscriminatedUnion" as const,
     members: {
       NodeShape: { discriminantValues: ["NodeShape"], type: NodeShape.schema },
       Ontology: { discriminantValues: ["Ontology"], type: Ontology.schema },
