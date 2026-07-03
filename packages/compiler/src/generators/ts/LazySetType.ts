@@ -25,15 +25,34 @@ export class LazySetType extends AbstractLazyType<
     invariant(this.resolveType.jsTypes.length === 1);
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToLazySet}<${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
+      code: code`\
+${this.reusables.snippets.convertToLazySet}<
+  ${this.partialType.itemType.expression},
+  ${this.resolveType.itemType.expression}
+>(
+  ${this.partialType.itemType.typeGuardFunction.unsafeCoerce()},
+  ${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })}
+)`,
       sourceTypes: [
         {
           expression: this.expression,
           jsType: this.jsTypes[0],
         },
         {
+          expression: this.partialType.expression,
+          jsType: this.partialType.jsTypes[0],
+        },
+        {
           expression: this.resolveType.expression,
           jsType: this.resolveType.jsTypes[0],
+        },
+        {
+          expression: this.partialType.itemType.expression,
+          jsType: this.partialType.itemType.jsTypes[0],
+        },
+        {
+          expression: this.resolveType.itemType.expression,
+          jsType: this.resolveType.itemType.jsTypes[0],
         },
         {
           expression: code`undefined`,

@@ -9,34 +9,48 @@ export const snippets_convertToLazyOption: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToLazyOption`,
     code`\
-function ${syntheticNamePrefix}convertToLazyOption<PartialT, ResolvedT>(resolvedToPartial: (resolved: ResolvedT) => PartialT) {
-  return (value: ${snippets.LazyOption}<PartialT, ResolvedT> | ${imports.Maybe}<ResolvedT> | ResolvedT | undefined): ${imports.Either}<Error, ${snippets.LazyOption}<PartialT, ResolvedT>> => {
-    switch (typeof value) {
-      case "object": {
-        if (value instanceof ${snippets.LazyOption}) {
-          return ${imports.Either}.of(value);
-        }
-
-        if (${imports.Maybe}.isMaybe(value)) {
-          return ${imports.Either}.of(new ${snippets.LazyOption}<PartialT, ResolvedT>({
-            partial: value.map(resolvedToPartial),
-            resolver: async () => ${imports.Right}(value.unsafeCoerce())
-          }));
-        }
-
-        break;
-      }
-      case "undefined":
-        return ${imports.Either}.of(new ${snippets.LazyOption}<PartialT, ResolvedT>({
-          partial: ${imports.Maybe}.empty(),
-          resolver: async () => { throw new Error("should never be called"); }
-        }));
+function ${syntheticNamePrefix}convertToLazyOption<PartialT, ResolvedT>(
+  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
+  resolvedToPartial: (resolved: ResolvedT) => PartialT
+) {
+  return (value: ${snippets.LazyOption}<PartialT, ResolvedT> | ${imports.Maybe}<PartialT> | ${imports.Maybe}<ResolvedT> | PartialT | ResolvedT | undefined): ${imports.Either}<Error, ${snippets.LazyOption}<PartialT, ResolvedT>> => {
+    if (value instanceof ${snippets.LazyOption}) {
+      return ${imports.Either}.of(value);
     }
 
-    return ${imports.Either}.of(new ${snippets.LazyOption}<PartialT, ResolvedT>({
-      partial: ${imports.Maybe}.of(resolvedToPartial(value)),
-      resolver: async () => ${imports.Right}(value)
-    }));
+    let extractedValue: PartialT | ResolvedT | undefined;
+    if (typeof value === "undefined") {
+      extractedValue = value;
+    } else if (${imports.Maybe}.isMaybe(value)) {
+      extractedValue = value.extract();
+    } else {
+      extractedValue = value;
+    }
+
+    if (typeof extractedValue === "undefined") {
+      return ${imports.Either}.of(new ${snippets.LazyOption}<PartialT, ResolvedT>({
+        partial: ${imports.Maybe}.empty(),
+        resolver: async () => { throw new Error("should never be called"); }
+      }));
+    }
+
+    if (isPartial(extractedValue)) {
+      const partial: PartialT = extractedValue;
+      return ${imports.Either}.of(
+        new ${snippets.LazyOption}({
+          partial: ${imports.Maybe}.of(partial),
+          resolver: async () => ${imports.Left}(new Error("unable to resolve"))
+        })
+      );
+    }
+
+    const resolved: ResolvedT = extractedValue;
+    return ${imports.Either}.of(
+      new ${snippets.LazyOption}({
+        partial: ${imports.Maybe}.of(resolvedToPartial(resolved)),
+        resolver: async () => ${imports.Right}(resolved)
+      })
+    );
   };
 }`,
   );

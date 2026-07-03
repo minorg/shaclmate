@@ -32,7 +32,7 @@ if (focusIdentifier.termType === "Variable") {
     this.members.map(
       (member) =>
         code`${{
-          patterns: code`${member.type.name.unsafeCoerce()}.focusSparqlWherePatterns({ filter: filter?.on?.${member.type.name.unsafeCoerce()}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name.unsafeCoerce())}\` }).concat()`,
+          patterns: code`${member.type.name.unsafeCoerce()}.focusSparqlWherePatterns({ filter: filter?.on?.${member.primaryDiscriminantValue}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name.unsafeCoerce())}\` }).concat()`,
           type: literalOf("group"),
         }}`,
     ),

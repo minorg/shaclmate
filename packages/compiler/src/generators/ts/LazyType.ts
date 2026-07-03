@@ -17,11 +17,22 @@ export class LazyType extends AbstractLazyType<
     invariant(this.resolveType.jsTypes.length === 1);
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToLazy}<${this.partialType.expression}, ${this.resolveType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
+      code: code`\
+${this.reusables.snippets.convertToLazy}<
+  ${this.partialType.expression},
+  ${this.resolveType.expression}
+>(
+  ${this.partialType.typeGuardFunction.unsafeCoerce()},
+  ${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })}
+)`,
       sourceTypes: [
         {
           expression: this.expression,
           jsType: this.jsTypes[0],
+        },
+        {
+          expression: this.partialType.expression,
+          jsType: this.partialType.jsTypes[0],
         },
         {
           expression: this.resolveType.expression,

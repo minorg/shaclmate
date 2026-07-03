@@ -493,99 +493,138 @@ function $convertToLangString(value: Literal): Either<Error, Literal> {
 }
 
 function $convertToLazy<PartialT, ResolvedT>(
+  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
 ) {
   return (
-    value: $Lazy<PartialT, ResolvedT> | ResolvedT,
+    value: $Lazy<PartialT, ResolvedT> | PartialT | ResolvedT,
   ): Either<Error, $Lazy<PartialT, ResolvedT>> => {
     if (value instanceof $Lazy) {
       return Either.of(value);
     }
 
+    if (isPartial(value)) {
+      const partial: PartialT = value;
+      return Either.of(
+        new $Lazy({
+          partial,
+          resolver: async () => Left(new Error("unable to resolve")),
+        }),
+      );
+    }
+
+    const resolved: ResolvedT = value;
     return Either.of(
       new $Lazy({
-        partial: resolvedToPartial(value),
-        resolver: async () => Right(value),
+        partial: resolvedToPartial(resolved),
+        resolver: async () => Right(resolved),
       }),
     );
   };
 }
 
 function $convertToLazyOption<PartialT, ResolvedT>(
+  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
 ) {
   return (
     value:
       | $LazyOption<PartialT, ResolvedT>
+      | Maybe<PartialT>
       | Maybe<ResolvedT>
+      | PartialT
       | ResolvedT
       | undefined,
   ): Either<Error, $LazyOption<PartialT, ResolvedT>> => {
-    switch (typeof value) {
-      case "object": {
-        if (value instanceof $LazyOption) {
-          return Either.of(value);
-        }
-
-        if (Maybe.isMaybe(value)) {
-          return Either.of(
-            new $LazyOption<PartialT, ResolvedT>({
-              partial: value.map(resolvedToPartial),
-              resolver: async () => Right(value.unsafeCoerce()),
-            }),
-          );
-        }
-
-        break;
-      }
-      case "undefined":
-        return Either.of(
-          new $LazyOption<PartialT, ResolvedT>({
-            partial: Maybe.empty(),
-            resolver: async () => {
-              throw new Error("should never be called");
-            },
-          }),
-        );
+    if (value instanceof $LazyOption) {
+      return Either.of(value);
     }
 
+    let extractedValue: PartialT | ResolvedT | undefined;
+    if (typeof value === "undefined") {
+      extractedValue = value;
+    } else if (Maybe.isMaybe(value)) {
+      extractedValue = value.extract();
+    } else {
+      extractedValue = value;
+    }
+
+    if (typeof extractedValue === "undefined") {
+      return Either.of(
+        new $LazyOption<PartialT, ResolvedT>({
+          partial: Maybe.empty(),
+          resolver: async () => {
+            throw new Error("should never be called");
+          },
+        }),
+      );
+    }
+
+    if (isPartial(extractedValue)) {
+      const partial: PartialT = extractedValue;
+      return Either.of(
+        new $LazyOption({
+          partial: Maybe.of(partial),
+          resolver: async () => Left(new Error("unable to resolve")),
+        }),
+      );
+    }
+
+    const resolved: ResolvedT = extractedValue;
     return Either.of(
-      new $LazyOption<PartialT, ResolvedT>({
-        partial: Maybe.of(resolvedToPartial(value)),
-        resolver: async () => Right(value),
+      new $LazyOption({
+        partial: Maybe.of(resolvedToPartial(resolved)),
+        resolver: async () => Right(resolved),
       }),
     );
   };
 }
 
 function $convertToLazySet<PartialT, ResolvedT>(
+  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
 ) {
   return (
-    value: $LazySet<PartialT, ResolvedT> | readonly ResolvedT[] | undefined,
+    value:
+      | $LazySet<PartialT, ResolvedT>
+      | readonly PartialT[]
+      | readonly ResolvedT[]
+      | PartialT
+      | ResolvedT
+      | undefined,
   ): Either<Error, $LazySet<PartialT, ResolvedT>> => {
-    switch (typeof value) {
-      case "object": {
-        if (value instanceof $LazySet) {
-          return Either.of(value);
-        }
-
-        break;
-      }
-      case "undefined":
-        return Either.of(
-          new $LazySet<PartialT, ResolvedT>({
-            partials: [],
-            resolver: async () => Right([]),
-          }),
-        );
+    if (typeof value === "undefined") {
+      return Either.of(
+        new $LazySet<PartialT, ResolvedT>({
+          partials: [],
+          resolver: async () => Right([]),
+        }),
+      );
     }
 
-    const captureValue = value;
+    if (value instanceof $LazySet) {
+      return Either.of(value);
+    }
+
+    const arrayValue = (Array.isArray(value) ? value : [value]) as
+      | readonly PartialT[]
+      | readonly ResolvedT[];
+
+    if (arrayValue.every(isPartial)) {
+      const partials: readonly PartialT[] = arrayValue;
+      return Either.of(
+        new $LazySet<PartialT, ResolvedT>({
+          partials,
+          resolver: async () => Left(new Error("unable to resolve")),
+        }),
+      );
+    }
+
+    const resolved: readonly ResolvedT[] = arrayValue;
     return Either.of(
       new $LazySet<PartialT, ResolvedT>({
-        partials: value.map(resolvedToPartial),
-        resolver: async () => Right(captureValue),
+        partials: resolved.map(resolvedToPartial),
+        resolver: async () => Right(resolved),
       }),
     );
   };
@@ -3818,6 +3857,10 @@ export namespace $DefaultPartial {
     export const stringify = NTriplesTerm.stringify;
   }
 
+  export const is$DefaultPartial = (
+    object: $Object,
+  ): object is $DefaultPartial => object.$type === "DefaultPartial";
+
   export type Json = {
     readonly "@id": string;
     readonly $type: "DefaultPartial";
@@ -4147,6 +4190,10 @@ export namespace $NamedDefaultPartial {
     export const parse = $parseIri;
     export const stringify = NTriplesTerm.stringify;
   }
+
+  export const is$NamedDefaultPartial = (
+    object: $Object,
+  ): object is $NamedDefaultPartial => object.$type === "NamedDefaultPartial";
 
   export type Json = {
     readonly "@id": string;
@@ -5014,11 +5061,9 @@ export namespace AnonymousTypesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isAnonymousTypesStruct(
+  export const isAnonymousTypesStruct = (
     object: $Object,
-  ): object is AnonymousTypesStruct {
-    return object.$type === "AnonymousTypesStruct";
-  }
+  ): object is AnonymousTypesStruct => object.$type === "AnonymousTypesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -5622,11 +5667,10 @@ export namespace BlankNodeIdentifierStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isBlankNodeIdentifierStruct(
+  export const isBlankNodeIdentifierStruct = (
     object: $Object,
-  ): object is BlankNodeIdentifierStruct {
-    return object.$type === "BlankNodeIdentifierStruct";
-  }
+  ): object is BlankNodeIdentifierStruct =>
+    object.$type === "BlankNodeIdentifierStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -6174,11 +6218,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isBlankNodeOrIriIdentifierStruct(
+  export const isBlankNodeOrIriIdentifierStruct = (
     object: $Object,
-  ): object is BlankNodeOrIriIdentifierStruct {
-    return object.$type === "BlankNodeOrIriIdentifierStruct";
-  }
+  ): object is BlankNodeOrIriIdentifierStruct =>
+    object.$type === "BlankNodeOrIriIdentifierStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -7079,11 +7122,10 @@ export namespace ClassConstraintsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isClassConstraintsStruct(
+  export const isClassConstraintsStruct = (
     object: $Object,
-  ): object is ClassConstraintsStruct {
-    return object.$type === "ClassConstraintsStruct";
-  }
+  ): object is ClassConstraintsStruct =>
+    object.$type === "ClassConstraintsStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -8803,11 +8845,10 @@ export namespace ConvertibleTypesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isConvertibleTypesStruct(
+  export const isConvertibleTypesStruct = (
     object: $Object,
-  ): object is ConvertibleTypesStruct {
-    return object.$type === "ConvertibleTypesStruct";
-  }
+  ): object is ConvertibleTypesStruct =>
+    object.$type === "ConvertibleTypesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -12595,11 +12636,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isDatatypeDiscriminatedUnionsStruct(
+  export const isDatatypeDiscriminatedUnionsStruct = (
     object: $Object,
-  ): object is DatatypeDiscriminatedUnionsStruct {
-    return object.$type === "DatatypeDiscriminatedUnionsStruct";
-  }
+  ): object is DatatypeDiscriminatedUnionsStruct =>
+    object.$type === "DatatypeDiscriminatedUnionsStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -14279,11 +14319,9 @@ export namespace DefaultValuesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isDefaultValuesStruct(
+  export const isDefaultValuesStruct = (
     object: $Object,
-  ): object is DefaultValuesStruct {
-    return object.$type === "DefaultValuesStruct";
-  }
+  ): object is DefaultValuesStruct => object.$type === "DefaultValuesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -14967,11 +15005,10 @@ export namespace DirectRecursiveStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isDirectRecursiveStruct(
+  export const isDirectRecursiveStruct = (
     object: $Object,
-  ): object is DirectRecursiveStruct {
-    return object.$type === "DirectRecursiveStruct";
-  }
+  ): object is DirectRecursiveStruct =>
+    object.$type === "DirectRecursiveStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -15573,11 +15610,10 @@ export namespace DiscriminatedUnionMember1 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isDiscriminatedUnionMember1(
+  export const isDiscriminatedUnionMember1 = (
     object: $Object,
-  ): object is DiscriminatedUnionMember1 {
-    return object.$type === "DiscriminatedUnionMember1";
-  }
+  ): object is DiscriminatedUnionMember1 =>
+    object.$type === "DiscriminatedUnionMember1";
 
   export type Json = {
     readonly "@id": string;
@@ -16196,11 +16232,10 @@ export namespace DiscriminatedUnionMember2 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isDiscriminatedUnionMember2(
+  export const isDiscriminatedUnionMember2 = (
     object: $Object,
-  ): object is DiscriminatedUnionMember2 {
-    return object.$type === "DiscriminatedUnionMember2";
-  }
+  ): object is DiscriminatedUnionMember2 =>
+    object.$type === "DiscriminatedUnionMember2";
 
   export type Json = {
     readonly "@id": string;
@@ -16845,9 +16880,8 @@ export namespace DisplayStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isDisplayStruct(object: $Object): object is DisplayStruct {
-    return object.$type === "DisplayStruct";
-  }
+  export const isDisplayStruct = (object: $Object): object is DisplayStruct =>
+    object.$type === "DisplayStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -17400,11 +17434,10 @@ export namespace ExplicitFromToRdfTypesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isExplicitFromToRdfTypesStruct(
+  export const isExplicitFromToRdfTypesStruct = (
     object: $Object,
-  ): object is ExplicitFromToRdfTypesStruct {
-    return object.$type === "ExplicitFromToRdfTypesStruct";
-  }
+  ): object is ExplicitFromToRdfTypesStruct =>
+    object.$type === "ExplicitFromToRdfTypesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -17914,11 +17947,10 @@ export namespace ExplicitRdfTypeStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isExplicitRdfTypeStruct(
+  export const isExplicitRdfTypeStruct = (
     object: $Object,
-  ): object is ExplicitRdfTypeStruct {
-    return object.$type === "ExplicitRdfTypeStruct";
-  }
+  ): object is ExplicitRdfTypeStruct =>
+    object.$type === "ExplicitRdfTypeStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -18435,11 +18467,10 @@ export namespace FlattenDiscriminatedUnionMember3 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isFlattenDiscriminatedUnionMember3(
+  export const isFlattenDiscriminatedUnionMember3 = (
     object: $Object,
-  ): object is FlattenDiscriminatedUnionMember3 {
-    return object.$type === "FlattenDiscriminatedUnionMember3";
-  }
+  ): object is FlattenDiscriminatedUnionMember3 =>
+    object.$type === "FlattenDiscriminatedUnionMember3";
 
   export type Json = {
     readonly "@id": string;
@@ -18931,11 +18962,9 @@ export namespace HasValuesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isHasValuesStruct(
+  export const isHasValuesStruct = (
     object: $Object,
-  ): object is HasValuesStruct {
-    return object.$type === "HasValuesStruct";
-  }
+  ): object is HasValuesStruct => object.$type === "HasValuesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -19523,11 +19552,10 @@ export namespace IgnoredPropertiesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isIgnoredPropertiesStruct(
+  export const isIgnoredPropertiesStruct = (
     object: $Object,
-  ): object is IgnoredPropertiesStruct {
-    return object.$type === "IgnoredPropertiesStruct";
-  }
+  ): object is IgnoredPropertiesStruct =>
+    object.$type === "IgnoredPropertiesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -20076,11 +20104,10 @@ export namespace IndirectRecursiveStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isIndirectRecursiveStruct(
+  export const isIndirectRecursiveStruct = (
     object: $Object,
-  ): object is IndirectRecursiveStruct {
-    return object.$type === "IndirectRecursiveStruct";
-  }
+  ): object is IndirectRecursiveStruct =>
+    object.$type === "IndirectRecursiveStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -20601,11 +20628,10 @@ export namespace IndirectRecursiveStructHelper {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isIndirectRecursiveStructHelper(
+  export const isIndirectRecursiveStructHelper = (
     object: $Object,
-  ): object is IndirectRecursiveStructHelper {
-    return object.$type === "IndirectRecursiveStructHelper";
-  }
+  ): object is IndirectRecursiveStructHelper =>
+    object.$type === "IndirectRecursiveStructHelper";
 
   export type Json = {
     readonly "@id": string;
@@ -21183,11 +21209,9 @@ export namespace InIdentifierStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isInIdentifierStruct(
+  export const isInIdentifierStruct = (
     object: $Object,
-  ): object is InIdentifierStruct {
-    return object.$type === "InIdentifierStruct";
-  }
+  ): object is InIdentifierStruct => object.$type === "InIdentifierStruct";
 
   export type Json = {
     readonly "@id":
@@ -22235,11 +22259,9 @@ export namespace InPropertiesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isInPropertiesStruct(
+  export const isInPropertiesStruct = (
     object: $Object,
-  ): object is InPropertiesStruct {
-    return object.$type === "InPropertiesStruct";
-  }
+  ): object is InPropertiesStruct => object.$type === "InPropertiesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -22930,11 +22952,9 @@ export namespace IriIdentifierStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isIriIdentifierStruct(
+  export const isIriIdentifierStruct = (
     object: $Object,
-  ): object is IriIdentifierStruct {
-    return object.$type === "IriIdentifierStruct";
-  }
+  ): object is IriIdentifierStruct => object.$type === "IriIdentifierStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -23417,11 +23437,9 @@ export namespace LanguageInStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isLanguageInStruct(
+  export const isLanguageInStruct = (
     object: $Object,
-  ): object is LanguageInStruct {
-    return object.$type === "LanguageInStruct";
-  }
+  ): object is LanguageInStruct => object.$type === "LanguageInStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -23945,11 +23963,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isLazilyResolvedBlankNodeOrIriIdentifierStruct(
+  export const isLazilyResolvedBlankNodeOrIriIdentifierStruct = (
     object: $Object,
-  ): object is LazilyResolvedBlankNodeOrIriIdentifierStruct {
-    return object.$type === "LazilyResolvedBlankNodeOrIriIdentifierStruct";
-  }
+  ): object is LazilyResolvedBlankNodeOrIriIdentifierStruct =>
+    object.$type === "LazilyResolvedBlankNodeOrIriIdentifierStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -24483,11 +24500,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isLazilyResolvedDiscriminatedUnionMember1(
+  export const isLazilyResolvedDiscriminatedUnionMember1 = (
     object: $Object,
-  ): object is LazilyResolvedDiscriminatedUnionMember1 {
-    return object.$type === "LazilyResolvedDiscriminatedUnionMember1";
-  }
+  ): object is LazilyResolvedDiscriminatedUnionMember1 =>
+    object.$type === "LazilyResolvedDiscriminatedUnionMember1";
 
   export type Json = {
     readonly "@id": string;
@@ -25007,11 +25023,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isLazilyResolvedDiscriminatedUnionMember2(
+  export const isLazilyResolvedDiscriminatedUnionMember2 = (
     object: $Object,
-  ): object is LazilyResolvedDiscriminatedUnionMember2 {
-    return object.$type === "LazilyResolvedDiscriminatedUnionMember2";
-  }
+  ): object is LazilyResolvedDiscriminatedUnionMember2 =>
+    object.$type === "LazilyResolvedDiscriminatedUnionMember2";
 
   export type Json = {
     readonly "@id": string;
@@ -25457,11 +25472,10 @@ export namespace LazilyResolvedIriIdentifierStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isLazilyResolvedIriIdentifierStruct(
+  export const isLazilyResolvedIriIdentifierStruct = (
     object: $Object,
-  ): object is LazilyResolvedIriIdentifierStruct {
-    return object.$type === "LazilyResolvedIriIdentifierStruct";
-  }
+  ): object is LazilyResolvedIriIdentifierStruct =>
+    object.$type === "LazilyResolvedIriIdentifierStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -25736,114 +25750,146 @@ export namespace LazyPropertiesStruct {
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >
+      | Maybe<$DefaultPartial>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalLazyToResolvedDiscriminatedUnion?:
       | $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
+      | Maybe<$DefaultPartial>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | $DefaultPartial
       | LazilyResolvedDiscriminatedUnion;
     readonly optionalLazyToResolvedIriIdentifier?:
       | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
+      | Maybe<$NamedDefaultPartial>
       | Maybe<LazilyResolvedIriIdentifierStruct>
+      | $NamedDefaultPartial
       | LazilyResolvedIriIdentifierStruct;
     readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?:
       | $LazyOption<PartialDiscriminatedUnion, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialDiscriminatedUnion>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialDiscriminatedUnion
       | LazilyResolvedDiscriminatedUnion;
     readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?:
       | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | Maybe<PartialStruct>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalPartialToResolvedDiscriminatedUnion?:
       | $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialStruct>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialStruct
       | LazilyResolvedDiscriminatedUnion;
     readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly requiredPartialToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
+      | readonly $DefaultPartial[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | $DefaultPartial
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setPartialToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
+      | readonly PartialStruct[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | PartialStruct
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
   }) => Either<Error, LazyPropertiesStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >($DefaultPartial.createUnsafe)(
-        parameters.optionalLazyToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        $DefaultPartial.is$DefaultPartial,
+        $DefaultPartial.createUnsafe,
+      )(parameters.optionalLazyToResolvedBlankNodeOrIriIdentifier),
       optionalLazyToResolvedDiscriminatedUnion: $convertToLazyOption<
         $DefaultPartial,
         LazilyResolvedDiscriminatedUnion
-      >($DefaultPartial.createUnsafe)(
-        parameters.optionalLazyToResolvedDiscriminatedUnion,
-      ),
+      >(
+        $DefaultPartial.is$DefaultPartial,
+        $DefaultPartial.createUnsafe,
+      )(parameters.optionalLazyToResolvedDiscriminatedUnion),
       optionalLazyToResolvedIriIdentifier: $convertToLazyOption<
         $NamedDefaultPartial,
         LazilyResolvedIriIdentifierStruct
-      >($NamedDefaultPartial.createUnsafe)(
-        parameters.optionalLazyToResolvedIriIdentifier,
-      ),
+      >(
+        $NamedDefaultPartial.is$NamedDefaultPartial,
+        $NamedDefaultPartial.createUnsafe,
+      )(parameters.optionalLazyToResolvedIriIdentifier),
       optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
         $convertToLazyOption<
           PartialDiscriminatedUnion,
           LazilyResolvedDiscriminatedUnion
-        >((resolved: LazilyResolvedDiscriminatedUnion) => {
-          switch (resolved.$type) {
-            case "LazilyResolvedDiscriminatedUnionMember1":
-              return PartialDiscriminatedUnionMember1.createUnsafe(resolved);
-            case "LazilyResolvedDiscriminatedUnionMember2":
-              return PartialDiscriminatedUnionMember2.createUnsafe(resolved);
-            default:
-              resolved satisfies never;
-              throw new Error("unrecognized type");
-          }
-        })(
+        >(
+          PartialDiscriminatedUnion.isPartialDiscriminatedUnion,
+          (resolved: LazilyResolvedDiscriminatedUnion) => {
+            switch (resolved.$type) {
+              case "LazilyResolvedDiscriminatedUnionMember1":
+                return PartialDiscriminatedUnionMember1.createUnsafe(resolved);
+              case "LazilyResolvedDiscriminatedUnionMember2":
+                return PartialDiscriminatedUnionMember2.createUnsafe(resolved);
+              default:
+                resolved satisfies never;
+                throw new Error("unrecognized type");
+            }
+          },
+        )(
           parameters.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
         ),
       optionalPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         PartialStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(PartialStruct.createUnsafe)(
-        parameters.optionalPartialToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        PartialStruct.isPartialStruct,
+        PartialStruct.createUnsafe,
+      )(parameters.optionalPartialToResolvedBlankNodeOrIriIdentifier),
       optionalPartialToResolvedDiscriminatedUnion: $convertToLazyOption<
         PartialStruct,
         LazilyResolvedDiscriminatedUnion
-      >(PartialStruct.createUnsafe)(
-        parameters.optionalPartialToResolvedDiscriminatedUnion,
-      ),
+      >(
+        PartialStruct.isPartialStruct,
+        PartialStruct.createUnsafe,
+      )(parameters.optionalPartialToResolvedDiscriminatedUnion),
       requiredLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazy<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >($DefaultPartial.createUnsafe)(
-        parameters.requiredLazyToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        $DefaultPartial.is$DefaultPartial,
+        $DefaultPartial.createUnsafe,
+      )(parameters.requiredLazyToResolvedBlankNodeOrIriIdentifier),
       requiredPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazy<
         PartialStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(PartialStruct.createUnsafe)(
-        parameters.requiredPartialToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        PartialStruct.isPartialStruct,
+        PartialStruct.createUnsafe,
+      )(parameters.requiredPartialToResolvedBlankNodeOrIriIdentifier),
       setLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >($DefaultPartial.createUnsafe)(
-        parameters.setLazyToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        $DefaultPartial.is$DefaultPartial,
+        $DefaultPartial.createUnsafe,
+      )(parameters.setLazyToResolvedBlankNodeOrIriIdentifier),
       setPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         PartialStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(PartialStruct.createUnsafe)(
-        parameters.setPartialToResolvedBlankNodeOrIriIdentifier,
-      ),
+      >(
+        PartialStruct.isPartialStruct,
+        PartialStruct.createUnsafe,
+      )(parameters.setPartialToResolvedBlankNodeOrIriIdentifier),
     })
       .map((properties) => ({
         ...properties,
@@ -25867,40 +25913,60 @@ export namespace LazyPropertiesStruct {
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierStruct
         >
+      | Maybe<$DefaultPartial>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalLazyToResolvedDiscriminatedUnion?:
       | $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
+      | Maybe<$DefaultPartial>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | $DefaultPartial
       | LazilyResolvedDiscriminatedUnion;
     readonly optionalLazyToResolvedIriIdentifier?:
       | $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
+      | Maybe<$NamedDefaultPartial>
       | Maybe<LazilyResolvedIriIdentifierStruct>
+      | $NamedDefaultPartial
       | LazilyResolvedIriIdentifierStruct;
     readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?:
       | $LazyOption<PartialDiscriminatedUnion, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialDiscriminatedUnion>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialDiscriminatedUnion
       | LazilyResolvedDiscriminatedUnion;
     readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?:
       | $LazyOption<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | Maybe<PartialStruct>
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly optionalPartialToResolvedDiscriminatedUnion?:
       | $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
+      | Maybe<PartialStruct>
       | Maybe<LazilyResolvedDiscriminatedUnion>
+      | PartialStruct
       | LazilyResolvedDiscriminatedUnion;
     readonly requiredLazyToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | $DefaultPartial
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly requiredPartialToResolvedBlankNodeOrIriIdentifier:
       | $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
+      | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
+      | readonly $DefaultPartial[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | $DefaultPartial
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
     readonly setPartialToResolvedBlankNodeOrIriIdentifier?:
       | $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[];
+      | readonly PartialStruct[]
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
+      | PartialStruct
+      | LazilyResolvedBlankNodeOrIriIdentifierStruct;
   }): LazyPropertiesStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -27494,11 +27560,9 @@ export namespace LazyPropertiesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isLazyPropertiesStruct(
+  export const isLazyPropertiesStruct = (
     object: $Object,
-  ): object is LazyPropertiesStruct {
-    return object.$type === "LazyPropertiesStruct";
-  }
+  ): object is LazyPropertiesStruct => object.$type === "LazyPropertiesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -28946,9 +29010,8 @@ export namespace ListSetsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isListSetsStruct(object: $Object): object is ListSetsStruct {
-    return object.$type === "ListSetsStruct";
-  }
+  export const isListSetsStruct = (object: $Object): object is ListSetsStruct =>
+    object.$type === "ListSetsStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -30146,9 +30209,8 @@ export namespace ListsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isListsStruct(object: $Object): object is ListsStruct {
-    return object.$type === "ListsStruct";
-  }
+  export const isListsStruct = (object: $Object): object is ListsStruct =>
+    object.$type === "ListsStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -31208,11 +31270,10 @@ export namespace MutablePropertiesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isMutablePropertiesStruct(
+  export const isMutablePropertiesStruct = (
     object: $Object,
-  ): object is MutablePropertiesStruct {
-    return object.$type === "MutablePropertiesStruct";
-  }
+  ): object is MutablePropertiesStruct =>
+    object.$type === "MutablePropertiesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -32014,11 +32075,9 @@ export namespace NamedTypesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isNamedTypesStruct(
+  export const isNamedTypesStruct = (
     object: $Object,
-  ): object is NamedTypesStruct {
-    return object.$type === "NamedTypesStruct";
-  }
+  ): object is NamedTypesStruct => object.$type === "NamedTypesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -32607,9 +32666,8 @@ export namespace NewName {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isNewName(object: $Object): object is NewName {
-    return object.$type === "NewName";
-  }
+  export const isNewName = (object: $Object): object is NewName =>
+    object.$type === "NewName";
 
   export type Json = {
     readonly "@id": string;
@@ -33439,11 +33497,9 @@ export namespace NodeKindsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isNodeKindsStruct(
+  export const isNodeKindsStruct = (
     object: $Object,
-  ): object is NodeKindsStruct {
-    return object.$type === "NodeKindsStruct";
-  }
+  ): object is NodeKindsStruct => object.$type === "NodeKindsStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -34040,9 +34096,8 @@ export namespace NonClassStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isNonClassStruct(object: $Object): object is NonClassStruct {
-    return object.$type === "NonClassStruct";
-  }
+  export const isNonClassStruct = (object: $Object): object is NonClassStruct =>
+    object.$type === "NonClassStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -34478,11 +34533,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isNoRdfTypeDiscriminatedUnionMember1(
+  export const isNoRdfTypeDiscriminatedUnionMember1 = (
     object: $Object,
-  ): object is NoRdfTypeDiscriminatedUnionMember1 {
-    return object.$type === "NoRdfTypeDiscriminatedUnionMember1";
-  }
+  ): object is NoRdfTypeDiscriminatedUnionMember1 =>
+    object.$type === "NoRdfTypeDiscriminatedUnionMember1";
 
   export type Json = {
     readonly "@id": string;
@@ -34934,11 +34988,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isNoRdfTypeDiscriminatedUnionMember2(
+  export const isNoRdfTypeDiscriminatedUnionMember2 = (
     object: $Object,
-  ): object is NoRdfTypeDiscriminatedUnionMember2 {
-    return object.$type === "NoRdfTypeDiscriminatedUnionMember2";
-  }
+  ): object is NoRdfTypeDiscriminatedUnionMember2 =>
+    object.$type === "NoRdfTypeDiscriminatedUnionMember2";
 
   export type Json = {
     readonly "@id": string;
@@ -36688,9 +36741,8 @@ export namespace NumericsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isNumericsStruct(object: $Object): object is NumericsStruct {
-    return object.$type === "NumericsStruct";
-  }
+  export const isNumericsStruct = (object: $Object): object is NumericsStruct =>
+    object.$type === "NumericsStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -37676,9 +37728,8 @@ export namespace OrderedStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isOrderedStruct(object: $Object): object is OrderedStruct {
-    return object.$type === "OrderedStruct";
-  }
+  export const isOrderedStruct = (object: $Object): object is OrderedStruct =>
+    object.$type === "OrderedStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -38187,11 +38238,10 @@ export namespace PartialDiscriminatedUnionMember1 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isPartialDiscriminatedUnionMember1(
+  export const isPartialDiscriminatedUnionMember1 = (
     object: $Object,
-  ): object is PartialDiscriminatedUnionMember1 {
-    return object.$type === "PartialDiscriminatedUnionMember1";
-  }
+  ): object is PartialDiscriminatedUnionMember1 =>
+    object.$type === "PartialDiscriminatedUnionMember1";
 
   export type Json = {
     readonly "@id": string;
@@ -38693,11 +38743,10 @@ export namespace PartialDiscriminatedUnionMember2 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isPartialDiscriminatedUnionMember2(
+  export const isPartialDiscriminatedUnionMember2 = (
     object: $Object,
-  ): object is PartialDiscriminatedUnionMember2 {
-    return object.$type === "PartialDiscriminatedUnionMember2";
-  }
+  ): object is PartialDiscriminatedUnionMember2 =>
+    object.$type === "PartialDiscriminatedUnionMember2";
 
   export type Json = {
     readonly "@id": string;
@@ -39122,9 +39171,8 @@ export namespace PartialStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isPartialStruct(object: $Object): object is PartialStruct {
-    return object.$type === "PartialStruct";
-  }
+  export const isPartialStruct = (object: $Object): object is PartialStruct =>
+    object.$type === "PartialStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -39793,11 +39841,10 @@ export namespace PropertyCardinalitiesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isPropertyCardinalitiesStruct(
+  export const isPropertyCardinalitiesStruct = (
     object: $Object,
-  ): object is PropertyCardinalitiesStruct {
-    return object.$type === "PropertyCardinalitiesStruct";
-  }
+  ): object is PropertyCardinalitiesStruct =>
+    object.$type === "PropertyCardinalitiesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -40563,11 +40610,9 @@ export namespace PropertyNamesStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isPropertyNamesStruct(
+  export const isPropertyNamesStruct = (
     object: $Object,
-  ): object is PropertyNamesStruct {
-    return object.$type === "PropertyNamesStruct";
-  }
+  ): object is PropertyNamesStruct => object.$type === "PropertyNamesStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -41244,11 +41289,9 @@ export namespace PropertyPathsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isPropertyPathsStruct(
+  export const isPropertyPathsStruct = (
     object: $Object,
-  ): object is PropertyPathsStruct {
-    return object.$type === "PropertyPathsStruct";
-  }
+  ): object is PropertyPathsStruct => object.$type === "PropertyPathsStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -41783,11 +41826,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isRecursiveDiscriminatedUnionMember1(
+  export const isRecursiveDiscriminatedUnionMember1 = (
     object: $Object,
-  ): object is RecursiveDiscriminatedUnionMember1 {
-    return object.$type === "RecursiveDiscriminatedUnionMember1";
-  }
+  ): object is RecursiveDiscriminatedUnionMember1 =>
+    object.$type === "RecursiveDiscriminatedUnionMember1";
 
   export type Json = {
     readonly "@id": string;
@@ -42334,11 +42376,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isRecursiveDiscriminatedUnionMember2(
+  export const isRecursiveDiscriminatedUnionMember2 = (
     object: $Object,
-  ): object is RecursiveDiscriminatedUnionMember2 {
-    return object.$type === "RecursiveDiscriminatedUnionMember2";
-  }
+  ): object is RecursiveDiscriminatedUnionMember2 =>
+    object.$type === "RecursiveDiscriminatedUnionMember2";
 
   export type Json = {
     readonly "@id": string;
@@ -42869,11 +42910,9 @@ export namespace TargetClassStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isTargetClassStruct(
+  export const isTargetClassStruct = (
     object: $Object,
-  ): object is TargetClassStruct {
-    return object.$type === "TargetClassStruct";
-  }
+  ): object is TargetClassStruct => object.$type === "TargetClassStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -44154,9 +44193,8 @@ export namespace TermsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isTermsStruct(object: $Object): object is TermsStruct {
-    return object.$type === "TermsStruct";
-  }
+  export const isTermsStruct = (object: $Object): object is TermsStruct =>
+    object.$type === "TermsStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -50573,11 +50611,10 @@ export namespace UnionDiscriminantsStruct {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function isUnionDiscriminantsStruct(
+  export const isUnionDiscriminantsStruct = (
     object: $Object,
-  ): object is UnionDiscriminantsStruct {
-    return object.$type === "UnionDiscriminantsStruct";
-  }
+  ): object is UnionDiscriminantsStruct =>
+    object.$type === "UnionDiscriminantsStruct";
 
   export type Json = {
     readonly "@id": string;
@@ -55993,6 +56030,8 @@ export namespace RecursiveDiscriminatedUnion {
   >;
 }
 export type $Object =
+  | $DefaultPartial
+  | $NamedDefaultPartial
   | AnonymousTypesStruct
   | BlankNodeIdentifierStruct
   | BlankNodeOrIriIdentifierStruct
@@ -56045,6 +56084,12 @@ export type $Object =
 
 export namespace $Object {
   export const $toString = (value: $Object): string => {
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return $DefaultPartial.$toString(value);
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
+      return $NamedDefaultPartial.$toString(value);
+    }
     if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
       return AnonymousTypesStruct.$toString(value);
     }
@@ -56241,6 +56286,24 @@ export namespace $Object {
   };
 
   export const equals = (left: $Object, right: $Object) => {
+    if (
+      $DefaultPartial.is$DefaultPartial(left) &&
+      $DefaultPartial.is$DefaultPartial(right)
+    ) {
+      return $DefaultPartial.equals(
+        left as $DefaultPartial,
+        right as $DefaultPartial,
+      );
+    }
+    if (
+      $NamedDefaultPartial.is$NamedDefaultPartial(left) &&
+      $NamedDefaultPartial.is$NamedDefaultPartial(right)
+    ) {
+      return $NamedDefaultPartial.equals(
+        left as $NamedDefaultPartial,
+        right as $NamedDefaultPartial,
+      );
+    }
     if (
       AnonymousTypesStruct.isAnonymousTypesStruct(left) &&
       AnonymousTypesStruct.isAnonymousTypesStruct(right)
@@ -56726,6 +56789,24 @@ export namespace $Object {
       !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
+    }
+    if (
+      filter.on?.["DefaultPartial"] !== undefined &&
+      $DefaultPartial.is$DefaultPartial(value)
+    ) {
+      if (!$DefaultPartial.filter(filter.on["DefaultPartial"], value)) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["NamedDefaultPartial"] !== undefined &&
+      $NamedDefaultPartial.is$NamedDefaultPartial(value)
+    ) {
+      if (
+        !$NamedDefaultPartial.filter(filter.on["NamedDefaultPartial"], value)
+      ) {
+        return false;
+      }
     }
     if (
       filter.on?.["AnonymousTypesStruct"] !== undefined &&
@@ -57283,6 +57364,8 @@ export namespace $Object {
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
+      readonly DefaultPartial?: $DefaultPartial.Filter;
+      readonly NamedDefaultPartial?: $NamedDefaultPartial.Filter;
       readonly AnonymousTypesStruct?: AnonymousTypesStruct.Filter;
       readonly BlankNodeIdentifierStruct?: BlankNodeIdentifierStruct.Filter;
       readonly BlankNodeOrIriIdentifierStruct?: BlankNodeOrIriIdentifierStruct.Filter;
@@ -57346,6 +57429,22 @@ export namespace $Object {
     variablePrefix: string;
   }): readonly sparqljs.Triple[] {
     return [
+      ...$DefaultPartial
+        .focusSparqlConstructTriples({
+          filter: filter?.on?.DefaultPartial,
+          focusIdentifier,
+          ignoreRdfType: false,
+          variablePrefix: `${variablePrefix}DefaultPartial`,
+        })
+        .concat(),
+      ...$NamedDefaultPartial
+        .focusSparqlConstructTriples({
+          filter: filter?.on?.NamedDefaultPartial,
+          focusIdentifier,
+          ignoreRdfType: false,
+          variablePrefix: `${variablePrefix}NamedDefaultPartial`,
+        })
+        .concat(),
       ...AnonymousTypesStruct.focusSparqlConstructTriples({
         filter: filter?.on?.AnonymousTypesStruct,
         focusIdentifier,
@@ -57673,6 +57772,30 @@ export namespace $Object {
     }
     patterns.push({
       patterns: [
+        {
+          patterns: $DefaultPartial
+            .focusSparqlWherePatterns({
+              filter: filter?.on?.DefaultPartial,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}DefaultPartial`,
+            })
+            .concat(),
+          type: "group",
+        },
+        {
+          patterns: $NamedDefaultPartial
+            .focusSparqlWherePatterns({
+              filter: filter?.on?.NamedDefaultPartial,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}NamedDefaultPartial`,
+            })
+            .concat(),
+          type: "group",
+        },
         {
           patterns: AnonymousTypesStruct.focusSparqlWherePatterns({
             filter: filter?.on?.AnonymousTypesStruct,
@@ -58184,6 +58307,16 @@ export namespace $Object {
   }
 
   export const fromJson = (value: $Object.Json): Either<Error, $Object> => {
+    if (value["$type"] === "DefaultPartial") {
+      return $DefaultPartial
+        .fromJson(value as $DefaultPartial.Json)
+        .map((value) => value);
+    }
+    if (value["$type"] === "NamedDefaultPartial") {
+      return $NamedDefaultPartial
+        .fromJson(value as $NamedDefaultPartial.Json)
+        .map((value) => value);
+    }
     if (value["$type"] === "AnonymousTypesStruct") {
       return AnonymousTypesStruct.fromJson(
         value as AnonymousTypesStruct.Json,
@@ -58436,11 +58569,25 @@ export namespace $Object {
     options,
   ) =>
     (
-      AnonymousTypesStruct.fromRdfResource(resource, {
+      $DefaultPartial.fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
       }) as Either<Error, $Object>
     )
+      .altLazy(
+        () =>
+          $NamedDefaultPartial.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          AnonymousTypesStruct.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
       .altLazy(
         () =>
           BlankNodeIdentifierStruct.fromRdfResource(resource, {
@@ -58788,11 +58935,25 @@ export namespace $Object {
     values.chainMap((value) => {
       const valueAsValues = value.toValues();
       return (
-        AnonymousTypesStruct.fromRdfResourceValues(valueAsValues, {
+        $DefaultPartial.fromRdfResourceValues(valueAsValues, {
           ...options,
-          schema: options.schema.members["AnonymousTypesStruct"].type,
+          schema: options.schema.members["DefaultPartial"].type,
         }) as Either<Error, Resource.Values<$Object>>
       )
+        .altLazy(
+          () =>
+            $NamedDefaultPartial.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["NamedDefaultPartial"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
+        .altLazy(
+          () =>
+            AnonymousTypesStruct.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["AnonymousTypesStruct"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
         .altLazy(
           () =>
             BlankNodeIdentifierStruct.fromRdfResourceValues(valueAsValues, {
@@ -59209,6 +59370,12 @@ export namespace $Object {
     hasher: HasherT,
     value: $Object,
   ): HasherT => {
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return $DefaultPartial.hash(hasher, value);
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
+      return $NamedDefaultPartial.hash(hasher, value);
+    }
     if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
       return AnonymousTypesStruct.hash(hasher, value);
     }
@@ -59413,6 +59580,8 @@ export namespace $Object {
     export const schema = () =>
       z
         .discriminatedUnion("$type", [
+          $DefaultPartial.Json.schema(),
+          $NamedDefaultPartial.Json.schema(),
           AnonymousTypesStruct.Json.schema(),
           BlankNodeIdentifierStruct.Json.schema(),
           BlankNodeOrIriIdentifierStruct.Json.schema(),
@@ -59475,6 +59644,8 @@ export namespace $Object {
   }
 
   export type Json =
+    | $DefaultPartial.Json
+    | $NamedDefaultPartial.Json
     | AnonymousTypesStruct.Json
     | BlankNodeIdentifierStruct.Json
     | BlankNodeOrIriIdentifierStruct.Json
@@ -59528,6 +59699,14 @@ export namespace $Object {
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
     members: {
+      DefaultPartial: {
+        discriminantValues: ["DefaultPartial"],
+        type: $DefaultPartial.schema,
+      },
+      NamedDefaultPartial: {
+        discriminantValues: ["NamedDefaultPartial"],
+        type: $NamedDefaultPartial.schema,
+      },
       AnonymousTypesStruct: {
         discriminantValues: ["AnonymousTypesStruct"],
         type: AnonymousTypesStruct.schema,
@@ -59782,6 +59961,12 @@ export namespace $Object {
   }
 
   export const toJson = (value: $Object): $Object.Json => {
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return $DefaultPartial.toJson(value);
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
+      return $NamedDefaultPartial.toJson(value);
+    }
     if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
       return AnonymousTypesStruct.toJson(value);
     }
@@ -59981,6 +60166,12 @@ export namespace $Object {
     object,
     options,
   ) => {
+    if ($DefaultPartial.is$DefaultPartial(object)) {
+      return $DefaultPartial.toRdfResource(object, options);
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(object)) {
+      return $NamedDefaultPartial.toRdfResource(object, options);
+    }
     if (AnonymousTypesStruct.isAnonymousTypesStruct(object)) {
       return AnonymousTypesStruct.toRdfResource(object, options);
     }
@@ -60194,6 +60385,22 @@ export namespace $Object {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return [
+        $DefaultPartial.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
+      return [
+        $NamedDefaultPartial.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
     if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
       return [
         AnonymousTypesStruct.toRdfResource(value, {
@@ -60641,6 +60848,22 @@ export namespace $Object {
     let triples: sparqljs.Triple[] = [];
 
     triples = triples.concat(
+      $DefaultPartial.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["DefaultPartial"],
+        ignoreRdfType: false,
+        schema: schema.members["DefaultPartial"].type,
+      }),
+    );
+    triples = triples.concat(
+      $NamedDefaultPartial.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NamedDefaultPartial"],
+        ignoreRdfType: false,
+        schema: schema.members["NamedDefaultPartial"].type,
+      }),
+    );
+    triples = triples.concat(
       AnonymousTypesStruct.valueSparqlConstructTriples({
         ...otherParameters,
         filter: filter?.on?.["AnonymousTypesStruct"],
@@ -61046,6 +61269,28 @@ export namespace $Object {
   > = (({ filter, schema, ...otherParameters }) => {
     const unionPatterns: sparqljs.GroupPattern[] = [];
 
+    unionPatterns.push({
+      patterns: $DefaultPartial
+        .valueSparqlWherePatterns({
+          ...otherParameters,
+          filter: filter?.on?.["DefaultPartial"],
+          ignoreRdfType: false,
+          schema: schema.members["DefaultPartial"].type,
+        })
+        .concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: $NamedDefaultPartial
+        .valueSparqlWherePatterns({
+          ...otherParameters,
+          filter: filter?.on?.["NamedDefaultPartial"],
+          ignoreRdfType: false,
+          schema: schema.members["NamedDefaultPartial"].type,
+        })
+        .concat(),
+      type: "group",
+    });
     unionPatterns.push({
       patterns: AnonymousTypesStruct.valueSparqlWherePatterns({
         ...otherParameters,
@@ -68112,6 +68357,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $Object.Identifier
     >(
       [
+        {
+          filter: $Object.filter,
+          fromRdfResource: $DefaultPartial.fromRdfResource,
+          fromRdfTypes: [],
+        },
+        {
+          filter: $Object.filter,
+          fromRdfResource: $NamedDefaultPartial.fromRdfResource,
+          fromRdfTypes: [],
+        },
         {
           filter: $Object.filter,
           fromRdfResource: AnonymousTypesStruct.fromRdfResource,
