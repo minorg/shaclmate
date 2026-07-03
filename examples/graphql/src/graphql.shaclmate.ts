@@ -126,80 +126,107 @@ function $convertToIriIdentifierProperty<IriT extends string = string>(
 }
 
 function $convertToLazyOption<PartialT, ResolvedT>(
+  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
 ) {
   return (
     value:
       | $LazyOption<PartialT, ResolvedT>
+      | Maybe<PartialT>
       | Maybe<ResolvedT>
+      | PartialT
       | ResolvedT
       | undefined,
   ): Either<Error, $LazyOption<PartialT, ResolvedT>> => {
-    switch (typeof value) {
-      case "object": {
-        if (value instanceof $LazyOption) {
-          return Either.of(value);
-        }
-
-        if (Maybe.isMaybe(value)) {
-          return Either.of(
-            new $LazyOption<PartialT, ResolvedT>({
-              partial: value.map(resolvedToPartial),
-              resolver: async () => Right(value.unsafeCoerce()),
-            }),
-          );
-        }
-
-        break;
-      }
-      case "undefined":
-        return Either.of(
-          new $LazyOption<PartialT, ResolvedT>({
-            partial: Maybe.empty(),
-            resolver: async () => {
-              throw new Error("should never be called");
-            },
-          }),
-        );
+    if (value instanceof $LazyOption) {
+      return Either.of(value);
     }
 
+    let extractedValue: PartialT | ResolvedT | undefined;
+    if (typeof value === "undefined") {
+      extractedValue = value;
+    } else if (Maybe.isMaybe(value)) {
+      extractedValue = value.extract();
+    } else {
+      extractedValue = value;
+    }
+
+    if (typeof extractedValue === "undefined") {
+      return Either.of(
+        new $LazyOption<PartialT, ResolvedT>({
+          partial: Maybe.empty(),
+          resolver: async () => {
+            throw new Error("should never be called");
+          },
+        }),
+      );
+    }
+
+    if (isPartial(extractedValue)) {
+      const partial: PartialT = extractedValue;
+      return Either.of(
+        new $LazyOption({
+          partial: Maybe.of(partial),
+          resolver: async () => Left(new Error("unable to resolve")),
+        }),
+      );
+    }
+
+    const resolved: ResolvedT = extractedValue;
     return Either.of(
-      new $LazyOption<PartialT, ResolvedT>({
-        partial: Maybe.of(resolvedToPartial(value)),
-        resolver: async () => Right(value),
+      new $LazyOption({
+        partial: Maybe.of(resolvedToPartial(resolved)),
+        resolver: async () => Right(resolved),
       }),
     );
   };
 }
 
 function $convertToLazySet<PartialT, ResolvedT>(
+  isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
 ) {
   return (
-    value: $LazySet<PartialT, ResolvedT> | readonly ResolvedT[] | undefined,
+    value:
+      | $LazySet<PartialT, ResolvedT>
+      | readonly PartialT[]
+      | readonly ResolvedT[]
+      | PartialT
+      | ResolvedT
+      | undefined,
   ): Either<Error, $LazySet<PartialT, ResolvedT>> => {
-    switch (typeof value) {
-      case "object": {
-        if (value instanceof $LazySet) {
-          return Either.of(value);
-        }
-
-        break;
-      }
-      case "undefined":
-        return Either.of(
-          new $LazySet<PartialT, ResolvedT>({
-            partials: [],
-            resolver: async () => Right([]),
-          }),
-        );
+    if (typeof value === "undefined") {
+      return Either.of(
+        new $LazySet<PartialT, ResolvedT>({
+          partials: [],
+          resolver: async () => Right([]),
+        }),
+      );
     }
 
-    const captureValue = value;
+    if (value instanceof $LazySet) {
+      return Either.of(value);
+    }
+
+    const arrayValue = (Array.isArray(value) ? value : [value]) as
+      | readonly PartialT[]
+      | readonly ResolvedT[];
+
+    if (arrayValue.every(isPartial)) {
+      const partials: readonly PartialT[] = arrayValue;
+      return Either.of(
+        new $LazySet<PartialT, ResolvedT>({
+          partials,
+          resolver: async () => Left(new Error("unable to resolve")),
+        }),
+      );
+    }
+
+    const resolved: readonly ResolvedT[] = arrayValue;
     return Either.of(
       new $LazySet<PartialT, ResolvedT>({
-        partials: value.map(resolvedToPartial),
-        resolver: async () => Right(captureValue),
+        partials: resolved.map(resolvedToPartial),
+        resolver: async () => Right(resolved),
       }),
     );
   };
@@ -1131,6 +1158,10 @@ export namespace $DefaultPartial {
     export const stringify = NTriplesTerm.stringify;
   }
 
+  export const is$DefaultPartial = (
+    object: $Object,
+  ): object is $DefaultPartial => object.$type === "DefaultPartial";
+
   export const schema = {
     properties: {
       $identifier: {
@@ -1524,10 +1555,15 @@ export namespace RootObject {
     readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
     readonly lazyObjectSetProperty?:
       | $LazySet<$DefaultPartial, LazyObject>
-      | readonly LazyObject[];
+      | readonly $DefaultPartial[]
+      | readonly LazyObject[]
+      | $DefaultPartial
+      | LazyObject;
     readonly optionalLazyProperty?:
       | $LazyOption<$DefaultPartial, LazyObject>
+      | Maybe<$DefaultPartial>
       | Maybe<LazyObject>
+      | $DefaultPartial
       | LazyObject;
     readonly optionalObjectProperty?:
       | {
@@ -1554,9 +1590,11 @@ export namespace RootObject {
         parameters.$identifier,
       ),
       lazyObjectSetProperty: $convertToLazySet<$DefaultPartial, LazyObject>(
+        $DefaultPartial.is$DefaultPartial,
         $DefaultPartial.createUnsafe,
       )(parameters.lazyObjectSetProperty),
       optionalLazyProperty: $convertToLazyOption<$DefaultPartial, LazyObject>(
+        $DefaultPartial.is$DefaultPartial,
         $DefaultPartial.createUnsafe,
       )(parameters.optionalLazyProperty),
       optionalObjectProperty: $convertToMaybe(
@@ -1608,10 +1646,15 @@ export namespace RootObject {
     readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
     readonly lazyObjectSetProperty?:
       | $LazySet<$DefaultPartial, LazyObject>
-      | readonly LazyObject[];
+      | readonly $DefaultPartial[]
+      | readonly LazyObject[]
+      | $DefaultPartial
+      | LazyObject;
     readonly optionalLazyProperty?:
       | $LazyOption<$DefaultPartial, LazyObject>
+      | Maybe<$DefaultPartial>
       | Maybe<LazyObject>
+      | $DefaultPartial
       | LazyObject;
     readonly optionalObjectProperty?:
       | {
@@ -2850,10 +2893,18 @@ export namespace Union {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<Union>;
 }
-export type $Object = LazyObject | RootObject | UnionMember1 | UnionMember2;
+export type $Object =
+  | $DefaultPartial
+  | LazyObject
+  | RootObject
+  | UnionMember1
+  | UnionMember2;
 
 export namespace $Object {
   export const $toString = (value: $Object): string => {
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return $DefaultPartial.$toString(value);
+    }
     if (LazyObject.isLazyObject(value)) {
       return LazyObject.$toString(value);
     }
@@ -2876,6 +2927,14 @@ export namespace $Object {
       !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
+    }
+    if (
+      filter.on?.["DefaultPartial"] !== undefined &&
+      $DefaultPartial.is$DefaultPartial(value)
+    ) {
+      if (!$DefaultPartial.filter(filter.on["DefaultPartial"], value)) {
+        return false;
+      }
     }
     if (
       filter.on?.["LazyObject"] !== undefined &&
@@ -2916,6 +2975,7 @@ export namespace $Object {
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
+      readonly DefaultPartial?: $DefaultPartial.Filter;
       readonly LazyObject?: LazyObject.Filter;
       readonly RootObject?: RootObject.Filter;
       readonly UnionMember1?: UnionMember1.Filter;
@@ -2928,11 +2988,18 @@ export namespace $Object {
     options,
   ) =>
     (
-      LazyObject.fromRdfResource(resource, {
+      $DefaultPartial.fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
       }) as Either<Error, $Object>
     )
+      .altLazy(
+        () =>
+          LazyObject.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
       .altLazy(
         () =>
           RootObject.fromRdfResource(resource, {
@@ -2962,11 +3029,18 @@ export namespace $Object {
     values.chainMap((value) => {
       const valueAsValues = value.toValues();
       return (
-        LazyObject.fromRdfResourceValues(valueAsValues, {
+        $DefaultPartial.fromRdfResourceValues(valueAsValues, {
           ...options,
-          schema: options.schema.members["LazyObject"].type,
+          schema: options.schema.members["DefaultPartial"].type,
         }) as Either<Error, Resource.Values<$Object>>
       )
+        .altLazy(
+          () =>
+            LazyObject.fromRdfResourceValues(valueAsValues, {
+              ...options,
+              schema: options.schema.members["LazyObject"].type,
+            }) as Either<Error, Resource.Values<$Object>>,
+        )
         .altLazy(
           () =>
             RootObject.fromRdfResourceValues(valueAsValues, {
@@ -3003,6 +3077,10 @@ export namespace $Object {
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
     members: {
+      DefaultPartial: {
+        discriminantValues: ["DefaultPartial"],
+        type: $DefaultPartial.schema,
+      },
       LazyObject: {
         discriminantValues: ["LazyObject"],
         type: LazyObject.schema,
@@ -3027,6 +3105,9 @@ export namespace $Object {
     object,
     options,
   ) => {
+    if ($DefaultPartial.is$DefaultPartial(object)) {
+      return $DefaultPartial.toRdfResource(object, options);
+    }
     if (LazyObject.isLazyObject(object)) {
       return LazyObject.toRdfResource(object, options);
     }
@@ -3046,6 +3127,14 @@ export namespace $Object {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return [
+        $DefaultPartial.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
     if (LazyObject.isLazyObject(value)) {
       return [
         LazyObject.toRdfResource(value, {
@@ -3665,6 +3754,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $Object.Identifier
     >(
       [
+        {
+          filter: $Object.filter,
+          fromRdfResource: $DefaultPartial.fromRdfResource,
+          fromRdfTypes: [],
+        },
         {
           filter: $Object.filter,
           fromRdfResource: LazyObject.fromRdfResource,
