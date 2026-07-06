@@ -27,8 +27,8 @@ export class UberObjectDiscriminatedUnionType {
     reusables: Reusables;
   }) {
     this.configuration = configuration;
-    this.members = members;
-    invariant(members.every((member) => member.name.isJust()));
+    this.members = members.filter((member) => !member.extern);
+    invariant(this.members.every((member) => member.name.isJust()));
     this.reusables = reusables;
   }
 
