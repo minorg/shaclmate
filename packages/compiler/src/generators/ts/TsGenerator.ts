@@ -150,10 +150,7 @@ export class TsGenerator implements Generator {
         (tsNamedObjectType) => !tsNamedObjectType.synthetic,
       );
       const graphqlNamedObjectDiscriminatedUnionTypes =
-        tsNamedObjectDiscriminatedUnionTypes.filter(
-          (tsNamedObjectDiscriminatedUnionType) =>
-            !tsNamedObjectDiscriminatedUnionType.synthetic,
-        );
+        tsNamedObjectDiscriminatedUnionTypes;
 
       if (graphqlNamedObjectTypes.length > 0) {
         declarations.push(
