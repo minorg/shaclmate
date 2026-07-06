@@ -56170,5667 +56170,680 @@ export type $Object =
   | UnionDiscriminantsStruct;
 
 export namespace $Object {
-  export const $toString = (value: $Object): string => {
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return $DefaultPartial.$toString(value);
-    }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return $NamedDefaultPartial.$toString(value);
-    }
-    if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
-      return AnonymousTypesStruct.$toString(value);
-    }
-    if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(value)) {
-      return BlankNodeIdentifierStruct.$toString(value);
-    }
-    if (
-      BlankNodeOrIriIdentifierStruct.isBlankNodeOrIriIdentifierStruct(value)
-    ) {
-      return BlankNodeOrIriIdentifierStruct.$toString(value);
-    }
-    if (ClassConstraintsStruct.isClassConstraintsStruct(value)) {
-      return ClassConstraintsStruct.$toString(value);
-    }
-    if (ConvertibleTypesStruct.isConvertibleTypesStruct(value)) {
-      return ConvertibleTypesStruct.$toString(value);
-    }
-    if (
-      DatatypeDiscriminatedUnionsStruct.isDatatypeDiscriminatedUnionsStruct(
-        value,
-      )
-    ) {
-      return DatatypeDiscriminatedUnionsStruct.$toString(value);
-    }
-    if (DefaultValuesStruct.isDefaultValuesStruct(value)) {
-      return DefaultValuesStruct.$toString(value);
-    }
-    if (DirectRecursiveStruct.isDirectRecursiveStruct(value)) {
-      return DirectRecursiveStruct.$toString(value);
-    }
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
-      return DiscriminatedUnionMember1.$toString(value);
-    }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
-      return DiscriminatedUnionMember2.$toString(value);
-    }
-    if (DisplayStruct.isDisplayStruct(value)) {
-      return DisplayStruct.$toString(value);
-    }
-    if (ExplicitFromToRdfTypesStruct.isExplicitFromToRdfTypesStruct(value)) {
-      return ExplicitFromToRdfTypesStruct.$toString(value);
-    }
-    if (ExplicitRdfTypeStruct.isExplicitRdfTypeStruct(value)) {
-      return ExplicitRdfTypeStruct.$toString(value);
-    }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
-    ) {
-      return FlattenDiscriminatedUnionMember3.$toString(value);
-    }
-    if (HasValuesStruct.isHasValuesStruct(value)) {
-      return HasValuesStruct.$toString(value);
-    }
-    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)) {
-      return IgnoredPropertiesStruct.$toString(value);
-    }
-    if (IndirectRecursiveStruct.isIndirectRecursiveStruct(value)) {
-      return IndirectRecursiveStruct.$toString(value);
-    }
-    if (IndirectRecursiveStructHelper.isIndirectRecursiveStructHelper(value)) {
-      return IndirectRecursiveStructHelper.$toString(value);
-    }
-    if (InIdentifierStruct.isInIdentifierStruct(value)) {
-      return InIdentifierStruct.$toString(value);
-    }
-    if (InPropertiesStruct.isInPropertiesStruct(value)) {
-      return InPropertiesStruct.$toString(value);
-    }
-    if (IriIdentifierStruct.isIriIdentifierStruct(value)) {
-      return IriIdentifierStruct.$toString(value);
-    }
-    if (LanguageInStruct.isLanguageInStruct(value)) {
-      return LanguageInStruct.$toString(value);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierStruct.isLazilyResolvedBlankNodeOrIriIdentifierStruct(
-        value,
-      )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierStruct.$toString(value);
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember1.$toString(value);
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember2.$toString(value);
-    }
-    if (
-      LazilyResolvedIriIdentifierStruct.isLazilyResolvedIriIdentifierStruct(
-        value,
-      )
-    ) {
-      return LazilyResolvedIriIdentifierStruct.$toString(value);
-    }
-    if (LazyPropertiesStruct.isLazyPropertiesStruct(value)) {
-      return LazyPropertiesStruct.$toString(value);
-    }
-    if (ListSetsStruct.isListSetsStruct(value)) {
-      return ListSetsStruct.$toString(value);
-    }
-    if (ListsStruct.isListsStruct(value)) {
-      return ListsStruct.$toString(value);
-    }
-    if (MutablePropertiesStruct.isMutablePropertiesStruct(value)) {
-      return MutablePropertiesStruct.$toString(value);
-    }
-    if (NamedTypesStruct.isNamedTypesStruct(value)) {
-      return NamedTypesStruct.$toString(value);
-    }
-    if (NewName.isNewName(value)) {
-      return NewName.$toString(value);
-    }
-    if (NodeKindsStruct.isNodeKindsStruct(value)) {
-      return NodeKindsStruct.$toString(value);
-    }
-    if (NonClassStruct.isNonClassStruct(value)) {
-      return NonClassStruct.$toString(value);
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember1.$toString(value);
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember2.$toString(value);
-    }
-    if (NumericsStruct.isNumericsStruct(value)) {
-      return NumericsStruct.$toString(value);
-    }
-    if (OrderedStruct.isOrderedStruct(value)) {
-      return OrderedStruct.$toString(value);
-    }
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
-    ) {
-      return PartialDiscriminatedUnionMember1.$toString(value);
-    }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
-    ) {
-      return PartialDiscriminatedUnionMember2.$toString(value);
-    }
-    if (PartialStruct.isPartialStruct(value)) {
-      return PartialStruct.$toString(value);
-    }
-    if (PropertyCardinalitiesStruct.isPropertyCardinalitiesStruct(value)) {
-      return PropertyCardinalitiesStruct.$toString(value);
-    }
-    if (PropertyNamesStruct.isPropertyNamesStruct(value)) {
-      return PropertyNamesStruct.$toString(value);
-    }
-    if (PropertyPathsStruct.isPropertyPathsStruct(value)) {
-      return PropertyPathsStruct.$toString(value);
-    }
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember1.$toString(value);
-    }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember2.$toString(value);
-    }
-    if (TargetClassStruct.isTargetClassStruct(value)) {
-      return TargetClassStruct.$toString(value);
-    }
-    if (TermsStruct.isTermsStruct(value)) {
-      return TermsStruct.$toString(value);
-    }
-    if (UnionDiscriminantsStruct.isUnionDiscriminantsStruct(value)) {
-      return UnionDiscriminantsStruct.$toString(value);
-    }
-
-    throw new Error("unable to serialize to string");
-  };
-
-  export const equals = (left: $Object, right: $Object) => {
-    if (
-      $DefaultPartial.is$DefaultPartial(left) &&
-      $DefaultPartial.is$DefaultPartial(right)
-    ) {
-      return $DefaultPartial.equals(
-        left as $DefaultPartial,
-        right as $DefaultPartial,
-      );
-    }
-    if (
-      $NamedDefaultPartial.is$NamedDefaultPartial(left) &&
-      $NamedDefaultPartial.is$NamedDefaultPartial(right)
-    ) {
-      return $NamedDefaultPartial.equals(
-        left as $NamedDefaultPartial,
-        right as $NamedDefaultPartial,
-      );
-    }
-    if (
-      AnonymousTypesStruct.isAnonymousTypesStruct(left) &&
-      AnonymousTypesStruct.isAnonymousTypesStruct(right)
-    ) {
-      return AnonymousTypesStruct.equals(
-        left as AnonymousTypesStruct,
-        right as AnonymousTypesStruct,
-      );
-    }
-    if (
-      BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(left) &&
-      BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(right)
-    ) {
-      return BlankNodeIdentifierStruct.equals(
-        left as BlankNodeIdentifierStruct,
-        right as BlankNodeIdentifierStruct,
-      );
-    }
-    if (
-      BlankNodeOrIriIdentifierStruct.isBlankNodeOrIriIdentifierStruct(left) &&
-      BlankNodeOrIriIdentifierStruct.isBlankNodeOrIriIdentifierStruct(right)
-    ) {
-      return BlankNodeOrIriIdentifierStruct.equals(
-        left as BlankNodeOrIriIdentifierStruct,
-        right as BlankNodeOrIriIdentifierStruct,
-      );
-    }
-    if (
-      ClassConstraintsStruct.isClassConstraintsStruct(left) &&
-      ClassConstraintsStruct.isClassConstraintsStruct(right)
-    ) {
-      return ClassConstraintsStruct.equals(
-        left as ClassConstraintsStruct,
-        right as ClassConstraintsStruct,
-      );
-    }
-    if (
-      ConvertibleTypesStruct.isConvertibleTypesStruct(left) &&
-      ConvertibleTypesStruct.isConvertibleTypesStruct(right)
-    ) {
-      return ConvertibleTypesStruct.equals(
-        left as ConvertibleTypesStruct,
-        right as ConvertibleTypesStruct,
-      );
-    }
-    if (
-      DatatypeDiscriminatedUnionsStruct.isDatatypeDiscriminatedUnionsStruct(
+  export function equals(left: $Object, right: $Object): $EqualsResult {
+    if (left.$type !== right.$type) {
+      return Left({
         left,
-      ) &&
-      DatatypeDiscriminatedUnionsStruct.isDatatypeDiscriminatedUnionsStruct(
         right,
-      )
-    ) {
-      return DatatypeDiscriminatedUnionsStruct.equals(
-        left as DatatypeDiscriminatedUnionsStruct,
-        right as DatatypeDiscriminatedUnionsStruct,
-      );
-    }
-    if (
-      DefaultValuesStruct.isDefaultValuesStruct(left) &&
-      DefaultValuesStruct.isDefaultValuesStruct(right)
-    ) {
-      return DefaultValuesStruct.equals(
-        left as DefaultValuesStruct,
-        right as DefaultValuesStruct,
-      );
-    }
-    if (
-      DirectRecursiveStruct.isDirectRecursiveStruct(left) &&
-      DirectRecursiveStruct.isDirectRecursiveStruct(right)
-    ) {
-      return DirectRecursiveStruct.equals(
-        left as DirectRecursiveStruct,
-        right as DirectRecursiveStruct,
-      );
-    }
-    if (
-      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(left) &&
-      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(right)
-    ) {
-      return DiscriminatedUnionMember1.equals(
-        left as DiscriminatedUnionMember1,
-        right as DiscriminatedUnionMember1,
-      );
-    }
-    if (
-      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(left) &&
-      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(right)
-    ) {
-      return DiscriminatedUnionMember2.equals(
-        left as DiscriminatedUnionMember2,
-        right as DiscriminatedUnionMember2,
-      );
-    }
-    if (
-      DisplayStruct.isDisplayStruct(left) &&
-      DisplayStruct.isDisplayStruct(right)
-    ) {
-      return DisplayStruct.equals(
-        left as DisplayStruct,
-        right as DisplayStruct,
-      );
-    }
-    if (
-      ExplicitFromToRdfTypesStruct.isExplicitFromToRdfTypesStruct(left) &&
-      ExplicitFromToRdfTypesStruct.isExplicitFromToRdfTypesStruct(right)
-    ) {
-      return ExplicitFromToRdfTypesStruct.equals(
-        left as ExplicitFromToRdfTypesStruct,
-        right as ExplicitFromToRdfTypesStruct,
-      );
-    }
-    if (
-      ExplicitRdfTypeStruct.isExplicitRdfTypeStruct(left) &&
-      ExplicitRdfTypeStruct.isExplicitRdfTypeStruct(right)
-    ) {
-      return ExplicitRdfTypeStruct.equals(
-        left as ExplicitRdfTypeStruct,
-        right as ExplicitRdfTypeStruct,
-      );
-    }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(
-        left,
-      ) &&
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(right)
-    ) {
-      return FlattenDiscriminatedUnionMember3.equals(
-        left as FlattenDiscriminatedUnionMember3,
-        right as FlattenDiscriminatedUnionMember3,
-      );
-    }
-    if (
-      HasValuesStruct.isHasValuesStruct(left) &&
-      HasValuesStruct.isHasValuesStruct(right)
-    ) {
-      return HasValuesStruct.equals(
-        left as HasValuesStruct,
-        right as HasValuesStruct,
-      );
-    }
-    if (
-      IgnoredPropertiesStruct.isIgnoredPropertiesStruct(left) &&
-      IgnoredPropertiesStruct.isIgnoredPropertiesStruct(right)
-    ) {
-      return IgnoredPropertiesStruct.equals(
-        left as IgnoredPropertiesStruct,
-        right as IgnoredPropertiesStruct,
-      );
-    }
-    if (
-      IndirectRecursiveStruct.isIndirectRecursiveStruct(left) &&
-      IndirectRecursiveStruct.isIndirectRecursiveStruct(right)
-    ) {
-      return IndirectRecursiveStruct.equals(
-        left as IndirectRecursiveStruct,
-        right as IndirectRecursiveStruct,
-      );
-    }
-    if (
-      IndirectRecursiveStructHelper.isIndirectRecursiveStructHelper(left) &&
-      IndirectRecursiveStructHelper.isIndirectRecursiveStructHelper(right)
-    ) {
-      return IndirectRecursiveStructHelper.equals(
-        left as IndirectRecursiveStructHelper,
-        right as IndirectRecursiveStructHelper,
-      );
-    }
-    if (
-      InIdentifierStruct.isInIdentifierStruct(left) &&
-      InIdentifierStruct.isInIdentifierStruct(right)
-    ) {
-      return InIdentifierStruct.equals(
-        left as InIdentifierStruct,
-        right as InIdentifierStruct,
-      );
-    }
-    if (
-      InPropertiesStruct.isInPropertiesStruct(left) &&
-      InPropertiesStruct.isInPropertiesStruct(right)
-    ) {
-      return InPropertiesStruct.equals(
-        left as InPropertiesStruct,
-        right as InPropertiesStruct,
-      );
-    }
-    if (
-      IriIdentifierStruct.isIriIdentifierStruct(left) &&
-      IriIdentifierStruct.isIriIdentifierStruct(right)
-    ) {
-      return IriIdentifierStruct.equals(
-        left as IriIdentifierStruct,
-        right as IriIdentifierStruct,
-      );
-    }
-    if (
-      LanguageInStruct.isLanguageInStruct(left) &&
-      LanguageInStruct.isLanguageInStruct(right)
-    ) {
-      return LanguageInStruct.equals(
-        left as LanguageInStruct,
-        right as LanguageInStruct,
-      );
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierStruct.isLazilyResolvedBlankNodeOrIriIdentifierStruct(
-        left,
-      ) &&
-      LazilyResolvedBlankNodeOrIriIdentifierStruct.isLazilyResolvedBlankNodeOrIriIdentifierStruct(
-        right,
-      )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierStruct.equals(
-        left as LazilyResolvedBlankNodeOrIriIdentifierStruct,
-        right as LazilyResolvedBlankNodeOrIriIdentifierStruct,
-      );
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        left,
-      ) &&
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        right,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember1.equals(
-        left as LazilyResolvedDiscriminatedUnionMember1,
-        right as LazilyResolvedDiscriminatedUnionMember1,
-      );
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        left,
-      ) &&
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        right,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember2.equals(
-        left as LazilyResolvedDiscriminatedUnionMember2,
-        right as LazilyResolvedDiscriminatedUnionMember2,
-      );
-    }
-    if (
-      LazilyResolvedIriIdentifierStruct.isLazilyResolvedIriIdentifierStruct(
-        left,
-      ) &&
-      LazilyResolvedIriIdentifierStruct.isLazilyResolvedIriIdentifierStruct(
-        right,
-      )
-    ) {
-      return LazilyResolvedIriIdentifierStruct.equals(
-        left as LazilyResolvedIriIdentifierStruct,
-        right as LazilyResolvedIriIdentifierStruct,
-      );
-    }
-    if (
-      LazyPropertiesStruct.isLazyPropertiesStruct(left) &&
-      LazyPropertiesStruct.isLazyPropertiesStruct(right)
-    ) {
-      return LazyPropertiesStruct.equals(
-        left as LazyPropertiesStruct,
-        right as LazyPropertiesStruct,
-      );
-    }
-    if (
-      ListSetsStruct.isListSetsStruct(left) &&
-      ListSetsStruct.isListSetsStruct(right)
-    ) {
-      return ListSetsStruct.equals(
-        left as ListSetsStruct,
-        right as ListSetsStruct,
-      );
-    }
-    if (ListsStruct.isListsStruct(left) && ListsStruct.isListsStruct(right)) {
-      return ListsStruct.equals(left as ListsStruct, right as ListsStruct);
-    }
-    if (
-      MutablePropertiesStruct.isMutablePropertiesStruct(left) &&
-      MutablePropertiesStruct.isMutablePropertiesStruct(right)
-    ) {
-      return MutablePropertiesStruct.equals(
-        left as MutablePropertiesStruct,
-        right as MutablePropertiesStruct,
-      );
-    }
-    if (
-      NamedTypesStruct.isNamedTypesStruct(left) &&
-      NamedTypesStruct.isNamedTypesStruct(right)
-    ) {
-      return NamedTypesStruct.equals(
-        left as NamedTypesStruct,
-        right as NamedTypesStruct,
-      );
-    }
-    if (NewName.isNewName(left) && NewName.isNewName(right)) {
-      return NewName.equals(left as NewName, right as NewName);
-    }
-    if (
-      NodeKindsStruct.isNodeKindsStruct(left) &&
-      NodeKindsStruct.isNodeKindsStruct(right)
-    ) {
-      return NodeKindsStruct.equals(
-        left as NodeKindsStruct,
-        right as NodeKindsStruct,
-      );
-    }
-    if (
-      NonClassStruct.isNonClassStruct(left) &&
-      NonClassStruct.isNonClassStruct(right)
-    ) {
-      return NonClassStruct.equals(
-        left as NonClassStruct,
-        right as NonClassStruct,
-      );
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        left,
-      ) &&
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        right,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember1.equals(
-        left as NoRdfTypeDiscriminatedUnionMember1,
-        right as NoRdfTypeDiscriminatedUnionMember1,
-      );
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        left,
-      ) &&
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        right,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember2.equals(
-        left as NoRdfTypeDiscriminatedUnionMember2,
-        right as NoRdfTypeDiscriminatedUnionMember2,
-      );
-    }
-    if (
-      NumericsStruct.isNumericsStruct(left) &&
-      NumericsStruct.isNumericsStruct(right)
-    ) {
-      return NumericsStruct.equals(
-        left as NumericsStruct,
-        right as NumericsStruct,
-      );
-    }
-    if (
-      OrderedStruct.isOrderedStruct(left) &&
-      OrderedStruct.isOrderedStruct(right)
-    ) {
-      return OrderedStruct.equals(
-        left as OrderedStruct,
-        right as OrderedStruct,
-      );
-    }
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(
-        left,
-      ) &&
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(right)
-    ) {
-      return PartialDiscriminatedUnionMember1.equals(
-        left as PartialDiscriminatedUnionMember1,
-        right as PartialDiscriminatedUnionMember1,
-      );
-    }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(
-        left,
-      ) &&
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(right)
-    ) {
-      return PartialDiscriminatedUnionMember2.equals(
-        left as PartialDiscriminatedUnionMember2,
-        right as PartialDiscriminatedUnionMember2,
-      );
-    }
-    if (
-      PartialStruct.isPartialStruct(left) &&
-      PartialStruct.isPartialStruct(right)
-    ) {
-      return PartialStruct.equals(
-        left as PartialStruct,
-        right as PartialStruct,
-      );
-    }
-    if (
-      PropertyCardinalitiesStruct.isPropertyCardinalitiesStruct(left) &&
-      PropertyCardinalitiesStruct.isPropertyCardinalitiesStruct(right)
-    ) {
-      return PropertyCardinalitiesStruct.equals(
-        left as PropertyCardinalitiesStruct,
-        right as PropertyCardinalitiesStruct,
-      );
-    }
-    if (
-      PropertyNamesStruct.isPropertyNamesStruct(left) &&
-      PropertyNamesStruct.isPropertyNamesStruct(right)
-    ) {
-      return PropertyNamesStruct.equals(
-        left as PropertyNamesStruct,
-        right as PropertyNamesStruct,
-      );
-    }
-    if (
-      PropertyPathsStruct.isPropertyPathsStruct(left) &&
-      PropertyPathsStruct.isPropertyPathsStruct(right)
-    ) {
-      return PropertyPathsStruct.equals(
-        left as PropertyPathsStruct,
-        right as PropertyPathsStruct,
-      );
-    }
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        left,
-      ) &&
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        right,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember1.equals(
-        left as RecursiveDiscriminatedUnionMember1,
-        right as RecursiveDiscriminatedUnionMember1,
-      );
-    }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        left,
-      ) &&
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        right,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember2.equals(
-        left as RecursiveDiscriminatedUnionMember2,
-        right as RecursiveDiscriminatedUnionMember2,
-      );
-    }
-    if (
-      TargetClassStruct.isTargetClassStruct(left) &&
-      TargetClassStruct.isTargetClassStruct(right)
-    ) {
-      return TargetClassStruct.equals(
-        left as TargetClassStruct,
-        right as TargetClassStruct,
-      );
-    }
-    if (TermsStruct.isTermsStruct(left) && TermsStruct.isTermsStruct(right)) {
-      return TermsStruct.equals(left as TermsStruct, right as TermsStruct);
-    }
-    if (
-      UnionDiscriminantsStruct.isUnionDiscriminantsStruct(left) &&
-      UnionDiscriminantsStruct.isUnionDiscriminantsStruct(right)
-    ) {
-      return UnionDiscriminantsStruct.equals(
-        left as UnionDiscriminantsStruct,
-        right as UnionDiscriminantsStruct,
-      );
-    }
-
-    return Left({
-      left,
-      right,
-      propertyName: "type",
-      propertyValuesUnequal: {
-        left: typeof left,
-        right: typeof right,
-        type: "boolean" as const,
-      },
-      type: "property" as const,
-    });
-  };
-
-  export const filter = (filter: $Object.Filter, value: $Object) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.on?.["DefaultPartial"] !== undefined &&
-      $DefaultPartial.is$DefaultPartial(value)
-    ) {
-      if (!$DefaultPartial.filter(filter.on["DefaultPartial"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["NamedDefaultPartial"] !== undefined &&
-      $NamedDefaultPartial.is$NamedDefaultPartial(value)
-    ) {
-      if (
-        !$NamedDefaultPartial.filter(filter.on["NamedDefaultPartial"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["AnonymousTypesStruct"] !== undefined &&
-      AnonymousTypesStruct.isAnonymousTypesStruct(value)
-    ) {
-      if (
-        !AnonymousTypesStruct.filter(filter.on["AnonymousTypesStruct"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["BlankNodeIdentifierStruct"] !== undefined &&
-      BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(value)
-    ) {
-      if (
-        !BlankNodeIdentifierStruct.filter(
-          filter.on["BlankNodeIdentifierStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["BlankNodeOrIriIdentifierStruct"] !== undefined &&
-      BlankNodeOrIriIdentifierStruct.isBlankNodeOrIriIdentifierStruct(value)
-    ) {
-      if (
-        !BlankNodeOrIriIdentifierStruct.filter(
-          filter.on["BlankNodeOrIriIdentifierStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["ClassConstraintsStruct"] !== undefined &&
-      ClassConstraintsStruct.isClassConstraintsStruct(value)
-    ) {
-      if (
-        !ClassConstraintsStruct.filter(
-          filter.on["ClassConstraintsStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["ConvertibleTypesStruct"] !== undefined &&
-      ConvertibleTypesStruct.isConvertibleTypesStruct(value)
-    ) {
-      if (
-        !ConvertibleTypesStruct.filter(
-          filter.on["ConvertibleTypesStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["DatatypeDiscriminatedUnionsStruct"] !== undefined &&
-      DatatypeDiscriminatedUnionsStruct.isDatatypeDiscriminatedUnionsStruct(
-        value,
-      )
-    ) {
-      if (
-        !DatatypeDiscriminatedUnionsStruct.filter(
-          filter.on["DatatypeDiscriminatedUnionsStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["DefaultValuesStruct"] !== undefined &&
-      DefaultValuesStruct.isDefaultValuesStruct(value)
-    ) {
-      if (
-        !DefaultValuesStruct.filter(filter.on["DefaultValuesStruct"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["DirectRecursiveStruct"] !== undefined &&
-      DirectRecursiveStruct.isDirectRecursiveStruct(value)
-    ) {
-      if (
-        !DirectRecursiveStruct.filter(filter.on["DirectRecursiveStruct"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["DiscriminatedUnionMember1"] !== undefined &&
-      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)
-    ) {
-      if (
-        !DiscriminatedUnionMember1.filter(
-          filter.on["DiscriminatedUnionMember1"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["DiscriminatedUnionMember2"] !== undefined &&
-      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)
-    ) {
-      if (
-        !DiscriminatedUnionMember2.filter(
-          filter.on["DiscriminatedUnionMember2"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["DisplayStruct"] !== undefined &&
-      DisplayStruct.isDisplayStruct(value)
-    ) {
-      if (!DisplayStruct.filter(filter.on["DisplayStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["ExplicitFromToRdfTypesStruct"] !== undefined &&
-      ExplicitFromToRdfTypesStruct.isExplicitFromToRdfTypesStruct(value)
-    ) {
-      if (
-        !ExplicitFromToRdfTypesStruct.filter(
-          filter.on["ExplicitFromToRdfTypesStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["ExplicitRdfTypeStruct"] !== undefined &&
-      ExplicitRdfTypeStruct.isExplicitRdfTypeStruct(value)
-    ) {
-      if (
-        !ExplicitRdfTypeStruct.filter(filter.on["ExplicitRdfTypeStruct"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["FlattenDiscriminatedUnionMember3"] !== undefined &&
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
-    ) {
-      if (
-        !FlattenDiscriminatedUnionMember3.filter(
-          filter.on["FlattenDiscriminatedUnionMember3"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["HasValuesStruct"] !== undefined &&
-      HasValuesStruct.isHasValuesStruct(value)
-    ) {
-      if (!HasValuesStruct.filter(filter.on["HasValuesStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["IgnoredPropertiesStruct"] !== undefined &&
-      IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)
-    ) {
-      if (
-        !IgnoredPropertiesStruct.filter(
-          filter.on["IgnoredPropertiesStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["IndirectRecursiveStruct"] !== undefined &&
-      IndirectRecursiveStruct.isIndirectRecursiveStruct(value)
-    ) {
-      if (
-        !IndirectRecursiveStruct.filter(
-          filter.on["IndirectRecursiveStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["IndirectRecursiveStructHelper"] !== undefined &&
-      IndirectRecursiveStructHelper.isIndirectRecursiveStructHelper(value)
-    ) {
-      if (
-        !IndirectRecursiveStructHelper.filter(
-          filter.on["IndirectRecursiveStructHelper"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["InIdentifierStruct"] !== undefined &&
-      InIdentifierStruct.isInIdentifierStruct(value)
-    ) {
-      if (!InIdentifierStruct.filter(filter.on["InIdentifierStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["InPropertiesStruct"] !== undefined &&
-      InPropertiesStruct.isInPropertiesStruct(value)
-    ) {
-      if (!InPropertiesStruct.filter(filter.on["InPropertiesStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["IriIdentifierStruct"] !== undefined &&
-      IriIdentifierStruct.isIriIdentifierStruct(value)
-    ) {
-      if (
-        !IriIdentifierStruct.filter(filter.on["IriIdentifierStruct"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["LanguageInStruct"] !== undefined &&
-      LanguageInStruct.isLanguageInStruct(value)
-    ) {
-      if (!LanguageInStruct.filter(filter.on["LanguageInStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["LazilyResolvedBlankNodeOrIriIdentifierStruct"] !==
-        undefined &&
-      LazilyResolvedBlankNodeOrIriIdentifierStruct.isLazilyResolvedBlankNodeOrIriIdentifierStruct(
-        value,
-      )
-    ) {
-      if (
-        !LazilyResolvedBlankNodeOrIriIdentifierStruct.filter(
-          filter.on["LazilyResolvedBlankNodeOrIriIdentifierStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["LazilyResolvedDiscriminatedUnionMember1"] !== undefined &&
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      if (
-        !LazilyResolvedDiscriminatedUnionMember1.filter(
-          filter.on["LazilyResolvedDiscriminatedUnionMember1"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["LazilyResolvedDiscriminatedUnionMember2"] !== undefined &&
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      if (
-        !LazilyResolvedDiscriminatedUnionMember2.filter(
-          filter.on["LazilyResolvedDiscriminatedUnionMember2"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["LazilyResolvedIriIdentifierStruct"] !== undefined &&
-      LazilyResolvedIriIdentifierStruct.isLazilyResolvedIriIdentifierStruct(
-        value,
-      )
-    ) {
-      if (
-        !LazilyResolvedIriIdentifierStruct.filter(
-          filter.on["LazilyResolvedIriIdentifierStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["LazyPropertiesStruct"] !== undefined &&
-      LazyPropertiesStruct.isLazyPropertiesStruct(value)
-    ) {
-      if (
-        !LazyPropertiesStruct.filter(filter.on["LazyPropertiesStruct"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["ListSetsStruct"] !== undefined &&
-      ListSetsStruct.isListSetsStruct(value)
-    ) {
-      if (!ListSetsStruct.filter(filter.on["ListSetsStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["ListsStruct"] !== undefined &&
-      ListsStruct.isListsStruct(value)
-    ) {
-      if (!ListsStruct.filter(filter.on["ListsStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["MutablePropertiesStruct"] !== undefined &&
-      MutablePropertiesStruct.isMutablePropertiesStruct(value)
-    ) {
-      if (
-        !MutablePropertiesStruct.filter(
-          filter.on["MutablePropertiesStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["NamedTypesStruct"] !== undefined &&
-      NamedTypesStruct.isNamedTypesStruct(value)
-    ) {
-      if (!NamedTypesStruct.filter(filter.on["NamedTypesStruct"], value)) {
-        return false;
-      }
-    }
-    if (filter.on?.["NewName"] !== undefined && NewName.isNewName(value)) {
-      if (!NewName.filter(filter.on["NewName"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["NodeKindsStruct"] !== undefined &&
-      NodeKindsStruct.isNodeKindsStruct(value)
-    ) {
-      if (!NodeKindsStruct.filter(filter.on["NodeKindsStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["NonClassStruct"] !== undefined &&
-      NonClassStruct.isNonClassStruct(value)
-    ) {
-      if (!NonClassStruct.filter(filter.on["NonClassStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["NoRdfTypeDiscriminatedUnionMember1"] !== undefined &&
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      if (
-        !NoRdfTypeDiscriminatedUnionMember1.filter(
-          filter.on["NoRdfTypeDiscriminatedUnionMember1"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["NoRdfTypeDiscriminatedUnionMember2"] !== undefined &&
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      if (
-        !NoRdfTypeDiscriminatedUnionMember2.filter(
-          filter.on["NoRdfTypeDiscriminatedUnionMember2"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["NumericsStruct"] !== undefined &&
-      NumericsStruct.isNumericsStruct(value)
-    ) {
-      if (!NumericsStruct.filter(filter.on["NumericsStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["OrderedStruct"] !== undefined &&
-      OrderedStruct.isOrderedStruct(value)
-    ) {
-      if (!OrderedStruct.filter(filter.on["OrderedStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["PartialDiscriminatedUnionMember1"] !== undefined &&
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
-    ) {
-      if (
-        !PartialDiscriminatedUnionMember1.filter(
-          filter.on["PartialDiscriminatedUnionMember1"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["PartialDiscriminatedUnionMember2"] !== undefined &&
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
-    ) {
-      if (
-        !PartialDiscriminatedUnionMember2.filter(
-          filter.on["PartialDiscriminatedUnionMember2"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["PartialStruct"] !== undefined &&
-      PartialStruct.isPartialStruct(value)
-    ) {
-      if (!PartialStruct.filter(filter.on["PartialStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["PropertyCardinalitiesStruct"] !== undefined &&
-      PropertyCardinalitiesStruct.isPropertyCardinalitiesStruct(value)
-    ) {
-      if (
-        !PropertyCardinalitiesStruct.filter(
-          filter.on["PropertyCardinalitiesStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["PropertyNamesStruct"] !== undefined &&
-      PropertyNamesStruct.isPropertyNamesStruct(value)
-    ) {
-      if (
-        !PropertyNamesStruct.filter(filter.on["PropertyNamesStruct"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["PropertyPathsStruct"] !== undefined &&
-      PropertyPathsStruct.isPropertyPathsStruct(value)
-    ) {
-      if (
-        !PropertyPathsStruct.filter(filter.on["PropertyPathsStruct"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["RecursiveDiscriminatedUnionMember1"] !== undefined &&
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      if (
-        !RecursiveDiscriminatedUnionMember1.filter(
-          filter.on["RecursiveDiscriminatedUnionMember1"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["RecursiveDiscriminatedUnionMember2"] !== undefined &&
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      if (
-        !RecursiveDiscriminatedUnionMember2.filter(
-          filter.on["RecursiveDiscriminatedUnionMember2"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["TargetClassStruct"] !== undefined &&
-      TargetClassStruct.isTargetClassStruct(value)
-    ) {
-      if (!TargetClassStruct.filter(filter.on["TargetClassStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["TermsStruct"] !== undefined &&
-      TermsStruct.isTermsStruct(value)
-    ) {
-      if (!TermsStruct.filter(filter.on["TermsStruct"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["UnionDiscriminantsStruct"] !== undefined &&
-      UnionDiscriminantsStruct.isUnionDiscriminantsStruct(value)
-    ) {
-      if (
-        !UnionDiscriminantsStruct.filter(
-          filter.on["UnionDiscriminantsStruct"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly DefaultPartial?: $DefaultPartial.Filter;
-      readonly NamedDefaultPartial?: $NamedDefaultPartial.Filter;
-      readonly AnonymousTypesStruct?: AnonymousTypesStruct.Filter;
-      readonly BlankNodeIdentifierStruct?: BlankNodeIdentifierStruct.Filter;
-      readonly BlankNodeOrIriIdentifierStruct?: BlankNodeOrIriIdentifierStruct.Filter;
-      readonly ClassConstraintsStruct?: ClassConstraintsStruct.Filter;
-      readonly ConvertibleTypesStruct?: ConvertibleTypesStruct.Filter;
-      readonly DatatypeDiscriminatedUnionsStruct?: DatatypeDiscriminatedUnionsStruct.Filter;
-      readonly DefaultValuesStruct?: DefaultValuesStruct.Filter;
-      readonly DirectRecursiveStruct?: DirectRecursiveStruct.Filter;
-      readonly DiscriminatedUnionMember1?: DiscriminatedUnionMember1.Filter;
-      readonly DiscriminatedUnionMember2?: DiscriminatedUnionMember2.Filter;
-      readonly DisplayStruct?: DisplayStruct.Filter;
-      readonly ExplicitFromToRdfTypesStruct?: ExplicitFromToRdfTypesStruct.Filter;
-      readonly ExplicitRdfTypeStruct?: ExplicitRdfTypeStruct.Filter;
-      readonly FlattenDiscriminatedUnionMember3?: FlattenDiscriminatedUnionMember3.Filter;
-      readonly HasValuesStruct?: HasValuesStruct.Filter;
-      readonly IgnoredPropertiesStruct?: IgnoredPropertiesStruct.Filter;
-      readonly IndirectRecursiveStruct?: IndirectRecursiveStruct.Filter;
-      readonly IndirectRecursiveStructHelper?: IndirectRecursiveStructHelper.Filter;
-      readonly InIdentifierStruct?: InIdentifierStruct.Filter;
-      readonly InPropertiesStruct?: InPropertiesStruct.Filter;
-      readonly IriIdentifierStruct?: IriIdentifierStruct.Filter;
-      readonly LanguageInStruct?: LanguageInStruct.Filter;
-      readonly LazilyResolvedBlankNodeOrIriIdentifierStruct?: LazilyResolvedBlankNodeOrIriIdentifierStruct.Filter;
-      readonly LazilyResolvedDiscriminatedUnionMember1?: LazilyResolvedDiscriminatedUnionMember1.Filter;
-      readonly LazilyResolvedDiscriminatedUnionMember2?: LazilyResolvedDiscriminatedUnionMember2.Filter;
-      readonly LazilyResolvedIriIdentifierStruct?: LazilyResolvedIriIdentifierStruct.Filter;
-      readonly LazyPropertiesStruct?: LazyPropertiesStruct.Filter;
-      readonly ListSetsStruct?: ListSetsStruct.Filter;
-      readonly ListsStruct?: ListsStruct.Filter;
-      readonly MutablePropertiesStruct?: MutablePropertiesStruct.Filter;
-      readonly NamedTypesStruct?: NamedTypesStruct.Filter;
-      readonly NewName?: NewName.Filter;
-      readonly NodeKindsStruct?: NodeKindsStruct.Filter;
-      readonly NonClassStruct?: NonClassStruct.Filter;
-      readonly NoRdfTypeDiscriminatedUnionMember1?: NoRdfTypeDiscriminatedUnionMember1.Filter;
-      readonly NoRdfTypeDiscriminatedUnionMember2?: NoRdfTypeDiscriminatedUnionMember2.Filter;
-      readonly NumericsStruct?: NumericsStruct.Filter;
-      readonly OrderedStruct?: OrderedStruct.Filter;
-      readonly PartialDiscriminatedUnionMember1?: PartialDiscriminatedUnionMember1.Filter;
-      readonly PartialDiscriminatedUnionMember2?: PartialDiscriminatedUnionMember2.Filter;
-      readonly PartialStruct?: PartialStruct.Filter;
-      readonly PropertyCardinalitiesStruct?: PropertyCardinalitiesStruct.Filter;
-      readonly PropertyNamesStruct?: PropertyNamesStruct.Filter;
-      readonly PropertyPathsStruct?: PropertyPathsStruct.Filter;
-      readonly RecursiveDiscriminatedUnionMember1?: RecursiveDiscriminatedUnionMember1.Filter;
-      readonly RecursiveDiscriminatedUnionMember2?: RecursiveDiscriminatedUnionMember2.Filter;
-      readonly TargetClassStruct?: TargetClassStruct.Filter;
-      readonly TermsStruct?: TermsStruct.Filter;
-      readonly UnionDiscriminantsStruct?: UnionDiscriminantsStruct.Filter;
-    };
-  };
-
-  export function focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: $Object.Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...$DefaultPartial
-        .focusSparqlConstructTriples({
-          filter: filter?.on?.DefaultPartial,
-          focusIdentifier,
-          ignoreRdfType: false,
-          variablePrefix: `${variablePrefix}DefaultPartial`,
-        })
-        .concat(),
-      ...$NamedDefaultPartial
-        .focusSparqlConstructTriples({
-          filter: filter?.on?.NamedDefaultPartial,
-          focusIdentifier,
-          ignoreRdfType: false,
-          variablePrefix: `${variablePrefix}NamedDefaultPartial`,
-        })
-        .concat(),
-      ...AnonymousTypesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.AnonymousTypesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}AnonymousTypesStruct`,
-      }).concat(),
-      ...BlankNodeIdentifierStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.BlankNodeIdentifierStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BlankNodeIdentifierStruct`,
-      }).concat(),
-      ...BlankNodeOrIriIdentifierStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.BlankNodeOrIriIdentifierStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierStruct`,
-      }).concat(),
-      ...ClassConstraintsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.ClassConstraintsStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ClassConstraintsStruct`,
-      }).concat(),
-      ...ConvertibleTypesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.ConvertibleTypesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ConvertibleTypesStruct`,
-      }).concat(),
-      ...DatatypeDiscriminatedUnionsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.DatatypeDiscriminatedUnionsStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DatatypeDiscriminatedUnionsStruct`,
-      }).concat(),
-      ...DefaultValuesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.DefaultValuesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DefaultValuesStruct`,
-      }).concat(),
-      ...DirectRecursiveStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.DirectRecursiveStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DirectRecursiveStruct`,
-      }).concat(),
-      ...DiscriminatedUnionMember1.focusSparqlConstructTriples({
-        filter: filter?.on?.DiscriminatedUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DiscriminatedUnionMember1`,
-      }).concat(),
-      ...DiscriminatedUnionMember2.focusSparqlConstructTriples({
-        filter: filter?.on?.DiscriminatedUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DiscriminatedUnionMember2`,
-      }).concat(),
-      ...DisplayStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.DisplayStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DisplayStruct`,
-      }).concat(),
-      ...ExplicitFromToRdfTypesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.ExplicitFromToRdfTypesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ExplicitFromToRdfTypesStruct`,
-      }).concat(),
-      ...ExplicitRdfTypeStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.ExplicitRdfTypeStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ExplicitRdfTypeStruct`,
-      }).concat(),
-      ...FlattenDiscriminatedUnionMember3.focusSparqlConstructTriples({
-        filter: filter?.on?.FlattenDiscriminatedUnionMember3,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}FlattenDiscriminatedUnionMember3`,
-      }).concat(),
-      ...HasValuesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.HasValuesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}HasValuesStruct`,
-      }).concat(),
-      ...IgnoredPropertiesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.IgnoredPropertiesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IgnoredPropertiesStruct`,
-      }).concat(),
-      ...IndirectRecursiveStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.IndirectRecursiveStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IndirectRecursiveStruct`,
-      }).concat(),
-      ...IndirectRecursiveStructHelper.focusSparqlConstructTriples({
-        filter: filter?.on?.IndirectRecursiveStructHelper,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IndirectRecursiveStructHelper`,
-      }).concat(),
-      ...InIdentifierStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.InIdentifierStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}InIdentifierStruct`,
-      }).concat(),
-      ...InPropertiesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.InPropertiesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}InPropertiesStruct`,
-      }).concat(),
-      ...IriIdentifierStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.IriIdentifierStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IriIdentifierStruct`,
-      }).concat(),
-      ...LanguageInStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.LanguageInStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LanguageInStruct`,
-      }).concat(),
-      ...LazilyResolvedBlankNodeOrIriIdentifierStruct.focusSparqlConstructTriples(
-        {
-          filter: filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierStruct,
-          focusIdentifier,
-          ignoreRdfType: false,
-          variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierStruct`,
+        propertyName: "type",
+        propertyValuesUnequal: {
+          left: typeof left,
+          right: typeof right,
+          type: "boolean" as const,
         },
-      ).concat(),
-      ...LazilyResolvedDiscriminatedUnionMember1.focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedDiscriminatedUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedDiscriminatedUnionMember1`,
-      }).concat(),
-      ...LazilyResolvedDiscriminatedUnionMember2.focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedDiscriminatedUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedDiscriminatedUnionMember2`,
-      }).concat(),
-      ...LazilyResolvedIriIdentifierStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedIriIdentifierStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierStruct`,
-      }).concat(),
-      ...LazyPropertiesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.LazyPropertiesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazyPropertiesStruct`,
-      }).concat(),
-      ...ListSetsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.ListSetsStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ListSetsStruct`,
-      }).concat(),
-      ...ListsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.ListsStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ListsStruct`,
-      }).concat(),
-      ...MutablePropertiesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.MutablePropertiesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}MutablePropertiesStruct`,
-      }).concat(),
-      ...NamedTypesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.NamedTypesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NamedTypesStruct`,
-      }).concat(),
-      ...NewName.focusSparqlConstructTriples({
-        filter: filter?.on?.NewName,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NewName`,
-      }).concat(),
-      ...NodeKindsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.NodeKindsStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NodeKindsStruct`,
-      }).concat(),
-      ...NonClassStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.NonClassStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NonClassStruct`,
-      }).concat(),
-      ...NoRdfTypeDiscriminatedUnionMember1.focusSparqlConstructTriples({
-        filter: filter?.on?.NoRdfTypeDiscriminatedUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NoRdfTypeDiscriminatedUnionMember1`,
-      }).concat(),
-      ...NoRdfTypeDiscriminatedUnionMember2.focusSparqlConstructTriples({
-        filter: filter?.on?.NoRdfTypeDiscriminatedUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NoRdfTypeDiscriminatedUnionMember2`,
-      }).concat(),
-      ...NumericsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.NumericsStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NumericsStruct`,
-      }).concat(),
-      ...OrderedStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.OrderedStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}OrderedStruct`,
-      }).concat(),
-      ...PartialDiscriminatedUnionMember1.focusSparqlConstructTriples({
-        filter: filter?.on?.PartialDiscriminatedUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialDiscriminatedUnionMember1`,
-      }).concat(),
-      ...PartialDiscriminatedUnionMember2.focusSparqlConstructTriples({
-        filter: filter?.on?.PartialDiscriminatedUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialDiscriminatedUnionMember2`,
-      }).concat(),
-      ...PartialStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.PartialStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialStruct`,
-      }).concat(),
-      ...PropertyCardinalitiesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.PropertyCardinalitiesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PropertyCardinalitiesStruct`,
-      }).concat(),
-      ...PropertyNamesStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.PropertyNamesStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PropertyNamesStruct`,
-      }).concat(),
-      ...PropertyPathsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.PropertyPathsStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PropertyPathsStruct`,
-      }).concat(),
-      ...RecursiveDiscriminatedUnionMember1.focusSparqlConstructTriples({
-        filter: filter?.on?.RecursiveDiscriminatedUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}RecursiveDiscriminatedUnionMember1`,
-      }).concat(),
-      ...RecursiveDiscriminatedUnionMember2.focusSparqlConstructTriples({
-        filter: filter?.on?.RecursiveDiscriminatedUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}RecursiveDiscriminatedUnionMember2`,
-      }).concat(),
-      ...TargetClassStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.TargetClassStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}TargetClassStruct`,
-      }).concat(),
-      ...TermsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.TermsStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}TermsStruct`,
-      }).concat(),
-      ...UnionDiscriminantsStruct.focusSparqlConstructTriples({
-        filter: filter?.on?.UnionDiscriminantsStruct,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}UnionDiscriminantsStruct`,
-      }).concat(),
-    ];
+        type: "property" as const,
+      });
+    }
+
+    switch (left.$type) {
+      case "DefaultPartial":
+        return $DefaultPartial.equals(left, right as $DefaultPartial);
+      case "NamedDefaultPartial":
+        return $NamedDefaultPartial.equals(left, right as $NamedDefaultPartial);
+      case "AnonymousTypesStruct":
+        return AnonymousTypesStruct.equals(left, right as AnonymousTypesStruct);
+      case "BlankNodeIdentifierStruct":
+        return BlankNodeIdentifierStruct.equals(
+          left,
+          right as BlankNodeIdentifierStruct,
+        );
+      case "BlankNodeOrIriIdentifierStruct":
+        return BlankNodeOrIriIdentifierStruct.equals(
+          left,
+          right as BlankNodeOrIriIdentifierStruct,
+        );
+      case "ClassConstraintsStruct":
+        return ClassConstraintsStruct.equals(
+          left,
+          right as ClassConstraintsStruct,
+        );
+      case "ConvertibleTypesStruct":
+        return ConvertibleTypesStruct.equals(
+          left,
+          right as ConvertibleTypesStruct,
+        );
+      case "DatatypeDiscriminatedUnionsStruct":
+        return DatatypeDiscriminatedUnionsStruct.equals(
+          left,
+          right as DatatypeDiscriminatedUnionsStruct,
+        );
+      case "DefaultValuesStruct":
+        return DefaultValuesStruct.equals(left, right as DefaultValuesStruct);
+      case "DirectRecursiveStruct":
+        return DirectRecursiveStruct.equals(
+          left,
+          right as DirectRecursiveStruct,
+        );
+      case "DiscriminatedUnionMember1":
+        return DiscriminatedUnionMember1.equals(
+          left,
+          right as DiscriminatedUnionMember1,
+        );
+      case "DiscriminatedUnionMember2":
+        return DiscriminatedUnionMember2.equals(
+          left,
+          right as DiscriminatedUnionMember2,
+        );
+      case "DisplayStruct":
+        return DisplayStruct.equals(left, right as DisplayStruct);
+      case "ExplicitFromToRdfTypesStruct":
+        return ExplicitFromToRdfTypesStruct.equals(
+          left,
+          right as ExplicitFromToRdfTypesStruct,
+        );
+      case "ExplicitRdfTypeStruct":
+        return ExplicitRdfTypeStruct.equals(
+          left,
+          right as ExplicitRdfTypeStruct,
+        );
+      case "FlattenDiscriminatedUnionMember3":
+        return FlattenDiscriminatedUnionMember3.equals(
+          left,
+          right as FlattenDiscriminatedUnionMember3,
+        );
+      case "HasValuesStruct":
+        return HasValuesStruct.equals(left, right as HasValuesStruct);
+      case "IgnoredPropertiesStruct":
+        return IgnoredPropertiesStruct.equals(
+          left,
+          right as IgnoredPropertiesStruct,
+        );
+      case "IndirectRecursiveStruct":
+        return IndirectRecursiveStruct.equals(
+          left,
+          right as IndirectRecursiveStruct,
+        );
+      case "IndirectRecursiveStructHelper":
+        return IndirectRecursiveStructHelper.equals(
+          left,
+          right as IndirectRecursiveStructHelper,
+        );
+      case "InIdentifierStruct":
+        return InIdentifierStruct.equals(left, right as InIdentifierStruct);
+      case "InPropertiesStruct":
+        return InPropertiesStruct.equals(left, right as InPropertiesStruct);
+      case "IriIdentifierStruct":
+        return IriIdentifierStruct.equals(left, right as IriIdentifierStruct);
+      case "LanguageInStruct":
+        return LanguageInStruct.equals(left, right as LanguageInStruct);
+      case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
+        return LazilyResolvedBlankNodeOrIriIdentifierStruct.equals(
+          left,
+          right as LazilyResolvedBlankNodeOrIriIdentifierStruct,
+        );
+      case "LazilyResolvedDiscriminatedUnionMember1":
+        return LazilyResolvedDiscriminatedUnionMember1.equals(
+          left,
+          right as LazilyResolvedDiscriminatedUnionMember1,
+        );
+      case "LazilyResolvedDiscriminatedUnionMember2":
+        return LazilyResolvedDiscriminatedUnionMember2.equals(
+          left,
+          right as LazilyResolvedDiscriminatedUnionMember2,
+        );
+      case "LazilyResolvedIriIdentifierStruct":
+        return LazilyResolvedIriIdentifierStruct.equals(
+          left,
+          right as LazilyResolvedIriIdentifierStruct,
+        );
+      case "LazyPropertiesStruct":
+        return LazyPropertiesStruct.equals(left, right as LazyPropertiesStruct);
+      case "ListSetsStruct":
+        return ListSetsStruct.equals(left, right as ListSetsStruct);
+      case "ListsStruct":
+        return ListsStruct.equals(left, right as ListsStruct);
+      case "MutablePropertiesStruct":
+        return MutablePropertiesStruct.equals(
+          left,
+          right as MutablePropertiesStruct,
+        );
+      case "NamedTypesStruct":
+        return NamedTypesStruct.equals(left, right as NamedTypesStruct);
+      case "NewName":
+        return NewName.equals(left, right as NewName);
+      case "NodeKindsStruct":
+        return NodeKindsStruct.equals(left, right as NodeKindsStruct);
+      case "NonClassStruct":
+        return NonClassStruct.equals(left, right as NonClassStruct);
+      case "NoRdfTypeDiscriminatedUnionMember1":
+        return NoRdfTypeDiscriminatedUnionMember1.equals(
+          left,
+          right as NoRdfTypeDiscriminatedUnionMember1,
+        );
+      case "NoRdfTypeDiscriminatedUnionMember2":
+        return NoRdfTypeDiscriminatedUnionMember2.equals(
+          left,
+          right as NoRdfTypeDiscriminatedUnionMember2,
+        );
+      case "NumericsStruct":
+        return NumericsStruct.equals(left, right as NumericsStruct);
+      case "OrderedStruct":
+        return OrderedStruct.equals(left, right as OrderedStruct);
+      case "PartialDiscriminatedUnionMember1":
+        return PartialDiscriminatedUnionMember1.equals(
+          left,
+          right as PartialDiscriminatedUnionMember1,
+        );
+      case "PartialDiscriminatedUnionMember2":
+        return PartialDiscriminatedUnionMember2.equals(
+          left,
+          right as PartialDiscriminatedUnionMember2,
+        );
+      case "PartialStruct":
+        return PartialStruct.equals(left, right as PartialStruct);
+      case "PropertyCardinalitiesStruct":
+        return PropertyCardinalitiesStruct.equals(
+          left,
+          right as PropertyCardinalitiesStruct,
+        );
+      case "PropertyNamesStruct":
+        return PropertyNamesStruct.equals(left, right as PropertyNamesStruct);
+      case "PropertyPathsStruct":
+        return PropertyPathsStruct.equals(left, right as PropertyPathsStruct);
+      case "RecursiveDiscriminatedUnionMember1":
+        return RecursiveDiscriminatedUnionMember1.equals(
+          left,
+          right as RecursiveDiscriminatedUnionMember1,
+        );
+      case "RecursiveDiscriminatedUnionMember2":
+        return RecursiveDiscriminatedUnionMember2.equals(
+          left,
+          right as RecursiveDiscriminatedUnionMember2,
+        );
+      case "TargetClassStruct":
+        return TargetClassStruct.equals(left, right as TargetClassStruct);
+      case "TermsStruct":
+        return TermsStruct.equals(left, right as TermsStruct);
+      case "UnionDiscriminantsStruct":
+        return UnionDiscriminantsStruct.equals(
+          left,
+          right as UnionDiscriminantsStruct,
+        );
+      default:
+        left satisfies never;
+        throw new Error("should never reach this point");
+    }
   }
 
-  export function focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: $Object.Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: $DefaultPartial
-            .focusSparqlWherePatterns({
-              filter: filter?.on?.DefaultPartial,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}DefaultPartial`,
-            })
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: $NamedDefaultPartial
-            .focusSparqlWherePatterns({
-              filter: filter?.on?.NamedDefaultPartial,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}NamedDefaultPartial`,
-            })
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: AnonymousTypesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.AnonymousTypesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}AnonymousTypesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: BlankNodeIdentifierStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.BlankNodeIdentifierStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}BlankNodeIdentifierStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: BlankNodeOrIriIdentifierStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.BlankNodeOrIriIdentifierStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ClassConstraintsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.ClassConstraintsStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ClassConstraintsStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ConvertibleTypesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.ConvertibleTypesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ConvertibleTypesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: DatatypeDiscriminatedUnionsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.DatatypeDiscriminatedUnionsStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}DatatypeDiscriminatedUnionsStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: DefaultValuesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.DefaultValuesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}DefaultValuesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: DirectRecursiveStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.DirectRecursiveStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}DirectRecursiveStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: DiscriminatedUnionMember1.focusSparqlWherePatterns({
-            filter: filter?.on?.DiscriminatedUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}DiscriminatedUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: DiscriminatedUnionMember2.focusSparqlWherePatterns({
-            filter: filter?.on?.DiscriminatedUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}DiscriminatedUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: DisplayStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.DisplayStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}DisplayStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ExplicitFromToRdfTypesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.ExplicitFromToRdfTypesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ExplicitFromToRdfTypesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ExplicitRdfTypeStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.ExplicitRdfTypeStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ExplicitRdfTypeStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: FlattenDiscriminatedUnionMember3.focusSparqlWherePatterns({
-            filter: filter?.on?.FlattenDiscriminatedUnionMember3,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}FlattenDiscriminatedUnionMember3`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: HasValuesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.HasValuesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}HasValuesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IgnoredPropertiesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.IgnoredPropertiesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IgnoredPropertiesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IndirectRecursiveStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.IndirectRecursiveStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IndirectRecursiveStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IndirectRecursiveStructHelper.focusSparqlWherePatterns({
-            filter: filter?.on?.IndirectRecursiveStructHelper,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IndirectRecursiveStructHelper`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: InIdentifierStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.InIdentifierStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}InIdentifierStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: InPropertiesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.InPropertiesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}InPropertiesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IriIdentifierStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.IriIdentifierStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IriIdentifierStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: LanguageInStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.LanguageInStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LanguageInStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            LazilyResolvedBlankNodeOrIriIdentifierStruct.focusSparqlWherePatterns(
-              {
-                filter:
-                  filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierStruct,
-                focusIdentifier,
-                ignoreRdfType: false,
-                preferredLanguages,
-                variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierStruct`,
-              },
-            ).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            LazilyResolvedDiscriminatedUnionMember1.focusSparqlWherePatterns({
-              filter: filter?.on?.LazilyResolvedDiscriminatedUnionMember1,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}LazilyResolvedDiscriminatedUnionMember1`,
-            }).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            LazilyResolvedDiscriminatedUnionMember2.focusSparqlWherePatterns({
-              filter: filter?.on?.LazilyResolvedDiscriminatedUnionMember2,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}LazilyResolvedDiscriminatedUnionMember2`,
-            }).concat(),
-          type: "group",
-        },
-        {
-          patterns: LazilyResolvedIriIdentifierStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.LazilyResolvedIriIdentifierStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: LazyPropertiesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.LazyPropertiesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LazyPropertiesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ListSetsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.ListSetsStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ListSetsStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ListsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.ListsStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ListsStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: MutablePropertiesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.MutablePropertiesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}MutablePropertiesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NamedTypesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.NamedTypesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NamedTypesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NewName.focusSparqlWherePatterns({
-            filter: filter?.on?.NewName,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NewName`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NodeKindsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.NodeKindsStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NodeKindsStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NonClassStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.NonClassStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NonClassStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NoRdfTypeDiscriminatedUnionMember1.focusSparqlWherePatterns(
-            {
-              filter: filter?.on?.NoRdfTypeDiscriminatedUnionMember1,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}NoRdfTypeDiscriminatedUnionMember1`,
-            },
-          ).concat(),
-          type: "group",
-        },
-        {
-          patterns: NoRdfTypeDiscriminatedUnionMember2.focusSparqlWherePatterns(
-            {
-              filter: filter?.on?.NoRdfTypeDiscriminatedUnionMember2,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}NoRdfTypeDiscriminatedUnionMember2`,
-            },
-          ).concat(),
-          type: "group",
-        },
-        {
-          patterns: NumericsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.NumericsStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NumericsStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: OrderedStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.OrderedStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}OrderedStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialDiscriminatedUnionMember1.focusSparqlWherePatterns({
-            filter: filter?.on?.PartialDiscriminatedUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialDiscriminatedUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialDiscriminatedUnionMember2.focusSparqlWherePatterns({
-            filter: filter?.on?.PartialDiscriminatedUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialDiscriminatedUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.PartialStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PropertyCardinalitiesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.PropertyCardinalitiesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PropertyCardinalitiesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PropertyNamesStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.PropertyNamesStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PropertyNamesStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PropertyPathsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.PropertyPathsStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PropertyPathsStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: RecursiveDiscriminatedUnionMember1.focusSparqlWherePatterns(
-            {
-              filter: filter?.on?.RecursiveDiscriminatedUnionMember1,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}RecursiveDiscriminatedUnionMember1`,
-            },
-          ).concat(),
-          type: "group",
-        },
-        {
-          patterns: RecursiveDiscriminatedUnionMember2.focusSparqlWherePatterns(
-            {
-              filter: filter?.on?.RecursiveDiscriminatedUnionMember2,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}RecursiveDiscriminatedUnionMember2`,
-            },
-          ).concat(),
-          type: "group",
-        },
-        {
-          patterns: TargetClassStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.TargetClassStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}TargetClassStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: TermsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.TermsStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}TermsStruct`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: UnionDiscriminantsStruct.focusSparqlWherePatterns({
-            filter: filter?.on?.UnionDiscriminantsStruct,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}UnionDiscriminantsStruct`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const fromJson = (value: $Object.Json): Either<Error, $Object> => {
-    if (value["$type"] === "DefaultPartial") {
-      return $DefaultPartial
-        .fromJson(value as $DefaultPartial.Json)
-        .map((value) => value);
-    }
-    if (value["$type"] === "NamedDefaultPartial") {
-      return $NamedDefaultPartial
-        .fromJson(value as $NamedDefaultPartial.Json)
-        .map((value) => value);
-    }
-    if (value["$type"] === "AnonymousTypesStruct") {
-      return AnonymousTypesStruct.fromJson(
-        value as AnonymousTypesStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "BlankNodeIdentifierStruct") {
-      return BlankNodeIdentifierStruct.fromJson(
-        value as BlankNodeIdentifierStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "BlankNodeOrIriIdentifierStruct") {
-      return BlankNodeOrIriIdentifierStruct.fromJson(
-        value as BlankNodeOrIriIdentifierStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "ClassConstraintsStruct") {
-      return ClassConstraintsStruct.fromJson(
-        value as ClassConstraintsStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "ConvertibleTypesStruct") {
-      return ConvertibleTypesStruct.fromJson(
-        value as ConvertibleTypesStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "DatatypeDiscriminatedUnionsStruct") {
-      return DatatypeDiscriminatedUnionsStruct.fromJson(
-        value as DatatypeDiscriminatedUnionsStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "DefaultValuesStruct") {
-      return DefaultValuesStruct.fromJson(
-        value as DefaultValuesStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "DirectRecursiveStruct") {
-      return DirectRecursiveStruct.fromJson(
-        value as DirectRecursiveStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "DiscriminatedUnionMember1") {
-      return DiscriminatedUnionMember1.fromJson(
-        value as DiscriminatedUnionMember1.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "DiscriminatedUnionMember2") {
-      return DiscriminatedUnionMember2.fromJson(
-        value as DiscriminatedUnionMember2.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "DisplayStruct") {
-      return DisplayStruct.fromJson(value as DisplayStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "ExplicitFromToRdfTypesStruct") {
-      return ExplicitFromToRdfTypesStruct.fromJson(
-        value as ExplicitFromToRdfTypesStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "ExplicitRdfTypeStruct") {
-      return ExplicitRdfTypeStruct.fromJson(
-        value as ExplicitRdfTypeStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
-      return FlattenDiscriminatedUnionMember3.fromJson(
-        value as FlattenDiscriminatedUnionMember3.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "HasValuesStruct") {
-      return HasValuesStruct.fromJson(value as HasValuesStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "IgnoredPropertiesStruct") {
-      return IgnoredPropertiesStruct.fromJson(
-        value as IgnoredPropertiesStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "IndirectRecursiveStruct") {
-      return IndirectRecursiveStruct.fromJson(
-        value as IndirectRecursiveStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "IndirectRecursiveStructHelper") {
-      return IndirectRecursiveStructHelper.fromJson(
-        value as IndirectRecursiveStructHelper.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "InIdentifierStruct") {
-      return InIdentifierStruct.fromJson(value as InIdentifierStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "InPropertiesStruct") {
-      return InPropertiesStruct.fromJson(value as InPropertiesStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "IriIdentifierStruct") {
-      return IriIdentifierStruct.fromJson(
-        value as IriIdentifierStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "LanguageInStruct") {
-      return LanguageInStruct.fromJson(value as LanguageInStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "LazilyResolvedBlankNodeOrIriIdentifierStruct") {
-      return LazilyResolvedBlankNodeOrIriIdentifierStruct.fromJson(
-        value as LazilyResolvedBlankNodeOrIriIdentifierStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember1") {
-      return LazilyResolvedDiscriminatedUnionMember1.fromJson(
-        value as LazilyResolvedDiscriminatedUnionMember1.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember2") {
-      return LazilyResolvedDiscriminatedUnionMember2.fromJson(
-        value as LazilyResolvedDiscriminatedUnionMember2.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "LazilyResolvedIriIdentifierStruct") {
-      return LazilyResolvedIriIdentifierStruct.fromJson(
-        value as LazilyResolvedIriIdentifierStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "LazyPropertiesStruct") {
-      return LazyPropertiesStruct.fromJson(
-        value as LazyPropertiesStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "ListSetsStruct") {
-      return ListSetsStruct.fromJson(value as ListSetsStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "ListsStruct") {
-      return ListsStruct.fromJson(value as ListsStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "MutablePropertiesStruct") {
-      return MutablePropertiesStruct.fromJson(
-        value as MutablePropertiesStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "NamedTypesStruct") {
-      return NamedTypesStruct.fromJson(value as NamedTypesStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "NewName") {
-      return NewName.fromJson(value as NewName.Json).map((value) => value);
-    }
-    if (value["$type"] === "NodeKindsStruct") {
-      return NodeKindsStruct.fromJson(value as NodeKindsStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "NonClassStruct") {
-      return NonClassStruct.fromJson(value as NonClassStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
-      return NoRdfTypeDiscriminatedUnionMember1.fromJson(
-        value as NoRdfTypeDiscriminatedUnionMember1.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember2") {
-      return NoRdfTypeDiscriminatedUnionMember2.fromJson(
-        value as NoRdfTypeDiscriminatedUnionMember2.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "NumericsStruct") {
-      return NumericsStruct.fromJson(value as NumericsStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "OrderedStruct") {
-      return OrderedStruct.fromJson(value as OrderedStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "PartialDiscriminatedUnionMember1") {
-      return PartialDiscriminatedUnionMember1.fromJson(
-        value as PartialDiscriminatedUnionMember1.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "PartialDiscriminatedUnionMember2") {
-      return PartialDiscriminatedUnionMember2.fromJson(
-        value as PartialDiscriminatedUnionMember2.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "PartialStruct") {
-      return PartialStruct.fromJson(value as PartialStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "PropertyCardinalitiesStruct") {
-      return PropertyCardinalitiesStruct.fromJson(
-        value as PropertyCardinalitiesStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "PropertyNamesStruct") {
-      return PropertyNamesStruct.fromJson(
-        value as PropertyNamesStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "PropertyPathsStruct") {
-      return PropertyPathsStruct.fromJson(
-        value as PropertyPathsStruct.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
-      return RecursiveDiscriminatedUnionMember1.fromJson(
-        value as RecursiveDiscriminatedUnionMember1.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "RecursiveDiscriminatedUnionMember2") {
-      return RecursiveDiscriminatedUnionMember2.fromJson(
-        value as RecursiveDiscriminatedUnionMember2.Json,
-      ).map((value) => value);
-    }
-    if (value["$type"] === "TargetClassStruct") {
-      return TargetClassStruct.fromJson(value as TargetClassStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "TermsStruct") {
-      return TermsStruct.fromJson(value as TermsStruct.Json).map(
-        (value) => value,
-      );
-    }
-    if (value["$type"] === "UnionDiscriminantsStruct") {
-      return UnionDiscriminantsStruct.fromJson(
-        value as UnionDiscriminantsStruct.Json,
-      ).map((value) => value);
-    }
-
-    throw new Error("unable to deserialize JSON");
-  };
-
-  export const fromRdfResource: $FromRdfResourceFunction<$Object> = (
-    resource,
-    options,
-  ) =>
-    (
-      $DefaultPartial.fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, $Object>
-    )
-      .altLazy(
-        () =>
-          $NamedDefaultPartial.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          AnonymousTypesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          BlankNodeIdentifierStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          BlankNodeOrIriIdentifierStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ClassConstraintsStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ConvertibleTypesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          DatatypeDiscriminatedUnionsStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          DefaultValuesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          DirectRecursiveStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          DiscriminatedUnionMember1.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          DiscriminatedUnionMember2.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          DisplayStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ExplicitFromToRdfTypesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ExplicitRdfTypeStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          FlattenDiscriminatedUnionMember3.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          HasValuesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IgnoredPropertiesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IndirectRecursiveStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IndirectRecursiveStructHelper.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          InIdentifierStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          InPropertiesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IriIdentifierStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LanguageInStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfResource(
-            resource,
-            {
-              ...options,
-              ignoreRdfType: false,
-            },
-          ) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedDiscriminatedUnionMember1.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedDiscriminatedUnionMember2.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedIriIdentifierStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazyPropertiesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ListSetsStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ListsStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          MutablePropertiesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NamedTypesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NewName.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NodeKindsStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NonClassStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NoRdfTypeDiscriminatedUnionMember1.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NoRdfTypeDiscriminatedUnionMember2.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NumericsStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          OrderedStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PartialDiscriminatedUnionMember1.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PartialDiscriminatedUnionMember2.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PartialStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyCardinalitiesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyNamesStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyPathsStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          RecursiveDiscriminatedUnionMember1.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          RecursiveDiscriminatedUnionMember2.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          TargetClassStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          TermsStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UnionDiscriminantsStruct.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      );
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    $Object,
-    typeof $Object.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        $DefaultPartial.fromRdfResourceValues(valueAsValues, {
-          ...options,
-          schema: options.schema.members["DefaultPartial"].type,
-        }) as Either<Error, Resource.Values<$Object>>
-      )
-        .altLazy(
-          () =>
-            $NamedDefaultPartial.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["NamedDefaultPartial"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            AnonymousTypesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["AnonymousTypesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            BlankNodeIdentifierStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["BlankNodeIdentifierStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            BlankNodeOrIriIdentifierStruct.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["BlankNodeOrIriIdentifierStruct"].type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            ClassConstraintsStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["ClassConstraintsStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            ConvertibleTypesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["ConvertibleTypesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            DatatypeDiscriminatedUnionsStruct.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["DatatypeDiscriminatedUnionsStruct"]
-                    .type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            DefaultValuesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["DefaultValuesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            DirectRecursiveStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["DirectRecursiveStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["DiscriminatedUnionMember1"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            DiscriminatedUnionMember2.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["DiscriminatedUnionMember2"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            DisplayStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["DisplayStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            ExplicitFromToRdfTypesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema:
-                options.schema.members["ExplicitFromToRdfTypesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            ExplicitRdfTypeStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["ExplicitRdfTypeStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            FlattenDiscriminatedUnionMember3.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["FlattenDiscriminatedUnionMember3"]
-                    .type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            HasValuesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["HasValuesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            IgnoredPropertiesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["IgnoredPropertiesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            IndirectRecursiveStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["IndirectRecursiveStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            IndirectRecursiveStructHelper.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema:
-                options.schema.members["IndirectRecursiveStructHelper"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            InIdentifierStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["InIdentifierStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            InPropertiesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["InPropertiesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            IriIdentifierStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["IriIdentifierStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            LanguageInStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["LanguageInStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members[
-                    "LazilyResolvedBlankNodeOrIriIdentifierStruct"
-                  ].type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            LazilyResolvedDiscriminatedUnionMember1.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members[
-                    "LazilyResolvedDiscriminatedUnionMember1"
-                  ].type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            LazilyResolvedDiscriminatedUnionMember2.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members[
-                    "LazilyResolvedDiscriminatedUnionMember2"
-                  ].type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            LazilyResolvedIriIdentifierStruct.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["LazilyResolvedIriIdentifierStruct"]
-                    .type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            LazyPropertiesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["LazyPropertiesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            ListSetsStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["ListSetsStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            ListsStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["ListsStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            MutablePropertiesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["MutablePropertiesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            NamedTypesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["NamedTypesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            NewName.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["NewName"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            NodeKindsStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["NodeKindsStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            NonClassStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["NonClassStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            NoRdfTypeDiscriminatedUnionMember1.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["NoRdfTypeDiscriminatedUnionMember1"]
-                    .type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            NoRdfTypeDiscriminatedUnionMember2.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["NoRdfTypeDiscriminatedUnionMember2"]
-                    .type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            NumericsStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["NumericsStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            OrderedStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["OrderedStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            PartialDiscriminatedUnionMember1.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["PartialDiscriminatedUnionMember1"]
-                    .type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            PartialDiscriminatedUnionMember2.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["PartialDiscriminatedUnionMember2"]
-                    .type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            PartialStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["PartialStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            PropertyCardinalitiesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema:
-                options.schema.members["PropertyCardinalitiesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            PropertyNamesStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["PropertyNamesStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            PropertyPathsStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["PropertyPathsStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            RecursiveDiscriminatedUnionMember1.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["RecursiveDiscriminatedUnionMember1"]
-                    .type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            RecursiveDiscriminatedUnionMember2.fromRdfResourceValues(
-              valueAsValues,
-              {
-                ...options,
-                schema:
-                  options.schema.members["RecursiveDiscriminatedUnionMember2"]
-                    .type,
-              },
-            ) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            TargetClassStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["TargetClassStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            TermsStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["TermsStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            UnionDiscriminantsStruct.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["UnionDiscriminantsStruct"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
-    $Object,
-    typeof $Object.schema
-  >;
-
-  export const hash = <HasherT extends $Hasher>(
+  export function hash<HasherT extends $Hasher>(
     hasher: HasherT,
-    value: $Object,
-  ): HasherT => {
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return $DefaultPartial.hash(hasher, value);
-    }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return $NamedDefaultPartial.hash(hasher, value);
-    }
-    if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
-      return AnonymousTypesStruct.hash(hasher, value);
-    }
-    if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(value)) {
-      return BlankNodeIdentifierStruct.hash(hasher, value);
-    }
-    if (
-      BlankNodeOrIriIdentifierStruct.isBlankNodeOrIriIdentifierStruct(value)
-    ) {
-      return BlankNodeOrIriIdentifierStruct.hash(hasher, value);
-    }
-    if (ClassConstraintsStruct.isClassConstraintsStruct(value)) {
-      return ClassConstraintsStruct.hash(hasher, value);
-    }
-    if (ConvertibleTypesStruct.isConvertibleTypesStruct(value)) {
-      return ConvertibleTypesStruct.hash(hasher, value);
-    }
-    if (
-      DatatypeDiscriminatedUnionsStruct.isDatatypeDiscriminatedUnionsStruct(
-        value,
-      )
-    ) {
-      return DatatypeDiscriminatedUnionsStruct.hash(hasher, value);
-    }
-    if (DefaultValuesStruct.isDefaultValuesStruct(value)) {
-      return DefaultValuesStruct.hash(hasher, value);
-    }
-    if (DirectRecursiveStruct.isDirectRecursiveStruct(value)) {
-      return DirectRecursiveStruct.hash(hasher, value);
-    }
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
-      return DiscriminatedUnionMember1.hash(hasher, value);
-    }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
-      return DiscriminatedUnionMember2.hash(hasher, value);
-    }
-    if (DisplayStruct.isDisplayStruct(value)) {
-      return DisplayStruct.hash(hasher, value);
-    }
-    if (ExplicitFromToRdfTypesStruct.isExplicitFromToRdfTypesStruct(value)) {
-      return ExplicitFromToRdfTypesStruct.hash(hasher, value);
-    }
-    if (ExplicitRdfTypeStruct.isExplicitRdfTypeStruct(value)) {
-      return ExplicitRdfTypeStruct.hash(hasher, value);
-    }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
-    ) {
-      return FlattenDiscriminatedUnionMember3.hash(hasher, value);
-    }
-    if (HasValuesStruct.isHasValuesStruct(value)) {
-      return HasValuesStruct.hash(hasher, value);
-    }
-    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)) {
-      return IgnoredPropertiesStruct.hash(hasher, value);
-    }
-    if (IndirectRecursiveStruct.isIndirectRecursiveStruct(value)) {
-      return IndirectRecursiveStruct.hash(hasher, value);
-    }
-    if (IndirectRecursiveStructHelper.isIndirectRecursiveStructHelper(value)) {
-      return IndirectRecursiveStructHelper.hash(hasher, value);
-    }
-    if (InIdentifierStruct.isInIdentifierStruct(value)) {
-      return InIdentifierStruct.hash(hasher, value);
-    }
-    if (InPropertiesStruct.isInPropertiesStruct(value)) {
-      return InPropertiesStruct.hash(hasher, value);
-    }
-    if (IriIdentifierStruct.isIriIdentifierStruct(value)) {
-      return IriIdentifierStruct.hash(hasher, value);
-    }
-    if (LanguageInStruct.isLanguageInStruct(value)) {
-      return LanguageInStruct.hash(hasher, value);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierStruct.isLazilyResolvedBlankNodeOrIriIdentifierStruct(
-        value,
-      )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierStruct.hash(hasher, value);
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember1.hash(hasher, value);
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember2.hash(hasher, value);
-    }
-    if (
-      LazilyResolvedIriIdentifierStruct.isLazilyResolvedIriIdentifierStruct(
-        value,
-      )
-    ) {
-      return LazilyResolvedIriIdentifierStruct.hash(hasher, value);
-    }
-    if (LazyPropertiesStruct.isLazyPropertiesStruct(value)) {
-      return LazyPropertiesStruct.hash(hasher, value);
-    }
-    if (ListSetsStruct.isListSetsStruct(value)) {
-      return ListSetsStruct.hash(hasher, value);
-    }
-    if (ListsStruct.isListsStruct(value)) {
-      return ListsStruct.hash(hasher, value);
-    }
-    if (MutablePropertiesStruct.isMutablePropertiesStruct(value)) {
-      return MutablePropertiesStruct.hash(hasher, value);
-    }
-    if (NamedTypesStruct.isNamedTypesStruct(value)) {
-      return NamedTypesStruct.hash(hasher, value);
-    }
-    if (NewName.isNewName(value)) {
-      return NewName.hash(hasher, value);
-    }
-    if (NodeKindsStruct.isNodeKindsStruct(value)) {
-      return NodeKindsStruct.hash(hasher, value);
-    }
-    if (NonClassStruct.isNonClassStruct(value)) {
-      return NonClassStruct.hash(hasher, value);
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember1.hash(hasher, value);
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember2.hash(hasher, value);
-    }
-    if (NumericsStruct.isNumericsStruct(value)) {
-      return NumericsStruct.hash(hasher, value);
-    }
-    if (OrderedStruct.isOrderedStruct(value)) {
-      return OrderedStruct.hash(hasher, value);
-    }
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
-    ) {
-      return PartialDiscriminatedUnionMember1.hash(hasher, value);
-    }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
-    ) {
-      return PartialDiscriminatedUnionMember2.hash(hasher, value);
-    }
-    if (PartialStruct.isPartialStruct(value)) {
-      return PartialStruct.hash(hasher, value);
-    }
-    if (PropertyCardinalitiesStruct.isPropertyCardinalitiesStruct(value)) {
-      return PropertyCardinalitiesStruct.hash(hasher, value);
-    }
-    if (PropertyNamesStruct.isPropertyNamesStruct(value)) {
-      return PropertyNamesStruct.hash(hasher, value);
-    }
-    if (PropertyPathsStruct.isPropertyPathsStruct(value)) {
-      return PropertyPathsStruct.hash(hasher, value);
-    }
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember1.hash(hasher, value);
-    }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember2.hash(hasher, value);
-    }
-    if (TargetClassStruct.isTargetClassStruct(value)) {
-      return TargetClassStruct.hash(hasher, value);
-    }
-    if (TermsStruct.isTermsStruct(value)) {
-      return TermsStruct.hash(hasher, value);
-    }
-    if (UnionDiscriminantsStruct.isUnionDiscriminantsStruct(value)) {
-      return UnionDiscriminantsStruct.hash(hasher, value);
-    }
-    return hasher;
-  };
-
-  export type Identifier = BlankNode | NamedNode;
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export namespace Json {
-    export const schema = () =>
-      z
-        .discriminatedUnion("$type", [
-          $DefaultPartial.Json.schema(),
-          $NamedDefaultPartial.Json.schema(),
-          AnonymousTypesStruct.Json.schema(),
-          BlankNodeIdentifierStruct.Json.schema(),
-          BlankNodeOrIriIdentifierStruct.Json.schema(),
-          ClassConstraintsStruct.Json.schema(),
-          ConvertibleTypesStruct.Json.schema(),
-          DatatypeDiscriminatedUnionsStruct.Json.schema(),
-          DefaultValuesStruct.Json.schema(),
-          DirectRecursiveStruct.Json.schema(),
-          DiscriminatedUnionMember1.Json.schema(),
-          DiscriminatedUnionMember2.Json.schema(),
-          DisplayStruct.Json.schema(),
-          ExplicitFromToRdfTypesStruct.Json.schema(),
-          ExplicitRdfTypeStruct.Json.schema(),
-          FlattenDiscriminatedUnionMember3.Json.schema(),
-          HasValuesStruct.Json.schema(),
-          IgnoredPropertiesStruct.Json.schema(),
-          IndirectRecursiveStruct.Json.schema(),
-          IndirectRecursiveStructHelper.Json.schema(),
-          InIdentifierStruct.Json.schema(),
-          InPropertiesStruct.Json.schema(),
-          IriIdentifierStruct.Json.schema(),
-          LanguageInStruct.Json.schema(),
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.Json.schema(),
-          LazilyResolvedDiscriminatedUnionMember1.Json.schema(),
-          LazilyResolvedDiscriminatedUnionMember2.Json.schema(),
-          LazilyResolvedIriIdentifierStruct.Json.schema(),
-          LazyPropertiesStruct.Json.schema(),
-          ListSetsStruct.Json.schema(),
-          ListsStruct.Json.schema(),
-          MutablePropertiesStruct.Json.schema(),
-          NamedTypesStruct.Json.schema(),
-          NewName.Json.schema(),
-          NodeKindsStruct.Json.schema(),
-          NonClassStruct.Json.schema(),
-          NoRdfTypeDiscriminatedUnionMember1.Json.schema(),
-          NoRdfTypeDiscriminatedUnionMember2.Json.schema(),
-          NumericsStruct.Json.schema(),
-          OrderedStruct.Json.schema(),
-          PartialDiscriminatedUnionMember1.Json.schema(),
-          PartialDiscriminatedUnionMember2.Json.schema(),
-          PartialStruct.Json.schema(),
-          PropertyCardinalitiesStruct.Json.schema(),
-          PropertyNamesStruct.Json.schema(),
-          PropertyPathsStruct.Json.schema(),
-          RecursiveDiscriminatedUnionMember1.Json.schema(),
-          RecursiveDiscriminatedUnionMember2.Json.schema(),
-          TargetClassStruct.Json.schema(),
-          TermsStruct.Json.schema(),
-          UnionDiscriminantsStruct.Json.schema(),
-        ])
-        .readonly();
-
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
+    object: $Object,
+  ): HasherT {
+    switch (object.$type) {
+      case "DefaultPartial":
+        return $DefaultPartial.hash(hasher, object);
+      case "NamedDefaultPartial":
+        return $NamedDefaultPartial.hash(hasher, object);
+      case "AnonymousTypesStruct":
+        return AnonymousTypesStruct.hash(hasher, object);
+      case "BlankNodeIdentifierStruct":
+        return BlankNodeIdentifierStruct.hash(hasher, object);
+      case "BlankNodeOrIriIdentifierStruct":
+        return BlankNodeOrIriIdentifierStruct.hash(hasher, object);
+      case "ClassConstraintsStruct":
+        return ClassConstraintsStruct.hash(hasher, object);
+      case "ConvertibleTypesStruct":
+        return ConvertibleTypesStruct.hash(hasher, object);
+      case "DatatypeDiscriminatedUnionsStruct":
+        return DatatypeDiscriminatedUnionsStruct.hash(hasher, object);
+      case "DefaultValuesStruct":
+        return DefaultValuesStruct.hash(hasher, object);
+      case "DirectRecursiveStruct":
+        return DirectRecursiveStruct.hash(hasher, object);
+      case "DiscriminatedUnionMember1":
+        return DiscriminatedUnionMember1.hash(hasher, object);
+      case "DiscriminatedUnionMember2":
+        return DiscriminatedUnionMember2.hash(hasher, object);
+      case "DisplayStruct":
+        return DisplayStruct.hash(hasher, object);
+      case "ExplicitFromToRdfTypesStruct":
+        return ExplicitFromToRdfTypesStruct.hash(hasher, object);
+      case "ExplicitRdfTypeStruct":
+        return ExplicitRdfTypeStruct.hash(hasher, object);
+      case "FlattenDiscriminatedUnionMember3":
+        return FlattenDiscriminatedUnionMember3.hash(hasher, object);
+      case "HasValuesStruct":
+        return HasValuesStruct.hash(hasher, object);
+      case "IgnoredPropertiesStruct":
+        return IgnoredPropertiesStruct.hash(hasher, object);
+      case "IndirectRecursiveStruct":
+        return IndirectRecursiveStruct.hash(hasher, object);
+      case "IndirectRecursiveStructHelper":
+        return IndirectRecursiveStructHelper.hash(hasher, object);
+      case "InIdentifierStruct":
+        return InIdentifierStruct.hash(hasher, object);
+      case "InPropertiesStruct":
+        return InPropertiesStruct.hash(hasher, object);
+      case "IriIdentifierStruct":
+        return IriIdentifierStruct.hash(hasher, object);
+      case "LanguageInStruct":
+        return LanguageInStruct.hash(hasher, object);
+      case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
+        return LazilyResolvedBlankNodeOrIriIdentifierStruct.hash(
+          hasher,
+          object,
+        );
+      case "LazilyResolvedDiscriminatedUnionMember1":
+        return LazilyResolvedDiscriminatedUnionMember1.hash(hasher, object);
+      case "LazilyResolvedDiscriminatedUnionMember2":
+        return LazilyResolvedDiscriminatedUnionMember2.hash(hasher, object);
+      case "LazilyResolvedIriIdentifierStruct":
+        return LazilyResolvedIriIdentifierStruct.hash(hasher, object);
+      case "LazyPropertiesStruct":
+        return LazyPropertiesStruct.hash(hasher, object);
+      case "ListSetsStruct":
+        return ListSetsStruct.hash(hasher, object);
+      case "ListsStruct":
+        return ListsStruct.hash(hasher, object);
+      case "MutablePropertiesStruct":
+        return MutablePropertiesStruct.hash(hasher, object);
+      case "NamedTypesStruct":
+        return NamedTypesStruct.hash(hasher, object);
+      case "NewName":
+        return NewName.hash(hasher, object);
+      case "NodeKindsStruct":
+        return NodeKindsStruct.hash(hasher, object);
+      case "NonClassStruct":
+        return NonClassStruct.hash(hasher, object);
+      case "NoRdfTypeDiscriminatedUnionMember1":
+        return NoRdfTypeDiscriminatedUnionMember1.hash(hasher, object);
+      case "NoRdfTypeDiscriminatedUnionMember2":
+        return NoRdfTypeDiscriminatedUnionMember2.hash(hasher, object);
+      case "NumericsStruct":
+        return NumericsStruct.hash(hasher, object);
+      case "OrderedStruct":
+        return OrderedStruct.hash(hasher, object);
+      case "PartialDiscriminatedUnionMember1":
+        return PartialDiscriminatedUnionMember1.hash(hasher, object);
+      case "PartialDiscriminatedUnionMember2":
+        return PartialDiscriminatedUnionMember2.hash(hasher, object);
+      case "PartialStruct":
+        return PartialStruct.hash(hasher, object);
+      case "PropertyCardinalitiesStruct":
+        return PropertyCardinalitiesStruct.hash(hasher, object);
+      case "PropertyNamesStruct":
+        return PropertyNamesStruct.hash(hasher, object);
+      case "PropertyPathsStruct":
+        return PropertyPathsStruct.hash(hasher, object);
+      case "RecursiveDiscriminatedUnionMember1":
+        return RecursiveDiscriminatedUnionMember1.hash(hasher, object);
+      case "RecursiveDiscriminatedUnionMember2":
+        return RecursiveDiscriminatedUnionMember2.hash(hasher, object);
+      case "TargetClassStruct":
+        return TargetClassStruct.hash(hasher, object);
+      case "TermsStruct":
+        return TermsStruct.hash(hasher, object);
+      case "UnionDiscriminantsStruct":
+        return UnionDiscriminantsStruct.hash(hasher, object);
+      default:
+        object satisfies never;
+        throw new Error("should never reach this point");
     }
   }
 
-  export type Json =
-    | $DefaultPartial.Json
-    | $NamedDefaultPartial.Json
-    | AnonymousTypesStruct.Json
-    | BlankNodeIdentifierStruct.Json
-    | BlankNodeOrIriIdentifierStruct.Json
-    | ClassConstraintsStruct.Json
-    | ConvertibleTypesStruct.Json
-    | DatatypeDiscriminatedUnionsStruct.Json
-    | DefaultValuesStruct.Json
-    | DirectRecursiveStruct.Json
-    | DiscriminatedUnionMember1.Json
-    | DiscriminatedUnionMember2.Json
-    | DisplayStruct.Json
-    | ExplicitFromToRdfTypesStruct.Json
-    | ExplicitRdfTypeStruct.Json
-    | FlattenDiscriminatedUnionMember3.Json
-    | HasValuesStruct.Json
-    | IgnoredPropertiesStruct.Json
-    | IndirectRecursiveStruct.Json
-    | IndirectRecursiveStructHelper.Json
-    | InIdentifierStruct.Json
-    | InPropertiesStruct.Json
-    | IriIdentifierStruct.Json
-    | LanguageInStruct.Json
-    | LazilyResolvedBlankNodeOrIriIdentifierStruct.Json
-    | LazilyResolvedDiscriminatedUnionMember1.Json
-    | LazilyResolvedDiscriminatedUnionMember2.Json
-    | LazilyResolvedIriIdentifierStruct.Json
-    | LazyPropertiesStruct.Json
-    | ListSetsStruct.Json
-    | ListsStruct.Json
-    | MutablePropertiesStruct.Json
-    | NamedTypesStruct.Json
-    | NewName.Json
-    | NodeKindsStruct.Json
-    | NonClassStruct.Json
-    | NoRdfTypeDiscriminatedUnionMember1.Json
-    | NoRdfTypeDiscriminatedUnionMember2.Json
-    | NumericsStruct.Json
-    | OrderedStruct.Json
-    | PartialDiscriminatedUnionMember1.Json
-    | PartialDiscriminatedUnionMember2.Json
-    | PartialStruct.Json
-    | PropertyCardinalitiesStruct.Json
-    | PropertyNamesStruct.Json
-    | PropertyPathsStruct.Json
-    | RecursiveDiscriminatedUnionMember1.Json
-    | RecursiveDiscriminatedUnionMember2.Json
-    | TargetClassStruct.Json
-    | TermsStruct.Json
-    | UnionDiscriminantsStruct.Json;
-
-  export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
-    members: {
-      DefaultPartial: {
-        discriminantValues: ["DefaultPartial"],
-        type: $DefaultPartial.schema,
-      },
-      NamedDefaultPartial: {
-        discriminantValues: ["NamedDefaultPartial"],
-        type: $NamedDefaultPartial.schema,
-      },
-      AnonymousTypesStruct: {
-        discriminantValues: ["AnonymousTypesStruct"],
-        type: AnonymousTypesStruct.schema,
-      },
-      BlankNodeIdentifierStruct: {
-        discriminantValues: ["BlankNodeIdentifierStruct"],
-        type: BlankNodeIdentifierStruct.schema,
-      },
-      BlankNodeOrIriIdentifierStruct: {
-        discriminantValues: ["BlankNodeOrIriIdentifierStruct"],
-        type: BlankNodeOrIriIdentifierStruct.schema,
-      },
-      ClassConstraintsStruct: {
-        discriminantValues: ["ClassConstraintsStruct"],
-        type: ClassConstraintsStruct.schema,
-      },
-      ConvertibleTypesStruct: {
-        discriminantValues: ["ConvertibleTypesStruct"],
-        type: ConvertibleTypesStruct.schema,
-      },
-      DatatypeDiscriminatedUnionsStruct: {
-        discriminantValues: ["DatatypeDiscriminatedUnionsStruct"],
-        type: DatatypeDiscriminatedUnionsStruct.schema,
-      },
-      DefaultValuesStruct: {
-        discriminantValues: ["DefaultValuesStruct"],
-        type: DefaultValuesStruct.schema,
-      },
-      DirectRecursiveStruct: {
-        discriminantValues: ["DirectRecursiveStruct"],
-        type: DirectRecursiveStruct.schema,
-      },
-      DiscriminatedUnionMember1: {
-        discriminantValues: ["DiscriminatedUnionMember1"],
-        type: DiscriminatedUnionMember1.schema,
-      },
-      DiscriminatedUnionMember2: {
-        discriminantValues: ["DiscriminatedUnionMember2"],
-        type: DiscriminatedUnionMember2.schema,
-      },
-      DisplayStruct: {
-        discriminantValues: ["DisplayStruct"],
-        type: DisplayStruct.schema,
-      },
-      ExplicitFromToRdfTypesStruct: {
-        discriminantValues: ["ExplicitFromToRdfTypesStruct"],
-        type: ExplicitFromToRdfTypesStruct.schema,
-      },
-      ExplicitRdfTypeStruct: {
-        discriminantValues: ["ExplicitRdfTypeStruct"],
-        type: ExplicitRdfTypeStruct.schema,
-      },
-      FlattenDiscriminatedUnionMember3: {
-        discriminantValues: ["FlattenDiscriminatedUnionMember3"],
-        type: FlattenDiscriminatedUnionMember3.schema,
-      },
-      HasValuesStruct: {
-        discriminantValues: ["HasValuesStruct"],
-        type: HasValuesStruct.schema,
-      },
-      IgnoredPropertiesStruct: {
-        discriminantValues: ["IgnoredPropertiesStruct"],
-        type: IgnoredPropertiesStruct.schema,
-      },
-      IndirectRecursiveStruct: {
-        discriminantValues: ["IndirectRecursiveStruct"],
-        type: IndirectRecursiveStruct.schema,
-      },
-      IndirectRecursiveStructHelper: {
-        discriminantValues: ["IndirectRecursiveStructHelper"],
-        type: IndirectRecursiveStructHelper.schema,
-      },
-      InIdentifierStruct: {
-        discriminantValues: ["InIdentifierStruct"],
-        type: InIdentifierStruct.schema,
-      },
-      InPropertiesStruct: {
-        discriminantValues: ["InPropertiesStruct"],
-        type: InPropertiesStruct.schema,
-      },
-      IriIdentifierStruct: {
-        discriminantValues: ["IriIdentifierStruct"],
-        type: IriIdentifierStruct.schema,
-      },
-      LanguageInStruct: {
-        discriminantValues: ["LanguageInStruct"],
-        type: LanguageInStruct.schema,
-      },
-      LazilyResolvedBlankNodeOrIriIdentifierStruct: {
-        discriminantValues: ["LazilyResolvedBlankNodeOrIriIdentifierStruct"],
-        type: LazilyResolvedBlankNodeOrIriIdentifierStruct.schema,
-      },
-      LazilyResolvedDiscriminatedUnionMember1: {
-        discriminantValues: ["LazilyResolvedDiscriminatedUnionMember1"],
-        type: LazilyResolvedDiscriminatedUnionMember1.schema,
-      },
-      LazilyResolvedDiscriminatedUnionMember2: {
-        discriminantValues: ["LazilyResolvedDiscriminatedUnionMember2"],
-        type: LazilyResolvedDiscriminatedUnionMember2.schema,
-      },
-      LazilyResolvedIriIdentifierStruct: {
-        discriminantValues: ["LazilyResolvedIriIdentifierStruct"],
-        type: LazilyResolvedIriIdentifierStruct.schema,
-      },
-      LazyPropertiesStruct: {
-        discriminantValues: ["LazyPropertiesStruct"],
-        type: LazyPropertiesStruct.schema,
-      },
-      ListSetsStruct: {
-        discriminantValues: ["ListSetsStruct"],
-        type: ListSetsStruct.schema,
-      },
-      ListsStruct: {
-        discriminantValues: ["ListsStruct"],
-        type: ListsStruct.schema,
-      },
-      MutablePropertiesStruct: {
-        discriminantValues: ["MutablePropertiesStruct"],
-        type: MutablePropertiesStruct.schema,
-      },
-      NamedTypesStruct: {
-        discriminantValues: ["NamedTypesStruct"],
-        type: NamedTypesStruct.schema,
-      },
-      NewName: { discriminantValues: ["NewName"], type: NewName.schema },
-      NodeKindsStruct: {
-        discriminantValues: ["NodeKindsStruct"],
-        type: NodeKindsStruct.schema,
-      },
-      NonClassStruct: {
-        discriminantValues: ["NonClassStruct"],
-        type: NonClassStruct.schema,
-      },
-      NoRdfTypeDiscriminatedUnionMember1: {
-        discriminantValues: ["NoRdfTypeDiscriminatedUnionMember1"],
-        type: NoRdfTypeDiscriminatedUnionMember1.schema,
-      },
-      NoRdfTypeDiscriminatedUnionMember2: {
-        discriminantValues: ["NoRdfTypeDiscriminatedUnionMember2"],
-        type: NoRdfTypeDiscriminatedUnionMember2.schema,
-      },
-      NumericsStruct: {
-        discriminantValues: ["NumericsStruct"],
-        type: NumericsStruct.schema,
-      },
-      OrderedStruct: {
-        discriminantValues: ["OrderedStruct"],
-        type: OrderedStruct.schema,
-      },
-      PartialDiscriminatedUnionMember1: {
-        discriminantValues: ["PartialDiscriminatedUnionMember1"],
-        type: PartialDiscriminatedUnionMember1.schema,
-      },
-      PartialDiscriminatedUnionMember2: {
-        discriminantValues: ["PartialDiscriminatedUnionMember2"],
-        type: PartialDiscriminatedUnionMember2.schema,
-      },
-      PartialStruct: {
-        discriminantValues: ["PartialStruct"],
-        type: PartialStruct.schema,
-      },
-      PropertyCardinalitiesStruct: {
-        discriminantValues: ["PropertyCardinalitiesStruct"],
-        type: PropertyCardinalitiesStruct.schema,
-      },
-      PropertyNamesStruct: {
-        discriminantValues: ["PropertyNamesStruct"],
-        type: PropertyNamesStruct.schema,
-      },
-      PropertyPathsStruct: {
-        discriminantValues: ["PropertyPathsStruct"],
-        type: PropertyPathsStruct.schema,
-      },
-      RecursiveDiscriminatedUnionMember1: {
-        discriminantValues: ["RecursiveDiscriminatedUnionMember1"],
-        type: RecursiveDiscriminatedUnionMember1.schema,
-      },
-      RecursiveDiscriminatedUnionMember2: {
-        discriminantValues: ["RecursiveDiscriminatedUnionMember2"],
-        type: RecursiveDiscriminatedUnionMember2.schema,
-      },
-      TargetClassStruct: {
-        discriminantValues: ["TargetClassStruct"],
-        type: TargetClassStruct.schema,
-      },
-      TermsStruct: {
-        discriminantValues: ["TermsStruct"],
-        type: TermsStruct.schema,
-      },
-      UnionDiscriminantsStruct: {
-        discriminantValues: ["UnionDiscriminantsStruct"],
-        type: UnionDiscriminantsStruct.schema,
-      },
-    },
-    properties: {},
-  } as const;
-
-  export function sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: $Object.Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "object";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        $Object.focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          $Object.focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
+  export function toJson(object: $Object) {
+    switch (object.$type) {
+      case "DefaultPartial":
+        return $DefaultPartial.toJson(object);
+      case "NamedDefaultPartial":
+        return $NamedDefaultPartial.toJson(object);
+      case "AnonymousTypesStruct":
+        return AnonymousTypesStruct.toJson(object);
+      case "BlankNodeIdentifierStruct":
+        return BlankNodeIdentifierStruct.toJson(object);
+      case "BlankNodeOrIriIdentifierStruct":
+        return BlankNodeOrIriIdentifierStruct.toJson(object);
+      case "ClassConstraintsStruct":
+        return ClassConstraintsStruct.toJson(object);
+      case "ConvertibleTypesStruct":
+        return ConvertibleTypesStruct.toJson(object);
+      case "DatatypeDiscriminatedUnionsStruct":
+        return DatatypeDiscriminatedUnionsStruct.toJson(object);
+      case "DefaultValuesStruct":
+        return DefaultValuesStruct.toJson(object);
+      case "DirectRecursiveStruct":
+        return DirectRecursiveStruct.toJson(object);
+      case "DiscriminatedUnionMember1":
+        return DiscriminatedUnionMember1.toJson(object);
+      case "DiscriminatedUnionMember2":
+        return DiscriminatedUnionMember2.toJson(object);
+      case "DisplayStruct":
+        return DisplayStruct.toJson(object);
+      case "ExplicitFromToRdfTypesStruct":
+        return ExplicitFromToRdfTypesStruct.toJson(object);
+      case "ExplicitRdfTypeStruct":
+        return ExplicitRdfTypeStruct.toJson(object);
+      case "FlattenDiscriminatedUnionMember3":
+        return FlattenDiscriminatedUnionMember3.toJson(object);
+      case "HasValuesStruct":
+        return HasValuesStruct.toJson(object);
+      case "IgnoredPropertiesStruct":
+        return IgnoredPropertiesStruct.toJson(object);
+      case "IndirectRecursiveStruct":
+        return IndirectRecursiveStruct.toJson(object);
+      case "IndirectRecursiveStructHelper":
+        return IndirectRecursiveStructHelper.toJson(object);
+      case "InIdentifierStruct":
+        return InIdentifierStruct.toJson(object);
+      case "InPropertiesStruct":
+        return InPropertiesStruct.toJson(object);
+      case "IriIdentifierStruct":
+        return IriIdentifierStruct.toJson(object);
+      case "LanguageInStruct":
+        return LanguageInStruct.toJson(object);
+      case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
+        return LazilyResolvedBlankNodeOrIriIdentifierStruct.toJson(object);
+      case "LazilyResolvedDiscriminatedUnionMember1":
+        return LazilyResolvedDiscriminatedUnionMember1.toJson(object);
+      case "LazilyResolvedDiscriminatedUnionMember2":
+        return LazilyResolvedDiscriminatedUnionMember2.toJson(object);
+      case "LazilyResolvedIriIdentifierStruct":
+        return LazilyResolvedIriIdentifierStruct.toJson(object);
+      case "LazyPropertiesStruct":
+        return LazyPropertiesStruct.toJson(object);
+      case "ListSetsStruct":
+        return ListSetsStruct.toJson(object);
+      case "ListsStruct":
+        return ListsStruct.toJson(object);
+      case "MutablePropertiesStruct":
+        return MutablePropertiesStruct.toJson(object);
+      case "NamedTypesStruct":
+        return NamedTypesStruct.toJson(object);
+      case "NewName":
+        return NewName.toJson(object);
+      case "NodeKindsStruct":
+        return NodeKindsStruct.toJson(object);
+      case "NonClassStruct":
+        return NonClassStruct.toJson(object);
+      case "NoRdfTypeDiscriminatedUnionMember1":
+        return NoRdfTypeDiscriminatedUnionMember1.toJson(object);
+      case "NoRdfTypeDiscriminatedUnionMember2":
+        return NoRdfTypeDiscriminatedUnionMember2.toJson(object);
+      case "NumericsStruct":
+        return NumericsStruct.toJson(object);
+      case "OrderedStruct":
+        return OrderedStruct.toJson(object);
+      case "PartialDiscriminatedUnionMember1":
+        return PartialDiscriminatedUnionMember1.toJson(object);
+      case "PartialDiscriminatedUnionMember2":
+        return PartialDiscriminatedUnionMember2.toJson(object);
+      case "PartialStruct":
+        return PartialStruct.toJson(object);
+      case "PropertyCardinalitiesStruct":
+        return PropertyCardinalitiesStruct.toJson(object);
+      case "PropertyNamesStruct":
+        return PropertyNamesStruct.toJson(object);
+      case "PropertyPathsStruct":
+        return PropertyPathsStruct.toJson(object);
+      case "RecursiveDiscriminatedUnionMember1":
+        return RecursiveDiscriminatedUnionMember1.toJson(object);
+      case "RecursiveDiscriminatedUnionMember2":
+        return RecursiveDiscriminatedUnionMember2.toJson(object);
+      case "TargetClassStruct":
+        return TargetClassStruct.toJson(object);
+      case "TermsStruct":
+        return TermsStruct.toJson(object);
+      case "UnionDiscriminantsStruct":
+        return UnionDiscriminantsStruct.toJson(object);
+      default:
+        object satisfies never;
+        throw new Error("should never reach this point");
+    }
   }
-
-  export function sparqlConstructQueryString(
-    parameters: Parameters<typeof $Object.sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      $Object.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const toJson = (value: $Object): $Object.Json => {
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return $DefaultPartial.toJson(value);
-    }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return $NamedDefaultPartial.toJson(value);
-    }
-    if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
-      return AnonymousTypesStruct.toJson(value);
-    }
-    if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(value)) {
-      return BlankNodeIdentifierStruct.toJson(value);
-    }
-    if (
-      BlankNodeOrIriIdentifierStruct.isBlankNodeOrIriIdentifierStruct(value)
-    ) {
-      return BlankNodeOrIriIdentifierStruct.toJson(value);
-    }
-    if (ClassConstraintsStruct.isClassConstraintsStruct(value)) {
-      return ClassConstraintsStruct.toJson(value);
-    }
-    if (ConvertibleTypesStruct.isConvertibleTypesStruct(value)) {
-      return ConvertibleTypesStruct.toJson(value);
-    }
-    if (
-      DatatypeDiscriminatedUnionsStruct.isDatatypeDiscriminatedUnionsStruct(
-        value,
-      )
-    ) {
-      return DatatypeDiscriminatedUnionsStruct.toJson(value);
-    }
-    if (DefaultValuesStruct.isDefaultValuesStruct(value)) {
-      return DefaultValuesStruct.toJson(value);
-    }
-    if (DirectRecursiveStruct.isDirectRecursiveStruct(value)) {
-      return DirectRecursiveStruct.toJson(value);
-    }
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
-      return DiscriminatedUnionMember1.toJson(value);
-    }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
-      return DiscriminatedUnionMember2.toJson(value);
-    }
-    if (DisplayStruct.isDisplayStruct(value)) {
-      return DisplayStruct.toJson(value);
-    }
-    if (ExplicitFromToRdfTypesStruct.isExplicitFromToRdfTypesStruct(value)) {
-      return ExplicitFromToRdfTypesStruct.toJson(value);
-    }
-    if (ExplicitRdfTypeStruct.isExplicitRdfTypeStruct(value)) {
-      return ExplicitRdfTypeStruct.toJson(value);
-    }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
-    ) {
-      return FlattenDiscriminatedUnionMember3.toJson(value);
-    }
-    if (HasValuesStruct.isHasValuesStruct(value)) {
-      return HasValuesStruct.toJson(value);
-    }
-    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)) {
-      return IgnoredPropertiesStruct.toJson(value);
-    }
-    if (IndirectRecursiveStruct.isIndirectRecursiveStruct(value)) {
-      return IndirectRecursiveStruct.toJson(value);
-    }
-    if (IndirectRecursiveStructHelper.isIndirectRecursiveStructHelper(value)) {
-      return IndirectRecursiveStructHelper.toJson(value);
-    }
-    if (InIdentifierStruct.isInIdentifierStruct(value)) {
-      return InIdentifierStruct.toJson(value);
-    }
-    if (InPropertiesStruct.isInPropertiesStruct(value)) {
-      return InPropertiesStruct.toJson(value);
-    }
-    if (IriIdentifierStruct.isIriIdentifierStruct(value)) {
-      return IriIdentifierStruct.toJson(value);
-    }
-    if (LanguageInStruct.isLanguageInStruct(value)) {
-      return LanguageInStruct.toJson(value);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierStruct.isLazilyResolvedBlankNodeOrIriIdentifierStruct(
-        value,
-      )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierStruct.toJson(value);
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember1.toJson(value);
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember2.toJson(value);
-    }
-    if (
-      LazilyResolvedIriIdentifierStruct.isLazilyResolvedIriIdentifierStruct(
-        value,
-      )
-    ) {
-      return LazilyResolvedIriIdentifierStruct.toJson(value);
-    }
-    if (LazyPropertiesStruct.isLazyPropertiesStruct(value)) {
-      return LazyPropertiesStruct.toJson(value);
-    }
-    if (ListSetsStruct.isListSetsStruct(value)) {
-      return ListSetsStruct.toJson(value);
-    }
-    if (ListsStruct.isListsStruct(value)) {
-      return ListsStruct.toJson(value);
-    }
-    if (MutablePropertiesStruct.isMutablePropertiesStruct(value)) {
-      return MutablePropertiesStruct.toJson(value);
-    }
-    if (NamedTypesStruct.isNamedTypesStruct(value)) {
-      return NamedTypesStruct.toJson(value);
-    }
-    if (NewName.isNewName(value)) {
-      return NewName.toJson(value);
-    }
-    if (NodeKindsStruct.isNodeKindsStruct(value)) {
-      return NodeKindsStruct.toJson(value);
-    }
-    if (NonClassStruct.isNonClassStruct(value)) {
-      return NonClassStruct.toJson(value);
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember1.toJson(value);
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember2.toJson(value);
-    }
-    if (NumericsStruct.isNumericsStruct(value)) {
-      return NumericsStruct.toJson(value);
-    }
-    if (OrderedStruct.isOrderedStruct(value)) {
-      return OrderedStruct.toJson(value);
-    }
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
-    ) {
-      return PartialDiscriminatedUnionMember1.toJson(value);
-    }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
-    ) {
-      return PartialDiscriminatedUnionMember2.toJson(value);
-    }
-    if (PartialStruct.isPartialStruct(value)) {
-      return PartialStruct.toJson(value);
-    }
-    if (PropertyCardinalitiesStruct.isPropertyCardinalitiesStruct(value)) {
-      return PropertyCardinalitiesStruct.toJson(value);
-    }
-    if (PropertyNamesStruct.isPropertyNamesStruct(value)) {
-      return PropertyNamesStruct.toJson(value);
-    }
-    if (PropertyPathsStruct.isPropertyPathsStruct(value)) {
-      return PropertyPathsStruct.toJson(value);
-    }
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember1.toJson(value);
-    }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember2.toJson(value);
-    }
-    if (TargetClassStruct.isTargetClassStruct(value)) {
-      return TargetClassStruct.toJson(value);
-    }
-    if (TermsStruct.isTermsStruct(value)) {
-      return TermsStruct.toJson(value);
-    }
-    if (UnionDiscriminantsStruct.isUnionDiscriminantsStruct(value)) {
-      return UnionDiscriminantsStruct.toJson(value);
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
 
   export const toRdfResource: $ToRdfResourceFunction<$Object> = (
     object,
     options,
   ) => {
-    if ($DefaultPartial.is$DefaultPartial(object)) {
-      return $DefaultPartial.toRdfResource(object, options);
+    switch (object.$type) {
+      case "DefaultPartial":
+        return $DefaultPartial.toRdfResource(object, options);
+      case "NamedDefaultPartial":
+        return $NamedDefaultPartial.toRdfResource(object, options);
+      case "AnonymousTypesStruct":
+        return AnonymousTypesStruct.toRdfResource(object, options);
+      case "BlankNodeIdentifierStruct":
+        return BlankNodeIdentifierStruct.toRdfResource(object, options);
+      case "BlankNodeOrIriIdentifierStruct":
+        return BlankNodeOrIriIdentifierStruct.toRdfResource(object, options);
+      case "ClassConstraintsStruct":
+        return ClassConstraintsStruct.toRdfResource(object, options);
+      case "ConvertibleTypesStruct":
+        return ConvertibleTypesStruct.toRdfResource(object, options);
+      case "DatatypeDiscriminatedUnionsStruct":
+        return DatatypeDiscriminatedUnionsStruct.toRdfResource(object, options);
+      case "DefaultValuesStruct":
+        return DefaultValuesStruct.toRdfResource(object, options);
+      case "DirectRecursiveStruct":
+        return DirectRecursiveStruct.toRdfResource(object, options);
+      case "DiscriminatedUnionMember1":
+        return DiscriminatedUnionMember1.toRdfResource(object, options);
+      case "DiscriminatedUnionMember2":
+        return DiscriminatedUnionMember2.toRdfResource(object, options);
+      case "DisplayStruct":
+        return DisplayStruct.toRdfResource(object, options);
+      case "ExplicitFromToRdfTypesStruct":
+        return ExplicitFromToRdfTypesStruct.toRdfResource(object, options);
+      case "ExplicitRdfTypeStruct":
+        return ExplicitRdfTypeStruct.toRdfResource(object, options);
+      case "FlattenDiscriminatedUnionMember3":
+        return FlattenDiscriminatedUnionMember3.toRdfResource(object, options);
+      case "HasValuesStruct":
+        return HasValuesStruct.toRdfResource(object, options);
+      case "IgnoredPropertiesStruct":
+        return IgnoredPropertiesStruct.toRdfResource(object, options);
+      case "IndirectRecursiveStruct":
+        return IndirectRecursiveStruct.toRdfResource(object, options);
+      case "IndirectRecursiveStructHelper":
+        return IndirectRecursiveStructHelper.toRdfResource(object, options);
+      case "InIdentifierStruct":
+        return InIdentifierStruct.toRdfResource(object, options);
+      case "InPropertiesStruct":
+        return InPropertiesStruct.toRdfResource(object, options);
+      case "IriIdentifierStruct":
+        return IriIdentifierStruct.toRdfResource(object, options);
+      case "LanguageInStruct":
+        return LanguageInStruct.toRdfResource(object, options);
+      case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
+        return LazilyResolvedBlankNodeOrIriIdentifierStruct.toRdfResource(
+          object,
+          options,
+        );
+      case "LazilyResolvedDiscriminatedUnionMember1":
+        return LazilyResolvedDiscriminatedUnionMember1.toRdfResource(
+          object,
+          options,
+        );
+      case "LazilyResolvedDiscriminatedUnionMember2":
+        return LazilyResolvedDiscriminatedUnionMember2.toRdfResource(
+          object,
+          options,
+        );
+      case "LazilyResolvedIriIdentifierStruct":
+        return LazilyResolvedIriIdentifierStruct.toRdfResource(object, options);
+      case "LazyPropertiesStruct":
+        return LazyPropertiesStruct.toRdfResource(object, options);
+      case "ListSetsStruct":
+        return ListSetsStruct.toRdfResource(object, options);
+      case "ListsStruct":
+        return ListsStruct.toRdfResource(object, options);
+      case "MutablePropertiesStruct":
+        return MutablePropertiesStruct.toRdfResource(object, options);
+      case "NamedTypesStruct":
+        return NamedTypesStruct.toRdfResource(object, options);
+      case "NewName":
+        return NewName.toRdfResource(object, options);
+      case "NodeKindsStruct":
+        return NodeKindsStruct.toRdfResource(object, options);
+      case "NonClassStruct":
+        return NonClassStruct.toRdfResource(object, options);
+      case "NoRdfTypeDiscriminatedUnionMember1":
+        return NoRdfTypeDiscriminatedUnionMember1.toRdfResource(
+          object,
+          options,
+        );
+      case "NoRdfTypeDiscriminatedUnionMember2":
+        return NoRdfTypeDiscriminatedUnionMember2.toRdfResource(
+          object,
+          options,
+        );
+      case "NumericsStruct":
+        return NumericsStruct.toRdfResource(object, options);
+      case "OrderedStruct":
+        return OrderedStruct.toRdfResource(object, options);
+      case "PartialDiscriminatedUnionMember1":
+        return PartialDiscriminatedUnionMember1.toRdfResource(object, options);
+      case "PartialDiscriminatedUnionMember2":
+        return PartialDiscriminatedUnionMember2.toRdfResource(object, options);
+      case "PartialStruct":
+        return PartialStruct.toRdfResource(object, options);
+      case "PropertyCardinalitiesStruct":
+        return PropertyCardinalitiesStruct.toRdfResource(object, options);
+      case "PropertyNamesStruct":
+        return PropertyNamesStruct.toRdfResource(object, options);
+      case "PropertyPathsStruct":
+        return PropertyPathsStruct.toRdfResource(object, options);
+      case "RecursiveDiscriminatedUnionMember1":
+        return RecursiveDiscriminatedUnionMember1.toRdfResource(
+          object,
+          options,
+        );
+      case "RecursiveDiscriminatedUnionMember2":
+        return RecursiveDiscriminatedUnionMember2.toRdfResource(
+          object,
+          options,
+        );
+      case "TargetClassStruct":
+        return TargetClassStruct.toRdfResource(object, options);
+      case "TermsStruct":
+        return TermsStruct.toRdfResource(object, options);
+      case "UnionDiscriminantsStruct":
+        return UnionDiscriminantsStruct.toRdfResource(object, options);
+      default:
+        object satisfies never;
+        throw new Error("should never reach this point");
     }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(object)) {
-      return $NamedDefaultPartial.toRdfResource(object, options);
-    }
-    if (AnonymousTypesStruct.isAnonymousTypesStruct(object)) {
-      return AnonymousTypesStruct.toRdfResource(object, options);
-    }
-    if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(object)) {
-      return BlankNodeIdentifierStruct.toRdfResource(object, options);
-    }
-    if (
-      BlankNodeOrIriIdentifierStruct.isBlankNodeOrIriIdentifierStruct(object)
-    ) {
-      return BlankNodeOrIriIdentifierStruct.toRdfResource(object, options);
-    }
-    if (ClassConstraintsStruct.isClassConstraintsStruct(object)) {
-      return ClassConstraintsStruct.toRdfResource(object, options);
-    }
-    if (ConvertibleTypesStruct.isConvertibleTypesStruct(object)) {
-      return ConvertibleTypesStruct.toRdfResource(object, options);
-    }
-    if (
-      DatatypeDiscriminatedUnionsStruct.isDatatypeDiscriminatedUnionsStruct(
-        object,
-      )
-    ) {
-      return DatatypeDiscriminatedUnionsStruct.toRdfResource(object, options);
-    }
-    if (DefaultValuesStruct.isDefaultValuesStruct(object)) {
-      return DefaultValuesStruct.toRdfResource(object, options);
-    }
-    if (DirectRecursiveStruct.isDirectRecursiveStruct(object)) {
-      return DirectRecursiveStruct.toRdfResource(object, options);
-    }
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(object)) {
-      return DiscriminatedUnionMember1.toRdfResource(object, options);
-    }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(object)) {
-      return DiscriminatedUnionMember2.toRdfResource(object, options);
-    }
-    if (DisplayStruct.isDisplayStruct(object)) {
-      return DisplayStruct.toRdfResource(object, options);
-    }
-    if (ExplicitFromToRdfTypesStruct.isExplicitFromToRdfTypesStruct(object)) {
-      return ExplicitFromToRdfTypesStruct.toRdfResource(object, options);
-    }
-    if (ExplicitRdfTypeStruct.isExplicitRdfTypeStruct(object)) {
-      return ExplicitRdfTypeStruct.toRdfResource(object, options);
-    }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(
-        object,
-      )
-    ) {
-      return FlattenDiscriminatedUnionMember3.toRdfResource(object, options);
-    }
-    if (HasValuesStruct.isHasValuesStruct(object)) {
-      return HasValuesStruct.toRdfResource(object, options);
-    }
-    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(object)) {
-      return IgnoredPropertiesStruct.toRdfResource(object, options);
-    }
-    if (IndirectRecursiveStruct.isIndirectRecursiveStruct(object)) {
-      return IndirectRecursiveStruct.toRdfResource(object, options);
-    }
-    if (IndirectRecursiveStructHelper.isIndirectRecursiveStructHelper(object)) {
-      return IndirectRecursiveStructHelper.toRdfResource(object, options);
-    }
-    if (InIdentifierStruct.isInIdentifierStruct(object)) {
-      return InIdentifierStruct.toRdfResource(object, options);
-    }
-    if (InPropertiesStruct.isInPropertiesStruct(object)) {
-      return InPropertiesStruct.toRdfResource(object, options);
-    }
-    if (IriIdentifierStruct.isIriIdentifierStruct(object)) {
-      return IriIdentifierStruct.toRdfResource(object, options);
-    }
-    if (LanguageInStruct.isLanguageInStruct(object)) {
-      return LanguageInStruct.toRdfResource(object, options);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierStruct.isLazilyResolvedBlankNodeOrIriIdentifierStruct(
-        object,
-      )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierStruct.toRdfResource(
-        object,
-        options,
-      );
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        object,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember1.toRdfResource(
-        object,
-        options,
-      );
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        object,
-      )
-    ) {
-      return LazilyResolvedDiscriminatedUnionMember2.toRdfResource(
-        object,
-        options,
-      );
-    }
-    if (
-      LazilyResolvedIriIdentifierStruct.isLazilyResolvedIriIdentifierStruct(
-        object,
-      )
-    ) {
-      return LazilyResolvedIriIdentifierStruct.toRdfResource(object, options);
-    }
-    if (LazyPropertiesStruct.isLazyPropertiesStruct(object)) {
-      return LazyPropertiesStruct.toRdfResource(object, options);
-    }
-    if (ListSetsStruct.isListSetsStruct(object)) {
-      return ListSetsStruct.toRdfResource(object, options);
-    }
-    if (ListsStruct.isListsStruct(object)) {
-      return ListsStruct.toRdfResource(object, options);
-    }
-    if (MutablePropertiesStruct.isMutablePropertiesStruct(object)) {
-      return MutablePropertiesStruct.toRdfResource(object, options);
-    }
-    if (NamedTypesStruct.isNamedTypesStruct(object)) {
-      return NamedTypesStruct.toRdfResource(object, options);
-    }
-    if (NewName.isNewName(object)) {
-      return NewName.toRdfResource(object, options);
-    }
-    if (NodeKindsStruct.isNodeKindsStruct(object)) {
-      return NodeKindsStruct.toRdfResource(object, options);
-    }
-    if (NonClassStruct.isNonClassStruct(object)) {
-      return NonClassStruct.toRdfResource(object, options);
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        object,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember1.toRdfResource(object, options);
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        object,
-      )
-    ) {
-      return NoRdfTypeDiscriminatedUnionMember2.toRdfResource(object, options);
-    }
-    if (NumericsStruct.isNumericsStruct(object)) {
-      return NumericsStruct.toRdfResource(object, options);
-    }
-    if (OrderedStruct.isOrderedStruct(object)) {
-      return OrderedStruct.toRdfResource(object, options);
-    }
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(
-        object,
-      )
-    ) {
-      return PartialDiscriminatedUnionMember1.toRdfResource(object, options);
-    }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(
-        object,
-      )
-    ) {
-      return PartialDiscriminatedUnionMember2.toRdfResource(object, options);
-    }
-    if (PartialStruct.isPartialStruct(object)) {
-      return PartialStruct.toRdfResource(object, options);
-    }
-    if (PropertyCardinalitiesStruct.isPropertyCardinalitiesStruct(object)) {
-      return PropertyCardinalitiesStruct.toRdfResource(object, options);
-    }
-    if (PropertyNamesStruct.isPropertyNamesStruct(object)) {
-      return PropertyNamesStruct.toRdfResource(object, options);
-    }
-    if (PropertyPathsStruct.isPropertyPathsStruct(object)) {
-      return PropertyPathsStruct.toRdfResource(object, options);
-    }
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        object,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember1.toRdfResource(object, options);
-    }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        object,
-      )
-    ) {
-      return RecursiveDiscriminatedUnionMember2.toRdfResource(object, options);
-    }
-    if (TargetClassStruct.isTargetClassStruct(object)) {
-      return TargetClassStruct.toRdfResource(object, options);
-    }
-    if (TermsStruct.isTermsStruct(object)) {
-      return TermsStruct.toRdfResource(object, options);
-    }
-    if (UnionDiscriminantsStruct.isUnionDiscriminantsStruct(object)) {
-      return UnionDiscriminantsStruct.toRdfResource(object, options);
-    }
-    throw new Error("unrecognized type");
   };
 
-  export const toRdfResourceValues = ((
-    value,
-    _options,
-  ): (BlankNode | NamedNode)[] => {
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return [
-        $DefaultPartial.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
+  export function $toString(object: $Object) {
+    switch (object.$type) {
+      case "DefaultPartial":
+        return $DefaultPartial.$toString(object);
+      case "NamedDefaultPartial":
+        return $NamedDefaultPartial.$toString(object);
+      case "AnonymousTypesStruct":
+        return AnonymousTypesStruct.$toString(object);
+      case "BlankNodeIdentifierStruct":
+        return BlankNodeIdentifierStruct.$toString(object);
+      case "BlankNodeOrIriIdentifierStruct":
+        return BlankNodeOrIriIdentifierStruct.$toString(object);
+      case "ClassConstraintsStruct":
+        return ClassConstraintsStruct.$toString(object);
+      case "ConvertibleTypesStruct":
+        return ConvertibleTypesStruct.$toString(object);
+      case "DatatypeDiscriminatedUnionsStruct":
+        return DatatypeDiscriminatedUnionsStruct.$toString(object);
+      case "DefaultValuesStruct":
+        return DefaultValuesStruct.$toString(object);
+      case "DirectRecursiveStruct":
+        return DirectRecursiveStruct.$toString(object);
+      case "DiscriminatedUnionMember1":
+        return DiscriminatedUnionMember1.$toString(object);
+      case "DiscriminatedUnionMember2":
+        return DiscriminatedUnionMember2.$toString(object);
+      case "DisplayStruct":
+        return DisplayStruct.$toString(object);
+      case "ExplicitFromToRdfTypesStruct":
+        return ExplicitFromToRdfTypesStruct.$toString(object);
+      case "ExplicitRdfTypeStruct":
+        return ExplicitRdfTypeStruct.$toString(object);
+      case "FlattenDiscriminatedUnionMember3":
+        return FlattenDiscriminatedUnionMember3.$toString(object);
+      case "HasValuesStruct":
+        return HasValuesStruct.$toString(object);
+      case "IgnoredPropertiesStruct":
+        return IgnoredPropertiesStruct.$toString(object);
+      case "IndirectRecursiveStruct":
+        return IndirectRecursiveStruct.$toString(object);
+      case "IndirectRecursiveStructHelper":
+        return IndirectRecursiveStructHelper.$toString(object);
+      case "InIdentifierStruct":
+        return InIdentifierStruct.$toString(object);
+      case "InPropertiesStruct":
+        return InPropertiesStruct.$toString(object);
+      case "IriIdentifierStruct":
+        return IriIdentifierStruct.$toString(object);
+      case "LanguageInStruct":
+        return LanguageInStruct.$toString(object);
+      case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
+        return LazilyResolvedBlankNodeOrIriIdentifierStruct.$toString(object);
+      case "LazilyResolvedDiscriminatedUnionMember1":
+        return LazilyResolvedDiscriminatedUnionMember1.$toString(object);
+      case "LazilyResolvedDiscriminatedUnionMember2":
+        return LazilyResolvedDiscriminatedUnionMember2.$toString(object);
+      case "LazilyResolvedIriIdentifierStruct":
+        return LazilyResolvedIriIdentifierStruct.$toString(object);
+      case "LazyPropertiesStruct":
+        return LazyPropertiesStruct.$toString(object);
+      case "ListSetsStruct":
+        return ListSetsStruct.$toString(object);
+      case "ListsStruct":
+        return ListsStruct.$toString(object);
+      case "MutablePropertiesStruct":
+        return MutablePropertiesStruct.$toString(object);
+      case "NamedTypesStruct":
+        return NamedTypesStruct.$toString(object);
+      case "NewName":
+        return NewName.$toString(object);
+      case "NodeKindsStruct":
+        return NodeKindsStruct.$toString(object);
+      case "NonClassStruct":
+        return NonClassStruct.$toString(object);
+      case "NoRdfTypeDiscriminatedUnionMember1":
+        return NoRdfTypeDiscriminatedUnionMember1.$toString(object);
+      case "NoRdfTypeDiscriminatedUnionMember2":
+        return NoRdfTypeDiscriminatedUnionMember2.$toString(object);
+      case "NumericsStruct":
+        return NumericsStruct.$toString(object);
+      case "OrderedStruct":
+        return OrderedStruct.$toString(object);
+      case "PartialDiscriminatedUnionMember1":
+        return PartialDiscriminatedUnionMember1.$toString(object);
+      case "PartialDiscriminatedUnionMember2":
+        return PartialDiscriminatedUnionMember2.$toString(object);
+      case "PartialStruct":
+        return PartialStruct.$toString(object);
+      case "PropertyCardinalitiesStruct":
+        return PropertyCardinalitiesStruct.$toString(object);
+      case "PropertyNamesStruct":
+        return PropertyNamesStruct.$toString(object);
+      case "PropertyPathsStruct":
+        return PropertyPathsStruct.$toString(object);
+      case "RecursiveDiscriminatedUnionMember1":
+        return RecursiveDiscriminatedUnionMember1.$toString(object);
+      case "RecursiveDiscriminatedUnionMember2":
+        return RecursiveDiscriminatedUnionMember2.$toString(object);
+      case "TargetClassStruct":
+        return TargetClassStruct.$toString(object);
+      case "TermsStruct":
+        return TermsStruct.$toString(object);
+      case "UnionDiscriminantsStruct":
+        return UnionDiscriminantsStruct.$toString(object);
+      default:
+        object satisfies never;
+        throw new Error("should never reach this point");
     }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return [
-        $NamedDefaultPartial.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (AnonymousTypesStruct.isAnonymousTypesStruct(value)) {
-      return [
-        AnonymousTypesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (BlankNodeIdentifierStruct.isBlankNodeIdentifierStruct(value)) {
-      return [
-        BlankNodeIdentifierStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      BlankNodeOrIriIdentifierStruct.isBlankNodeOrIriIdentifierStruct(value)
-    ) {
-      return [
-        BlankNodeOrIriIdentifierStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ClassConstraintsStruct.isClassConstraintsStruct(value)) {
-      return [
-        ClassConstraintsStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ConvertibleTypesStruct.isConvertibleTypesStruct(value)) {
-      return [
-        ConvertibleTypesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      DatatypeDiscriminatedUnionsStruct.isDatatypeDiscriminatedUnionsStruct(
-        value,
-      )
-    ) {
-      return [
-        DatatypeDiscriminatedUnionsStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (DefaultValuesStruct.isDefaultValuesStruct(value)) {
-      return [
-        DefaultValuesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (DirectRecursiveStruct.isDirectRecursiveStruct(value)) {
-      return [
-        DirectRecursiveStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
-      return [
-        DiscriminatedUnionMember1.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
-      return [
-        DiscriminatedUnionMember2.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (DisplayStruct.isDisplayStruct(value)) {
-      return [
-        DisplayStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ExplicitFromToRdfTypesStruct.isExplicitFromToRdfTypesStruct(value)) {
-      return [
-        ExplicitFromToRdfTypesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ExplicitRdfTypeStruct.isExplicitRdfTypeStruct(value)) {
-      return [
-        ExplicitRdfTypeStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
-    ) {
-      return [
-        FlattenDiscriminatedUnionMember3.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (HasValuesStruct.isHasValuesStruct(value)) {
-      return [
-        HasValuesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (IgnoredPropertiesStruct.isIgnoredPropertiesStruct(value)) {
-      return [
-        IgnoredPropertiesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (IndirectRecursiveStruct.isIndirectRecursiveStruct(value)) {
-      return [
-        IndirectRecursiveStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (IndirectRecursiveStructHelper.isIndirectRecursiveStructHelper(value)) {
-      return [
-        IndirectRecursiveStructHelper.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (InIdentifierStruct.isInIdentifierStruct(value)) {
-      return [
-        InIdentifierStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (InPropertiesStruct.isInPropertiesStruct(value)) {
-      return [
-        InPropertiesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (IriIdentifierStruct.isIriIdentifierStruct(value)) {
-      return [
-        IriIdentifierStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (LanguageInStruct.isLanguageInStruct(value)) {
-      return [
-        LanguageInStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierStruct.isLazilyResolvedBlankNodeOrIriIdentifierStruct(
-        value,
-      )
-    ) {
-      return [
-        LazilyResolvedBlankNodeOrIriIdentifierStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return [
-        LazilyResolvedDiscriminatedUnionMember1.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return [
-        LazilyResolvedDiscriminatedUnionMember2.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      LazilyResolvedIriIdentifierStruct.isLazilyResolvedIriIdentifierStruct(
-        value,
-      )
-    ) {
-      return [
-        LazilyResolvedIriIdentifierStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (LazyPropertiesStruct.isLazyPropertiesStruct(value)) {
-      return [
-        LazyPropertiesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ListSetsStruct.isListSetsStruct(value)) {
-      return [
-        ListSetsStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ListsStruct.isListsStruct(value)) {
-      return [
-        ListsStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (MutablePropertiesStruct.isMutablePropertiesStruct(value)) {
-      return [
-        MutablePropertiesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (NamedTypesStruct.isNamedTypesStruct(value)) {
-      return [
-        NamedTypesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (NewName.isNewName(value)) {
-      return [
-        NewName.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (NodeKindsStruct.isNodeKindsStruct(value)) {
-      return [
-        NodeKindsStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (NonClassStruct.isNonClassStruct(value)) {
-      return [
-        NonClassStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return [
-        NoRdfTypeDiscriminatedUnionMember1.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return [
-        NoRdfTypeDiscriminatedUnionMember2.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (NumericsStruct.isNumericsStruct(value)) {
-      return [
-        NumericsStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (OrderedStruct.isOrderedStruct(value)) {
-      return [
-        OrderedStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
-    ) {
-      return [
-        PartialDiscriminatedUnionMember1.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
-    ) {
-      return [
-        PartialDiscriminatedUnionMember2.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (PartialStruct.isPartialStruct(value)) {
-      return [
-        PartialStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (PropertyCardinalitiesStruct.isPropertyCardinalitiesStruct(value)) {
-      return [
-        PropertyCardinalitiesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (PropertyNamesStruct.isPropertyNamesStruct(value)) {
-      return [
-        PropertyNamesStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (PropertyPathsStruct.isPropertyPathsStruct(value)) {
-      return [
-        PropertyPathsStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
-      return [
-        RecursiveDiscriminatedUnionMember1.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
-      return [
-        RecursiveDiscriminatedUnionMember2.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (TargetClassStruct.isTargetClassStruct(value)) {
-      return [
-        TargetClassStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (TermsStruct.isTermsStruct(value)) {
-      return [
-        TermsStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (UnionDiscriminantsStruct.isUnionDiscriminantsStruct(value)) {
-      return [
-        UnionDiscriminantsStruct.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-
-    throw new Error("unable to serialize to RDF");
-  }) satisfies $ToRdfResourceValuesFunction<$Object>;
-
-  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    $Object.Filter,
-    typeof $Object.schema
-  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
-    let triples: sparqljs.Triple[] = [];
-
-    triples = triples.concat(
-      $DefaultPartial.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["DefaultPartial"],
-        ignoreRdfType: false,
-        schema: schema.members["DefaultPartial"].type,
-      }),
-    );
-    triples = triples.concat(
-      $NamedDefaultPartial.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["NamedDefaultPartial"],
-        ignoreRdfType: false,
-        schema: schema.members["NamedDefaultPartial"].type,
-      }),
-    );
-    triples = triples.concat(
-      AnonymousTypesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["AnonymousTypesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["AnonymousTypesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      BlankNodeIdentifierStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["BlankNodeIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["BlankNodeIdentifierStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      BlankNodeOrIriIdentifierStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["BlankNodeOrIriIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["BlankNodeOrIriIdentifierStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      ClassConstraintsStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["ClassConstraintsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ClassConstraintsStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      ConvertibleTypesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["ConvertibleTypesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ConvertibleTypesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      DatatypeDiscriminatedUnionsStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["DatatypeDiscriminatedUnionsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["DatatypeDiscriminatedUnionsStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      DefaultValuesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["DefaultValuesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["DefaultValuesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      DirectRecursiveStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["DirectRecursiveStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["DirectRecursiveStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      DiscriminatedUnionMember1.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["DiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["DiscriminatedUnionMember1"].type,
-      }),
-    );
-    triples = triples.concat(
-      DiscriminatedUnionMember2.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["DiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["DiscriminatedUnionMember2"].type,
-      }),
-    );
-    triples = triples.concat(
-      DisplayStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["DisplayStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["DisplayStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      ExplicitFromToRdfTypesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["ExplicitFromToRdfTypesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ExplicitFromToRdfTypesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      ExplicitRdfTypeStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["ExplicitRdfTypeStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ExplicitRdfTypeStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      FlattenDiscriminatedUnionMember3.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["FlattenDiscriminatedUnionMember3"],
-        ignoreRdfType: false,
-        schema: schema.members["FlattenDiscriminatedUnionMember3"].type,
-      }),
-    );
-    triples = triples.concat(
-      HasValuesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["HasValuesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["HasValuesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      IgnoredPropertiesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["IgnoredPropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["IgnoredPropertiesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      IndirectRecursiveStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["IndirectRecursiveStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["IndirectRecursiveStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      IndirectRecursiveStructHelper.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["IndirectRecursiveStructHelper"],
-        ignoreRdfType: false,
-        schema: schema.members["IndirectRecursiveStructHelper"].type,
-      }),
-    );
-    triples = triples.concat(
-      InIdentifierStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["InIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["InIdentifierStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      InPropertiesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["InPropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["InPropertiesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      IriIdentifierStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["IriIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["IriIdentifierStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      LanguageInStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["LanguageInStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["LanguageInStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      LazilyResolvedBlankNodeOrIriIdentifierStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["LazilyResolvedBlankNodeOrIriIdentifierStruct"],
-        ignoreRdfType: false,
-        schema:
-          schema.members["LazilyResolvedBlankNodeOrIriIdentifierStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      LazilyResolvedDiscriminatedUnionMember1.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["LazilyResolvedDiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["LazilyResolvedDiscriminatedUnionMember1"].type,
-      }),
-    );
-    triples = triples.concat(
-      LazilyResolvedDiscriminatedUnionMember2.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["LazilyResolvedDiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["LazilyResolvedDiscriminatedUnionMember2"].type,
-      }),
-    );
-    triples = triples.concat(
-      LazilyResolvedIriIdentifierStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["LazilyResolvedIriIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["LazilyResolvedIriIdentifierStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      LazyPropertiesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["LazyPropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["LazyPropertiesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      ListSetsStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["ListSetsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ListSetsStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      ListsStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["ListsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ListsStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      MutablePropertiesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["MutablePropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["MutablePropertiesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      NamedTypesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["NamedTypesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["NamedTypesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      NewName.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["NewName"],
-        ignoreRdfType: false,
-        schema: schema.members["NewName"].type,
-      }),
-    );
-    triples = triples.concat(
-      NodeKindsStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["NodeKindsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["NodeKindsStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      NonClassStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["NonClassStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["NonClassStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      NoRdfTypeDiscriminatedUnionMember1.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["NoRdfTypeDiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["NoRdfTypeDiscriminatedUnionMember1"].type,
-      }),
-    );
-    triples = triples.concat(
-      NoRdfTypeDiscriminatedUnionMember2.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["NoRdfTypeDiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["NoRdfTypeDiscriminatedUnionMember2"].type,
-      }),
-    );
-    triples = triples.concat(
-      NumericsStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["NumericsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["NumericsStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      OrderedStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["OrderedStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["OrderedStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      PartialDiscriminatedUnionMember1.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["PartialDiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialDiscriminatedUnionMember1"].type,
-      }),
-    );
-    triples = triples.concat(
-      PartialDiscriminatedUnionMember2.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["PartialDiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialDiscriminatedUnionMember2"].type,
-      }),
-    );
-    triples = triples.concat(
-      PartialStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["PartialStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      PropertyCardinalitiesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["PropertyCardinalitiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["PropertyCardinalitiesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      PropertyNamesStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["PropertyNamesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["PropertyNamesStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      PropertyPathsStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["PropertyPathsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["PropertyPathsStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      RecursiveDiscriminatedUnionMember1.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["RecursiveDiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["RecursiveDiscriminatedUnionMember1"].type,
-      }),
-    );
-    triples = triples.concat(
-      RecursiveDiscriminatedUnionMember2.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["RecursiveDiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["RecursiveDiscriminatedUnionMember2"].type,
-      }),
-    );
-    triples = triples.concat(
-      TargetClassStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["TargetClassStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["TargetClassStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      TermsStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["TermsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["TermsStruct"].type,
-      }),
-    );
-    triples = triples.concat(
-      UnionDiscriminantsStruct.valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["UnionDiscriminantsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["UnionDiscriminantsStruct"].type,
-      }),
-    );
-
-    return triples;
-  }) satisfies $ValueSparqlConstructTriplesFunction<
-    $Object.Filter,
-    typeof $Object.schema
-  >;
-
-  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    $Object.Filter,
-    typeof $Object.schema
-  > = (({ filter, schema, ...otherParameters }) => {
-    const unionPatterns: sparqljs.GroupPattern[] = [];
-
-    unionPatterns.push({
-      patterns: $DefaultPartial
-        .valueSparqlWherePatterns({
-          ...otherParameters,
-          filter: filter?.on?.["DefaultPartial"],
-          ignoreRdfType: false,
-          schema: schema.members["DefaultPartial"].type,
-        })
-        .concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: $NamedDefaultPartial
-        .valueSparqlWherePatterns({
-          ...otherParameters,
-          filter: filter?.on?.["NamedDefaultPartial"],
-          ignoreRdfType: false,
-          schema: schema.members["NamedDefaultPartial"].type,
-        })
-        .concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: AnonymousTypesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["AnonymousTypesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["AnonymousTypesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: BlankNodeIdentifierStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["BlankNodeIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["BlankNodeIdentifierStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: BlankNodeOrIriIdentifierStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["BlankNodeOrIriIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["BlankNodeOrIriIdentifierStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: ClassConstraintsStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["ClassConstraintsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ClassConstraintsStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: ConvertibleTypesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["ConvertibleTypesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ConvertibleTypesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: DatatypeDiscriminatedUnionsStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["DatatypeDiscriminatedUnionsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["DatatypeDiscriminatedUnionsStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: DefaultValuesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["DefaultValuesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["DefaultValuesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: DirectRecursiveStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["DirectRecursiveStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["DirectRecursiveStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: DiscriminatedUnionMember1.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["DiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["DiscriminatedUnionMember1"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: DiscriminatedUnionMember2.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["DiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["DiscriminatedUnionMember2"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: DisplayStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["DisplayStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["DisplayStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: ExplicitFromToRdfTypesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["ExplicitFromToRdfTypesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ExplicitFromToRdfTypesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: ExplicitRdfTypeStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["ExplicitRdfTypeStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ExplicitRdfTypeStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: FlattenDiscriminatedUnionMember3.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["FlattenDiscriminatedUnionMember3"],
-        ignoreRdfType: false,
-        schema: schema.members["FlattenDiscriminatedUnionMember3"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: HasValuesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["HasValuesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["HasValuesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: IgnoredPropertiesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["IgnoredPropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["IgnoredPropertiesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: IndirectRecursiveStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["IndirectRecursiveStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["IndirectRecursiveStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: IndirectRecursiveStructHelper.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["IndirectRecursiveStructHelper"],
-        ignoreRdfType: false,
-        schema: schema.members["IndirectRecursiveStructHelper"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: InIdentifierStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["InIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["InIdentifierStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: InPropertiesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["InPropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["InPropertiesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: IriIdentifierStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["IriIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["IriIdentifierStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: LanguageInStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["LanguageInStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["LanguageInStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns:
-        LazilyResolvedBlankNodeOrIriIdentifierStruct.valueSparqlWherePatterns({
-          ...otherParameters,
-          filter: filter?.on?.["LazilyResolvedBlankNodeOrIriIdentifierStruct"],
-          ignoreRdfType: false,
-          schema:
-            schema.members["LazilyResolvedBlankNodeOrIriIdentifierStruct"].type,
-        }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns:
-        LazilyResolvedDiscriminatedUnionMember1.valueSparqlWherePatterns({
-          ...otherParameters,
-          filter: filter?.on?.["LazilyResolvedDiscriminatedUnionMember1"],
-          ignoreRdfType: false,
-          schema:
-            schema.members["LazilyResolvedDiscriminatedUnionMember1"].type,
-        }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns:
-        LazilyResolvedDiscriminatedUnionMember2.valueSparqlWherePatterns({
-          ...otherParameters,
-          filter: filter?.on?.["LazilyResolvedDiscriminatedUnionMember2"],
-          ignoreRdfType: false,
-          schema:
-            schema.members["LazilyResolvedDiscriminatedUnionMember2"].type,
-        }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: LazilyResolvedIriIdentifierStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["LazilyResolvedIriIdentifierStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["LazilyResolvedIriIdentifierStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: LazyPropertiesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["LazyPropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["LazyPropertiesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: ListSetsStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["ListSetsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ListSetsStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: ListsStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["ListsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["ListsStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: MutablePropertiesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["MutablePropertiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["MutablePropertiesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: NamedTypesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["NamedTypesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["NamedTypesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: NewName.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["NewName"],
-        ignoreRdfType: false,
-        schema: schema.members["NewName"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: NodeKindsStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["NodeKindsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["NodeKindsStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: NonClassStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["NonClassStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["NonClassStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: NoRdfTypeDiscriminatedUnionMember1.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["NoRdfTypeDiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["NoRdfTypeDiscriminatedUnionMember1"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: NoRdfTypeDiscriminatedUnionMember2.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["NoRdfTypeDiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["NoRdfTypeDiscriminatedUnionMember2"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: NumericsStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["NumericsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["NumericsStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: OrderedStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["OrderedStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["OrderedStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: PartialDiscriminatedUnionMember1.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["PartialDiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialDiscriminatedUnionMember1"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: PartialDiscriminatedUnionMember2.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["PartialDiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialDiscriminatedUnionMember2"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: PartialStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["PartialStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: PropertyCardinalitiesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["PropertyCardinalitiesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["PropertyCardinalitiesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: PropertyNamesStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["PropertyNamesStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["PropertyNamesStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: PropertyPathsStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["PropertyPathsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["PropertyPathsStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: RecursiveDiscriminatedUnionMember1.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["RecursiveDiscriminatedUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["RecursiveDiscriminatedUnionMember1"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: RecursiveDiscriminatedUnionMember2.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["RecursiveDiscriminatedUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["RecursiveDiscriminatedUnionMember2"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: TargetClassStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["TargetClassStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["TargetClassStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: TermsStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["TermsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["TermsStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: UnionDiscriminantsStruct.valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["UnionDiscriminantsStruct"],
-        ignoreRdfType: false,
-        schema: schema.members["UnionDiscriminantsStruct"].type,
-      }).concat(),
-      type: "group",
-    });
-
-    return [{ patterns: unionPatterns, type: "union" }];
-  }) satisfies $ValueSparqlWherePatternsFunction<
-    $Object.Filter,
-    typeof $Object.schema
-  >;
+  }
 }
 export interface $ObjectSet {
   anonymousTypesStruct(
@@ -63366,26 +58379,6 @@ export interface $ObjectSet {
       RecursiveDiscriminatedUnion.Identifier
     >,
   ): Promise<Either<Error, readonly RecursiveDiscriminatedUnion[]>>;
-
-  $object(
-    identifier: $Object.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, $Object>>;
-
-  $objectCount(
-    query?: Pick<
-      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  $objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object.Identifier[]>>;
-
-  $objects(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object[]>>;
 }
 
 export namespace $ObjectSet {
@@ -68380,339 +63373,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async $object(
-    identifier: $Object.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, $Object>> {
-    return this.$objectSync(identifier, options);
-  }
-
-  $objectSync(
-    identifier: $Object.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, $Object> {
-    return this.$objectsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async $objectCount(
-    query?: Pick<
-      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCountSync(query);
-  }
-
-  $objectCountSync(
-    query?: Pick<
-      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.$objectsSync(query).map((objects) => objects.length);
-  }
-
-  async $objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object.Identifier[]>> {
-    return this.$objectIdentifiersSync(query);
-  }
-
-  $objectIdentifiersSync(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Either<Error, readonly $Object.Identifier[]> {
-    return this.$objectsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async $objects(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object[]>> {
-    return this.$objectsSync(query);
-  }
-
-  $objectsSync(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Either<Error, readonly $Object[]> {
-    return this.#objectDiscriminatedUnionsSync<
-      $Object,
-      $Object.Filter,
-      $Object.Identifier
-    >(
-      [
-        {
-          filter: $Object.filter,
-          fromRdfResource: $DefaultPartial.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: $NamedDefaultPartial.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: AnonymousTypesStruct.fromRdfResource,
-          fromRdfTypes: [AnonymousTypesStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: BlankNodeIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [BlankNodeIdentifierStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: BlankNodeOrIriIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [BlankNodeOrIriIdentifierStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: ClassConstraintsStruct.fromRdfResource,
-          fromRdfTypes: [ClassConstraintsStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: ConvertibleTypesStruct.fromRdfResource,
-          fromRdfTypes: [ConvertibleTypesStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: DatatypeDiscriminatedUnionsStruct.fromRdfResource,
-          fromRdfTypes: [DatatypeDiscriminatedUnionsStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: DefaultValuesStruct.fromRdfResource,
-          fromRdfTypes: [DefaultValuesStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: DirectRecursiveStruct.fromRdfResource,
-          fromRdfTypes: [DirectRecursiveStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: DiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [DiscriminatedUnionMember1.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: DiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [DiscriminatedUnionMember2.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: DisplayStruct.fromRdfResource,
-          fromRdfTypes: [DisplayStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: ExplicitFromToRdfTypesStruct.fromRdfResource,
-          fromRdfTypes: [ExplicitFromToRdfTypesStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: ExplicitRdfTypeStruct.fromRdfResource,
-          fromRdfTypes: [ExplicitRdfTypeStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: FlattenDiscriminatedUnionMember3.fromRdfResource,
-          fromRdfTypes: [FlattenDiscriminatedUnionMember3.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: HasValuesStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: IgnoredPropertiesStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: IndirectRecursiveStruct.fromRdfResource,
-          fromRdfTypes: [IndirectRecursiveStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: IndirectRecursiveStructHelper.fromRdfResource,
-          fromRdfTypes: [IndirectRecursiveStructHelper.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: InIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [InIdentifierStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: InPropertiesStruct.fromRdfResource,
-          fromRdfTypes: [InPropertiesStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: IriIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [IriIdentifierStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: LanguageInStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource:
-            LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [
-            LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.fromRdfType,
-          ],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource:
-            LazilyResolvedDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [
-            LazilyResolvedDiscriminatedUnionMember1.schema.fromRdfType,
-          ],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource:
-            LazilyResolvedDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [
-            LazilyResolvedDiscriminatedUnionMember2.schema.fromRdfType,
-          ],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: LazilyResolvedIriIdentifierStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: LazyPropertiesStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: ListSetsStruct.fromRdfResource,
-          fromRdfTypes: [ListSetsStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: ListsStruct.fromRdfResource,
-          fromRdfTypes: [ListsStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: MutablePropertiesStruct.fromRdfResource,
-          fromRdfTypes: [MutablePropertiesStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: NamedTypesStruct.fromRdfResource,
-          fromRdfTypes: [NamedTypesStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: NewName.fromRdfResource,
-          fromRdfTypes: [NewName.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: NodeKindsStruct.fromRdfResource,
-          fromRdfTypes: [NodeKindsStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: NonClassStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: NoRdfTypeDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: NoRdfTypeDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: NumericsStruct.fromRdfResource,
-          fromRdfTypes: [NumericsStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: OrderedStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: PartialDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [PartialDiscriminatedUnionMember1.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: PartialDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [PartialDiscriminatedUnionMember2.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: PartialStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: PropertyCardinalitiesStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: PropertyNamesStruct.fromRdfResource,
-          fromRdfTypes: [PropertyNamesStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: PropertyPathsStruct.fromRdfResource,
-          fromRdfTypes: [PropertyPathsStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: RecursiveDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [RecursiveDiscriminatedUnionMember1.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: RecursiveDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [RecursiveDiscriminatedUnionMember2.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: TargetClassStruct.fromRdfResource,
-          fromRdfTypes: [TargetClassStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: TermsStruct.fromRdfResource,
-          fromRdfTypes: [TermsStruct.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: UnionDiscriminantsStruct.fromRdfResource,
-          fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
-  }
-
   #objectsSync<
     ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
@@ -71874,48 +66534,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveDiscriminatedUnion.Filter,
       RecursiveDiscriminatedUnion.Identifier
     >(RecursiveDiscriminatedUnion, query);
-  }
-
-  async $object(
-    identifier: $Object.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, $Object>> {
-    return (
-      await this.$objects({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async $objectCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<$Object.Filter, $Object.Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<$Object.Filter, $Object.Identifier>(
-      $Object,
-      query,
-    );
-  }
-
-  async $objectIdentifiers(
-    query?: $SparqlObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object.Identifier[]>> {
-    return this.#objectIdentifiers<$Object.Filter, $Object.Identifier>(
-      $Object,
-      query,
-    );
-  }
-
-  async $objects(
-    query?: $SparqlObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object[]>> {
-    return this.#objects<$Object, $Object.Filter, $Object.Identifier>(
-      $Object,
-      query,
-    );
   }
 
   #mapBindingsToCount(

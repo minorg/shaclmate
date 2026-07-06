@@ -80,13 +80,15 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
     return Maybe.of(code`\
 export function equals(left: ${this.name}, right: ${this.name}): ${this.reusables.snippets.EqualsResult} {
+  if (left.${this.configuration.objectDiscriminantProperty.name} !== right.${this.configuration.objectDiscriminantProperty.name}) {
+    return ${this.reusables.imports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "boolean" as const }, type: "property" as const });
+  }
+
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
-    code`if (right.${this.configuration.objectDiscriminantProperty.name} === "${member.discriminantProperty.unsafeCoerce().value}") { return ${member.equalsFunction}(left, right); } break;`,
+    code`return ${member.equalsFunction}(left, right as ${member.name.unsafeCoerce()});`,
   variables: { value: code`left` },
 })}
-
-  return ${this.reusables.imports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "boolean" as const }, type: "property" as const });
 }`);
   }
 
