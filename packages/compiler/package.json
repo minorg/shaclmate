@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.66",
+    "@shaclmate/shacl-ast": "4.0.67",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/term-map": "~2.0.2",
@@ -227,6 +227,8 @@
     "dist/generators/ts/TypeFactory.js",
     "dist/generators/ts/Typeof.d.ts",
     "dist/generators/ts/Typeof.js",
+    "dist/generators/ts/UberObjectDiscriminatedUnionType.d.ts",
+    "dist/generators/ts/UberObjectDiscriminatedUnionType.js",
     "dist/generators/ts/ZodGenerator.d.ts",
     "dist/generators/ts/ZodGenerator.js",
     "dist/generators/ts/_AbstractType/AbstractType_ConversionFunction.d.ts",
@@ -721,5 +723,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.66"
+  "version": "4.0.67"
 }

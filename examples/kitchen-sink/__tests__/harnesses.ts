@@ -124,6 +124,15 @@ export const harnesses = {
     }),
     kitchenSink.DatatypeDiscriminatedUnionsStruct,
   ),
+  datesStruct: new Harness(
+    kitchenSink.DatesStruct.createUnsafe({
+      $identifier,
+      date: new Date("2025-12-08"),
+      dateTime: new Date("2025-12-08T21:17:27+00:00"),
+      dateTimeStamp: new Date("2025-12-08T21:17:27+00:00"),
+    }),
+    kitchenSink.DatesStruct,
+  ),
   defaultValuesStruct: new Harness(
     kitchenSink.DefaultValuesStruct.createUnsafe({
       $identifier,
