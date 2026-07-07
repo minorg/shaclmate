@@ -9,10 +9,6 @@ export function ObjectDiscriminatedUnionType_graphqlTypeVariableStatement(
     return {};
   }
 
-  if (this.synthetic) {
-    return {};
-  }
-
   const name = this.name.unsafeCoerce();
 
   return singleEntryRecord(

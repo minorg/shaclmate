@@ -14,10 +14,6 @@ export function ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration(
     return {};
   }
 
-  if (name === `${this.configuration.syntheticNamePrefix}Object`) {
-    return {};
-  }
-
   return singleEntryRecord(
     `is${name}`,
     code`\

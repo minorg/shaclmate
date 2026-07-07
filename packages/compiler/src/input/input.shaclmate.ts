@@ -2458,6 +2458,7 @@ export namespace NodeShape {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "NodeShape" },
       and: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
@@ -3582,6 +3583,7 @@ export namespace Ontology {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "Ontology" },
       comment: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -3787,6 +3789,7 @@ export namespace PropertyGroup {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "PropertyGroup" },
       comment: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -5533,6 +5536,7 @@ export namespace PropertyShape {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "PropertyShape" },
       and: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
@@ -6776,6 +6780,7 @@ export namespace ValidationReport {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "ValidationReport" },
       conforms: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#conforms"),
@@ -7173,6 +7178,7 @@ export namespace ValidationResult {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "ValidationResult" },
       details: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#detail"),
@@ -7760,237 +7766,46 @@ export type $Object =
   | ValidationResult;
 
 export namespace $Object {
-  export const $toString = (value: $Object): string => {
-    if (NodeShape.isNodeShape(value)) {
-      return NodeShape.$toString(value);
-    }
-    if (Ontology.isOntology(value)) {
-      return Ontology.$toString(value);
-    }
-    if (PropertyGroup.isPropertyGroup(value)) {
-      return PropertyGroup.$toString(value);
-    }
-    if (PropertyShape.isPropertyShape(value)) {
-      return PropertyShape.$toString(value);
-    }
-    if (ValidationReport.isValidationReport(value)) {
-      return ValidationReport.$toString(value);
-    }
-    if (ValidationResult.isValidationResult(value)) {
-      return ValidationResult.$toString(value);
-    }
-
-    throw new Error("unable to serialize to string");
-  };
-
-  export const fromRdfResource: $FromRdfResourceFunction<$Object> = (
-    resource,
-    options,
-  ) =>
-    (
-      NodeShape.fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, $Object>
-    )
-      .altLazy(
-        () =>
-          Ontology.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyGroup.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyShape.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ValidationReport.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ValidationResult.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      );
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    $Object,
-    typeof $Object.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        NodeShape.fromRdfResourceValues(valueAsValues, {
-          ...options,
-          schema: options.schema.members["NodeShape"].type,
-        }) as Either<Error, Resource.Values<$Object>>
-      )
-        .altLazy(
-          () =>
-            Ontology.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["Ontology"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            PropertyGroup.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["PropertyGroup"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            PropertyShape.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["PropertyShape"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            ValidationReport.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["ValidationReport"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            ValidationResult.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["ValidationResult"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
-    $Object,
-    typeof $Object.schema
-  >;
-
-  export type Identifier = BlankNode | NamedNode;
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
-    members: {
-      NodeShape: { discriminantValues: ["NodeShape"], type: NodeShape.schema },
-      Ontology: { discriminantValues: ["Ontology"], type: Ontology.schema },
-      PropertyGroup: {
-        discriminantValues: ["PropertyGroup"],
-        type: PropertyGroup.schema,
-      },
-      PropertyShape: {
-        discriminantValues: ["PropertyShape"],
-        type: PropertyShape.schema,
-      },
-      ValidationReport: {
-        discriminantValues: ["ValidationReport"],
-        type: ValidationReport.schema,
-      },
-      ValidationResult: {
-        discriminantValues: ["ValidationResult"],
-        type: ValidationResult.schema,
-      },
-    },
-    properties: {},
-  } as const;
-
   export const toRdfResource: $ToRdfResourceFunction<$Object> = (
     object,
     options,
   ) => {
-    if (NodeShape.isNodeShape(object)) {
-      return NodeShape.toRdfResource(object, options);
+    switch (object.$type) {
+      case "NodeShape":
+        return NodeShape.toRdfResource(object, options);
+      case "Ontology":
+        return Ontology.toRdfResource(object, options);
+      case "PropertyGroup":
+        return PropertyGroup.toRdfResource(object, options);
+      case "PropertyShape":
+        return PropertyShape.toRdfResource(object, options);
+      case "ValidationReport":
+        return ValidationReport.toRdfResource(object, options);
+      case "ValidationResult":
+        return ValidationResult.toRdfResource(object, options);
+      default:
+        object satisfies never;
+        throw new Error("should never reach this point");
     }
-    if (Ontology.isOntology(object)) {
-      return Ontology.toRdfResource(object, options);
-    }
-    if (PropertyGroup.isPropertyGroup(object)) {
-      return PropertyGroup.toRdfResource(object, options);
-    }
-    if (PropertyShape.isPropertyShape(object)) {
-      return PropertyShape.toRdfResource(object, options);
-    }
-    if (ValidationReport.isValidationReport(object)) {
-      return ValidationReport.toRdfResource(object, options);
-    }
-    if (ValidationResult.isValidationResult(object)) {
-      return ValidationResult.toRdfResource(object, options);
-    }
-    throw new Error("unrecognized type");
   };
 
-  export const toRdfResourceValues = ((
-    value,
-    _options,
-  ): (BlankNode | NamedNode)[] => {
-    if (NodeShape.isNodeShape(value)) {
-      return [
-        NodeShape.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
+  export function $toString(object: $Object) {
+    switch (object.$type) {
+      case "NodeShape":
+        return NodeShape.$toString(object);
+      case "Ontology":
+        return Ontology.$toString(object);
+      case "PropertyGroup":
+        return PropertyGroup.$toString(object);
+      case "PropertyShape":
+        return PropertyShape.$toString(object);
+      case "ValidationReport":
+        return ValidationReport.$toString(object);
+      case "ValidationResult":
+        return ValidationResult.$toString(object);
+      default:
+        object satisfies never;
+        throw new Error("should never reach this point");
     }
-    if (Ontology.isOntology(value)) {
-      return [
-        Ontology.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (PropertyGroup.isPropertyGroup(value)) {
-      return [
-        PropertyGroup.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (PropertyShape.isPropertyShape(value)) {
-      return [
-        PropertyShape.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ValidationReport.isValidationReport(value)) {
-      return [
-        ValidationReport.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ValidationResult.isValidationResult(value)) {
-      return [
-        ValidationResult.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-
-    throw new Error("unable to serialize to RDF");
-  }) satisfies $ToRdfResourceValuesFunction<$Object>;
+  }
 }

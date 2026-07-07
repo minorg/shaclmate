@@ -1,15 +1,8 @@
-import dataFactory from "@rdfx/data-factory";
-import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-import { Maybe } from "purify-ts";
-import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import { BlankNodeType } from "./BlankNodeType.js";
 import { GraphqlSchema } from "./GraphqlSchema.js";
-import { IdentifierType } from "./IdentifierType.js";
-import { IriType } from "./IriType.js";
-import { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
@@ -19,6 +12,7 @@ import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { UberObjectDiscriminatedUnionType } from "./UberObjectDiscriminatedUnionType.js";
 
 function compareTsNamedType(left: Type, right: Type): number {
   return left.name.unsafeCoerce().localeCompare(right.name.unsafeCoerce());
@@ -111,29 +105,14 @@ export class TsGenerator implements Generator {
       });
     }
 
-    switch (tsNamedObjectTypes.length) {
-      case 0:
-        break;
-      case 1:
-        declarations.push(
-          code`type ${configuration.syntheticNamePrefix}Object = ${tsNamedObjectTypes[0].expression};`,
-        );
-        break;
-      default: {
-        const uberObjectDiscriminatedUnionType =
-          this.synthesizeUberObjectDiscriminatedUnionType({
-            configuration,
-            namedObjectTypes: tsNamedObjectTypes,
-            reusables,
-          });
-        declarations = declarations.concat(
-          uberObjectDiscriminatedUnionType.declaration.toList(),
-        );
-        tsNamedObjectDiscriminatedUnionTypes.push(
-          uberObjectDiscriminatedUnionType,
-        );
-      }
-    }
+    declarations = declarations.concat(
+      new UberObjectDiscriminatedUnionType({
+        configuration,
+        logger: this.logger,
+        members: tsNamedObjectTypes,
+        reusables,
+      }).declaration.toList(),
+    );
 
     declarations.push(
       ...this.objectSetTypeDeclarations({
@@ -150,10 +129,7 @@ export class TsGenerator implements Generator {
         (tsNamedObjectType) => !tsNamedObjectType.synthetic,
       );
       const graphqlNamedObjectDiscriminatedUnionTypes =
-        tsNamedObjectDiscriminatedUnionTypes.filter(
-          (tsNamedObjectDiscriminatedUnionType) =>
-            !tsNamedObjectDiscriminatedUnionType.synthetic,
-        );
+        tsNamedObjectDiscriminatedUnionTypes;
 
       if (graphqlNamedObjectTypes.length > 0) {
         declarations.push(
@@ -221,91 +197,6 @@ export class TsGenerator implements Generator {
     }
 
     return declarations;
-  }
-
-  /**
-   * Synthesize the $Object union.
-   */
-  private synthesizeUberObjectDiscriminatedUnionType({
-    configuration,
-    namedObjectTypes,
-    reusables,
-  }: {
-    configuration: TsGenerator.Configuration;
-    namedObjectTypes: readonly ObjectType[];
-    reusables: Reusables;
-  }): ObjectDiscriminatedUnionType {
-    const filteredNamedObjectTypes = namedObjectTypes.filter(
-      (namedObjectType) => !namedObjectType.extern,
-    );
-    invariant(filteredNamedObjectTypes.length > 0);
-
-    const nodeKinds = filteredNamedObjectTypes.reduce(
-      (nodeKinds, namedObjectType) => {
-        for (const nodeKind of namedObjectType.identifierType.nodeKinds) {
-          nodeKinds.add(nodeKind);
-        }
-        return nodeKinds;
-      },
-      new Set<IdentifierNodeKind>(),
-    );
-
-    let identifierType: BlankNodeType | IdentifierType | IriType;
-    if (nodeKinds.size === 2) {
-      identifierType = new IdentifierType({
-        name: Maybe.empty(),
-        comment: Maybe.empty(),
-        configuration,
-        label: Maybe.empty(),
-        logger: this.logger,
-        reusables,
-        shapeIdentifier: dataFactory.blankNode(),
-      });
-    } else {
-      switch ([...nodeKinds][0]) {
-        case "BlankNode":
-          identifierType = new BlankNodeType({
-            name: Maybe.empty(),
-            comment: Maybe.empty(),
-            configuration,
-            label: Maybe.empty(),
-            logger: this.logger,
-            reusables,
-            shapeIdentifier: dataFactory.blankNode(),
-          });
-          break;
-        case "IRI":
-          identifierType = new IriType({
-            name: Maybe.empty(),
-            comment: Maybe.empty(),
-            configuration,
-            hasValues: [],
-            in_: [],
-            label: Maybe.empty(),
-            logger: this.logger,
-            reusables,
-            shapeIdentifier: dataFactory.blankNode(),
-          });
-          break;
-      }
-    }
-
-    return new ObjectDiscriminatedUnionType({
-      name: Maybe.of(`${configuration.syntheticNamePrefix}Object`),
-      comment: Maybe.empty(),
-      configuration,
-      identifierType: Maybe.of(identifierType),
-      label: Maybe.empty(),
-      logger: this.logger,
-      members: filteredNamedObjectTypes.map((namedObjectType) => ({
-        discriminantValue: Maybe.empty(),
-        type: namedObjectType,
-      })),
-      recursive: false,
-      reusables,
-      shapeIdentifier: dataFactory.blankNode(),
-      synthetic: true,
-    });
   }
 }
 

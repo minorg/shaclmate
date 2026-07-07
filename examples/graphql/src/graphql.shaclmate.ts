@@ -1168,6 +1168,7 @@ export namespace $DefaultPartial {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "DefaultPartial" },
     },
   } as const;
 
@@ -1437,6 +1438,7 @@ export namespace LazyObject {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "LazyObject" },
       optionalNumberProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -2143,6 +2145,7 @@ export namespace RootObject {
     fromRdfType: dataFactory.namedNode("http://example.com/RootObject"),
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $type: { kind: "Discriminant", value: "RootObject" },
       lazyObjectSetProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/lazyObjectSetProperty"),
@@ -2474,6 +2477,7 @@ export namespace UnionMember1 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "UnionMember1" },
       optionalNumberProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -2686,6 +2690,7 @@ export namespace UnionMember2 {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "UnionMember2" },
       optionalStringProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -2901,275 +2906,44 @@ export type $Object =
   | UnionMember2;
 
 export namespace $Object {
-  export const $toString = (value: $Object): string => {
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return $DefaultPartial.$toString(value);
-    }
-    if (LazyObject.isLazyObject(value)) {
-      return LazyObject.$toString(value);
-    }
-    if (RootObject.isRootObject(value)) {
-      return RootObject.$toString(value);
-    }
-    if (UnionMember1.isUnionMember1(value)) {
-      return UnionMember1.$toString(value);
-    }
-    if (UnionMember2.isUnionMember2(value)) {
-      return UnionMember2.$toString(value);
-    }
-
-    throw new Error("unable to serialize to string");
-  };
-
-  export const filter = (filter: $Object.Filter, value: $Object) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.on?.["DefaultPartial"] !== undefined &&
-      $DefaultPartial.is$DefaultPartial(value)
-    ) {
-      if (!$DefaultPartial.filter(filter.on["DefaultPartial"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["LazyObject"] !== undefined &&
-      LazyObject.isLazyObject(value)
-    ) {
-      if (!LazyObject.filter(filter.on["LazyObject"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["RootObject"] !== undefined &&
-      RootObject.isRootObject(value)
-    ) {
-      if (!RootObject.filter(filter.on["RootObject"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["UnionMember1"] !== undefined &&
-      UnionMember1.isUnionMember1(value)
-    ) {
-      if (!UnionMember1.filter(filter.on["UnionMember1"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["UnionMember2"] !== undefined &&
-      UnionMember2.isUnionMember2(value)
-    ) {
-      if (!UnionMember2.filter(filter.on["UnionMember2"], value)) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly DefaultPartial?: $DefaultPartial.Filter;
-      readonly LazyObject?: LazyObject.Filter;
-      readonly RootObject?: RootObject.Filter;
-      readonly UnionMember1?: UnionMember1.Filter;
-      readonly UnionMember2?: UnionMember2.Filter;
-    };
-  };
-
-  export const fromRdfResource: $FromRdfResourceFunction<$Object> = (
-    resource,
-    options,
-  ) =>
-    (
-      $DefaultPartial.fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, $Object>
-    )
-      .altLazy(
-        () =>
-          LazyObject.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          RootObject.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UnionMember1.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UnionMember2.fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      );
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    $Object,
-    typeof $Object.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        $DefaultPartial.fromRdfResourceValues(valueAsValues, {
-          ...options,
-          schema: options.schema.members["DefaultPartial"].type,
-        }) as Either<Error, Resource.Values<$Object>>
-      )
-        .altLazy(
-          () =>
-            LazyObject.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["LazyObject"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            RootObject.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["RootObject"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            UnionMember1.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["UnionMember1"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .altLazy(
-          () =>
-            UnionMember2.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              schema: options.schema.members["UnionMember2"].type,
-            }) as Either<Error, Resource.Values<$Object>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
-    $Object,
-    typeof $Object.schema
-  >;
-
-  export type Identifier = BlankNode | NamedNode;
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export const schema = {
-    kind: "ObjectDiscriminatedUnion" as const,
-    members: {
-      DefaultPartial: {
-        discriminantValues: ["DefaultPartial"],
-        type: $DefaultPartial.schema,
-      },
-      LazyObject: {
-        discriminantValues: ["LazyObject"],
-        type: LazyObject.schema,
-      },
-      RootObject: {
-        discriminantValues: ["RootObject"],
-        type: RootObject.schema,
-      },
-      UnionMember1: {
-        discriminantValues: ["UnionMember1"],
-        type: UnionMember1.schema,
-      },
-      UnionMember2: {
-        discriminantValues: ["UnionMember2"],
-        type: UnionMember2.schema,
-      },
-    },
-    properties: {},
-  } as const;
-
   export const toRdfResource: $ToRdfResourceFunction<$Object> = (
     object,
     options,
   ) => {
-    if ($DefaultPartial.is$DefaultPartial(object)) {
-      return $DefaultPartial.toRdfResource(object, options);
+    switch (object.$type) {
+      case "DefaultPartial":
+        return $DefaultPartial.toRdfResource(object, options);
+      case "LazyObject":
+        return LazyObject.toRdfResource(object, options);
+      case "RootObject":
+        return RootObject.toRdfResource(object, options);
+      case "UnionMember1":
+        return UnionMember1.toRdfResource(object, options);
+      case "UnionMember2":
+        return UnionMember2.toRdfResource(object, options);
+      default:
+        object satisfies never;
+        throw new Error("should never reach this point");
     }
-    if (LazyObject.isLazyObject(object)) {
-      return LazyObject.toRdfResource(object, options);
-    }
-    if (RootObject.isRootObject(object)) {
-      return RootObject.toRdfResource(object, options);
-    }
-    if (UnionMember1.isUnionMember1(object)) {
-      return UnionMember1.toRdfResource(object, options);
-    }
-    if (UnionMember2.isUnionMember2(object)) {
-      return UnionMember2.toRdfResource(object, options);
-    }
-    throw new Error("unrecognized type");
   };
 
-  export const toRdfResourceValues = ((
-    value,
-    _options,
-  ): (BlankNode | NamedNode)[] => {
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return [
-        $DefaultPartial.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
+  export function $toString(object: $Object) {
+    switch (object.$type) {
+      case "DefaultPartial":
+        return $DefaultPartial.$toString(object);
+      case "LazyObject":
+        return LazyObject.$toString(object);
+      case "RootObject":
+        return RootObject.$toString(object);
+      case "UnionMember1":
+        return UnionMember1.$toString(object);
+      case "UnionMember2":
+        return UnionMember2.$toString(object);
+      default:
+        object satisfies never;
+        throw new Error("should never reach this point");
     }
-    if (LazyObject.isLazyObject(value)) {
-      return [
-        LazyObject.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (RootObject.isRootObject(value)) {
-      return [
-        RootObject.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (UnionMember1.isUnionMember1(value)) {
-      return [
-        UnionMember1.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (UnionMember2.isUnionMember2(value)) {
-      return [
-        UnionMember2.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-
-    throw new Error("unable to serialize to RDF");
-  }) satisfies $ToRdfResourceValuesFunction<$Object>;
+  }
 }
 export interface $ObjectSet {
   lazyObject(
@@ -3268,26 +3042,6 @@ export interface $ObjectSet {
   unions(
     query?: $ObjectSet.Query<Union.Filter, Union.Identifier>,
   ): Promise<Either<Error, readonly Union[]>>;
-
-  $object(
-    identifier: $Object.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, $Object>>;
-
-  $objectCount(
-    query?: Pick<
-      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  $objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object.Identifier[]>>;
-
-  $objects(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object[]>>;
 }
 
 export namespace $ObjectSet {
@@ -3682,100 +3436,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           filter: Union.filter,
-          fromRdfResource: UnionMember2.fromRdfResource,
-          fromRdfTypes: [UnionMember2.schema.fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async $object(
-    identifier: $Object.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, $Object>> {
-    return this.$objectSync(identifier, options);
-  }
-
-  $objectSync(
-    identifier: $Object.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, $Object> {
-    return this.$objectsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async $objectCount(
-    query?: Pick<
-      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCountSync(query);
-  }
-
-  $objectCountSync(
-    query?: Pick<
-      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.$objectsSync(query).map((objects) => objects.length);
-  }
-
-  async $objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object.Identifier[]>> {
-    return this.$objectIdentifiersSync(query);
-  }
-
-  $objectIdentifiersSync(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Either<Error, readonly $Object.Identifier[]> {
-    return this.$objectsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async $objects(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object[]>> {
-    return this.$objectsSync(query);
-  }
-
-  $objectsSync(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Either<Error, readonly $Object[]> {
-    return this.#objectDiscriminatedUnionsSync<
-      $Object,
-      $Object.Filter,
-      $Object.Identifier
-    >(
-      [
-        {
-          filter: $Object.filter,
-          fromRdfResource: $DefaultPartial.fromRdfResource,
-          fromRdfTypes: [],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: LazyObject.fromRdfResource,
-          fromRdfTypes: [LazyObject.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: RootObject.fromRdfResource,
-          fromRdfTypes: [RootObject.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
-          fromRdfResource: UnionMember1.fromRdfResource,
-          fromRdfTypes: [UnionMember1.schema.fromRdfType],
-        },
-        {
-          filter: $Object.filter,
           fromRdfResource: UnionMember2.fromRdfResource,
           fromRdfTypes: [UnionMember2.schema.fromRdfType],
         },

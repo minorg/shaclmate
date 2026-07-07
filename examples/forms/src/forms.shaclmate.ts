@@ -725,6 +725,7 @@ export namespace FormStruct {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $type: { kind: "Discriminant", value: "FormStruct" },
       emptyStringSetProperty: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -906,4 +907,12 @@ export namespace FormStruct {
   ) => Record<string, string> = (_formStruct) =>
     $compactRecord({ $identifier: _formStruct.$identifier().toString() });
 }
-type $Object = FormStruct;
+export type $Object = FormStruct;
+
+export namespace $Object {
+  export const toJson = FormStruct.toJson;
+
+  export const toRdfResource = FormStruct.toRdfResource;
+
+  export const $toString = FormStruct.$toString;
+}

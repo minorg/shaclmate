@@ -41,14 +41,12 @@ export class DiscriminatedUnionType<
   override readonly kind: "ObjectDiscriminatedUnion" | "DiscriminatedUnion" =
     "DiscriminatedUnion";
   override readonly recursive: boolean;
-  readonly synthetic: boolean;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
     identifierType,
     members,
     recursive,
-    synthetic,
     ...superParameters
   }: {
     identifierType: Maybe<BlankNodeType | IdentifierType | IriType>;
@@ -69,7 +67,6 @@ export class DiscriminatedUnionType<
       this,
       members,
     );
-    this.synthetic = synthetic;
 
     this.lazyMembers = () =>
       members.map((member, memberI) => {
