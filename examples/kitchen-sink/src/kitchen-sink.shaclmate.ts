@@ -2569,6 +2569,9 @@ namespace $RdfVocabularies {
     dateTime: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
     ),
+    dateTimeStamp: dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
+    ),
     decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
     double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
     float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
@@ -13689,6 +13692,762 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
       DatatypeDiscriminatedUnionsStruct.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+} /**
+ * Struct node shape with properties that have date sh:datatype's
+ */
+
+export type DatesStruct = {
+  readonly $identifier: () => DatesStruct.Identifier;
+
+  readonly $type: "DatesStruct";
+
+  readonly date: Maybe<Date>;
+
+  readonly dateTime: Maybe<Date>;
+
+  readonly dateTimeStamp: Maybe<Date>;
+};
+
+export namespace DatesStruct {
+  export const create: (parameters?: {
+    readonly $identifier?:
+      | (() => DatesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly date?: Date | Maybe<Date>;
+    readonly dateTime?: Date | Maybe<Date>;
+    readonly dateTimeStamp?: Date | Maybe<Date>;
+  }) => Either<Error, DatesStruct> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      date: $convertToMaybe($identityConversionFunction)(
+        parameters?.date,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DatesStruct.schema.properties.date.type,
+          value,
+        ),
+      ),
+      dateTime: $convertToMaybe($identityConversionFunction)(
+        parameters?.dateTime,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DatesStruct.schema.properties.dateTime.type,
+          value,
+        ),
+      ),
+      dateTimeStamp: $convertToMaybe($identityConversionFunction)(
+        parameters?.dateTimeStamp,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DatesStruct.schema.properties.dateTimeStamp.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({ ...properties, $type: "DatesStruct" as const }))
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          toJson: DatesStruct.toJson,
+          $toString: DatesStruct.$toString,
+        }),
+      );
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => DatesStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly date?: Date | Maybe<Date>;
+    readonly dateTime?: Date | Maybe<Date>;
+    readonly dateTimeStamp?: Date | Maybe<Date>;
+  }): DatesStruct {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const equals: (
+    left: DatesStruct,
+    right: DatesStruct,
+  ) => $EqualsResult = (left, right) =>
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $dateEquals),
+            name: "date",
+          },
+          [left, left.date],
+          [right, right.date],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $dateEquals),
+            name: "dateTime",
+          },
+          [left, left.dateTime],
+          [right, right.dateTime],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $dateEquals),
+            name: "dateTimeStamp",
+          },
+          [left, left.dateTimeStamp],
+          [right, right.dateTimeStamp],
+        ),
+      );
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly date?: $MaybeFilter<$DateFilter>;
+    readonly dateTime?: $MaybeFilter<$DateFilter>;
+    readonly dateTimeStamp?: $MaybeFilter<$DateFilter>;
+  };
+
+  export const filter: (
+    filter: DatesStruct.Filter,
+    value: DatesStruct,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.date !== undefined &&
+      !$filterMaybe<Date, $DateFilter>($filterDate)(filter.date, value.date)
+    ) {
+      return false;
+    }
+    if (
+      filter.dateTime !== undefined &&
+      !$filterMaybe<Date, $DateFilter>($filterDate)(
+        filter.dateTime,
+        value.dateTime,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.dateTimeStamp !== undefined &&
+      !$filterMaybe<Date, $DateFilter>($filterDate)(
+        filter.dateTimeStamp,
+        value.dateTimeStamp,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    DatesStruct.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.date,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "date",
+        propertySchema: DatesStruct.schema.properties.date,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $DateFilter,
+          $DateSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.dateTime,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "dateTime",
+        propertySchema: DatesStruct.schema.properties.dateTime,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $DateFilter,
+          $DateSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.dateTimeStamp,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "dateTimeStamp",
+        propertySchema: DatesStruct.schema.properties.dateTimeStamp,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $DateFilter,
+          $DateSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    DatesStruct.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: DatesStruct.schema.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: DatesStruct.schema.properties.$identifier.type,
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.date,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "date",
+        propertySchema: DatesStruct.schema.properties.date,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.dateTime,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "dateTime",
+        propertySchema: DatesStruct.schema.properties.dateTime,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.dateTimeStamp,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "dateTimeStamp",
+        propertySchema: DatesStruct.schema.properties.dateTimeStamp,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export const fromJson: (
+    json: DatesStruct.Json,
+  ) => Either<Error, DatesStruct> = ($json) =>
+    $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      date: Maybe.fromNullable($json["date"])
+        .map((item) =>
+          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      dateTime: Maybe.fromNullable($json["dateTime"])
+        .map((item) =>
+          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      dateTimeStamp: Maybe.fromNullable($json["dateTimeStamp"])
+        .map((item) =>
+          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(DatesStruct.create);
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<DatesStruct> = (
+    resource,
+    options,
+  ) =>
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(resource, [DatesStruct.schema.fromRdfType], {
+          graph: options.graph,
+        })
+      : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: $identifierFromRdfResourceValues(
+          $rdfResourceIdentifierValues(resource),
+          {
+            ...options,
+            focusResource: resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: DatesStruct.schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        date: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: DatesStruct.schema.properties.date,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Date,
+            $DateSchema
+          >($dateFromRdfResourceValues),
+        }),
+        dateTime: $shaclPropertyFromRdf<Maybe<Date>, $MaybeSchema<$DateSchema>>(
+          {
+            ...options,
+            focusResource: resource,
+            ignoreRdfType: true,
+            propertySchema: DatesStruct.schema.properties.dateTime,
+            typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+              Date,
+              $DateSchema
+            >($dateTimeFromRdfResourceValues),
+          },
+        ),
+        dateTimeStamp: $shaclPropertyFromRdf<
+          Maybe<Date>,
+          $MaybeSchema<$DateSchema>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: DatesStruct.schema.properties.dateTimeStamp,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Date,
+            $DateSchema
+          >($dateTimeFromRdfResourceValues),
+        }),
+      }).chain((properties) => DatesStruct.create(properties)),
+    );
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    DatesStruct,
+    DatesStruct.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export const hash = <HasherT extends $Hasher>(
+    hasher: HasherT,
+    _datesStruct: Omit<DatesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => DatesStruct.Identifier;
+      readonly $type?: "DatesStruct";
+    },
+  ): HasherT => {
+    if (_datesStruct.$identifier) {
+      hasher.update(_datesStruct.$identifier().value);
+    }
+    if (_datesStruct.$type) {
+      hasher.update(_datesStruct.$type);
+    }
+    $hashMaybe($hashDate)(hasher, _datesStruct.date);
+    $hashMaybe($hashDateTime)(hasher, _datesStruct.dateTime);
+    $hashMaybe($hashDateTime)(hasher, _datesStruct.dateTimeStamp);
+    return hasher;
+  };
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export const isDatesStruct = (object: $Object): object is DatesStruct =>
+    object.$type === "DatesStruct";
+
+  export type Json = {
+    readonly "@id": string;
+    readonly $type: "DatesStruct";
+    readonly date?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
+      readonly "@value": string;
+    };
+    readonly dateTime?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
+      readonly "@value": string;
+    };
+    readonly dateTimeStamp?: {
+      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTimeStamp";
+      readonly "@value": string;
+    };
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("DatesStruct"),
+          date: z
+            .object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
+              "@value": z.iso.date(),
+            })
+            .optional(),
+          dateTime: z
+            .object({
+              "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
+              "@value": z.iso.datetime(),
+            })
+            .optional(),
+          dateTimeStamp: z
+            .object({
+              "@type": z.literal(
+                "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
+              ),
+              "@value": z.iso.datetime(),
+            })
+            .optional(),
+        })
+        .meta({
+          description:
+            "Struct node shape with properties that have date sh:datatype's",
+        }) satisfies z.ZodType<Json>;
+    }
+
+    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "DatesStruct" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          { scope: `${scopePrefix}/properties/date`, type: "Control" },
+          { scope: `${scopePrefix}/properties/dateTime`, type: "Control" },
+          { scope: `${scopePrefix}/properties/dateTimeStamp`, type: "Control" },
+        ],
+        type: "Group",
+        label: "DatesStruct",
+      };
+    };
+  }
+
+  export const schema = {
+    fromRdfType: dataFactory.namedNode("http://example.com/DatesStruct"),
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      $type: { kind: "Discriminant", value: "DatesStruct" },
+      date: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/date"),
+        type: { kind: "Option" as const, itemType: { kind: "Date" as const } },
+      },
+      dateTime: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/dateTime"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "DateTime" as const },
+        },
+      },
+      dateTimeStamp: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/dateTimeStamp"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "DateTime" as const },
+        },
+      },
+    },
+    toRdfTypes: [dataFactory.namedNode("http://example.com/DatesStruct")],
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: DatesStruct.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "datesStruct";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        DatesStruct.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          DatesStruct.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof DatesStruct.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      DatesStruct.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const toJson: (_datesStruct: DatesStruct) => DatesStruct.Json = (
+    _datesStruct,
+  ) =>
+    JSON.parse(
+      JSON.stringify({
+        "@id":
+          _datesStruct.$identifier().termType === "BlankNode"
+            ? `_:${_datesStruct.$identifier().value}`
+            : _datesStruct.$identifier().value,
+        $type: _datesStruct.$type,
+        date: _datesStruct.date
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+            "@value": $toIsoDateString(item),
+          }))
+          .extract(),
+        dateTime: _datesStruct.dateTime
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
+            "@value": item.toISOString(),
+          }))
+          .extract(),
+        dateTimeStamp: _datesStruct.dateTimeStamp
+          .map((item) => ({
+            "@type": "http://www.w3.org/2001/XMLSchema#dateTimeStamp" as const,
+            "@value": item.toISOString(),
+          }))
+          .extract(),
+      } satisfies DatesStruct.Json),
+    );
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    DatesStruct.Identifier,
+    DatesStruct
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        DatesStruct.schema.toRdfTypes,
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      DatesStruct.schema.properties.date.path,
+      parameters.object.date
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.date(value, $RdfVocabularies.xsd.date),
+        ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      DatesStruct.schema.properties.dateTime.path,
+      parameters.object.dateTime
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
+        ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      DatesStruct.schema.properties.dateTimeStamp.path,
+      parameters.object.dateTimeStamp
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.date(
+            value,
+            dataFactory.namedNode(
+              "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
+            ),
+          ),
+        ]),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export const $toString: (_datesStruct: DatesStruct) => string = (
+    _datesStruct,
+  ) => `DatesStruct(${JSON.stringify(toStringRecord(_datesStruct))})`;
+
+  export const toStringRecord: (
+    _datesStruct: DatesStruct,
+  ) => Record<string, string> = (_datesStruct) =>
+    $compactRecord({ $identifier: _datesStruct.$identifier().toString() });
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    DatesStruct.Filter,
+    DatesStruct.Schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    DatesStruct.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    DatesStruct.Filter,
+    DatesStruct.Schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      DatesStruct.focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -56125,6 +56884,7 @@ export type $Object =
   | ClassConstraintsStruct
   | ConvertibleTypesStruct
   | DatatypeDiscriminatedUnionsStruct
+  | DatesStruct
   | DefaultValuesStruct
   | DirectRecursiveStruct
   | DiscriminatedUnionMember1
@@ -56217,6 +56977,8 @@ export namespace $Object {
           left,
           right as DatatypeDiscriminatedUnionsStruct,
         );
+      case "DatesStruct":
+        return DatesStruct.equals(left, right as DatesStruct);
       case "DefaultValuesStruct":
         return DefaultValuesStruct.equals(left, right as DefaultValuesStruct);
       case "DirectRecursiveStruct":
@@ -56396,6 +57158,8 @@ export namespace $Object {
         return ConvertibleTypesStruct.hash(hasher, object);
       case "DatatypeDiscriminatedUnionsStruct":
         return DatatypeDiscriminatedUnionsStruct.hash(hasher, object);
+      case "DatesStruct":
+        return DatesStruct.hash(hasher, object);
       case "DefaultValuesStruct":
         return DefaultValuesStruct.hash(hasher, object);
       case "DirectRecursiveStruct":
@@ -56509,6 +57273,8 @@ export namespace $Object {
         return ConvertibleTypesStruct.toJson(object);
       case "DatatypeDiscriminatedUnionsStruct":
         return DatatypeDiscriminatedUnionsStruct.toJson(object);
+      case "DatesStruct":
+        return DatesStruct.toJson(object);
       case "DefaultValuesStruct":
         return DefaultValuesStruct.toJson(object);
       case "DirectRecursiveStruct":
@@ -56622,6 +57388,8 @@ export namespace $Object {
         return ConvertibleTypesStruct.toRdfResource(object, options);
       case "DatatypeDiscriminatedUnionsStruct":
         return DatatypeDiscriminatedUnionsStruct.toRdfResource(object, options);
+      case "DatesStruct":
+        return DatesStruct.toRdfResource(object, options);
       case "DefaultValuesStruct":
         return DefaultValuesStruct.toRdfResource(object, options);
       case "DirectRecursiveStruct":
@@ -56753,6 +57521,8 @@ export namespace $Object {
         return ConvertibleTypesStruct.$toString(object);
       case "DatatypeDiscriminatedUnionsStruct":
         return DatatypeDiscriminatedUnionsStruct.$toString(object);
+      case "DatesStruct":
+        return DatesStruct.$toString(object);
       case "DefaultValuesStruct":
         return DefaultValuesStruct.$toString(object);
       case "DirectRecursiveStruct":
@@ -57023,6 +57793,26 @@ export interface $ObjectSet {
       DatatypeDiscriminatedUnionsStruct.Identifier
     >,
   ): Promise<Either<Error, readonly DatatypeDiscriminatedUnionsStruct[]>>;
+
+  datesStruct(
+    identifier: DatesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DatesStruct>>;
+
+  datesStructCount(
+    query?: Pick<
+      $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  datesStructIdentifiers(
+    query?: $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+  ): Promise<Either<Error, readonly DatesStruct.Identifier[]>>;
+
+  datesStructs(
+    query?: $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+  ): Promise<Either<Error, readonly DatesStruct[]>>;
 
   defaultValuesStruct(
     identifier: DefaultValuesStruct.Identifier,
@@ -58971,6 +59761,78 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         filter: DatatypeDiscriminatedUnionsStruct.filter,
         fromRdfResource: DatatypeDiscriminatedUnionsStruct.fromRdfResource,
         fromRdfTypes: [DatatypeDiscriminatedUnionsStruct.schema.fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async datesStruct(
+    identifier: DatesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DatesStruct>> {
+    return this.datesStructSync(identifier, options);
+  }
+
+  datesStructSync(
+    identifier: DatesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, DatesStruct> {
+    return this.datesStructsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async datesStructCount(
+    query?: Pick<
+      $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.datesStructCountSync(query);
+  }
+
+  datesStructCountSync(
+    query?: Pick<
+      $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.datesStructsSync(query).map((objects) => objects.length);
+  }
+
+  async datesStructIdentifiers(
+    query?: $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+  ): Promise<Either<Error, readonly DatesStruct.Identifier[]>> {
+    return this.datesStructIdentifiersSync(query);
+  }
+
+  datesStructIdentifiersSync(
+    query?: $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+  ): Either<Error, readonly DatesStruct.Identifier[]> {
+    return this.datesStructsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async datesStructs(
+    query?: $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+  ): Promise<Either<Error, readonly DatesStruct[]>> {
+    return this.datesStructsSync(query);
+  }
+
+  datesStructsSync(
+    query?: $ObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+  ): Either<Error, readonly DatesStruct[]> {
+    return this.#objectsSync<
+      DatesStruct,
+      DatesStruct.Filter,
+      DatesStruct.Identifier
+    >(
+      {
+        filter: DatesStruct.filter,
+        fromRdfResource: DatesStruct.fromRdfResource,
+        fromRdfTypes: [DatesStruct.schema.fromRdfType],
       },
       query,
     );
@@ -63995,6 +64857,49 @@ export class $SparqlObjectSet implements $ObjectSet {
       DatatypeDiscriminatedUnionsStruct.Filter,
       DatatypeDiscriminatedUnionsStruct.Identifier
     >(DatatypeDiscriminatedUnionsStruct, query);
+  }
+
+  async datesStruct(
+    identifier: DatesStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DatesStruct>> {
+    return (
+      await this.datesStructs({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async datesStructCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<DatesStruct.Filter, DatesStruct.Identifier>(
+      DatesStruct,
+      query,
+    );
+  }
+
+  async datesStructIdentifiers(
+    query?: $SparqlObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+  ): Promise<Either<Error, readonly DatesStruct.Identifier[]>> {
+    return this.#objectIdentifiers<DatesStruct.Filter, DatesStruct.Identifier>(
+      DatesStruct,
+      query,
+    );
+  }
+
+  async datesStructs(
+    query?: $SparqlObjectSet.Query<DatesStruct.Filter, DatesStruct.Identifier>,
+  ): Promise<Either<Error, readonly DatesStruct[]>> {
+    return this.#objects<
+      DatesStruct,
+      DatesStruct.Filter,
+      DatesStruct.Identifier
+    >(DatesStruct, query);
   }
 
   async defaultValuesStruct(

@@ -907,6 +907,23 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :nonClassString
     ] .
 
+:DatesStruct
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Struct node shape with properties that have date sh:datatype's" ;
+    sh:property [
+        sh:datatype xsd:date ;
+        sh:maxCount 1 ;
+        sh:path :date
+    ], [
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1 ;
+        sh:path :dateTime
+    ], [
+        sh:datatype xsd:dateTimeStamp ;
+        sh:maxCount 1 ;
+        sh:path :dateTimeStamp
+    ] .
+
 :NumericsStruct
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with properties that have numeric sh:datatype's" ;

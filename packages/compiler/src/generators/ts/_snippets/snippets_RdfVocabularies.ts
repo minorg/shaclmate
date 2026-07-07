@@ -27,6 +27,7 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
     byte: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
     date: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#date"),
     dateTime: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#dateTime"),
+    dateTimeStamp: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#dateTimeStamp"),
     decimal: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
     double: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#double"),
     float: ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#float"),
