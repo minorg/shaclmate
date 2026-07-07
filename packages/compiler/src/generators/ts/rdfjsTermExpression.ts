@@ -56,6 +56,7 @@ export function rdfjsTermExpression(
           case "float":
           case "date":
           case "dateTime":
+          case "dateTimeStamp":
           case "decimal":
           case "double":
           case "int":

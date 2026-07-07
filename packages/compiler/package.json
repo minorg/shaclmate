@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.67",
+    "@shaclmate/shacl-ast": "4.0.68",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/term-map": "~2.0.2",
@@ -723,5 +723,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.67"
+  "version": "4.0.68"
 }
