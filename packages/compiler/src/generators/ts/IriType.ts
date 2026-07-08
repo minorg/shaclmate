@@ -51,10 +51,17 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   @Memoize()
   protected override get inlineExpression(): Code {
     if (this.in_.length > 0) {
-      return code`${this.reusables.imports.NamedNode}<${this.valueTypeExpression}>`;
+      return code`${this.reusables.imports.NamedNode}<${this.inlineValueTypeExpression}>`;
     }
 
     return code`${this.reusables.imports.NamedNode}`;
+  }
+
+  @Memoize()
+  protected get inlineValueTypeExpression(): Code {
+    return this.in_.length > 0
+      ? code`(${this.in_.map((in_) => `"${in_.value}"`).join(" | ")})`
+      : code`string`;
   }
 
   protected override get schemaInitializers() {
@@ -69,9 +76,9 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
 
   @Memoize()
   private get valueTypeExpression(): Code {
-    return this.in_.length > 0
-      ? code`(${this.in_.map((in_) => `"${in_.value}"`).join(" | ")})`
-      : code`string`;
+    return this.name
+      .map((name) => code`${name}["value"]`)
+      .orDefault(this.inlineValueTypeExpression);
   }
 
   override fromJsonExpression({

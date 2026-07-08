@@ -32433,9 +32433,7 @@ export namespace NamedTypesStruct {
     readonly namedDiscriminatedUnion1: NamedNode | string;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
     readonly namedInLiteral: NamedInLiteral;
-    readonly nameInIri:
-      | ("http://example.com/NamedInIri1" | "http://example.com/NamedInIri2")
-      | NamedInIri;
+    readonly nameInIri: NamedInIri["value"] | NamedInIri;
   }) => Either<Error, NamedTypesStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
@@ -32447,9 +32445,7 @@ export namespace NamedTypesStruct {
         parameters.namedDiscriminatedUnion2,
       ),
       namedInLiteral: Either.of(parameters.namedInLiteral),
-      nameInIri: $convertToIri<
-        "http://example.com/NamedInIri1" | "http://example.com/NamedInIri2"
-      >(parameters.nameInIri),
+      nameInIri: $convertToIri<NamedInIri["value"]>(parameters.nameInIri),
     })
       .map((properties) => ({
         ...properties,
@@ -32472,9 +32468,7 @@ export namespace NamedTypesStruct {
     readonly namedDiscriminatedUnion1: NamedNode | string;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
     readonly namedInLiteral: NamedInLiteral;
-    readonly nameInIri:
-      | ("http://example.com/NamedInIri1" | "http://example.com/NamedInIri2")
-      | NamedInIri;
+    readonly nameInIri: NamedInIri["value"] | NamedInIri;
   }): NamedTypesStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -32886,16 +32880,14 @@ export namespace NamedTypesStruct {
         }),
         nameInIri: $shaclPropertyFromRdf<
           NamedInIri,
-          $IriSchema<
-            "http://example.com/NamedInIri1" | "http://example.com/NamedInIri2"
-          >
+          $IriSchema<NamedInIri["value"]>
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
           propertySchema: NamedTypesStruct.schema.properties.nameInIri,
           typeFromRdfResourceValues: $iriFromRdfResourceValues<
-            "http://example.com/NamedInIri1" | "http://example.com/NamedInIri2"
+            NamedInIri["value"]
           >,
         }),
       }).chain((properties) => NamedTypesStruct.create(properties)),
@@ -32959,11 +32951,7 @@ export namespace NamedTypesStruct {
     readonly namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json;
     readonly namedInLiteral: NamedInLiteral;
-    readonly nameInIri: {
-      readonly "@id":
-        | "http://example.com/NamedInIri1"
-        | "http://example.com/NamedInIri2";
-    };
+    readonly nameInIri: { readonly "@id": NamedInIri["value"] };
   };
 
   export namespace Json {
