@@ -835,7 +835,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:node :NamedInIri ;
-        sh:path :nameInIri
+        sh:path :namedInIri
     ], [
         sh:maxCount 1 ;
         sh:minCount 1 ;

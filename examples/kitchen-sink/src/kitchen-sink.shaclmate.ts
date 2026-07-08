@@ -22247,8 +22247,6 @@ export type InPropertiesStruct = {
   >;
 
   readonly inStrings: Maybe<"text" | "html">;
-
-  readonly reusableIn: Maybe<ReusableIn>;
 };
 
 export namespace InPropertiesStruct {
@@ -22269,7 +22267,6 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-    readonly reusableIn?: ReusableIn | Maybe<ReusableIn>;
   }) => Either<Error, InPropertiesStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
@@ -22323,14 +22320,6 @@ export namespace InPropertiesStruct {
           value,
         ),
       ),
-      reusableIn: $convertToMaybe($identityConversionFunction)(
-        parameters?.reusableIn,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          InPropertiesStruct.schema.properties.reusableIn.type,
-          value,
-        ),
-      ),
     })
       .map((properties) => ({
         ...properties,
@@ -22360,7 +22349,6 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-    readonly reusableIn?: ReusableIn | Maybe<ReusableIn>;
   }): InPropertiesStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -22439,17 +22427,6 @@ export namespace InPropertiesStruct {
           [left, left.inStrings],
           [right, right.inStrings],
         ),
-      )
-      .chain(() =>
-        $propertyEquals(
-          {
-            equalsFunction: (left, right) =>
-              $maybeEquals(left, right, $strictEquals),
-            name: "reusableIn",
-          },
-          [left, left.reusableIn],
-          [right, right.reusableIn],
-        ),
       );
 
   export type Filter = {
@@ -22460,7 +22437,6 @@ export namespace InPropertiesStruct {
     readonly inIntegers?: $MaybeFilter<$NumericFilter<1n | 2n>>;
     readonly inIris?: $MaybeFilter<$IriFilter>;
     readonly inStrings?: $MaybeFilter<$StringFilter>;
-    readonly reusableIn?: $MaybeFilter<$StringFilter>;
   };
 
   export const filter: (
@@ -22523,15 +22499,6 @@ export namespace InPropertiesStruct {
       !$filterMaybe<"text" | "html", $StringFilter>($filterString)(
         filter.inStrings,
         value.inStrings,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.reusableIn !== undefined &&
-      !$filterMaybe<ReusableIn, $StringFilter>($filterString)(
-        filter.reusableIn,
-        value.reusableIn,
       )
     ) {
       return false;
@@ -22637,20 +22604,6 @@ export namespace InPropertiesStruct {
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
           $StringSchema<"text" | "html">
-        >((_: object) => []),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.reusableIn,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "reusableIn",
-        propertySchema: InPropertiesStruct.schema.properties.reusableIn,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $StringFilter,
-          $StringSchema<ReusableIn>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -22807,21 +22760,6 @@ export namespace InPropertiesStruct {
         variablePrefix: parameters.variablePrefix,
       }),
     );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.reusableIn,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "reusableIn",
-        propertySchema: InPropertiesStruct.schema.properties.reusableIn,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $StringFilter,
-          $StringSchema<ReusableIn>
-        >($stringSparqlWherePatterns),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
     return patterns;
   };
 
@@ -22862,9 +22800,6 @@ export namespace InPropertiesStruct {
         .orDefault(Either.of(Maybe.empty())),
       inStrings: Maybe.fromNullable($json["inStrings"])
         .map((item) => Either.of<Error, "text" | "html">(item).map(Maybe.of))
-        .orDefault(Either.of(Maybe.empty())),
-      reusableIn: Maybe.fromNullable($json["reusableIn"])
-        .map((item) => Either.of<Error, ReusableIn>(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
     }).chain(InPropertiesStruct.create);
 
@@ -22981,19 +22916,6 @@ export namespace InPropertiesStruct {
             $StringSchema<"text" | "html">
           >($stringFromRdfResourceValues<"text" | "html">),
         }),
-        reusableIn: $shaclPropertyFromRdf<
-          Maybe<ReusableIn>,
-          $MaybeSchema<$StringSchema<ReusableIn>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: InPropertiesStruct.schema.properties.reusableIn,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            ReusableIn,
-            $StringSchema<ReusableIn>
-          >($stringFromRdfResourceValues<ReusableIn>),
-        }),
       }).chain((properties) => InPropertiesStruct.create(properties)),
     );
 
@@ -23029,7 +22951,6 @@ export namespace InPropertiesStruct {
     $hashMaybe($hashNumeric)(hasher, _inPropertiesStruct.inIntegers);
     $hashMaybe($hashTerm)(hasher, _inPropertiesStruct.inIris);
     $hashMaybe($hashString)(hasher, _inPropertiesStruct.inStrings);
-    $hashMaybe($hashString)(hasher, _inPropertiesStruct.reusableIn);
     return hasher;
   };
 
@@ -23061,7 +22982,6 @@ export namespace InPropertiesStruct {
       readonly "@id": "http://example.com/InIri1" | "http://example.com/InIri2";
     };
     readonly inStrings?: "text" | "html";
-    readonly reusableIn?: ReusableIn;
   };
 
   export namespace Json {
@@ -23101,7 +23021,6 @@ export namespace InPropertiesStruct {
             })
             .optional(),
           inStrings: z.enum(["text", "html"]).optional(),
-          reusableIn: z.enum(["cat", "dog"]).optional(),
         })
         .meta({
           description: "Struct node shape with sh:in properties.",
@@ -23134,7 +23053,6 @@ export namespace InPropertiesStruct {
           { scope: `${scopePrefix}/properties/inIntegers`, type: "Control" },
           { scope: `${scopePrefix}/properties/inIris`, type: "Control" },
           { scope: `${scopePrefix}/properties/inStrings`, type: "Control" },
-          { scope: `${scopePrefix}/properties/reusableIn`, type: "Control" },
         ],
         type: "Group",
         label: "InPropertiesStruct",
@@ -23205,18 +23123,6 @@ export namespace InPropertiesStruct {
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const, in: ["text", "html"] as const },
-        },
-      },
-      reusableIn: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/reusableIn"),
-        get type() {
-          return {
-            kind: "Option" as const,
-            get itemType() {
-              return ReusableIn.schema;
-            },
-          };
         },
       },
     },
@@ -23313,9 +23219,6 @@ export namespace InPropertiesStruct {
           .map((item) => ({ "@id": item.value }))
           .extract(),
         inStrings: _inPropertiesStruct.inStrings.map((item) => item).extract(),
-        reusableIn: _inPropertiesStruct.reusableIn
-          .map((item) => item)
-          .extract(),
       } satisfies InPropertiesStruct.Json),
     );
 
@@ -23374,13 +23277,6 @@ export namespace InPropertiesStruct {
     parameters.resource.add(
       InPropertiesStruct.schema.properties.inStrings.path,
       parameters.object.inStrings
-        .toList()
-        .flatMap((value) => [$literalFactory.string(value)]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      InPropertiesStruct.schema.properties.reusableIn.path,
-      parameters.object.reusableIn
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
@@ -32399,10 +32295,31 @@ export namespace MutablePropertiesStruct {
     );
 }
 export type NamedDatatype = string;
+
+export namespace NamedDatatype {
+  export const schema = { kind: "String" as const };
+}
 export type NamedInIri = NamedNode<
   "http://example.com/NamedInIri1" | "http://example.com/NamedInIri2"
 >;
-export type NamedInLiteral = "test1" | "test2"; /**
+
+export namespace NamedInIri {
+  export const schema = {
+    kind: "Iri" as const,
+    in: [
+      dataFactory.namedNode("http://example.com/NamedInIri1"),
+      dataFactory.namedNode("http://example.com/NamedInIri2"),
+    ],
+  };
+}
+export type NamedInLiteral = "test1" | "test2";
+
+export namespace NamedInLiteral {
+  export const schema = {
+    kind: "String" as const,
+    in: ["test1", "test2"] as const,
+  };
+} /**
  * Struct node shape that uses named types in properties with sh:node
  */
 
@@ -32417,9 +32334,9 @@ export type NamedTypesStruct = {
 
   readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
 
-  readonly namedInLiteral: NamedInLiteral;
+  readonly namedInIri: NamedInIri;
 
-  readonly nameInIri: NamedInIri;
+  readonly namedInLiteral: NamedInLiteral;
 };
 
 export namespace NamedTypesStruct {
@@ -32432,8 +32349,8 @@ export namespace NamedTypesStruct {
     readonly namedDatatype: NamedDatatype;
     readonly namedDiscriminatedUnion1: NamedNode | string;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
+    readonly namedInIri: NamedInIri["value"] | NamedInIri;
     readonly namedInLiteral: NamedInLiteral;
-    readonly nameInIri: NamedInIri["value"] | NamedInIri;
   }) => Either<Error, NamedTypesStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
@@ -32444,8 +32361,8 @@ export namespace NamedTypesStruct {
       namedDiscriminatedUnion2: $identityConversionFunction(
         parameters.namedDiscriminatedUnion2,
       ),
+      namedInIri: $convertToIri<NamedInIri["value"]>(parameters.namedInIri),
       namedInLiteral: Either.of(parameters.namedInLiteral),
-      nameInIri: $convertToIri<NamedInIri["value"]>(parameters.nameInIri),
     })
       .map((properties) => ({
         ...properties,
@@ -32467,8 +32384,8 @@ export namespace NamedTypesStruct {
     readonly namedDatatype: NamedDatatype;
     readonly namedDiscriminatedUnion1: NamedNode | string;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
+    readonly namedInIri: NamedInIri["value"] | NamedInIri;
     readonly namedInLiteral: NamedInLiteral;
-    readonly nameInIri: NamedInIri["value"] | NamedInIri;
   }): NamedTypesStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -32511,16 +32428,16 @@ export namespace NamedTypesStruct {
       )
       .chain(() =>
         $propertyEquals(
-          { equalsFunction: $strictEquals, name: "namedInLiteral" },
-          [left, left.namedInLiteral],
-          [right, right.namedInLiteral],
+          { equalsFunction: $booleanEquals, name: "namedInIri" },
+          [left, left.namedInIri],
+          [right, right.namedInIri],
         ),
       )
       .chain(() =>
         $propertyEquals(
-          { equalsFunction: $booleanEquals, name: "nameInIri" },
-          [left, left.nameInIri],
-          [right, right.nameInIri],
+          { equalsFunction: $strictEquals, name: "namedInLiteral" },
+          [left, left.namedInLiteral],
+          [right, right.namedInLiteral],
         ),
       );
 
@@ -32529,8 +32446,8 @@ export namespace NamedTypesStruct {
     readonly namedDatatype?: $StringFilter;
     readonly namedDiscriminatedUnion1?: NamedDiscriminatedUnion1.Filter;
     readonly namedDiscriminatedUnion2?: NamedDiscriminatedUnion2.Filter;
+    readonly namedInIri?: $IriFilter;
     readonly namedInLiteral?: $StringFilter;
-    readonly nameInIri?: $IriFilter;
   };
 
   export const filter: (
@@ -32568,14 +32485,14 @@ export namespace NamedTypesStruct {
       return false;
     }
     if (
-      filter.namedInLiteral !== undefined &&
-      !$filterString(filter.namedInLiteral, value.namedInLiteral)
+      filter.namedInIri !== undefined &&
+      !$filterIri(filter.namedInIri, value.namedInIri)
     ) {
       return false;
     }
     if (
-      filter.nameInIri !== undefined &&
-      !$filterIri(filter.nameInIri, value.nameInIri)
+      filter.namedInLiteral !== undefined &&
+      !$filterString(filter.namedInLiteral, value.namedInLiteral)
     ) {
       return false;
     }
@@ -32639,22 +32556,22 @@ export namespace NamedTypesStruct {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.namedInLiteral,
+        filter: parameters.filter?.namedInIri,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "namedInLiteral",
-        propertySchema: NamedTypesStruct.schema.properties.namedInLiteral,
+        propertyName: "namedInIri",
+        propertySchema: NamedTypesStruct.schema.properties.namedInIri,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.nameInIri,
+        filter: parameters.filter?.namedInLiteral,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "nameInIri",
-        propertySchema: NamedTypesStruct.schema.properties.nameInIri,
+        propertyName: "namedInLiteral",
+        propertySchema: NamedTypesStruct.schema.properties.namedInLiteral,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -32763,6 +32680,18 @@ export namespace NamedTypesStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.namedInIri,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "namedInIri",
+        propertySchema: NamedTypesStruct.schema.properties.namedInIri,
+        typeSparqlWherePatterns: $iriSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.namedInLiteral,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -32770,18 +32699,6 @@ export namespace NamedTypesStruct {
         propertyName: "namedInLiteral",
         propertySchema: NamedTypesStruct.schema.properties.namedInLiteral,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.nameInIri,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "nameInIri",
-        propertySchema: NamedTypesStruct.schema.properties.nameInIri,
-        typeSparqlWherePatterns: $iriSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32804,10 +32721,10 @@ export namespace NamedTypesStruct {
       namedDiscriminatedUnion2: NamedDiscriminatedUnion2.fromJson(
         $json["namedDiscriminatedUnion2"],
       ),
-      namedInLiteral: Either.of<Error, NamedInLiteral>($json["namedInLiteral"]),
-      nameInIri: Either.of<Error, NamedInIri>(
-        dataFactory.namedNode($json["nameInIri"]["@id"]),
+      namedInIri: Either.of<Error, NamedInIri>(
+        dataFactory.namedNode($json["namedInIri"]["@id"]),
       ),
+      namedInLiteral: Either.of<Error, NamedInLiteral>($json["namedInLiteral"]),
     }).chain(NamedTypesStruct.create);
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NamedTypesStruct> = (
@@ -32867,6 +32784,18 @@ export namespace NamedTypesStruct {
           typeFromRdfResourceValues:
             NamedDiscriminatedUnion2.fromRdfResourceValues,
         }),
+        namedInIri: $shaclPropertyFromRdf<
+          NamedInIri,
+          $IriSchema<NamedInIri["value"]>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: NamedTypesStruct.schema.properties.namedInIri,
+          typeFromRdfResourceValues: $iriFromRdfResourceValues<
+            NamedInIri["value"]
+          >,
+        }),
         namedInLiteral: $shaclPropertyFromRdf<
           NamedInLiteral,
           $StringSchema<NamedInLiteral>
@@ -32877,18 +32806,6 @@ export namespace NamedTypesStruct {
           propertySchema: NamedTypesStruct.schema.properties.namedInLiteral,
           typeFromRdfResourceValues:
             $stringFromRdfResourceValues<NamedInLiteral>,
-        }),
-        nameInIri: $shaclPropertyFromRdf<
-          NamedInIri,
-          $IriSchema<NamedInIri["value"]>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NamedTypesStruct.schema.properties.nameInIri,
-          typeFromRdfResourceValues: $iriFromRdfResourceValues<
-            NamedInIri["value"]
-          >,
         }),
       }).chain((properties) => NamedTypesStruct.create(properties)),
     );
@@ -32928,8 +32845,8 @@ export namespace NamedTypesStruct {
       hasher,
       _namedTypesStruct.namedDiscriminatedUnion2,
     );
+    $hashTerm(hasher, _namedTypesStruct.namedInIri);
     $hashString(hasher, _namedTypesStruct.namedInLiteral);
-    $hashTerm(hasher, _namedTypesStruct.nameInIri);
     return hasher;
   };
 
@@ -32950,8 +32867,8 @@ export namespace NamedTypesStruct {
     readonly namedDatatype: NamedDatatype;
     readonly namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json;
+    readonly namedInIri: { readonly "@id": NamedInIri["value"] };
     readonly namedInLiteral: NamedInLiteral;
-    readonly nameInIri: { readonly "@id": NamedInIri["value"] };
   };
 
   export namespace Json {
@@ -32971,13 +32888,13 @@ export namespace NamedTypesStruct {
           namedDatatype: z.string(),
           namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json.schema(),
           namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json.schema(),
-          namedInLiteral: z.enum(["test1", "test2"]),
-          nameInIri: z.object({
+          namedInIri: z.object({
             "@id": z.enum([
               "http://example.com/NamedInIri1",
               "http://example.com/NamedInIri2",
             ]),
           }),
+          namedInLiteral: z.enum(["test1", "test2"]),
         })
         .meta({
           description:
@@ -33014,11 +32931,11 @@ export namespace NamedTypesStruct {
             scope: `${scopePrefix}/properties/namedDiscriminatedUnion2`,
             type: "Control",
           },
+          { scope: `${scopePrefix}/properties/namedInIri`, type: "Control" },
           {
             scope: `${scopePrefix}/properties/namedInLiteral`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/nameInIri`, type: "Control" },
         ],
         type: "Group",
         label: "NamedTypesStruct",
@@ -33059,18 +32976,18 @@ export namespace NamedTypesStruct {
           return NamedDiscriminatedUnion2.schema;
         },
       },
+      namedInIri: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/namedInIri"),
+        get type() {
+          return NamedInIri.schema;
+        },
+      },
       namedInLiteral: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedInLiteral"),
         get type() {
           return NamedInLiteral.schema;
-        },
-      },
-      nameInIri: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/nameInIri"),
-        get type() {
-          return NamedInIri.schema;
         },
       },
     },
@@ -33152,8 +33069,8 @@ export namespace NamedTypesStruct {
         namedDiscriminatedUnion2: NamedDiscriminatedUnion2.toJson(
           _namedTypesStruct.namedDiscriminatedUnion2,
         ),
+        namedInIri: { "@id": _namedTypesStruct.namedInIri.value },
         namedInLiteral: _namedTypesStruct.namedInLiteral,
-        nameInIri: { "@id": _namedTypesStruct.nameInIri.value },
       } satisfies NamedTypesStruct.Json),
     );
 
@@ -33202,13 +33119,13 @@ export namespace NamedTypesStruct {
       parameters.graph,
     );
     parameters.resource.add(
-      NamedTypesStruct.schema.properties.namedInLiteral.path,
-      [$literalFactory.string(parameters.object.namedInLiteral)],
+      NamedTypesStruct.schema.properties.namedInIri.path,
+      [parameters.object.namedInIri],
       parameters.graph,
     );
     parameters.resource.add(
-      NamedTypesStruct.schema.properties.nameInIri.path,
-      [parameters.object.nameInIri],
+      NamedTypesStruct.schema.properties.namedInLiteral.path,
+      [$literalFactory.string(parameters.object.namedInLiteral)],
       parameters.graph,
     );
     return parameters.resource;
@@ -43551,8 +43468,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-}
-export type ReusableIn = "cat" | "dog"; /**
+} /**
  * Struct node shape with sh:targetClass.
  *
  * The sh:targetClass is expected on deserialization and added on serialization.

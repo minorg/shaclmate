@@ -5,7 +5,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, def } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for all types that are terms in RDF (i.e., identifiers, literals).
@@ -49,9 +49,17 @@ export abstract class AbstractTermType<
 
   @Memoize()
   get declaration(): Maybe<Code> {
-    return this.name.map(
-      (name) => code`export type ${name} = ${this.inlineExpression};`,
-    );
+    const name = this.name.extract();
+    if (!name) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of(code`\
+export type ${def(name)} = ${this.inlineExpression};
+  
+export namespace ${def(name)} {
+  export const schema = ${this.schemaExpression};
+}`);
   }
 
   @Memoize()
