@@ -116,7 +116,7 @@ export class ObjectType extends AbstractType {
     name: string,
   ): Record<string, Code> {
     let staticModuleDeclarations: Record<string, Code> = {
-      ...super.staticModuleDeclarations,
+      ...super.staticModuleDeclarations(name),
     };
 
     // create

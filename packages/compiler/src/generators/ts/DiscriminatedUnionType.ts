@@ -398,33 +398,33 @@ export class DiscriminatedUnionType<
     name: string,
   ): Record<string, Code> {
     const staticModuleDeclarations: Record<string, Code> = {
-      ...super.staticModuleDeclarations,
+      ...super.staticModuleDeclarations(name),
     };
 
     if (this.configuration.features.has("Object.equals")) {
-      staticModuleDeclarations[`equals`] =
+      staticModuleDeclarations["equals"] =
         code`export const equals = ${DiscriminatedUnionType_equalsFunctionExpression.call(this)};`;
     }
 
     if (this.configuration.features.has("Object.filter")) {
-      staticModuleDeclarations[`Filter`] =
+      staticModuleDeclarations["Filter"] =
         code`export type Filter = ${DiscriminatedUnionType_filterTypeExpression.call(this)};`;
-      staticModuleDeclarations[`filter`] =
+      staticModuleDeclarations["filter"] =
         code`export const filter = ${DiscriminatedUnionType_filterFunctionExpression.call(this)};`;
     }
 
     if (this.configuration.features.has("Object.hash")) {
-      staticModuleDeclarations[`hash`] =
+      staticModuleDeclarations["hash"] =
         code`export const hash = ${DiscriminatedUnionType_hashFunctionExpression.call(this)};`;
     }
 
     if (this.configuration.features.has("Object.JSON.type")) {
-      staticModuleDeclarations[`Json.type`] =
+      staticModuleDeclarations["Json.type"] =
         code`${this.jsonTypeAliasDeclaration}`;
     }
 
     if (this.configuration.features.has("Object.JSON.schema")) {
-      staticModuleDeclarations[`Json.namespace`] = code`\
+      staticModuleDeclarations["Json.namespace"] = code`\
 export namespace Json {
   ${this.jsonSchemaFunctionDeclaration}
 
@@ -437,30 +437,30 @@ export namespace Json {
     }
 
     if (this.configuration.features.has("Object.fromJson")) {
-      staticModuleDeclarations[`fromJson`] =
+      staticModuleDeclarations["fromJson"] =
         code`export const fromJson = ${DiscriminatedUnionType_fromJsonFunctionExpression.call(this)};`;
     }
 
     if (this.configuration.features.has("Object.fromRdf")) {
-      staticModuleDeclarations[`fromRdfResourceValues`] =
+      staticModuleDeclarations["fromRdfResourceValues"] =
         code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}, ${this.schemaType}> = ${DiscriminatedUnionType_fromRdfResourceValuesFunctionExpression.call(this)};`;
     }
 
     if (this.configuration.features.has("Object.toJson")) {
-      staticModuleDeclarations[`toJson`] =
+      staticModuleDeclarations["toJson"] =
         code`export const toJson = ${DiscriminatedUnionType_toJsonFunctionExpression.call(this)};`;
     }
 
     if (this.configuration.features.has("Object.toRdf")) {
-      staticModuleDeclarations[`toRdfResourceValues`] =
+      staticModuleDeclarations["toRdfResourceValues"] =
         code`export const toRdfResourceValues = ${DiscriminatedUnionType_toRdfResourceValuesFunctionExpression.call(this)};`;
     }
 
     if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations[`valueSparqlConstructTriples`] =
+      staticModuleDeclarations["valueSparqlConstructTriples"] =
         code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${DiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression.call(this)};`;
 
-      staticModuleDeclarations[`valueSparqlWherePatterns`] =
+      staticModuleDeclarations["valueSparqlWherePatterns"] =
         code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${DiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.call(this)};`;
     }
 

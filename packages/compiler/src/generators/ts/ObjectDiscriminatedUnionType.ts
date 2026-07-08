@@ -59,7 +59,7 @@ export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectT
     name: string,
   ): Record<string, Code> {
     return {
-      ...super.staticModuleDeclarations,
+      ...super.staticModuleDeclarations(name),
       ...ObjectDiscriminatedUnionType_identifierTypeDeclarations.call(this),
       ...ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunctionDeclaration.call(
         this,
