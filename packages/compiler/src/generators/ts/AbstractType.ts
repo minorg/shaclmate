@@ -30,6 +30,7 @@ export abstract class AbstractType {
    * Inline TypeScript type expression.
    */
   protected abstract readonly inlineExpression: Code;
+
   protected readonly logger: Logger;
   protected readonly reusables: Reusables;
 
