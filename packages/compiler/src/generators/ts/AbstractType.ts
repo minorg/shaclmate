@@ -279,7 +279,7 @@ ${joinCode(
   get expression(): Code {
     return this.name
       .map((name) => code`${name}`)
-      .orDefault(this.inlineExpression);
+      .orDefaultLazy(() => this.inlineExpression);
   }
 
   /**
