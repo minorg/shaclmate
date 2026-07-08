@@ -78,7 +78,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   private get valueTypeExpression(): Code {
     return this.name
       .map((name) => code`${name}["value"]`)
-      .orDefault(this.inlineValueTypeExpression);
+      .orDefaultLazy(() => this.inlineValueTypeExpression);
   }
 
   override fromJsonExpression({
