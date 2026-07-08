@@ -807,6 +807,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
+:NamedInIri
+    a sh:NodeShape ;
+    rdfs:comment "Named sh:in of IRIs" ;
+    sh:in ( :NamedInIri1 :NamedInIri2 ) .
+
 :NamedInLiteral
     a sh:NodeShape ;
     rdfs:comment "Named sh:in of literals" ;
@@ -830,6 +835,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:node :NamedDiscriminatedUnion2 ;
         sh:path :namedDiscriminatedUnion2
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :NamedInIri ;
+        sh:path :nameInIri
     ], [
         sh:maxCount 1 ;
         sh:minCount 1 ;
