@@ -239,7 +239,9 @@ export abstract class AbstractType {
    */
   @Memoize()
   get schema(): Code {
-    return this.schemaExpression;
+    return this.name
+      .map((name) => code`${name}.schema`)
+      .orDefaultLazy(() => this.schemaExpression);
   }
 
   @Memoize()

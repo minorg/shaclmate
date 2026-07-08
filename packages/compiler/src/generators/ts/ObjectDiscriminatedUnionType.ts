@@ -37,13 +37,6 @@ export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectT
   }
 
   @Memoize()
-  override get schema(): Code {
-    return this.name
-      .map((name) => code`${name}.schema`)
-      .orDefault(super.schema);
-  }
-
-  @Memoize()
   override get schemaType(): Code {
     return this.name
       .map(() => code`typeof ${this.schema}`)

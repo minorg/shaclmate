@@ -381,13 +381,6 @@ ${joinCode(
   }
 
   @Memoize()
-  override get schema() {
-    return this.name
-      .map((name) => code`${name}.schema`)
-      .orDefault(this.schemaExpression);
-  }
-
-  @Memoize()
   override get schemaType(): Code {
     return this.name
       .map(() => code`typeof ${this.schema}`)

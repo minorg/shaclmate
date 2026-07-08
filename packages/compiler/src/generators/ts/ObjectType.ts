@@ -428,10 +428,8 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  override get schema(): Code {
-    return this.name
-      .map((name) => code`${name}.schema`)
-      .orDefaultLazy(() => ObjectType_schemaExpression.call(this));
+  override get schemaExpression(): Code {
+    return ObjectType_schemaExpression.call(this);
   }
 
   @Memoize()
