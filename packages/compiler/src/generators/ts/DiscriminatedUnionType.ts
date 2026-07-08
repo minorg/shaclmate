@@ -23,13 +23,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
-import {
-  type Code,
-  code,
-  def,
-  joinCode,
-  literalOf,
-} from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class DiscriminatedUnionType<
   MemberTypeT extends Type,
@@ -205,39 +199,6 @@ export class DiscriminatedUnionType<
   }
 
   @Memoize()
-  get declaration(): Maybe<Code> {
-    const name = this.name.extract();
-    if (!name) {
-      return Maybe.empty();
-    }
-
-    const declarations: Code[] = [];
-
-    if (this.configuration.features.has("Object.type")) {
-      declarations.push(
-        code`export type ${def(name)} = ${DiscriminatedUnionType_inlineExpression.call(this)};`,
-      );
-    }
-
-    const staticModuleDeclarations = Object.entries(
-      this.staticModuleDeclarations,
-    );
-    if (staticModuleDeclarations.length > 0) {
-      declarations.push(code`\
-export namespace ${def(name)} {
-${joinCode(
-  staticModuleDeclarations
-    .sort((left, right) => left[0].localeCompare(right[0]))
-    .map((_) => _[1]),
-  { on: "\n\n" },
-)}
-}`);
-    }
-
-    return Maybe.of(joinCode(declarations, { on: "\n\n" }));
-  }
-
-  @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     switch (this.discriminant.kind) {
       case "Extrinsic":
@@ -273,10 +234,8 @@ ${joinCode(
   }
 
   @Memoize()
-  override get expression(): Code {
-    return this.name
-      .map((name) => code`${name}`)
-      .orDefault(DiscriminatedUnionType_inlineExpression.call(this));
+  protected override get inlineExpression(): Code {
+    return DiscriminatedUnionType_inlineExpression.call(this);
   }
 
   @Memoize()
@@ -435,9 +394,12 @@ ${joinCode(
     );
   }
 
-  protected get staticModuleDeclarations(): Record<string, Code> {
-    const name = this.name.unsafeCoerce();
-    const staticModuleDeclarations: Record<string, Code> = {};
+  protected override staticModuleDeclarations(
+    name: string,
+  ): Record<string, Code> {
+    const staticModuleDeclarations: Record<string, Code> = {
+      ...super.staticModuleDeclarations,
+    };
 
     if (this.configuration.features.has("Object.equals")) {
       staticModuleDeclarations[`equals`] =
@@ -482,11 +444,6 @@ export namespace Json {
     if (this.configuration.features.has("Object.fromRdf")) {
       staticModuleDeclarations[`fromRdfResourceValues`] =
         code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}, ${this.schemaType}> = ${DiscriminatedUnionType_fromRdfResourceValuesFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.schema")) {
-      staticModuleDeclarations["schema"] =
-        code`export const schema = ${this.schemaExpression}`;
     }
 
     if (this.configuration.features.has("Object.toJson")) {

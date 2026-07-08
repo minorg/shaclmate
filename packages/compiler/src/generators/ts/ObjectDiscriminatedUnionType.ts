@@ -55,9 +55,9 @@ export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectT
     return this.name.map((name) => code`${name}.is${name}`);
   }
 
-  protected override get staticModuleDeclarations(): Record<string, Code> {
-    const name = this.name.unsafeCoerce();
-
+  protected override staticModuleDeclarations(
+    name: string,
+  ): Record<string, Code> {
     return {
       ...super.staticModuleDeclarations,
       ...ObjectDiscriminatedUnionType_identifierTypeDeclarations.call(this),

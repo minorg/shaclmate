@@ -1,4 +1,3 @@
-import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
@@ -29,7 +28,6 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export abstract class AbstractContainerType<
   ItemTypeT extends AbstractContainerType.ItemType,
 > extends AbstractType {
-  override readonly declaration: Maybe<Code> = Maybe.empty();
   abstract override readonly kind: "DefaultValue" | "List" | "Option" | "Set";
 
   /**

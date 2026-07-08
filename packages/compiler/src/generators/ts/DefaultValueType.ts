@@ -52,10 +52,6 @@ export class DefaultValueType<
     return this.itemType.equalsFunction;
   }
 
-  override get expression(): Code {
-    return this.itemType.expression;
-  }
-
   override get filterFunction(): Code {
     return this.itemType.filterFunction;
   }
@@ -98,6 +94,10 @@ export class DefaultValueType<
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
     return code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  }
+
+  protected override get inlineExpression(): Code {
+    return this.itemType.expression;
   }
 
   protected override get schemaInitializers() {
