@@ -508,10 +508,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inIris
-    ], [
-        sh:maxCount 1 ;
-        sh:node :ReusableIn ;
-        sh:path :reusableIn
     ] .
 
 :IndirectRecursiveStruct
@@ -1179,13 +1175,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:node :RecursiveDiscriminatedUnion ;
         sh:path :recursiveDiscriminatedUnionMember2Property
     ] .
-
-:ReusableIn
-    a sh:NodeShape ;
-    rdfs:comment "Reusable sh:in with a name to use in lieu of inline types." ;
-    sh:in ("cat"
-        "dog"
-    ) .
 
 :StringList
     a sh:NodeShape ;

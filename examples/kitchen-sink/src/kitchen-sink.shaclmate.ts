@@ -23214,7 +23214,7 @@ export namespace InPropertiesStruct {
           return {
             kind: "Option" as const,
             get itemType() {
-              return { kind: "String" as const, in: ["cat", "dog"] as const };
+              return ReusableIn.schema;
             },
           };
         },
@@ -33038,7 +33038,7 @@ export namespace NamedTypesStruct {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedDatatype"),
         get type() {
-          return { kind: "String" as const };
+          return NamedDatatype.schema;
         },
       },
       namedDiscriminatedUnion1: {
@@ -33063,20 +33063,14 @@ export namespace NamedTypesStruct {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedInLiteral"),
         get type() {
-          return { kind: "String" as const, in: ["test1", "test2"] as const };
+          return NamedInLiteral.schema;
         },
       },
       nameInIri: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nameInIri"),
         get type() {
-          return {
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode("http://example.com/NamedInIri1"),
-              dataFactory.namedNode("http://example.com/NamedInIri2"),
-            ],
-          };
+          return NamedInIri.schema;
         },
       },
     },
