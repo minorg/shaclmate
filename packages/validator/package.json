@@ -1,13 +1,13 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.69",
+    "@shaclmate/shacl-ast": "4.0.70",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/data-factory": "0.0.33",
-    "@rdfx/parsers": "0.0.33",
-    "@rdfx/resource": "0.0.33",
-    "@rdfx/serializers": "0.0.33",
+    "@rdfx/data-factory": "0.0.34",
+    "@rdfx/parsers": "0.0.34",
+    "@rdfx/resource": "0.0.34",
+    "@rdfx/serializers": "0.0.34",
     "@types/rdfjs__prefix-map": "~0.1.5",
     "get-stream": "~9.0.1",
     "purify-ts": "~2.1.4",
@@ -17,7 +17,7 @@
     "which": "~6.0.1"
   },
   "devDependencies": {
-    "@rdfx/fs": "0.0.33",
+    "@rdfx/fs": "0.0.34",
     "@types/rdfjs__dataset": "~2.0.7",
     "@types/which": "~3.0.4"
   },
@@ -78,5 +78,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.69"
+  "version": "4.0.70"
 }
