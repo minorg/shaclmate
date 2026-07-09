@@ -122,7 +122,7 @@ export class DefaultValueType<
     }
 
     invariant(this.defaultValue.termType === "Literal");
-    return this.itemType.literalValueExpression(this.defaultValue);
+    return this.itemType.valueExpression(this.defaultValue);
   }
 
   override fromJsonExpression(

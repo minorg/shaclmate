@@ -97,7 +97,7 @@ export class LangStringType extends AbstractLiteralType {
     );
   }
 
-  override literalValueExpression(literal: Literal): Code {
+  override valueExpression(literal: Literal): Code {
     return this.rdfjsTermExpression(literal);
   }
 

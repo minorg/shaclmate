@@ -65,7 +65,7 @@ export class StringType extends AbstractPrimitiveType<string> {
     return super.jsonSchema(parameters);
   }
 
-  override literalValueExpression(literal: Literal | string): Code {
+  override valueExpression(literal: Literal | string): Code {
     return code`${literalOf(typeof literal === "string" ? literal : literal.value)}`;
   }
 

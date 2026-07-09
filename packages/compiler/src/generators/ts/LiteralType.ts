@@ -108,7 +108,7 @@ export class LiteralType extends AbstractLiteralType {
     );
   }
 
-  override literalValueExpression(literal: Literal): Code {
+  override valueExpression(literal: Literal): Code {
     return this.rdfjsTermExpression(literal);
   }
 

@@ -38,7 +38,7 @@ export abstract class AbstractTypedLiteralType<
     let initializers = super.schemaInitializers;
     if (this.decodedIn.length > 0) {
       initializers = initializers.concat(
-        code`in: ${arrayOf(...this.decodedIn.map((in_) => this.literalValueExpression(in_)))} as const`,
+        code`in: ${arrayOf(...this.decodedIn.map((in_) => this.valueExpression(in_)))} as const`,
       );
     }
     return initializers;
@@ -50,7 +50,7 @@ export abstract class AbstractTypedLiteralType<
     return variables.value;
   }
 
-  abstract override literalValueExpression(literal: Literal | ValueT): Code;
+  abstract override valueExpression(literal: Literal | ValueT): Code;
 }
 
 export namespace AbstractTypedLiteralType {

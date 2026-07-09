@@ -98,6 +98,15 @@ export abstract class AbstractTermType<
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
     return code`${variables.value}.toString()`;
   }
+
+  /**
+   * An expression that converts a compile-time RDF/JS term into a runtime TypeScript value.
+   *
+   * For example, a string would be converted to "thestring".
+   */
+  valueExpression(term: ConstantTermT): Code {
+    return this.rdfjsTermExpression(term);
+  }
 }
 
 export namespace AbstractTermType {

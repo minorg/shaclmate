@@ -76,7 +76,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
     );
   }
 
-  override literalValueExpression(literal: bigint | Literal): Code {
+  override valueExpression(literal: bigint | Literal): Code {
     return code`${typeof literal === "bigint" ? literal : LiteralDecoder.decodeBigIntLiteral(literal).unsafeCoerce()}n`;
   }
 
