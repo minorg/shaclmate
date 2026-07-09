@@ -59,8 +59,8 @@ export class StringType extends AbstractPrimitiveType<string> {
   override jsonSchema(
     parameters: Parameters<AbstractPrimitiveType<string>["jsonSchema"]>[0],
   ): Code {
-    if (this.decodedIn.length > 1) {
-      return code`${this.reusables.imports.z}.enum(${arrayOf(...this.decodedIn)})`;
+    if (this.in_.length > 1) {
+      return code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((value) => this.valueExpression(value)))})`;
     }
     return super.jsonSchema(parameters);
   }

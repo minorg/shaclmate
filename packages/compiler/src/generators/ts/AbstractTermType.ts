@@ -80,6 +80,11 @@ export abstract class AbstractTermType<
         code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
       );
     }
+    if (this.in_.length > 0) {
+      initializers = initializers.concat(
+        code`in: ${arrayOf(...this.in_.map((in_) => this.valueExpression(in_)))}`,
+      );
+    }
     return initializers;
   }
 

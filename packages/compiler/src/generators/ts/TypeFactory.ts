@@ -1,7 +1,7 @@
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import { LiteralDecoder, literalDatatypeDefinitions } from "@rdfx/literal";
+import { literalDatatypeDefinitions } from "@rdfx/literal";
 import base62 from "@sindresorhus/base62";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
@@ -452,57 +452,23 @@ export class TypeFactory {
       if (datatypeDefinition) {
         switch (datatypeDefinition.kind) {
           case "bigdecimal":
-            return new BigDecimalType({
-              ...typeParameters,
-              decodedIn: astType.in_.map((value) =>
-                LiteralDecoder.decodeBigDecimalLiteral(value).unsafeCoerce(),
-              ),
-            });
+            return new BigDecimalType(typeParameters);
           case "bigint":
-            return new BigIntType({
-              ...typeParameters,
-              decodedIn: astType.in_.map((value) =>
-                LiteralDecoder.decodeBigIntLiteral(value).unsafeCoerce(),
-              ),
-            });
+            return new BigIntType(typeParameters);
           case "boolean":
-            return new BooleanType({
-              ...typeParameters,
-              decodedIn: astType.in_.map((value) =>
-                LiteralDecoder.decodeBooleanLiteral(value).unsafeCoerce(),
-              ),
-            });
+            return new BooleanType(typeParameters);
           case "date":
           case "datetime":
             return new (
               datatypeDefinition.kind === "date" ? DateType : DateTimeType
-            )({
-              ...typeParameters,
-              decodedIn: astType.in_.map((value) =>
-                (datatypeDefinition.kind === "date"
-                  ? LiteralDecoder.decodeDateLiteral
-                  : LiteralDecoder.decodeDateTimeLiteral)(value).unsafeCoerce(),
-              ),
-            });
+            )(typeParameters);
           case "float":
           case "int":
             return new (
               datatypeDefinition.kind === "float" ? FloatType : IntType
-            )({
-              ...typeParameters,
-              decodedIn: astType.in_.map((value) =>
-                (datatypeDefinition.kind === "float"
-                  ? LiteralDecoder.decodeFloatLiteral
-                  : LiteralDecoder.decodeIntLiteral)(value).unsafeCoerce(),
-              ),
-            });
+            )(typeParameters);
           case "string":
-            return new StringType({
-              ...typeParameters,
-              decodedIn: astType.in_.map((value) =>
-                LiteralDecoder.decodeStringLiteral(value).unsafeCoerce(),
-              ),
-            });
+            return new StringType(typeParameters);
         }
       }
 

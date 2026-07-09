@@ -20,9 +20,9 @@ export abstract class AbstractPrimitiveType<
 
   @Memoize()
   protected override get inlineExpression(): Code {
-    if (this.decodedIn.length > 0) {
+    if (this.in_.length > 0) {
       return code`${joinCode(
-        this.decodedIn.map((value) => this.valueExpression(value)),
+        this.in_.map((value) => this.valueExpression(value)),
         { on: " | " },
       )}`;
     }
@@ -38,14 +38,14 @@ export abstract class AbstractPrimitiveType<
   override jsonSchema(
     _parameters: Parameters<AbstractTypedLiteralType<ValueT>["jsonSchema"]>[0],
   ): Code {
-    switch (this.decodedIn.length) {
+    switch (this.in_.length) {
       case 0:
         return code`${this.reusables.imports.z}.${this.jsTypes[0].typeof}()`;
       case 1:
-        return code`${this.reusables.imports.z}.literal(${this.valueExpression(this.decodedIn[0])})`;
+        return code`${this.reusables.imports.z}.literal(${this.valueExpression(this.in_[0])})`;
       default:
         return code`${this.reusables.imports.z}.union(${arrayOf(
-          ...this.decodedIn.map(
+          ...this.in_.map(
             (value) =>
               code`${this.reusables.imports.z}.literal(${this.valueExpression(value)})`,
           ),

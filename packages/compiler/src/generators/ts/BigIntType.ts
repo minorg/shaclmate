@@ -33,7 +33,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
     variables,
   }: Parameters<AbstractNumericType<bigint>["fromJsonExpression"]>[0]): Code {
     let expression = code`BigInt(${variables.value}["@value"])`;
-    if (this.decodedIn.length > 0) {
+    if (this.in_.length > 0) {
       expression = code`${expression} as ${this.expression}`;
     }
     return code`${this.reusables.imports.Either}.encase<Error, ${this.expression}>(() => ${expression})`;
@@ -43,18 +43,16 @@ export class BigIntType extends AbstractNumericType<bigint> {
     _parameters: Parameters<AbstractNumericType<bigint>["jsonSchema"]>[0],
   ): Code {
     let valueJsonSchema: Code;
-    switch (this.decodedIn.length) {
+    switch (this.in_.length) {
       case 0:
         valueJsonSchema = code`${this.reusables.imports.z}.string()`;
         break;
       case 1:
-        valueJsonSchema = code`${this.reusables.imports.z}.literal(${literalOf(this.decodedIn[0].toString())})`;
+        valueJsonSchema = code`${this.reusables.imports.z}.literal(${this.valueExpression(this.in_[0])})`;
         break;
       default:
         valueJsonSchema = code`${this.reusables.imports.z}.enum(${arrayOf(
-          ...this.decodedIn.map(
-            (value) => code`${literalOf(value.toString())}`,
-          ),
+          ...this.in_.map((value) => this.valueExpression(value)),
         )})`;
         break;
     }
@@ -66,10 +64,13 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override jsonType(): AbstractNumericType.JsonType {
     return new AbstractNumericType.JsonType(
       code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": ${
-        this.decodedIn.length === 0
+        this.in_.length === 0
           ? "string"
           : joinCode(
-              this.decodedIn.map((in_) => code`${literalOf(in_.toString())}`),
+              this.in_.map(
+                (in_) =>
+                  code`${literalOf(LiteralDecoder.decodeBigIntLiteral(in_).toString())}`,
+              ),
               { on: " | " },
             )
       } }`,
@@ -84,9 +85,12 @@ export class BigIntType extends AbstractNumericType<bigint> {
     variables,
   }: Parameters<AbstractNumericType<bigint>["toJsonExpression"]>[0]): Code {
     let valueExpression = code`${variables.value}.toString()`;
-    if (this.decodedIn.length > 0) {
+    if (this.in_.length > 0) {
       valueExpression = code`${valueExpression} as ${joinCode(
-        this.decodedIn.map((in_) => code`${literalOf(in_.toString())}`),
+        this.in_.map(
+          (in_) =>
+            code`${literalOf(LiteralDecoder.decodeBigIntLiteral(in_).toString())}`,
+        ),
         { on: " | " },
       )}`;
     }
