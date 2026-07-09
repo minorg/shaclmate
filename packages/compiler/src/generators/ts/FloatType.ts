@@ -23,7 +23,7 @@ export class FloatType extends AbstractNumericType<number> {
     );
   }
 
-  override literalValueExpression(literal: Literal | number): Code {
+  override valueExpression(literal: Literal | number): Code {
     return code`${typeof literal === "number" ? literal : LiteralDecoder.decodeFloatLiteral(literal).unsafeCoerce()}`;
   }
 }

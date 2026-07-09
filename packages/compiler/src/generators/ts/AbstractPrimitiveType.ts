@@ -20,9 +20,15 @@ export abstract class AbstractPrimitiveType<
 
   @Memoize()
   protected override get inlineExpression(): Code {
-    if (this.decodedIn.length > 0) {
+    if (this.in_.length > 0) {
+      const name = this.name.extract();
+      if (name && this.configuration.features.has("Object.schema")) {
+        // Reuse the type from schema to cut down code
+        return code`(typeof ${name}.schema)["in"][number]`;
+      }
+
       return code`${joinCode(
-        this.decodedIn.map((value) => this.literalValueExpression(value)),
+        this.in_.map((value) => this.valueExpression(value)),
         { on: " | " },
       )}`;
     }
@@ -38,18 +44,25 @@ export abstract class AbstractPrimitiveType<
   override jsonSchema(
     _parameters: Parameters<AbstractTypedLiteralType<ValueT>["jsonSchema"]>[0],
   ): Code {
-    switch (this.decodedIn.length) {
+    switch (this.in_.length) {
       case 0:
         return code`${this.reusables.imports.z}.${this.jsTypes[0].typeof}()`;
       case 1:
-        return code`${this.reusables.imports.z}.literal(${this.literalValueExpression(this.decodedIn[0])})`;
-      default:
-        return code`${this.reusables.imports.z}.union(${arrayOf(
-          ...this.decodedIn.map(
-            (value) =>
-              code`${this.reusables.imports.z}.literal(${this.literalValueExpression(value)})`,
-          ),
-        )})`;
+        return code`${this.reusables.imports.z}.literal(${this.valueExpression(this.in_[0])})`;
+      default: {
+        const name = this.name.extract();
+        if (name && this.configuration.features.has("Object.schema")) {
+          // Reuse the type from schema to cut down code
+          return code`${this.reusables.imports.z}.union(${name}.schema.in.map(_ => ${this.reusables.imports.z}.literal(_)))`;
+        } else {
+          return code`${this.reusables.imports.z}.union(${arrayOf(
+            ...this.in_.map(
+              (value) =>
+                code`${this.reusables.imports.z}.literal(${this.valueExpression(value)})`,
+            ),
+          )})`;
+        }
+      }
     }
   }
 

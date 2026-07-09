@@ -1,6 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 
-import type { Maybe } from "purify-ts";
+import { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 import type { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
@@ -11,13 +11,26 @@ import { AbstractType_JsType } from "./_AbstractType/AbstractType_JsType.js";
 import type { Reusables } from "./Reusables.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { TsGenerator } from "./TsGenerator.js";
-import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import {
+  type Code,
+  code,
+  def,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
+import { tsComment } from "./tsComment.js";
 
 /**
  * Abstract base class all types.
  */
 export abstract class AbstractType {
   protected readonly configuration: TsGenerator.Configuration;
+
+  /**
+   * Inline TypeScript type expression.
+   */
+  protected abstract readonly inlineExpression: Code;
+
   protected readonly logger: Logger;
   protected readonly reusables: Reusables;
 
@@ -38,11 +51,6 @@ export abstract class AbstractType {
   abstract readonly conversionFunction: Maybe<AbstractType.ConversionFunction>;
 
   /**
-   * The declaration of named types.
-   */
-  abstract readonly declaration: Maybe<Code>;
-
-  /**
    * A property that discriminates sub-types of this type e.g., termType on RDF/JS terms.
    */
   abstract readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty>;
@@ -52,11 +60,6 @@ export abstract class AbstractType {
    * $EqualsResult.
    */
   abstract readonly equalsFunction: Code;
-
-  /**
-   * TypeScript type expression.
-   */
-  abstract readonly expression: Code;
 
   /**
    * A function (reference or literal) that takes a filter of filterType (below) and a value of this type
@@ -235,11 +238,59 @@ export abstract class AbstractType {
   }
 
   /**
+   * The declaration of named types.
+   */
+  @Memoize()
+  get declaration(): Maybe<Code> {
+    const name = this.name.extract();
+    if (!name) {
+      return Maybe.empty();
+    }
+
+    const declarations: Code[] = [];
+
+    if (this.configuration.features.has("Object.type")) {
+      declarations.push(
+        code`${this.comment
+          .alt(this.label)
+          .map(tsComment)
+          .orDefault("")}export type ${def(name)} = ${this.inlineExpression};`,
+      );
+    }
+
+    const staticModuleDeclarations = Object.entries(
+      this.staticModuleDeclarations(name),
+    );
+    if (staticModuleDeclarations.length > 0) {
+      declarations.push(code`\
+export namespace ${def(name)} {
+${joinCode(
+  staticModuleDeclarations
+    .sort((left, right) => left[0].localeCompare(right[0]))
+    .map((_) => _[1]),
+  { on: "\n\n" },
+)}
+}`);
+    }
+
+    return Maybe.of(joinCode(declarations, { on: "\n\n" }));
+  }
+
+  @Memoize()
+  get expression(): Code {
+    return this.name
+      .map((name) => code`${name}`)
+      .orDefaultLazy(() => this.inlineExpression);
+  }
+
+  /**
    * TypeScript object describing this type, for runtime use.
    */
   @Memoize()
   get schema(): Code {
-    return this.schemaExpression;
+    return this.name
+      .map((name) => code`${name}.schema`)
+      .orDefaultLazy(() => this.schemaExpression);
   }
 
   @Memoize()
@@ -341,6 +392,17 @@ export abstract class AbstractType {
   protected readonly rdfjsTermExpression: (
     parameters: Parameters<typeof rdfjsTermExpression>[0],
   ) => Code;
+
+  protected staticModuleDeclarations(_name: string): Record<string, Code> {
+    const staticModuleDeclarations: Record<string, Code> = {};
+
+    if (this.configuration.features.has("Object.schema")) {
+      staticModuleDeclarations["schema"] =
+        code`export const schema = ${this.schemaExpression}`;
+    }
+
+    return staticModuleDeclarations;
+  }
 }
 
 export namespace AbstractType {

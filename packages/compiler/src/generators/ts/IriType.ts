@@ -5,7 +5,13 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = code`${this.reusables.snippets.filterIri}`;
@@ -51,27 +57,62 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   @Memoize()
   protected override get inlineExpression(): Code {
     if (this.in_.length > 0) {
-      return code`${this.reusables.imports.NamedNode}<${this.valueTypeExpression}>`;
+      return code`${this.reusables.imports.NamedNode}<${this.inlineValueTypeExpression}>`;
     }
 
     return code`${this.reusables.imports.NamedNode}`;
   }
 
-  protected override get schemaInitializers() {
-    let initializers = super.schemaInitializers;
-    if (this.in_.length > 0) {
+  protected override staticModuleDeclarations(
+    name: string,
+  ): Record<string, Code> {
+    if (this.in_.length === 0) {
+      return super.staticModuleDeclarations(name);
+    }
+    return {
+      ...super.staticModuleDeclarations(name),
+      inValues: code`const inValues = ${arrayOf(...this.in_.map((in_) => in_.value))} as const;`,
+    };
+  }
+
+  protected override get schemaInitializers(): readonly Code[] {
+    if (this.in_.length === 0 || this.name.isNothing()) {
+      return super.schemaInitializers;
+    }
+
+    let initializers = [code`kind: ${literalOf(this.kind)} as const`];
+    if (this.hasValues.length > 0) {
       initializers = initializers.concat(
-        code`in: ${arrayOf(...this.in_.map((in_) => this.rdfjsTermExpression(in_)))}`,
+        code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
       );
     }
+    initializers = initializers.concat(
+      code`in: inValues.map(inValue => ${this.reusables.imports.dataFactory}.namedNode(inValue))`,
+      code`inValues`,
+    );
     return initializers;
   }
 
   @Memoize()
+  protected get inlineValueTypeExpression(): Code {
+    if (this.in_.length === 0) {
+      return code`string`;
+    }
+
+    const name = this.name.extract();
+    if (name && this.configuration.features.has("Object.schema")) {
+      // Reuse the type from schema to cut down code
+      return code`(typeof ${name}.schema)["inValues"][number]`;
+    }
+
+    return code`(${this.in_.map((in_) => `"${in_.value}"`).join(" | ")})`;
+  }
+
+  @Memoize()
   private get valueTypeExpression(): Code {
-    return this.in_.length > 0
-      ? code`(${this.in_.map((in_) => `"${in_.value}"`).join(" | ")})`
-      : code`string`;
+    return this.name
+      .map((name) => code`${name}["value"]`)
+      .orDefaultLazy(() => this.inlineValueTypeExpression);
   }
 
   override fromJsonExpression({
@@ -87,9 +128,13 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }: Parameters<AbstractIdentifierType<NamedNode>["jsonSchema"]>[0]): Code {
     let idSchema: Code;
     if (this.in_.length > 0) {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      idSchema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((iri) => iri.value))})`;
+      const name = this.name.extract();
+      if (name && this.configuration.features.has("Object.schema")) {
+        // Reuse the type from schema to cut down code
+        idSchema = code`${this.reusables.imports.z}.enum(${name}.schema.in.map(_ => _.value))`;
+      } else {
+        idSchema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((iri) => iri.value))})`;
+      }
     } else {
       idSchema = code`${this.reusables.imports.z}.string().min(1)`;
     }

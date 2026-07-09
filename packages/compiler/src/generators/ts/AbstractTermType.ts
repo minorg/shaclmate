@@ -22,8 +22,6 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  protected abstract readonly inlineExpression: Code;
-
   readonly equalsFunction = code`${this.reusables.snippets.booleanEquals}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
@@ -48,28 +46,12 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  get declaration(): Maybe<Code> {
-    return this.name.map(
-      (name) => code`export type ${name} = ${this.inlineExpression};`,
-    );
-  }
-
-  @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
       jsonName: "termType",
       name: "termType",
       values: [...this.nodeKinds].map(NodeKind.toTermType),
     });
-  }
-
-  @Memoize()
-  override get expression(): Code {
-    const name = this.name.extract();
-    if (name) {
-      return code`${name}`;
-    }
-    return this.inlineExpression;
   }
 
   get referencesNamedType(): boolean {
@@ -98,6 +80,11 @@ export abstract class AbstractTermType<
         code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
       );
     }
+    if (this.in_.length > 0) {
+      initializers = initializers.concat(
+        code`in: ${arrayOf(...this.in_.map((in_) => this.valueExpression(in_)))} as const`,
+      );
+    }
     return initializers;
   }
 
@@ -115,6 +102,15 @@ export abstract class AbstractTermType<
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
     return code`${variables.value}.toString()`;
+  }
+
+  /**
+   * An expression that converts a compile-time RDF/JS term into a runtime TypeScript value.
+   *
+   * For example, a string would be converted to "thestring".
+   */
+  valueExpression(term: ConstantTermT): Code {
+    return this.rdfjsTermExpression(term);
   }
 }
 

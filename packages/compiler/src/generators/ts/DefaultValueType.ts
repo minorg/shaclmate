@@ -52,10 +52,6 @@ export class DefaultValueType<
     return this.itemType.equalsFunction;
   }
 
-  override get expression(): Code {
-    return this.itemType.expression;
-  }
-
   override get filterFunction(): Code {
     return this.itemType.filterFunction;
   }
@@ -100,6 +96,10 @@ export class DefaultValueType<
     return code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
+  protected override get inlineExpression(): Code {
+    return this.itemType.expression;
+  }
+
   protected override get schemaInitializers() {
     return super.schemaInitializers.concat(
       code`defaultValue: ${this.rdfjsTermExpression(this.defaultValue)}`,
@@ -122,7 +122,7 @@ export class DefaultValueType<
     }
 
     invariant(this.defaultValue.termType === "Literal");
-    return this.itemType.literalValueExpression(this.defaultValue);
+    return this.itemType.valueExpression(this.defaultValue);
   }
 
   override fromJsonExpression(

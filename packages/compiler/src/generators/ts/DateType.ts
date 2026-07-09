@@ -24,7 +24,7 @@ export class DateType extends AbstractDateType {
     return code`${this.reusables.imports.z}.object({ "@type": ${this.reusables.imports.z}.literal(${literalOf(this.datatype.value)}), "@value": ${this.reusables.imports.z}.iso.date() })`;
   }
 
-  override literalValueExpression(literal: Date | Literal): Code {
+  override valueExpression(literal: Date | Literal): Code {
     return code`new Date("${(literal instanceof Date ? literal : LiteralDecoder.decodeDateLiteral(literal).unsafeCoerce()).toISOString()}")`;
   }
 

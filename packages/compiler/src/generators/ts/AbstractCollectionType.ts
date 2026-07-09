@@ -33,11 +33,6 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get expression(): Code {
-    return code`${!this._mutable ? "readonly " : ""}(${this.itemType.expression})[]`;
-  }
-
-  @Memoize()
   get filterFunction(): Code {
     return code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
@@ -76,6 +71,11 @@ export abstract class AbstractCollectionType<
         this.itemValidationFunctionDefault,
       )}, ${literalOf(!this._mutable)})`,
     );
+  }
+
+  @Memoize()
+  protected override get inlineExpression(): Code {
+    return code`${!this._mutable ? "readonly " : ""}(${this.itemType.expression})[]`;
   }
 
   override graphqlResolveExpression({

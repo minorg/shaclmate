@@ -1,16 +1,18 @@
 import type { ObjectType } from "../ObjectType.js";
+import { singleEntryRecord } from "../singleEntryRecord.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function ObjectType_identifierTypeDeclarations(
   this: ObjectType,
-): readonly Code[] {
+): Record<string, Code> {
   // Bespoke identifier type and associated functions
-  return [
-    code`export type Identifier = ${this.identifierType.expression};`,
+  return singleEntryRecord(
+    "Identifier",
     code`\
+export type Identifier = ${this.identifierType.expression};
 export namespace Identifier {
   export const parse = ${this.identifierType.parseFunction};
   export const stringify = ${this.identifierType.stringifyFunction};
 }`,
-  ];
+  );
 }

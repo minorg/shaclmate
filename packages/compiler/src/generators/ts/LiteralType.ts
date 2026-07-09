@@ -62,11 +62,6 @@ export class LiteralType extends AbstractLiteralType {
 
   protected override get schemaInitializers() {
     let initializers = super.schemaInitializers;
-    if (this.in_.length > 0) {
-      initializers = initializers.concat(
-        code`in: ${arrayOf(...this.in_.map((in_) => this.rdfjsTermExpression(in_)))}`,
-      );
-    }
     if (this.languageIn.length > 0) {
       initializers = initializers.concat(
         code`languageIn: ${arrayOf(...this.languageIn)}`,
@@ -108,7 +103,7 @@ export class LiteralType extends AbstractLiteralType {
     );
   }
 
-  override literalValueExpression(literal: Literal): Code {
+  override valueExpression(literal: Literal): Code {
     return this.rdfjsTermExpression(literal);
   }
 

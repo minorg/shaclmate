@@ -37,13 +37,6 @@ export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectT
   }
 
   @Memoize()
-  override get schema(): Code {
-    return this.name
-      .map((name) => code`${name}.schema`)
-      .orDefault(super.schema);
-  }
-
-  @Memoize()
   override get schemaType(): Code {
     return this.name
       .map(() => code`typeof ${this.schema}`)
@@ -62,11 +55,11 @@ export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectT
     return this.name.map((name) => code`${name}.is${name}`);
   }
 
-  protected override get staticModuleDeclarations(): Record<string, Code> {
-    const name = this.name.unsafeCoerce();
-
+  protected override staticModuleDeclarations(
+    name: string,
+  ): Record<string, Code> {
     return {
-      ...super.staticModuleDeclarations,
+      ...super.staticModuleDeclarations(name),
       ...ObjectDiscriminatedUnionType_identifierTypeDeclarations.call(this),
       ...ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunctionDeclaration.call(
         this,

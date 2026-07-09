@@ -21,7 +21,6 @@ export abstract class AbstractLazyType<
     readonly rawName: Code;
   };
 
-  override readonly declaration: Maybe<Code> = Maybe.empty();
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
@@ -45,7 +44,7 @@ export abstract class AbstractLazyType<
     return code`((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
   }
 
-  override get expression(): Code {
+  override get inlineExpression(): Code {
     return this.runtimeClass.name;
   }
 

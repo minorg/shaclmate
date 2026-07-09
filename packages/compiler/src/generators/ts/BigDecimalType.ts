@@ -59,7 +59,7 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
     );
   }
 
-  override literalValueExpression(literal: Literal): Code {
+  override valueExpression(literal: Literal): Code {
     return code`new ${this.reusables.imports.BigDecimal}(${literalOf(literal.value)})`;
   }
 

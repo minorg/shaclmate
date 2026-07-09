@@ -46,11 +46,6 @@ export class OptionType<
   }
 
   @Memoize()
-  override get expression(): Code {
-    return code`${this.reusables.imports.Maybe}<${this.itemType.expression}>`;
-  }
-
-  @Memoize()
   get filterFunction(): Code {
     return code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
@@ -112,6 +107,11 @@ export class OptionType<
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
     return code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  }
+
+  @Memoize()
+  protected override get inlineExpression(): Code {
+    return code`${this.reusables.imports.Maybe}<${this.itemType.expression}>`;
   }
 
   override fromJsonExpression({
