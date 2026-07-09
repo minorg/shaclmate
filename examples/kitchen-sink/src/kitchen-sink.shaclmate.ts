@@ -32266,9 +32266,7 @@ export type NamedDatatype = string;
 export namespace NamedDatatype {
   export const schema = { kind: "String" as const };
 }
-export type NamedInIri = NamedNode<
-  "http://example.com/NamedInIri1" | "http://example.com/NamedInIri2"
->;
+export type NamedInIri = (typeof NamedInIri.schema)["in"][number];
 
 export namespace NamedInIri {
   export const schema = {
@@ -32279,7 +32277,7 @@ export namespace NamedInIri {
     ] as const,
   };
 }
-export type NamedInLiteral = "test1" | "test2";
+export type NamedInLiteral = (typeof NamedInLiteral.schema)["in"][number];
 
 export namespace NamedInLiteral {
   export const schema = {

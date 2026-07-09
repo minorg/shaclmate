@@ -51,6 +51,12 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   @Memoize()
   protected override get inlineExpression(): Code {
     if (this.in_.length > 0) {
+      const name = this.name.extract();
+      if (name && this.configuration.features.has("Object.schema")) {
+        // Reuse the type from schema to cut down code
+        return code`(typeof ${name}.schema)["in"][number]`;
+      }
+
       return code`${this.reusables.imports.NamedNode}<${this.inlineValueTypeExpression}>`;
     }
 
@@ -84,8 +90,6 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }: Parameters<AbstractIdentifierType<NamedNode>["jsonSchema"]>[0]): Code {
     let idSchema: Code;
     if (this.in_.length > 0) {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       idSchema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((iri) => iri.value))})`;
     } else {
       idSchema = code`${this.reusables.imports.z}.string().min(1)`;

@@ -21,6 +21,12 @@ export abstract class AbstractPrimitiveType<
   @Memoize()
   protected override get inlineExpression(): Code {
     if (this.in_.length > 0) {
+      const name = this.name.extract();
+      if (name && this.configuration.features.has("Object.schema")) {
+        // Reuse the type from schema to cut down code
+        return code`(typeof ${name}.schema)["in"][number]`;
+      }
+
       return code`${joinCode(
         this.in_.map((value) => this.valueExpression(value)),
         { on: " | " },
