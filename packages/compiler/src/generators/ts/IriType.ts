@@ -5,7 +5,13 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = code`${this.reusables.snippets.filterIri}`;
@@ -51,23 +57,55 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   @Memoize()
   protected override get inlineExpression(): Code {
     if (this.in_.length > 0) {
-      const name = this.name.extract();
-      if (name && this.configuration.features.has("Object.schema")) {
-        // Reuse the type from schema to cut down code
-        return code`(typeof ${name}.schema)["in"][number]`;
-      }
-
       return code`${this.reusables.imports.NamedNode}<${this.inlineValueTypeExpression}>`;
     }
 
     return code`${this.reusables.imports.NamedNode}`;
   }
 
+  protected override staticModuleDeclarations(
+    name: string,
+  ): Record<string, Code> {
+    if (this.in_.length === 0) {
+      return super.staticModuleDeclarations(name);
+    }
+    return {
+      ...super.staticModuleDeclarations(name),
+      inValues: code`const inValues = ${arrayOf(...this.in_.map((in_) => in_.value))} as const;`,
+    };
+  }
+
+  protected override get schemaInitializers(): readonly Code[] {
+    if (this.in_.length === 0 || this.name.isNothing()) {
+      return super.schemaInitializers;
+    }
+
+    let initializers = [code`kind: ${literalOf(this.kind)} as const`];
+    if (this.hasValues.length > 0) {
+      initializers = initializers.concat(
+        code`hasValues: ${arrayOf(...this.hasValues.map((hasValue) => this.rdfjsTermExpression(hasValue)))}`,
+      );
+    }
+    initializers = initializers.concat(
+      code`in: inValues.map(inValue => ${this.reusables.imports.dataFactory}.namedNode(inValue))`,
+      code`inValues`,
+    );
+    return initializers;
+  }
+
   @Memoize()
   protected get inlineValueTypeExpression(): Code {
-    return this.in_.length > 0
-      ? code`(${this.in_.map((in_) => `"${in_.value}"`).join(" | ")})`
-      : code`string`;
+    if (this.in_.length === 0) {
+      return code`string`;
+    }
+
+    const name = this.name.extract();
+    if (name && this.configuration.features.has("Object.schema")) {
+      // Reuse the type from schema to cut down code
+      return code`(typeof ${name}.schema)["inValues"][number]`;
+    }
+
+    return code`(${this.in_.map((in_) => `"${in_.value}"`).join(" | ")})`;
   }
 
   @Memoize()

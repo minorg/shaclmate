@@ -32266,15 +32266,20 @@ export type NamedDatatype = string;
 export namespace NamedDatatype {
   export const schema = { kind: "String" as const };
 }
-export type NamedInIri = (typeof NamedInIri.schema)["in"][number];
+export type NamedInIri = NamedNode<
+  (typeof NamedInIri.schema)["inValues"][number]
+>;
 
 export namespace NamedInIri {
+  const inValues = [
+    "http://example.com/NamedInIri1",
+    "http://example.com/NamedInIri2",
+  ] as const;
+
   export const schema = {
     kind: "Iri" as const,
-    in: [
-      dataFactory.namedNode("http://example.com/NamedInIri1"),
-      dataFactory.namedNode("http://example.com/NamedInIri2"),
-    ] as const,
+    in: inValues.map((inValue) => dataFactory.namedNode(inValue)),
+    inValues,
   };
 }
 export type NamedInLiteral = (typeof NamedInLiteral.schema)["in"][number];
