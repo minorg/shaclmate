@@ -90,7 +90,13 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }: Parameters<AbstractIdentifierType<NamedNode>["jsonSchema"]>[0]): Code {
     let idSchema: Code;
     if (this.in_.length > 0) {
-      idSchema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((iri) => iri.value))})`;
+      const name = this.name.extract();
+      if (name && this.configuration.features.has("Object.schema")) {
+        // Reuse the type from schema to cut down code
+        idSchema = code`${this.reusables.imports.z}.enum(${name}.schema.in.map(_ => _.value))`;
+      } else {
+        idSchema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((iri) => iri.value))})`;
+      }
     } else {
       idSchema = code`${this.reusables.imports.z}.string().min(1)`;
     }

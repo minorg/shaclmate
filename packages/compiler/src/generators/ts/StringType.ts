@@ -60,7 +60,13 @@ export class StringType extends AbstractPrimitiveType<string> {
     parameters: Parameters<AbstractPrimitiveType<string>["jsonSchema"]>[0],
   ): Code {
     if (this.in_.length > 1) {
-      return code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((value) => this.valueExpression(value)))})`;
+      const name = this.name.extract();
+      if (name && this.configuration.features.has("Object.schema")) {
+        // Reuse the type from schema to cut down code
+        return code`${this.reusables.imports.z}.enum(${name}.schema.in)`;
+      } else {
+        return code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((value) => this.valueExpression(value)))})`;
+      }
     }
     return super.jsonSchema(parameters);
   }

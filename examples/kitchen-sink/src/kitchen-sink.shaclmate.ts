@@ -32904,12 +32904,9 @@ export namespace NamedTypesStruct {
           namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json.schema(),
           namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json.schema(),
           namedInIri: z.object({
-            "@id": z.enum([
-              "http://example.com/NamedInIri1",
-              "http://example.com/NamedInIri2",
-            ]),
+            "@id": z.enum(NamedInIri.schema.in.map((_) => _.value)),
           }),
-          namedInLiteral: z.enum(["test1", "test2"]),
+          namedInLiteral: z.enum(NamedInLiteral.schema.in),
         })
         .meta({
           description:

@@ -49,13 +49,20 @@ export abstract class AbstractPrimitiveType<
         return code`${this.reusables.imports.z}.${this.jsTypes[0].typeof}()`;
       case 1:
         return code`${this.reusables.imports.z}.literal(${this.valueExpression(this.in_[0])})`;
-      default:
-        return code`${this.reusables.imports.z}.union(${arrayOf(
-          ...this.in_.map(
-            (value) =>
-              code`${this.reusables.imports.z}.literal(${this.valueExpression(value)})`,
-          ),
-        )})`;
+      default: {
+        const name = this.name.extract();
+        if (name && this.configuration.features.has("Object.schema")) {
+          // Reuse the type from schema to cut down code
+          return code`${this.reusables.imports.z}.union(${name}.schema.in.map(_ => ${this.reusables.imports.z}.literal(_)))`;
+        } else {
+          return code`${this.reusables.imports.z}.union(${arrayOf(
+            ...this.in_.map(
+              (value) =>
+                code`${this.reusables.imports.z}.literal(${this.valueExpression(value)})`,
+            ),
+          )})`;
+        }
+      }
     }
   }
 
