@@ -82,7 +82,7 @@ export abstract class AbstractTermType<
     }
     if (this.in_.length > 0) {
       initializers = initializers.concat(
-        code`in: ${arrayOf(...this.in_.map((in_) => this.valueExpression(in_)))}`,
+        code`in: ${arrayOf(...this.in_.map((in_) => this.valueExpression(in_)))} as const`,
       );
     }
     return initializers;

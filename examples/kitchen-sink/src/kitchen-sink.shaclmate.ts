@@ -22074,7 +22074,7 @@ export namespace InIdentifierStruct {
             dataFactory.namedNode(
               "http://example.com/InIdentifierStructInstance2",
             ),
-          ],
+          ] as const,
         },
       },
       $type: { kind: "Discriminant", value: "InIdentifierStruct" },
@@ -23156,7 +23156,7 @@ export namespace InPropertiesStruct {
             in: [
               dataFactory.namedNode("http://example.com/InIri1"),
               dataFactory.namedNode("http://example.com/InIri2"),
-            ],
+            ] as const,
           },
         },
       },
@@ -32276,7 +32276,7 @@ export namespace NamedInIri {
     in: [
       dataFactory.namedNode("http://example.com/NamedInIri1"),
       dataFactory.namedNode("http://example.com/NamedInIri2"),
-    ],
+    ] as const,
   };
 }
 export type NamedInLiteral = "test1" | "test2";
