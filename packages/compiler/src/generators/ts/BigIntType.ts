@@ -29,6 +29,13 @@ export class BigIntType extends AbstractNumericType<bigint> {
     );
   }
 
+  @Memoize()
+  private get decodedIn(): readonly bigint[] {
+    return this.in_.map((in_) =>
+      LiteralDecoder.decodeBigIntLiteral(in_).unsafeCoerce(),
+    );
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractNumericType<bigint>["fromJsonExpression"]>[0]): Code {
@@ -43,16 +50,18 @@ export class BigIntType extends AbstractNumericType<bigint> {
     _parameters: Parameters<AbstractNumericType<bigint>["jsonSchema"]>[0],
   ): Code {
     let valueJsonSchema: Code;
-    switch (this.in_.length) {
+    switch (this.decodedIn.length) {
       case 0:
         valueJsonSchema = code`${this.reusables.imports.z}.string()`;
         break;
       case 1:
-        valueJsonSchema = code`${this.reusables.imports.z}.literal(${this.valueExpression(this.in_[0])})`;
+        valueJsonSchema = code`${this.reusables.imports.z}.literal(${literalOf(this.decodedIn[0].toString())})`;
         break;
       default:
         valueJsonSchema = code`${this.reusables.imports.z}.enum(${arrayOf(
-          ...this.in_.map((value) => this.valueExpression(value)),
+          ...this.decodedIn.map(
+            (value) => code`${literalOf(value.toString())}`,
+          ),
         )})`;
         break;
     }
@@ -64,21 +73,14 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override jsonType(): AbstractNumericType.JsonType {
     return new AbstractNumericType.JsonType(
       code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": ${
-        this.in_.length === 0
+        this.decodedIn.length === 0
           ? "string"
           : joinCode(
-              this.in_.map(
-                (in_) =>
-                  code`${literalOf(LiteralDecoder.decodeBigIntLiteral(in_).toString())}`,
-              ),
+              this.decodedIn.map((in_) => code`${literalOf(in_.toString())}`),
               { on: " | " },
             )
       } }`,
     );
-  }
-
-  override valueExpression(literal: bigint | Literal): Code {
-    return code`${typeof literal === "bigint" ? literal : LiteralDecoder.decodeBigIntLiteral(literal).unsafeCoerce()}n`;
   }
 
   override toJsonExpression({
@@ -87,14 +89,15 @@ export class BigIntType extends AbstractNumericType<bigint> {
     let valueExpression = code`${variables.value}.toString()`;
     if (this.in_.length > 0) {
       valueExpression = code`${valueExpression} as ${joinCode(
-        this.in_.map(
-          (in_) =>
-            code`${literalOf(LiteralDecoder.decodeBigIntLiteral(in_).toString())}`,
-        ),
+        this.decodedIn.map((in_) => code`${literalOf(in_.toString())}`),
         { on: " | " },
       )}`;
     }
 
     return code`{ "@type": ${literalOf(this.datatype.value)} as const, "@value": ${valueExpression} }`;
+  }
+
+  override valueExpression(literal: bigint | Literal): Code {
+    return code`${typeof literal === "bigint" ? literal : LiteralDecoder.decodeBigIntLiteral(literal).unsafeCoerce()}n`;
   }
 }
