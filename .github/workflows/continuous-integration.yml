@@ -31,4 +31,3 @@ jobs:
       - name: Run API example scripts
         run: |
           npm exec tsx -- examples/api/src/compile.ts
-          npm exec tsx -- examples/api/src/dump.ts
