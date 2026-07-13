@@ -13,8 +13,6 @@ export async function parseTestShapesGraph(testShapesGraph: {
       await RdfFile.fromPath(filePath).unsafeCoerce().parseInto(dataset);
     }
     invariant(dataset.size > 0);
-    return (
-      await liftEither(ShapesGraph.builder().parseDataset(dataset))
-    ).build();
+    return await liftEither(ShapesGraph.fromDataset(dataset));
   });
 }

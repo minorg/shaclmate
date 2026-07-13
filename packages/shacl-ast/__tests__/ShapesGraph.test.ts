@@ -38,14 +38,6 @@ describe("ShapesGraph", () => {
             expect(shapesGraph.propertyGroups).toHaveLength(0);
           }
         });
-
-        it("toDataset", ({ expect }) => {
-          expect(shapesGraph.toDataset().size).toBeGreaterThan(0);
-        });
-
-        it("toString", ({ expect }) => {
-          expect(shapesGraph.toString()).not.to.be.empty;
-        });
       });
     }
   });

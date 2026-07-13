@@ -12,6 +12,7 @@ import type {
 import dataFactory from "@rdfx/data-factory";
 import { type Resource, ResourceSet } from "@rdfx/resource";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
+
 import { Either, Left } from "purify-ts";
 import type { Curie } from "./Curie.js";
 import { CurieFactory } from "./CurieFactory.js";
@@ -23,10 +24,14 @@ export abstract class AbstractShapesGraph<
   PropertyGroupT extends generated.PropertyGroup,
   PropertyShapeT extends generated.PropertyShape,
 > {
-  private readonly nodeShapesByIdentifier: IdentifierMap<NodeShapeT>;
-  private readonly ontologiesByIdentifier: IdentifierMap<OntologyT>;
-  private readonly propertyGroupsByIdentifier: IdentifierMap<PropertyGroupT>;
-  private readonly propertyShapesByIdentifier: IdentifierMap<PropertyShapeT>;
+  private readonly nodeShapesByIdentifier: IdentifierMap<NodeShapeT> =
+    new TermMap();
+  private readonly ontologiesByIdentifier: IdentifierMap<OntologyT> =
+    new TermMap();
+  private readonly propertyGroupsByIdentifier: IdentifierMap<PropertyGroupT> =
+    new TermMap();
+  private readonly propertyShapesByIdentifier: IdentifierMap<PropertyShapeT> =
+    new TermMap();
 
   protected abstract readonly typeFunctions: {
     NodeShape: TypeFunctions<NodeShapeT>;
@@ -35,26 +40,7 @@ export abstract class AbstractShapesGraph<
     PropertyShape: TypeFunctions<PropertyShapeT>;
   };
 
-  constructor(parameters: {
-    nodeShapesByIdentifier: IdentifierMap<NodeShapeT>;
-    ontologiesByIdentifier: IdentifierMap<OntologyT>;
-    propertyGroupsByIdentifier: IdentifierMap<PropertyGroupT>;
-    propertyShapesByIdentifier: IdentifierMap<PropertyShapeT>;
-  }) {
-    // Defensive copies
-    this.nodeShapesByIdentifier = new TermMap([
-      ...parameters.nodeShapesByIdentifier.entries(),
-    ]);
-    this.ontologiesByIdentifier = new TermMap([
-      ...parameters.ontologiesByIdentifier.entries(),
-    ]);
-    this.propertyGroupsByIdentifier = new TermMap([
-      ...parameters.propertyGroupsByIdentifier.entries(),
-    ]);
-    this.propertyShapesByIdentifier = new TermMap([
-      ...parameters.propertyShapesByIdentifier.entries(),
-    ]);
-  }
+  protected constructor() {}
 
   get nodeShapes(): readonly NodeShapeT[] {
     return [...this.nodeShapesByIdentifier.values()];
@@ -113,6 +99,371 @@ export abstract class AbstractShapesGraph<
       .alt(this.propertyShape(identifier))
       .mapLeft(() => new Error(`no such shape ${identifier}`));
   }
+
+  protected static _fromDataset<
+    NodeShapeT extends generated.NodeShape,
+    OntologyT extends generated.Ontology,
+    PropertyGroupT extends generated.PropertyGroup,
+    PropertyShapeT extends generated.PropertyShape,
+    ShapesGraphT extends AbstractShapesGraph<
+      NodeShapeT,
+      OntologyT,
+      PropertyGroupT,
+      PropertyShapeT
+    >,
+  >(
+    dataset: DatasetCore,
+    options:
+      | {
+          ignoreUndefinedShapes?: boolean;
+          prefixMap?: PrefixMap;
+        }
+      | undefined,
+    shapesGraph: ShapesGraphT,
+  ): Either<Error, ShapesGraphT> {
+    function datasetHasMatch(
+      subject?: Term | null,
+      predicate?: Term | null,
+      object?: Term | null,
+      graph?: Term | null,
+    ): boolean {
+      for (const _ of dataset.match(subject, predicate, object, graph)) {
+        return true;
+      }
+      return false;
+    }
+
+    let curieDataset: DatasetCore;
+    if (options?.prefixMap) {
+      const curieCache = new Map<string, Curie | NamedNode>();
+      curieDataset = datasetFactory.dataset();
+      const curieFactory = new CurieFactory({
+        prefixMap: options.prefixMap!,
+      });
+
+      const termToCurie = <TermT extends Term>(term: TermT): TermT => {
+        if (term.termType !== "NamedNode") {
+          return term;
+        }
+        const cachedCurie = curieCache.get(term.value);
+        if (cachedCurie) {
+          return cachedCurie as TermT;
+        }
+        const curie = curieFactory.create(term).extract() ?? term;
+        curieCache.set(term.value, curie);
+        return curie as TermT;
+      };
+
+      for (const quad of dataset) {
+        const curieObject = termToCurie(quad.object);
+        const curieSubject = termToCurie(quad.subject);
+
+        if (
+          !Object.is(curieObject, quad.object) ||
+          !Object.is(curieSubject, quad.subject)
+        ) {
+          curieDataset.add(
+            dataFactory.quad(
+              curieSubject,
+              quad.predicate,
+              curieObject,
+              quad.graph,
+            ),
+          );
+        } else {
+          curieDataset.add(quad);
+        }
+      }
+    } else {
+      curieDataset = dataset;
+    }
+
+    const curieResourceSet = new ResourceSet({
+      dataFactory,
+      dataset: curieDataset,
+    });
+
+    return Either.encase(() => {
+      function readGraph(): BlankNode | DefaultGraph | NamedNode | undefined {
+        const graphs = new TermSet();
+        for (const quad of dataset) {
+          graphs.add(quad.graph);
+        }
+        if (graphs.size !== 1) {
+          return undefined;
+        }
+        const graph = [...graphs.values()][0];
+        switch (graph.termType) {
+          case "BlankNode":
+          case "DefaultGraph":
+          case "NamedNode":
+            return graph;
+          default:
+            throw new RangeError(
+              `expected NamedNode or default graph, actual ${graph.termType}`,
+            );
+        }
+      }
+
+      const graph = readGraph();
+
+      // Read ontologies
+      for (const ontologyResource of curieResourceSet.instancesOf(
+        owl.Ontology,
+        {
+          graph,
+        },
+      )) {
+        if (
+          shapesGraph.ontologiesByIdentifier.has(ontologyResource.identifier)
+        ) {
+          continue;
+        }
+        shapesGraph.typeFunctions.Ontology.fromRdfResource(ontologyResource, {
+          ignoreRdfType: true,
+        }).ifRight((ontology) =>
+          shapesGraph.ontologiesByIdentifier.set(
+            ontology.$identifier(),
+            ontology,
+          ),
+        );
+      }
+
+      // Read property groups
+      for (const propertyGroupResource of curieResourceSet.instancesOf(
+        sh.PropertyGroup,
+        { graph },
+      )) {
+        if (propertyGroupResource.identifier.termType !== "NamedNode") {
+          continue;
+        }
+
+        if (
+          shapesGraph.propertyGroupsByIdentifier.has(
+            propertyGroupResource.identifier,
+          )
+        ) {
+          continue;
+        }
+
+        shapesGraph.typeFunctions.PropertyGroup.fromRdfResource(
+          curieResourceSet.resource(propertyGroupResource.identifier),
+          { ignoreRdfType: true },
+        ).ifRight((propertyGroup) =>
+          shapesGraph.propertyGroupsByIdentifier.set(
+            propertyGroup.$identifier(),
+            propertyGroup,
+          ),
+        );
+      }
+
+      // Read shapes
+      // Collect the shape identifiers in sets
+      const shapeNodeSet = new TermSet<BlankNode | NamedNode>();
+
+      // Utility function for adding to the shapeNodeSet
+      function addShapeNode(
+        shapeNode: Term,
+      ): shapeNode is BlankNode | NamedNode {
+        switch (shapeNode.termType) {
+          case "BlankNode":
+          case "NamedNode":
+            shapeNodeSet.add(shapeNode);
+            return true;
+          default:
+            throw new RangeError(
+              `unexpected shape node identifier term type: ${shapeNode.termType}`,
+            );
+        }
+      }
+
+      // Test each shape condition
+      // https://www.w3.org/TR/shacl/#shapes
+
+      // Subject is a SHACL instance of sh:NodeShape or sh:PropertyShape
+      for (const rdfType of [sh.NodeShape, sh.PropertyShape]) {
+        for (const resource of curieResourceSet.instancesOf(rdfType, {
+          graph,
+        })) {
+          addShapeNode(resource.identifier);
+        }
+      }
+
+      // Subject of a triple with sh:targetClass, sh:targetNode, sh:targetObjectsOf, or sh:targetSubjectsOf predicate
+      for (const predicate of [
+        sh.targetClass,
+        sh.targetNode,
+        sh.targetObjectsOf,
+        sh.targetSubjectsOf,
+      ]) {
+        for (const quad of dataset.match(null, predicate, null, graph)) {
+          addShapeNode(quad.subject);
+        }
+      }
+
+      // Subject of a triple that has a parameter as predicate
+      // https://www.w3.org/TR/shacl/#constraints
+      // https://www.w3.org/TR/shacl/#core-components
+      for (const predicate of [
+        sh.class,
+        sh.datatype,
+        sh.nodeKind,
+        sh.minCount,
+        sh.maxCount,
+        sh.minExclusive,
+        sh.minInclusive,
+        sh.maxExclusive,
+        sh.maxInclusive,
+        sh.minLength,
+        sh.maxLength,
+        sh.pattern,
+        sh.languageIn,
+        sh.uniqueLang,
+        sh.equals,
+        sh.disjoint,
+        sh.lessThan,
+        sh.lessThanOrEquals,
+        sh.not,
+        sh.and,
+        sh.or,
+        sh.xone,
+        sh.node,
+        sh.property,
+        sh.qualifiedValueShape,
+        sh.qualifiedMinCount,
+        sh.qualifiedMaxCount,
+        sh.closed,
+        sh.ignoredProperties,
+        sh.hasValue,
+        sh.in,
+      ]) {
+        for (const quad of dataset.match(null, predicate, null, graph)) {
+          addShapeNode(quad.subject);
+        }
+      }
+
+      // Object of a shape-expecting, non-list-taking parameter such as sh:node
+      for (const predicate of [sh.node, sh.not, sh.property]) {
+        for (const quad of dataset.match(null, predicate, null, graph)) {
+          addShapeNode(quad.object);
+
+          if (
+            !options?.ignoreUndefinedShapes &&
+            !datasetHasMatch(quad.object)
+          ) {
+            throw new Error(`undefined shape: ${quad.object}`);
+          }
+        }
+      }
+
+      // Member of a SHACL list that is a value of a shape-expecting and list-taking parameter such as sh:or
+      for (const predicate of [sh.and, sh.or, sh.xone]) {
+        for (const quad of dataset.match(null, predicate, null, graph)) {
+          switch (quad.object.termType) {
+            case "BlankNode":
+            case "NamedNode":
+              break;
+            default:
+              throw new RangeError(
+                `expected list term to be a blank or named node, not ${quad.object.termType}`,
+              );
+          }
+
+          for (const value of curieResourceSet
+            .resource(quad.object)
+            .toList()
+            .unsafeCoerce()) {
+            const identifier = value.toIdentifier().unsafeCoerce();
+
+            addShapeNode(identifier);
+
+            if (
+              !options?.ignoreUndefinedShapes &&
+              !datasetHasMatch(identifier)
+            ) {
+              throw new Error(
+                `undefined shape: ${identifier as Resource.Identifier}`,
+              );
+            }
+          }
+        }
+      }
+
+      // Separate shapes into node and property shapes.
+      for (const shapeNode of shapeNodeSet) {
+        if (dataset.match(shapeNode, sh.path, null, graph).size > 0) {
+          // A property shape is a shape in the shapes graph that is the subject of a triple that has sh:path as its predicate. A shape has at most one value for sh:path. Each value of sh:path in a shape must be a well-formed SHACL property path. It is recommended, but not required, for a property shape to be declared as a SHACL instance of sh:PropertyShape. SHACL instances of sh:PropertyShape have one value for the property sh:path.
+          shapesGraph.propertyShapesByIdentifier.set(
+            shapeNode,
+            shapesGraph.typeFunctions.PropertyShape.fromRdfResource(
+              curieResourceSet.resource(shapeNode),
+              {
+                ignoreRdfType: true,
+              },
+            ).unsafeCoerce(),
+          );
+        } else {
+          // A node shape is a shape in the shapes graph that is not the subject of a triple with sh:path as its predicate. It is recommended, but not required, for a node shape to be declared as a SHACL instance of sh:NodeShape. SHACL instances of sh:NodeShape cannot have a value for the property sh:path.
+          shapesGraph.nodeShapesByIdentifier.set(
+            shapeNode,
+            shapesGraph.typeFunctions.NodeShape.fromRdfResource(
+              curieResourceSet.resource(shapeNode),
+              {
+                ignoreRdfType: true,
+              },
+            ).unsafeCoerce(),
+          );
+        }
+      }
+
+      return shapesGraph;
+    });
+  }
+
+  protected static _fromShapes<
+    NodeShapeT extends generated.NodeShape,
+    OntologyT extends generated.Ontology,
+    PropertyGroupT extends generated.PropertyGroup,
+    PropertyShapeT extends generated.PropertyShape,
+    ShapesGraphT extends AbstractShapesGraph<
+      NodeShapeT,
+      OntologyT,
+      PropertyGroupT,
+      PropertyShapeT
+    >,
+  >(
+    shapesGraph: ShapesGraphT,
+    ...objects: readonly (
+      | NodeShapeT
+      | OntologyT
+      | PropertyGroupT
+      | PropertyShapeT
+    )[]
+  ): ShapesGraphT {
+    for (const object of objects) {
+      switch (object.$type) {
+        case "NodeShape":
+          shapesGraph.nodeShapesByIdentifier.set(object.$identifier(), object);
+          break;
+        case "Ontology":
+          shapesGraph.ontologiesByIdentifier.set(object.$identifier(), object);
+          break;
+        case "PropertyGroup":
+          shapesGraph.propertyGroupsByIdentifier.set(
+            object.$identifier(),
+            object,
+          );
+          break;
+        case "PropertyShape":
+          shapesGraph.propertyShapesByIdentifier.set(
+            object.$identifier(),
+            object,
+          );
+          break;
+      }
+    }
+    return shapesGraph;
+  }
 }
 
 type IdentifierMap<T> = TermMap<BlankNode | NamedNode, T>;
@@ -123,347 +474,3 @@ type TypeFunctions<T> = {
     options?: { ignoreRdfType?: boolean },
   ) => Either<Error, T>;
 };
-
-export namespace AbstractShapesGraph {
-  export abstract class AbstractBuilder<
-    NodeShapeT extends generated.NodeShape,
-    OntologyT extends generated.Ontology,
-    PropertyGroupT extends generated.PropertyGroup,
-    PropertyShapeT extends generated.PropertyShape,
-  > {
-    protected readonly nodeShapesByIdentifier: IdentifierMap<NodeShapeT> =
-      new TermMap();
-    protected readonly ontologiesByIdentifier: IdentifierMap<OntologyT> =
-      new TermMap();
-    protected readonly propertyGroupsByIdentifier: IdentifierMap<PropertyGroupT> =
-      new TermMap();
-    protected readonly propertyShapesByIdentifier: IdentifierMap<PropertyShapeT> =
-      new TermMap();
-
-    protected abstract readonly typeFunctions: {
-      NodeShape: TypeFunctions<NodeShapeT>;
-      Ontology: TypeFunctions<OntologyT>;
-      PropertyGroup: TypeFunctions<PropertyGroupT>;
-      PropertyShape: TypeFunctions<PropertyShapeT>;
-    };
-
-    add(
-      ...objects: readonly (
-        | NodeShapeT
-        | OntologyT
-        | PropertyGroupT
-        | PropertyShapeT
-      )[]
-    ): this {
-      for (const object of objects) {
-        switch (object.$type) {
-          case "NodeShape":
-            this.nodeShapesByIdentifier.set(object.$identifier(), object);
-            break;
-          case "Ontology":
-            this.ontologiesByIdentifier.set(object.$identifier(), object);
-            break;
-          case "PropertyGroup":
-            this.propertyGroupsByIdentifier.set(object.$identifier(), object);
-            break;
-          case "PropertyShape":
-            this.propertyShapesByIdentifier.set(object.$identifier(), object);
-            break;
-        }
-      }
-      return this;
-    }
-
-    parseDataset(
-      dataset: DatasetCore,
-      options?: {
-        ignoreUndefinedShapes?: boolean;
-        prefixMap?: PrefixMap;
-      },
-    ): Either<Error, this> {
-      function datasetHasMatch(
-        subject?: Term | null,
-        predicate?: Term | null,
-        object?: Term | null,
-        graph?: Term | null,
-      ): boolean {
-        for (const _ of dataset.match(subject, predicate, object, graph)) {
-          return true;
-        }
-        return false;
-      }
-
-      let curieDataset: DatasetCore;
-      if (options?.prefixMap) {
-        const curieCache = new Map<string, Curie | NamedNode>();
-        curieDataset = datasetFactory.dataset();
-        const curieFactory = new CurieFactory({
-          prefixMap: options.prefixMap!,
-        });
-
-        const termToCurie = <TermT extends Term>(term: TermT): TermT => {
-          if (term.termType !== "NamedNode") {
-            return term;
-          }
-          const cachedCurie = curieCache.get(term.value);
-          if (cachedCurie) {
-            return cachedCurie as TermT;
-          }
-          const curie = curieFactory.create(term).extract() ?? term;
-          curieCache.set(term.value, curie);
-          return curie as TermT;
-        };
-
-        for (const quad of dataset) {
-          const curieObject = termToCurie(quad.object);
-          const curieSubject = termToCurie(quad.subject);
-
-          if (
-            !Object.is(curieObject, quad.object) ||
-            !Object.is(curieSubject, quad.subject)
-          ) {
-            curieDataset.add(
-              dataFactory.quad(
-                curieSubject,
-                quad.predicate,
-                curieObject,
-                quad.graph,
-              ),
-            );
-          } else {
-            curieDataset.add(quad);
-          }
-        }
-      } else {
-        curieDataset = dataset;
-      }
-
-      const curieResourceSet = new ResourceSet({
-        dataFactory,
-        dataset: curieDataset,
-      });
-
-      return Either.encase(() => {
-        function readGraph(): BlankNode | DefaultGraph | NamedNode | undefined {
-          const graphs = new TermSet();
-          for (const quad of dataset) {
-            graphs.add(quad.graph);
-          }
-          if (graphs.size !== 1) {
-            return undefined;
-          }
-          const graph = [...graphs.values()][0];
-          switch (graph.termType) {
-            case "BlankNode":
-            case "DefaultGraph":
-            case "NamedNode":
-              return graph;
-            default:
-              throw new RangeError(
-                `expected NamedNode or default graph, actual ${graph.termType}`,
-              );
-          }
-        }
-
-        const graph = readGraph();
-
-        // Read ontologies
-        for (const ontologyResource of curieResourceSet.instancesOf(
-          owl.Ontology,
-          {
-            graph,
-          },
-        )) {
-          if (this.ontologiesByIdentifier.has(ontologyResource.identifier)) {
-            continue;
-          }
-          this.typeFunctions.Ontology.fromRdfResource(ontologyResource, {
-            ignoreRdfType: true,
-          }).ifRight((ontology) => this.add(ontology));
-        }
-
-        // Read property groups
-        for (const propertyGroupResource of curieResourceSet.instancesOf(
-          sh.PropertyGroup,
-          { graph },
-        )) {
-          if (propertyGroupResource.identifier.termType !== "NamedNode") {
-            continue;
-          }
-
-          if (
-            this.propertyGroupsByIdentifier.has(
-              propertyGroupResource.identifier,
-            )
-          ) {
-            continue;
-          }
-
-          this.typeFunctions.PropertyGroup.fromRdfResource(
-            curieResourceSet.resource(propertyGroupResource.identifier),
-            { ignoreRdfType: true },
-          ).ifRight((propertyGroup) => this.add(propertyGroup));
-        }
-
-        // Read shapes
-        // Collect the shape identifiers in sets
-        const shapeNodeSet = new TermSet<BlankNode | NamedNode>();
-
-        // Utility function for adding to the shapeNodeSet
-        function addShapeNode(
-          shapeNode: Term,
-        ): shapeNode is BlankNode | NamedNode {
-          switch (shapeNode.termType) {
-            case "BlankNode":
-            case "NamedNode":
-              shapeNodeSet.add(shapeNode);
-              return true;
-            default:
-              throw new RangeError(
-                `unexpected shape node identifier term type: ${shapeNode.termType}`,
-              );
-          }
-        }
-
-        // Test each shape condition
-        // https://www.w3.org/TR/shacl/#shapes
-
-        // Subject is a SHACL instance of sh:NodeShape or sh:PropertyShape
-        for (const rdfType of [sh.NodeShape, sh.PropertyShape]) {
-          for (const resource of curieResourceSet.instancesOf(rdfType, {
-            graph,
-          })) {
-            addShapeNode(resource.identifier);
-          }
-        }
-
-        // Subject of a triple with sh:targetClass, sh:targetNode, sh:targetObjectsOf, or sh:targetSubjectsOf predicate
-        for (const predicate of [
-          sh.targetClass,
-          sh.targetNode,
-          sh.targetObjectsOf,
-          sh.targetSubjectsOf,
-        ]) {
-          for (const quad of dataset.match(null, predicate, null, graph)) {
-            addShapeNode(quad.subject);
-          }
-        }
-
-        // Subject of a triple that has a parameter as predicate
-        // https://www.w3.org/TR/shacl/#constraints
-        // https://www.w3.org/TR/shacl/#core-components
-        for (const predicate of [
-          sh.class,
-          sh.datatype,
-          sh.nodeKind,
-          sh.minCount,
-          sh.maxCount,
-          sh.minExclusive,
-          sh.minInclusive,
-          sh.maxExclusive,
-          sh.maxInclusive,
-          sh.minLength,
-          sh.maxLength,
-          sh.pattern,
-          sh.languageIn,
-          sh.uniqueLang,
-          sh.equals,
-          sh.disjoint,
-          sh.lessThan,
-          sh.lessThanOrEquals,
-          sh.not,
-          sh.and,
-          sh.or,
-          sh.xone,
-          sh.node,
-          sh.property,
-          sh.qualifiedValueShape,
-          sh.qualifiedMinCount,
-          sh.qualifiedMaxCount,
-          sh.closed,
-          sh.ignoredProperties,
-          sh.hasValue,
-          sh.in,
-        ]) {
-          for (const quad of dataset.match(null, predicate, null, graph)) {
-            addShapeNode(quad.subject);
-          }
-        }
-
-        // Object of a shape-expecting, non-list-taking parameter such as sh:node
-        for (const predicate of [sh.node, sh.not, sh.property]) {
-          for (const quad of dataset.match(null, predicate, null, graph)) {
-            addShapeNode(quad.object);
-
-            if (
-              !options?.ignoreUndefinedShapes &&
-              !datasetHasMatch(quad.object)
-            ) {
-              throw new Error(`undefined shape: ${quad.object}`);
-            }
-          }
-        }
-
-        // Member of a SHACL list that is a value of a shape-expecting and list-taking parameter such as sh:or
-        for (const predicate of [sh.and, sh.or, sh.xone]) {
-          for (const quad of dataset.match(null, predicate, null, graph)) {
-            switch (quad.object.termType) {
-              case "BlankNode":
-              case "NamedNode":
-                break;
-              default:
-                throw new RangeError(
-                  `expected list term to be a blank or named node, not ${quad.object.termType}`,
-                );
-            }
-
-            for (const value of curieResourceSet
-              .resource(quad.object)
-              .toList()
-              .unsafeCoerce()) {
-              const identifier = value.toIdentifier().unsafeCoerce();
-
-              addShapeNode(identifier);
-
-              if (
-                !options?.ignoreUndefinedShapes &&
-                !datasetHasMatch(identifier)
-              ) {
-                throw new Error(
-                  `undefined shape: ${identifier as Resource.Identifier}`,
-                );
-              }
-            }
-          }
-        }
-
-        // Separate shapes into node and property shapes.
-        for (const shapeNode of shapeNodeSet) {
-          if (dataset.match(shapeNode, sh.path, null, graph).size > 0) {
-            // A property shape is a shape in the shapes graph that is the subject of a triple that has sh:path as its predicate. A shape has at most one value for sh:path. Each value of sh:path in a shape must be a well-formed SHACL property path. It is recommended, but not required, for a property shape to be declared as a SHACL instance of sh:PropertyShape. SHACL instances of sh:PropertyShape have one value for the property sh:path.
-            this.add(
-              this.typeFunctions.PropertyShape.fromRdfResource(
-                curieResourceSet.resource(shapeNode),
-                {
-                  ignoreRdfType: true,
-                },
-              ).unsafeCoerce(),
-            );
-          } else {
-            // A node shape is a shape in the shapes graph that is not the subject of a triple with sh:path as its predicate. It is recommended, but not required, for a node shape to be declared as a SHACL instance of sh:NodeShape. SHACL instances of sh:NodeShape cannot have a value for the property sh:path.
-            this.add(
-              this.typeFunctions.NodeShape.fromRdfResource(
-                curieResourceSet.resource(shapeNode),
-                {
-                  ignoreRdfType: true,
-                },
-              ).unsafeCoerce(),
-            );
-          }
-        }
-
-        return this;
-      });
-    }
-  }
-}
