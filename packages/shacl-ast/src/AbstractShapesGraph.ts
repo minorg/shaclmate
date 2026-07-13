@@ -11,7 +11,6 @@ import type {
 } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
 import { type Resource, ResourceSet } from "@rdfx/resource";
-import { NTriplesTerm } from "@rdfx/string";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left } from "purify-ts";
 import type { Curie } from "./Curie.js";
@@ -114,69 +113,6 @@ export abstract class AbstractShapesGraph<
       .alt(this.propertyShape(identifier))
       .mapLeft(() => new Error(`no such shape ${identifier}`));
   }
-
-  /**
-   * Convert the shapes graph to a dataset.
-   */
-  toDataset(): DatasetCore {
-    const dataset = datasetFactory.dataset();
-    const resourceSet = new ResourceSet({ dataFactory, dataset });
-    for (const nodeShape of this.nodeShapes) {
-      this.typeFunctions.NodeShape.toRdfResource(nodeShape, { resourceSet });
-    }
-    for (const ontology of this.ontologies) {
-      this.typeFunctions.Ontology.toRdfResource(ontology, { resourceSet });
-    }
-    for (const propertyGroup of this.propertyGroups) {
-      this.typeFunctions.PropertyGroup.toRdfResource(propertyGroup, {
-        resourceSet,
-      });
-    }
-    for (const propertyShape of this.propertyShapes) {
-      this.typeFunctions.PropertyShape.toRdfResource(propertyShape, {
-        resourceSet,
-      });
-    }
-    return dataset;
-  }
-
-  /**
-   * Convert the shapes graph to an RDF string.
-   *
-   * If the format isn't specified, defaults to N-Triples.
-   */
-  toString(options?: {
-    format?: "application/n-triples" | "application/n-quads";
-  }): string {
-    const format = options?.format ?? ("application/n-triples" as const);
-
-    const lines: string[] = [];
-    switch (format) {
-      case "application/n-quads": {
-        for (const quad of this.toDataset()) {
-          const graphString =
-            quad.graph.termType === "DefaultGraph"
-              ? ""
-              : ` ${NTriplesTerm.stringify(quad.graph)}`;
-          lines.push(
-            `${NTriplesTerm.stringify(quad.subject)} ${NTriplesTerm.stringify(quad.predicate)} ${NTriplesTerm.stringify(quad.object)}${graphString} .\n`,
-          );
-        }
-        break;
-      }
-      case "application/n-triples":
-        {
-          for (const quad of this.toDataset()) {
-            lines.push(
-              `${NTriplesTerm.stringify(quad.subject)} ${NTriplesTerm.stringify(quad.predicate)} ${NTriplesTerm.stringify(quad.object)} .\n`,
-            );
-          }
-        }
-        break;
-    }
-
-    return lines.join("");
-  }
 }
 
 type IdentifierMap<T> = TermMap<BlankNode | NamedNode, T>;
@@ -186,11 +122,6 @@ type TypeFunctions<T> = {
     resource: Resource,
     options?: { ignoreRdfType?: boolean },
   ) => Either<Error, T>;
-
-  toRdfResource: (
-    value: T,
-    options?: { resourceSet?: ResourceSet },
-  ) => Resource;
 };
 
 export namespace AbstractShapesGraph {
