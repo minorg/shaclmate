@@ -3,13 +3,13 @@
     "shaclmate": "dist/cli.js"
   },
   "dependencies": {
-    "@shaclmate/compiler": "4.0.71",
-    "@shaclmate/validator": "4.0.71",
+    "@shaclmate/compiler": "4.0.72",
+    "@shaclmate/validator": "4.0.72",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/prefix-map": "~0.1.2",
-    "@rdfx/data-factory": "0.0.34",
-    "@rdfx/fs": "0.0.34",
-    "@rdfx/serializers": "0.0.34",
+    "@rdfx/data-factory": "0.0.35",
+    "@rdfx/fs": "0.0.35",
+    "@rdfx/serializers": "0.0.35",
     "cmd-ts": "~0.15.0",
     "pino": "~9.1.0",
     "pino-pretty": "~13.1.2",
@@ -65,5 +65,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.71"
+  "version": "4.0.72"
 }
