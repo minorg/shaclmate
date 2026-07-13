@@ -8,9 +8,9 @@
     "@mui/x-date-pickers": "~7.17.0",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/data-factory": "0.0.35",
-    "@rdfx/resource": "0.0.35",
-    "@rdfx/serializers": "0.0.35",
+    "@rdfx/data-factory": "0.0.36",
+    "@rdfx/resource": "0.0.36",
+    "@rdfx/serializers": "0.0.36",
     "@types/rdfjs__dataset": "~2.0.7",
     "purify-ts": "~2.1.4",
     "react": "~18",
@@ -40,5 +40,5 @@
     "start": "vite dev --port 3000"
   },
   "type": "module",
-  "version": "4.0.73"
+  "version": "4.0.74"
 }
