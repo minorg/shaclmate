@@ -1,3 +1,6 @@
+import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
+import type { DatasetCore } from "@rdfjs/types";
+import type { Either } from "purify-ts";
 import { AbstractShapesGraph } from "./AbstractShapesGraph.js";
 import * as generated from "./shacl-ast.shaclmate.js";
 
@@ -16,59 +19,28 @@ export class ShapesGraph extends AbstractShapesGraph<
 > {
   protected readonly typeFunctions = typeFunctions;
 
-  static builder(): ShapesGraph.Builder {
-    return new ShapesGraph.Builder();
+  static fromDataset(
+    dataset: DatasetCore,
+    options?: {
+      ignoreUndefinedShapes?: boolean;
+      prefixMap?: PrefixMap;
+    },
+  ): Either<Error, ShapesGraph> {
+    return AbstractShapesGraph._fromDataset(
+      dataset,
+      options,
+      new ShapesGraph(),
+    );
   }
-}
 
-export namespace ShapesGraph {
-  export class Builder extends AbstractShapesGraph.AbstractBuilder<
-    generated.NodeShape,
-    generated.Ontology,
-    generated.PropertyGroup,
-    generated.PropertyShape
-  > {
-    protected readonly typeFunctions = typeFunctions;
-
-    build(): ShapesGraph {
-      return new ShapesGraph({
-        nodeShapesByIdentifier: this.nodeShapesByIdentifier,
-        ontologiesByIdentifier: this.ontologiesByIdentifier,
-        propertyGroupsByIdentifier: this.propertyGroupsByIdentifier,
-        propertyShapesByIdentifier: this.propertyShapesByIdentifier,
-      });
-    }
-
-    nodeShape(
-      parameters?: Parameters<typeof generated.NodeShape.createUnsafe>[0],
-    ): generated.NodeShape {
-      const nodeShape = generated.NodeShape.createUnsafe(parameters);
-      this.add(nodeShape);
-      return nodeShape;
-    }
-
-    ontology(
-      parameters?: Parameters<typeof generated.Ontology.createUnsafe>[0],
-    ): generated.Ontology {
-      const ontology = generated.Ontology.createUnsafe(parameters);
-      this.add(ontology);
-      return ontology;
-    }
-
-    propertyGroup(
-      parameters?: Parameters<typeof generated.PropertyGroup.create>[0],
-    ): generated.PropertyGroup {
-      const propertyGroup = generated.PropertyGroup.createUnsafe(parameters);
-      this.add(propertyGroup);
-      return propertyGroup;
-    }
-
-    propertyShape(
-      parameters: Parameters<typeof generated.PropertyShape.createUnsafe>[0],
-    ): generated.PropertyShape {
-      const propertyShape = generated.PropertyShape.createUnsafe(parameters);
-      this.add(propertyShape);
-      return propertyShape;
-    }
+  static fromShapes(
+    ...objects: readonly (
+      | generated.NodeShape
+      | generated.Ontology
+      | generated.PropertyGroup
+      | generated.PropertyShape
+    )[]
+  ): ShapesGraph {
+    return AbstractShapesGraph._fromShapes(new ShapesGraph(), ...objects);
   }
 }

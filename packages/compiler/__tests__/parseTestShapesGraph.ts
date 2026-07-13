@@ -21,10 +21,6 @@ export async function parseTestShapesGraph(testShapesGraph: {
         `test shapes graph dataset is empty: ${JSON.stringify(testShapesGraph)}`,
       );
     }
-    return (
-      await liftEither(
-        ShapesGraph.builder().parseDataset(dataset, { prefixMap }),
-      )
-    ).build();
+    return await liftEither(ShapesGraph.fromDataset(dataset, { prefixMap }));
   });
 }
