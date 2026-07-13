@@ -40,12 +40,9 @@ export async function generate({
     // }
 
     const output = await liftEither(
-      ShapesGraph.builder()
-        .parseDataset(dataset, { prefixMap })
-        .map((_) => _.build())
-        .chain((shapesGraph) =>
-          new Compiler({ generator, logger }).compile(shapesGraph),
-        ),
+      ShapesGraph.fromDataset(dataset, { prefixMap }).chain((shapesGraph) =>
+        new Compiler({ generator, logger }).compile(shapesGraph),
+      ),
     );
 
     if (outputFilePath.length === 0) {
