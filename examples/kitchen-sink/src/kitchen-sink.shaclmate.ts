@@ -1,4 +1,3 @@
-import datasetFactory from "@rdfjs/dataset";
 import type {
   BlankNode,
   DatasetCore,
@@ -8,6 +7,7 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {

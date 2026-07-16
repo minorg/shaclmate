@@ -1,4 +1,3 @@
-import datasetFactory from "@rdfjs/dataset";
 import type {
   BlankNode,
   DatasetCore,
@@ -7,6 +6,7 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
@@ -769,6 +769,9 @@ namespace $RdfVocabularies {
     dateTime: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
     ),
+    dateTimeStamp: dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
+    ),
     decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
     double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
     float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
@@ -1079,6 +1082,33 @@ export type $DefaultPartial = {
 };
 
 export namespace $DefaultPartial {
+  export const _fromRdfResource: $_FromRdfResourceFunction<$DefaultPartial> = (
+    resource,
+    options,
+  ) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          schema: $DefaultPartial.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+    }).chain((properties) => $DefaultPartial.create(properties));
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    $DefaultPartial.Identifier,
+    $DefaultPartial
+  > = (parameters) => {
+    return parameters.resource;
+  };
+
+  export const $toString: (_defaultPartial: $DefaultPartial) => string = (
+    _defaultPartial,
+  ) => `$DefaultPartial(${JSON.stringify(toStringRecord(_defaultPartial))})`;
+
   export const create: (parameters?: {
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
@@ -1107,8 +1137,6 @@ export namespace $DefaultPartial {
     return create(parameters).unsafeCoerce();
   }
 
-  export type Filter = { readonly $identifier?: $IdentifierFilter };
-
   export const filter: (
     filter: $DefaultPartial.Filter,
     value: $DefaultPartial,
@@ -1122,21 +1150,7 @@ export namespace $DefaultPartial {
     return true;
   };
 
-  export const _fromRdfResource: $_FromRdfResourceFunction<$DefaultPartial> = (
-    resource,
-    options,
-  ) =>
-    $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
-          ...options,
-          focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          schema: $DefaultPartial.schema.properties.$identifier.type,
-        },
-      ).chain((values) => values.head()),
-    }).chain((properties) => $DefaultPartial.create(properties));
+  export type Filter = { readonly $identifier?: $IdentifierFilter };
 
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
@@ -1152,7 +1166,6 @@ export namespace $DefaultPartial {
     );
 
   export type Identifier = BlankNode | NamedNode;
-
   export namespace Identifier {
     export const parse = $parseIdentifier;
     export const stringify = NTriplesTerm.stringify;
@@ -1174,18 +1187,7 @@ export namespace $DefaultPartial {
 
   export type Schema = typeof schema;
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    $DefaultPartial.Identifier,
-    $DefaultPartial
-  > = (parameters) => {
-    return parameters.resource;
-  };
-
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export const $toString: (_defaultPartial: $DefaultPartial) => string = (
-    _defaultPartial,
-  ) => `$DefaultPartial(${JSON.stringify(toStringRecord(_defaultPartial))})`;
 
   export const toStringRecord: (
     _defaultPartial: $DefaultPartial,
@@ -1214,141 +1216,6 @@ export type LazyObject = {
 };
 
 export namespace LazyObject {
-  export const create: (parameters: {
-    readonly $identifier?:
-      | (() => LazyObject.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalNumberProperty?: number | Maybe<number>;
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredStringProperty: string;
-  }) => Either<Error, LazyObject> = (parameters) =>
-    $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
-        parameters.optionalNumberProperty,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalNumberProperty.type,
-          value,
-        ),
-      ),
-      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
-        parameters.optionalStringProperty,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalStringProperty.type,
-          value,
-        ),
-      ),
-      requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    })
-      .map((properties) => ({ ...properties, $type: "LazyObject" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: LazyObject.$toString }),
-      );
-
-  export function createUnsafe(parameters: {
-    readonly $identifier?:
-      | (() => LazyObject.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalNumberProperty?: number | Maybe<number>;
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredStringProperty: string;
-  }): LazyObject {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredStringProperty?: $StringFilter;
-  };
-
-  export const filter: (
-    filter: LazyObject.Filter,
-    value: LazyObject,
-  ) => boolean = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalNumberProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.optionalNumberProperty,
-        value.optionalNumberProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredStringProperty !== undefined &&
-      !$filterString(
-        filter.requiredStringProperty,
-        value.requiredStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  };
-
-  export const GraphQL = new GraphQLObjectType<
-    LazyObject,
-    { objectSet: $ObjectSet }
-  >({
-    description: undefined,
-    fields: () => ({
-      _identifier: {
-        args: undefined,
-        description: undefined,
-        name: "_identifier",
-        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-      optionalNumberProperty: {
-        args: undefined,
-        description: '"Optional number property"',
-        name: "optionalNumberProperty",
-        resolve: (source, _args) =>
-          source.optionalNumberProperty.extractNullable(),
-        type: new GraphQLNonNull(GraphQLFloat),
-      },
-      optionalStringProperty: {
-        args: undefined,
-        description: '"Optional string property"',
-        name: "optionalStringProperty",
-        resolve: (source, _args) =>
-          source.optionalStringProperty.extractNullable(),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-      requiredStringProperty: {
-        args: undefined,
-        description: '"Required string property"',
-        name: "requiredStringProperty",
-        resolve: (source, _args) => source.requiredStringProperty,
-        type: new GraphQLNonNull(GraphQLString),
-      },
-    }),
-    name: "LazyObject",
-  });
-
   export const _fromRdfResource: $_FromRdfResourceFunction<LazyObject> = (
     resource,
     options,
@@ -1408,6 +1275,139 @@ export namespace LazyObject {
       }).chain((properties) => LazyObject.create(properties)),
     );
 
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    LazyObject.Identifier,
+    LazyObject
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        LazyObject.schema.toRdfTypes,
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      LazyObject.schema.properties.optionalNumberProperty.path,
+      parameters.object.optionalNumberProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
+        ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      LazyObject.schema.properties.optionalStringProperty.path,
+      parameters.object.optionalStringProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      LazyObject.schema.properties.requiredStringProperty.path,
+      [$literalFactory.string(parameters.object.requiredStringProperty)],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const $toString: (_lazyObject: LazyObject) => string = (_lazyObject) =>
+    `LazyObject(${JSON.stringify(toStringRecord(_lazyObject))})`;
+
+  export const create: (parameters: {
+    readonly $identifier?:
+      | (() => LazyObject.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalNumberProperty?: number | Maybe<number>;
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }) => Either<Error, LazyObject> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
+        parameters.optionalNumberProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          LazyObject.schema.properties.optionalNumberProperty.type,
+          value,
+        ),
+      ),
+      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
+        parameters.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          LazyObject.schema.properties.optionalStringProperty.type,
+          value,
+        ),
+      ),
+      requiredStringProperty: Either.of(parameters.requiredStringProperty),
+    })
+      .map((properties) => ({ ...properties, $type: "LazyObject" as const }))
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: LazyObject.$toString }),
+      );
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => LazyObject.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalNumberProperty?: number | Maybe<number>;
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }): LazyObject {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const filter: (
+    filter: LazyObject.Filter,
+    value: LazyObject,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalNumberProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.optionalNumberProperty,
+        value.optionalNumberProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredStringProperty !== undefined &&
+      !$filterString(
+        filter.requiredStringProperty,
+        value.requiredStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredStringProperty?: $StringFilter;
+  };
+
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
@@ -1421,8 +1421,47 @@ export namespace LazyObject {
         .chain((resource) => fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export const GraphQL = new GraphQLObjectType<
+    LazyObject,
+    { objectSet: $ObjectSet }
+  >({
+    description: undefined,
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      optionalNumberProperty: {
+        args: undefined,
+        description: '"Optional number property"',
+        name: "optionalNumberProperty",
+        resolve: (source, _args) =>
+          source.optionalNumberProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLFloat),
+      },
+      optionalStringProperty: {
+        args: undefined,
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      requiredStringProperty: {
+        args: undefined,
+        description: '"Required string property"',
+        name: "requiredStringProperty",
+        resolve: (source, _args) => source.requiredStringProperty,
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    }),
+    name: "LazyObject",
+  });
 
+  export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
     export const stringify = NTriplesTerm.stringify;
@@ -1469,45 +1508,7 @@ export namespace LazyObject {
 
   export type Schema = typeof schema;
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    LazyObject.Identifier,
-    LazyObject
-  > = (parameters) => {
-    if (!parameters.ignoreRdfType) {
-      parameters.resource.add(
-        $RdfVocabularies.rdf.type,
-        LazyObject.schema.toRdfTypes,
-        parameters.graph,
-      );
-    }
-    parameters.resource.add(
-      LazyObject.schema.properties.optionalNumberProperty.path,
-      parameters.object.optionalNumberProperty
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      LazyObject.schema.properties.optionalStringProperty.path,
-      parameters.object.optionalStringProperty
-        .toList()
-        .flatMap((value) => [$literalFactory.string(value)]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      LazyObject.schema.properties.requiredStringProperty.path,
-      [$literalFactory.string(parameters.object.requiredStringProperty)],
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export const $toString: (_lazyObject: LazyObject) => string = (_lazyObject) =>
-    `LazyObject(${JSON.stringify(toStringRecord(_lazyObject))})`;
 
   export const toStringRecord: (
     _lazyObject: LazyObject,
@@ -1553,337 +1554,6 @@ export type RootObject = {
 };
 
 export namespace RootObject {
-  export const create: (parameters: {
-    readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
-    readonly lazyObjectSetProperty?:
-      | $LazySet<$DefaultPartial, LazyObject>
-      | readonly $DefaultPartial[]
-      | readonly LazyObject[]
-      | $DefaultPartial
-      | LazyObject;
-    readonly optionalLazyProperty?:
-      | $LazyOption<$DefaultPartial, LazyObject>
-      | Maybe<$DefaultPartial>
-      | Maybe<LazyObject>
-      | $DefaultPartial
-      | LazyObject;
-    readonly optionalObjectProperty?:
-      | {
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | string;
-          readonly requiredStringProperty: string;
-        }
-      | Maybe<{
-          readonly $identifier: () => BlankNode | NamedNode;
-
-          /**
-           * Required string property
-           */
-          readonly requiredStringProperty: string;
-        }>;
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredStringProperty: string;
-  }) => Either<Error, RootObject> = (parameters) =>
-    $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<string>(
-        parameters.$identifier,
-      ),
-      lazyObjectSetProperty: $convertToLazySet<$DefaultPartial, LazyObject>(
-        $DefaultPartial.is$DefaultPartial,
-        $DefaultPartial.createUnsafe,
-      )(parameters.lazyObjectSetProperty),
-      optionalLazyProperty: $convertToLazyOption<$DefaultPartial, LazyObject>(
-        $DefaultPartial.is$DefaultPartial,
-        $DefaultPartial.createUnsafe,
-      )(parameters.optionalLazyProperty),
-      optionalObjectProperty: $convertToMaybe(
-        (parameters: {
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | string;
-          readonly requiredStringProperty: string;
-        }) =>
-          $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(parameters.$identifier),
-            requiredStringProperty: Either.of(
-              parameters.requiredStringProperty,
-            ),
-          }).map((object) =>
-            $monkeyPatchObject(object, {
-              $toString: (_object) =>
-                JSON.stringify(
-                  $compactRecord({
-                    $identifier: _object.$identifier().toString(),
-                  }),
-                ),
-            }),
-          ),
-      )(parameters.optionalObjectProperty).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          RootObject.schema.properties.optionalObjectProperty.type,
-          value,
-        ),
-      ),
-      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
-        parameters.optionalStringProperty,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalStringProperty.type,
-          value,
-        ),
-      ),
-      requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    })
-      .map((properties) => ({ ...properties, $type: "RootObject" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: RootObject.$toString }),
-      );
-
-  export function createUnsafe(parameters: {
-    readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
-    readonly lazyObjectSetProperty?:
-      | $LazySet<$DefaultPartial, LazyObject>
-      | readonly $DefaultPartial[]
-      | readonly LazyObject[]
-      | $DefaultPartial
-      | LazyObject;
-    readonly optionalLazyProperty?:
-      | $LazyOption<$DefaultPartial, LazyObject>
-      | Maybe<$DefaultPartial>
-      | Maybe<LazyObject>
-      | $DefaultPartial
-      | LazyObject;
-    readonly optionalObjectProperty?:
-      | {
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | string;
-          readonly requiredStringProperty: string;
-        }
-      | Maybe<{
-          readonly $identifier: () => BlankNode | NamedNode;
-
-          /**
-           * Required string property
-           */
-          readonly requiredStringProperty: string;
-        }>;
-    readonly optionalStringProperty?: string | Maybe<string>;
-    readonly requiredStringProperty: string;
-  }): RootObject {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export type Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly lazyObjectSetProperty?: $CollectionFilter<$DefaultPartial.Filter>;
-    readonly optionalLazyProperty?: $MaybeFilter<$DefaultPartial.Filter>;
-    readonly optionalObjectProperty?: $MaybeFilter<{
-      readonly $identifier?: $IdentifierFilter;
-      readonly requiredStringProperty?: $StringFilter;
-    }>;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredStringProperty?: $StringFilter;
-  };
-
-  export const filter: (
-    filter: RootObject.Filter,
-    value: RootObject,
-  ) => boolean = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.lazyObjectSetProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<$DefaultPartial.Filter>,
-        value: $LazySet<$DefaultPartial, LazyObject>,
-      ) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
-          $DefaultPartial.filter,
-        )(filter, value.partials))(
-        filter.lazyObjectSetProperty,
-        value.lazyObjectSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.Filter>,
-        value: $LazyOption<$DefaultPartial, LazyObject>,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
-          $DefaultPartial.filter,
-        )(filter, value.partial))(
-        filter.optionalLazyProperty,
-        value.optionalLazyProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalObjectProperty !== undefined &&
-      !$filterMaybe<
-        {
-          readonly $identifier: () => BlankNode | NamedNode;
-
-          /**
-           * Required string property
-           */
-          readonly requiredStringProperty: string;
-        },
-        {
-          readonly $identifier?: $IdentifierFilter;
-          readonly requiredStringProperty?: $StringFilter;
-        }
-      >((filter, value) => {
-        if (
-          filter.$identifier !== undefined &&
-          !$filterIdentifier(filter.$identifier, value.$identifier())
-        ) {
-          return false;
-        }
-        if (
-          filter.requiredStringProperty !== undefined &&
-          !$filterString(
-            filter.requiredStringProperty,
-            value.requiredStringProperty,
-          )
-        ) {
-          return false;
-        }
-        return true;
-      })(filter.optionalObjectProperty, value.optionalObjectProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredStringProperty !== undefined &&
-      !$filterString(
-        filter.requiredStringProperty,
-        value.requiredStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  };
-
-  export const GraphQL = new GraphQLObjectType<
-    RootObject,
-    { objectSet: $ObjectSet }
-  >({
-    description: undefined,
-    fields: () => ({
-      _identifier: {
-        args: undefined,
-        description: undefined,
-        name: "_identifier",
-        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-      lazyObjectSetProperty: {
-        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
-        description: '"Lazy object set property"',
-        name: "lazyObjectSetProperty",
-        resolve: (source, args) =>
-          source.lazyObjectSetProperty
-            .resolve({ limit: args.limit, offset: args.offset })
-            .then((either) => either.unsafeCoerce()),
-        type: new GraphQLNonNull(
-          new GraphQLList(new GraphQLNonNull(LazyObject.GraphQL)),
-        ),
-      },
-      optionalLazyProperty: {
-        args: undefined,
-        description: '"Optional lazy object property"',
-        name: "optionalLazyProperty",
-        resolve: (source, _args) =>
-          source.optionalLazyProperty
-            .resolve()
-            .then((either) => either.unsafeCoerce().extractNullable()),
-        type: new GraphQLNonNull(LazyObject.GraphQL),
-      },
-      optionalObjectProperty: {
-        args: undefined,
-        description: "\"Optional object property with 'anonymous' object\"",
-        name: "optionalObjectProperty",
-        resolve: (source, _args) =>
-          source.optionalObjectProperty.extractNullable(),
-        type: new GraphQLNonNull(
-          new GraphQLObjectType<
-            {
-              readonly $identifier: () => BlankNode | NamedNode;
-
-              /**
-               * Required string property
-               */
-              readonly requiredStringProperty: string;
-            },
-            { objectSet: $ObjectSet }
-          >({
-            description: undefined,
-            fields: () => ({
-              _identifier: {
-                args: undefined,
-                description: undefined,
-                name: "_identifier",
-                resolve: (source) =>
-                  NTriplesTerm.stringify(source.$identifier()),
-                type: new GraphQLNonNull(GraphQLString),
-              },
-              requiredStringProperty: {
-                args: undefined,
-                description: '"Required string property"',
-                name: "requiredStringProperty",
-                resolve: (source, _args) => source.requiredStringProperty,
-                type: new GraphQLNonNull(GraphQLString),
-              },
-            }),
-            name: "df_0_135",
-          }),
-        ),
-      },
-      optionalStringProperty: {
-        args: undefined,
-        description: '"Optional string property"',
-        name: "optionalStringProperty",
-        resolve: (source, _args) =>
-          source.optionalStringProperty.extractNullable(),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-      requiredStringProperty: {
-        args: undefined,
-        description: '"Required string property"',
-        name: "requiredStringProperty",
-        resolve: (source, _args) => source.requiredStringProperty,
-        type: new GraphQLNonNull(GraphQLString),
-      },
-    }),
-    name: "RootObject",
-  });
-
   export const _fromRdfResource: $_FromRdfResourceFunction<RootObject> = (
     resource,
     options,
@@ -2118,6 +1788,321 @@ export namespace RootObject {
       }).chain((properties) => RootObject.create(properties)),
     );
 
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    RootObject.Identifier,
+    RootObject
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        RootObject.schema.toRdfTypes,
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      RootObject.schema.properties.lazyObjectSetProperty.path,
+      parameters.object.lazyObjectSetProperty.partials.flatMap((item) => [
+        $DefaultPartial.toRdfResource(item, {
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
+        }).identifier,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      RootObject.schema.properties.optionalLazyProperty.path,
+      parameters.object.optionalLazyProperty.partial
+        .toList()
+        .flatMap((value) => [
+          $DefaultPartial.toRdfResource(value, {
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
+          }).identifier,
+        ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      RootObject.schema.properties.optionalObjectProperty.path,
+      parameters.object.optionalObjectProperty.toList().flatMap((value) => [
+        $wrap_ToRdfResourceFunction<
+          BlankNode | NamedNode,
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+
+            /**
+             * Required string property
+             */
+            readonly requiredStringProperty: string;
+          }
+        >((parameters) => {
+          parameters.resource.add(
+            LazyObject.schema.properties.requiredStringProperty.path,
+            [$literalFactory.string(parameters.object.requiredStringProperty)],
+            parameters.graph,
+          );
+          return parameters.resource;
+        })(value, {
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
+        }).identifier,
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      LazyObject.schema.properties.optionalStringProperty.path,
+      parameters.object.optionalStringProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      LazyObject.schema.properties.requiredStringProperty.path,
+      [$literalFactory.string(parameters.object.requiredStringProperty)],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const $toString: (_rootObject: RootObject) => string = (_rootObject) =>
+    `RootObject(${JSON.stringify(toStringRecord(_rootObject))})`;
+
+  export const create: (parameters: {
+    readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
+    readonly lazyObjectSetProperty?:
+      | $LazySet<$DefaultPartial, LazyObject>
+      | readonly $DefaultPartial[]
+      | readonly LazyObject[]
+      | $DefaultPartial
+      | LazyObject;
+    readonly optionalLazyProperty?:
+      | $LazyOption<$DefaultPartial, LazyObject>
+      | Maybe<$DefaultPartial>
+      | Maybe<LazyObject>
+      | $DefaultPartial
+      | LazyObject;
+    readonly optionalObjectProperty?:
+      | {
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | string;
+          readonly requiredStringProperty: string;
+        }
+      | Maybe<{
+          readonly $identifier: () => BlankNode | NamedNode;
+
+          /**
+           * Required string property
+           */
+          readonly requiredStringProperty: string;
+        }>;
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }) => Either<Error, RootObject> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIriIdentifierProperty<string>(
+        parameters.$identifier,
+      ),
+      lazyObjectSetProperty: $convertToLazySet<$DefaultPartial, LazyObject>(
+        $DefaultPartial.is$DefaultPartial,
+        $DefaultPartial.createUnsafe,
+      )(parameters.lazyObjectSetProperty),
+      optionalLazyProperty: $convertToLazyOption<$DefaultPartial, LazyObject>(
+        $DefaultPartial.is$DefaultPartial,
+        $DefaultPartial.createUnsafe,
+      )(parameters.optionalLazyProperty),
+      optionalObjectProperty: $convertToMaybe(
+        (parameters: {
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | string;
+          readonly requiredStringProperty: string;
+        }) =>
+          $sequenceRecord({
+            $identifier: $convertToIdentifierProperty(parameters.$identifier),
+            requiredStringProperty: Either.of(
+              parameters.requiredStringProperty,
+            ),
+          }).map((object) =>
+            $monkeyPatchObject(object, {
+              $toString: (_object) =>
+                JSON.stringify(
+                  $compactRecord({
+                    $identifier: _object.$identifier().toString(),
+                  }),
+                ),
+            }),
+          ),
+      )(parameters.optionalObjectProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          RootObject.schema.properties.optionalObjectProperty.type,
+          value,
+        ),
+      ),
+      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
+        parameters.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          LazyObject.schema.properties.optionalStringProperty.type,
+          value,
+        ),
+      ),
+      requiredStringProperty: Either.of(parameters.requiredStringProperty),
+    })
+      .map((properties) => ({ ...properties, $type: "RootObject" as const }))
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: RootObject.$toString }),
+      );
+
+  export function createUnsafe(parameters: {
+    readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
+    readonly lazyObjectSetProperty?:
+      | $LazySet<$DefaultPartial, LazyObject>
+      | readonly $DefaultPartial[]
+      | readonly LazyObject[]
+      | $DefaultPartial
+      | LazyObject;
+    readonly optionalLazyProperty?:
+      | $LazyOption<$DefaultPartial, LazyObject>
+      | Maybe<$DefaultPartial>
+      | Maybe<LazyObject>
+      | $DefaultPartial
+      | LazyObject;
+    readonly optionalObjectProperty?:
+      | {
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | string;
+          readonly requiredStringProperty: string;
+        }
+      | Maybe<{
+          readonly $identifier: () => BlankNode | NamedNode;
+
+          /**
+           * Required string property
+           */
+          readonly requiredStringProperty: string;
+        }>;
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }): RootObject {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const filter: (
+    filter: RootObject.Filter,
+    value: RootObject,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.lazyObjectSetProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<$DefaultPartial.Filter>,
+        value: $LazySet<$DefaultPartial, LazyObject>,
+      ) =>
+        $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
+          $DefaultPartial.filter,
+        )(filter, value.partials))(
+        filter.lazyObjectSetProperty,
+        value.lazyObjectSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.Filter>,
+        value: $LazyOption<$DefaultPartial, LazyObject>,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
+          $DefaultPartial.filter,
+        )(filter, value.partial))(
+        filter.optionalLazyProperty,
+        value.optionalLazyProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalObjectProperty !== undefined &&
+      !$filterMaybe<
+        {
+          readonly $identifier: () => BlankNode | NamedNode;
+
+          /**
+           * Required string property
+           */
+          readonly requiredStringProperty: string;
+        },
+        {
+          readonly $identifier?: $IdentifierFilter;
+          readonly requiredStringProperty?: $StringFilter;
+        }
+      >((filter, value) => {
+        if (
+          filter.$identifier !== undefined &&
+          !$filterIdentifier(filter.$identifier, value.$identifier())
+        ) {
+          return false;
+        }
+        if (
+          filter.requiredStringProperty !== undefined &&
+          !$filterString(
+            filter.requiredStringProperty,
+            value.requiredStringProperty,
+          )
+        ) {
+          return false;
+        }
+        return true;
+      })(filter.optionalObjectProperty, value.optionalObjectProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredStringProperty !== undefined &&
+      !$filterString(
+        filter.requiredStringProperty,
+        value.requiredStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export type Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly lazyObjectSetProperty?: $CollectionFilter<$DefaultPartial.Filter>;
+    readonly optionalLazyProperty?: $MaybeFilter<$DefaultPartial.Filter>;
+    readonly optionalObjectProperty?: $MaybeFilter<{
+      readonly $identifier?: $IdentifierFilter;
+      readonly requiredStringProperty?: $StringFilter;
+    }>;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredStringProperty?: $StringFilter;
+  };
+
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
@@ -2131,8 +2116,101 @@ export namespace RootObject {
         .chain((resource) => fromRdfResource(resource, options)),
     );
 
-  export type Identifier = NamedNode;
+  export const GraphQL = new GraphQLObjectType<
+    RootObject,
+    { objectSet: $ObjectSet }
+  >({
+    description: undefined,
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      lazyObjectSetProperty: {
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
+        description: '"Lazy object set property"',
+        name: "lazyObjectSetProperty",
+        resolve: (source, args) =>
+          source.lazyObjectSetProperty
+            .resolve({ limit: args.limit, offset: args.offset })
+            .then((either) => either.unsafeCoerce()),
+        type: new GraphQLNonNull(
+          new GraphQLList(new GraphQLNonNull(LazyObject.GraphQL)),
+        ),
+      },
+      optionalLazyProperty: {
+        args: undefined,
+        description: '"Optional lazy object property"',
+        name: "optionalLazyProperty",
+        resolve: (source, _args) =>
+          source.optionalLazyProperty
+            .resolve()
+            .then((either) => either.unsafeCoerce().extractNullable()),
+        type: new GraphQLNonNull(LazyObject.GraphQL),
+      },
+      optionalObjectProperty: {
+        args: undefined,
+        description: "\"Optional object property with 'anonymous' object\"",
+        name: "optionalObjectProperty",
+        resolve: (source, _args) =>
+          source.optionalObjectProperty.extractNullable(),
+        type: new GraphQLNonNull(
+          new GraphQLObjectType<
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
 
+              /**
+               * Required string property
+               */
+              readonly requiredStringProperty: string;
+            },
+            { objectSet: $ObjectSet }
+          >({
+            description: undefined,
+            fields: () => ({
+              _identifier: {
+                args: undefined,
+                description: undefined,
+                name: "_identifier",
+                resolve: (source) =>
+                  NTriplesTerm.stringify(source.$identifier()),
+                type: new GraphQLNonNull(GraphQLString),
+              },
+              requiredStringProperty: {
+                args: undefined,
+                description: '"Required string property"',
+                name: "requiredStringProperty",
+                resolve: (source, _args) => source.requiredStringProperty,
+                type: new GraphQLNonNull(GraphQLString),
+              },
+            }),
+            name: "df_0_135",
+          }),
+        ),
+      },
+      optionalStringProperty: {
+        args: undefined,
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      requiredStringProperty: {
+        args: undefined,
+        description: '"Required string property"',
+        name: "requiredStringProperty",
+        resolve: (source, _args) => source.requiredStringProperty,
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    }),
+    name: "RootObject",
+  });
+
+  export type Identifier = NamedNode;
   export namespace Identifier {
     export const parse = $parseIri;
     export const stringify = NTriplesTerm.stringify;
@@ -2227,85 +2305,7 @@ export namespace RootObject {
 
   export type Schema = typeof schema;
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    RootObject.Identifier,
-    RootObject
-  > = (parameters) => {
-    if (!parameters.ignoreRdfType) {
-      parameters.resource.add(
-        $RdfVocabularies.rdf.type,
-        RootObject.schema.toRdfTypes,
-        parameters.graph,
-      );
-    }
-    parameters.resource.add(
-      RootObject.schema.properties.lazyObjectSetProperty.path,
-      parameters.object.lazyObjectSetProperty.partials.flatMap((item) => [
-        $DefaultPartial.toRdfResource(item, {
-          graph: parameters.graph,
-          resourceSet: parameters.resourceSet,
-        }).identifier,
-      ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      RootObject.schema.properties.optionalLazyProperty.path,
-      parameters.object.optionalLazyProperty.partial
-        .toList()
-        .flatMap((value) => [
-          $DefaultPartial.toRdfResource(value, {
-            graph: parameters.graph,
-            resourceSet: parameters.resourceSet,
-          }).identifier,
-        ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      RootObject.schema.properties.optionalObjectProperty.path,
-      parameters.object.optionalObjectProperty.toList().flatMap((value) => [
-        $wrap_ToRdfResourceFunction<
-          BlankNode | NamedNode,
-          {
-            readonly $identifier: () => BlankNode | NamedNode;
-
-            /**
-             * Required string property
-             */
-            readonly requiredStringProperty: string;
-          }
-        >((parameters) => {
-          parameters.resource.add(
-            LazyObject.schema.properties.requiredStringProperty.path,
-            [$literalFactory.string(parameters.object.requiredStringProperty)],
-            parameters.graph,
-          );
-          return parameters.resource;
-        })(value, {
-          graph: parameters.graph,
-          resourceSet: parameters.resourceSet,
-        }).identifier,
-      ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      LazyObject.schema.properties.optionalStringProperty.path,
-      parameters.object.optionalStringProperty
-        .toList()
-        .flatMap((value) => [$literalFactory.string(value)]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      LazyObject.schema.properties.requiredStringProperty.path,
-      [$literalFactory.string(parameters.object.requiredStringProperty)],
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export const $toString: (_rootObject: RootObject) => string = (_rootObject) =>
-    `RootObject(${JSON.stringify(toStringRecord(_rootObject))})`;
 
   export const toStringRecord: (
     _rootObject: RootObject,
@@ -2324,93 +2324,6 @@ export type UnionMember1 = {
 };
 
 export namespace UnionMember1 {
-  export const create: (parameters?: {
-    readonly $identifier?:
-      | (() => UnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalNumberProperty?: number | Maybe<number>;
-  }) => Either<Error, UnionMember1> = (parameters) =>
-    $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
-        parameters?.optionalNumberProperty,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalNumberProperty.type,
-          value,
-        ),
-      ),
-    })
-      .map((properties) => ({ ...properties, $type: "UnionMember1" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: UnionMember1.$toString }),
-      );
-
-  export function createUnsafe(parameters?: {
-    readonly $identifier?:
-      | (() => UnionMember1.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalNumberProperty?: number | Maybe<number>;
-  }): UnionMember1 {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
-  };
-
-  export const filter: (
-    filter: UnionMember1.Filter,
-    value: UnionMember1,
-  ) => boolean = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalNumberProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.optionalNumberProperty,
-        value.optionalNumberProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  };
-
-  export const GraphQL = new GraphQLObjectType<
-    UnionMember1,
-    { objectSet: $ObjectSet }
-  >({
-    description: undefined,
-    fields: () => ({
-      _identifier: {
-        args: undefined,
-        description: undefined,
-        name: "_identifier",
-        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-      optionalNumberProperty: {
-        args: undefined,
-        description: '"Optional number property"',
-        name: "optionalNumberProperty",
-        resolve: (source, _args) =>
-          source.optionalNumberProperty.extractNullable(),
-        type: new GraphQLNonNull(GraphQLFloat),
-      },
-    }),
-    name: "UnionMember1",
-  });
-
   export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember1> = (
     resource,
     options,
@@ -2447,6 +2360,95 @@ export namespace UnionMember1 {
       }).chain((properties) => UnionMember1.create(properties)),
     );
 
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    UnionMember1.Identifier,
+    UnionMember1
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        UnionMember1.schema.toRdfTypes,
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      LazyObject.schema.properties.optionalNumberProperty.path,
+      parameters.object.optionalNumberProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
+        ]),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const $toString: (_unionMember1: UnionMember1) => string = (
+    _unionMember1,
+  ) => `UnionMember1(${JSON.stringify(toStringRecord(_unionMember1))})`;
+
+  export const create: (parameters?: {
+    readonly $identifier?:
+      | (() => UnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalNumberProperty?: number | Maybe<number>;
+  }) => Either<Error, UnionMember1> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
+        parameters?.optionalNumberProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          LazyObject.schema.properties.optionalNumberProperty.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({ ...properties, $type: "UnionMember1" as const }))
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: UnionMember1.$toString }),
+      );
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => UnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalNumberProperty?: number | Maybe<number>;
+  }): UnionMember1 {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const filter: (
+    filter: UnionMember1.Filter,
+    value: UnionMember1,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalNumberProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.optionalNumberProperty,
+        value.optionalNumberProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
+  };
+
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
@@ -2460,8 +2462,32 @@ export namespace UnionMember1 {
         .chain((resource) => fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export const GraphQL = new GraphQLObjectType<
+    UnionMember1,
+    { objectSet: $ObjectSet }
+  >({
+    description: undefined,
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      optionalNumberProperty: {
+        args: undefined,
+        description: '"Optional number property"',
+        name: "optionalNumberProperty",
+        resolve: (source, _args) =>
+          source.optionalNumberProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLFloat),
+      },
+    }),
+    name: "UnionMember1",
+  });
 
+  export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
     export const stringify = NTriplesTerm.stringify;
@@ -2491,34 +2517,7 @@ export namespace UnionMember1 {
 
   export type Schema = typeof schema;
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    UnionMember1.Identifier,
-    UnionMember1
-  > = (parameters) => {
-    if (!parameters.ignoreRdfType) {
-      parameters.resource.add(
-        $RdfVocabularies.rdf.type,
-        UnionMember1.schema.toRdfTypes,
-        parameters.graph,
-      );
-    }
-    parameters.resource.add(
-      LazyObject.schema.properties.optionalNumberProperty.path,
-      parameters.object.optionalNumberProperty
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export const $toString: (_unionMember1: UnionMember1) => string = (
-    _unionMember1,
-  ) => `UnionMember1(${JSON.stringify(toStringRecord(_unionMember1))})`;
 
   export const toStringRecord: (
     _unionMember1: UnionMember1,
@@ -2537,93 +2536,6 @@ export type UnionMember2 = {
 };
 
 export namespace UnionMember2 {
-  export const create: (parameters?: {
-    readonly $identifier?:
-      | (() => UnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalStringProperty?: string | Maybe<string>;
-  }) => Either<Error, UnionMember2> = (parameters) =>
-    $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
-        parameters?.optionalStringProperty,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          LazyObject.schema.properties.optionalStringProperty.type,
-          value,
-        ),
-      ),
-    })
-      .map((properties) => ({ ...properties, $type: "UnionMember2" as const }))
-      .map((object) =>
-        $monkeyPatchObject(object, { $toString: UnionMember2.$toString }),
-      );
-
-  export function createUnsafe(parameters?: {
-    readonly $identifier?:
-      | (() => UnionMember2.Identifier)
-      | BlankNode
-      | NamedNode
-      | string;
-    readonly optionalStringProperty?: string | Maybe<string>;
-  }): UnionMember2 {
-    return create(parameters).unsafeCoerce();
-  }
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-  };
-
-  export const filter: (
-    filter: UnionMember2.Filter,
-    value: UnionMember2,
-  ) => boolean = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  };
-
-  export const GraphQL = new GraphQLObjectType<
-    UnionMember2,
-    { objectSet: $ObjectSet }
-  >({
-    description: undefined,
-    fields: () => ({
-      _identifier: {
-        args: undefined,
-        description: undefined,
-        name: "_identifier",
-        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-      optionalStringProperty: {
-        args: undefined,
-        description: '"Optional string property"',
-        name: "optionalStringProperty",
-        resolve: (source, _args) =>
-          source.optionalStringProperty.extractNullable(),
-        type: new GraphQLNonNull(GraphQLString),
-      },
-    }),
-    name: "UnionMember2",
-  });
-
   export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember2> = (
     resource,
     options,
@@ -2660,6 +2572,93 @@ export namespace UnionMember2 {
       }).chain((properties) => UnionMember2.create(properties)),
     );
 
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    UnionMember2.Identifier,
+    UnionMember2
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        UnionMember2.schema.toRdfTypes,
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      LazyObject.schema.properties.optionalStringProperty.path,
+      parameters.object.optionalStringProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const $toString: (_unionMember2: UnionMember2) => string = (
+    _unionMember2,
+  ) => `UnionMember2(${JSON.stringify(toStringRecord(_unionMember2))})`;
+
+  export const create: (parameters?: {
+    readonly $identifier?:
+      | (() => UnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalStringProperty?: string | Maybe<string>;
+  }) => Either<Error, UnionMember2> = (parameters) =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
+        parameters?.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          LazyObject.schema.properties.optionalStringProperty.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({ ...properties, $type: "UnionMember2" as const }))
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: UnionMember2.$toString }),
+      );
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => UnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalStringProperty?: string | Maybe<string>;
+  }): UnionMember2 {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const filter: (
+    filter: UnionMember2.Filter,
+    value: UnionMember2,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+  };
+
   export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
@@ -2673,8 +2672,32 @@ export namespace UnionMember2 {
         .chain((resource) => fromRdfResource(resource, options)),
     );
 
-  export type Identifier = BlankNode | NamedNode;
+  export const GraphQL = new GraphQLObjectType<
+    UnionMember2,
+    { objectSet: $ObjectSet }
+  >({
+    description: undefined,
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) => NTriplesTerm.stringify(source.$identifier()),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      optionalStringProperty: {
+        args: undefined,
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    }),
+    name: "UnionMember2",
+  });
 
+  export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
     export const stringify = NTriplesTerm.stringify;
@@ -2707,32 +2730,7 @@ export namespace UnionMember2 {
 
   export type Schema = typeof schema;
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    UnionMember2.Identifier,
-    UnionMember2
-  > = (parameters) => {
-    if (!parameters.ignoreRdfType) {
-      parameters.resource.add(
-        $RdfVocabularies.rdf.type,
-        UnionMember2.schema.toRdfTypes,
-        parameters.graph,
-      );
-    }
-    parameters.resource.add(
-      LazyObject.schema.properties.optionalStringProperty.path,
-      parameters.object.optionalStringProperty
-        .toList()
-        .flatMap((value) => [$literalFactory.string(value)]),
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export const $toString: (_unionMember2: UnionMember2) => string = (
-    _unionMember2,
-  ) => `UnionMember2(${JSON.stringify(toStringRecord(_unionMember2))})`;
 
   export const toStringRecord: (
     _unionMember2: UnionMember2,
