@@ -5,9 +5,9 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.74";
+const VERSION = "4.0.75";
 
-const rdfxVersion = "0.0.36";
+const rdfxVersion = "0.0.38";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -32,6 +32,7 @@ const externalDependencies = {
   "@rdfx/resource": rdfxVersion,
   "@rdfx/sparql-client": rdfxVersion,
   "@rdfx/serializers": rdfxVersion,
+  "@rdfx/stream": rdfxVersion,
   "@rdfx/testing": rdfxVersion,
   "@sindresorhus/base62": "~0.1.0",
   "@tpluscode/rdf-ns-builders": "~4.3.0",
@@ -53,7 +54,6 @@ const externalDependencies = {
   "cmd-ts": "~0.15.0",
   "decimal.js": "~10.6.0",
   depcheck: "~1.4.7",
-  "get-stream": "~9.0.1",
   graphql: "16.11.0",
   "graphql-scalars": "1.24.2",
   "graphql-yoga": "5.14.0",
@@ -385,8 +385,8 @@ const workspaces = {
           "@rdfx/parsers",
           "@rdfx/resource",
           "@rdfx/serializers",
+          "@rdfx/stream",
           "@types/rdfjs__prefix-map",
-          "get-stream",
           "purify-ts",
           "rdf-validate-shacl",
           "tmp-promise",
