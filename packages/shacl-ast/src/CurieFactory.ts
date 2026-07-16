@@ -1,5 +1,5 @@
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { NamedNode } from "@rdfjs/types";
+import type { PrefixMap } from "@rdfx/collection";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Curie } from "./Curie.js";

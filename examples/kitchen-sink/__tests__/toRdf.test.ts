@@ -1,7 +1,7 @@
 import { fail } from "node:assert";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import datasetFactory from "@rdfjs/dataset";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { RdfFile } from "@rdfx/fs";
 import { TurtleSerializer } from "@rdfx/serializers";

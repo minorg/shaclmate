@@ -1,17 +1,13 @@
-import TermMap from "@rdfjs/term-map";
-import TermSet from "@rdfjs/term-set";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import { TermMap, TermSet } from "@rdfx/collection";
 import { literalDatatypeDefinitions } from "@rdfx/literal";
 import base62 from "@sindresorhus/base62";
 import { rdf } from "@tpluscode/rdf-ns-builders";
-
 import { Maybe } from "purify-ts";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
-
 import * as ast from "../../ast/index.js";
-
 import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";

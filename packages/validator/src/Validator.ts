@@ -1,5 +1,5 @@
-import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { DatasetCore } from "@rdfjs/types";
+import { PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import type { ValidationReport } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";

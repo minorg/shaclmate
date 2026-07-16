@@ -1,5 +1,5 @@
-import datasetFactory from "@rdfjs/dataset";
 import type { DatasetCore } from "@rdfjs/types";
+import { datasetFactory } from "@rdfx/collection";
 import { RdfFile } from "@rdfx/fs";
 import type { Either, Maybe } from "purify-ts";
 import { it } from "vitest";

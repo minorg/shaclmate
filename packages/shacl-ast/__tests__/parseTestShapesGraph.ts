@@ -1,4 +1,4 @@
-import datasetFactory from "@rdfjs/dataset";
+import { datasetFactory } from "@rdfx/collection";
 import { RdfFile } from "@rdfx/fs";
 import { type Either, EitherAsync } from "purify-ts";
 import { invariant } from "ts-invariant";

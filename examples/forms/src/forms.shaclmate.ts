@@ -1,5 +1,5 @@
-import datasetFactory from "@rdfjs/dataset";
 import type { BlankNode, NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import { type Resource, ResourceSet } from "@rdfx/resource";
@@ -207,6 +207,9 @@ namespace $RdfVocabularies {
     dateTime: dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
     ),
+    dateTimeStamp: dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
+    ),
     decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
     double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
     float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
@@ -383,6 +386,79 @@ export type FormStruct = {
 };
 
 export namespace FormStruct {
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    FormStruct.Identifier,
+    FormStruct
+  > = (parameters) => {
+    parameters.resource.add(
+      FormStruct.schema.properties.emptyStringSetProperty.path,
+      parameters.object.emptyStringSetProperty.flatMap((item) => [
+        $literalFactory.string(item),
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      FormStruct.schema.properties.nestedStructProperty.path,
+      [
+        $wrap_ToRdfResourceFunction<
+          BlankNode | NamedNode,
+          {
+            readonly $identifier: () => BlankNode | NamedNode;
+
+            /**
+             * Required string
+             */
+            readonly requiredStringProperty: string;
+          }
+        >((parameters) => {
+          parameters.resource.add(
+            dataFactory.namedNode("http://example.com/requiredStringProperty"),
+            [$literalFactory.string(parameters.object.requiredStringProperty)],
+            parameters.graph,
+          );
+          return parameters.resource;
+        })(parameters.object.nestedStructProperty, {
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
+        }).identifier,
+      ],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      FormStruct.schema.properties.nonEmptyStringSetProperty.path,
+      parameters.object.nonEmptyStringSetProperty.flatMap((item) => [
+        $literalFactory.string(item),
+      ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      FormStruct.schema.properties.optionalStringProperty.path,
+      parameters.object.optionalStringProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      FormStruct.schema.properties.requiredIntProperty.path,
+      [
+        $literalFactory.number(
+          parameters.object.requiredIntProperty,
+          $RdfVocabularies.xsd.int,
+        ),
+      ],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      FormStruct.schema.properties.requiredStringProperty.path,
+      [$literalFactory.string(parameters.object.requiredStringProperty)],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const $toString: (_formStruct: FormStruct) => string = (_formStruct) =>
+    `FormStruct(${JSON.stringify(toStringRecord(_formStruct))})`;
+
   export const create: (parameters: {
     readonly $identifier?:
       | (() => FormStruct.Identifier)
@@ -581,7 +657,6 @@ export namespace FormStruct {
       }).chain(FormStruct.create);
 
   export type Identifier = BlankNode | NamedNode;
-
   export namespace Identifier {
     export const parse = $parseIdentifier;
     export const stringify = NTriplesTerm.stringify;
@@ -589,20 +664,6 @@ export namespace FormStruct {
 
   export const isFormStruct = (object: $Object): object is FormStruct =>
     object.$type === "FormStruct";
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "FormStruct";
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nestedStructProperty: {
-      readonly "@id": string;
-      readonly requiredStringProperty: string;
-    };
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty?: string;
-    readonly requiredIntProperty: number;
-    readonly requiredStringProperty: string;
-  };
 
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
@@ -719,6 +780,20 @@ export namespace FormStruct {
     };
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly $type: "FormStruct";
+    readonly emptyStringSetProperty?: readonly string[];
+    readonly nestedStructProperty: {
+      readonly "@id": string;
+      readonly requiredStringProperty: string;
+    };
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty?: string;
+    readonly requiredIntProperty: number;
+    readonly requiredStringProperty: string;
+  };
+
   export const schema = {
     properties: {
       $identifier: {
@@ -827,80 +902,7 @@ export namespace FormStruct {
       } satisfies FormStruct.Json),
     );
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
-    FormStruct.Identifier,
-    FormStruct
-  > = (parameters) => {
-    parameters.resource.add(
-      FormStruct.schema.properties.emptyStringSetProperty.path,
-      parameters.object.emptyStringSetProperty.flatMap((item) => [
-        $literalFactory.string(item),
-      ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      FormStruct.schema.properties.nestedStructProperty.path,
-      [
-        $wrap_ToRdfResourceFunction<
-          BlankNode | NamedNode,
-          {
-            readonly $identifier: () => BlankNode | NamedNode;
-
-            /**
-             * Required string
-             */
-            readonly requiredStringProperty: string;
-          }
-        >((parameters) => {
-          parameters.resource.add(
-            dataFactory.namedNode("http://example.com/requiredStringProperty"),
-            [$literalFactory.string(parameters.object.requiredStringProperty)],
-            parameters.graph,
-          );
-          return parameters.resource;
-        })(parameters.object.nestedStructProperty, {
-          graph: parameters.graph,
-          resourceSet: parameters.resourceSet,
-        }).identifier,
-      ],
-      parameters.graph,
-    );
-    parameters.resource.add(
-      FormStruct.schema.properties.nonEmptyStringSetProperty.path,
-      parameters.object.nonEmptyStringSetProperty.flatMap((item) => [
-        $literalFactory.string(item),
-      ]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      FormStruct.schema.properties.optionalStringProperty.path,
-      parameters.object.optionalStringProperty
-        .toList()
-        .flatMap((value) => [$literalFactory.string(value)]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      FormStruct.schema.properties.requiredIntProperty.path,
-      [
-        $literalFactory.number(
-          parameters.object.requiredIntProperty,
-          $RdfVocabularies.xsd.int,
-        ),
-      ],
-      parameters.graph,
-    );
-    parameters.resource.add(
-      FormStruct.schema.properties.requiredStringProperty.path,
-      [$literalFactory.string(parameters.object.requiredStringProperty)],
-      parameters.graph,
-    );
-    return parameters.resource;
-  };
-
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
-
-  export const $toString: (_formStruct: FormStruct) => string = (_formStruct) =>
-    `FormStruct(${JSON.stringify(toStringRecord(_formStruct))})`;
 
   export const toStringRecord: (
     _formStruct: FormStruct,

@@ -1,5 +1,5 @@
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { DatasetCore } from "@rdfjs/types";
+import type { PrefixMap } from "@rdfx/collection";
 import type { Either } from "purify-ts";
 import { AbstractShapesGraph } from "./AbstractShapesGraph.js";
 import * as generated from "./shacl-ast.shaclmate.js";

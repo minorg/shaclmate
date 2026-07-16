@@ -1,6 +1,5 @@
-import datasetFactory from "@rdfjs/dataset";
-import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { DatasetCore } from "@rdfjs/types";
+import { datasetFactory, PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { RdfFileSystemEntry } from "@rdfx/fs";
 import { type Either, EitherAsync } from "purify-ts";

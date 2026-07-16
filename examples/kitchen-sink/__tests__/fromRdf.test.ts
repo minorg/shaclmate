@@ -1,4 +1,4 @@
-import datasetFactory from "@rdfjs/dataset";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { Resource, ResourceSet } from "@rdfx/resource";
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";

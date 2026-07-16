@@ -1,5 +1,5 @@
-import datasetFactory from "@rdfjs/dataset";
 import type { DatasetCore } from "@rdfjs/types";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { ResourceSet } from "@rdfx/resource";
 import * as kitchenSink from "../../src/index.js";

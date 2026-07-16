@@ -1,9 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
-import datasetFactory from "@rdfjs/dataset";
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { DatasetCore } from "@rdfjs/types";
+import { datasetFactory, type PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import parsers from "@rdfx/parsers";
 import { ResourceSet } from "@rdfx/resource";
