@@ -1,7 +1,3 @@
-import datasetFactory from "@rdfjs/dataset";
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
-import TermMap from "@rdfjs/term-map";
-import TermSet from "@rdfjs/term-set";
 import type {
   BlankNode,
   DatasetCore,
@@ -9,6 +5,12 @@ import type {
   NamedNode,
   Term,
 } from "@rdfjs/types";
+import {
+  datasetFactory,
+  type PrefixMap,
+  TermMap,
+  TermSet,
+} from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { type Resource, ResourceSet } from "@rdfx/resource";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";

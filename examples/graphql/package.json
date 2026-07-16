@@ -1,16 +1,14 @@
 {
   "dependencies": {
-    "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
+    "@rdfx/collection": "0.0.38",
     "@rdfx/data-factory": "0.0.38",
     "@rdfx/resource": "0.0.38",
     "graphql": "16.11.0",
     "graphql-yoga": "5.14.0",
     "purify-ts": "~2.1.4"
   },
-  "devDependencies": {
-    "@types/rdfjs__dataset": "~2.0.7"
-  },
+  "devDependencies": {},
   "files": [
     "dist/dataset.d.ts",
     "dist/dataset.js",

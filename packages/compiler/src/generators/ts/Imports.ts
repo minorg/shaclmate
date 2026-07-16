@@ -5,7 +5,7 @@ export class Imports {
   readonly BlankNode = imp("BlankNode@@rdfjs/types");
   readonly dataFactory = imp("dataFactory=@rdfx/data-factory");
   readonly DatasetCore = imp("DatasetCore@@rdfjs/types");
-  readonly datasetFactory = imp("datasetFactory=@rdfjs/dataset");
+  readonly datasetFactory = imp("datasetFactory@@rdfx/collection");
   readonly Either = imp("Either@purify-ts");
   readonly EitherAsync = imp("EitherAsync@purify-ts");
   readonly GraphQLBigInt = imp("BigInt:GraphQLBigInt@graphql-scalars");

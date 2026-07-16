@@ -19,12 +19,9 @@ const externalDependencies = {
   // "@mui/lab": "6.0.0-beta.22",
   "@mui/material": "~6.1.0",
   "@mui/x-date-pickers": "~7.17.0",
-  "@rdfjs/dataset": "~2.0.2",
   "@rdfjs/namespace": "~2.0.1",
-  "@rdfjs/prefix-map": "~0.1.2",
-  "@rdfjs/term-map": "~2.0.2",
-  "@rdfjs/term-set": "~2.0.3",
   "@rdfjs/types": "~2.0.1",
+  "@rdfx/collection": rdfxVersion,
   "@rdfx/data-factory": rdfxVersion,
   "@rdfx/fs": rdfxVersion,
   "@rdfx/literal": rdfxVersion,
@@ -38,11 +35,7 @@ const externalDependencies = {
   "@tsconfig/node20": "^20",
   "@tsconfig/strictest": "~2.0.8",
   "@types/node": "^20",
-  "@types/rdfjs__dataset": "~2.0.7",
   "@types/rdfjs__namespace": "~2.0.10",
-  "@types/rdfjs__prefix-map": "~0.1.5",
-  "@types/rdfjs__term-map": "~2.0.10",
-  "@types/rdfjs__term-set": "~2.0.9",
   "@types/react": "~18",
   "@types/react-dom": "~18",
   "@types/sparqljs": "3.1.12",
@@ -163,8 +156,8 @@ const workspaces = {
       },
       dependencies: {
         external: [
-          "@rdfjs/dataset",
-          "@rdfjs/prefix-map",
+          "@rdfjs/types",
+          "@rdfx/collection",
           "@rdfx/data-factory",
           "@rdfx/fs",
           "@rdfx/serializers",
@@ -175,13 +168,6 @@ const workspaces = {
           "ts-log",
         ],
         internal: ["compiler", "validator"],
-      },
-      devDependencies: {
-        external: [
-          "@rdfjs/types",
-          "@types/rdfjs__dataset",
-          "@types/rdfjs__prefix-map",
-        ],
       },
       description:
         "Command line program to generate TypeScript code from SHACL shapes",
@@ -216,12 +202,11 @@ const workspaces = {
           // "@mui/lab": "6.0.0-beta.22",
           "@mui/material",
           "@mui/x-date-pickers",
+          "@rdfx/collection",
           "@rdfx/data-factory",
           "@rdfx/resource",
           "@rdfx/serializers",
-          "@rdfjs/dataset",
           "@rdfjs/types",
-          "@types/rdfjs__dataset",
           "react",
           "react-dom",
           "purify-ts",
@@ -264,17 +249,14 @@ const workspaces = {
     graphql: {
       dependencies: {
         external: [
-          "@rdfjs/dataset",
           "@rdfjs/types",
+          "@rdfx/collection",
           "@rdfx/data-factory",
           "@rdfx/resource",
           "graphql",
           "graphql-yoga",
           "purify-ts",
         ],
-      },
-      devDependencies: {
-        external: ["@types/rdfjs__dataset"],
       },
       scripts: {
         start: "NODE_ENV=development tsx src/server.ts",
@@ -284,8 +266,7 @@ const workspaces = {
     "kitchen-sink": {
       dependencies: {
         external: [
-          "@rdfjs/dataset",
-          "@rdfjs/types",
+          "@rdfx/collection",
           "@rdfx/data-factory",
           "@rdfx/resource",
           "decimal.js",
@@ -296,13 +277,10 @@ const workspaces = {
       },
       devDependencies: {
         external: [
-          "@rdfjs/prefix-map",
           "@rdfx/fs",
           "@rdfx/serializers",
           "@rdfx/sparql-client",
           "@tpluscode/rdf-ns-builders",
-          "@types/rdfjs__dataset",
-          "@types/rdfjs__prefix-map",
           "@types/sparqljs",
           "js-sha256",
           "oxigraph",
@@ -315,20 +293,13 @@ const workspaces = {
     compiler: {
       dependencies: {
         external: [
-          "@rdfjs/prefix-map",
-          "@rdfjs/dataset",
-          "@rdfjs/term-map",
-          "@rdfjs/term-set",
           "@rdfjs/types",
+          "@rdfx/collection",
           "@rdfx/data-factory",
           "@rdfx/literal",
           "@rdfx/resource",
           "@sindresorhus/base62",
           "@tpluscode/rdf-ns-builders",
-          "@types/rdfjs__dataset",
-          "@types/rdfjs__prefix-map",
-          "@types/rdfjs__term-map",
-          "@types/rdfjs__term-set",
           "change-case",
           "decimal.js",
           "plur",
@@ -356,16 +327,11 @@ const workspaces = {
     "shacl-ast": {
       dependencies: {
         external: [
-          "@rdfjs/dataset",
-          "@rdfjs/term-map",
-          "@rdfjs/term-set",
+          "@rdfx/collection",
           "@rdfjs/types",
           "@rdfx/data-factory",
           "@rdfx/resource",
           "@tpluscode/rdf-ns-builders",
-          "@types/rdfjs__dataset",
-          "@types/rdfjs__term-map",
-          "@types/rdfjs__term-set",
           "purify-ts",
           "typescript-memoize",
         ],
@@ -378,14 +344,12 @@ const workspaces = {
     validator: {
       dependencies: {
         external: [
-          "@rdfjs/dataset",
-          "@rdfjs/prefix-map",
+          "@rdfx/collection",
           "@rdfjs/types",
           "@rdfx/data-factory",
           "@rdfx/parsers",
           "@rdfx/resource",
           "@rdfx/serializers",
-          "@types/rdfjs__prefix-map",
           "get-stream",
           "purify-ts",
           "rdf-validate-shacl",
@@ -396,7 +360,7 @@ const workspaces = {
         internal: ["shacl-ast"],
       },
       devDependencies: {
-        external: ["@rdfx/fs", "@types/rdfjs__dataset", "@types/which"],
+        external: ["@rdfx/fs", "@types/which"],
       },
       exports: {
         ".": {

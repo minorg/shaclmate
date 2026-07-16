@@ -1,5 +1,5 @@
-import TermSet from "@rdfjs/term-set";
 import type { NamedNode } from "@rdfjs/types";
+import { TermSet } from "@rdfx/collection";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";

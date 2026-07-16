@@ -1,6 +1,6 @@
 import { fail } from "node:assert";
-import datasetFactory from "@rdfjs/dataset";
 import type { NamedNode, Quad } from "@rdfjs/types";
+import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { ResourceSet } from "@rdfx/resource";
 import * as oxigraph from "oxigraph";
