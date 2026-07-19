@@ -2324,7 +2324,7 @@ function $mutableSetFromRdfResourceValues<ItemT, ItemSchemaT>(
 /**
  * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
  */
-type $NamespaceBuilder<TermNames extends string = string> = Record<
+type $NamespaceBuilder<TermNames extends string = any> = Record<
   TermNames,
   NamedNode
 > &

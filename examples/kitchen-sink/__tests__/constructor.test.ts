@@ -3,6 +3,7 @@ import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 import "@rdfx/testing";
 import dataFactory from "@rdfx/data-factory";
+import { schema } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 
 describe("constructor", () => {
@@ -29,6 +30,44 @@ describe("constructor", () => {
       expect(instance.nonEmptySet).toEqual(["test"]);
       expect(instance.optional.extract()).toStrictEqual("test");
       expect(instance.required).toStrictEqual("test");
+    });
+
+    describe.only("default namespace", () => {
+      it("unspecified + sh:in", ({ expect }) => {
+        const instance = kitchenSink.InPropertiesStruct.createUnsafe({
+          inIris: "http://example.com/InIri1",
+        });
+        expect(instance.inIris.extract()).toEqualRdfTerm(
+          dataFactory.namedNode("http://example.com/InIri1"),
+        );
+      });
+
+      it("unspecified + no sh:in", ({ expect }) => {
+        const instance = kitchenSink.TermsStruct.createUnsafe({
+          iriTerm: "http://example.com/preserved",
+        });
+        expect(instance.iriTerm.extract()).toEqualRdfTerm(
+          dataFactory.namedNode("http://example.com/preserved"),
+        );
+      });
+
+      it("specified + sh:in", ({ expect }) => {
+        const instance = kitchenSink.InPropertiesStruct.createUnsafe({
+          $defaultNamespace: schema,
+          inIris: "http://example.com/InIri1",
+        });
+        expect(instance.inIris.extract()).toEqualRdfTerm(
+          dataFactory.namedNode("http://example.com/InIri1"),
+        );
+      });
+
+      it("specified + no sh:in", ({ expect }) => {
+        const instance = kitchenSink.TermsStruct.createUnsafe({
+          $defaultNamespace: schema,
+          iriTerm: "about",
+        });
+        expect(instance.iriTerm.extract()).toEqualRdfTerm(schema.about);
+      });
     });
 
     describe("lazy properties", () => {
