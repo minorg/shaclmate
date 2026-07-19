@@ -119,6 +119,7 @@ import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSpa
 import { snippets_monkeyPatchObject } from "./_snippets/snippets_monkeyPatchObject.js";
 import { snippets_mutableListFromRdfResourceValues } from "./_snippets/snippets_mutableListFromRdfResourceValues.js";
 import { snippets_mutableSetFromRdfResourceValues } from "./_snippets/snippets_mutableSetFromRdfResourceValues.js";
+import { snippets_NamespaceBuilder } from "./_snippets/snippets_NamespaceBuilder.js";
 import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
@@ -348,6 +349,11 @@ export class Snippets {
   @Memoize()
   get MaybeSchema(): Snippet {
     return this.snippet(snippets_MaybeSchema);
+  }
+
+  @Memoize()
+  get NamespaceBuilder(): Snippet {
+    return this.snippet(snippets_NamespaceBuilder);
   }
 
   @Memoize()

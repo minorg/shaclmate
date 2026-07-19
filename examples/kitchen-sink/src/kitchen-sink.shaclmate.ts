@@ -2251,6 +2251,15 @@ function $mutableSetFromRdfResourceValues<ItemT, ItemSchemaT>(
     );
 }
 
+/**
+ * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
+ */
+type $NamespaceBuilder<TermNames extends string = any> = Record<
+  TermNames,
+  NamedNode
+> &
+  ((property?: TemplateStringsArray | TermNames) => NamedNode);
+
 function $normalizeSparqlWherePatterns(
   patterns: readonly $SparqlPattern[],
 ): readonly $SparqlPattern[] {
@@ -3770,13 +3779,16 @@ export namespace $DefaultPartial {
     _defaultPartial,
   ) => `$DefaultPartial(${JSON.stringify(toStringRecord(_defaultPartial))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
       | BlankNode
       | NamedNode
       | string;
-  }) => Either<Error, $DefaultPartial> = (parameters) =>
+  }): Either<Error, $DefaultPartial> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
     })
@@ -3791,7 +3803,10 @@ export namespace $DefaultPartial {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
       | BlankNode
@@ -4104,12 +4119,15 @@ export namespace $NamedDefaultPartial {
   ) => string = (_namedDefaultPartial) =>
     `$NamedDefaultPartial(${JSON.stringify(toStringRecord(_namedDefaultPartial))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => $NamedDefaultPartial.Identifier)
       | string
       | NamedNode;
-  }) => Either<Error, $NamedDefaultPartial> = (parameters) =>
+  }): Either<Error, $NamedDefaultPartial> =>
     $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
@@ -4126,7 +4144,10 @@ export namespace $NamedDefaultPartial {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => $NamedDefaultPartial.Identifier)
       | string
@@ -4516,7 +4537,11 @@ export namespace AnonymousTypesStruct {
                         $stringFromRdfResourceValues<string>,
                     }),
                   }).chain((properties) =>
-                    ((parameters: {
+                    (<
+                      $DefaultNamespaceT extends
+                        $NamespaceBuilder = $NamespaceBuilder,
+                    >(parameters: {
+                      readonly $defaultNamespace?: $DefaultNamespaceT;
                       readonly $identifier?:
                         | (() => BlankNode | NamedNode)
                         | BlankNode
@@ -4605,7 +4630,10 @@ export namespace AnonymousTypesStruct {
   ) => string = (_anonymousTypesStruct) =>
     `AnonymousTypesStruct(${JSON.stringify(toStringRecord(_anonymousTypesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => AnonymousTypesStruct.Identifier)
       | BlankNode
@@ -4613,6 +4641,7 @@ export namespace AnonymousTypesStruct {
       | string;
     readonly anonymousStruct?:
       | {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
@@ -4624,11 +4653,14 @@ export namespace AnonymousTypesStruct {
           readonly $identifier: () => BlankNode | NamedNode;
           readonly anonymousStructString: string;
         }>;
-  }) => Either<Error, AnonymousTypesStruct> = (parameters) =>
+  }): Either<Error, AnonymousTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       anonymousStruct: $convertToMaybe(
-        (parameters: {
+        <
+          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+        >(parameters: {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
@@ -4680,7 +4712,10 @@ export namespace AnonymousTypesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => AnonymousTypesStruct.Identifier)
       | BlankNode
@@ -4688,6 +4723,7 @@ export namespace AnonymousTypesStruct {
       | string;
     readonly anonymousStruct?:
       | {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
@@ -5034,7 +5070,11 @@ export namespace AnonymousTypesStruct {
                 $json["anonymousStructString"],
               ),
             }).chain(
-              (parameters: {
+              <
+                $DefaultNamespaceT extends
+                  $NamespaceBuilder = $NamespaceBuilder,
+              >(parameters: {
+                readonly $defaultNamespace?: $DefaultNamespaceT;
                 readonly $identifier?:
                   | (() => BlankNode | NamedNode)
                   | BlankNode
@@ -5467,12 +5507,15 @@ export namespace BlankNodeIdentifierStruct {
   ) => string = (_blankNodeIdentifierStruct) =>
     `BlankNodeIdentifierStruct(${JSON.stringify(toStringRecord(_blankNodeIdentifierStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => BlankNodeIdentifierStruct.Identifier)
       | BlankNode;
     readonly blankNodeIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, BlankNodeIdentifierStruct> = (parameters) =>
+  }): Either<Error, BlankNodeIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToBlankNodeIdentifierProperty(
         parameters?.$identifier,
@@ -5498,7 +5541,10 @@ export namespace BlankNodeIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => BlankNodeIdentifierStruct.Identifier)
       | BlankNode;
@@ -6011,14 +6057,17 @@ export namespace BlankNodeOrIriIdentifierStruct {
   ) => string = (_blankNodeOrIriIdentifierStruct) =>
     `BlankNodeOrIriIdentifierStruct(${JSON.stringify(toStringRecord(_blankNodeOrIriIdentifierStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => BlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, BlankNodeOrIriIdentifierStruct> = (parameters) =>
+  }): Either<Error, BlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       blankNodeOrIriIdentifierString: $convertToMaybe(
@@ -6042,7 +6091,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => BlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
@@ -6667,7 +6719,10 @@ export namespace ClassConstraintsStruct {
   ) => string = (_classConstraintsStruct) =>
     `ClassConstraintsStruct(${JSON.stringify(toStringRecord(_classConstraintsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ClassConstraintsStruct.Identifier)
       | BlankNode
@@ -6686,7 +6741,7 @@ export namespace ClassConstraintsStruct {
       | NamedNode
       | string
       | Maybe<BlankNode | NamedNode>;
-  }) => Either<Error, ClassConstraintsStruct> = (parameters) =>
+  }): Either<Error, ClassConstraintsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       iriClass: $convertToMaybe($convertToIri<string>)(
@@ -6741,7 +6796,10 @@ export namespace ClassConstraintsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ClassConstraintsStruct.Identifier)
       | BlankNode
@@ -7804,7 +7862,10 @@ export namespace ConvertibleTypesStruct {
   ) => string = (_convertibleTypesStruct) =>
     `ConvertibleTypesStruct(${JSON.stringify(toStringRecord(_convertibleTypesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ConvertibleTypesStruct.Identifier)
       | BlankNode
@@ -7861,7 +7922,7 @@ export namespace ConvertibleTypesStruct {
     readonly convertibleTermSet?:
       | (BlankNode | NamedNode | Literal)
       | readonly (BlankNode | NamedNode | Literal)[];
-  }) => Either<Error, ConvertibleTypesStruct> = (parameters) =>
+  }): Either<Error, ConvertibleTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       convertibleIri: $convertToIri<string>(parameters.convertibleIri),
@@ -7955,7 +8016,10 @@ export namespace ConvertibleTypesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ConvertibleTypesStruct.Identifier)
       | BlankNode
@@ -10540,7 +10604,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   ) => string = (_datatypeDiscriminatedUnionsStruct) =>
     `DatatypeDiscriminatedUnionsStruct(${JSON.stringify(toStringRecord(_datatypeDiscriminatedUnionsStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
       | BlankNode
@@ -10559,7 +10626,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly stringOrDate: string | Date;
     readonly stringOrDecimal: string | BigDecimal;
     readonly stringOrLangString: string | Literal;
-  }) => Either<Error, DatatypeDiscriminatedUnionsStruct> = (parameters) =>
+  }): Either<Error, DatatypeDiscriminatedUnionsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       dateOrDateTime: $identityConversionFunction(parameters.dateOrDateTime),
@@ -10587,7 +10654,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
       | BlankNode
@@ -13833,7 +13903,10 @@ export namespace DatesStruct {
     _datesStruct,
   ) => `DatesStruct(${JSON.stringify(toStringRecord(_datesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DatesStruct.Identifier)
       | BlankNode
@@ -13842,7 +13915,7 @@ export namespace DatesStruct {
     readonly date?: Date | Maybe<Date>;
     readonly dateTime?: Date | Maybe<Date>;
     readonly dateTimeStamp?: Date | Maybe<Date>;
-  }) => Either<Error, DatesStruct> = (parameters) =>
+  }): Either<Error, DatesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       date: $convertToMaybe($identityConversionFunction)(
@@ -13878,7 +13951,10 @@ export namespace DatesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DatesStruct.Identifier)
       | BlankNode
@@ -14686,7 +14762,10 @@ export namespace DefaultValuesStruct {
   ) => string = (_defaultValuesStruct) =>
     `DefaultValuesStruct(${JSON.stringify(toStringRecord(_defaultValuesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DefaultValuesStruct.Identifier)
       | BlankNode
@@ -14698,7 +14777,7 @@ export namespace DefaultValuesStruct {
     readonly numberDefaultValue?: number;
     readonly stringDefaultValue?: string;
     readonly trueBooleanDefaultValue?: boolean;
-  }) => Either<Error, DefaultValuesStruct> = (parameters) =>
+  }): Either<Error, DefaultValuesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       dateDefaultValue: $convertWithDefaultValue(
@@ -14737,7 +14816,10 @@ export namespace DefaultValuesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DefaultValuesStruct.Identifier)
       | BlankNode
@@ -15581,7 +15663,10 @@ export namespace DirectRecursiveStruct {
   ) => string = (_directRecursiveStruct) =>
     `DirectRecursiveStruct(${JSON.stringify(toStringRecord(_directRecursiveStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DirectRecursiveStruct.Identifier)
       | BlankNode
@@ -15590,7 +15675,7 @@ export namespace DirectRecursiveStruct {
     readonly directRecursive?:
       | DirectRecursiveStruct
       | Maybe<DirectRecursiveStruct>;
-  }) => Either<Error, DirectRecursiveStruct> = (parameters) =>
+  }): Either<Error, DirectRecursiveStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       directRecursive: $convertToMaybe($identityConversionFunction)(
@@ -15613,7 +15698,10 @@ export namespace DirectRecursiveStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DirectRecursiveStruct.Identifier)
       | BlankNode
@@ -16118,7 +16206,10 @@ export namespace DiscriminatedUnionMember1 {
   ) => string = (_discriminatedUnionMember1) =>
     `DiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_discriminatedUnionMember1))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DiscriminatedUnionMember1.Identifier)
       | BlankNode
@@ -16126,7 +16217,7 @@ export namespace DiscriminatedUnionMember1 {
       | string;
     readonly discriminatedUnionMember1Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
-  }) => Either<Error, DiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, DiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       discriminatedUnionMember1Distinct: Either.of(
@@ -16147,7 +16238,10 @@ export namespace DiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DiscriminatedUnionMember1.Identifier)
       | BlankNode
@@ -16740,7 +16834,10 @@ export namespace DiscriminatedUnionMember2 {
   ) => string = (_discriminatedUnionMember2) =>
     `DiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_discriminatedUnionMember2))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DiscriminatedUnionMember2.Identifier)
       | BlankNode
@@ -16748,7 +16845,7 @@ export namespace DiscriminatedUnionMember2 {
       | string;
     readonly discriminatedUnionMember2Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
-  }) => Either<Error, DiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, DiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       discriminatedUnionMember2Distinct: Either.of(
@@ -16769,7 +16866,10 @@ export namespace DiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DiscriminatedUnionMember2.Identifier)
       | BlankNode
@@ -17374,7 +17474,10 @@ export namespace DisplayStruct {
     _displayStruct,
   ) => `DisplayStruct(${JSON.stringify(toStringRecord(_displayStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DisplayStruct.Identifier)
       | BlankNode
@@ -17383,7 +17486,7 @@ export namespace DisplayStruct {
     readonly explicitFalseDisplay: string;
     readonly explicitTrueDisplay: string;
     readonly implicitFalseDisplay: string;
-  }) => Either<Error, DisplayStruct> = (parameters) =>
+  }): Either<Error, DisplayStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       explicitFalseDisplay: Either.of(parameters.explicitFalseDisplay),
@@ -17398,7 +17501,10 @@ export namespace DisplayStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DisplayStruct.Identifier)
       | BlankNode
@@ -17990,14 +18096,17 @@ export namespace ExplicitFromToRdfTypesStruct {
   ) => string = (_explicitFromToRdfTypesStruct) =>
     `ExplicitFromToRdfTypesStruct(${JSON.stringify(toStringRecord(_explicitFromToRdfTypesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ExplicitFromToRdfTypesStruct.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly explicitFromToRdfTypesString: string;
-  }) => Either<Error, ExplicitFromToRdfTypesStruct> = (parameters) =>
+  }): Either<Error, ExplicitFromToRdfTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       explicitFromToRdfTypesString: Either.of(
@@ -18015,7 +18124,10 @@ export namespace ExplicitFromToRdfTypesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ExplicitFromToRdfTypesStruct.Identifier)
       | BlankNode
@@ -18513,14 +18625,17 @@ export namespace ExplicitRdfTypeStruct {
   ) => string = (_explicitRdfTypeStruct) =>
     `ExplicitRdfTypeStruct(${JSON.stringify(toStringRecord(_explicitRdfTypeStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ExplicitRdfTypeStruct.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly explicitRdfTypeString: string;
-  }) => Either<Error, ExplicitRdfTypeStruct> = (parameters) =>
+  }): Either<Error, ExplicitRdfTypeStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       explicitRdfTypeString: Either.of(parameters.explicitRdfTypeString),
@@ -18536,7 +18651,10 @@ export namespace ExplicitRdfTypeStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ExplicitRdfTypeStruct.Identifier)
       | BlankNode
@@ -19024,14 +19142,17 @@ export namespace FlattenDiscriminatedUnionMember3 {
   ) => string = (_flattenDiscriminatedUnionMember3) =>
     `FlattenDiscriminatedUnionMember3(${JSON.stringify(toStringRecord(_flattenDiscriminatedUnionMember3))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => FlattenDiscriminatedUnionMember3.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly flattenDiscriminatedUnionMember3String: string;
-  }) => Either<Error, FlattenDiscriminatedUnionMember3> = (parameters) =>
+  }): Either<Error, FlattenDiscriminatedUnionMember3> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       flattenDiscriminatedUnionMember3String: Either.of(
@@ -19049,7 +19170,10 @@ export namespace FlattenDiscriminatedUnionMember3 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => FlattenDiscriminatedUnionMember3.Identifier)
       | BlankNode
@@ -19546,7 +19670,10 @@ export namespace HasValuesStruct {
     _hasValuesStruct,
   ) => `HasValuesStruct(${JSON.stringify(toStringRecord(_hasValuesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => HasValuesStruct.Identifier)
       | BlankNode
@@ -19554,7 +19681,7 @@ export namespace HasValuesStruct {
       | string;
     readonly hasIriValue: string | NamedNode;
     readonly hasLiteralValue: string;
-  }) => Either<Error, HasValuesStruct> = (parameters) =>
+  }): Either<Error, HasValuesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       hasIriValue: $convertToIri<string>(parameters.hasIriValue),
@@ -19571,7 +19698,10 @@ export namespace HasValuesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => HasValuesStruct.Identifier)
       | BlankNode
@@ -20070,7 +20200,10 @@ export namespace IgnoredPropertiesStruct {
   ) => string = (_ignoredPropertiesStruct) =>
     `IgnoredPropertiesStruct(${JSON.stringify(toStringRecord(_ignoredPropertiesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IgnoredPropertiesStruct.Identifier)
       | BlankNode
@@ -20079,7 +20212,7 @@ export namespace IgnoredPropertiesStruct {
     readonly severityDefaultProperty: string;
     readonly severityViolationProperty: string;
     readonly shaclmateIgnoreFalseProperty: string;
-  }) => Either<Error, IgnoredPropertiesStruct> = (parameters) =>
+  }): Either<Error, IgnoredPropertiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       severityDefaultProperty: Either.of(parameters.severityDefaultProperty),
@@ -20101,7 +20234,10 @@ export namespace IgnoredPropertiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IgnoredPropertiesStruct.Identifier)
       | BlankNode
@@ -20674,7 +20810,10 @@ export namespace IndirectRecursiveStruct {
   ) => string = (_indirectRecursiveStruct) =>
     `IndirectRecursiveStruct(${JSON.stringify(toStringRecord(_indirectRecursiveStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IndirectRecursiveStruct.Identifier)
       | BlankNode
@@ -20683,7 +20822,7 @@ export namespace IndirectRecursiveStruct {
     readonly indirectRecursiveHelper?:
       | IndirectRecursiveStructHelper
       | Maybe<IndirectRecursiveStructHelper>;
-  }) => Either<Error, IndirectRecursiveStruct> = (parameters) =>
+  }): Either<Error, IndirectRecursiveStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       indirectRecursiveHelper: $convertToMaybe($identityConversionFunction)(
@@ -20707,7 +20846,10 @@ export namespace IndirectRecursiveStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IndirectRecursiveStruct.Identifier)
       | BlankNode
@@ -21205,7 +21347,10 @@ export namespace IndirectRecursiveStructHelper {
   ) => string = (_indirectRecursiveStructHelper) =>
     `IndirectRecursiveStructHelper(${JSON.stringify(toStringRecord(_indirectRecursiveStructHelper))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IndirectRecursiveStructHelper.Identifier)
       | BlankNode
@@ -21214,7 +21359,7 @@ export namespace IndirectRecursiveStructHelper {
     readonly indirectRecursive?:
       | IndirectRecursiveStruct
       | Maybe<IndirectRecursiveStruct>;
-  }) => Either<Error, IndirectRecursiveStructHelper> = (parameters) =>
+  }): Either<Error, IndirectRecursiveStructHelper> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       indirectRecursive: $convertToMaybe($identityConversionFunction)(
@@ -21238,7 +21383,10 @@ export namespace IndirectRecursiveStructHelper {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IndirectRecursiveStructHelper.Identifier)
       | BlankNode
@@ -21722,7 +21870,10 @@ export namespace InIdentifierStruct {
     (_inIdentifierStruct) =>
       `InIdentifierStruct(${JSON.stringify(toStringRecord(_inIdentifierStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => InIdentifierStruct.Identifier)
       | (
@@ -21734,7 +21885,7 @@ export namespace InIdentifierStruct {
           | "http://example.com/InIdentifierStructInstance2"
         >;
     readonly inIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, InIdentifierStruct> = (parameters) =>
+  }): Either<Error, InIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<
         | "http://example.com/InIdentifierStructInstance1"
@@ -21760,7 +21911,10 @@ export namespace InIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => InIdentifierStruct.Identifier)
       | (
@@ -22432,7 +22586,10 @@ export namespace InPropertiesStruct {
     (_inPropertiesStruct) =>
       `InPropertiesStruct(${JSON.stringify(toStringRecord(_inPropertiesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => InPropertiesStruct.Identifier)
       | BlankNode
@@ -22449,7 +22606,7 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-  }) => Either<Error, InPropertiesStruct> = (parameters) =>
+  }): Either<Error, InPropertiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       inBooleans: $convertToMaybe($identityConversionFunction)(
@@ -22514,7 +22671,10 @@ export namespace InPropertiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => InPropertiesStruct.Identifier)
       | BlankNode
@@ -23404,13 +23564,16 @@ export namespace IriIdentifierStruct {
   ) => string = (_iriIdentifierStruct) =>
     `IriIdentifierStruct(${JSON.stringify(toStringRecord(_iriIdentifierStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => IriIdentifierStruct.Identifier)
       | string
       | NamedNode;
     readonly iriIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, IriIdentifierStruct> = (parameters) =>
+  }): Either<Error, IriIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
@@ -23435,7 +23598,10 @@ export namespace IriIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => IriIdentifierStruct.Identifier)
       | string
@@ -23909,7 +24075,10 @@ export namespace LanguageInStruct {
     _languageInStruct,
   ) => `LanguageInStruct(${JSON.stringify(toStringRecord(_languageInStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LanguageInStruct.Identifier)
       | BlankNode
@@ -23923,7 +24092,7 @@ export namespace LanguageInStruct {
       | Date
       | Literal
       | readonly (bigint | boolean | number | string | Date | Literal)[];
-  }) => Either<Error, LanguageInStruct> = (parameters) =>
+  }): Either<Error, LanguageInStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       languageInLiteral: $convertToScalarSet($convertToLiteral)(
@@ -23946,7 +24115,10 @@ export namespace LanguageInStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LanguageInStruct.Identifier)
       | BlankNode
@@ -24420,16 +24592,17 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       toStringRecord(_lazilyResolvedBlankNodeOrIriIdentifierStruct),
     )})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> = (
-    parameters,
-  ) =>
+  }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       lazilyResolved: Either.of(parameters.lazilyResolved),
@@ -24445,7 +24618,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
@@ -24963,14 +25139,17 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       toStringRecord(_lazilyResolvedDiscriminatedUnionMember1),
     )})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedDiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, LazilyResolvedDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       lazilyResolved: Either.of(parameters.lazilyResolved),
@@ -24986,7 +25165,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
       | BlankNode
@@ -25489,14 +25671,17 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       toStringRecord(_lazilyResolvedDiscriminatedUnionMember2),
     )})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedDiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, LazilyResolvedDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       lazilyResolved: Either.of(parameters.lazilyResolved),
@@ -25512,7 +25697,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
       | BlankNode
@@ -25996,13 +26184,16 @@ export namespace LazilyResolvedIriIdentifierStruct {
   ) => string = (_lazilyResolvedIriIdentifierStruct) =>
     `LazilyResolvedIriIdentifierStruct(${JSON.stringify(toStringRecord(_lazilyResolvedIriIdentifierStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => LazilyResolvedIriIdentifierStruct.Identifier)
       | string
       | NamedNode;
     readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedIriIdentifierStruct> = (parameters) =>
+  }): Either<Error, LazilyResolvedIriIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
@@ -26020,7 +26211,10 @@ export namespace LazilyResolvedIriIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => LazilyResolvedIriIdentifierStruct.Identifier)
       | string
@@ -27063,7 +27257,10 @@ export namespace LazyPropertiesStruct {
   ) => string = (_lazyPropertiesStruct) =>
     `LazyPropertiesStruct(${JSON.stringify(toStringRecord(_lazyPropertiesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazyPropertiesStruct.Identifier)
       | BlankNode
@@ -27128,7 +27325,7 @@ export namespace LazyPropertiesStruct {
       | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
       | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-  }) => Either<Error, LazyPropertiesStruct> = (parameters) =>
+  }): Either<Error, LazyPropertiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
@@ -27226,7 +27423,10 @@ export namespace LazyPropertiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazyPropertiesStruct.Identifier)
       | BlankNode
@@ -29274,7 +29474,10 @@ export namespace ListSetsStruct {
     _listSetsStruct,
   ) => `ListSetsStruct(${JSON.stringify(toStringRecord(_listSetsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ListSetsStruct.Identifier)
       | BlankNode
@@ -29286,7 +29489,7 @@ export namespace ListSetsStruct {
     )[];
     readonly listListSet?: readonly (readonly (readonly string[])[])[];
     readonly listSet?: readonly (readonly string[])[];
-  }) => Either<Error, ListSetsStruct> = (parameters) =>
+  }): Either<Error, ListSetsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       listDiscriminatedUnionSet: $convertToArraySet(
@@ -29324,7 +29527,10 @@ export namespace ListSetsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ListSetsStruct.Identifier)
       | BlankNode
@@ -30637,7 +30843,10 @@ export namespace ListsStruct {
     _listsStruct,
   ) => `ListsStruct(${JSON.stringify(toStringRecord(_listsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ListsStruct.Identifier)
       | BlankNode
@@ -30653,7 +30862,7 @@ export namespace ListsStruct {
     readonly structList?:
       | readonly NonClassStruct[]
       | Maybe<readonly NonClassStruct[]>;
-  }) => Either<Error, ListsStruct> = (parameters) =>
+  }): Either<Error, ListsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       iriList: $convertToMaybe($convertToList($convertToIri<string>))(
@@ -30696,7 +30905,10 @@ export namespace ListsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ListsStruct.Identifier)
       | BlankNode
@@ -31634,7 +31846,10 @@ export namespace MutablePropertiesStruct {
   ) => string = (_mutablePropertiesStruct) =>
     `MutablePropertiesStruct(${JSON.stringify(toStringRecord(_mutablePropertiesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => MutablePropertiesStruct.Identifier)
       | BlankNode
@@ -31643,7 +31858,7 @@ export namespace MutablePropertiesStruct {
     readonly mutableList?: readonly string[] | Maybe<string[]>;
     readonly mutableSet?: string | readonly string[];
     readonly mutableString?: string | Maybe<string>;
-  }) => Either<Error, MutablePropertiesStruct> = (parameters) =>
+  }): Either<Error, MutablePropertiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       mutableList: $convertToMaybe(
@@ -31682,7 +31897,10 @@ export namespace MutablePropertiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => MutablePropertiesStruct.Identifier)
       | BlankNode
@@ -32464,7 +32682,10 @@ export namespace NamedTypesStruct {
     _namedTypesStruct,
   ) => `NamedTypesStruct(${JSON.stringify(toStringRecord(_namedTypesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NamedTypesStruct.Identifier)
       | BlankNode
@@ -32475,7 +32696,7 @@ export namespace NamedTypesStruct {
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
     readonly namedInIri: NamedInIri["value"] | NamedInIri;
     readonly namedInLiteral: NamedInLiteral;
-  }) => Either<Error, NamedTypesStruct> = (parameters) =>
+  }): Either<Error, NamedTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       namedDatatype: Either.of(parameters.namedDatatype),
@@ -32499,7 +32720,10 @@ export namespace NamedTypesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NamedTypesStruct.Identifier)
       | BlankNode
@@ -33222,14 +33446,17 @@ export namespace NewName {
   export const $toString: (_newName: NewName) => string = (_newName) =>
     `NewName(${JSON.stringify(toStringRecord(_newName))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NewName.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly newNameString?: string | Maybe<string>;
-  }) => Either<Error, NewName> = (parameters) =>
+  }): Either<Error, NewName> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       newNameString: $convertToMaybe($identityConversionFunction)(
@@ -33249,7 +33476,10 @@ export namespace NewName {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NewName.Identifier)
       | BlankNode
@@ -33809,7 +34039,10 @@ export namespace NodeKindsStruct {
     _nodeKindsStruct,
   ) => `NodeKindsStruct(${JSON.stringify(toStringRecord(_nodeKindsStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NodeKindsStruct.Identifier)
       | BlankNode
@@ -33827,7 +34060,7 @@ export namespace NodeKindsStruct {
       | string
       | Date
       | Literal;
-  }) => Either<Error, NodeKindsStruct> = (parameters) =>
+  }): Either<Error, NodeKindsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       blankNodeKind: $convertToBlankNode(parameters.blankNodeKind),
@@ -33852,7 +34085,10 @@ export namespace NodeKindsStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NodeKindsStruct.Identifier)
       | BlankNode
@@ -34719,14 +34955,17 @@ export namespace NonClassStruct {
     _nonClassStruct,
   ) => `NonClassStruct(${JSON.stringify(toStringRecord(_nonClassStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NonClassStruct.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly nonClassString: string;
-  }) => Either<Error, NonClassStruct> = (parameters) =>
+  }): Either<Error, NonClassStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       nonClassString: Either.of(parameters.nonClassString),
@@ -34742,7 +34981,10 @@ export namespace NonClassStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NonClassStruct.Identifier)
       | BlankNode
@@ -35140,14 +35382,17 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   ) => string = (_noRdfTypeDiscriminatedUnionMember1) =>
     `NoRdfTypeDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_noRdfTypeDiscriminatedUnionMember1))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly noRdfTypeDiscriminatedUnionMember1String: string;
-  }) => Either<Error, NoRdfTypeDiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, NoRdfTypeDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       noRdfTypeDiscriminatedUnionMember1String: Either.of(
@@ -35165,7 +35410,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
       | BlankNode
@@ -35598,14 +35846,17 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   ) => string = (_noRdfTypeDiscriminatedUnionMember2) =>
     `NoRdfTypeDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_noRdfTypeDiscriminatedUnionMember2))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly noRdfTypeDiscriminatedUnionMember2String: string;
-  }) => Either<Error, NoRdfTypeDiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, NoRdfTypeDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       noRdfTypeDiscriminatedUnionMember2String: Either.of(
@@ -35623,7 +35874,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
       | BlankNode
@@ -36437,7 +36691,10 @@ export namespace NumericsStruct {
     _numericsStruct,
   ) => `NumericsStruct(${JSON.stringify(toStringRecord(_numericsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NumericsStruct.Identifier)
       | BlankNode
@@ -36459,7 +36716,7 @@ export namespace NumericsStruct {
     readonly unsignedIntNumeric?: number | Maybe<number>;
     readonly unsignedLongNumeric?: bigint | Maybe<bigint>;
     readonly unsignedShortNumeric?: number | Maybe<number>;
-  }) => Either<Error, NumericsStruct> = (parameters) =>
+  }): Either<Error, NumericsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       byteNumeric: $convertToMaybe($identityConversionFunction)(
@@ -36602,7 +36859,10 @@ export namespace NumericsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NumericsStruct.Identifier)
       | BlankNode
@@ -38285,7 +38545,10 @@ export namespace OrderedStruct {
     _orderedStruct,
   ) => `OrderedStruct(${JSON.stringify(toStringRecord(_orderedStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => OrderedStruct.Identifier)
       | BlankNode
@@ -38294,7 +38557,7 @@ export namespace OrderedStruct {
     readonly orderedC: string;
     readonly orderedB: string;
     readonly orderedA: string;
-  }) => Either<Error, OrderedStruct> = (parameters) =>
+  }): Either<Error, OrderedStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       orderedC: Either.of(parameters.orderedC),
@@ -38309,7 +38572,10 @@ export namespace OrderedStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => OrderedStruct.Identifier)
       | BlankNode
@@ -38813,14 +39079,17 @@ export namespace PartialDiscriminatedUnionMember1 {
   ) => string = (_partialDiscriminatedUnionMember1) =>
     `PartialDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_partialDiscriminatedUnionMember1))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly lazilyResolved: string;
-  }) => Either<Error, PartialDiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, PartialDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       lazilyResolved: Either.of(parameters.lazilyResolved),
@@ -38836,7 +39105,10 @@ export namespace PartialDiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialDiscriminatedUnionMember1.Identifier)
       | BlankNode
@@ -39321,14 +39593,17 @@ export namespace PartialDiscriminatedUnionMember2 {
   ) => string = (_partialDiscriminatedUnionMember2) =>
     `PartialDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_partialDiscriminatedUnionMember2))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly lazilyResolved: string;
-  }) => Either<Error, PartialDiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, PartialDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       lazilyResolved: Either.of(parameters.lazilyResolved),
@@ -39344,7 +39619,10 @@ export namespace PartialDiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialDiscriminatedUnionMember2.Identifier)
       | BlankNode
@@ -39809,14 +40087,17 @@ export namespace PartialStruct {
     _partialStruct,
   ) => `PartialStruct(${JSON.stringify(toStringRecord(_partialStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialStruct.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly lazilyResolved: string;
-  }) => Either<Error, PartialStruct> = (parameters) =>
+  }): Either<Error, PartialStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       lazilyResolved: Either.of(parameters.lazilyResolved),
@@ -39829,7 +40110,10 @@ export namespace PartialStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialStruct.Identifier)
       | BlankNode
@@ -40297,7 +40581,10 @@ export namespace PropertyCardinalitiesStruct {
   ) => string = (_propertyCardinalitiesStruct) =>
     `PropertyCardinalitiesStruct(${JSON.stringify(toStringRecord(_propertyCardinalitiesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyCardinalitiesStruct.Identifier)
       | BlankNode
@@ -40307,7 +40594,7 @@ export namespace PropertyCardinalitiesStruct {
     readonly nonEmptySet: string | readonly string[];
     readonly optional?: string | Maybe<string>;
     readonly required: string;
-  }) => Either<Error, PropertyCardinalitiesStruct> = (parameters) =>
+  }): Either<Error, PropertyCardinalitiesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       emptySet: $convertToScalarSet($identityConversionFunction)(
@@ -40347,7 +40634,10 @@ export namespace PropertyCardinalitiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyCardinalitiesStruct.Identifier)
       | BlankNode
@@ -41046,7 +41336,10 @@ export namespace PropertyNamesStruct {
   ) => string = (_propertyNamesStruct) =>
     `PropertyNamesStruct(${JSON.stringify(toStringRecord(_propertyNamesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyNamesStruct.Identifier)
       | BlankNode
@@ -41057,7 +41350,7 @@ export namespace PropertyNamesStruct {
     readonly actualName3: string;
     readonly actualName4: string;
     readonly actualName5: string;
-  }) => Either<Error, PropertyNamesStruct> = (parameters) =>
+  }): Either<Error, PropertyNamesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       actualName1: Either.of(parameters.actualName1),
@@ -41077,7 +41370,10 @@ export namespace PropertyNamesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyNamesStruct.Identifier)
       | BlankNode
@@ -41790,7 +42086,10 @@ export namespace PropertyPathsStruct {
   ) => string = (_propertyPathsStruct) =>
     `PropertyPathsStruct(${JSON.stringify(toStringRecord(_propertyPathsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyPathsStruct.Identifier)
       | BlankNode
@@ -41798,7 +42097,7 @@ export namespace PropertyPathsStruct {
       | string;
     readonly inversePath?: string | NamedNode | Maybe<NamedNode>;
     readonly predicatePath?: string | Maybe<string>;
-  }) => Either<Error, PropertyPathsStruct> = (parameters) =>
+  }): Either<Error, PropertyPathsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       inversePath: $convertToMaybe($convertToIri<string>)(
@@ -41829,7 +42128,10 @@ export namespace PropertyPathsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyPathsStruct.Identifier)
       | BlankNode
@@ -42412,7 +42714,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   ) => string = (_recursiveDiscriminatedUnionMember1) =>
     `RecursiveDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_recursiveDiscriminatedUnionMember1))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => RecursiveDiscriminatedUnionMember1.Identifier)
       | BlankNode
@@ -42421,7 +42726,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     readonly recursiveDiscriminatedUnionMember1Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
-  }) => Either<Error, RecursiveDiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, RecursiveDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       recursiveDiscriminatedUnionMember1Property: $convertToMaybe(
@@ -42445,7 +42750,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => RecursiveDiscriminatedUnionMember1.Identifier)
       | BlankNode
@@ -42965,7 +43273,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   ) => string = (_recursiveDiscriminatedUnionMember2) =>
     `RecursiveDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_recursiveDiscriminatedUnionMember2))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => RecursiveDiscriminatedUnionMember2.Identifier)
       | BlankNode
@@ -42974,7 +43285,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     readonly recursiveDiscriminatedUnionMember2Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
-  }) => Either<Error, RecursiveDiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, RecursiveDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       recursiveDiscriminatedUnionMember2Property: $convertToMaybe(
@@ -42998,7 +43309,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => RecursiveDiscriminatedUnionMember2.Identifier)
       | BlankNode
@@ -43500,14 +43814,17 @@ export namespace TargetClassStruct {
   ) =>
     `TargetClassStruct(${JSON.stringify(toStringRecord(_targetClassStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => TargetClassStruct.Identifier)
       | BlankNode
       | NamedNode
       | string;
     readonly targetClassString: string;
-  }) => Either<Error, TargetClassStruct> = (parameters) =>
+  }): Either<Error, TargetClassStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       targetClassString: Either.of(parameters.targetClassString),
@@ -43523,7 +43840,10 @@ export namespace TargetClassStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => TargetClassStruct.Identifier)
       | BlankNode
@@ -44189,7 +44509,10 @@ export namespace TermsStruct {
     _termsStruct,
   ) => `TermsStruct(${JSON.stringify(toStringRecord(_termsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => TermsStruct.Identifier)
       | BlankNode
@@ -44214,7 +44537,7 @@ export namespace TermsStruct {
     readonly term?:
       | (BlankNode | NamedNode | Literal)
       | Maybe<BlankNode | NamedNode | Literal>;
-  }) => Either<Error, TermsStruct> = (parameters) =>
+  }): Either<Error, TermsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       blankNodeTerm: $convertToMaybe($convertToBlankNode)(
@@ -44306,7 +44629,10 @@ export namespace TermsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => TermsStruct.Identifier)
       | BlankNode
@@ -47341,7 +47667,10 @@ export namespace UnionDiscriminantsStruct {
   ) => string = (_unionDiscriminantsStruct) =>
     `UnionDiscriminantsStruct(${JSON.stringify(toStringRecord(_unionDiscriminantsStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => UnionDiscriminantsStruct.Identifier)
       | BlankNode
@@ -47452,7 +47781,7 @@ export namespace UnionDiscriminantsStruct {
     readonly setTerm?:
       | ((BlankNode | NamedNode) | Literal)
       | readonly ((BlankNode | NamedNode) | Literal)[];
-  }) => Either<Error, UnionDiscriminantsStruct> = (parameters) =>
+  }): Either<Error, UnionDiscriminantsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       optionalIriOrString: $convertToMaybe($identityConversionFunction)(
@@ -47542,7 +47871,10 @@ export namespace UnionDiscriminantsStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => UnionDiscriminantsStruct.Identifier)
       | BlankNode
