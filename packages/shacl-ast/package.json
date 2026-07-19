@@ -1,15 +1,15 @@
 {
   "dependencies": {
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.38",
-    "@rdfx/data-factory": "0.0.38",
-    "@rdfx/resource": "0.0.38",
+    "@rdfx/collection": "0.0.42",
+    "@rdfx/data-factory": "0.0.42",
+    "@rdfx/resource": "0.0.42",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "purify-ts": "~2.1.4",
     "typescript-memoize": "~1.1.1"
   },
   "devDependencies": {
-    "@rdfx/literal": "0.0.38",
+    "@rdfx/literal": "0.0.42",
     "ts-invariant": "~0.10.3"
   },
   "files": [
