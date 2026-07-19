@@ -9,7 +9,7 @@ export const snippets_convertToIdentifier: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIdentifier`,
     code`\
-function ${syntheticNamePrefix}convertToIdentifier<DefaultNamespaceT extends ${snippets.NamespaceBuilder} = ${snippets.NamespaceBuilder}>(value: (keyof DefaultNamespaceT & string) | ${imports.BlankNode} | ${imports.NamedNode} | undefined, defaultNamespace?: DefaultNamespaceT): ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}> {
+function ${syntheticNamePrefix}convertToIdentifier<DefaultNamespaceT extends ${snippets.NamespaceBuilder} = ${snippets.NamespaceBuilder}>(value: ${imports.BlankNode} | ${imports.NamedNode} | (keyof DefaultNamespaceT & string) | undefined, defaultNamespace?: DefaultNamespaceT): ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}> {
   switch (typeof value) {
     case "object":
       return ${imports.Either}.of(value);

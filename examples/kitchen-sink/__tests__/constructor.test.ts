@@ -32,8 +32,73 @@ describe("constructor", () => {
       expect(instance.required).toStrictEqual("test");
     });
 
-    describe.only("default namespace", () => {
-      describe("identifier property", () => {
+    describe("default namespace", () => {
+      describe("BlankNodeOrIRI $identifier property", () => {
+        it("default namespace unspecified", ({ expect }) => {
+          const instance = kitchenSink.TermsStruct.createUnsafe({
+            $identifier: "http://example.com/preserve",
+          });
+          expect(instance.$identifier()).toEqualRdfTerm(
+            dataFactory.namedNode("http://example.com/preserve"),
+          );
+        });
+
+        it("default namespace specified", ({ expect }) => {
+          const instance = kitchenSink.TermsStruct.createUnsafe({
+            $defaultNamespace: schema,
+            $identifier: "Person",
+          });
+          expect(instance.$identifier()).toEqualRdfTerm(schema.Person);
+        });
+      });
+
+      describe("IRI $identifier property", () => {
+        describe("with sh:in", () => {
+          it("default namespace unspecified", ({ expect }) => {
+            const instance = kitchenSink.InIdentifierStruct.createUnsafe({
+              $identifier: "http://example.com/InIdentifierStructInstance1",
+            });
+            expect(instance.$identifier()).toEqualRdfTerm(
+              dataFactory.namedNode(
+                "http://example.com/InIdentifierStructInstance1",
+              ),
+            );
+          });
+
+          it("default namespace specified", ({ expect }) => {
+            const instance = kitchenSink.InIdentifierStruct.createUnsafe({
+              $defaultNamespace: schema,
+              $identifier: "http://example.com/InIdentifierStructInstance1",
+            });
+            expect(instance.$identifier()).toEqualRdfTerm(
+              dataFactory.namedNode(
+                "http://example.com/InIdentifierStructInstance1",
+              ),
+            );
+          });
+        });
+
+        describe("without sh:in", () => {
+          it("default namespace unspecified", ({ expect }) => {
+            const instance = kitchenSink.IriIdentifierStruct.createUnsafe({
+              $identifier: "http://example.com/preserved",
+            });
+            expect(instance.$identifier()).toEqualRdfTerm(
+              dataFactory.namedNode("http://example.com/preserved"),
+            );
+          });
+
+          it("default namespace specified", ({ expect }) => {
+            const instance = kitchenSink.IriIdentifierStruct.createUnsafe({
+              $defaultNamespace: schema,
+              $identifier: "Person",
+            });
+            expect(instance.$identifier()).toEqualRdfTerm(schema.Person);
+          });
+        });
+      });
+
+      describe("BlankNodeOrIRI property", () => {
         it("default namespace unspecified", ({ expect }) => {
           const instance = kitchenSink.TermsStruct.createUnsafe({
             identifierTerm: "http://example.com/preserve",

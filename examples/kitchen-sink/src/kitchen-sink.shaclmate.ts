@@ -424,7 +424,7 @@ const $convertToBlankNodeIdentifierProperty: $ConversionFunction<
 function $convertToIdentifier<
   DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
 >(
-  value: (keyof DefaultNamespaceT & string) | BlankNode | NamedNode | undefined,
+  value: BlankNode | NamedNode | (keyof DefaultNamespaceT & string) | undefined,
   defaultNamespace?: DefaultNamespaceT,
 ): Either<Error, BlankNode | NamedNode> {
   switch (typeof value) {
@@ -441,10 +441,17 @@ function $convertToIdentifier<
   }
 }
 
-const $convertToIdentifierProperty: $ConversionFunction<
-  (() => BlankNode | NamedNode) | BlankNode | NamedNode | string | undefined,
-  () => BlankNode | NamedNode
-> = (identifier) => {
+function $convertToIdentifierProperty<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  identifier:
+    | (() => BlankNode | NamedNode)
+    | BlankNode
+    | NamedNode
+    | (keyof DefaultNamespaceT & string)
+    | undefined,
+  defaultNamespace?: DefaultNamespaceT,
+): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
       return Either.of(identifier);
@@ -453,7 +460,9 @@ const $convertToIdentifierProperty: $ConversionFunction<
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = dataFactory.namedNode(identifier);
+      const captureIdentifier = defaultNamespace
+        ? defaultNamespace(identifier)
+        : dataFactory.namedNode(identifier);
       return Either.of(() => captureIdentifier);
     }
     case "undefined": {
@@ -461,14 +470,11 @@ const $convertToIdentifierProperty: $ConversionFunction<
       return Either.of(() => captureIdentifier);
     }
   }
-};
+}
 
-function $convertToInIri<
-  IriT extends string,
-  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
->(
+function $convertToInIri<IriT extends string>(
   value: IriT | NamedNode<IriT>,
-  _defaultNamespace?: DefaultNamespaceT,
+  _defaultNamespace?: $NamespaceBuilder,
 ): Either<Error, NamedNode<IriT>> {
   switch (typeof value) {
     case "object":
@@ -478,10 +484,28 @@ function $convertToInIri<
   }
 }
 
+function $convertToInIriIdentifierProperty<InIriT extends string>(
+  identifier: (() => NamedNode<InIriT>) | NamedNode<InIriT> | InIriT,
+  _defaultNamespace?: $NamespaceBuilder,
+): Either<Error, () => NamedNode<InIriT>> {
+  switch (typeof identifier) {
+    case "function":
+      return Either.of(identifier);
+    case "object": {
+      const captureIdentifier = identifier;
+      return Either.of(() => captureIdentifier);
+    }
+    case "string": {
+      const captureIdentifier = dataFactory.namedNode<InIriT>(identifier);
+      return Either.of(() => captureIdentifier);
+    }
+  }
+}
+
 function $convertToIri<
   DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
 >(
-  value: (keyof DefaultNamespaceT & string) | NamedNode,
+  value: NamedNode | (keyof DefaultNamespaceT & string),
   defaultNamespace?: DefaultNamespaceT,
 ): Either<Error, NamedNode> {
   switch (typeof value) {
@@ -496,9 +520,15 @@ function $convertToIri<
   }
 }
 
-function $convertToIriIdentifierProperty<IriT extends string = string>(
-  identifier: (() => NamedNode<IriT>) | NamedNode<IriT> | IriT,
-): Either<Error, () => NamedNode<IriT>> {
+function $convertToIriIdentifierProperty<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  identifier:
+    | (() => NamedNode)
+    | NamedNode
+    | (keyof DefaultNamespaceT & string),
+  defaultNamespace?: DefaultNamespaceT,
+): Either<Error, () => NamedNode> {
   switch (typeof identifier) {
     case "function":
       return Either.of(identifier);
@@ -507,7 +537,9 @@ function $convertToIriIdentifierProperty<IriT extends string = string>(
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = dataFactory.namedNode<IriT>(identifier);
+      const captureIdentifier = defaultNamespace
+        ? defaultNamespace(identifier)
+        : dataFactory.namedNode(identifier);
       return Either.of(() => captureIdentifier);
     }
   }
@@ -3884,7 +3916,10 @@ export namespace $DefaultPartial {
       | (keyof $DefaultNamespaceT & string);
   }): Either<Error, $DefaultPartial> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -4223,8 +4258,9 @@ export namespace $NamedDefaultPartial {
       | NamedNode;
   }): Either<Error, $NamedDefaultPartial> =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<string>(
+      $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
     })
       .map((properties) => ({
@@ -4646,6 +4682,7 @@ export namespace AnonymousTypesStruct {
                       $sequenceRecord({
                         $identifier: $convertToIdentifierProperty(
                           parameters.$identifier,
+                          parameters.$defaultNamespace,
                         ),
                         anonymousStructString: Either.of(
                           parameters.anonymousStructString,
@@ -4749,7 +4786,10 @@ export namespace AnonymousTypesStruct {
         }>;
   }): Either<Error, AnonymousTypesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       anonymousStruct: $convertToMaybe(
         <
           $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -4763,7 +4803,10 @@ export namespace AnonymousTypesStruct {
           readonly anonymousStructString: string;
         }) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(parameters.$identifier),
+            $identifier: $convertToIdentifierProperty(
+              parameters.$identifier,
+              parameters.$defaultNamespace,
+            ),
             anonymousStructString: Either.of(parameters.anonymousStructString),
           }).map((object) =>
             $monkeyPatchObject(object, {
@@ -5180,6 +5223,7 @@ export namespace AnonymousTypesStruct {
                 $sequenceRecord({
                   $identifier: $convertToIdentifierProperty(
                     parameters.$identifier,
+                    parameters.$defaultNamespace,
                   ),
                   anonymousStructString: Either.of(
                     parameters.anonymousStructString,
@@ -5614,6 +5658,7 @@ export namespace BlankNodeIdentifierStruct {
     $sequenceRecord({
       $identifier: $convertToBlankNodeIdentifierProperty(
         parameters?.$identifier,
+        parameters?.$defaultNamespace,
       ),
       blankNodeIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters?.blankNodeIdentifierString,
@@ -6165,7 +6210,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
     readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
   }): Either<Error, BlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       blankNodeOrIriIdentifierString: $convertToMaybe(
         $identityConversionFunction,
       )(
@@ -6845,7 +6893,10 @@ export namespace ClassConstraintsStruct {
       | Maybe<BlankNode | NamedNode>;
   }): Either<Error, ClassConstraintsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       iriClass: $convertToMaybe($convertToIri)(
         parameters?.iriClass,
         parameters?.$defaultNamespace,
@@ -8037,7 +8088,10 @@ export namespace ConvertibleTypesStruct {
       | readonly (BlankNode | NamedNode | Literal)[];
   }): Either<Error, ConvertibleTypesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       convertibleIri: $convertToIri(
         parameters.convertibleIri,
         parameters.$defaultNamespace,
@@ -10761,7 +10815,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly stringOrLangString: string | Literal;
   }): Either<Error, DatatypeDiscriminatedUnionsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       dateOrDateTime: $identityConversionFunction(
         parameters.dateOrDateTime,
         parameters.$defaultNamespace,
@@ -14073,7 +14130,10 @@ export namespace DatesStruct {
     readonly dateTimeStamp?: Date | Maybe<Date>;
   }): Either<Error, DatesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       date: $convertToMaybe($identityConversionFunction)(
         parameters?.date,
         parameters?.$defaultNamespace,
@@ -14938,7 +14998,10 @@ export namespace DefaultValuesStruct {
     readonly trueBooleanDefaultValue?: boolean;
   }): Either<Error, DefaultValuesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       dateDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         new Date("2018-04-09T00:00:00.000Z"),
@@ -15836,7 +15899,10 @@ export namespace DirectRecursiveStruct {
       | Maybe<DirectRecursiveStruct>;
   }): Either<Error, DirectRecursiveStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       directRecursive: $convertToMaybe($identityConversionFunction)(
         parameters?.directRecursive,
         parameters?.$defaultNamespace,
@@ -16379,7 +16445,10 @@ export namespace DiscriminatedUnionMember1 {
     readonly discriminatedUnionMemberCommon: string;
   }): Either<Error, DiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       discriminatedUnionMember1Distinct: Either.of(
         parameters.discriminatedUnionMember1Distinct,
       ),
@@ -17007,7 +17076,10 @@ export namespace DiscriminatedUnionMember2 {
     readonly discriminatedUnionMemberCommon: string;
   }): Either<Error, DiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       discriminatedUnionMember2Distinct: Either.of(
         parameters.discriminatedUnionMember2Distinct,
       ),
@@ -17648,7 +17720,10 @@ export namespace DisplayStruct {
     readonly implicitFalseDisplay: string;
   }): Either<Error, DisplayStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       explicitFalseDisplay: Either.of(parameters.explicitFalseDisplay),
       explicitTrueDisplay: Either.of(parameters.explicitTrueDisplay),
       implicitFalseDisplay: Either.of(parameters.implicitFalseDisplay),
@@ -18268,7 +18343,10 @@ export namespace ExplicitFromToRdfTypesStruct {
     readonly explicitFromToRdfTypesString: string;
   }): Either<Error, ExplicitFromToRdfTypesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       explicitFromToRdfTypesString: Either.of(
         parameters.explicitFromToRdfTypesString,
       ),
@@ -18797,7 +18875,10 @@ export namespace ExplicitRdfTypeStruct {
     readonly explicitRdfTypeString: string;
   }): Either<Error, ExplicitRdfTypeStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       explicitRdfTypeString: Either.of(parameters.explicitRdfTypeString),
     })
       .map((properties) => ({
@@ -19314,7 +19395,10 @@ export namespace FlattenDiscriminatedUnionMember3 {
     readonly flattenDiscriminatedUnionMember3String: string;
   }): Either<Error, FlattenDiscriminatedUnionMember3> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       flattenDiscriminatedUnionMember3String: Either.of(
         parameters.flattenDiscriminatedUnionMember3String,
       ),
@@ -19843,7 +19927,10 @@ export namespace HasValuesStruct {
     readonly hasLiteralValue: string;
   }): Either<Error, HasValuesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       hasIriValue: $convertToIri(
         parameters.hasIriValue,
         parameters.$defaultNamespace,
@@ -20377,7 +20464,10 @@ export namespace IgnoredPropertiesStruct {
     readonly shaclmateIgnoreFalseProperty: string;
   }): Either<Error, IgnoredPropertiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       severityDefaultProperty: Either.of(parameters.severityDefaultProperty),
       severityViolationProperty: Either.of(
         parameters.severityViolationProperty,
@@ -20987,7 +21077,10 @@ export namespace IndirectRecursiveStruct {
       | Maybe<IndirectRecursiveStructHelper>;
   }): Either<Error, IndirectRecursiveStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       indirectRecursiveHelper: $convertToMaybe($identityConversionFunction)(
         parameters?.indirectRecursiveHelper,
         parameters?.$defaultNamespace,
@@ -21525,7 +21618,10 @@ export namespace IndirectRecursiveStructHelper {
       | Maybe<IndirectRecursiveStruct>;
   }): Either<Error, IndirectRecursiveStructHelper> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       indirectRecursive: $convertToMaybe($identityConversionFunction)(
         parameters?.indirectRecursive,
         parameters?.$defaultNamespace,
@@ -22052,10 +22148,10 @@ export namespace InIdentifierStruct {
     readonly inIdentifierString?: string | Maybe<string>;
   }): Either<Error, InIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<
+      $identifier: $convertToInIriIdentifierProperty<
         | "http://example.com/InIdentifierStructInstance1"
         | "http://example.com/InIdentifierStructInstance2"
-      >(parameters.$identifier),
+      >(parameters.$identifier, parameters.$defaultNamespace),
       inIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters.inIdentifierString,
         parameters.$defaultNamespace,
@@ -22774,7 +22870,10 @@ export namespace InPropertiesStruct {
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
   }): Either<Error, InPropertiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       inBooleans: $convertToMaybe($identityConversionFunction)(
         parameters?.inBooleans,
         parameters?.$defaultNamespace,
@@ -23746,8 +23845,9 @@ export namespace IriIdentifierStruct {
     readonly iriIdentifierString?: string | Maybe<string>;
   }): Either<Error, IriIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<string>(
+      $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       iriIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters.iriIdentifierString,
@@ -24266,7 +24366,10 @@ export namespace LanguageInStruct {
       | readonly (bigint | boolean | number | string | Date | Literal)[];
   }): Either<Error, LanguageInStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       languageInLiteral: $convertToScalarSet($convertToLiteral)(
         parameters.languageInLiteral,
         parameters.$defaultNamespace,
@@ -24777,7 +24880,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     readonly lazilyResolved: string;
   }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -25324,7 +25430,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     readonly lazilyResolved: string;
   }): Either<Error, LazilyResolvedDiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -25856,7 +25965,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     readonly lazilyResolved: string;
   }): Either<Error, LazilyResolvedDiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -26368,8 +26480,9 @@ export namespace LazilyResolvedIriIdentifierStruct {
     readonly lazilyResolved: string;
   }): Either<Error, LazilyResolvedIriIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<string>(
+      $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
@@ -27500,7 +27613,10 @@ export namespace LazyPropertiesStruct {
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
   }): Either<Error, LazyPropertiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
@@ -29668,7 +29784,10 @@ export namespace ListSetsStruct {
     readonly listSet?: readonly (readonly string[])[];
   }): Either<Error, ListSetsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       listDiscriminatedUnionSet: $convertToArraySet(
         $identityConversionFunction,
       )(
@@ -31045,7 +31164,10 @@ export namespace ListsStruct {
       | Maybe<readonly NonClassStruct[]>;
   }): Either<Error, ListsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       iriList: $convertToMaybe($convertToList($convertToIri))(
         parameters?.iriList,
         parameters?.$defaultNamespace,
@@ -32045,7 +32167,10 @@ export namespace MutablePropertiesStruct {
     readonly mutableString?: string | Maybe<string>;
   }): Either<Error, MutablePropertiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       mutableList: $convertToMaybe(
         $convertToMutableList($identityConversionFunction),
       )(parameters?.mutableList, parameters?.$defaultNamespace).chain((value) =>
@@ -32885,7 +33010,10 @@ export namespace NamedTypesStruct {
     readonly namedInLiteral: NamedInLiteral;
   }): Either<Error, NamedTypesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       namedDatatype: Either.of(parameters.namedDatatype),
       namedDiscriminatedUnion1: $identityConversionFunction(
         parameters.namedDiscriminatedUnion1,
@@ -33650,7 +33778,10 @@ export namespace NewName {
     readonly newNameString?: string | Maybe<string>;
   }): Either<Error, NewName> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       newNameString: $convertToMaybe($identityConversionFunction)(
         parameters?.newNameString,
         parameters?.$defaultNamespace,
@@ -34258,7 +34389,10 @@ export namespace NodeKindsStruct {
       | Literal;
   }): Either<Error, NodeKindsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       blankNodeKind: $convertToBlankNode(
         parameters.blankNodeKind,
         parameters.$defaultNamespace,
@@ -35176,7 +35310,10 @@ export namespace NonClassStruct {
     readonly nonClassString: string;
   }): Either<Error, NonClassStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       nonClassString: Either.of(parameters.nonClassString),
     })
       .map((properties) => ({
@@ -35603,7 +35740,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     readonly noRdfTypeDiscriminatedUnionMember1String: string;
   }): Either<Error, NoRdfTypeDiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       noRdfTypeDiscriminatedUnionMember1String: Either.of(
         parameters.noRdfTypeDiscriminatedUnionMember1String,
       ),
@@ -36067,7 +36207,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     readonly noRdfTypeDiscriminatedUnionMember2String: string;
   }): Either<Error, NoRdfTypeDiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       noRdfTypeDiscriminatedUnionMember2String: Either.of(
         parameters.noRdfTypeDiscriminatedUnionMember2String,
       ),
@@ -36927,7 +37070,10 @@ export namespace NumericsStruct {
     readonly unsignedShortNumeric?: number | Maybe<number>;
   }): Either<Error, NumericsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       byteNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.byteNumeric,
         parameters?.$defaultNamespace,
@@ -38784,7 +38930,10 @@ export namespace OrderedStruct {
     readonly orderedA: string;
   }): Either<Error, OrderedStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       orderedC: Either.of(parameters.orderedC),
       orderedB: Either.of(parameters.orderedB),
       orderedA: Either.of(parameters.orderedA),
@@ -39316,7 +39465,10 @@ export namespace PartialDiscriminatedUnionMember1 {
     readonly lazilyResolved: string;
   }): Either<Error, PartialDiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -39830,7 +39982,10 @@ export namespace PartialDiscriminatedUnionMember2 {
     readonly lazilyResolved: string;
   }): Either<Error, PartialDiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -40324,7 +40479,10 @@ export namespace PartialStruct {
     readonly lazilyResolved: string;
   }): Either<Error, PartialStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({ ...properties, $type: "PartialStruct" as const }))
@@ -40821,7 +40979,10 @@ export namespace PropertyCardinalitiesStruct {
     readonly required: string;
   }): Either<Error, PropertyCardinalitiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       emptySet: $convertToScalarSet($identityConversionFunction)(
         parameters.emptySet,
         parameters.$defaultNamespace,
@@ -41580,7 +41741,10 @@ export namespace PropertyNamesStruct {
     readonly actualName5: string;
   }): Either<Error, PropertyNamesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       actualName1: Either.of(parameters.actualName1),
       actualName2: Either.of(parameters.actualName2),
       actualName3: Either.of(parameters.actualName3),
@@ -42330,7 +42494,10 @@ export namespace PropertyPathsStruct {
     readonly predicatePath?: string | Maybe<string>;
   }): Either<Error, PropertyPathsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       inversePath: $convertToMaybe($convertToIri)(
         parameters?.inversePath,
         parameters?.$defaultNamespace,
@@ -42964,7 +43131,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       | Maybe<RecursiveDiscriminatedUnion>;
   }): Either<Error, RecursiveDiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       recursiveDiscriminatedUnionMember1Property: $convertToMaybe(
         $identityConversionFunction,
       )(
@@ -43526,7 +43696,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       | Maybe<RecursiveDiscriminatedUnion>;
   }): Either<Error, RecursiveDiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       recursiveDiscriminatedUnionMember2Property: $convertToMaybe(
         $identityConversionFunction,
       )(
@@ -44068,7 +44241,10 @@ export namespace TargetClassStruct {
     readonly targetClassString: string;
   }): Either<Error, TargetClassStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       targetClassString: Either.of(parameters.targetClassString),
     })
       .map((properties) => ({
@@ -44809,7 +44985,10 @@ export namespace TermsStruct {
       | Maybe<BlankNode | NamedNode | Literal>;
   }): Either<Error, TermsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       blankNodeTerm: $convertToMaybe($convertToBlankNode)(
         parameters?.blankNodeTerm,
         parameters?.$defaultNamespace,
@@ -48160,7 +48339,10 @@ export namespace UnionDiscriminantsStruct {
       | readonly ((BlankNode | NamedNode) | Literal)[];
   }): Either<Error, UnionDiscriminantsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       optionalIriOrString: $convertToMaybe($identityConversionFunction)(
         parameters.optionalIriOrString,
         parameters.$defaultNamespace,
