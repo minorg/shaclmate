@@ -659,10 +659,11 @@ const $convertToLiteral: $ConversionFunction<
 
 function $convertToMaybe<ItemSourceT, ItemTargetT>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-) {
-  return (
-    value: ItemSourceT | Maybe<ItemTargetT> | undefined,
-  ): Either<Error, Maybe<ItemTargetT>> => {
+): $ConversionFunction<
+  ItemSourceT | Maybe<ItemTargetT> | undefined,
+  Maybe<ItemTargetT>
+> {
+  return (value) => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {

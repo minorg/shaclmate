@@ -12,8 +12,8 @@ export const snippets_convertToLazySet: SnippetFactory = ({
 function ${syntheticNamePrefix}convertToLazySet<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT
-) {
-  return (value: ${snippets.LazySet}<PartialT, ResolvedT> | readonly PartialT[] | readonly ResolvedT[] | PartialT | ResolvedT | undefined): ${imports.Either}<Error, ${snippets.LazySet}<PartialT, ResolvedT>> => {
+): ${snippets.ConversionFunction}<${snippets.LazySet}<PartialT, ResolvedT> | readonly PartialT[] | readonly ResolvedT[] | PartialT | ResolvedT | undefined, ${snippets.LazySet}<PartialT, ResolvedT>>  {
+  return (value) => {
     if (typeof value === "undefined") {
       return ${imports.Either}.of(new ${snippets.LazySet}<PartialT, ResolvedT>({
         partials: [],
