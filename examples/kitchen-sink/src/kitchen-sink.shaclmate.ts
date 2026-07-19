@@ -381,20 +381,22 @@ function $convertToArraySet<ItemSourceT, ItemTargetT, Readonly extends boolean>(
     >;
 }
 
-function $convertToBlankNode(
-  value: BlankNode | undefined,
-): Either<Error, BlankNode> {
+const $convertToBlankNode: $ConversionFunction<
+  BlankNode | undefined,
+  BlankNode
+> = (value) => {
   switch (typeof value) {
     case "object":
       return Either.of(value);
     case "undefined":
       return Either.of(dataFactory.blankNode());
   }
-}
+};
 
-function $convertToBlankNodeIdentifierProperty(
-  identifier: (() => BlankNode) | BlankNode | undefined,
-): Either<Error, () => BlankNode> {
+const $convertToBlankNodeIdentifierProperty: $ConversionFunction<
+  (() => BlankNode) | BlankNode | undefined,
+  () => BlankNode
+> = (identifier) => {
   switch (typeof identifier) {
     case "function":
       return Either.of(identifier);
@@ -407,11 +409,12 @@ function $convertToBlankNodeIdentifierProperty(
       return Either.of(() => captureIdentifier);
     }
   }
-}
+};
 
-function $convertToIdentifier(
-  value: BlankNode | NamedNode | string | undefined,
-): Either<Error, BlankNode | NamedNode> {
+const $convertToIdentifier: $ConversionFunction<
+  BlankNode | NamedNode | string | undefined,
+  BlankNode | NamedNode
+> = (value) => {
   switch (typeof value) {
     case "object":
       return Either.of(value);
@@ -420,16 +423,12 @@ function $convertToIdentifier(
     case "undefined":
       return Either.of(dataFactory.blankNode());
   }
-}
+};
 
-function $convertToIdentifierProperty(
-  identifier:
-    | (() => BlankNode | NamedNode)
-    | BlankNode
-    | NamedNode
-    | string
-    | undefined,
-): Either<Error, () => BlankNode | NamedNode> {
+const $convertToIdentifierProperty: $ConversionFunction<
+  (() => BlankNode | NamedNode) | BlankNode | NamedNode | string | undefined,
+  () => BlankNode | NamedNode
+> = (identifier) => {
   switch (typeof identifier) {
     case "function":
       return Either.of(identifier);
@@ -446,7 +445,7 @@ function $convertToIdentifierProperty(
       return Either.of(() => captureIdentifier);
     }
   }
-}
+};
 
 function $convertToIri<IriT extends string>(
   value: IriT | NamedNode<IriT>,
@@ -476,7 +475,7 @@ function $convertToIriIdentifierProperty<IriT extends string = string>(
   }
 }
 
-function $convertToLangString(value: Literal): Either<Error, Literal> {
+const $convertToLangString: $ConversionFunction<Literal, Literal> = (value) => {
   if (!value.datatype.equals($RdfVocabularies.rdf.langString)) {
     return Left(
       new Error(
@@ -490,7 +489,7 @@ function $convertToLangString(value: Literal): Either<Error, Literal> {
   }
 
   return Either.of(value);
-}
+};
 
 function $convertToLazy<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
@@ -644,9 +643,10 @@ function $convertToList<ItemSourceT, ItemTargetT, Readonly extends boolean>(
     >;
 }
 
-function $convertToLiteral(
-  value: bigint | boolean | Date | number | string | Literal,
-): Either<Error, Literal> {
+const $convertToLiteral: $ConversionFunction<
+  bigint | boolean | Date | number | string | Literal,
+  Literal
+> = (value) => {
   if (typeof value === "object") {
     if (value instanceof Date) {
       return Either.of($literalFactory.date(value));
@@ -655,7 +655,7 @@ function $convertToLiteral(
   }
 
   return Either.of($literalFactory.primitive(value));
-}
+};
 
 function $convertToMaybe<ItemSourceT, ItemTargetT>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,

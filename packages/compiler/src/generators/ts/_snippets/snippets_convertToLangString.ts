@@ -5,12 +5,13 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_convertToLangString: SnippetFactory = ({
   imports,
   rdfjsTermExpression,
+  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}convertToLangString`,
     code`\
-function ${syntheticNamePrefix}convertToLangString(value: ${imports.Literal}): ${imports.Either}<Error, ${imports.Literal}> {
+const ${syntheticNamePrefix}convertToLangString: ${snippets.ConversionFunction}<${imports.Literal}, ${imports.Literal}> = (value) => {
   if (!value.datatype.equals(${rdfjsTermExpression(rdf.langString)})) {
     return ${imports.Left}(new Error(\`expected Literal to have rdf:langString datatype, not \${value.datatype.value}\`));
   }
