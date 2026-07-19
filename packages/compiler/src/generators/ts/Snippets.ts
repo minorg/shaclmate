@@ -166,6 +166,7 @@ import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippe
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 import { snippets_validateArray } from "./_snippets/snippets_validateArray.js";
 import { snippets_validateMaybe } from "./_snippets/snippets_validateMaybe.js";
+import { snippets_validateMutableArray } from "./_snippets/snippets_validateMutableArray.js";
 import { snippets_wrap_FromRdfResourceFunction } from "./_snippets/snippets_wrap_FromRdfResourceFunction.js";
 import { snippets_wrap_ToRdfResourceFunction } from "./_snippets/snippets_wrap_ToRdfResourceFunction.js";
 import type { Imports } from "./Imports.js";
@@ -1041,6 +1042,11 @@ export class Snippets {
   @Memoize()
   get validateMaybe(): Snippet {
     return this.snippet(snippets_validateMaybe);
+  }
+
+  @Memoize()
+  get validateMutableArray(): Snippet {
+    return this.snippet(snippets_validateMutableArray);
   }
 
   @Memoize()

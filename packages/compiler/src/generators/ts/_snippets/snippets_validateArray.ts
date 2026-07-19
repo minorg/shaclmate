@@ -9,14 +9,13 @@ export const snippets_validateArray: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}validateArray`,
     code`\
-function ${syntheticNamePrefix}validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(validateItem: ${snippets.ValidationFunction}<ItemSchemaT, ItemValueT>, _readonly: Readonly) {
-  type EitherR = Readonly extends true ? ReadonlyArray<ItemValueT> : Array<ItemValueT>;
-  return (schema: ${snippets.CollectionSchema}<ItemSchemaT>, valueArray: readonly ItemValueT[]): ${imports.Either}<Error, EitherR> => {
+function ${syntheticNamePrefix}validateArray<ItemSchemaT, ItemValueT>(validateItem: ${snippets.ValidationFunction}<ItemSchemaT, ItemValueT>): ${snippets.ValidationFunction}<${snippets.CollectionSchema}<ItemSchemaT>, readonly ItemValueT[]> {
+  return (schema, valueArray) => {
     if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
-      return ${imports.Left}(new Error(\`value array has length (\${valueArray.length}) less than minCount (\${schema.minCount})\`)) as ${imports.Either}<Error, EitherR>;
+      return ${imports.Left}(new Error(\`value array has length (\${valueArray.length}) less than minCount (\${schema.minCount})\`)) as ${imports.Either}<Error, readonly ItemValueT[]>;
     }
 
-    return ${imports.Either}.sequence(valueArray.map(value => validateItem(schema.itemType, value))) as ${imports.Either}<Error, EitherR>;
+    return ${imports.Either}.sequence(valueArray.map(value => validateItem(schema.itemType, value))) as ${imports.Either}<Error, readonly ItemValueT[]>;
   }
 }`,
   );

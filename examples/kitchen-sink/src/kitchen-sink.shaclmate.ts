@@ -3617,28 +3617,21 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 
-function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
+function $validateArray<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
-  _readonly: Readonly,
-) {
-  type EitherR = Readonly extends true
-    ? ReadonlyArray<ItemValueT>
-    : Array<ItemValueT>;
-  return (
-    schema: $CollectionSchema<ItemSchemaT>,
-    valueArray: readonly ItemValueT[],
-  ): Either<Error, EitherR> => {
+): $ValidationFunction<$CollectionSchema<ItemSchemaT>, readonly ItemValueT[]> {
+  return (schema, valueArray) => {
     if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
       return Left(
         new Error(
           `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
         ),
-      ) as Either<Error, EitherR>;
+      ) as Either<Error, readonly ItemValueT[]>;
     }
 
     return Either.sequence(
       valueArray.map((value) => validateItem(schema.itemType, value)),
-    ) as Either<Error, EitherR>;
+    ) as Either<Error, readonly ItemValueT[]>;
   };
 }
 
@@ -3654,6 +3647,24 @@ function $validateMaybe<ItemSchemaT, ItemValueT>(
         validateItem(schema.itemType, value).map(() => valueMaybe),
       )
       .orDefault(Either.of(valueMaybe));
+}
+
+function $validateMutableArray<ItemSchemaT, ItemValueT>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+): $ValidationFunction<$CollectionSchema<ItemSchemaT>, ItemValueT[]> {
+  return (schema, valueArray) => {
+    if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
+      return Left(
+        new Error(
+          `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
+        ),
+      ) as Either<Error, ItemValueT[]>;
+    }
+
+    return Either.sequence(
+      valueArray.map((value) => validateItem(schema.itemType, value)),
+    ) as Either<Error, ItemValueT[]>;
+  };
 }
 
 type $ValidationFunction<SchemaT, ValueT> = (
@@ -7857,7 +7868,7 @@ export namespace ConvertibleTypesStruct {
       convertibleIriNonEmptySet: $convertToScalarSet($convertToIri<string>)(
         parameters.convertibleIriNonEmptySet,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet
             .type,
           value,
@@ -7874,7 +7885,7 @@ export namespace ConvertibleTypesStruct {
       convertibleIriSet: $convertToScalarSet($convertToIri<string>)(
         parameters.convertibleIriSet,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriSet.type,
           value,
         ),
@@ -7883,7 +7894,7 @@ export namespace ConvertibleTypesStruct {
       convertibleLiteralNonEmptySet: $convertToScalarSet($convertToLiteral)(
         parameters.convertibleLiteralNonEmptySet,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralNonEmptySet
             .type,
           value,
@@ -7901,7 +7912,7 @@ export namespace ConvertibleTypesStruct {
       convertibleLiteralSet: $convertToScalarSet($convertToLiteral)(
         parameters.convertibleLiteralSet,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralSet.type,
           value,
         ),
@@ -7910,7 +7921,7 @@ export namespace ConvertibleTypesStruct {
       convertibleTermNonEmptySet: $convertToScalarSet(
         $identityConversionFunction,
       )(parameters.convertibleTermNonEmptySet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet
             .type,
           value,
@@ -7927,7 +7938,7 @@ export namespace ConvertibleTypesStruct {
       convertibleTermSet: $convertToScalarSet($identityConversionFunction)(
         parameters.convertibleTermSet,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermSet.type,
           value,
         ),
@@ -23918,7 +23929,7 @@ export namespace LanguageInStruct {
       languageInLiteral: $convertToScalarSet($convertToLiteral)(
         parameters.languageInLiteral,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           LanguageInStruct.schema.properties.languageInLiteral.type,
           value,
         ),
@@ -29281,7 +29292,7 @@ export namespace ListSetsStruct {
       listDiscriminatedUnionSet: $convertToArraySet(
         $identityConversionFunction,
       )(parameters?.listDiscriminatedUnionSet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           ListSetsStruct.schema.properties.listDiscriminatedUnionSet.type,
           value,
         ),
@@ -29290,17 +29301,13 @@ export namespace ListSetsStruct {
         $convertToList($convertToList($identityConversionFunction)),
       )(parameters?.listListSet).chain((value) =>
         $validateArray(
-          $validateArray(
-            $validateArray($identityValidationFunction, true),
-            true,
-          ),
-          true,
+          $validateArray($validateArray($identityValidationFunction)),
         )(ListSetsStruct.schema.properties.listListSet.type, value),
       ),
       listSet: $convertToArraySet($convertToList($identityConversionFunction))(
         parameters?.listSet,
       ).chain((value) =>
-        $validateArray($validateArray($identityValidationFunction, true), true)(
+        $validateArray($validateArray($identityValidationFunction))(
           ListSetsStruct.schema.properties.listSet.type,
           value,
         ),
@@ -30652,7 +30659,7 @@ export namespace ListsStruct {
       iriList: $convertToMaybe($convertToList($convertToIri<string>))(
         parameters?.iriList,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           ListsStruct.schema.properties.iriList.type,
           value,
         ),
@@ -30660,7 +30667,7 @@ export namespace ListsStruct {
       stringList: $convertToMaybe($convertToList($identityConversionFunction))(
         parameters?.stringList,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           ListsStruct.schema.properties.stringList.type,
           value,
         ),
@@ -30669,16 +30676,13 @@ export namespace ListsStruct {
         $convertToList($convertToList($identityConversionFunction)),
       )(parameters?.stringListList).chain((value) =>
         $validateMaybe(
-          $validateArray(
-            $validateArray($identityValidationFunction, true),
-            true,
-          ),
+          $validateArray($validateArray($identityValidationFunction)),
         )(ListsStruct.schema.properties.stringListList.type, value),
       ),
       structList: $convertToMaybe($convertToList($identityConversionFunction))(
         parameters?.structList,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           ListsStruct.schema.properties.structList.type,
           value,
         ),
@@ -31645,7 +31649,7 @@ export namespace MutablePropertiesStruct {
       mutableList: $convertToMaybe(
         $convertToMutableList($identityConversionFunction),
       )(parameters?.mutableList).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, false))(
+        $validateMaybe($validateMutableArray($identityValidationFunction))(
           MutablePropertiesStruct.schema.properties.mutableList.type,
           value,
         ),
@@ -31653,7 +31657,7 @@ export namespace MutablePropertiesStruct {
       mutableSet: $convertToMutableScalarSet($identityConversionFunction)(
         parameters?.mutableSet,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, false)(
+        $validateMutableArray($identityValidationFunction)(
           MutablePropertiesStruct.schema.properties.mutableSet.type,
           value,
         ),
@@ -40309,7 +40313,7 @@ export namespace PropertyCardinalitiesStruct {
       emptySet: $convertToScalarSet($identityConversionFunction)(
         parameters.emptySet,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.emptySet.type,
           value,
         ),
@@ -40317,7 +40321,7 @@ export namespace PropertyCardinalitiesStruct {
       nonEmptySet: $convertToScalarSet($identityConversionFunction)(
         parameters.nonEmptySet,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.nonEmptySet.type,
           value,
         ),
@@ -47497,7 +47501,7 @@ export namespace UnionDiscriminantsStruct {
       setIriOrString: $convertToScalarSet($identityConversionFunction)(
         parameters.setIriOrString,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setIriOrString.type,
           value,
         ),
@@ -47505,7 +47509,7 @@ export namespace UnionDiscriminantsStruct {
       setNodeOrLiteral: $convertToScalarSet($identityConversionFunction)(
         parameters.setNodeOrLiteral,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.type,
           value,
         ),
@@ -47513,7 +47517,7 @@ export namespace UnionDiscriminantsStruct {
       setNodeOrNodeOrString: $convertToScalarSet($identityConversionFunction)(
         parameters.setNodeOrNodeOrString,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.type,
           value,
         ),
@@ -47521,7 +47525,7 @@ export namespace UnionDiscriminantsStruct {
       setTerm: $convertToScalarSet($identityConversionFunction)(
         parameters.setTerm,
       ).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+        $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setTerm.type,
           value,
         ),
