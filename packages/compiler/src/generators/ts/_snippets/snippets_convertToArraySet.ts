@@ -9,7 +9,7 @@ export const snippets_convertToArraySet: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToArraySet`,
     code`\
-function ${syntheticNamePrefix}convertToArraySet<ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>): ${snippets.ConversionFunction}<readonly ItemSourceT[] | undefined, readonly ItemTargetT[]> {
-  return (value) => (typeof value === "undefined" ? ${imports.Either}.of([]) : ${imports.Either}.sequence(value.map(convertToItem))) as ${imports.Either}<Error, readonly ItemTargetT[]>;
+function ${syntheticNamePrefix}convertToArraySet<DefaultNamespaceT extends ${snippets.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<readonly ItemSourceT[] | undefined, readonly ItemTargetT[], DefaultNamespaceT> {
+  return (value, defaultNamespace) => (typeof value === "undefined" ? ${imports.Either}.of([]) : ${imports.Either}.sequence(value.map(value => convertToItem(value, defaultNamespace)))) as ${imports.Either}<Error, readonly ItemTargetT[]>;
 }`,
   );

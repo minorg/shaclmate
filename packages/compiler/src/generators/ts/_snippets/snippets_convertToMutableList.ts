@@ -9,7 +9,7 @@ export const snippets_convertToMutableList: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToMutableList`,
     code`\
-function ${syntheticNamePrefix}convertToMutableList<ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>): ${snippets.ConversionFunction}<readonly ItemSourceT[], ItemTargetT[]> {
-  return (value) => ${imports.Either}.sequence(value.map(convertToItem)) as ${imports.Either}<Error, ItemTargetT[]>;
+function ${syntheticNamePrefix}convertToMutableList<DefaultNamespaceT extends ${snippets.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<readonly ItemSourceT[], ItemTargetT[], DefaultNamespaceT> {
+  return (value, defaultNamespace) => ${imports.Either}.sequence(value.map(value => convertToItem(value, defaultNamespace))) as ${imports.Either}<Error, ItemTargetT[]>;
 }`,
   );

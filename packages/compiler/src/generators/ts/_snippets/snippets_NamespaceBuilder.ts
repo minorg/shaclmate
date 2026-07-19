@@ -11,7 +11,7 @@ export const snippets_NamespaceBuilder: SnippetFactory = ({
 /**
  * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
  */
-type ${syntheticNamePrefix}NamespaceBuilder<TermNames extends string = any> = Record<TermNames, NamedNode> & {
+type ${syntheticNamePrefix}NamespaceBuilder<TermNames extends string = string> = Record<TermNames, NamedNode> & {
     (property?: TemplateStringsArray | TermNames): ${imports.NamedNode};
 };`,
   );

@@ -9,13 +9,13 @@ export const snippets_convertToScalarSet: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToScalarSet`,
     code`\
-function ${syntheticNamePrefix}convertToScalarSet<ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>): ${snippets.ConversionFunction}<ItemSourceT | readonly ItemSourceT[] | undefined, readonly ItemTargetT[]> {
-  return (value) => {
+function ${syntheticNamePrefix}convertToScalarSet<DefaultNamespaceT extends ${snippets.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<ItemSourceT | readonly ItemSourceT[] | undefined, readonly ItemTargetT[], DefaultNamespaceT> {
+  return (value, defaultNamespace) => {
     if (typeof value === "undefined") {
       return ${imports.Either}.of<Error, readonly ItemTargetT[]>([] as unknown as readonly ItemTargetT[]);
     }
     if (Array.isArray(value)) {
-      return ${imports.Either}.sequence(value.map(convertToItem)) as ${imports.Either}<Error, readonly ItemTargetT[]>;
+      return ${imports.Either}.sequence(value.map(value => convertToItem(value, defaultNamespace))) as ${imports.Either}<Error, readonly ItemTargetT[]>;
     }
     return convertToItem(value as ItemSourceT).map(value => [value]) as ${imports.Either}<Error, readonly ItemTargetT[]>;
   };
