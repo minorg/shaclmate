@@ -3881,7 +3881,7 @@ export namespace $DefaultPartial {
       | (() => $DefaultPartial.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
   }): Either<Error, $DefaultPartial> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
@@ -3905,7 +3905,7 @@ export namespace $DefaultPartial {
       | (() => $DefaultPartial.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
   }): $DefaultPartial {
     return create(parameters).unsafeCoerce();
   }
@@ -4219,7 +4219,7 @@ export namespace $NamedDefaultPartial {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => $NamedDefaultPartial.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
   }): Either<Error, $NamedDefaultPartial> =>
     $sequenceRecord({
@@ -4244,7 +4244,7 @@ export namespace $NamedDefaultPartial {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => $NamedDefaultPartial.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
   }): $NamedDefaultPartial {
     return create(parameters).unsafeCoerce();
@@ -4640,7 +4640,7 @@ export namespace AnonymousTypesStruct {
                         | (() => BlankNode | NamedNode)
                         | BlankNode
                         | NamedNode
-                        | string;
+                        | (keyof $DefaultNamespaceT & string);
                       readonly anonymousStructString: string;
                     }) =>
                       $sequenceRecord({
@@ -4732,7 +4732,7 @@ export namespace AnonymousTypesStruct {
       | (() => AnonymousTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly anonymousStruct?:
       | {
           readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -4740,7 +4740,7 @@ export namespace AnonymousTypesStruct {
             | (() => BlankNode | NamedNode)
             | BlankNode
             | NamedNode
-            | string;
+            | (keyof $DefaultNamespaceT & string);
           readonly anonymousStructString: string;
         }
       | Maybe<{
@@ -4759,7 +4759,7 @@ export namespace AnonymousTypesStruct {
             | (() => BlankNode | NamedNode)
             | BlankNode
             | NamedNode
-            | string;
+            | (keyof $DefaultNamespaceT & string);
           readonly anonymousStructString: string;
         }) =>
           $sequenceRecord({
@@ -4815,7 +4815,7 @@ export namespace AnonymousTypesStruct {
       | (() => AnonymousTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly anonymousStruct?:
       | {
           readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -4823,7 +4823,7 @@ export namespace AnonymousTypesStruct {
             | (() => BlankNode | NamedNode)
             | BlankNode
             | NamedNode
-            | string;
+            | (keyof $DefaultNamespaceT & string);
           readonly anonymousStructString: string;
         }
       | Maybe<{
@@ -5174,7 +5174,7 @@ export namespace AnonymousTypesStruct {
                   | (() => BlankNode | NamedNode)
                   | BlankNode
                   | NamedNode
-                  | string;
+                  | (keyof $DefaultNamespaceT & string);
                 readonly anonymousStructString: string;
               }) =>
                 $sequenceRecord({
@@ -6161,7 +6161,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
       | (() => BlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
   }): Either<Error, BlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
@@ -6198,7 +6198,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
       | (() => BlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
   }): BlankNodeOrIriIdentifierStruct {
     return create(parameters).unsafeCoerce();
@@ -6826,19 +6826,22 @@ export namespace ClassConstraintsStruct {
       | (() => ClassConstraintsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly iriClass?: string | NamedNode | Maybe<NamedNode>;
+      | (keyof $DefaultNamespaceT & string);
+    readonly iriClass?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly multiClass?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
     readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
     readonly singleClass?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
   }): Either<Error, ClassConstraintsStruct> =>
     $sequenceRecord({
@@ -6908,19 +6911,22 @@ export namespace ClassConstraintsStruct {
       | (() => ClassConstraintsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly iriClass?: string | NamedNode | Maybe<NamedNode>;
+      | (keyof $DefaultNamespaceT & string);
+    readonly iriClass?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly multiClass?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
     readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
     readonly singleClass?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
   }): ClassConstraintsStruct {
     return create(parameters).unsafeCoerce();
@@ -7974,17 +7980,20 @@ export namespace ConvertibleTypesStruct {
       | (() => ConvertibleTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly convertibleIri: string | NamedNode;
+      | (keyof $DefaultNamespaceT & string);
+    readonly convertibleIri: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly convertibleIriNonEmptySet:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
-    readonly convertibleIriOption?: string | NamedNode | Maybe<NamedNode>;
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly convertibleIriOption?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly convertibleIriSet?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly convertibleLiteral:
       | bigint
       | boolean
@@ -8145,17 +8154,20 @@ export namespace ConvertibleTypesStruct {
       | (() => ConvertibleTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly convertibleIri: string | NamedNode;
+      | (keyof $DefaultNamespaceT & string);
+    readonly convertibleIri: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly convertibleIriNonEmptySet:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
-    readonly convertibleIriOption?: string | NamedNode | Maybe<NamedNode>;
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly convertibleIriOption?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly convertibleIriSet?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly convertibleLiteral:
       | bigint
       | boolean
@@ -10733,7 +10745,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly dateOrDateTime:
       | { $type: "date"; value: Date }
       | { $type: "dateTime"; value: Date };
@@ -10806,7 +10818,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly dateOrDateTime:
       | { $type: "date"; value: Date }
       | { $type: "dateTime"; value: Date };
@@ -14055,7 +14067,7 @@ export namespace DatesStruct {
       | (() => DatesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly date?: Date | Maybe<Date>;
     readonly dateTime?: Date | Maybe<Date>;
     readonly dateTimeStamp?: Date | Maybe<Date>;
@@ -14106,7 +14118,7 @@ export namespace DatesStruct {
       | (() => DatesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly date?: Date | Maybe<Date>;
     readonly dateTime?: Date | Maybe<Date>;
     readonly dateTimeStamp?: Date | Maybe<Date>;
@@ -14917,7 +14929,7 @@ export namespace DefaultValuesStruct {
       | (() => DefaultValuesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly dateDefaultValue?: Date;
     readonly dateTimeDefaultValue?: Date;
     readonly falseBooleanDefaultValue?: boolean;
@@ -14971,7 +14983,7 @@ export namespace DefaultValuesStruct {
       | (() => DefaultValuesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly dateDefaultValue?: Date;
     readonly dateTimeDefaultValue?: Date;
     readonly falseBooleanDefaultValue?: boolean;
@@ -15818,7 +15830,7 @@ export namespace DirectRecursiveStruct {
       | (() => DirectRecursiveStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly directRecursive?:
       | DirectRecursiveStruct
       | Maybe<DirectRecursiveStruct>;
@@ -15854,7 +15866,7 @@ export namespace DirectRecursiveStruct {
       | (() => DirectRecursiveStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly directRecursive?:
       | DirectRecursiveStruct
       | Maybe<DirectRecursiveStruct>;
@@ -16362,7 +16374,7 @@ export namespace DiscriminatedUnionMember1 {
       | (() => DiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly discriminatedUnionMember1Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
   }): Either<Error, DiscriminatedUnionMember1> =>
@@ -16394,7 +16406,7 @@ export namespace DiscriminatedUnionMember1 {
       | (() => DiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly discriminatedUnionMember1Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
   }): DiscriminatedUnionMember1 {
@@ -16990,7 +17002,7 @@ export namespace DiscriminatedUnionMember2 {
       | (() => DiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly discriminatedUnionMember2Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
   }): Either<Error, DiscriminatedUnionMember2> =>
@@ -17022,7 +17034,7 @@ export namespace DiscriminatedUnionMember2 {
       | (() => DiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly discriminatedUnionMember2Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
   }): DiscriminatedUnionMember2 {
@@ -17630,7 +17642,7 @@ export namespace DisplayStruct {
       | (() => DisplayStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitFalseDisplay: string;
     readonly explicitTrueDisplay: string;
     readonly implicitFalseDisplay: string;
@@ -17657,7 +17669,7 @@ export namespace DisplayStruct {
       | (() => DisplayStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitFalseDisplay: string;
     readonly explicitTrueDisplay: string;
     readonly implicitFalseDisplay: string;
@@ -18252,7 +18264,7 @@ export namespace ExplicitFromToRdfTypesStruct {
       | (() => ExplicitFromToRdfTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitFromToRdfTypesString: string;
   }): Either<Error, ExplicitFromToRdfTypesStruct> =>
     $sequenceRecord({
@@ -18280,7 +18292,7 @@ export namespace ExplicitFromToRdfTypesStruct {
       | (() => ExplicitFromToRdfTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitFromToRdfTypesString: string;
   }): ExplicitFromToRdfTypesStruct {
     return create(parameters).unsafeCoerce();
@@ -18781,7 +18793,7 @@ export namespace ExplicitRdfTypeStruct {
       | (() => ExplicitRdfTypeStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitRdfTypeString: string;
   }): Either<Error, ExplicitRdfTypeStruct> =>
     $sequenceRecord({
@@ -18807,7 +18819,7 @@ export namespace ExplicitRdfTypeStruct {
       | (() => ExplicitRdfTypeStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitRdfTypeString: string;
   }): ExplicitRdfTypeStruct {
     return create(parameters).unsafeCoerce();
@@ -19298,7 +19310,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
       | (() => FlattenDiscriminatedUnionMember3.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly flattenDiscriminatedUnionMember3String: string;
   }): Either<Error, FlattenDiscriminatedUnionMember3> =>
     $sequenceRecord({
@@ -19326,7 +19338,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
       | (() => FlattenDiscriminatedUnionMember3.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly flattenDiscriminatedUnionMember3String: string;
   }): FlattenDiscriminatedUnionMember3 {
     return create(parameters).unsafeCoerce();
@@ -19826,8 +19838,8 @@ export namespace HasValuesStruct {
       | (() => HasValuesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly hasIriValue: string | NamedNode;
+      | (keyof $DefaultNamespaceT & string);
+    readonly hasIriValue: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly hasLiteralValue: string;
   }): Either<Error, HasValuesStruct> =>
     $sequenceRecord({
@@ -19857,8 +19869,8 @@ export namespace HasValuesStruct {
       | (() => HasValuesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly hasIriValue: string | NamedNode;
+      | (keyof $DefaultNamespaceT & string);
+    readonly hasIriValue: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly hasLiteralValue: string;
   }): HasValuesStruct {
     return create(parameters).unsafeCoerce();
@@ -20359,7 +20371,7 @@ export namespace IgnoredPropertiesStruct {
       | (() => IgnoredPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly severityDefaultProperty: string;
     readonly severityViolationProperty: string;
     readonly shaclmateIgnoreFalseProperty: string;
@@ -20393,7 +20405,7 @@ export namespace IgnoredPropertiesStruct {
       | (() => IgnoredPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly severityDefaultProperty: string;
     readonly severityViolationProperty: string;
     readonly shaclmateIgnoreFalseProperty: string;
@@ -20969,7 +20981,7 @@ export namespace IndirectRecursiveStruct {
       | (() => IndirectRecursiveStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly indirectRecursiveHelper?:
       | IndirectRecursiveStructHelper
       | Maybe<IndirectRecursiveStructHelper>;
@@ -21006,7 +21018,7 @@ export namespace IndirectRecursiveStruct {
       | (() => IndirectRecursiveStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly indirectRecursiveHelper?:
       | IndirectRecursiveStructHelper
       | Maybe<IndirectRecursiveStructHelper>;
@@ -21507,7 +21519,7 @@ export namespace IndirectRecursiveStructHelper {
       | (() => IndirectRecursiveStructHelper.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly indirectRecursive?:
       | IndirectRecursiveStruct
       | Maybe<IndirectRecursiveStruct>;
@@ -21544,7 +21556,7 @@ export namespace IndirectRecursiveStructHelper {
       | (() => IndirectRecursiveStructHelper.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly indirectRecursive?:
       | IndirectRecursiveStruct
       | Maybe<IndirectRecursiveStruct>;
@@ -22748,7 +22760,7 @@ export namespace InPropertiesStruct {
       | (() => InPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly inBooleans?: true | Maybe<true>;
     readonly inDateTimes?: Date | Maybe<Date>;
     readonly inDoubles?: 1 | 2 | Maybe<1 | 2>;
@@ -22838,7 +22850,7 @@ export namespace InPropertiesStruct {
       | (() => InPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly inBooleans?: true | Maybe<true>;
     readonly inDateTimes?: Date | Maybe<Date>;
     readonly inDoubles?: 1 | 2 | Maybe<1 | 2>;
@@ -23729,7 +23741,7 @@ export namespace IriIdentifierStruct {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => IriIdentifierStruct.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
     readonly iriIdentifierString?: string | Maybe<string>;
   }): Either<Error, IriIdentifierStruct> =>
@@ -23764,7 +23776,7 @@ export namespace IriIdentifierStruct {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => IriIdentifierStruct.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
     readonly iriIdentifierString?: string | Maybe<string>;
   }): IriIdentifierStruct {
@@ -24243,7 +24255,7 @@ export namespace LanguageInStruct {
       | (() => LanguageInStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly languageInLiteral:
       | bigint
       | boolean
@@ -24284,7 +24296,7 @@ export namespace LanguageInStruct {
       | (() => LanguageInStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly languageInLiteral:
       | bigint
       | boolean
@@ -24761,7 +24773,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
@@ -24787,7 +24799,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): LazilyResolvedBlankNodeOrIriIdentifierStruct {
     return create(parameters).unsafeCoerce();
@@ -25308,7 +25320,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): Either<Error, LazilyResolvedDiscriminatedUnionMember1> =>
     $sequenceRecord({
@@ -25334,7 +25346,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): LazilyResolvedDiscriminatedUnionMember1 {
     return create(parameters).unsafeCoerce();
@@ -25840,7 +25852,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): Either<Error, LazilyResolvedDiscriminatedUnionMember2> =>
     $sequenceRecord({
@@ -25866,7 +25878,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): LazilyResolvedDiscriminatedUnionMember2 {
     return create(parameters).unsafeCoerce();
@@ -26351,7 +26363,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => LazilyResolvedIriIdentifierStruct.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
     readonly lazilyResolved: string;
   }): Either<Error, LazilyResolvedIriIdentifierStruct> =>
@@ -26378,7 +26390,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => LazilyResolvedIriIdentifierStruct.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
     readonly lazilyResolved: string;
   }): LazilyResolvedIriIdentifierStruct {
@@ -27426,7 +27438,7 @@ export namespace LazyPropertiesStruct {
       | (() => LazyPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazyOption<
           $DefaultPartial,
@@ -27596,7 +27608,7 @@ export namespace LazyPropertiesStruct {
       | (() => LazyPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazyOption<
           $DefaultPartial,
@@ -29647,7 +29659,7 @@ export namespace ListSetsStruct {
       | (() => ListSetsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly listDiscriminatedUnionSet?: readonly (
       | readonly string[]
       | string
@@ -29704,7 +29716,7 @@ export namespace ListSetsStruct {
       | (() => ListSetsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly listDiscriminatedUnionSet?: readonly (
       | readonly string[]
       | string
@@ -31020,9 +31032,9 @@ export namespace ListsStruct {
       | (() => ListsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly iriList?:
-      | readonly (string | NamedNode)[]
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
       | Maybe<readonly NamedNode[]>;
     readonly stringList?: readonly string[] | Maybe<readonly string[]>;
     readonly stringListList?:
@@ -31086,9 +31098,9 @@ export namespace ListsStruct {
       | (() => ListsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly iriList?:
-      | readonly (string | NamedNode)[]
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
       | Maybe<readonly NamedNode[]>;
     readonly stringList?: readonly string[] | Maybe<readonly string[]>;
     readonly stringListList?:
@@ -32027,7 +32039,7 @@ export namespace MutablePropertiesStruct {
       | (() => MutablePropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly mutableList?: readonly string[] | Maybe<string[]>;
     readonly mutableSet?: string | readonly string[];
     readonly mutableString?: string | Maybe<string>;
@@ -32080,7 +32092,7 @@ export namespace MutablePropertiesStruct {
       | (() => MutablePropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly mutableList?: readonly string[] | Maybe<string[]>;
     readonly mutableSet?: string | readonly string[];
     readonly mutableString?: string | Maybe<string>;
@@ -32865,7 +32877,7 @@ export namespace NamedTypesStruct {
       | (() => NamedTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly namedDatatype: NamedDatatype;
     readonly namedDiscriminatedUnion1: NamedNode | string;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
@@ -32908,7 +32920,7 @@ export namespace NamedTypesStruct {
       | (() => NamedTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly namedDatatype: NamedDatatype;
     readonly namedDiscriminatedUnion1: NamedNode | string;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
@@ -33634,7 +33646,7 @@ export namespace NewName {
       | (() => NewName.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly newNameString?: string | Maybe<string>;
   }): Either<Error, NewName> =>
     $sequenceRecord({
@@ -33665,7 +33677,7 @@ export namespace NewName {
       | (() => NewName.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly newNameString?: string | Maybe<string>;
   }): NewName {
     return create(parameters).unsafeCoerce();
@@ -34228,11 +34240,14 @@ export namespace NodeKindsStruct {
       | (() => NodeKindsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeKind?: BlankNode;
-    readonly blankNodeOrIriNodeKind?: BlankNode | NamedNode | string;
+    readonly blankNodeOrIriNodeKind?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
-    readonly iriNodeKind: string | NamedNode;
+    readonly iriNodeKind: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly iriOrLiteralNodeKind: NamedNode | Literal;
     readonly literalNodeKind:
       | bigint
@@ -34284,11 +34299,14 @@ export namespace NodeKindsStruct {
       | (() => NodeKindsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeKind?: BlankNode;
-    readonly blankNodeOrIriNodeKind?: BlankNode | NamedNode | string;
+    readonly blankNodeOrIriNodeKind?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
-    readonly iriNodeKind: string | NamedNode;
+    readonly iriNodeKind: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly iriOrLiteralNodeKind: NamedNode | Literal;
     readonly literalNodeKind:
       | bigint
@@ -35154,7 +35172,7 @@ export namespace NonClassStruct {
       | (() => NonClassStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly nonClassString: string;
   }): Either<Error, NonClassStruct> =>
     $sequenceRecord({
@@ -35180,7 +35198,7 @@ export namespace NonClassStruct {
       | (() => NonClassStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly nonClassString: string;
   }): NonClassStruct {
     return create(parameters).unsafeCoerce();
@@ -35581,7 +35599,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly noRdfTypeDiscriminatedUnionMember1String: string;
   }): Either<Error, NoRdfTypeDiscriminatedUnionMember1> =>
     $sequenceRecord({
@@ -35609,7 +35627,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly noRdfTypeDiscriminatedUnionMember1String: string;
   }): NoRdfTypeDiscriminatedUnionMember1 {
     return create(parameters).unsafeCoerce();
@@ -36045,7 +36063,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly noRdfTypeDiscriminatedUnionMember2String: string;
   }): Either<Error, NoRdfTypeDiscriminatedUnionMember2> =>
     $sequenceRecord({
@@ -36073,7 +36091,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly noRdfTypeDiscriminatedUnionMember2String: string;
   }): NoRdfTypeDiscriminatedUnionMember2 {
     return create(parameters).unsafeCoerce();
@@ -36890,7 +36908,7 @@ export namespace NumericsStruct {
       | (() => NumericsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly byteNumeric?: number | Maybe<number>;
     readonly decimalNumeric?: BigDecimal | Maybe<BigDecimal>;
     readonly doubleNumeric?: number | Maybe<number>;
@@ -37074,7 +37092,7 @@ export namespace NumericsStruct {
       | (() => NumericsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly byteNumeric?: number | Maybe<number>;
     readonly decimalNumeric?: BigDecimal | Maybe<BigDecimal>;
     readonly doubleNumeric?: number | Maybe<number>;
@@ -38760,7 +38778,7 @@ export namespace OrderedStruct {
       | (() => OrderedStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly orderedC: string;
     readonly orderedB: string;
     readonly orderedA: string;
@@ -38787,7 +38805,7 @@ export namespace OrderedStruct {
       | (() => OrderedStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly orderedC: string;
     readonly orderedB: string;
     readonly orderedA: string;
@@ -39294,7 +39312,7 @@ export namespace PartialDiscriminatedUnionMember1 {
       | (() => PartialDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): Either<Error, PartialDiscriminatedUnionMember1> =>
     $sequenceRecord({
@@ -39320,7 +39338,7 @@ export namespace PartialDiscriminatedUnionMember1 {
       | (() => PartialDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): PartialDiscriminatedUnionMember1 {
     return create(parameters).unsafeCoerce();
@@ -39808,7 +39826,7 @@ export namespace PartialDiscriminatedUnionMember2 {
       | (() => PartialDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): Either<Error, PartialDiscriminatedUnionMember2> =>
     $sequenceRecord({
@@ -39834,7 +39852,7 @@ export namespace PartialDiscriminatedUnionMember2 {
       | (() => PartialDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): PartialDiscriminatedUnionMember2 {
     return create(parameters).unsafeCoerce();
@@ -40302,7 +40320,7 @@ export namespace PartialStruct {
       | (() => PartialStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): Either<Error, PartialStruct> =>
     $sequenceRecord({
@@ -40325,7 +40343,7 @@ export namespace PartialStruct {
       | (() => PartialStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): PartialStruct {
     return create(parameters).unsafeCoerce();
@@ -40796,7 +40814,7 @@ export namespace PropertyCardinalitiesStruct {
       | (() => PropertyCardinalitiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly emptySet?: string | readonly string[];
     readonly nonEmptySet: string | readonly string[];
     readonly optional?: string | Maybe<string>;
@@ -40852,7 +40870,7 @@ export namespace PropertyCardinalitiesStruct {
       | (() => PropertyCardinalitiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly emptySet?: string | readonly string[];
     readonly nonEmptySet: string | readonly string[];
     readonly optional?: string | Maybe<string>;
@@ -41554,7 +41572,7 @@ export namespace PropertyNamesStruct {
       | (() => PropertyNamesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly actualName1: string;
     readonly actualName2: string;
     readonly actualName3: string;
@@ -41588,7 +41606,7 @@ export namespace PropertyNamesStruct {
       | (() => PropertyNamesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly actualName1: string;
     readonly actualName2: string;
     readonly actualName3: string;
@@ -42304,8 +42322,11 @@ export namespace PropertyPathsStruct {
       | (() => PropertyPathsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly inversePath?: string | NamedNode | Maybe<NamedNode>;
+      | (keyof $DefaultNamespaceT & string);
+    readonly inversePath?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly predicatePath?: string | Maybe<string>;
   }): Either<Error, PropertyPathsStruct> =>
     $sequenceRecord({
@@ -42348,8 +42369,11 @@ export namespace PropertyPathsStruct {
       | (() => PropertyPathsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly inversePath?: string | NamedNode | Maybe<NamedNode>;
+      | (keyof $DefaultNamespaceT & string);
+    readonly inversePath?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly predicatePath?: string | Maybe<string>;
   }): PropertyPathsStruct {
     return create(parameters).unsafeCoerce();
@@ -42934,7 +42958,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       | (() => RecursiveDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly recursiveDiscriminatedUnionMember1Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
@@ -42973,7 +42997,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       | (() => RecursiveDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly recursiveDiscriminatedUnionMember1Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
@@ -43496,7 +43520,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       | (() => RecursiveDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly recursiveDiscriminatedUnionMember2Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
@@ -43535,7 +43559,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       | (() => RecursiveDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly recursiveDiscriminatedUnionMember2Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
@@ -44040,7 +44064,7 @@ export namespace TargetClassStruct {
       | (() => TargetClassStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly targetClassString: string;
   }): Either<Error, TargetClassStruct> =>
     $sequenceRecord({
@@ -44066,7 +44090,7 @@ export namespace TargetClassStruct {
       | (() => TargetClassStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly targetClassString: string;
   }): TargetClassStruct {
     return create(parameters).unsafeCoerce();
@@ -44755,7 +44779,7 @@ export namespace TermsStruct {
       | (() => TermsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeTerm?: BlankNode | Maybe<BlankNode>;
     readonly booleanTerm?: boolean | Maybe<boolean>;
     readonly dateTerm?: Date | Maybe<Date>;
@@ -44764,9 +44788,12 @@ export namespace TermsStruct {
     readonly identifierTerm?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
-    readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
+    readonly iriTerm?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly langStringTerm?: Literal | Maybe<Literal>;
     readonly literalTerm?:
       | bigint
@@ -44899,7 +44926,7 @@ export namespace TermsStruct {
       | (() => TermsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeTerm?: BlankNode | Maybe<BlankNode>;
     readonly booleanTerm?: boolean | Maybe<boolean>;
     readonly dateTerm?: Date | Maybe<Date>;
@@ -44908,9 +44935,12 @@ export namespace TermsStruct {
     readonly identifierTerm?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
-    readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
+    readonly iriTerm?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly langStringTerm?: Literal | Maybe<Literal>;
     readonly literalTerm?:
       | bigint
@@ -48022,7 +48052,7 @@ export namespace UnionDiscriminantsStruct {
       | (() => UnionDiscriminantsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalIriOrString?:
       | NamedNode
       | string
@@ -48240,7 +48270,7 @@ export namespace UnionDiscriminantsStruct {
       | (() => UnionDiscriminantsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalIriOrString?:
       | NamedNode
       | string

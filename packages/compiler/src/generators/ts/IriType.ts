@@ -33,7 +33,10 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
           : code`${this.reusables.snippets.convertToIri}`,
       sourceTypes: [
         {
-          expression: this.valueTypeExpression,
+          expression:
+            this.in_.length > 0
+              ? this.valueTypeExpression
+              : code`(keyof ${this.configuration.syntheticNamePrefix}DefaultNamespaceT & string)`,
           jsType: { typeof: "string" },
         },
         {

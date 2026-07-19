@@ -27,7 +27,7 @@ export class IdentifierType extends AbstractIdentifierType<
         },
         {
           // To NamedNode
-          expression: code`string`,
+          expression: code`(keyof ${this.configuration.syntheticNamePrefix}DefaultNamespaceT & string)`,
           jsType: { typeof: "string" },
         },
         {
