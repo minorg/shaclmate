@@ -9,8 +9,7 @@ export const snippets_convertToList: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToList`,
     code`\
-function ${syntheticNamePrefix}convertToList<ItemSourceT, ItemTargetT, Readonly extends boolean>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>, _readonly: Readonly) {
-  type ItemTargetArrayT = Readonly extends true ? ReadonlyArray<ItemTargetT> : Array<ItemTargetT>;
-  return (value: readonly ItemSourceT[]): ${imports.Either}<Error, ItemTargetArrayT> => ${imports.Either}.sequence(value.map(convertToItem)) as ${imports.Either}<Error, ItemTargetArrayT>;
+function ${syntheticNamePrefix}convertToList<ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>): ${snippets.ConversionFunction}<readonly ItemSourceT[], readonly ItemTargetT[]> {
+  return (value) => ${imports.Either}.sequence(value.map(convertToItem)) as ${imports.Either}<Error, readonly ItemTargetT[]>;
 }`,
   );

@@ -5,7 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AbstractContainerType } from "./AbstractContainerType.js";
 import type { Snippet } from "./Snippet.js";
-import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class SetType<
   ItemTypeT extends SetType.ItemType,
@@ -49,9 +49,13 @@ export class SetType<
           sourceType.jsType.instanceof === "Array",
       )
     ) {
-      conversionFunction = this.reusables.snippets.convertToArraySet;
+      conversionFunction = this._mutable
+        ? this.reusables.snippets.convertToMutableArraySet
+        : this.reusables.snippets.convertToArraySet;
     } else {
-      conversionFunction = this.reusables.snippets.convertToScalarSet;
+      conversionFunction = this._mutable
+        ? this.reusables.snippets.convertToMutableScalarSet
+        : this.reusables.snippets.convertToScalarSet;
       // Convert from a single item
       sourceTypes.push(...itemConversionFunction.sourceTypes);
     }
@@ -76,7 +80,7 @@ export class SetType<
     }
 
     return Maybe.of({
-      code: code`${conversionFunction}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
+      code: code`${conversionFunction}(${itemConversionFunction.code})`,
       sourceTypes,
     });
   }

@@ -36,6 +36,9 @@ import { snippets_convertToLazySet } from "./_snippets/snippets_convertToLazySet
 import { snippets_convertToList } from "./_snippets/snippets_convertToList.js";
 import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
 import { snippets_convertToMaybe } from "./_snippets/snippets_convertToMaybe.js";
+import { snippets_convertToMutableArraySet } from "./_snippets/snippets_convertToMutableArraySet.js";
+import { snippets_convertToMutableList } from "./_snippets/snippets_convertToMutableList.js";
+import { snippets_convertToMutableScalarSet } from "./_snippets/snippets_convertToMutableScalarSet.js";
 import { snippets_convertToScalarSet } from "./_snippets/snippets_convertToScalarSet.js";
 import { snippets_convertWithDefaultValue } from "./_snippets/snippets_convertWithDefaultValue.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
@@ -574,6 +577,21 @@ export class Snippets {
   @Memoize()
   get convertToMaybe(): Snippet {
     return this.snippet(snippets_convertToMaybe);
+  }
+
+  @Memoize()
+  get convertToMutableArraySet(): Snippet {
+    return this.snippet(snippets_convertToMutableArraySet);
+  }
+
+  @Memoize()
+  get convertToMutableList(): Snippet {
+    return this.snippet(snippets_convertToMutableList);
+  }
+
+  @Memoize()
+  get convertToMutableScalarSet(): Snippet {
+    return this.snippet(snippets_convertToMutableScalarSet);
   }
 
   @Memoize()

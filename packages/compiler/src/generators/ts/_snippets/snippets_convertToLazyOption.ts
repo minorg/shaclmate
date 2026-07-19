@@ -12,7 +12,7 @@ export const snippets_convertToLazyOption: SnippetFactory = ({
 function ${syntheticNamePrefix}convertToLazyOption<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT
-): ${snippets.ConversionFunction}<${snippets.LazyOption}<PartialT, ResolvedT> | ${imports.Maybe}<PartialT> | ${imports.Maybe}<ResolvedT> | PartialT | ResolvedT | undefined, ${snippets.LazyOption}<PartialT, ResolvedT>>  {
+): ${snippets.ConversionFunction}<${snippets.LazyOption}<PartialT, ResolvedT> | ${imports.Maybe}<PartialT> | ${imports.Maybe}<ResolvedT> | PartialT | ResolvedT | undefined, ${snippets.LazyOption}<PartialT, ResolvedT>> {
   return (value) => {
     if (value instanceof ${snippets.LazyOption}) {
       return ${imports.Either}.of(value);

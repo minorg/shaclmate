@@ -363,21 +363,18 @@ type $ConversionFunction<SourceT, TargetT> = (
   source: SourceT,
 ) => Either<Error, TargetT>;
 
-function $convertToArraySet<ItemSourceT, ItemTargetT, Readonly extends boolean>(
+function $convertToArraySet<ItemSourceT, ItemTargetT>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type ItemTargetArrayT = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (
-    value: readonly ItemSourceT[] | undefined,
-  ): Either<Error, ItemTargetArrayT> =>
+): $ConversionFunction<
+  readonly ItemSourceT[] | undefined,
+  readonly ItemTargetT[]
+> {
+  return (value) =>
     (typeof value === "undefined"
       ? Either.of([])
       : Either.sequence(value.map(convertToItem))) as Either<
       Error,
-      ItemTargetArrayT
+      readonly ItemTargetT[]
     >;
 }
 
@@ -494,10 +491,11 @@ const $convertToLangString: $ConversionFunction<Literal, Literal> = (value) => {
 function $convertToLazy<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
-) {
-  return (
-    value: $Lazy<PartialT, ResolvedT> | PartialT | ResolvedT,
-  ): Either<Error, $Lazy<PartialT, ResolvedT>> => {
+): $ConversionFunction<
+  $Lazy<PartialT, ResolvedT> | PartialT | ResolvedT,
+  $Lazy<PartialT, ResolvedT>
+> {
+  return (value) => {
     if (value instanceof $Lazy) {
       return Either.of(value);
     }
@@ -525,16 +523,16 @@ function $convertToLazy<PartialT, ResolvedT>(
 function $convertToLazyOption<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
-) {
-  return (
-    value:
-      | $LazyOption<PartialT, ResolvedT>
-      | Maybe<PartialT>
-      | Maybe<ResolvedT>
-      | PartialT
-      | ResolvedT
-      | undefined,
-  ): Either<Error, $LazyOption<PartialT, ResolvedT>> => {
+): $ConversionFunction<
+  | $LazyOption<PartialT, ResolvedT>
+  | Maybe<PartialT>
+  | Maybe<ResolvedT>
+  | PartialT
+  | ResolvedT
+  | undefined,
+  $LazyOption<PartialT, ResolvedT>
+> {
+  return (value) => {
     if (value instanceof $LazyOption) {
       return Either.of(value);
     }
@@ -582,16 +580,16 @@ function $convertToLazyOption<PartialT, ResolvedT>(
 function $convertToLazySet<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
-) {
-  return (
-    value:
-      | $LazySet<PartialT, ResolvedT>
-      | readonly PartialT[]
-      | readonly ResolvedT[]
-      | PartialT
-      | ResolvedT
-      | undefined,
-  ): Either<Error, $LazySet<PartialT, ResolvedT>> => {
+): $ConversionFunction<
+  | $LazySet<PartialT, ResolvedT>
+  | readonly PartialT[]
+  | readonly ResolvedT[]
+  | PartialT
+  | ResolvedT
+  | undefined,
+  $LazySet<PartialT, ResolvedT>
+> {
+  return (value) => {
     if (typeof value === "undefined") {
       return Either.of(
         new $LazySet<PartialT, ResolvedT>({
@@ -629,17 +627,13 @@ function $convertToLazySet<PartialT, ResolvedT>(
   };
 }
 
-function $convertToList<ItemSourceT, ItemTargetT, Readonly extends boolean>(
+function $convertToList<ItemSourceT, ItemTargetT>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type ItemTargetArrayT = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (value: readonly ItemSourceT[]): Either<Error, ItemTargetArrayT> =>
+): $ConversionFunction<readonly ItemSourceT[], readonly ItemTargetT[]> {
+  return (value) =>
     Either.sequence(value.map(convertToItem)) as Either<
       Error,
-      ItemTargetArrayT
+      readonly ItemTargetT[]
     >;
 }
 
@@ -679,42 +673,64 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
   };
 }
 
-function $convertToScalarSet<
-  ItemSourceT,
-  ItemTargetT,
-  Readonly extends boolean,
->(
+function $convertToMutableList<ItemSourceT, ItemTargetT>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type ItemTargetArrayT = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (
-    value: ItemSourceT | readonly ItemSourceT[] | undefined,
-  ): Either<Error, ItemTargetArrayT> => {
+): $ConversionFunction<readonly ItemSourceT[], ItemTargetT[]> {
+  return (value) =>
+    Either.sequence(value.map(convertToItem)) as Either<Error, ItemTargetT[]>;
+}
+
+function $convertToMutableScalarSet<ItemSourceT, ItemTargetT>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+): $ConversionFunction<
+  ItemSourceT | readonly ItemSourceT[] | undefined,
+  ItemTargetT[]
+> {
+  return (value) => {
     if (typeof value === "undefined") {
-      return Either.of<Error, ItemTargetArrayT>(
-        [] as unknown as ItemTargetArrayT,
+      return Either.of<Error, ItemTargetT[]>([] as unknown as ItemTargetT[]);
+    }
+    if (Array.isArray(value)) {
+      return Either.sequence(value.map(convertToItem)) as Either<
+        Error,
+        ItemTargetT[]
+      >;
+    }
+    return convertToItem(value as ItemSourceT).map((value) => [
+      value,
+    ]) as Either<Error, ItemTargetT[]>;
+  };
+}
+
+function $convertToScalarSet<ItemSourceT, ItemTargetT>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+): $ConversionFunction<
+  ItemSourceT | readonly ItemSourceT[] | undefined,
+  readonly ItemTargetT[]
+> {
+  return (value) => {
+    if (typeof value === "undefined") {
+      return Either.of<Error, readonly ItemTargetT[]>(
+        [] as unknown as readonly ItemTargetT[],
       );
     }
     if (Array.isArray(value)) {
       return Either.sequence(value.map(convertToItem)) as Either<
         Error,
-        ItemTargetArrayT
+        readonly ItemTargetT[]
       >;
     }
     return convertToItem(value as ItemSourceT).map((value) => [
       value,
-    ]) as Either<Error, ItemTargetArrayT>;
+    ]) as Either<Error, readonly ItemTargetT[]>;
   };
 }
 
 function $convertWithDefaultValue<ItemSourceT, ItemTargetT>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
   defaultValue: ItemSourceT,
-) {
-  return (value: ItemSourceT | undefined): Either<Error, ItemTargetT> => {
+): $ConversionFunction<ItemSourceT | undefined, ItemTargetT> {
+  return (value) => {
     if (typeof value === "undefined") {
       return convertToItem(defaultValue);
     }
@@ -7838,10 +7854,9 @@ export namespace ConvertibleTypesStruct {
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       convertibleIri: $convertToIri<string>(parameters.convertibleIri),
-      convertibleIriNonEmptySet: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.convertibleIriNonEmptySet).chain((value) =>
+      convertibleIriNonEmptySet: $convertToScalarSet($convertToIri<string>)(
+        parameters.convertibleIriNonEmptySet,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet
             .type,
@@ -7856,20 +7871,18 @@ export namespace ConvertibleTypesStruct {
           value,
         ),
       ),
-      convertibleIriSet: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.convertibleIriSet).chain((value) =>
+      convertibleIriSet: $convertToScalarSet($convertToIri<string>)(
+        parameters.convertibleIriSet,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           ConvertibleTypesStruct.schema.properties.convertibleIriSet.type,
           value,
         ),
       ),
       convertibleLiteral: $convertToLiteral(parameters.convertibleLiteral),
-      convertibleLiteralNonEmptySet: $convertToScalarSet(
-        $convertToLiteral,
-        true,
-      )(parameters.convertibleLiteralNonEmptySet).chain((value) =>
+      convertibleLiteralNonEmptySet: $convertToScalarSet($convertToLiteral)(
+        parameters.convertibleLiteralNonEmptySet,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralNonEmptySet
             .type,
@@ -7885,10 +7898,9 @@ export namespace ConvertibleTypesStruct {
           value,
         ),
       ),
-      convertibleLiteralSet: $convertToScalarSet(
-        $convertToLiteral,
-        true,
-      )(parameters.convertibleLiteralSet).chain((value) =>
+      convertibleLiteralSet: $convertToScalarSet($convertToLiteral)(
+        parameters.convertibleLiteralSet,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralSet.type,
           value,
@@ -7897,7 +7909,6 @@ export namespace ConvertibleTypesStruct {
       convertibleTerm: Either.of(parameters.convertibleTerm),
       convertibleTermNonEmptySet: $convertToScalarSet(
         $identityConversionFunction,
-        true,
       )(parameters.convertibleTermNonEmptySet).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet
@@ -7913,10 +7924,9 @@ export namespace ConvertibleTypesStruct {
           value,
         ),
       ),
-      convertibleTermSet: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.convertibleTermSet).chain((value) =>
+      convertibleTermSet: $convertToScalarSet($identityConversionFunction)(
+        parameters.convertibleTermSet,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           ConvertibleTypesStruct.schema.properties.convertibleTermSet.type,
           value,
@@ -23905,10 +23915,9 @@ export namespace LanguageInStruct {
   }) => Either<Error, LanguageInStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      languageInLiteral: $convertToScalarSet(
-        $convertToLiteral,
-        true,
-      )(parameters.languageInLiteral).chain((value) =>
+      languageInLiteral: $convertToScalarSet($convertToLiteral)(
+        parameters.languageInLiteral,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           LanguageInStruct.schema.properties.languageInLiteral.type,
           value,
@@ -29271,7 +29280,6 @@ export namespace ListSetsStruct {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       listDiscriminatedUnionSet: $convertToArraySet(
         $identityConversionFunction,
-        true,
       )(parameters?.listDiscriminatedUnionSet).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           ListSetsStruct.schema.properties.listDiscriminatedUnionSet.type,
@@ -29279,8 +29287,7 @@ export namespace ListSetsStruct {
         ),
       ),
       listListSet: $convertToArraySet(
-        $convertToList($convertToList($identityConversionFunction, true), true),
-        true,
+        $convertToList($convertToList($identityConversionFunction)),
       )(parameters?.listListSet).chain((value) =>
         $validateArray(
           $validateArray(
@@ -29290,10 +29297,9 @@ export namespace ListSetsStruct {
           true,
         )(ListSetsStruct.schema.properties.listListSet.type, value),
       ),
-      listSet: $convertToArraySet(
-        $convertToList($identityConversionFunction, true),
-        true,
-      )(parameters?.listSet).chain((value) =>
+      listSet: $convertToArraySet($convertToList($identityConversionFunction))(
+        parameters?.listSet,
+      ).chain((value) =>
         $validateArray($validateArray($identityValidationFunction, true), true)(
           ListSetsStruct.schema.properties.listSet.type,
           value,
@@ -30643,7 +30649,7 @@ export namespace ListsStruct {
   }) => Either<Error, ListsStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      iriList: $convertToMaybe($convertToList($convertToIri<string>, true))(
+      iriList: $convertToMaybe($convertToList($convertToIri<string>))(
         parameters?.iriList,
       ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
@@ -30651,16 +30657,16 @@ export namespace ListsStruct {
           value,
         ),
       ),
-      stringList: $convertToMaybe(
-        $convertToList($identityConversionFunction, true),
-      )(parameters?.stringList).chain((value) =>
+      stringList: $convertToMaybe($convertToList($identityConversionFunction))(
+        parameters?.stringList,
+      ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           ListsStruct.schema.properties.stringList.type,
           value,
         ),
       ),
       stringListList: $convertToMaybe(
-        $convertToList($convertToList($identityConversionFunction, true), true),
+        $convertToList($convertToList($identityConversionFunction)),
       )(parameters?.stringListList).chain((value) =>
         $validateMaybe(
           $validateArray(
@@ -30669,9 +30675,9 @@ export namespace ListsStruct {
           ),
         )(ListsStruct.schema.properties.stringListList.type, value),
       ),
-      structList: $convertToMaybe(
-        $convertToList($identityConversionFunction, true),
-      )(parameters?.structList).chain((value) =>
+      structList: $convertToMaybe($convertToList($identityConversionFunction))(
+        parameters?.structList,
+      ).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, true))(
           ListsStruct.schema.properties.structList.type,
           value,
@@ -31637,17 +31643,16 @@ export namespace MutablePropertiesStruct {
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       mutableList: $convertToMaybe(
-        $convertToList($identityConversionFunction, false),
+        $convertToMutableList($identityConversionFunction),
       )(parameters?.mutableList).chain((value) =>
         $validateMaybe($validateArray($identityValidationFunction, false))(
           MutablePropertiesStruct.schema.properties.mutableList.type,
           value,
         ),
       ),
-      mutableSet: $convertToScalarSet(
-        $identityConversionFunction,
-        false,
-      )(parameters?.mutableSet).chain((value) =>
+      mutableSet: $convertToMutableScalarSet($identityConversionFunction)(
+        parameters?.mutableSet,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, false)(
           MutablePropertiesStruct.schema.properties.mutableSet.type,
           value,
@@ -40301,19 +40306,17 @@ export namespace PropertyCardinalitiesStruct {
   }) => Either<Error, PropertyCardinalitiesStruct> = (parameters) =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      emptySet: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.emptySet).chain((value) =>
+      emptySet: $convertToScalarSet($identityConversionFunction)(
+        parameters.emptySet,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           PropertyCardinalitiesStruct.schema.properties.emptySet.type,
           value,
         ),
       ),
-      nonEmptySet: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.nonEmptySet).chain((value) =>
+      nonEmptySet: $convertToScalarSet($identityConversionFunction)(
+        parameters.nonEmptySet,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           PropertyCardinalitiesStruct.schema.properties.nonEmptySet.type,
           value,
@@ -47491,37 +47494,33 @@ export namespace UnionDiscriminantsStruct {
         parameters.requiredNodeOrNodeOrString,
       ),
       requiredTerm: $identityConversionFunction(parameters.requiredTerm),
-      setIriOrString: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.setIriOrString).chain((value) =>
+      setIriOrString: $convertToScalarSet($identityConversionFunction)(
+        parameters.setIriOrString,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           UnionDiscriminantsStruct.schema.properties.setIriOrString.type,
           value,
         ),
       ),
-      setNodeOrLiteral: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.setNodeOrLiteral).chain((value) =>
+      setNodeOrLiteral: $convertToScalarSet($identityConversionFunction)(
+        parameters.setNodeOrLiteral,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.type,
           value,
         ),
       ),
-      setNodeOrNodeOrString: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.setNodeOrNodeOrString).chain((value) =>
+      setNodeOrNodeOrString: $convertToScalarSet($identityConversionFunction)(
+        parameters.setNodeOrNodeOrString,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.type,
           value,
         ),
       ),
-      setTerm: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.setTerm).chain((value) =>
+      setTerm: $convertToScalarSet($identityConversionFunction)(
+        parameters.setTerm,
+      ).chain((value) =>
         $validateArray($identityValidationFunction, true)(
           UnionDiscriminantsStruct.schema.properties.setTerm.type,
           value,
