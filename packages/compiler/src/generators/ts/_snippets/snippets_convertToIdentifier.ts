@@ -9,12 +9,12 @@ export const snippets_convertToIdentifier: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIdentifier`,
     code`\
-const ${syntheticNamePrefix}convertToIdentifier: ${snippets.ConversionFunction}<${imports.BlankNode} | ${imports.NamedNode} | string | undefined, ${imports.BlankNode} | ${imports.NamedNode}> = (value) => {
+function ${syntheticNamePrefix}convertToIdentifier<DefaultNamespaceT extends ${snippets.NamespaceBuilder} = ${snippets.NamespaceBuilder}>(value: (keyof DefaultNamespaceT & string) | ${imports.BlankNode} | ${imports.NamedNode} | undefined, defaultNamespace?: DefaultNamespaceT): ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}> {
   switch (typeof value) {
     case "object":
       return ${imports.Either}.of(value);
     case "string":
-      return ${imports.Either}.of(${imports.dataFactory}.namedNode(value));
+      return ${imports.Either}.of(defaultNamespace ? defaultNamespace(value) : ${imports.dataFactory}.namedNode(value));
     case "undefined":
       return ${imports.Either}.of(${imports.dataFactory}.blankNode());
   }

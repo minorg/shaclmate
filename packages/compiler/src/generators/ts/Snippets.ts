@@ -27,6 +27,7 @@ import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlank
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
+import { snippets_convertToInIri } from "./_snippets/snippets_convertToInIri.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
 import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
 import { snippets_convertToLangString } from "./_snippets/snippets_convertToLangString.js";
@@ -539,6 +540,11 @@ export class Snippets {
   @Memoize()
   get convertToIdentifierProperty(): Snippet {
     return this.snippet(snippets_convertToIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToInIri(): Snippet {
+    return this.snippet(snippets_convertToInIri);
   }
 
   @Memoize()

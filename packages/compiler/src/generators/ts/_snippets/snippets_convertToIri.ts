@@ -9,12 +9,12 @@ export const snippets_convertToIri: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIri`,
     code`\
-function ${syntheticNamePrefix}convertToIri<IriT extends string, DefaultNamespaceT extends ${snippets.NamespaceBuilder} = ${snippets.NamespaceBuilder}>(value: IriT | ${imports.NamedNode}<IriT>, _defaultNamespace?: DefaultNamespaceT): ${imports.Either}<Error, ${imports.NamedNode}<IriT>> {
+function ${syntheticNamePrefix}convertToIri<DefaultNamespaceT extends ${snippets.NamespaceBuilder} = ${snippets.NamespaceBuilder}>(value: (keyof DefaultNamespaceT & string) | ${imports.NamedNode}, defaultNamespace?: DefaultNamespaceT): ${imports.Either}<Error, ${imports.NamedNode}> {
   switch (typeof value) {
     case "object":
       return ${imports.Either}.of(value);
     case "string":
-      return ${imports.Either}.of(${imports.dataFactory}.namedNode<IriT>(value));
+      return ${imports.Either}.of(defaultNamespace ? defaultNamespace(value) : ${imports.dataFactory}.namedNode(value));
   }
 }`,
   );

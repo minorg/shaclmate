@@ -421,19 +421,25 @@ const $convertToBlankNodeIdentifierProperty: $ConversionFunction<
   }
 };
 
-const $convertToIdentifier: $ConversionFunction<
-  BlankNode | NamedNode | string | undefined,
-  BlankNode | NamedNode
-> = (value) => {
+function $convertToIdentifier<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  value: (keyof DefaultNamespaceT & string) | BlankNode | NamedNode | undefined,
+  defaultNamespace?: DefaultNamespaceT,
+): Either<Error, BlankNode | NamedNode> {
   switch (typeof value) {
     case "object":
       return Either.of(value);
     case "string":
-      return Either.of(dataFactory.namedNode(value));
+      return Either.of(
+        defaultNamespace
+          ? defaultNamespace(value)
+          : dataFactory.namedNode(value),
+      );
     case "undefined":
       return Either.of(dataFactory.blankNode());
   }
-};
+}
 
 const $convertToIdentifierProperty: $ConversionFunction<
   (() => BlankNode | NamedNode) | BlankNode | NamedNode | string | undefined,
@@ -457,7 +463,7 @@ const $convertToIdentifierProperty: $ConversionFunction<
   }
 };
 
-function $convertToIri<
+function $convertToInIri<
   IriT extends string,
   DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
 >(
@@ -469,6 +475,24 @@ function $convertToIri<
       return Either.of(value);
     case "string":
       return Either.of(dataFactory.namedNode<IriT>(value));
+  }
+}
+
+function $convertToIri<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  value: (keyof DefaultNamespaceT & string) | NamedNode,
+  defaultNamespace?: DefaultNamespaceT,
+): Either<Error, NamedNode> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "string":
+      return Either.of(
+        defaultNamespace
+          ? defaultNamespace(value)
+          : dataFactory.namedNode(value),
+      );
   }
 }
 
@@ -6819,7 +6843,7 @@ export namespace ClassConstraintsStruct {
   }): Either<Error, ClassConstraintsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      iriClass: $convertToMaybe($convertToIri<string>)(
+      iriClass: $convertToMaybe($convertToIri)(
         parameters?.iriClass,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -8005,11 +8029,11 @@ export namespace ConvertibleTypesStruct {
   }): Either<Error, ConvertibleTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      convertibleIri: $convertToIri<string>(
+      convertibleIri: $convertToIri(
         parameters.convertibleIri,
         parameters.$defaultNamespace,
       ),
-      convertibleIriNonEmptySet: $convertToScalarSet($convertToIri<string>)(
+      convertibleIriNonEmptySet: $convertToScalarSet($convertToIri)(
         parameters.convertibleIriNonEmptySet,
         parameters.$defaultNamespace,
       ).chain((value) =>
@@ -8019,7 +8043,7 @@ export namespace ConvertibleTypesStruct {
           value,
         ),
       ),
-      convertibleIriOption: $convertToMaybe($convertToIri<string>)(
+      convertibleIriOption: $convertToMaybe($convertToIri)(
         parameters.convertibleIriOption,
         parameters.$defaultNamespace,
       ).chain((value) =>
@@ -8028,7 +8052,7 @@ export namespace ConvertibleTypesStruct {
           value,
         ),
       ),
-      convertibleIriSet: $convertToScalarSet($convertToIri<string>)(
+      convertibleIriSet: $convertToScalarSet($convertToIri)(
         parameters.convertibleIriSet,
         parameters.$defaultNamespace,
       ).chain((value) =>
@@ -19808,7 +19832,7 @@ export namespace HasValuesStruct {
   }): Either<Error, HasValuesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      hasIriValue: $convertToIri<string>(
+      hasIriValue: $convertToIri(
         parameters.hasIriValue,
         parameters.$defaultNamespace,
       ),
@@ -22776,7 +22800,7 @@ export namespace InPropertiesStruct {
         ),
       ),
       inIris: $convertToMaybe(
-        $convertToIri<
+        $convertToInIri<
           "http://example.com/InIri1" | "http://example.com/InIri2"
         >,
       )(parameters?.inIris, parameters?.$defaultNamespace).chain((value) =>
@@ -31010,7 +31034,7 @@ export namespace ListsStruct {
   }): Either<Error, ListsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      iriList: $convertToMaybe($convertToList($convertToIri<string>))(
+      iriList: $convertToMaybe($convertToList($convertToIri))(
         parameters?.iriList,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -32859,7 +32883,7 @@ export namespace NamedTypesStruct {
         parameters.namedDiscriminatedUnion2,
         parameters.$defaultNamespace,
       ),
-      namedInIri: $convertToIri<NamedInIri["value"]>(
+      namedInIri: $convertToInIri<NamedInIri["value"]>(
         parameters.namedInIri,
         parameters.$defaultNamespace,
       ),
@@ -34231,7 +34255,7 @@ export namespace NodeKindsStruct {
       blankNodeOrLiteralNodeKind: Either.of(
         parameters.blankNodeOrLiteralNodeKind,
       ),
-      iriNodeKind: $convertToIri<string>(
+      iriNodeKind: $convertToIri(
         parameters.iriNodeKind,
         parameters.$defaultNamespace,
       ),
@@ -42286,7 +42310,7 @@ export namespace PropertyPathsStruct {
   }): Either<Error, PropertyPathsStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      inversePath: $convertToMaybe($convertToIri<string>)(
+      inversePath: $convertToMaybe($convertToIri)(
         parameters?.inversePath,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -44451,13 +44475,15 @@ export type TermsStruct = {
 
   readonly dateTimeTerm: Maybe<Date>;
 
+  readonly doubleTerm: Maybe<number>;
+
+  readonly identifierTerm: Maybe<BlankNode | NamedNode>;
+
   readonly iriTerm: Maybe<NamedNode>;
 
   readonly langStringTerm: Maybe<Literal>;
 
   readonly literalTerm: Maybe<Literal>;
-
-  readonly numberTerm: Maybe<number>;
 
   readonly stringTerm: Maybe<string>;
 
@@ -44536,6 +44562,32 @@ export namespace TermsStruct {
             $DateSchema
           >($dateTimeFromRdfResourceValues),
         }),
+        doubleTerm: $shaclPropertyFromRdf<
+          Maybe<number>,
+          $MaybeSchema<$NumericSchema<number>>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: TermsStruct.schema.properties.doubleTerm,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            number,
+            $NumericSchema<number>
+          >($floatFromRdfResourceValues<number>),
+        }),
+        identifierTerm: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode>,
+          $MaybeSchema<$IdentifierSchema>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: TermsStruct.schema.properties.identifierTerm,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
+        }),
         iriTerm: $shaclPropertyFromRdf<
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
@@ -44574,19 +44626,6 @@ export namespace TermsStruct {
             Literal,
             $LiteralSchema
           >($literalFromRdfResourceValues),
-        }),
-        numberTerm: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.numberTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($floatFromRdfResourceValues<number>),
         }),
         stringTerm: $shaclPropertyFromRdf<
           Maybe<string>,
@@ -44661,6 +44700,20 @@ export namespace TermsStruct {
       parameters.graph,
     );
     parameters.resource.add(
+      TermsStruct.schema.properties.doubleTerm.path,
+      parameters.object.doubleTerm
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
+        ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      TermsStruct.schema.properties.identifierTerm.path,
+      parameters.object.identifierTerm.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
       TermsStruct.schema.properties.iriTerm.path,
       parameters.object.iriTerm.toList(),
       parameters.graph,
@@ -44673,15 +44726,6 @@ export namespace TermsStruct {
     parameters.resource.add(
       TermsStruct.schema.properties.literalTerm.path,
       parameters.object.literalTerm.toList(),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      TermsStruct.schema.properties.numberTerm.path,
-      parameters.object.numberTerm
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -44716,6 +44760,12 @@ export namespace TermsStruct {
     readonly booleanTerm?: boolean | Maybe<boolean>;
     readonly dateTerm?: Date | Maybe<Date>;
     readonly dateTimeTerm?: Date | Maybe<Date>;
+    readonly doubleTerm?: number | Maybe<number>;
+    readonly identifierTerm?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
     readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
     readonly langStringTerm?: Literal | Maybe<Literal>;
     readonly literalTerm?:
@@ -44726,7 +44776,6 @@ export namespace TermsStruct {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly numberTerm?: number | Maybe<number>;
     readonly stringTerm?: string | Maybe<string>;
     readonly term?:
       | (BlankNode | NamedNode | Literal)
@@ -44770,7 +44819,25 @@ export namespace TermsStruct {
           value,
         ),
       ),
-      iriTerm: $convertToMaybe($convertToIri<string>)(
+      doubleTerm: $convertToMaybe($identityConversionFunction)(
+        parameters?.doubleTerm,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermsStruct.schema.properties.doubleTerm.type,
+          value,
+        ),
+      ),
+      identifierTerm: $convertToMaybe($convertToIdentifier)(
+        parameters?.identifierTerm,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermsStruct.schema.properties.identifierTerm.type,
+          value,
+        ),
+      ),
+      iriTerm: $convertToMaybe($convertToIri)(
         parameters?.iriTerm,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -44794,15 +44861,6 @@ export namespace TermsStruct {
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.literalTerm.type,
-          value,
-        ),
-      ),
-      numberTerm: $convertToMaybe($identityConversionFunction)(
-        parameters?.numberTerm,
-        parameters?.$defaultNamespace,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          TermsStruct.schema.properties.numberTerm.type,
           value,
         ),
       ),
@@ -44846,6 +44904,12 @@ export namespace TermsStruct {
     readonly booleanTerm?: boolean | Maybe<boolean>;
     readonly dateTerm?: Date | Maybe<Date>;
     readonly dateTimeTerm?: Date | Maybe<Date>;
+    readonly doubleTerm?: number | Maybe<number>;
+    readonly identifierTerm?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
     readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
     readonly langStringTerm?: Literal | Maybe<Literal>;
     readonly literalTerm?:
@@ -44856,7 +44920,6 @@ export namespace TermsStruct {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly numberTerm?: number | Maybe<number>;
     readonly stringTerm?: string | Maybe<string>;
     readonly term?:
       | (BlankNode | NamedNode | Literal)
@@ -44922,6 +44985,28 @@ export namespace TermsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "doubleTerm",
+          },
+          [left, left.doubleTerm],
+          [right, right.doubleTerm],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "identifierTerm",
+          },
+          [left, left.identifierTerm],
+          [right, right.identifierTerm],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
               $maybeEquals(left, right, $booleanEquals),
             name: "iriTerm",
           },
@@ -44949,17 +45034,6 @@ export namespace TermsStruct {
           },
           [left, left.literalTerm],
           [right, right.literalTerm],
-        ),
-      )
-      .chain(() =>
-        $propertyEquals(
-          {
-            equalsFunction: (left, right) =>
-              $maybeEquals(left, right, $strictEquals),
-            name: "numberTerm",
-          },
-          [left, left.numberTerm],
-          [right, right.numberTerm],
         ),
       )
       .chain(() =>
@@ -45032,6 +45106,23 @@ export namespace TermsStruct {
       return false;
     }
     if (
+      filter.doubleTerm !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.doubleTerm,
+        value.doubleTerm,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.identifierTerm !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
+        $filterIdentifier,
+      )(filter.identifierTerm, value.identifierTerm)
+    ) {
+      return false;
+    }
+    if (
       filter.iriTerm !== undefined &&
       !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.iriTerm,
@@ -45054,15 +45145,6 @@ export namespace TermsStruct {
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.literalTerm,
         value.literalTerm,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.numberTerm !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.numberTerm,
-        value.numberTerm,
       )
     ) {
       return false;
@@ -45094,10 +45176,11 @@ export namespace TermsStruct {
     readonly booleanTerm?: $MaybeFilter<$BooleanFilter>;
     readonly dateTerm?: $MaybeFilter<$DateFilter>;
     readonly dateTimeTerm?: $MaybeFilter<$DateFilter>;
+    readonly doubleTerm?: $MaybeFilter<$NumericFilter<number>>;
+    readonly identifierTerm?: $MaybeFilter<$IdentifierFilter>;
     readonly iriTerm?: $MaybeFilter<$IriFilter>;
     readonly langStringTerm?: $MaybeFilter<$LiteralFilter>;
     readonly literalTerm?: $MaybeFilter<$LiteralFilter>;
-    readonly numberTerm?: $MaybeFilter<$NumericFilter<number>>;
     readonly stringTerm?: $MaybeFilter<$StringFilter>;
     readonly term?: $MaybeFilter<$TermFilter<BlankNode | NamedNode | Literal>>;
   };
@@ -45178,6 +45261,34 @@ export namespace TermsStruct {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.doubleTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "doubleTerm",
+        propertySchema: TermsStruct.schema.properties.doubleTerm,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.identifierTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "identifierTerm",
+        propertySchema: TermsStruct.schema.properties.identifierTerm,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.iriTerm,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -45214,20 +45325,6 @@ export namespace TermsStruct {
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $LiteralFilter,
           $LiteralSchema
-        >((_: object) => []),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.numberTerm,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "numberTerm",
-        propertySchema: TermsStruct.schema.properties.numberTerm,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $NumericFilter<number>,
-          $NumericSchema<number>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -45384,6 +45481,36 @@ export namespace TermsStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.doubleTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "doubleTerm",
+        propertySchema: TermsStruct.schema.properties.doubleTerm,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.identifierTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "identifierTerm",
+        propertySchema: TermsStruct.schema.properties.identifierTerm,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >($identifierSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.iriTerm,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -45424,21 +45551,6 @@ export namespace TermsStruct {
           $LiteralFilter,
           $LiteralSchema
         >($literalSparqlWherePatterns),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.numberTerm,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "numberTerm",
-        propertySchema: TermsStruct.schema.properties.numberTerm,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $NumericFilter<number>,
-          $NumericSchema<number>
-        >($numericSparqlWherePatterns<number>),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -45504,6 +45616,18 @@ export namespace TermsStruct {
           Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
+      doubleTerm: Maybe.fromNullable($json["doubleTerm"])
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      identifierTerm: Maybe.fromNullable($json["identifierTerm"])
+        .map((item) =>
+          Either.of<Error, BlankNode | NamedNode>(
+            item["@id"].startsWith("_:")
+              ? dataFactory.blankNode(item["@id"].substring(2))
+              : dataFactory.namedNode(item["@id"]),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       iriTerm: Maybe.fromNullable($json["iriTerm"])
         .map((item) =>
           Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
@@ -45531,9 +45655,6 @@ export namespace TermsStruct {
             ),
           ).map(Maybe.of),
         )
-        .orDefault(Either.of(Maybe.empty())),
-      numberTerm: Maybe.fromNullable($json["numberTerm"])
-        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
       stringTerm: Maybe.fromNullable($json["stringTerm"])
         .map((item) => Either.of<Error, string>(item).map(Maybe.of))
@@ -45588,10 +45709,11 @@ export namespace TermsStruct {
     $hashMaybe($hashBoolean)(hasher, _termsStruct.booleanTerm);
     $hashMaybe($hashDate)(hasher, _termsStruct.dateTerm);
     $hashMaybe($hashDateTime)(hasher, _termsStruct.dateTimeTerm);
+    $hashMaybe($hashNumeric)(hasher, _termsStruct.doubleTerm);
+    $hashMaybe($hashTerm)(hasher, _termsStruct.identifierTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.iriTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.langStringTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.literalTerm);
-    $hashMaybe($hashNumeric)(hasher, _termsStruct.numberTerm);
     $hashMaybe($hashString)(hasher, _termsStruct.stringTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.term);
     return hasher;
@@ -45634,6 +45756,8 @@ export namespace TermsStruct {
               "@value": z.iso.datetime(),
             })
             .optional(),
+          doubleTerm: z.number().optional(),
+          identifierTerm: z.object({ "@id": z.string().min(1) }).optional(),
           iriTerm: z.object({ "@id": z.string().min(1) }).optional(),
           langStringTerm: z
             .object({ "@language": z.string(), "@value": z.string() })
@@ -45645,7 +45769,6 @@ export namespace TermsStruct {
               "@value": z.string(),
             })
             .optional(),
-          numberTerm: z.number().optional(),
           stringTerm: z.string().optional(),
           term: z
             .discriminatedUnion("termType", [
@@ -45696,13 +45819,17 @@ export namespace TermsStruct {
           { scope: `${scopePrefix}/properties/booleanTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/dateTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/dateTimeTerm`, type: "Control" },
+          { scope: `${scopePrefix}/properties/doubleTerm`, type: "Control" },
+          {
+            scope: `${scopePrefix}/properties/identifierTerm`,
+            type: "Control",
+          },
           { scope: `${scopePrefix}/properties/iriTerm`, type: "Control" },
           {
             scope: `${scopePrefix}/properties/langStringTerm`,
             type: "Control",
           },
           { scope: `${scopePrefix}/properties/literalTerm`, type: "Control" },
-          { scope: `${scopePrefix}/properties/numberTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/stringTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/term`, type: "Control" },
         ],
@@ -45725,6 +45852,8 @@ export namespace TermsStruct {
       readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
       readonly "@value": string;
     };
+    readonly doubleTerm?: number;
+    readonly identifierTerm?: { readonly "@id": string };
     readonly iriTerm?: { readonly "@id": string };
     readonly langStringTerm?: {
       readonly "@language": string;
@@ -45735,7 +45864,6 @@ export namespace TermsStruct {
       readonly "@type"?: string;
       readonly "@value": string;
     };
-    readonly numberTerm?: number;
     readonly stringTerm?: string;
     readonly term?:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
@@ -45784,6 +45912,19 @@ export namespace TermsStruct {
           itemType: { kind: "DateTime" as const },
         },
       },
+      doubleTerm: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/doubleTerm"),
+        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
+      },
+      identifierTerm: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/identifierTerm"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Identifier" as const },
+        },
+      },
       iriTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriTerm"),
@@ -45804,11 +45945,6 @@ export namespace TermsStruct {
           kind: "Option" as const,
           itemType: { kind: "Literal" as const },
         },
-      },
-      numberTerm: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/numberTerm"),
-        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
       },
       stringTerm: {
         kind: "Shacl",
@@ -45917,6 +46053,14 @@ export namespace TermsStruct {
             "@value": item.toISOString(),
           }))
           .extract(),
+        doubleTerm: _termsStruct.doubleTerm.map((item) => item).extract(),
+        identifierTerm: _termsStruct.identifierTerm
+          .map((item) =>
+            item.termType === "BlankNode"
+              ? { "@id": `_:${item.value}` }
+              : { "@id": item.value },
+          )
+          .extract(),
         iriTerm: _termsStruct.iriTerm
           .map((item) => ({ "@id": item.value }))
           .extract(),
@@ -45936,7 +46080,6 @@ export namespace TermsStruct {
             "@value": item.value,
           }))
           .extract(),
-        numberTerm: _termsStruct.numberTerm.map((item) => item).extract(),
         stringTerm: _termsStruct.stringTerm.map((item) => item).extract(),
         term: _termsStruct.term
           .map((item) =>

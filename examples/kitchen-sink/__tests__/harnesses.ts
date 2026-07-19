@@ -619,15 +619,16 @@ export const harnesses = {
   ),
   termsStruct: new Harness(
     kitchenSink.TermsStruct.createUnsafe({
+      $identifier,
       blankNodeTerm: dataFactory.blankNode(),
       booleanTerm: true,
       dateTerm: new Date("2025-03-06"),
       dateTimeTerm: new Date(1523268000000),
-      $identifier,
+      doubleTerm: 1.0,
+      identifierTerm: dataFactory.blankNode(),
       iriTerm: dataFactory.namedNode("http://example.com"),
       langStringTerm: dataFactory.literal("test", "en"),
       literalTerm: dataFactory.literal("test"),
-      numberTerm: 1.0,
       stringTerm: "test",
       term: dataFactory.literal("1", xsd.decimal), // Use a literal instead of a number to avoid an issue with Oxigraph literal normalization (https://github.com/oxigraph/oxigraph/issues/526)
     }),
