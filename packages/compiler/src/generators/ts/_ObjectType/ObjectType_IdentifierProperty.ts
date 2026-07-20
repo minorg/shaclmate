@@ -163,20 +163,18 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
       invariant(nodeKinds.size === 1);
       if (nodeKinds.has("BlankNode")) {
         conversionFunction = code`${this.reusables.snippets.convertToBlankNodeIdentifierProperty}`;
+      } else if (this.type.in_.length > 0) {
+        conversionFunction = code`${this.reusables.snippets.convertToInIriIdentifierProperty}<${joinCode(
+          this.type.in_.map((in_) => code`${literalOf(in_.value)}`),
+          { on: " | " },
+        )}>`;
       } else {
-        conversionFunction = code`${this.reusables.snippets.convertToIriIdentifierProperty}<${
-          this.type.in_.length > 0
-            ? joinCode(
-                this.type.in_.map((in_) => code`${literalOf(in_.value)}`),
-                { on: " | " },
-              )
-            : "string"
-        }>`;
+        conversionFunction = code`${this.reusables.snippets.convertToIriIdentifierProperty}`;
       }
     }
 
     return Maybe.of(
-      code`${this.name}: ${conversionFunction}(${variables.parameters}.${this.name})`,
+      code`${this.name}: ${conversionFunction}(${variables.parameters}.${this.name}, ${variables.parameters}.${this.configuration.syntheticNamePrefix}defaultNamespace)`,
     );
   }
 

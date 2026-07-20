@@ -1274,7 +1274,11 @@ The sh:targetClass is expected on deserialization and added on serialization."""
     ], [
         sh:datatype xsd:double ;
         sh:maxCount 1 ;
-        sh:path :numberTerm
+        sh:path :doubleTerm
+    ], [
+        sh:maxCount 1 ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+        sh:path :identifierTerm
     ], [
         sh:maxCount 1 ;
         sh:nodeKind sh:IRI ;

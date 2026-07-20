@@ -27,6 +27,8 @@ import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlank
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
+import { snippets_convertToInIri } from "./_snippets/snippets_convertToInIri.js";
+import { snippets_convertToInIriIdentifierProperty } from "./_snippets/snippets_convertToInIriIdentifierProperty.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
 import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
 import { snippets_convertToLangString } from "./_snippets/snippets_convertToLangString.js";
@@ -36,6 +38,9 @@ import { snippets_convertToLazySet } from "./_snippets/snippets_convertToLazySet
 import { snippets_convertToList } from "./_snippets/snippets_convertToList.js";
 import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
 import { snippets_convertToMaybe } from "./_snippets/snippets_convertToMaybe.js";
+import { snippets_convertToMutableArraySet } from "./_snippets/snippets_convertToMutableArraySet.js";
+import { snippets_convertToMutableList } from "./_snippets/snippets_convertToMutableList.js";
+import { snippets_convertToMutableScalarSet } from "./_snippets/snippets_convertToMutableScalarSet.js";
 import { snippets_convertToScalarSet } from "./_snippets/snippets_convertToScalarSet.js";
 import { snippets_convertWithDefaultValue } from "./_snippets/snippets_convertWithDefaultValue.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
@@ -116,6 +121,7 @@ import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSpa
 import { snippets_monkeyPatchObject } from "./_snippets/snippets_monkeyPatchObject.js";
 import { snippets_mutableListFromRdfResourceValues } from "./_snippets/snippets_mutableListFromRdfResourceValues.js";
 import { snippets_mutableSetFromRdfResourceValues } from "./_snippets/snippets_mutableSetFromRdfResourceValues.js";
+import { snippets_NamespaceBuilder } from "./_snippets/snippets_NamespaceBuilder.js";
 import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
@@ -163,6 +169,7 @@ import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippe
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 import { snippets_validateArray } from "./_snippets/snippets_validateArray.js";
 import { snippets_validateMaybe } from "./_snippets/snippets_validateMaybe.js";
+import { snippets_validateMutableArray } from "./_snippets/snippets_validateMutableArray.js";
 import { snippets_wrap_FromRdfResourceFunction } from "./_snippets/snippets_wrap_FromRdfResourceFunction.js";
 import { snippets_wrap_ToRdfResourceFunction } from "./_snippets/snippets_wrap_ToRdfResourceFunction.js";
 import type { Imports } from "./Imports.js";
@@ -344,6 +351,11 @@ export class Snippets {
   @Memoize()
   get MaybeSchema(): Snippet {
     return this.snippet(snippets_MaybeSchema);
+  }
+
+  @Memoize()
+  get NamespaceBuilder(): Snippet {
+    return this.snippet(snippets_NamespaceBuilder);
   }
 
   @Memoize()
@@ -532,6 +544,16 @@ export class Snippets {
   }
 
   @Memoize()
+  get convertToInIri(): Snippet {
+    return this.snippet(snippets_convertToInIri);
+  }
+
+  @Memoize()
+  get convertToInIriIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToInIriIdentifierProperty);
+  }
+
+  @Memoize()
   get convertToIri(): Snippet {
     return this.snippet(snippets_convertToIri);
   }
@@ -574,6 +596,21 @@ export class Snippets {
   @Memoize()
   get convertToMaybe(): Snippet {
     return this.snippet(snippets_convertToMaybe);
+  }
+
+  @Memoize()
+  get convertToMutableArraySet(): Snippet {
+    return this.snippet(snippets_convertToMutableArraySet);
+  }
+
+  @Memoize()
+  get convertToMutableList(): Snippet {
+    return this.snippet(snippets_convertToMutableList);
+  }
+
+  @Memoize()
+  get convertToMutableScalarSet(): Snippet {
+    return this.snippet(snippets_convertToMutableScalarSet);
   }
 
   @Memoize()
@@ -1023,6 +1060,11 @@ export class Snippets {
   @Memoize()
   get validateMaybe(): Snippet {
     return this.snippet(snippets_validateMaybe);
+  }
+
+  @Memoize()
+  get validateMutableArray(): Snippet {
+    return this.snippet(snippets_validateMutableArray);
   }
 
   @Memoize()

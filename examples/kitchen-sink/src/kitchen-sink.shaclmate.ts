@@ -359,42 +359,54 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
-type $ConversionFunction<SourceT, TargetT> = (
+type $ConversionFunction<
+  SourceT,
+  TargetT,
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+> = (
   source: SourceT,
+  defaultNamespace?: DefaultNamespaceT,
 ) => Either<Error, TargetT>;
 
-function $convertToArraySet<ItemSourceT, ItemTargetT, Readonly extends boolean>(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type ItemTargetArrayT = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (
-    value: readonly ItemSourceT[] | undefined,
-  ): Either<Error, ItemTargetArrayT> =>
+function $convertToArraySet<
+  DefaultNamespaceT extends $NamespaceBuilder,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  readonly ItemSourceT[] | undefined,
+  readonly ItemTargetT[],
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) =>
     (typeof value === "undefined"
       ? Either.of([])
-      : Either.sequence(value.map(convertToItem))) as Either<
-      Error,
-      ItemTargetArrayT
-    >;
+      : Either.sequence(
+          value.map((value) => convertToItem(value, defaultNamespace)),
+        )) as Either<Error, readonly ItemTargetT[]>;
 }
 
-function $convertToBlankNode(
-  value: BlankNode | undefined,
-): Either<Error, BlankNode> {
+const $convertToBlankNode: $ConversionFunction<
+  BlankNode | undefined,
+  BlankNode
+> = (value) => {
   switch (typeof value) {
     case "object":
       return Either.of(value);
     case "undefined":
       return Either.of(dataFactory.blankNode());
   }
-}
+};
 
-function $convertToBlankNodeIdentifierProperty(
-  identifier: (() => BlankNode) | BlankNode | undefined,
-): Either<Error, () => BlankNode> {
+const $convertToBlankNodeIdentifierProperty: $ConversionFunction<
+  (() => BlankNode) | BlankNode | undefined,
+  () => BlankNode
+> = (identifier) => {
   switch (typeof identifier) {
     case "function":
       return Either.of(identifier);
@@ -407,28 +419,38 @@ function $convertToBlankNodeIdentifierProperty(
       return Either.of(() => captureIdentifier);
     }
   }
-}
+};
 
-function $convertToIdentifier(
-  value: BlankNode | NamedNode | string | undefined,
+function $convertToIdentifier<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  value: BlankNode | NamedNode | (keyof DefaultNamespaceT & string) | undefined,
+  defaultNamespace?: DefaultNamespaceT,
 ): Either<Error, BlankNode | NamedNode> {
   switch (typeof value) {
     case "object":
       return Either.of(value);
     case "string":
-      return Either.of(dataFactory.namedNode(value));
+      return Either.of(
+        defaultNamespace
+          ? defaultNamespace(value)
+          : dataFactory.namedNode(value),
+      );
     case "undefined":
       return Either.of(dataFactory.blankNode());
   }
 }
 
-function $convertToIdentifierProperty(
+function $convertToIdentifierProperty<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
   identifier:
     | (() => BlankNode | NamedNode)
     | BlankNode
     | NamedNode
-    | string
+    | (keyof DefaultNamespaceT & string)
     | undefined,
+  defaultNamespace?: DefaultNamespaceT,
 ): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
@@ -438,7 +460,9 @@ function $convertToIdentifierProperty(
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = dataFactory.namedNode(identifier);
+      const captureIdentifier = defaultNamespace
+        ? defaultNamespace(identifier)
+        : dataFactory.namedNode(identifier);
       return Either.of(() => captureIdentifier);
     }
     case "undefined": {
@@ -448,8 +472,9 @@ function $convertToIdentifierProperty(
   }
 }
 
-function $convertToIri<IriT extends string>(
+function $convertToInIri<IriT extends string>(
   value: IriT | NamedNode<IriT>,
+  _defaultNamespace?: $NamespaceBuilder,
 ): Either<Error, NamedNode<IriT>> {
   switch (typeof value) {
     case "object":
@@ -459,9 +484,10 @@ function $convertToIri<IriT extends string>(
   }
 }
 
-function $convertToIriIdentifierProperty<IriT extends string = string>(
-  identifier: (() => NamedNode<IriT>) | NamedNode<IriT> | IriT,
-): Either<Error, () => NamedNode<IriT>> {
+function $convertToInIriIdentifierProperty<InIriT extends string>(
+  identifier: (() => NamedNode<InIriT>) | NamedNode<InIriT> | InIriT,
+  _defaultNamespace?: $NamespaceBuilder,
+): Either<Error, () => NamedNode<InIriT>> {
   switch (typeof identifier) {
     case "function":
       return Either.of(identifier);
@@ -470,13 +496,56 @@ function $convertToIriIdentifierProperty<IriT extends string = string>(
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = dataFactory.namedNode<IriT>(identifier);
+      const captureIdentifier = dataFactory.namedNode<InIriT>(identifier);
       return Either.of(() => captureIdentifier);
     }
   }
 }
 
-function $convertToLangString(value: Literal): Either<Error, Literal> {
+function $convertToIri<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  value: NamedNode | (keyof DefaultNamespaceT & string),
+  defaultNamespace?: DefaultNamespaceT,
+): Either<Error, NamedNode> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "string":
+      return Either.of(
+        defaultNamespace
+          ? defaultNamespace(value)
+          : dataFactory.namedNode(value),
+      );
+  }
+}
+
+function $convertToIriIdentifierProperty<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  identifier:
+    | (() => NamedNode)
+    | NamedNode
+    | (keyof DefaultNamespaceT & string),
+  defaultNamespace?: DefaultNamespaceT,
+): Either<Error, () => NamedNode> {
+  switch (typeof identifier) {
+    case "function":
+      return Either.of(identifier);
+    case "object": {
+      const captureIdentifier = identifier;
+      return Either.of(() => captureIdentifier);
+    }
+    case "string": {
+      const captureIdentifier = defaultNamespace
+        ? defaultNamespace(identifier)
+        : dataFactory.namedNode(identifier);
+      return Either.of(() => captureIdentifier);
+    }
+  }
+}
+
+const $convertToLangString: $ConversionFunction<Literal, Literal> = (value) => {
   if (!value.datatype.equals($RdfVocabularies.rdf.langString)) {
     return Left(
       new Error(
@@ -490,15 +559,16 @@ function $convertToLangString(value: Literal): Either<Error, Literal> {
   }
 
   return Either.of(value);
-}
+};
 
 function $convertToLazy<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
-) {
-  return (
-    value: $Lazy<PartialT, ResolvedT> | PartialT | ResolvedT,
-  ): Either<Error, $Lazy<PartialT, ResolvedT>> => {
+): $ConversionFunction<
+  $Lazy<PartialT, ResolvedT> | PartialT | ResolvedT,
+  $Lazy<PartialT, ResolvedT>
+> {
+  return (value) => {
     if (value instanceof $Lazy) {
       return Either.of(value);
     }
@@ -526,16 +596,16 @@ function $convertToLazy<PartialT, ResolvedT>(
 function $convertToLazyOption<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
-) {
-  return (
-    value:
-      | $LazyOption<PartialT, ResolvedT>
-      | Maybe<PartialT>
-      | Maybe<ResolvedT>
-      | PartialT
-      | ResolvedT
-      | undefined,
-  ): Either<Error, $LazyOption<PartialT, ResolvedT>> => {
+): $ConversionFunction<
+  | $LazyOption<PartialT, ResolvedT>
+  | Maybe<PartialT>
+  | Maybe<ResolvedT>
+  | PartialT
+  | ResolvedT
+  | undefined,
+  $LazyOption<PartialT, ResolvedT>
+> {
+  return (value) => {
     if (value instanceof $LazyOption) {
       return Either.of(value);
     }
@@ -583,16 +653,16 @@ function $convertToLazyOption<PartialT, ResolvedT>(
 function $convertToLazySet<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
-) {
-  return (
-    value:
-      | $LazySet<PartialT, ResolvedT>
-      | readonly PartialT[]
-      | readonly ResolvedT[]
-      | PartialT
-      | ResolvedT
-      | undefined,
-  ): Either<Error, $LazySet<PartialT, ResolvedT>> => {
+): $ConversionFunction<
+  | $LazySet<PartialT, ResolvedT>
+  | readonly PartialT[]
+  | readonly ResolvedT[]
+  | PartialT
+  | ResolvedT
+  | undefined,
+  $LazySet<PartialT, ResolvedT>
+> {
+  return (value) => {
     if (typeof value === "undefined") {
       return Either.of(
         new $LazySet<PartialT, ResolvedT>({
@@ -630,23 +700,31 @@ function $convertToLazySet<PartialT, ResolvedT>(
   };
 }
 
-function $convertToList<ItemSourceT, ItemTargetT, Readonly extends boolean>(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type ItemTargetArrayT = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (value: readonly ItemSourceT[]): Either<Error, ItemTargetArrayT> =>
-    Either.sequence(value.map(convertToItem)) as Either<
-      Error,
-      ItemTargetArrayT
-    >;
+function $convertToList<
+  DefaultNamespaceT extends $NamespaceBuilder,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  readonly ItemSourceT[],
+  readonly ItemTargetT[],
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) =>
+    Either.sequence(
+      value.map((value) => convertToItem(value, defaultNamespace)),
+    ) as Either<Error, readonly ItemTargetT[]>;
 }
 
-function $convertToLiteral(
-  value: bigint | boolean | Date | number | string | Literal,
-): Either<Error, Literal> {
+const $convertToLiteral: $ConversionFunction<
+  bigint | boolean | Date | number | string | Literal,
+  Literal
+> = (value) => {
   if (typeof value === "object") {
     if (value instanceof Date) {
       return Either.of($literalFactory.date(value));
@@ -655,14 +733,24 @@ function $convertToLiteral(
   }
 
   return Either.of($literalFactory.primitive(value));
-}
+};
 
-function $convertToMaybe<ItemSourceT, ItemTargetT>(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-) {
-  return (
-    value: ItemSourceT | Maybe<ItemTargetT> | undefined,
-  ): Either<Error, Maybe<ItemTargetT>> => {
+function $convertToMaybe<
+  DefaultNamespaceT extends $NamespaceBuilder,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  ItemSourceT | Maybe<ItemTargetT> | undefined,
+  Maybe<ItemTargetT>,
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {
@@ -674,46 +762,98 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(value).map(Maybe.of);
+    return convertToItem(value, defaultNamespace).map(Maybe.of);
+  };
+}
+
+function $convertToMutableList<
+  DefaultNamespaceT extends $NamespaceBuilder,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  readonly ItemSourceT[],
+  ItemTargetT[],
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) =>
+    Either.sequence(
+      value.map((value) => convertToItem(value, defaultNamespace)),
+    ) as Either<Error, ItemTargetT[]>;
+}
+
+function $convertToMutableScalarSet<
+  DefaultNamespaceT extends $NamespaceBuilder,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  ItemSourceT | readonly ItemSourceT[] | undefined,
+  ItemTargetT[],
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) => {
+    if (typeof value === "undefined") {
+      return Either.of<Error, ItemTargetT[]>([] as unknown as ItemTargetT[]);
+    }
+    if (Array.isArray(value)) {
+      return Either.sequence(
+        value.map((value) => convertToItem(value, defaultNamespace)),
+      ) as Either<Error, ItemTargetT[]>;
+    }
+    return convertToItem(value as ItemSourceT, defaultNamespace).map(
+      (value) => [value],
+    ) as Either<Error, ItemTargetT[]>;
   };
 }
 
 function $convertToScalarSet<
+  DefaultNamespaceT extends $NamespaceBuilder,
   ItemSourceT,
   ItemTargetT,
-  Readonly extends boolean,
 >(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type ItemTargetArrayT = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (
-    value: ItemSourceT | readonly ItemSourceT[] | undefined,
-  ): Either<Error, ItemTargetArrayT> => {
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  ItemSourceT | readonly ItemSourceT[] | undefined,
+  readonly ItemTargetT[],
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) => {
     if (typeof value === "undefined") {
-      return Either.of<Error, ItemTargetArrayT>(
-        [] as unknown as ItemTargetArrayT,
+      return Either.of<Error, readonly ItemTargetT[]>(
+        [] as unknown as readonly ItemTargetT[],
       );
     }
     if (Array.isArray(value)) {
-      return Either.sequence(value.map(convertToItem)) as Either<
-        Error,
-        ItemTargetArrayT
-      >;
+      return Either.sequence(
+        value.map((value) => convertToItem(value, defaultNamespace)),
+      ) as Either<Error, readonly ItemTargetT[]>;
     }
     return convertToItem(value as ItemSourceT).map((value) => [
       value,
-    ]) as Either<Error, ItemTargetArrayT>;
+    ]) as Either<Error, readonly ItemTargetT[]>;
   };
 }
 
 function $convertWithDefaultValue<ItemSourceT, ItemTargetT>(
   convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
   defaultValue: ItemSourceT,
-) {
-  return (value: ItemSourceT | undefined): Either<Error, ItemTargetT> => {
+): $ConversionFunction<ItemSourceT | undefined, ItemTargetT> {
+  return (value) => {
     if (typeof value === "undefined") {
       return convertToItem(defaultValue);
     }
@@ -1518,7 +1658,10 @@ const $identifierSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
   return patterns;
 };
 
-function $identityConversionFunction<T>(value: T): Either<Error, T> {
+function $identityConversionFunction<T>(
+  value: T,
+  _defaultNamespace?: $NamespaceBuilder,
+): Either<Error, T> {
   return Either.of(value);
 }
 
@@ -2233,6 +2376,15 @@ function $mutableSetFromRdfResourceValues<ItemT, ItemSchemaT>(
       values.map((value) => value.concat()),
     );
 }
+
+/**
+ * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
+ */
+type $NamespaceBuilder<TermNames extends string = any> = Record<
+  TermNames,
+  NamedNode
+> &
+  ((property?: TemplateStringsArray | TermNames) => NamedNode);
 
 function $normalizeSparqlWherePatterns(
   patterns: readonly $SparqlPattern[],
@@ -3600,28 +3752,21 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 
-function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
+function $validateArray<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
-  _readonly: Readonly,
-) {
-  type EitherR = Readonly extends true
-    ? ReadonlyArray<ItemValueT>
-    : Array<ItemValueT>;
-  return (
-    schema: $CollectionSchema<ItemSchemaT>,
-    valueArray: readonly ItemValueT[],
-  ): Either<Error, EitherR> => {
+): $ValidationFunction<$CollectionSchema<ItemSchemaT>, readonly ItemValueT[]> {
+  return (schema, valueArray) => {
     if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
       return Left(
         new Error(
           `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
         ),
-      ) as Either<Error, EitherR>;
+      ) as Either<Error, readonly ItemValueT[]>;
     }
 
     return Either.sequence(
       valueArray.map((value) => validateItem(schema.itemType, value)),
-    ) as Either<Error, EitherR>;
+    ) as Either<Error, readonly ItemValueT[]>;
   };
 }
 
@@ -3637,6 +3782,24 @@ function $validateMaybe<ItemSchemaT, ItemValueT>(
         validateItem(schema.itemType, value).map(() => valueMaybe),
       )
       .orDefault(Either.of(valueMaybe));
+}
+
+function $validateMutableArray<ItemSchemaT, ItemValueT>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+): $ValidationFunction<$CollectionSchema<ItemSchemaT>, ItemValueT[]> {
+  return (schema, valueArray) => {
+    if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
+      return Left(
+        new Error(
+          `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
+        ),
+      ) as Either<Error, ItemValueT[]>;
+    }
+
+    return Either.sequence(
+      valueArray.map((value) => validateItem(schema.itemType, value)),
+    ) as Either<Error, ItemValueT[]>;
+  };
 }
 
 type $ValidationFunction<SchemaT, ValueT> = (
@@ -3742,15 +3905,21 @@ export namespace $DefaultPartial {
     _defaultPartial,
   ) => `$DefaultPartial(${JSON.stringify(toStringRecord(_defaultPartial))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-  }) => Either<Error, $DefaultPartial> = (parameters) =>
+      | (keyof $DefaultNamespaceT & string);
+  }): Either<Error, $DefaultPartial> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -3763,12 +3932,15 @@ export namespace $DefaultPartial {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
   }): $DefaultPartial {
     return create(parameters).unsafeCoerce();
   }
@@ -4076,15 +4248,19 @@ export namespace $NamedDefaultPartial {
   ) => string = (_namedDefaultPartial) =>
     `$NamedDefaultPartial(${JSON.stringify(toStringRecord(_namedDefaultPartial))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => $NamedDefaultPartial.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
-  }) => Either<Error, $NamedDefaultPartial> = (parameters) =>
+  }): Either<Error, $NamedDefaultPartial> =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<string>(
+      $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
     })
       .map((properties) => ({
@@ -4098,10 +4274,13 @@ export namespace $NamedDefaultPartial {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => $NamedDefaultPartial.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
   }): $NamedDefaultPartial {
     return create(parameters).unsafeCoerce();
@@ -4488,17 +4667,22 @@ export namespace AnonymousTypesStruct {
                         $stringFromRdfResourceValues<string>,
                     }),
                   }).chain((properties) =>
-                    ((parameters: {
+                    (<
+                      $DefaultNamespaceT extends
+                        $NamespaceBuilder = $NamespaceBuilder,
+                    >(parameters: {
+                      readonly $defaultNamespace?: $DefaultNamespaceT;
                       readonly $identifier?:
                         | (() => BlankNode | NamedNode)
                         | BlankNode
                         | NamedNode
-                        | string;
+                        | (keyof $DefaultNamespaceT & string);
                       readonly anonymousStructString: string;
                     }) =>
                       $sequenceRecord({
                         $identifier: $convertToIdentifierProperty(
                           parameters.$identifier,
+                          parameters.$defaultNamespace,
                         ),
                         anonymousStructString: Either.of(
                           parameters.anonymousStructString,
@@ -4577,39 +4761,52 @@ export namespace AnonymousTypesStruct {
   ) => string = (_anonymousTypesStruct) =>
     `AnonymousTypesStruct(${JSON.stringify(toStringRecord(_anonymousTypesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => AnonymousTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly anonymousStruct?:
       | {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
             | NamedNode
-            | string;
+            | (keyof $DefaultNamespaceT & string);
           readonly anonymousStructString: string;
         }
       | Maybe<{
           readonly $identifier: () => BlankNode | NamedNode;
           readonly anonymousStructString: string;
         }>;
-  }) => Either<Error, AnonymousTypesStruct> = (parameters) =>
+  }): Either<Error, AnonymousTypesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       anonymousStruct: $convertToMaybe(
-        (parameters: {
+        <
+          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+        >(parameters: {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
             | NamedNode
-            | string;
+            | (keyof $DefaultNamespaceT & string);
           readonly anonymousStructString: string;
         }) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(parameters.$identifier),
+            $identifier: $convertToIdentifierProperty(
+              parameters.$identifier,
+              parameters.$defaultNamespace,
+            ),
             anonymousStructString: Either.of(parameters.anonymousStructString),
           }).map((object) =>
             $monkeyPatchObject(object, {
@@ -4634,11 +4831,12 @@ export namespace AnonymousTypesStruct {
                 ),
             }),
           ),
-      )(parameters?.anonymousStruct).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          AnonymousTypesStruct.schema.properties.anonymousStruct.type,
-          value,
-        ),
+      )(parameters?.anonymousStruct, parameters?.$defaultNamespace).chain(
+        (value) =>
+          $validateMaybe($identityValidationFunction)(
+            AnonymousTypesStruct.schema.properties.anonymousStruct.type,
+            value,
+          ),
       ),
     })
       .map((properties) => ({
@@ -4652,19 +4850,23 @@ export namespace AnonymousTypesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => AnonymousTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly anonymousStruct?:
       | {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
             | NamedNode
-            | string;
+            | (keyof $DefaultNamespaceT & string);
           readonly anonymousStructString: string;
         }
       | Maybe<{
@@ -5006,17 +5208,22 @@ export namespace AnonymousTypesStruct {
                 $json["anonymousStructString"],
               ),
             }).chain(
-              (parameters: {
+              <
+                $DefaultNamespaceT extends
+                  $NamespaceBuilder = $NamespaceBuilder,
+              >(parameters: {
+                readonly $defaultNamespace?: $DefaultNamespaceT;
                 readonly $identifier?:
                   | (() => BlankNode | NamedNode)
                   | BlankNode
                   | NamedNode
-                  | string;
+                  | (keyof $DefaultNamespaceT & string);
                 readonly anonymousStructString: string;
               }) =>
                 $sequenceRecord({
                   $identifier: $convertToIdentifierProperty(
                     parameters.$identifier,
+                    parameters.$defaultNamespace,
                   ),
                   anonymousStructString: Either.of(
                     parameters.anonymousStructString,
@@ -5439,18 +5646,23 @@ export namespace BlankNodeIdentifierStruct {
   ) => string = (_blankNodeIdentifierStruct) =>
     `BlankNodeIdentifierStruct(${JSON.stringify(toStringRecord(_blankNodeIdentifierStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => BlankNodeIdentifierStruct.Identifier)
       | BlankNode;
     readonly blankNodeIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, BlankNodeIdentifierStruct> = (parameters) =>
+  }): Either<Error, BlankNodeIdentifierStruct> =>
     $sequenceRecord({
       $identifier: $convertToBlankNodeIdentifierProperty(
         parameters?.$identifier,
+        parameters?.$defaultNamespace,
       ),
       blankNodeIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters?.blankNodeIdentifierString,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           BlankNodeIdentifierStruct.schema.properties.blankNodeIdentifierString
@@ -5470,7 +5682,10 @@ export namespace BlankNodeIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => BlankNodeIdentifierStruct.Identifier)
       | BlankNode;
@@ -5983,19 +6198,28 @@ export namespace BlankNodeOrIriIdentifierStruct {
   ) => string = (_blankNodeOrIriIdentifierStruct) =>
     `BlankNodeOrIriIdentifierStruct(${JSON.stringify(toStringRecord(_blankNodeOrIriIdentifierStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => BlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, BlankNodeOrIriIdentifierStruct> = (parameters) =>
+  }): Either<Error, BlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       blankNodeOrIriIdentifierString: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.blankNodeOrIriIdentifierString).chain((value) =>
+      )(
+        parameters?.blankNodeOrIriIdentifierString,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           BlankNodeOrIriIdentifierStruct.schema.properties
             .blankNodeOrIriIdentifierString.type,
@@ -6014,12 +6238,15 @@ export namespace BlankNodeOrIriIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => BlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeOrIriIdentifierString?: string | Maybe<string>;
   }): BlankNodeOrIriIdentifierStruct {
     return create(parameters).unsafeCoerce();
@@ -6639,30 +6866,40 @@ export namespace ClassConstraintsStruct {
   ) => string = (_classConstraintsStruct) =>
     `ClassConstraintsStruct(${JSON.stringify(toStringRecord(_classConstraintsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ClassConstraintsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly iriClass?: string | NamedNode | Maybe<NamedNode>;
+      | (keyof $DefaultNamespaceT & string);
+    readonly iriClass?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly multiClass?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
     readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
     readonly singleClass?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
-  }) => Either<Error, ClassConstraintsStruct> = (parameters) =>
+  }): Either<Error, ClassConstraintsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      iriClass: $convertToMaybe($convertToIri<string>)(
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
+      iriClass: $convertToMaybe($convertToIri)(
         parameters?.iriClass,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.iriClass.type,
@@ -6671,6 +6908,7 @@ export namespace ClassConstraintsStruct {
       ),
       multiClass: $convertToMaybe($convertToIdentifier)(
         parameters?.multiClass,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.multiClass.type,
@@ -6679,6 +6917,7 @@ export namespace ClassConstraintsStruct {
       ),
       nodeClass1: $convertToMaybe($identityConversionFunction)(
         parameters?.nodeClass1,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.nodeClass1.type,
@@ -6687,6 +6926,7 @@ export namespace ClassConstraintsStruct {
       ),
       nodeClass2: $convertToMaybe($identityConversionFunction)(
         parameters?.nodeClass2,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.nodeClass2.type,
@@ -6695,6 +6935,7 @@ export namespace ClassConstraintsStruct {
       ),
       singleClass: $convertToMaybe($convertToIdentifier)(
         parameters?.singleClass,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ClassConstraintsStruct.schema.properties.singleClass.type,
@@ -6713,24 +6954,30 @@ export namespace ClassConstraintsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ClassConstraintsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly iriClass?: string | NamedNode | Maybe<NamedNode>;
+      | (keyof $DefaultNamespaceT & string);
+    readonly iriClass?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly multiClass?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly nodeClass1?: NonClassStruct | Maybe<NonClassStruct>;
     readonly nodeClass2?: PartialStruct | Maybe<PartialStruct>;
     readonly singleClass?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
   }): ClassConstraintsStruct {
     return create(parameters).unsafeCoerce();
@@ -7776,22 +8023,28 @@ export namespace ConvertibleTypesStruct {
   ) => string = (_convertibleTypesStruct) =>
     `ConvertibleTypesStruct(${JSON.stringify(toStringRecord(_convertibleTypesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ConvertibleTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly convertibleIri: string | NamedNode;
+      | (keyof $DefaultNamespaceT & string);
+    readonly convertibleIri: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly convertibleIriNonEmptySet:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
-    readonly convertibleIriOption?: string | NamedNode | Maybe<NamedNode>;
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly convertibleIriOption?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly convertibleIriSet?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly convertibleLiteral:
       | bigint
       | boolean
@@ -7833,43 +8086,53 @@ export namespace ConvertibleTypesStruct {
     readonly convertibleTermSet?:
       | (BlankNode | NamedNode | Literal)
       | readonly (BlankNode | NamedNode | Literal)[];
-  }) => Either<Error, ConvertibleTypesStruct> = (parameters) =>
+  }): Either<Error, ConvertibleTypesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      convertibleIri: $convertToIri<string>(parameters.convertibleIri),
-      convertibleIriNonEmptySet: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.convertibleIriNonEmptySet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      convertibleIri: $convertToIri(
+        parameters.convertibleIri,
+        parameters.$defaultNamespace,
+      ),
+      convertibleIriNonEmptySet: $convertToScalarSet($convertToIri)(
+        parameters.convertibleIriNonEmptySet,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriNonEmptySet
             .type,
           value,
         ),
       ),
-      convertibleIriOption: $convertToMaybe($convertToIri<string>)(
+      convertibleIriOption: $convertToMaybe($convertToIri)(
         parameters.convertibleIriOption,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriOption.type,
           value,
         ),
       ),
-      convertibleIriSet: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.convertibleIriSet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      convertibleIriSet: $convertToScalarSet($convertToIri)(
+        parameters.convertibleIriSet,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleIriSet.type,
           value,
         ),
       ),
-      convertibleLiteral: $convertToLiteral(parameters.convertibleLiteral),
-      convertibleLiteralNonEmptySet: $convertToScalarSet(
-        $convertToLiteral,
-        true,
-      )(parameters.convertibleLiteralNonEmptySet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      convertibleLiteral: $convertToLiteral(
+        parameters.convertibleLiteral,
+        parameters.$defaultNamespace,
+      ),
+      convertibleLiteralNonEmptySet: $convertToScalarSet($convertToLiteral)(
+        parameters.convertibleLiteralNonEmptySet,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralNonEmptySet
             .type,
           value,
@@ -7877,6 +8140,7 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleLiteralOption: $convertToMaybe($convertToLiteral)(
         parameters.convertibleLiteralOption,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralOption
@@ -7884,11 +8148,11 @@ export namespace ConvertibleTypesStruct {
           value,
         ),
       ),
-      convertibleLiteralSet: $convertToScalarSet(
-        $convertToLiteral,
-        true,
-      )(parameters.convertibleLiteralSet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      convertibleLiteralSet: $convertToScalarSet($convertToLiteral)(
+        parameters.convertibleLiteralSet,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleLiteralSet.type,
           value,
         ),
@@ -7896,9 +8160,11 @@ export namespace ConvertibleTypesStruct {
       convertibleTerm: Either.of(parameters.convertibleTerm),
       convertibleTermNonEmptySet: $convertToScalarSet(
         $identityConversionFunction,
-        true,
-      )(parameters.convertibleTermNonEmptySet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      )(
+        parameters.convertibleTermNonEmptySet,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermNonEmptySet
             .type,
           value,
@@ -7906,17 +8172,18 @@ export namespace ConvertibleTypesStruct {
       ),
       convertibleTermOption: $convertToMaybe($identityConversionFunction)(
         parameters.convertibleTermOption,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermOption.type,
           value,
         ),
       ),
-      convertibleTermSet: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.convertibleTermSet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      convertibleTermSet: $convertToScalarSet($identityConversionFunction)(
+        parameters.convertibleTermSet,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           ConvertibleTypesStruct.schema.properties.convertibleTermSet.type,
           value,
         ),
@@ -7933,22 +8200,28 @@ export namespace ConvertibleTypesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ConvertibleTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly convertibleIri: string | NamedNode;
+      | (keyof $DefaultNamespaceT & string);
+    readonly convertibleIri: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly convertibleIriNonEmptySet:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
-    readonly convertibleIriOption?: string | NamedNode | Maybe<NamedNode>;
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly convertibleIriOption?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly convertibleIriSet?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly convertibleLiteral:
       | bigint
       | boolean
@@ -10518,12 +10791,15 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   ) => string = (_datatypeDiscriminatedUnionsStruct) =>
     `DatatypeDiscriminatedUnionsStruct(${JSON.stringify(toStringRecord(_datatypeDiscriminatedUnionsStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly dateOrDateTime:
       | { $type: "date"; value: Date }
       | { $type: "dateTime"; value: Date };
@@ -10537,21 +10813,47 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly stringOrDate: string | Date;
     readonly stringOrDecimal: string | BigDecimal;
     readonly stringOrLangString: string | Literal;
-  }) => Either<Error, DatatypeDiscriminatedUnionsStruct> = (parameters) =>
+  }): Either<Error, DatatypeDiscriminatedUnionsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      dateOrDateTime: $identityConversionFunction(parameters.dateOrDateTime),
-      dateOrString: $identityConversionFunction(parameters.dateOrString),
-      dateTimeOrDate: $identityConversionFunction(parameters.dateTimeOrDate),
-      decimalOrString: $identityConversionFunction(parameters.decimalOrString),
-      jsPrimitive: $identityConversionFunction(parameters.jsPrimitive),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      dateOrDateTime: $identityConversionFunction(
+        parameters.dateOrDateTime,
+        parameters.$defaultNamespace,
+      ),
+      dateOrString: $identityConversionFunction(
+        parameters.dateOrString,
+        parameters.$defaultNamespace,
+      ),
+      dateTimeOrDate: $identityConversionFunction(
+        parameters.dateTimeOrDate,
+        parameters.$defaultNamespace,
+      ),
+      decimalOrString: $identityConversionFunction(
+        parameters.decimalOrString,
+        parameters.$defaultNamespace,
+      ),
+      jsPrimitive: $identityConversionFunction(
+        parameters.jsPrimitive,
+        parameters.$defaultNamespace,
+      ),
       langStringOrString: $identityConversionFunction(
         parameters.langStringOrString,
+        parameters.$defaultNamespace,
       ),
-      stringOrDate: $identityConversionFunction(parameters.stringOrDate),
-      stringOrDecimal: $identityConversionFunction(parameters.stringOrDecimal),
+      stringOrDate: $identityConversionFunction(
+        parameters.stringOrDate,
+        parameters.$defaultNamespace,
+      ),
+      stringOrDecimal: $identityConversionFunction(
+        parameters.stringOrDecimal,
+        parameters.$defaultNamespace,
+      ),
       stringOrLangString: $identityConversionFunction(
         parameters.stringOrLangString,
+        parameters.$defaultNamespace,
       ),
     })
       .map((properties) => ({
@@ -10565,12 +10867,15 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DatatypeDiscriminatedUnionsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly dateOrDateTime:
       | { $type: "date"; value: Date }
       | { $type: "dateTime"; value: Date };
@@ -13811,20 +14116,27 @@ export namespace DatesStruct {
     _datesStruct,
   ) => `DatesStruct(${JSON.stringify(toStringRecord(_datesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DatesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly date?: Date | Maybe<Date>;
     readonly dateTime?: Date | Maybe<Date>;
     readonly dateTimeStamp?: Date | Maybe<Date>;
-  }) => Either<Error, DatesStruct> = (parameters) =>
+  }): Either<Error, DatesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       date: $convertToMaybe($identityConversionFunction)(
         parameters?.date,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           DatesStruct.schema.properties.date.type,
@@ -13833,6 +14145,7 @@ export namespace DatesStruct {
       ),
       dateTime: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTime,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           DatesStruct.schema.properties.dateTime.type,
@@ -13841,6 +14154,7 @@ export namespace DatesStruct {
       ),
       dateTimeStamp: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTimeStamp,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           DatesStruct.schema.properties.dateTimeStamp.type,
@@ -13856,12 +14170,15 @@ export namespace DatesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DatesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly date?: Date | Maybe<Date>;
     readonly dateTime?: Date | Maybe<Date>;
     readonly dateTimeStamp?: Date | Maybe<Date>;
@@ -14664,45 +14981,51 @@ export namespace DefaultValuesStruct {
   ) => string = (_defaultValuesStruct) =>
     `DefaultValuesStruct(${JSON.stringify(toStringRecord(_defaultValuesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DefaultValuesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly dateDefaultValue?: Date;
     readonly dateTimeDefaultValue?: Date;
     readonly falseBooleanDefaultValue?: boolean;
     readonly numberDefaultValue?: number;
     readonly stringDefaultValue?: string;
     readonly trueBooleanDefaultValue?: boolean;
-  }) => Either<Error, DefaultValuesStruct> = (parameters) =>
+  }): Either<Error, DefaultValuesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       dateDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         new Date("2018-04-09T00:00:00.000Z"),
-      )(parameters?.dateDefaultValue),
+      )(parameters?.dateDefaultValue, parameters?.$defaultNamespace),
       dateTimeDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         new Date("2018-04-09T10:00:00.000Z"),
-      )(parameters?.dateTimeDefaultValue),
+      )(parameters?.dateTimeDefaultValue, parameters?.$defaultNamespace),
       falseBooleanDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         false,
-      )(parameters?.falseBooleanDefaultValue),
+      )(parameters?.falseBooleanDefaultValue, parameters?.$defaultNamespace),
       numberDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         0,
-      )(parameters?.numberDefaultValue),
+      )(parameters?.numberDefaultValue, parameters?.$defaultNamespace),
       stringDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         "",
-      )(parameters?.stringDefaultValue),
+      )(parameters?.stringDefaultValue, parameters?.$defaultNamespace),
       trueBooleanDefaultValue: $convertWithDefaultValue(
         $identityConversionFunction,
         true,
-      )(parameters?.trueBooleanDefaultValue),
+      )(parameters?.trueBooleanDefaultValue, parameters?.$defaultNamespace),
     })
       .map((properties) => ({
         ...properties,
@@ -14715,12 +15038,15 @@ export namespace DefaultValuesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DefaultValuesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly dateDefaultValue?: Date;
     readonly dateTimeDefaultValue?: Date;
     readonly falseBooleanDefaultValue?: boolean;
@@ -15559,20 +15885,27 @@ export namespace DirectRecursiveStruct {
   ) => string = (_directRecursiveStruct) =>
     `DirectRecursiveStruct(${JSON.stringify(toStringRecord(_directRecursiveStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DirectRecursiveStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly directRecursive?:
       | DirectRecursiveStruct
       | Maybe<DirectRecursiveStruct>;
-  }) => Either<Error, DirectRecursiveStruct> = (parameters) =>
+  }): Either<Error, DirectRecursiveStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       directRecursive: $convertToMaybe($identityConversionFunction)(
         parameters?.directRecursive,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           DirectRecursiveStruct.schema.properties.directRecursive.type,
@@ -15591,12 +15924,15 @@ export namespace DirectRecursiveStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DirectRecursiveStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly directRecursive?:
       | DirectRecursiveStruct
       | Maybe<DirectRecursiveStruct>;
@@ -16096,17 +16432,23 @@ export namespace DiscriminatedUnionMember1 {
   ) => string = (_discriminatedUnionMember1) =>
     `DiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_discriminatedUnionMember1))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly discriminatedUnionMember1Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
-  }) => Either<Error, DiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, DiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       discriminatedUnionMember1Distinct: Either.of(
         parameters.discriminatedUnionMember1Distinct,
       ),
@@ -16125,12 +16467,15 @@ export namespace DiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly discriminatedUnionMember1Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
   }): DiscriminatedUnionMember1 {
@@ -16718,17 +17063,23 @@ export namespace DiscriminatedUnionMember2 {
   ) => string = (_discriminatedUnionMember2) =>
     `DiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_discriminatedUnionMember2))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly discriminatedUnionMember2Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
-  }) => Either<Error, DiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, DiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       discriminatedUnionMember2Distinct: Either.of(
         parameters.discriminatedUnionMember2Distinct,
       ),
@@ -16747,12 +17098,15 @@ export namespace DiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly discriminatedUnionMember2Distinct: string;
     readonly discriminatedUnionMemberCommon: string;
   }): DiscriminatedUnionMember2 {
@@ -17352,18 +17706,24 @@ export namespace DisplayStruct {
     _displayStruct,
   ) => `DisplayStruct(${JSON.stringify(toStringRecord(_displayStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DisplayStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitFalseDisplay: string;
     readonly explicitTrueDisplay: string;
     readonly implicitFalseDisplay: string;
-  }) => Either<Error, DisplayStruct> = (parameters) =>
+  }): Either<Error, DisplayStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       explicitFalseDisplay: Either.of(parameters.explicitFalseDisplay),
       explicitTrueDisplay: Either.of(parameters.explicitTrueDisplay),
       implicitFalseDisplay: Either.of(parameters.implicitFalseDisplay),
@@ -17376,12 +17736,15 @@ export namespace DisplayStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => DisplayStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitFalseDisplay: string;
     readonly explicitTrueDisplay: string;
     readonly implicitFalseDisplay: string;
@@ -17968,16 +18331,22 @@ export namespace ExplicitFromToRdfTypesStruct {
   ) => string = (_explicitFromToRdfTypesStruct) =>
     `ExplicitFromToRdfTypesStruct(${JSON.stringify(toStringRecord(_explicitFromToRdfTypesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ExplicitFromToRdfTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitFromToRdfTypesString: string;
-  }) => Either<Error, ExplicitFromToRdfTypesStruct> = (parameters) =>
+  }): Either<Error, ExplicitFromToRdfTypesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       explicitFromToRdfTypesString: Either.of(
         parameters.explicitFromToRdfTypesString,
       ),
@@ -17993,12 +18362,15 @@ export namespace ExplicitFromToRdfTypesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ExplicitFromToRdfTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitFromToRdfTypesString: string;
   }): ExplicitFromToRdfTypesStruct {
     return create(parameters).unsafeCoerce();
@@ -18491,16 +18863,22 @@ export namespace ExplicitRdfTypeStruct {
   ) => string = (_explicitRdfTypeStruct) =>
     `ExplicitRdfTypeStruct(${JSON.stringify(toStringRecord(_explicitRdfTypeStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ExplicitRdfTypeStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitRdfTypeString: string;
-  }) => Either<Error, ExplicitRdfTypeStruct> = (parameters) =>
+  }): Either<Error, ExplicitRdfTypeStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       explicitRdfTypeString: Either.of(parameters.explicitRdfTypeString),
     })
       .map((properties) => ({
@@ -18514,12 +18892,15 @@ export namespace ExplicitRdfTypeStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ExplicitRdfTypeStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly explicitRdfTypeString: string;
   }): ExplicitRdfTypeStruct {
     return create(parameters).unsafeCoerce();
@@ -19002,16 +19383,22 @@ export namespace FlattenDiscriminatedUnionMember3 {
   ) => string = (_flattenDiscriminatedUnionMember3) =>
     `FlattenDiscriminatedUnionMember3(${JSON.stringify(toStringRecord(_flattenDiscriminatedUnionMember3))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => FlattenDiscriminatedUnionMember3.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly flattenDiscriminatedUnionMember3String: string;
-  }) => Either<Error, FlattenDiscriminatedUnionMember3> = (parameters) =>
+  }): Either<Error, FlattenDiscriminatedUnionMember3> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       flattenDiscriminatedUnionMember3String: Either.of(
         parameters.flattenDiscriminatedUnionMember3String,
       ),
@@ -19027,12 +19414,15 @@ export namespace FlattenDiscriminatedUnionMember3 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => FlattenDiscriminatedUnionMember3.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly flattenDiscriminatedUnionMember3String: string;
   }): FlattenDiscriminatedUnionMember3 {
     return create(parameters).unsafeCoerce();
@@ -19524,18 +19914,27 @@ export namespace HasValuesStruct {
     _hasValuesStruct,
   ) => `HasValuesStruct(${JSON.stringify(toStringRecord(_hasValuesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => HasValuesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly hasIriValue: string | NamedNode;
+      | (keyof $DefaultNamespaceT & string);
+    readonly hasIriValue: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly hasLiteralValue: string;
-  }) => Either<Error, HasValuesStruct> = (parameters) =>
+  }): Either<Error, HasValuesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      hasIriValue: $convertToIri<string>(parameters.hasIriValue),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      hasIriValue: $convertToIri(
+        parameters.hasIriValue,
+        parameters.$defaultNamespace,
+      ),
       hasLiteralValue: Either.of(parameters.hasLiteralValue),
     })
       .map((properties) => ({
@@ -19549,13 +19948,16 @@ export namespace HasValuesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => HasValuesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly hasIriValue: string | NamedNode;
+      | (keyof $DefaultNamespaceT & string);
+    readonly hasIriValue: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly hasLiteralValue: string;
   }): HasValuesStruct {
     return create(parameters).unsafeCoerce();
@@ -20048,18 +20450,24 @@ export namespace IgnoredPropertiesStruct {
   ) => string = (_ignoredPropertiesStruct) =>
     `IgnoredPropertiesStruct(${JSON.stringify(toStringRecord(_ignoredPropertiesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IgnoredPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly severityDefaultProperty: string;
     readonly severityViolationProperty: string;
     readonly shaclmateIgnoreFalseProperty: string;
-  }) => Either<Error, IgnoredPropertiesStruct> = (parameters) =>
+  }): Either<Error, IgnoredPropertiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       severityDefaultProperty: Either.of(parameters.severityDefaultProperty),
       severityViolationProperty: Either.of(
         parameters.severityViolationProperty,
@@ -20079,12 +20487,15 @@ export namespace IgnoredPropertiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IgnoredPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly severityDefaultProperty: string;
     readonly severityViolationProperty: string;
     readonly shaclmateIgnoreFalseProperty: string;
@@ -20652,20 +21063,27 @@ export namespace IndirectRecursiveStruct {
   ) => string = (_indirectRecursiveStruct) =>
     `IndirectRecursiveStruct(${JSON.stringify(toStringRecord(_indirectRecursiveStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IndirectRecursiveStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly indirectRecursiveHelper?:
       | IndirectRecursiveStructHelper
       | Maybe<IndirectRecursiveStructHelper>;
-  }) => Either<Error, IndirectRecursiveStruct> = (parameters) =>
+  }): Either<Error, IndirectRecursiveStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       indirectRecursiveHelper: $convertToMaybe($identityConversionFunction)(
         parameters?.indirectRecursiveHelper,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           IndirectRecursiveStruct.schema.properties.indirectRecursiveHelper
@@ -20685,12 +21103,15 @@ export namespace IndirectRecursiveStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IndirectRecursiveStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly indirectRecursiveHelper?:
       | IndirectRecursiveStructHelper
       | Maybe<IndirectRecursiveStructHelper>;
@@ -21183,20 +21604,27 @@ export namespace IndirectRecursiveStructHelper {
   ) => string = (_indirectRecursiveStructHelper) =>
     `IndirectRecursiveStructHelper(${JSON.stringify(toStringRecord(_indirectRecursiveStructHelper))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IndirectRecursiveStructHelper.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly indirectRecursive?:
       | IndirectRecursiveStruct
       | Maybe<IndirectRecursiveStruct>;
-  }) => Either<Error, IndirectRecursiveStructHelper> = (parameters) =>
+  }): Either<Error, IndirectRecursiveStructHelper> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       indirectRecursive: $convertToMaybe($identityConversionFunction)(
         parameters?.indirectRecursive,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           IndirectRecursiveStructHelper.schema.properties.indirectRecursive
@@ -21216,12 +21644,15 @@ export namespace IndirectRecursiveStructHelper {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => IndirectRecursiveStructHelper.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly indirectRecursive?:
       | IndirectRecursiveStruct
       | Maybe<IndirectRecursiveStruct>;
@@ -21700,7 +22131,10 @@ export namespace InIdentifierStruct {
     (_inIdentifierStruct) =>
       `InIdentifierStruct(${JSON.stringify(toStringRecord(_inIdentifierStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => InIdentifierStruct.Identifier)
       | (
@@ -21712,14 +22146,15 @@ export namespace InIdentifierStruct {
           | "http://example.com/InIdentifierStructInstance2"
         >;
     readonly inIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, InIdentifierStruct> = (parameters) =>
+  }): Either<Error, InIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<
+      $identifier: $convertToInIriIdentifierProperty<
         | "http://example.com/InIdentifierStructInstance1"
         | "http://example.com/InIdentifierStructInstance2"
-      >(parameters.$identifier),
+      >(parameters.$identifier, parameters.$defaultNamespace),
       inIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters.inIdentifierString,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InIdentifierStruct.schema.properties.inIdentifierString.type,
@@ -21738,7 +22173,10 @@ export namespace InIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => InIdentifierStruct.Identifier)
       | (
@@ -22410,12 +22848,15 @@ export namespace InPropertiesStruct {
     (_inPropertiesStruct) =>
       `InPropertiesStruct(${JSON.stringify(toStringRecord(_inPropertiesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => InPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly inBooleans?: true | Maybe<true>;
     readonly inDateTimes?: Date | Maybe<Date>;
     readonly inDoubles?: 1 | 2 | Maybe<1 | 2>;
@@ -22427,11 +22868,15 @@ export namespace InPropertiesStruct {
           NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
         >;
     readonly inStrings?: "text" | "html" | Maybe<"text" | "html">;
-  }) => Either<Error, InPropertiesStruct> = (parameters) =>
+  }): Either<Error, InPropertiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       inBooleans: $convertToMaybe($identityConversionFunction)(
         parameters?.inBooleans,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inBooleans.type,
@@ -22440,6 +22885,7 @@ export namespace InPropertiesStruct {
       ),
       inDateTimes: $convertToMaybe($identityConversionFunction)(
         parameters?.inDateTimes,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inDateTimes.type,
@@ -22448,6 +22894,7 @@ export namespace InPropertiesStruct {
       ),
       inDoubles: $convertToMaybe($identityConversionFunction)(
         parameters?.inDoubles,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inDoubles.type,
@@ -22456,6 +22903,7 @@ export namespace InPropertiesStruct {
       ),
       inIntegers: $convertToMaybe($identityConversionFunction)(
         parameters?.inIntegers,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inIntegers.type,
@@ -22463,10 +22911,10 @@ export namespace InPropertiesStruct {
         ),
       ),
       inIris: $convertToMaybe(
-        $convertToIri<
+        $convertToInIri<
           "http://example.com/InIri1" | "http://example.com/InIri2"
         >,
-      )(parameters?.inIris).chain((value) =>
+      )(parameters?.inIris, parameters?.$defaultNamespace).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inIris.type,
           value,
@@ -22474,6 +22922,7 @@ export namespace InPropertiesStruct {
       ),
       inStrings: $convertToMaybe($identityConversionFunction)(
         parameters?.inStrings,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           InPropertiesStruct.schema.properties.inStrings.type,
@@ -22492,12 +22941,15 @@ export namespace InPropertiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => InPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly inBooleans?: true | Maybe<true>;
     readonly inDateTimes?: Date | Maybe<Date>;
     readonly inDoubles?: 1 | 2 | Maybe<1 | 2>;
@@ -23382,19 +23834,24 @@ export namespace IriIdentifierStruct {
   ) => string = (_iriIdentifierStruct) =>
     `IriIdentifierStruct(${JSON.stringify(toStringRecord(_iriIdentifierStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => IriIdentifierStruct.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
     readonly iriIdentifierString?: string | Maybe<string>;
-  }) => Either<Error, IriIdentifierStruct> = (parameters) =>
+  }): Either<Error, IriIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<string>(
+      $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       iriIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters.iriIdentifierString,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           IriIdentifierStruct.schema.properties.iriIdentifierString.type,
@@ -23413,10 +23870,13 @@ export namespace IriIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => IriIdentifierStruct.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
     readonly iriIdentifierString?: string | Maybe<string>;
   }): IriIdentifierStruct {
@@ -23887,12 +24347,15 @@ export namespace LanguageInStruct {
     _languageInStruct,
   ) => `LanguageInStruct(${JSON.stringify(toStringRecord(_languageInStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LanguageInStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly languageInLiteral:
       | bigint
       | boolean
@@ -23901,14 +24364,17 @@ export namespace LanguageInStruct {
       | Date
       | Literal
       | readonly (bigint | boolean | number | string | Date | Literal)[];
-  }) => Either<Error, LanguageInStruct> = (parameters) =>
+  }): Either<Error, LanguageInStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      languageInLiteral: $convertToScalarSet(
-        $convertToLiteral,
-        true,
-      )(parameters.languageInLiteral).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      languageInLiteral: $convertToScalarSet($convertToLiteral)(
+        parameters.languageInLiteral,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           LanguageInStruct.schema.properties.languageInLiteral.type,
           value,
         ),
@@ -23925,12 +24391,15 @@ export namespace LanguageInStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LanguageInStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly languageInLiteral:
       | bigint
       | boolean
@@ -24399,18 +24868,22 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       toStringRecord(_lazilyResolvedBlankNodeOrIriIdentifierStruct),
     )})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> = (
-    parameters,
-  ) =>
+  }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -24424,12 +24897,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): LazilyResolvedBlankNodeOrIriIdentifierStruct {
     return create(parameters).unsafeCoerce();
@@ -24942,16 +25418,22 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       toStringRecord(_lazilyResolvedDiscriminatedUnionMember1),
     )})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedDiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, LazilyResolvedDiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -24965,12 +25447,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): LazilyResolvedDiscriminatedUnionMember1 {
     return create(parameters).unsafeCoerce();
@@ -25468,16 +25953,22 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       toStringRecord(_lazilyResolvedDiscriminatedUnionMember2),
     )})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedDiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, LazilyResolvedDiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -25491,12 +25982,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazilyResolvedDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): LazilyResolvedDiscriminatedUnionMember2 {
     return create(parameters).unsafeCoerce();
@@ -25975,16 +26469,20 @@ export namespace LazilyResolvedIriIdentifierStruct {
   ) => string = (_lazilyResolvedIriIdentifierStruct) =>
     `LazilyResolvedIriIdentifierStruct(${JSON.stringify(toStringRecord(_lazilyResolvedIriIdentifierStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => LazilyResolvedIriIdentifierStruct.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
     readonly lazilyResolved: string;
-  }) => Either<Error, LazilyResolvedIriIdentifierStruct> = (parameters) =>
+  }): Either<Error, LazilyResolvedIriIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<string>(
+      $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
@@ -25999,10 +26497,13 @@ export namespace LazilyResolvedIriIdentifierStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier:
       | (() => LazilyResolvedIriIdentifierStruct.Identifier)
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode;
     readonly lazilyResolved: string;
   }): LazilyResolvedIriIdentifierStruct {
@@ -27042,12 +27543,15 @@ export namespace LazyPropertiesStruct {
   ) => string = (_lazyPropertiesStruct) =>
     `LazyPropertiesStruct(${JSON.stringify(toStringRecord(_lazyPropertiesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazyPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazyOption<
           $DefaultPartial,
@@ -27107,30 +27611,36 @@ export namespace LazyPropertiesStruct {
       | readonly LazilyResolvedBlankNodeOrIriIdentifierStruct[]
       | PartialStruct
       | LazilyResolvedBlankNodeOrIriIdentifierStruct;
-  }) => Either<Error, LazyPropertiesStruct> = (parameters) =>
+  }): Either<Error, LazyPropertiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       optionalLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(
-        $DefaultPartial.is$DefaultPartial,
-        $DefaultPartial.createUnsafe,
-      )(parameters.optionalLazyToResolvedBlankNodeOrIriIdentifier),
+      >($DefaultPartial.is$DefaultPartial, $DefaultPartial.createUnsafe)(
+        parameters.optionalLazyToResolvedBlankNodeOrIriIdentifier,
+        parameters.$defaultNamespace,
+      ),
       optionalLazyToResolvedDiscriminatedUnion: $convertToLazyOption<
         $DefaultPartial,
         LazilyResolvedDiscriminatedUnion
-      >(
-        $DefaultPartial.is$DefaultPartial,
-        $DefaultPartial.createUnsafe,
-      )(parameters.optionalLazyToResolvedDiscriminatedUnion),
+      >($DefaultPartial.is$DefaultPartial, $DefaultPartial.createUnsafe)(
+        parameters.optionalLazyToResolvedDiscriminatedUnion,
+        parameters.$defaultNamespace,
+      ),
       optionalLazyToResolvedIriIdentifier: $convertToLazyOption<
         $NamedDefaultPartial,
         LazilyResolvedIriIdentifierStruct
       >(
         $NamedDefaultPartial.is$NamedDefaultPartial,
         $NamedDefaultPartial.createUnsafe,
-      )(parameters.optionalLazyToResolvedIriIdentifier),
+      )(
+        parameters.optionalLazyToResolvedIriIdentifier,
+        parameters.$defaultNamespace,
+      ),
       optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
         $convertToLazyOption<
           PartialDiscriminatedUnion,
@@ -27150,49 +27660,50 @@ export namespace LazyPropertiesStruct {
           },
         )(
           parameters.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
+          parameters.$defaultNamespace,
         ),
       optionalPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazyOption<
         PartialStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(
-        PartialStruct.isPartialStruct,
-        PartialStruct.createUnsafe,
-      )(parameters.optionalPartialToResolvedBlankNodeOrIriIdentifier),
+      >(PartialStruct.isPartialStruct, PartialStruct.createUnsafe)(
+        parameters.optionalPartialToResolvedBlankNodeOrIriIdentifier,
+        parameters.$defaultNamespace,
+      ),
       optionalPartialToResolvedDiscriminatedUnion: $convertToLazyOption<
         PartialStruct,
         LazilyResolvedDiscriminatedUnion
-      >(
-        PartialStruct.isPartialStruct,
-        PartialStruct.createUnsafe,
-      )(parameters.optionalPartialToResolvedDiscriminatedUnion),
+      >(PartialStruct.isPartialStruct, PartialStruct.createUnsafe)(
+        parameters.optionalPartialToResolvedDiscriminatedUnion,
+        parameters.$defaultNamespace,
+      ),
       requiredLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazy<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(
-        $DefaultPartial.is$DefaultPartial,
-        $DefaultPartial.createUnsafe,
-      )(parameters.requiredLazyToResolvedBlankNodeOrIriIdentifier),
+      >($DefaultPartial.is$DefaultPartial, $DefaultPartial.createUnsafe)(
+        parameters.requiredLazyToResolvedBlankNodeOrIriIdentifier,
+        parameters.$defaultNamespace,
+      ),
       requiredPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazy<
         PartialStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(
-        PartialStruct.isPartialStruct,
-        PartialStruct.createUnsafe,
-      )(parameters.requiredPartialToResolvedBlankNodeOrIriIdentifier),
+      >(PartialStruct.isPartialStruct, PartialStruct.createUnsafe)(
+        parameters.requiredPartialToResolvedBlankNodeOrIriIdentifier,
+        parameters.$defaultNamespace,
+      ),
       setLazyToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(
-        $DefaultPartial.is$DefaultPartial,
-        $DefaultPartial.createUnsafe,
-      )(parameters.setLazyToResolvedBlankNodeOrIriIdentifier),
+      >($DefaultPartial.is$DefaultPartial, $DefaultPartial.createUnsafe)(
+        parameters.setLazyToResolvedBlankNodeOrIriIdentifier,
+        parameters.$defaultNamespace,
+      ),
       setPartialToResolvedBlankNodeOrIriIdentifier: $convertToLazySet<
         PartialStruct,
         LazilyResolvedBlankNodeOrIriIdentifierStruct
-      >(
-        PartialStruct.isPartialStruct,
-        PartialStruct.createUnsafe,
-      )(parameters.setPartialToResolvedBlankNodeOrIriIdentifier),
+      >(PartialStruct.isPartialStruct, PartialStruct.createUnsafe)(
+        parameters.setPartialToResolvedBlankNodeOrIriIdentifier,
+        parameters.$defaultNamespace,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -27205,12 +27716,15 @@ export namespace LazyPropertiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazyPropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?:
       | $LazyOption<
           $DefaultPartial,
@@ -29253,47 +29767,50 @@ export namespace ListSetsStruct {
     _listSetsStruct,
   ) => `ListSetsStruct(${JSON.stringify(toStringRecord(_listSetsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ListSetsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly listDiscriminatedUnionSet?: readonly (
       | readonly string[]
       | string
     )[];
     readonly listListSet?: readonly (readonly (readonly string[])[])[];
     readonly listSet?: readonly (readonly string[])[];
-  }) => Either<Error, ListSetsStruct> = (parameters) =>
+  }): Either<Error, ListSetsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       listDiscriminatedUnionSet: $convertToArraySet(
         $identityConversionFunction,
-        true,
-      )(parameters?.listDiscriminatedUnionSet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      )(
+        parameters?.listDiscriminatedUnionSet,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           ListSetsStruct.schema.properties.listDiscriminatedUnionSet.type,
           value,
         ),
       ),
       listListSet: $convertToArraySet(
-        $convertToList($convertToList($identityConversionFunction, true), true),
-        true,
-      )(parameters?.listListSet).chain((value) =>
+        $convertToList($convertToList($identityConversionFunction)),
+      )(parameters?.listListSet, parameters?.$defaultNamespace).chain((value) =>
         $validateArray(
-          $validateArray(
-            $validateArray($identityValidationFunction, true),
-            true,
-          ),
-          true,
+          $validateArray($validateArray($identityValidationFunction)),
         )(ListSetsStruct.schema.properties.listListSet.type, value),
       ),
-      listSet: $convertToArraySet(
-        $convertToList($identityConversionFunction, true),
-        true,
-      )(parameters?.listSet).chain((value) =>
-        $validateArray($validateArray($identityValidationFunction, true), true)(
+      listSet: $convertToArraySet($convertToList($identityConversionFunction))(
+        parameters?.listSet,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($validateArray($identityValidationFunction))(
           ListSetsStruct.schema.properties.listSet.type,
           value,
         ),
@@ -29310,12 +29827,15 @@ export namespace ListSetsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ListSetsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly listDiscriminatedUnionSet?: readonly (
       | readonly string[]
       | string
@@ -30623,14 +31143,17 @@ export namespace ListsStruct {
     _listsStruct,
   ) => `ListsStruct(${JSON.stringify(toStringRecord(_listsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ListsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly iriList?:
-      | readonly (string | NamedNode)[]
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
       | Maybe<readonly NamedNode[]>;
     readonly stringList?: readonly string[] | Maybe<readonly string[]>;
     readonly stringListList?:
@@ -30639,39 +31162,43 @@ export namespace ListsStruct {
     readonly structList?:
       | readonly NonClassStruct[]
       | Maybe<readonly NonClassStruct[]>;
-  }) => Either<Error, ListsStruct> = (parameters) =>
+  }): Either<Error, ListsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      iriList: $convertToMaybe($convertToList($convertToIri<string>, true))(
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
+      iriList: $convertToMaybe($convertToList($convertToIri))(
         parameters?.iriList,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           ListsStruct.schema.properties.iriList.type,
           value,
         ),
       ),
-      stringList: $convertToMaybe(
-        $convertToList($identityConversionFunction, true),
-      )(parameters?.stringList).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+      stringList: $convertToMaybe($convertToList($identityConversionFunction))(
+        parameters?.stringList,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction))(
           ListsStruct.schema.properties.stringList.type,
           value,
         ),
       ),
       stringListList: $convertToMaybe(
-        $convertToList($convertToList($identityConversionFunction, true), true),
-      )(parameters?.stringListList).chain((value) =>
-        $validateMaybe(
-          $validateArray(
-            $validateArray($identityValidationFunction, true),
-            true,
-          ),
-        )(ListsStruct.schema.properties.stringListList.type, value),
+        $convertToList($convertToList($identityConversionFunction)),
+      )(parameters?.stringListList, parameters?.$defaultNamespace).chain(
+        (value) =>
+          $validateMaybe(
+            $validateArray($validateArray($identityValidationFunction)),
+          )(ListsStruct.schema.properties.stringListList.type, value),
       ),
-      structList: $convertToMaybe(
-        $convertToList($identityConversionFunction, true),
-      )(parameters?.structList).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+      structList: $convertToMaybe($convertToList($identityConversionFunction))(
+        parameters?.structList,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction))(
           ListsStruct.schema.properties.structList.type,
           value,
         ),
@@ -30685,14 +31212,17 @@ export namespace ListsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ListsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly iriList?:
-      | readonly (string | NamedNode)[]
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
       | Maybe<readonly NamedNode[]>;
     readonly stringList?: readonly string[] | Maybe<readonly string[]>;
     readonly stringListList?:
@@ -31623,37 +32153,44 @@ export namespace MutablePropertiesStruct {
   ) => string = (_mutablePropertiesStruct) =>
     `MutablePropertiesStruct(${JSON.stringify(toStringRecord(_mutablePropertiesStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => MutablePropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly mutableList?: readonly string[] | Maybe<string[]>;
     readonly mutableSet?: string | readonly string[];
     readonly mutableString?: string | Maybe<string>;
-  }) => Either<Error, MutablePropertiesStruct> = (parameters) =>
+  }): Either<Error, MutablePropertiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       mutableList: $convertToMaybe(
-        $convertToList($identityConversionFunction, false),
-      )(parameters?.mutableList).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, false))(
+        $convertToMutableList($identityConversionFunction),
+      )(parameters?.mutableList, parameters?.$defaultNamespace).chain((value) =>
+        $validateMaybe($validateMutableArray($identityValidationFunction))(
           MutablePropertiesStruct.schema.properties.mutableList.type,
           value,
         ),
       ),
-      mutableSet: $convertToScalarSet(
-        $identityConversionFunction,
-        false,
-      )(parameters?.mutableSet).chain((value) =>
-        $validateArray($identityValidationFunction, false)(
+      mutableSet: $convertToMutableScalarSet($identityConversionFunction)(
+        parameters?.mutableSet,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMutableArray($identityValidationFunction)(
           MutablePropertiesStruct.schema.properties.mutableSet.type,
           value,
         ),
       ),
       mutableString: $convertToMaybe($identityConversionFunction)(
         parameters?.mutableString,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           MutablePropertiesStruct.schema.properties.mutableString.type,
@@ -31672,12 +32209,15 @@ export namespace MutablePropertiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => MutablePropertiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly mutableList?: readonly string[] | Maybe<string[]>;
     readonly mutableSet?: string | readonly string[];
     readonly mutableString?: string | Maybe<string>;
@@ -32454,28 +32994,39 @@ export namespace NamedTypesStruct {
     _namedTypesStruct,
   ) => `NamedTypesStruct(${JSON.stringify(toStringRecord(_namedTypesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NamedTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly namedDatatype: NamedDatatype;
     readonly namedDiscriminatedUnion1: NamedNode | string;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
     readonly namedInIri: NamedInIri["value"] | NamedInIri;
     readonly namedInLiteral: NamedInLiteral;
-  }) => Either<Error, NamedTypesStruct> = (parameters) =>
+  }): Either<Error, NamedTypesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       namedDatatype: Either.of(parameters.namedDatatype),
       namedDiscriminatedUnion1: $identityConversionFunction(
         parameters.namedDiscriminatedUnion1,
+        parameters.$defaultNamespace,
       ),
       namedDiscriminatedUnion2: $identityConversionFunction(
         parameters.namedDiscriminatedUnion2,
+        parameters.$defaultNamespace,
       ),
-      namedInIri: $convertToIri<NamedInIri["value"]>(parameters.namedInIri),
+      namedInIri: $convertToInIri<NamedInIri["value"]>(
+        parameters.namedInIri,
+        parameters.$defaultNamespace,
+      ),
       namedInLiteral: Either.of(parameters.namedInLiteral),
     })
       .map((properties) => ({
@@ -32489,12 +33040,15 @@ export namespace NamedTypesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NamedTypesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly namedDatatype: NamedDatatype;
     readonly namedDiscriminatedUnion1: NamedNode | string;
     readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
@@ -33212,18 +33766,25 @@ export namespace NewName {
   export const $toString: (_newName: NewName) => string = (_newName) =>
     `NewName(${JSON.stringify(toStringRecord(_newName))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NewName.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly newNameString?: string | Maybe<string>;
-  }) => Either<Error, NewName> = (parameters) =>
+  }): Either<Error, NewName> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       newNameString: $convertToMaybe($identityConversionFunction)(
         parameters?.newNameString,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NewName.schema.properties.newNameString.type,
@@ -33239,12 +33800,15 @@ export namespace NewName {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NewName.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly newNameString?: string | Maybe<string>;
   }): NewName {
     return create(parameters).unsafeCoerce();
@@ -33799,16 +34363,22 @@ export namespace NodeKindsStruct {
     _nodeKindsStruct,
   ) => `NodeKindsStruct(${JSON.stringify(toStringRecord(_nodeKindsStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NodeKindsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeKind?: BlankNode;
-    readonly blankNodeOrIriNodeKind?: BlankNode | NamedNode | string;
+    readonly blankNodeOrIriNodeKind?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
-    readonly iriNodeKind: string | NamedNode;
+    readonly iriNodeKind: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly iriOrLiteralNodeKind: NamedNode | Literal;
     readonly literalNodeKind:
       | bigint
@@ -33817,19 +34387,32 @@ export namespace NodeKindsStruct {
       | string
       | Date
       | Literal;
-  }) => Either<Error, NodeKindsStruct> = (parameters) =>
+  }): Either<Error, NodeKindsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      blankNodeKind: $convertToBlankNode(parameters.blankNodeKind),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      blankNodeKind: $convertToBlankNode(
+        parameters.blankNodeKind,
+        parameters.$defaultNamespace,
+      ),
       blankNodeOrIriNodeKind: $convertToIdentifier(
         parameters.blankNodeOrIriNodeKind,
+        parameters.$defaultNamespace,
       ),
       blankNodeOrLiteralNodeKind: Either.of(
         parameters.blankNodeOrLiteralNodeKind,
       ),
-      iriNodeKind: $convertToIri<string>(parameters.iriNodeKind),
+      iriNodeKind: $convertToIri(
+        parameters.iriNodeKind,
+        parameters.$defaultNamespace,
+      ),
       iriOrLiteralNodeKind: Either.of(parameters.iriOrLiteralNodeKind),
-      literalNodeKind: $convertToLiteral(parameters.literalNodeKind),
+      literalNodeKind: $convertToLiteral(
+        parameters.literalNodeKind,
+        parameters.$defaultNamespace,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -33842,16 +34425,22 @@ export namespace NodeKindsStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NodeKindsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeKind?: BlankNode;
-    readonly blankNodeOrIriNodeKind?: BlankNode | NamedNode | string;
+    readonly blankNodeOrIriNodeKind?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeOrLiteralNodeKind: BlankNode | Literal;
-    readonly iriNodeKind: string | NamedNode;
+    readonly iriNodeKind: (keyof $DefaultNamespaceT & string) | NamedNode;
     readonly iriOrLiteralNodeKind: NamedNode | Literal;
     readonly literalNodeKind:
       | bigint
@@ -34709,16 +35298,22 @@ export namespace NonClassStruct {
     _nonClassStruct,
   ) => `NonClassStruct(${JSON.stringify(toStringRecord(_nonClassStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NonClassStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly nonClassString: string;
-  }) => Either<Error, NonClassStruct> = (parameters) =>
+  }): Either<Error, NonClassStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       nonClassString: Either.of(parameters.nonClassString),
     })
       .map((properties) => ({
@@ -34732,12 +35327,15 @@ export namespace NonClassStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NonClassStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly nonClassString: string;
   }): NonClassStruct {
     return create(parameters).unsafeCoerce();
@@ -35130,16 +35728,22 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   ) => string = (_noRdfTypeDiscriminatedUnionMember1) =>
     `NoRdfTypeDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_noRdfTypeDiscriminatedUnionMember1))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly noRdfTypeDiscriminatedUnionMember1String: string;
-  }) => Either<Error, NoRdfTypeDiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, NoRdfTypeDiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       noRdfTypeDiscriminatedUnionMember1String: Either.of(
         parameters.noRdfTypeDiscriminatedUnionMember1String,
       ),
@@ -35155,12 +35759,15 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NoRdfTypeDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly noRdfTypeDiscriminatedUnionMember1String: string;
   }): NoRdfTypeDiscriminatedUnionMember1 {
     return create(parameters).unsafeCoerce();
@@ -35588,16 +36195,22 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   ) => string = (_noRdfTypeDiscriminatedUnionMember2) =>
     `NoRdfTypeDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_noRdfTypeDiscriminatedUnionMember2))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly noRdfTypeDiscriminatedUnionMember2String: string;
-  }) => Either<Error, NoRdfTypeDiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, NoRdfTypeDiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       noRdfTypeDiscriminatedUnionMember2String: Either.of(
         parameters.noRdfTypeDiscriminatedUnionMember2String,
       ),
@@ -35613,12 +36226,15 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NoRdfTypeDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly noRdfTypeDiscriminatedUnionMember2String: string;
   }): NoRdfTypeDiscriminatedUnionMember2 {
     return create(parameters).unsafeCoerce();
@@ -36427,12 +37043,15 @@ export namespace NumericsStruct {
     _numericsStruct,
   ) => `NumericsStruct(${JSON.stringify(toStringRecord(_numericsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NumericsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly byteNumeric?: number | Maybe<number>;
     readonly decimalNumeric?: BigDecimal | Maybe<BigDecimal>;
     readonly doubleNumeric?: number | Maybe<number>;
@@ -36449,11 +37068,15 @@ export namespace NumericsStruct {
     readonly unsignedIntNumeric?: number | Maybe<number>;
     readonly unsignedLongNumeric?: bigint | Maybe<bigint>;
     readonly unsignedShortNumeric?: number | Maybe<number>;
-  }) => Either<Error, NumericsStruct> = (parameters) =>
+  }): Either<Error, NumericsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       byteNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.byteNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.byteNumeric.type,
@@ -36462,6 +37085,7 @@ export namespace NumericsStruct {
       ),
       decimalNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.decimalNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.decimalNumeric.type,
@@ -36470,6 +37094,7 @@ export namespace NumericsStruct {
       ),
       doubleNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.doubleNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.doubleNumeric.type,
@@ -36478,6 +37103,7 @@ export namespace NumericsStruct {
       ),
       floatNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.floatNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.floatNumeric.type,
@@ -36486,6 +37112,7 @@ export namespace NumericsStruct {
       ),
       integerNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.integerNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.integerNumeric.type,
@@ -36494,6 +37121,7 @@ export namespace NumericsStruct {
       ),
       intNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.intNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.intNumeric.type,
@@ -36502,6 +37130,7 @@ export namespace NumericsStruct {
       ),
       longNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.longNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.longNumeric.type,
@@ -36510,6 +37139,7 @@ export namespace NumericsStruct {
       ),
       negativeIntegerNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.negativeIntegerNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.negativeIntegerNumeric.type,
@@ -36518,6 +37148,7 @@ export namespace NumericsStruct {
       ),
       nonNegativeIntegerNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.nonNegativeIntegerNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.nonNegativeIntegerNumeric.type,
@@ -36526,6 +37157,7 @@ export namespace NumericsStruct {
       ),
       nonPositiveIntegerNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.nonPositiveIntegerNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.nonPositiveIntegerNumeric.type,
@@ -36534,6 +37166,7 @@ export namespace NumericsStruct {
       ),
       positiveIntegerNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.positiveIntegerNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.positiveIntegerNumeric.type,
@@ -36542,6 +37175,7 @@ export namespace NumericsStruct {
       ),
       shortNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.shortNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.shortNumeric.type,
@@ -36550,6 +37184,7 @@ export namespace NumericsStruct {
       ),
       unsignedByteNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedByteNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.unsignedByteNumeric.type,
@@ -36558,6 +37193,7 @@ export namespace NumericsStruct {
       ),
       unsignedIntNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedIntNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.unsignedIntNumeric.type,
@@ -36566,6 +37202,7 @@ export namespace NumericsStruct {
       ),
       unsignedLongNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedLongNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.unsignedLongNumeric.type,
@@ -36574,6 +37211,7 @@ export namespace NumericsStruct {
       ),
       unsignedShortNumeric: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedShortNumeric,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NumericsStruct.schema.properties.unsignedShortNumeric.type,
@@ -36592,12 +37230,15 @@ export namespace NumericsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NumericsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly byteNumeric?: number | Maybe<number>;
     readonly decimalNumeric?: BigDecimal | Maybe<BigDecimal>;
     readonly doubleNumeric?: number | Maybe<number>;
@@ -38275,18 +38916,24 @@ export namespace OrderedStruct {
     _orderedStruct,
   ) => `OrderedStruct(${JSON.stringify(toStringRecord(_orderedStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => OrderedStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly orderedC: string;
     readonly orderedB: string;
     readonly orderedA: string;
-  }) => Either<Error, OrderedStruct> = (parameters) =>
+  }): Either<Error, OrderedStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       orderedC: Either.of(parameters.orderedC),
       orderedB: Either.of(parameters.orderedB),
       orderedA: Either.of(parameters.orderedA),
@@ -38299,12 +38946,15 @@ export namespace OrderedStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => OrderedStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly orderedC: string;
     readonly orderedB: string;
     readonly orderedA: string;
@@ -38803,16 +39453,22 @@ export namespace PartialDiscriminatedUnionMember1 {
   ) => string = (_partialDiscriminatedUnionMember1) =>
     `PartialDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_partialDiscriminatedUnionMember1))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
-  }) => Either<Error, PartialDiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, PartialDiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -38826,12 +39482,15 @@ export namespace PartialDiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): PartialDiscriminatedUnionMember1 {
     return create(parameters).unsafeCoerce();
@@ -39311,16 +39970,22 @@ export namespace PartialDiscriminatedUnionMember2 {
   ) => string = (_partialDiscriminatedUnionMember2) =>
     `PartialDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_partialDiscriminatedUnionMember2))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
-  }) => Either<Error, PartialDiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, PartialDiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({
@@ -39334,12 +39999,15 @@ export namespace PartialDiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): PartialDiscriminatedUnionMember2 {
     return create(parameters).unsafeCoerce();
@@ -39799,16 +40467,22 @@ export namespace PartialStruct {
     _partialStruct,
   ) => `PartialStruct(${JSON.stringify(toStringRecord(_partialStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
-  }) => Either<Error, PartialStruct> = (parameters) =>
+  }): Either<Error, PartialStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       lazilyResolved: Either.of(parameters.lazilyResolved),
     })
       .map((properties) => ({ ...properties, $type: "PartialStruct" as const }))
@@ -39819,12 +40493,15 @@ export namespace PartialStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PartialStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly lazilyResolved: string;
   }): PartialStruct {
     return create(parameters).unsafeCoerce();
@@ -40287,39 +40964,46 @@ export namespace PropertyCardinalitiesStruct {
   ) => string = (_propertyCardinalitiesStruct) =>
     `PropertyCardinalitiesStruct(${JSON.stringify(toStringRecord(_propertyCardinalitiesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyCardinalitiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly emptySet?: string | readonly string[];
     readonly nonEmptySet: string | readonly string[];
     readonly optional?: string | Maybe<string>;
     readonly required: string;
-  }) => Either<Error, PropertyCardinalitiesStruct> = (parameters) =>
+  }): Either<Error, PropertyCardinalitiesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      emptySet: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.emptySet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      emptySet: $convertToScalarSet($identityConversionFunction)(
+        parameters.emptySet,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.emptySet.type,
           value,
         ),
       ),
-      nonEmptySet: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.nonEmptySet).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      nonEmptySet: $convertToScalarSet($identityConversionFunction)(
+        parameters.nonEmptySet,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.nonEmptySet.type,
           value,
         ),
       ),
       optional: $convertToMaybe($identityConversionFunction)(
         parameters.optional,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyCardinalitiesStruct.schema.properties.optional.type,
@@ -40339,12 +41023,15 @@ export namespace PropertyCardinalitiesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyCardinalitiesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly emptySet?: string | readonly string[];
     readonly nonEmptySet: string | readonly string[];
     readonly optional?: string | Maybe<string>;
@@ -41038,20 +41725,26 @@ export namespace PropertyNamesStruct {
   ) => string = (_propertyNamesStruct) =>
     `PropertyNamesStruct(${JSON.stringify(toStringRecord(_propertyNamesStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyNamesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly actualName1: string;
     readonly actualName2: string;
     readonly actualName3: string;
     readonly actualName4: string;
     readonly actualName5: string;
-  }) => Either<Error, PropertyNamesStruct> = (parameters) =>
+  }): Either<Error, PropertyNamesStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       actualName1: Either.of(parameters.actualName1),
       actualName2: Either.of(parameters.actualName2),
       actualName3: Either.of(parameters.actualName3),
@@ -41069,12 +41762,15 @@ export namespace PropertyNamesStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyNamesStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly actualName1: string;
     readonly actualName2: string;
     readonly actualName3: string;
@@ -41782,19 +42478,29 @@ export namespace PropertyPathsStruct {
   ) => string = (_propertyPathsStruct) =>
     `PropertyPathsStruct(${JSON.stringify(toStringRecord(_propertyPathsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyPathsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly inversePath?: string | NamedNode | Maybe<NamedNode>;
+      | (keyof $DefaultNamespaceT & string);
+    readonly inversePath?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly predicatePath?: string | Maybe<string>;
-  }) => Either<Error, PropertyPathsStruct> = (parameters) =>
+  }): Either<Error, PropertyPathsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      inversePath: $convertToMaybe($convertToIri<string>)(
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
+      inversePath: $convertToMaybe($convertToIri)(
         parameters?.inversePath,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyPathsStruct.schema.properties.inversePath.type,
@@ -41803,6 +42509,7 @@ export namespace PropertyPathsStruct {
       ),
       predicatePath: $convertToMaybe($identityConversionFunction)(
         parameters?.predicatePath,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyPathsStruct.schema.properties.predicatePath.type,
@@ -41821,13 +42528,19 @@ export namespace PropertyPathsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyPathsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-    readonly inversePath?: string | NamedNode | Maybe<NamedNode>;
+      | (keyof $DefaultNamespaceT & string);
+    readonly inversePath?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly predicatePath?: string | Maybe<string>;
   }): PropertyPathsStruct {
     return create(parameters).unsafeCoerce();
@@ -42404,21 +43117,30 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   ) => string = (_recursiveDiscriminatedUnionMember1) =>
     `RecursiveDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_recursiveDiscriminatedUnionMember1))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => RecursiveDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly recursiveDiscriminatedUnionMember1Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
-  }) => Either<Error, RecursiveDiscriminatedUnionMember1> = (parameters) =>
+  }): Either<Error, RecursiveDiscriminatedUnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       recursiveDiscriminatedUnionMember1Property: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.recursiveDiscriminatedUnionMember1Property).chain((value) =>
+      )(
+        parameters?.recursiveDiscriminatedUnionMember1Property,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           RecursiveDiscriminatedUnionMember1.schema.properties
             .recursiveDiscriminatedUnionMember1Property.type,
@@ -42437,12 +43159,15 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => RecursiveDiscriminatedUnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly recursiveDiscriminatedUnionMember1Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
@@ -42957,21 +43682,30 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   ) => string = (_recursiveDiscriminatedUnionMember2) =>
     `RecursiveDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_recursiveDiscriminatedUnionMember2))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => RecursiveDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly recursiveDiscriminatedUnionMember2Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
-  }) => Either<Error, RecursiveDiscriminatedUnionMember2> = (parameters) =>
+  }): Either<Error, RecursiveDiscriminatedUnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       recursiveDiscriminatedUnionMember2Property: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.recursiveDiscriminatedUnionMember2Property).chain((value) =>
+      )(
+        parameters?.recursiveDiscriminatedUnionMember2Property,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           RecursiveDiscriminatedUnionMember2.schema.properties
             .recursiveDiscriminatedUnionMember2Property.type,
@@ -42990,12 +43724,15 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => RecursiveDiscriminatedUnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly recursiveDiscriminatedUnionMember2Property?:
       | RecursiveDiscriminatedUnion
       | Maybe<RecursiveDiscriminatedUnion>;
@@ -43492,16 +44229,22 @@ export namespace TargetClassStruct {
   ) =>
     `TargetClassStruct(${JSON.stringify(toStringRecord(_targetClassStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => TargetClassStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly targetClassString: string;
-  }) => Either<Error, TargetClassStruct> = (parameters) =>
+  }): Either<Error, TargetClassStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       targetClassString: Either.of(parameters.targetClassString),
     })
       .map((properties) => ({
@@ -43515,12 +44258,15 @@ export namespace TargetClassStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => TargetClassStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly targetClassString: string;
   }): TargetClassStruct {
     return create(parameters).unsafeCoerce();
@@ -43929,13 +44675,15 @@ export type TermsStruct = {
 
   readonly dateTimeTerm: Maybe<Date>;
 
+  readonly doubleTerm: Maybe<number>;
+
+  readonly identifierTerm: Maybe<BlankNode | NamedNode>;
+
   readonly iriTerm: Maybe<NamedNode>;
 
   readonly langStringTerm: Maybe<Literal>;
 
   readonly literalTerm: Maybe<Literal>;
-
-  readonly numberTerm: Maybe<number>;
 
   readonly stringTerm: Maybe<string>;
 
@@ -44014,6 +44762,32 @@ export namespace TermsStruct {
             $DateSchema
           >($dateTimeFromRdfResourceValues),
         }),
+        doubleTerm: $shaclPropertyFromRdf<
+          Maybe<number>,
+          $MaybeSchema<$NumericSchema<number>>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: TermsStruct.schema.properties.doubleTerm,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            number,
+            $NumericSchema<number>
+          >($floatFromRdfResourceValues<number>),
+        }),
+        identifierTerm: $shaclPropertyFromRdf<
+          Maybe<BlankNode | NamedNode>,
+          $MaybeSchema<$IdentifierSchema>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: TermsStruct.schema.properties.identifierTerm,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            BlankNode | NamedNode,
+            $IdentifierSchema
+          >($identifierFromRdfResourceValues),
+        }),
         iriTerm: $shaclPropertyFromRdf<
           Maybe<NamedNode>,
           $MaybeSchema<$IriSchema<string>>
@@ -44052,19 +44826,6 @@ export namespace TermsStruct {
             Literal,
             $LiteralSchema
           >($literalFromRdfResourceValues),
-        }),
-        numberTerm: $shaclPropertyFromRdf<
-          Maybe<number>,
-          $MaybeSchema<$NumericSchema<number>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: TermsStruct.schema.properties.numberTerm,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            number,
-            $NumericSchema<number>
-          >($floatFromRdfResourceValues<number>),
         }),
         stringTerm: $shaclPropertyFromRdf<
           Maybe<string>,
@@ -44139,6 +44900,20 @@ export namespace TermsStruct {
       parameters.graph,
     );
     parameters.resource.add(
+      TermsStruct.schema.properties.doubleTerm.path,
+      parameters.object.doubleTerm
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
+        ]),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      TermsStruct.schema.properties.identifierTerm.path,
+      parameters.object.identifierTerm.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
       TermsStruct.schema.properties.iriTerm.path,
       parameters.object.iriTerm.toList(),
       parameters.graph,
@@ -44151,15 +44926,6 @@ export namespace TermsStruct {
     parameters.resource.add(
       TermsStruct.schema.properties.literalTerm.path,
       parameters.object.literalTerm.toList(),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      TermsStruct.schema.properties.numberTerm.path,
-      parameters.object.numberTerm
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -44181,17 +44947,29 @@ export namespace TermsStruct {
     _termsStruct,
   ) => `TermsStruct(${JSON.stringify(toStringRecord(_termsStruct))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => TermsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeTerm?: BlankNode | Maybe<BlankNode>;
     readonly booleanTerm?: boolean | Maybe<boolean>;
     readonly dateTerm?: Date | Maybe<Date>;
     readonly dateTimeTerm?: Date | Maybe<Date>;
-    readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
+    readonly doubleTerm?: number | Maybe<number>;
+    readonly identifierTerm?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string)
+      | Maybe<BlankNode | NamedNode>;
+    readonly iriTerm?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly langStringTerm?: Literal | Maybe<Literal>;
     readonly literalTerm?:
       | bigint
@@ -44201,16 +44979,19 @@ export namespace TermsStruct {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly numberTerm?: number | Maybe<number>;
     readonly stringTerm?: string | Maybe<string>;
     readonly term?:
       | (BlankNode | NamedNode | Literal)
       | Maybe<BlankNode | NamedNode | Literal>;
-  }) => Either<Error, TermsStruct> = (parameters) =>
+  }): Either<Error, TermsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       blankNodeTerm: $convertToMaybe($convertToBlankNode)(
         parameters?.blankNodeTerm,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.blankNodeTerm.type,
@@ -44219,6 +45000,7 @@ export namespace TermsStruct {
       ),
       booleanTerm: $convertToMaybe($identityConversionFunction)(
         parameters?.booleanTerm,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.booleanTerm.type,
@@ -44227,6 +45009,7 @@ export namespace TermsStruct {
       ),
       dateTerm: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTerm,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.dateTerm.type,
@@ -44235,14 +45018,34 @@ export namespace TermsStruct {
       ),
       dateTimeTerm: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTimeTerm,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.dateTimeTerm.type,
           value,
         ),
       ),
-      iriTerm: $convertToMaybe($convertToIri<string>)(
+      doubleTerm: $convertToMaybe($identityConversionFunction)(
+        parameters?.doubleTerm,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermsStruct.schema.properties.doubleTerm.type,
+          value,
+        ),
+      ),
+      identifierTerm: $convertToMaybe($convertToIdentifier)(
+        parameters?.identifierTerm,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermsStruct.schema.properties.identifierTerm.type,
+          value,
+        ),
+      ),
+      iriTerm: $convertToMaybe($convertToIri)(
         parameters?.iriTerm,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.iriTerm.type,
@@ -44251,6 +45054,7 @@ export namespace TermsStruct {
       ),
       langStringTerm: $convertToMaybe($convertToLangString)(
         parameters?.langStringTerm,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.langStringTerm.type,
@@ -44259,22 +45063,16 @@ export namespace TermsStruct {
       ),
       literalTerm: $convertToMaybe($convertToLiteral)(
         parameters?.literalTerm,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.literalTerm.type,
           value,
         ),
       ),
-      numberTerm: $convertToMaybe($identityConversionFunction)(
-        parameters?.numberTerm,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          TermsStruct.schema.properties.numberTerm.type,
-          value,
-        ),
-      ),
       stringTerm: $convertToMaybe($identityConversionFunction)(
         parameters?.stringTerm,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.stringTerm.type,
@@ -44283,6 +45081,7 @@ export namespace TermsStruct {
       ),
       term: $convertToMaybe($identityConversionFunction)(
         parameters?.term,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           TermsStruct.schema.properties.term.type,
@@ -44298,17 +45097,29 @@ export namespace TermsStruct {
         }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => TermsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly blankNodeTerm?: BlankNode | Maybe<BlankNode>;
     readonly booleanTerm?: boolean | Maybe<boolean>;
     readonly dateTerm?: Date | Maybe<Date>;
     readonly dateTimeTerm?: Date | Maybe<Date>;
-    readonly iriTerm?: string | NamedNode | Maybe<NamedNode>;
+    readonly doubleTerm?: number | Maybe<number>;
+    readonly identifierTerm?:
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string)
+      | Maybe<BlankNode | NamedNode>;
+    readonly iriTerm?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly langStringTerm?: Literal | Maybe<Literal>;
     readonly literalTerm?:
       | bigint
@@ -44318,7 +45129,6 @@ export namespace TermsStruct {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly numberTerm?: number | Maybe<number>;
     readonly stringTerm?: string | Maybe<string>;
     readonly term?:
       | (BlankNode | NamedNode | Literal)
@@ -44384,6 +45194,28 @@ export namespace TermsStruct {
         $propertyEquals(
           {
             equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $strictEquals),
+            name: "doubleTerm",
+          },
+          [left, left.doubleTerm],
+          [right, right.doubleTerm],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "identifierTerm",
+          },
+          [left, left.identifierTerm],
+          [right, right.identifierTerm],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
               $maybeEquals(left, right, $booleanEquals),
             name: "iriTerm",
           },
@@ -44411,17 +45243,6 @@ export namespace TermsStruct {
           },
           [left, left.literalTerm],
           [right, right.literalTerm],
-        ),
-      )
-      .chain(() =>
-        $propertyEquals(
-          {
-            equalsFunction: (left, right) =>
-              $maybeEquals(left, right, $strictEquals),
-            name: "numberTerm",
-          },
-          [left, left.numberTerm],
-          [right, right.numberTerm],
         ),
       )
       .chain(() =>
@@ -44494,6 +45315,23 @@ export namespace TermsStruct {
       return false;
     }
     if (
+      filter.doubleTerm !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.doubleTerm,
+        value.doubleTerm,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.identifierTerm !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
+        $filterIdentifier,
+      )(filter.identifierTerm, value.identifierTerm)
+    ) {
+      return false;
+    }
+    if (
       filter.iriTerm !== undefined &&
       !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.iriTerm,
@@ -44516,15 +45354,6 @@ export namespace TermsStruct {
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.literalTerm,
         value.literalTerm,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.numberTerm !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.numberTerm,
-        value.numberTerm,
       )
     ) {
       return false;
@@ -44556,10 +45385,11 @@ export namespace TermsStruct {
     readonly booleanTerm?: $MaybeFilter<$BooleanFilter>;
     readonly dateTerm?: $MaybeFilter<$DateFilter>;
     readonly dateTimeTerm?: $MaybeFilter<$DateFilter>;
+    readonly doubleTerm?: $MaybeFilter<$NumericFilter<number>>;
+    readonly identifierTerm?: $MaybeFilter<$IdentifierFilter>;
     readonly iriTerm?: $MaybeFilter<$IriFilter>;
     readonly langStringTerm?: $MaybeFilter<$LiteralFilter>;
     readonly literalTerm?: $MaybeFilter<$LiteralFilter>;
-    readonly numberTerm?: $MaybeFilter<$NumericFilter<number>>;
     readonly stringTerm?: $MaybeFilter<$StringFilter>;
     readonly term?: $MaybeFilter<$TermFilter<BlankNode | NamedNode | Literal>>;
   };
@@ -44640,6 +45470,34 @@ export namespace TermsStruct {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.doubleTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "doubleTerm",
+        propertySchema: TermsStruct.schema.properties.doubleTerm,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.identifierTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "identifierTerm",
+        propertySchema: TermsStruct.schema.properties.identifierTerm,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.iriTerm,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -44676,20 +45534,6 @@ export namespace TermsStruct {
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $LiteralFilter,
           $LiteralSchema
-        >((_: object) => []),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.numberTerm,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "numberTerm",
-        propertySchema: TermsStruct.schema.properties.numberTerm,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $NumericFilter<number>,
-          $NumericSchema<number>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -44846,6 +45690,36 @@ export namespace TermsStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.doubleTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "doubleTerm",
+        propertySchema: TermsStruct.schema.properties.doubleTerm,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.identifierTerm,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "identifierTerm",
+        propertySchema: TermsStruct.schema.properties.identifierTerm,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >($identifierSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.iriTerm,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -44886,21 +45760,6 @@ export namespace TermsStruct {
           $LiteralFilter,
           $LiteralSchema
         >($literalSparqlWherePatterns),
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.numberTerm,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "numberTerm",
-        propertySchema: TermsStruct.schema.properties.numberTerm,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $NumericFilter<number>,
-          $NumericSchema<number>
-        >($numericSparqlWherePatterns<number>),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -44966,6 +45825,18 @@ export namespace TermsStruct {
           Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
+      doubleTerm: Maybe.fromNullable($json["doubleTerm"])
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      identifierTerm: Maybe.fromNullable($json["identifierTerm"])
+        .map((item) =>
+          Either.of<Error, BlankNode | NamedNode>(
+            item["@id"].startsWith("_:")
+              ? dataFactory.blankNode(item["@id"].substring(2))
+              : dataFactory.namedNode(item["@id"]),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       iriTerm: Maybe.fromNullable($json["iriTerm"])
         .map((item) =>
           Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
@@ -44993,9 +45864,6 @@ export namespace TermsStruct {
             ),
           ).map(Maybe.of),
         )
-        .orDefault(Either.of(Maybe.empty())),
-      numberTerm: Maybe.fromNullable($json["numberTerm"])
-        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
         .orDefault(Either.of(Maybe.empty())),
       stringTerm: Maybe.fromNullable($json["stringTerm"])
         .map((item) => Either.of<Error, string>(item).map(Maybe.of))
@@ -45050,10 +45918,11 @@ export namespace TermsStruct {
     $hashMaybe($hashBoolean)(hasher, _termsStruct.booleanTerm);
     $hashMaybe($hashDate)(hasher, _termsStruct.dateTerm);
     $hashMaybe($hashDateTime)(hasher, _termsStruct.dateTimeTerm);
+    $hashMaybe($hashNumeric)(hasher, _termsStruct.doubleTerm);
+    $hashMaybe($hashTerm)(hasher, _termsStruct.identifierTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.iriTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.langStringTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.literalTerm);
-    $hashMaybe($hashNumeric)(hasher, _termsStruct.numberTerm);
     $hashMaybe($hashString)(hasher, _termsStruct.stringTerm);
     $hashMaybe($hashTerm)(hasher, _termsStruct.term);
     return hasher;
@@ -45096,6 +45965,8 @@ export namespace TermsStruct {
               "@value": z.iso.datetime(),
             })
             .optional(),
+          doubleTerm: z.number().optional(),
+          identifierTerm: z.object({ "@id": z.string().min(1) }).optional(),
           iriTerm: z.object({ "@id": z.string().min(1) }).optional(),
           langStringTerm: z
             .object({ "@language": z.string(), "@value": z.string() })
@@ -45107,7 +45978,6 @@ export namespace TermsStruct {
               "@value": z.string(),
             })
             .optional(),
-          numberTerm: z.number().optional(),
           stringTerm: z.string().optional(),
           term: z
             .discriminatedUnion("termType", [
@@ -45158,13 +46028,17 @@ export namespace TermsStruct {
           { scope: `${scopePrefix}/properties/booleanTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/dateTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/dateTimeTerm`, type: "Control" },
+          { scope: `${scopePrefix}/properties/doubleTerm`, type: "Control" },
+          {
+            scope: `${scopePrefix}/properties/identifierTerm`,
+            type: "Control",
+          },
           { scope: `${scopePrefix}/properties/iriTerm`, type: "Control" },
           {
             scope: `${scopePrefix}/properties/langStringTerm`,
             type: "Control",
           },
           { scope: `${scopePrefix}/properties/literalTerm`, type: "Control" },
-          { scope: `${scopePrefix}/properties/numberTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/stringTerm`, type: "Control" },
           { scope: `${scopePrefix}/properties/term`, type: "Control" },
         ],
@@ -45187,6 +46061,8 @@ export namespace TermsStruct {
       readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
       readonly "@value": string;
     };
+    readonly doubleTerm?: number;
+    readonly identifierTerm?: { readonly "@id": string };
     readonly iriTerm?: { readonly "@id": string };
     readonly langStringTerm?: {
       readonly "@language": string;
@@ -45197,7 +46073,6 @@ export namespace TermsStruct {
       readonly "@type"?: string;
       readonly "@value": string;
     };
-    readonly numberTerm?: number;
     readonly stringTerm?: string;
     readonly term?:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
@@ -45246,6 +46121,19 @@ export namespace TermsStruct {
           itemType: { kind: "DateTime" as const },
         },
       },
+      doubleTerm: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/doubleTerm"),
+        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
+      },
+      identifierTerm: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/identifierTerm"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "Identifier" as const },
+        },
+      },
       iriTerm: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/iriTerm"),
@@ -45266,11 +46154,6 @@ export namespace TermsStruct {
           kind: "Option" as const,
           itemType: { kind: "Literal" as const },
         },
-      },
-      numberTerm: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/numberTerm"),
-        type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
       },
       stringTerm: {
         kind: "Shacl",
@@ -45379,6 +46262,14 @@ export namespace TermsStruct {
             "@value": item.toISOString(),
           }))
           .extract(),
+        doubleTerm: _termsStruct.doubleTerm.map((item) => item).extract(),
+        identifierTerm: _termsStruct.identifierTerm
+          .map((item) =>
+            item.termType === "BlankNode"
+              ? { "@id": `_:${item.value}` }
+              : { "@id": item.value },
+          )
+          .extract(),
         iriTerm: _termsStruct.iriTerm
           .map((item) => ({ "@id": item.value }))
           .extract(),
@@ -45398,7 +46289,6 @@ export namespace TermsStruct {
             "@value": item.value,
           }))
           .extract(),
-        numberTerm: _termsStruct.numberTerm.map((item) => item).extract(),
         stringTerm: _termsStruct.stringTerm.map((item) => item).extract(),
         term: _termsStruct.term
           .map((item) =>
@@ -47333,12 +48223,15 @@ export namespace UnionDiscriminantsStruct {
   ) => string = (_unionDiscriminantsStruct) =>
     `UnionDiscriminantsStruct(${JSON.stringify(toStringRecord(_unionDiscriminantsStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => UnionDiscriminantsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalIriOrString?:
       | NamedNode
       | string
@@ -47444,11 +48337,15 @@ export namespace UnionDiscriminantsStruct {
     readonly setTerm?:
       | ((BlankNode | NamedNode) | Literal)
       | readonly ((BlankNode | NamedNode) | Literal)[];
-  }) => Either<Error, UnionDiscriminantsStruct> = (parameters) =>
+  }): Either<Error, UnionDiscriminantsStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       optionalIriOrString: $convertToMaybe($identityConversionFunction)(
         parameters.optionalIriOrString,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.optionalIriOrString.type,
@@ -47457,6 +48354,7 @@ export namespace UnionDiscriminantsStruct {
       ),
       optionalNodeOrLiteral: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNodeOrLiteral,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral.type,
@@ -47465,6 +48363,7 @@ export namespace UnionDiscriminantsStruct {
       ),
       optionalNodeOrNodeOrString: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNodeOrNodeOrString,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.optionalNodeOrNodeOrString
@@ -47474,6 +48373,7 @@ export namespace UnionDiscriminantsStruct {
       ),
       optionalTerm: $convertToMaybe($identityConversionFunction)(
         parameters.optionalTerm,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.optionalTerm.type,
@@ -47482,46 +48382,52 @@ export namespace UnionDiscriminantsStruct {
       ),
       requiredIriOrString: $identityConversionFunction(
         parameters.requiredIriOrString,
+        parameters.$defaultNamespace,
       ),
       requiredNodeOrLiteral: $identityConversionFunction(
         parameters.requiredNodeOrLiteral,
+        parameters.$defaultNamespace,
       ),
       requiredNodeOrNodeOrString: $identityConversionFunction(
         parameters.requiredNodeOrNodeOrString,
+        parameters.$defaultNamespace,
       ),
-      requiredTerm: $identityConversionFunction(parameters.requiredTerm),
-      setIriOrString: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.setIriOrString).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      requiredTerm: $identityConversionFunction(
+        parameters.requiredTerm,
+        parameters.$defaultNamespace,
+      ),
+      setIriOrString: $convertToScalarSet($identityConversionFunction)(
+        parameters.setIriOrString,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setIriOrString.type,
           value,
         ),
       ),
-      setNodeOrLiteral: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.setNodeOrLiteral).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      setNodeOrLiteral: $convertToScalarSet($identityConversionFunction)(
+        parameters.setNodeOrLiteral,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.type,
           value,
         ),
       ),
-      setNodeOrNodeOrString: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.setNodeOrNodeOrString).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      setNodeOrNodeOrString: $convertToScalarSet($identityConversionFunction)(
+        parameters.setNodeOrNodeOrString,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.type,
           value,
         ),
       ),
-      setTerm: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.setTerm).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      setTerm: $convertToScalarSet($identityConversionFunction)(
+        parameters.setTerm,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           UnionDiscriminantsStruct.schema.properties.setTerm.type,
           value,
         ),
@@ -47538,12 +48444,15 @@ export namespace UnionDiscriminantsStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => UnionDiscriminantsStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalIriOrString?:
       | NamedNode
       | string

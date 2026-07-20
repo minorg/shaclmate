@@ -27,7 +27,7 @@ describe("ShapesGraph", () => {
 
         it("propertyShapes", ({ expect }) => {
           if (id === "kitchenSinkExample") {
-            expect(shapesGraph.propertyShapes).toHaveLength(178);
+            expect(shapesGraph.propertyShapes).toHaveLength(179);
           } else {
             expect(shapesGraph.propertyShape).not.toHaveLength(0);
           }

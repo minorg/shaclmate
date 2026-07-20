@@ -24,7 +24,7 @@ import type { ObjectType } from "./ObjectType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
-import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ListType<
   ItemTypeT extends ListType.ItemType,
@@ -57,7 +57,7 @@ export class ListType<
     );
 
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToList}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
+      code: code`${this._mutable ? this.reusables.snippets.convertToMutableList : this.reusables.snippets.convertToList}(${itemConversionFunction.code})`,
       sourceTypes: [
         {
           expression: code`readonly (${joinCode(

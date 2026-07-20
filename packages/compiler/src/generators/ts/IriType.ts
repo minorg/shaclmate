@@ -27,10 +27,16 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   override get conversionFunction(): Maybe<AbstractIdentifierType.ConversionFunction> {
     invariant(this.jsTypes.length === 1);
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToIri}<${this.valueTypeExpression}>`,
+      code:
+        this.in_.length > 0
+          ? code`${this.reusables.snippets.convertToInIri}<${this.valueTypeExpression}>`
+          : code`${this.reusables.snippets.convertToIri}`,
       sourceTypes: [
         {
-          expression: this.valueTypeExpression,
+          expression:
+            this.in_.length > 0
+              ? this.valueTypeExpression
+              : code`(keyof ${this.configuration.syntheticNamePrefix}DefaultNamespaceT & string)`,
           jsType: { typeof: "string" },
         },
         {

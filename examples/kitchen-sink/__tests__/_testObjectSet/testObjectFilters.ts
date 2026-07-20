@@ -400,7 +400,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           ...[...new Array(2)].map((_, i) =>
             kitchenSink.TermsStruct.createUnsafe({
               $identifier: identifiers[i],
-              numberTerm: i,
+              doubleTerm: i,
             }),
           ),
           kitchenSink.TermsStruct.createUnsafe({
@@ -411,12 +411,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       );
 
       for (const [id, [filter, expected]] of Object.entries({
-        in: [{ numberTerm: { in: [0] } }, [identifiers[0]]],
-        maxExclusive: [{ numberTerm: { maxExclusive: 1 } }, [identifiers[0]]],
-        maxInclusive: [{ numberTerm: { maxInclusive: 0 } }, [identifiers[0]]],
-        minExclusive: [{ numberTerm: { minExclusive: 0 } }, [identifiers[1]]],
+        in: [{ doubleTerm: { in: [0] } }, [identifiers[0]]],
+        maxExclusive: [{ doubleTerm: { maxExclusive: 1 } }, [identifiers[0]]],
+        maxInclusive: [{ doubleTerm: { maxInclusive: 0 } }, [identifiers[0]]],
+        minExclusive: [{ doubleTerm: { minExclusive: 0 } }, [identifiers[1]]],
         minInclusive: [
-          { numberTerm: { minInclusive: 0 } },
+          { doubleTerm: { minInclusive: 0 } },
           [identifiers[0], identifiers[1]],
         ],
       } satisfies Record<
@@ -448,7 +448,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           ),
           kitchenSink.TermsStruct.createUnsafe({
             $identifier: identifiers[2],
-            numberTerm: 0,
+            doubleTerm: 0,
           }),
         ]),
       );
@@ -495,7 +495,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           ),
           kitchenSink.TermsStruct.createUnsafe({
             $identifier: identifiers[2],
-            numberTerm: 0,
+            doubleTerm: 0,
           }),
         ]),
       );
@@ -658,7 +658,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           ),
           kitchenSink.TermsStruct.createUnsafe({
             $identifier: identifiers[2],
-            numberTerm: 0,
+            doubleTerm: 0,
           }),
         ]),
       );
@@ -759,9 +759,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
                 discriminatedUnionMemberCommon: "http://example.com/test0",
               }),
             },
-            requiredTerm: dataFactory.namedNode(
-              "http://example.com/test0",
-            ),
+            requiredTerm: dataFactory.namedNode("http://example.com/test0"),
             requiredIriOrString: dataFactory.namedNode(
               "http://example.com/test0",
             ),
@@ -775,9 +773,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
             requiredNodeOrLiteral: dataFactory.literal(
               "http://example.com/test1",
             ),
-            requiredTerm: dataFactory.literal(
-              "http://example.com/test1",
-            ),
+            requiredTerm: dataFactory.literal("http://example.com/test1"),
             requiredIriOrString: "http://example.com/test1",
           }),
         ]),

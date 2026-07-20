@@ -201,14 +201,15 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty<TypeT>["constructorInitializer"]
   >[0]): Maybe<Code> {
     const parameterVariable = code`${variables.parameters}.${this.name}`;
+    const defaultNamespaceVariable = code`${variables.parameters}.${this.configuration.syntheticNamePrefix}defaultNamespace`;
 
     const conversionFunction = this.type.conversionFunction.extract()?.code;
     const validationFunction = this.type.validationFunction.extract();
     let rhs: Code;
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable}).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;
     } else if (conversionFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable})`;
+      rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable})`;
     } else if (validationFunction) {
       rhs = code`${validationFunction}(${this.typeSchemaVariable}, ${parameterVariable})`;
     } else {

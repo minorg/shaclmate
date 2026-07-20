@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.76",
+    "@shaclmate/shacl-ast": "4.0.77",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.38",
-    "@rdfx/data-factory": "0.0.38",
-    "@rdfx/literal": "0.0.38",
-    "@rdfx/resource": "0.0.38",
+    "@rdfx/collection": "0.0.42",
+    "@rdfx/data-factory": "0.0.42",
+    "@rdfx/literal": "0.0.42",
+    "@rdfx/resource": "0.0.42",
     "@sindresorhus/base62": "~0.1.0",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "change-case": "~5.4.4",
@@ -19,8 +19,8 @@
     "typescript-memoize": "~1.1.1"
   },
   "devDependencies": {
-    "@rdfx/fs": "0.0.38",
-    "@rdfx/serializers": "0.0.38"
+    "@rdfx/fs": "0.0.42",
+    "@rdfx/serializers": "0.0.42"
   },
   "files": [
     "dist/Compiler.d.ts",
@@ -409,6 +409,8 @@
     "dist/generators/ts/_snippets/snippets_MaybeFilter.js",
     "dist/generators/ts/_snippets/snippets_MaybeSchema.d.ts",
     "dist/generators/ts/_snippets/snippets_MaybeSchema.js",
+    "dist/generators/ts/_snippets/snippets_NamespaceBuilder.d.ts",
+    "dist/generators/ts/_snippets/snippets_NamespaceBuilder.js",
     "dist/generators/ts/_snippets/snippets_NumericFilter.d.ts",
     "dist/generators/ts/_snippets/snippets_NumericFilter.js",
     "dist/generators/ts/_snippets/snippets_NumericSchema.d.ts",
@@ -483,6 +485,10 @@
     "dist/generators/ts/_snippets/snippets_convertToIdentifier.js",
     "dist/generators/ts/_snippets/snippets_convertToIdentifierProperty.d.ts",
     "dist/generators/ts/_snippets/snippets_convertToIdentifierProperty.js",
+    "dist/generators/ts/_snippets/snippets_convertToInIri.d.ts",
+    "dist/generators/ts/_snippets/snippets_convertToInIri.js",
+    "dist/generators/ts/_snippets/snippets_convertToInIriIdentifierProperty.d.ts",
+    "dist/generators/ts/_snippets/snippets_convertToInIriIdentifierProperty.js",
     "dist/generators/ts/_snippets/snippets_convertToIri.d.ts",
     "dist/generators/ts/_snippets/snippets_convertToIri.js",
     "dist/generators/ts/_snippets/snippets_convertToIriIdentifierProperty.d.ts",
@@ -501,6 +507,12 @@
     "dist/generators/ts/_snippets/snippets_convertToLiteral.js",
     "dist/generators/ts/_snippets/snippets_convertToMaybe.d.ts",
     "dist/generators/ts/_snippets/snippets_convertToMaybe.js",
+    "dist/generators/ts/_snippets/snippets_convertToMutableArraySet.d.ts",
+    "dist/generators/ts/_snippets/snippets_convertToMutableArraySet.js",
+    "dist/generators/ts/_snippets/snippets_convertToMutableList.d.ts",
+    "dist/generators/ts/_snippets/snippets_convertToMutableList.js",
+    "dist/generators/ts/_snippets/snippets_convertToMutableScalarSet.d.ts",
+    "dist/generators/ts/_snippets/snippets_convertToMutableScalarSet.js",
     "dist/generators/ts/_snippets/snippets_convertToScalarSet.d.ts",
     "dist/generators/ts/_snippets/snippets_convertToScalarSet.js",
     "dist/generators/ts/_snippets/snippets_convertWithDefaultValue.d.ts",
@@ -671,6 +683,8 @@
     "dist/generators/ts/_snippets/snippets_validateArray.js",
     "dist/generators/ts/_snippets/snippets_validateMaybe.d.ts",
     "dist/generators/ts/_snippets/snippets_validateMaybe.js",
+    "dist/generators/ts/_snippets/snippets_validateMutableArray.d.ts",
+    "dist/generators/ts/_snippets/snippets_validateMutableArray.js",
     "dist/generators/ts/_snippets/snippets_wrap_FromRdfResourceFunction.d.ts",
     "dist/generators/ts/_snippets/snippets_wrap_FromRdfResourceFunction.js",
     "dist/generators/ts/_snippets/snippets_wrap_ToRdfResourceFunction.d.ts",
@@ -715,5 +729,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.76"
+  "version": "4.0.77"
 }

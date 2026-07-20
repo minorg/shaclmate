@@ -119,13 +119,15 @@ export class ObjectType extends AbstractType {
       ...super.staticModuleDeclarations(name),
     };
 
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+
     // create
     if (this.configuration.features.has("Object.create")) {
       staticModuleDeclarations["create"] =
-        code`export const create: (${this.constructorParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}> = ${ObjectType_createFunctionExpression.call(this)};`;
+        code`export const create = ${ObjectType_createFunctionExpression.call(this)};`;
       staticModuleDeclarations["createUnsafe"] =
-        code`export function createUnsafe(${this.constructorParameters.signature}): ${this.expression} {
-  return create(parameters).unsafeCoerce();
+        code`export function createUnsafe<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}): ${this.expression} {
+  return create(${this.constructorParameters.variable}).unsafeCoerce();
 }`;
     }
 
@@ -274,10 +276,8 @@ export class ObjectType extends AbstractType {
 
     // toString / toStringRecord
     if (this.configuration.features.has("Object.toString")) {
-      staticModuleDeclarations[
-        `${this.configuration.syntheticNamePrefix}toString`
-      ] =
-        code`export const ${this.configuration.syntheticNamePrefix}toString: (${this.thisVariable}: ${this.expression}) => string = ${ObjectType_toStringFunctionExpression.call(this)};`;
+      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
+        code`export const ${syntheticNamePrefix}toString: (${this.thisVariable}: ${this.expression}) => string = ${ObjectType_toStringFunctionExpression.call(this)};`;
 
       staticModuleDeclarations["toStringRecord"] =
         code`export const toStringRecord: (${this.thisVariable}: ${this.expression}) => Record<string, string> = ${ObjectType_toStringRecordFunctionExpression.call(this)};`;
@@ -453,10 +453,13 @@ export class ObjectType extends AbstractType {
     type: {
       expression: Code;
     };
-    variable: string;
+    variable: Code;
   } {
     let hasQuestionToken: boolean = true;
-    const propertySignatures: Code[] = [];
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+    const propertySignatures: Code[] = [
+      code`readonly ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT;`,
+    ];
     for (const property of this.properties) {
       property.constructorParameter.ifJust((propertyConstructorParameter) => {
         hasQuestionToken =
@@ -464,7 +467,6 @@ export class ObjectType extends AbstractType {
         propertySignatures.push(propertyConstructorParameter.signature);
       });
     }
-    invariant(propertySignatures.length > 0);
 
     const typeExpression = code`{ ${joinCode(propertySignatures)} }`;
 
@@ -474,7 +476,7 @@ export class ObjectType extends AbstractType {
       type: {
         expression: typeExpression,
       },
-      variable: "parameters",
+      variable: code`parameters`,
     };
   }
 

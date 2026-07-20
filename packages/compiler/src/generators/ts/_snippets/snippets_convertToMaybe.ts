@@ -9,8 +9,8 @@ export const snippets_convertToMaybe: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToMaybe`,
     code`\
-function ${syntheticNamePrefix}convertToMaybe<ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>) {
-  return (value: ItemSourceT | ${imports.Maybe}<ItemTargetT> | undefined): ${imports.Either}<Error, ${imports.Maybe}<ItemTargetT>> => {
+function ${syntheticNamePrefix}convertToMaybe<DefaultNamespaceT extends ${snippets.NamespaceBuilder}, ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT, DefaultNamespaceT>): ${snippets.ConversionFunction}<ItemSourceT | ${imports.Maybe}<ItemTargetT> | undefined, ${imports.Maybe}<ItemTargetT>, DefaultNamespaceT> {
+  return (value, defaultNamespace) => {
     switch (typeof value) {
       case "object": {
         if (${imports.Maybe}.isMaybe(value)) {
@@ -22,7 +22,7 @@ function ${syntheticNamePrefix}convertToMaybe<ItemSourceT, ItemTargetT>(convertT
         return ${imports.Either}.of(${imports.Maybe}.empty());
     }
 
-    return convertToItem(value).map(${imports.Maybe}.of);
+    return convertToItem(value, defaultNamespace).map(${imports.Maybe}.of);
   }
 }`,
   );

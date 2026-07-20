@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for ListType and SetType.
@@ -67,9 +67,9 @@ export abstract class AbstractCollectionType<
   @Memoize()
   override get validationFunction(): Maybe<Code> {
     return Maybe.of(
-      code`${this.reusables.snippets.validateArray}(${this.itemType.validationFunction.orDefault(
+      code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction.orDefault(
         this.itemValidationFunctionDefault,
-      )}, ${literalOf(!this._mutable)})`,
+      )})`,
     );
   }
 

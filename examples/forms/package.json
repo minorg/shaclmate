@@ -7,10 +7,10 @@
     "@mui/material": "~6.1.0",
     "@mui/x-date-pickers": "~7.17.0",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.38",
-    "@rdfx/data-factory": "0.0.38",
-    "@rdfx/resource": "0.0.38",
-    "@rdfx/serializers": "0.0.38",
+    "@rdfx/collection": "0.0.42",
+    "@rdfx/data-factory": "0.0.42",
+    "@rdfx/resource": "0.0.42",
+    "@rdfx/serializers": "0.0.42",
     "purify-ts": "~2.1.4",
     "react": "~18",
     "react-dom": "~18",
@@ -39,5 +39,5 @@
     "start": "vite dev --port 3000"
   },
   "type": "module",
-  "version": "4.0.76"
+  "version": "4.0.77"
 }

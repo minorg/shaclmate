@@ -3,17 +3,18 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_convertToIdentifier: SnippetFactory = ({
   imports,
+  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}convertToIdentifier`,
     code`\
-function ${syntheticNamePrefix}convertToIdentifier(value: ${imports.BlankNode} | ${imports.NamedNode} | string | undefined): ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}> {
+function ${syntheticNamePrefix}convertToIdentifier<DefaultNamespaceT extends ${snippets.NamespaceBuilder} = ${snippets.NamespaceBuilder}>(value: ${imports.BlankNode} | ${imports.NamedNode} | (keyof DefaultNamespaceT & string) | undefined, defaultNamespace?: DefaultNamespaceT): ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}> {
   switch (typeof value) {
     case "object":
       return ${imports.Either}.of(value);
     case "string":
-      return ${imports.Either}.of(${imports.dataFactory}.namedNode(value));
+      return ${imports.Either}.of(defaultNamespace ? defaultNamespace(value) : ${imports.dataFactory}.namedNode(value));
     case "undefined":
       return ${imports.Either}.of(${imports.dataFactory}.blankNode());
   }
