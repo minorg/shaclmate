@@ -1,17 +1,17 @@
 {
   "dependencies": {
-    "@rdfx/collection": "0.0.42",
-    "@rdfx/data-factory": "0.0.42",
-    "@rdfx/resource": "0.0.42",
+    "@rdfx/collection": "0.0.43",
+    "@rdfx/data-factory": "0.0.43",
+    "@rdfx/resource": "0.0.43",
     "decimal.js": "~10.6.0",
     "purify-ts": "~2.1.4",
     "sparqljs": "3.7.3",
     "zod": "~4.1.12"
   },
   "devDependencies": {
-    "@rdfx/fs": "0.0.42",
-    "@rdfx/serializers": "0.0.42",
-    "@rdfx/sparql-client": "0.0.42",
+    "@rdfx/fs": "0.0.43",
+    "@rdfx/serializers": "0.0.43",
+    "@rdfx/sparql-client": "0.0.43",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "@types/sparqljs": "3.1.12",
     "js-sha256": "~0.11.0",
@@ -43,5 +43,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.77"
+  "version": "4.0.78"
 }

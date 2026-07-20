@@ -5,9 +5,9 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.77";
+const VERSION = "4.0.78";
 
-const rdfxVersion = "0.0.42";
+const rdfxVersion = "0.0.43";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
