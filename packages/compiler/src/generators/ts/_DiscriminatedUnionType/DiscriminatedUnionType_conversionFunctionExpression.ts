@@ -109,15 +109,26 @@ export function DiscriminatedUnionType_conversionFunctionExpression<
     const sourceTypes = memberIdentitySourceTypes.concat([
       ...otherMemberConversions.map((_) => _[0]),
     ]);
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return Maybe.of({
       code: code`\
-((value: ${joinCode(sourceTypes.map((sourceType) => sourceType.expression, { on: " | " }))}) => {
-  if (typeof value === "object") {
-    return value;
+(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${joinCode(
+        sourceTypes.map((sourceType) => sourceType.expression),
+        { on: " | " },
+      )}, defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT): ${this.reusables.imports.Either}<Error, ${this.expression}> => {
+  switch (typeof value) {
+    case "object": return ${this.reusables.imports.Either}.of(value);
+    ${joinCode(
+      otherMemberConversions.map(
+        ([otherMemberSourceType, otherMemberConversionFunction]) =>
+          code`case "${otherMemberSourceType.jsType.typeof}": return ${otherMemberConversionFunction.code}(value, defaultNamespace);`,
+      ),
+      { on: "\n" },
+    )}
+    default:
+      value satisfies never;
+      throw new Error("should never reach this point");
   }
-  ${joinCode(otherMemberConversions.map(([otherMemberSourceType, otherMemberConversionFunction]) => code`if (typeof value === ${otherMemberSourceType.jsType.typeof}) { return ${otherMemberConversionFunction}(value); }`))}
-  value satisfies never;
-  throw new Error("should never reach this point");
 })`,
       sourceTypes,
     });

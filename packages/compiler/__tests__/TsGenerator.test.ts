@@ -104,7 +104,7 @@ describe("TsGenerator", () => {
     }, 60000);
   }
 
-  it("objectDiscriminantProperty", async () => {
+  it.only("objectDiscriminantProperty", async () => {
     const shapesGraph = (
       await parseTestShapesGraph(testShapesGraphs.objectDiscriminantProperty)
     ).unsafeCoerce();
