@@ -5,7 +5,7 @@ import dataFactory from "@rdfx/data-factory";
 import { schema } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 
-describe("constructor", () => {
+describe("create", () => {
   describe("conversions", () => {
     it("undefined to []/Nothing", ({ expect }) => {
       const instance = kitchenSink.PropertyCardinalitiesStruct.createUnsafe({
