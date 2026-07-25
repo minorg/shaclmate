@@ -3,7 +3,7 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
-import type { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
+import { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
 import type { AbstractType_DiscriminantProperty } from "./_AbstractType/AbstractType_DiscriminantProperty.js";
 import { AbstractType_GraphqlType } from "./_AbstractType/AbstractType_GraphqlType.js";
 import { AbstractType_JsonType } from "./_AbstractType/AbstractType_JsonType.js";
@@ -407,6 +407,10 @@ ${joinCode(
 
 export namespace AbstractType {
   export type ConversionFunction = AbstractType_ConversionFunction;
+  export namespace ConversionFunction {
+    export const SourceType = AbstractType_ConversionFunction.SourceType;
+    export type SourceType = AbstractType_ConversionFunction.SourceType;
+  }
   export type DiscriminantProperty = AbstractType_DiscriminantProperty;
   export namespace DiscriminantProperty {
     export type Value = AbstractType_DiscriminantProperty.Value;
