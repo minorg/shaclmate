@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+import { DiscriminatedUnionType_conversionFunctionExpression } from "./_DiscriminatedUnionType/DiscriminatedUnionType_conversionFunctionExpression.js";
 import type { DiscriminatedUnionType_Discriminant } from "./_DiscriminatedUnionType/DiscriminatedUnionType_Discriminant.js";
 import { DiscriminatedUnionType_equalsFunctionExpression } from "./_DiscriminatedUnionType/DiscriminatedUnionType_equalsFunctionExpression.js";
 import { DiscriminatedUnionType_filterFunctionExpression } from "./_DiscriminatedUnionType/DiscriminatedUnionType_filterFunctionExpression.js";
@@ -176,26 +177,7 @@ export class DiscriminatedUnionType<
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
-    return Maybe.of({
-      code: code`${this.reusables.snippets.identityConversionFunction}`,
-      sourceTypes:
-        this.discriminant.kind === "Typeof"
-          ? this.members.flatMap(({ type }) =>
-              type.jsTypes.map((jsType) => ({
-                expression: type.expression,
-                jsType,
-              })),
-            )
-          : [
-              {
-                expression: this.expression,
-                jsType: {
-                  instanceof: "Object",
-                  typeof: "object",
-                },
-              },
-            ],
-    });
+    return DiscriminatedUnionType_conversionFunctionExpression.call(this);
   }
 
   @Memoize()
