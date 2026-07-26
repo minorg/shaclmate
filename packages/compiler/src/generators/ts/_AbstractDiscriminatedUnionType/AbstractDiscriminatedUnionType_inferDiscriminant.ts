@@ -20,10 +20,10 @@ function termTypes(
   }
 }
 
-export function DiscriminatedUnionType_inferDiscriminant<
+export function AbstractDiscriminatedUnionType_inferDiscriminant<
   MemberTypeT extends Type,
 >(
-  this: DiscriminatedUnionType<MemberTypeT>,
+  this: AbstractDiscriminatedUnionType<MemberTypeT>,
   members: readonly {
     readonly discriminantValue: Maybe<number | string>;
     readonly type: Type;

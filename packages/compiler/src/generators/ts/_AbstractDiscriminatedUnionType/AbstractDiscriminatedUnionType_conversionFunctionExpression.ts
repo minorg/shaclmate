@@ -6,10 +6,10 @@ import type { Type } from "../Type.js";
 import type { Typeof } from "../Typeof.js";
 import { code, joinCode } from "../ts-poet-wrapper.js";
 
-export function DiscriminatedUnionType_conversionFunctionExpression<
+export function AbstractDiscriminatedUnionType_conversionFunctionExpression<
   MemberTypeT extends Type,
 >(
-  this: DiscriminatedUnionType<MemberTypeT>,
+  this: AbstractDiscriminatedUnionType<MemberTypeT>,
 ): Maybe<AbstractType.ConversionFunction> {
   if (this.discriminant.kind === "Typeof") {
     // If the members are discriminated by typeof, they can all be used as source types.

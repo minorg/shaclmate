@@ -2,9 +2,9 @@ import type { DiscriminatedUnionType } from "../DiscriminatedUnionType.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function DiscriminatedUnionType_toRdfResourceValuesFunctionExpression<
+export function AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression<
   MemberTypeT extends Type,
->(this: DiscriminatedUnionType<MemberTypeT>): Code {
+>(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
   (((value, _options): (${joinCode(
     [...this.toRdfResourceValueTypes].map((toRdfResourceValueType) => {

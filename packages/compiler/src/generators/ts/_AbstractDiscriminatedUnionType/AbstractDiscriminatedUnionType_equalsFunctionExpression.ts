@@ -2,9 +2,9 @@ import type { DiscriminatedUnionType } from "../DiscriminatedUnionType.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function DiscriminatedUnionType_equalsFunctionExpression<
+export function AbstractDiscriminatedUnionType_equalsFunctionExpression<
   MemberTypeT extends Type,
->(this: DiscriminatedUnionType<MemberTypeT>): Code {
+>(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
 ((left: ${this.expression}, right: ${this.expression}) => {
 ${joinCode(
