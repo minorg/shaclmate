@@ -11,12 +11,24 @@ import { parseTestShapesGraph } from "./parseTestShapesGraph.js";
 
 describe("ShapesGraphToAstTransformer", () => {
   describe("well-formed", () => {
-    for (const [id, testShapesGraph] of Object.entries(testShapesGraphs)) {
-      if (
-        testShapesGraph.kind === "error" ||
-        testShapesGraph.kind === "stress"
-      ) {
-        continue;
+    for (const [idString, testShapesGraph] of Object.entries(
+      testShapesGraphs,
+    )) {
+      const id = idString as keyof typeof testShapesGraphs;
+
+      switch (testShapesGraph.kind) {
+        case "error":
+          continue;
+        case "stress": {
+          switch (id) {
+            case "empty":
+            case "propertyShapesOnly":
+              break;
+            default:
+              continue;
+          }
+          break;
+        }
       }
 
       describe(id, () => {
@@ -56,7 +68,7 @@ describe("ShapesGraphToAstTransformer", () => {
           );
           if (id === "kitchenSinkExample") {
             expect(namedObjectTypes).toHaveLength(52);
-          } else {
+          } else if (id !== "empty" && id !== "propertyShapesOnly") {
             expect(namedObjectTypes).not.toHaveLength(0);
           }
         });
@@ -173,6 +185,7 @@ describe("ShapesGraphToAstTransformer", () => {
           case "nodeShapeNameConflicts":
           case "objectDiscriminantProperty":
           case "propertyShapeNameConflicts":
+          case "propertyShapesOnly":
           case "shaclShacl":
           case "syntax":
             throw new RangeError(id);

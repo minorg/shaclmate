@@ -36,8 +36,12 @@ describe("TsGenerator", () => {
       case "example":
         break;
       case "stress":
-        if (id !== "empty") {
-          continue;
+        switch (id) {
+          case "empty":
+          case "propertyShapesOnly":
+            break;
+          default:
+            continue;
         }
         break;
       default:

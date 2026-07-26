@@ -173,6 +173,12 @@ export const testShapesGraphs = {
     kind: "stress",
   },
 
+  propertyShapesOnly: {
+    description: "Shapes graph with only property shapes",
+    filePaths: [path.join(thisDirectoryPath, "property-shapes-only.ttl")],
+    kind: "stress",
+  },
+
   shaclShacl: {
     description: "SHACL-SHACL",
     filePaths: [
