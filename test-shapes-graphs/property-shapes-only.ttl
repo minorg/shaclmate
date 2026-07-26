@@ -1,0 +1,14 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://example.com/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:PropertyShape
+    a sh:PropertyShape
+    sh:datatype xsd:int ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "property" ;
+    sh:path :property .
+
