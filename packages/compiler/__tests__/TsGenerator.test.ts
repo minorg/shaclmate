@@ -29,15 +29,20 @@ function generate(
 
 describe("TsGenerator", () => {
   for (const [idString, testShapesGraph] of Object.entries(testShapesGraphs)) {
+    const id = idString as keyof typeof testShapesGraphs;
+
     switch (testShapesGraph.kind) {
       case "dogfood":
       case "example":
         break;
+      case "stress":
+        if (id !== "empty") {
+          continue;
+        }
+        break;
       default:
         continue;
     }
-
-    const id = idString as keyof typeof testShapesGraphs;
 
     it(id, async () => {
       let configuration: Partial<TsGenerator.Configuration> | undefined;
