@@ -28,7 +28,7 @@ export function AbstractDiscriminatedUnionType_inferDiscriminant<
     readonly discriminantValue: Maybe<number | string>;
     readonly type: Type;
   }[],
-): DiscriminatedUnionType.Discriminant {
+): AbstractDiscriminatedUnionType.Discriminant {
   // extrinsic with user-specified values
   if (members.some((member) => member.discriminantValue.isJust())) {
     return {

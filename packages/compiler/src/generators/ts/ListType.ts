@@ -188,6 +188,7 @@ export namespace ListType {
     | BooleanType
     | DateTimeType
     | DateType
+    | DiscriminatedUnionType
     | FloatType
     | IdentifierType
     | IntType
@@ -198,8 +199,7 @@ export namespace ListType {
     | ObjectDiscriminatedUnionType
     | ObjectType
     | StringType
-    | TermType
-    | DiscriminatedUnionType<Type>;
+    | TermType;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
@@ -209,6 +209,7 @@ export namespace ListType {
       case "Boolean":
       case "DateTime":
       case "Date":
+      case "DiscriminatedUnion":
       case "Float":
       case "Identifier":
       case "Iri":
@@ -220,7 +221,6 @@ export namespace ListType {
       case "Object":
       case "String":
       case "Term":
-      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

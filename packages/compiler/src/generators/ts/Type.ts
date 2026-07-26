@@ -31,6 +31,7 @@ export type Type =
   | DateTimeType
   | DateType
   | DefaultValueType<DefaultValueType.ItemType>
+  | DiscriminatedUnionType
   | FloatType
   | IdentifierType
   | IntType
@@ -46,5 +47,4 @@ export type Type =
   | OptionType<OptionType.ItemType>
   | SetType<SetType.ItemType>
   | StringType
-  | TermType
-  | DiscriminatedUnionType<Type>;
+  | TermType;
