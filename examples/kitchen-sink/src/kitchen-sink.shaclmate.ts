@@ -4772,7 +4772,6 @@ export namespace AnonymousTypesStruct {
       | (keyof $DefaultNamespaceT & string);
     readonly anonymousStruct?:
       | {
-          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
@@ -4791,46 +4790,59 @@ export namespace AnonymousTypesStruct {
         parameters?.$defaultNamespace,
       ),
       anonymousStruct: $convertToMaybe(
-        <
-          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-        >(parameters: {
-          readonly $defaultNamespace?: $DefaultNamespaceT;
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | (keyof $DefaultNamespaceT & string);
-          readonly anonymousStructString: string;
-        }) =>
-          $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(
-              parameters.$identifier,
-              parameters.$defaultNamespace,
-            ),
-            anonymousStructString: Either.of(parameters.anonymousStructString),
-          }).map((object) =>
-            $monkeyPatchObject(object, {
-              toJson: (_object) =>
-                JSON.parse(
-                  JSON.stringify({
-                    "@id":
-                      _object.$identifier().termType === "BlankNode"
-                        ? `_:${_object.$identifier().value}`
-                        : _object.$identifier().value,
-                    anonymousStructString: _object.anonymousStructString,
-                  } satisfies {
-                    readonly "@id": string;
-                    readonly anonymousStructString: string;
-                  }),
-                ),
-              $toString: (_object) =>
-                JSON.stringify(
-                  $compactRecord({
-                    $identifier: _object.$identifier().toString(),
-                  }),
-                ),
-            }),
-          ),
+        <$DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder>(
+          value: {
+            readonly $identifier?:
+              | (() => BlankNode | NamedNode)
+              | BlankNode
+              | NamedNode
+              | (keyof $DefaultNamespaceT & string);
+            readonly anonymousStructString: string;
+          },
+          $defaultNamespace?: $DefaultNamespaceT,
+        ) =>
+          (<
+            $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+          >(parameters: {
+            readonly $defaultNamespace?: $DefaultNamespaceT;
+            readonly $identifier?:
+              | (() => BlankNode | NamedNode)
+              | BlankNode
+              | NamedNode
+              | (keyof $DefaultNamespaceT & string);
+            readonly anonymousStructString: string;
+          }) =>
+            $sequenceRecord({
+              $identifier: $convertToIdentifierProperty(
+                parameters.$identifier,
+                parameters.$defaultNamespace,
+              ),
+              anonymousStructString: Either.of(
+                parameters.anonymousStructString,
+              ),
+            }).map((object) =>
+              $monkeyPatchObject(object, {
+                toJson: (_object) =>
+                  JSON.parse(
+                    JSON.stringify({
+                      "@id":
+                        _object.$identifier().termType === "BlankNode"
+                          ? `_:${_object.$identifier().value}`
+                          : _object.$identifier().value,
+                      anonymousStructString: _object.anonymousStructString,
+                    } satisfies {
+                      readonly "@id": string;
+                      readonly anonymousStructString: string;
+                    }),
+                  ),
+                $toString: (_object) =>
+                  JSON.stringify(
+                    $compactRecord({
+                      $identifier: _object.$identifier().toString(),
+                    }),
+                  ),
+              }),
+            ))({ ...value, $defaultNamespace }),
       )(parameters?.anonymousStruct, parameters?.$defaultNamespace).chain(
         (value) =>
           $validateMaybe($identityValidationFunction)(
@@ -4861,7 +4873,6 @@ export namespace AnonymousTypesStruct {
       | (keyof $DefaultNamespaceT & string);
     readonly anonymousStruct?:
       | {
-          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
@@ -33009,7 +33020,7 @@ export namespace NamedTypesStruct {
         parameters.$defaultNamespace,
       ),
       namedDatatype: Either.of(parameters.namedDatatype),
-      namedDiscriminatedUnion1: $identityConversionFunction(
+      namedDiscriminatedUnion1: NamedDiscriminatedUnion1.convert(
         parameters.namedDiscriminatedUnion1,
         parameters.$defaultNamespace,
       ),
@@ -55527,6 +55538,8 @@ export namespace NamedDiscriminatedUnion1 {
 
     throw new Error("unable to serialize to string");
   };
+
+  export const convert = $identityConversionFunction;
 
   export const equals = (
     left: NamedDiscriminatedUnion1,

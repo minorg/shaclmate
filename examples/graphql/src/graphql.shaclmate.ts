@@ -1953,7 +1953,6 @@ export namespace RootObject {
       | LazyObject;
     readonly optionalObjectProperty?:
       | {
-          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
@@ -1986,35 +1985,46 @@ export namespace RootObject {
         $DefaultPartial.createUnsafe,
       )(parameters.optionalLazyProperty, parameters.$defaultNamespace),
       optionalObjectProperty: $convertToMaybe(
-        <
-          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-        >(parameters: {
-          readonly $defaultNamespace?: $DefaultNamespaceT;
-          readonly $identifier?:
-            | (() => BlankNode | NamedNode)
-            | BlankNode
-            | NamedNode
-            | (keyof $DefaultNamespaceT & string);
-          readonly requiredStringProperty: string;
-        }) =>
-          $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(
-              parameters.$identifier,
-              parameters.$defaultNamespace,
-            ),
-            requiredStringProperty: Either.of(
-              parameters.requiredStringProperty,
-            ),
-          }).map((object) =>
-            $monkeyPatchObject(object, {
-              $toString: (_object) =>
-                JSON.stringify(
-                  $compactRecord({
-                    $identifier: _object.$identifier().toString(),
-                  }),
-                ),
-            }),
-          ),
+        <$DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder>(
+          value: {
+            readonly $identifier?:
+              | (() => BlankNode | NamedNode)
+              | BlankNode
+              | NamedNode
+              | (keyof $DefaultNamespaceT & string);
+            readonly requiredStringProperty: string;
+          },
+          $defaultNamespace?: $DefaultNamespaceT,
+        ) =>
+          (<
+            $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+          >(parameters: {
+            readonly $defaultNamespace?: $DefaultNamespaceT;
+            readonly $identifier?:
+              | (() => BlankNode | NamedNode)
+              | BlankNode
+              | NamedNode
+              | (keyof $DefaultNamespaceT & string);
+            readonly requiredStringProperty: string;
+          }) =>
+            $sequenceRecord({
+              $identifier: $convertToIdentifierProperty(
+                parameters.$identifier,
+                parameters.$defaultNamespace,
+              ),
+              requiredStringProperty: Either.of(
+                parameters.requiredStringProperty,
+              ),
+            }).map((object) =>
+              $monkeyPatchObject(object, {
+                $toString: (_object) =>
+                  JSON.stringify(
+                    $compactRecord({
+                      $identifier: _object.$identifier().toString(),
+                    }),
+                  ),
+              }),
+            ))({ ...value, $defaultNamespace }),
       )(parameters.optionalObjectProperty, parameters.$defaultNamespace).chain(
         (value) =>
           $validateMaybe($identityValidationFunction)(
@@ -2060,7 +2070,6 @@ export namespace RootObject {
       | LazyObject;
     readonly optionalObjectProperty?:
       | {
-          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
