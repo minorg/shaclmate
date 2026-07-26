@@ -98,11 +98,14 @@ export class ObjectType extends AbstractType {
     if (this.name.isJust()) {
       return Maybe.empty();
     }
+
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+    const sourceTypeExpression = code`Omit<${this.constructorParameters.type.expression}, "${syntheticNamePrefix}defaultNamespace">`;
     return Maybe.of({
-      code: this.createFunction,
+      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
       sourceTypes: [
         {
-          expression: this.constructorParameters.type.expression,
+          expression: sourceTypeExpression,
           jsType: {
             instanceof: "Object",
             typeof: "object",

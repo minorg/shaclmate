@@ -495,15 +495,18 @@ export namespace FormStruct {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: {
-      readonly $defaultNamespace?: $DefaultNamespaceT;
-      readonly $identifier?:
-        | (() => BlankNode | NamedNode)
-        | BlankNode
-        | NamedNode
-        | (keyof $DefaultNamespaceT & string);
-      readonly requiredStringProperty: string;
-    };
+    readonly nestedStructProperty: Omit<
+      {
+        readonly $defaultNamespace?: $DefaultNamespaceT;
+        readonly $identifier?:
+          | (() => BlankNode | NamedNode)
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string);
+        readonly requiredStringProperty: string;
+      },
+      "$defaultNamespace"
+    >;
     readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
@@ -525,44 +528,66 @@ export namespace FormStruct {
       ),
       nestedStructProperty: (<
         $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-      >(parameters: {
-        readonly $defaultNamespace?: $DefaultNamespaceT;
-        readonly $identifier?:
-          | (() => BlankNode | NamedNode)
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string);
-        readonly requiredStringProperty: string;
-      }) =>
-        $sequenceRecord({
-          $identifier: $convertToIdentifierProperty(
-            parameters.$identifier,
-            parameters.$defaultNamespace,
-          ),
-          requiredStringProperty: Either.of(parameters.requiredStringProperty),
-        }).map((object) =>
-          $monkeyPatchObject(object, {
-            toJson: (_object) =>
-              JSON.parse(
-                JSON.stringify({
-                  "@id":
-                    _object.$identifier().termType === "BlankNode"
-                      ? `_:${_object.$identifier().value}`
-                      : _object.$identifier().value,
-                  requiredStringProperty: _object.requiredStringProperty,
-                } satisfies {
-                  readonly "@id": string;
-                  readonly requiredStringProperty: string;
-                }),
-              ),
-            $toString: (_object) =>
-              JSON.stringify(
-                $compactRecord({
-                  $identifier: _object.$identifier().toString(),
-                }),
-              ),
-          }),
-        ))(parameters.nestedStructProperty, parameters.$defaultNamespace),
+      >(
+        value: Omit<
+          {
+            readonly $defaultNamespace?: $DefaultNamespaceT;
+            readonly $identifier?:
+              | (() => BlankNode | NamedNode)
+              | BlankNode
+              | NamedNode
+              | (keyof $DefaultNamespaceT & string);
+            readonly requiredStringProperty: string;
+          },
+          "$defaultNamespace"
+        >,
+        $defaultNamespace?: $DefaultNamespaceT,
+      ) =>
+        (<
+          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+        >(parameters: {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | (keyof $DefaultNamespaceT & string);
+          readonly requiredStringProperty: string;
+        }) =>
+          $sequenceRecord({
+            $identifier: $convertToIdentifierProperty(
+              parameters.$identifier,
+              parameters.$defaultNamespace,
+            ),
+            requiredStringProperty: Either.of(
+              parameters.requiredStringProperty,
+            ),
+          }).map((object) =>
+            $monkeyPatchObject(object, {
+              toJson: (_object) =>
+                JSON.parse(
+                  JSON.stringify({
+                    "@id":
+                      _object.$identifier().termType === "BlankNode"
+                        ? `_:${_object.$identifier().value}`
+                        : _object.$identifier().value,
+                    requiredStringProperty: _object.requiredStringProperty,
+                  } satisfies {
+                    readonly "@id": string;
+                    readonly requiredStringProperty: string;
+                  }),
+                ),
+              $toString: (_object) =>
+                JSON.stringify(
+                  $compactRecord({
+                    $identifier: _object.$identifier().toString(),
+                  }),
+                ),
+            }),
+          ))({ ...value, $defaultNamespace }))(
+        parameters.nestedStructProperty,
+        parameters.$defaultNamespace,
+      ),
       nonEmptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
       )(
@@ -604,15 +629,18 @@ export namespace FormStruct {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: {
-      readonly $defaultNamespace?: $DefaultNamespaceT;
-      readonly $identifier?:
-        | (() => BlankNode | NamedNode)
-        | BlankNode
-        | NamedNode
-        | (keyof $DefaultNamespaceT & string);
-      readonly requiredStringProperty: string;
-    };
+    readonly nestedStructProperty: Omit<
+      {
+        readonly $defaultNamespace?: $DefaultNamespaceT;
+        readonly $identifier?:
+          | (() => BlankNode | NamedNode)
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string);
+        readonly requiredStringProperty: string;
+      },
+      "$defaultNamespace"
+    >;
     readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
