@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.78",
+    "@shaclmate/shacl-ast": "4.0.79",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.43",
     "@rdfx/data-factory": "0.0.43",
@@ -235,6 +235,8 @@
     "dist/generators/ts/_AbstractType/AbstractType_JsonType.js",
     "dist/generators/ts/_DiscriminatedUnionType/DiscriminatedUnionType_Discriminant.d.ts",
     "dist/generators/ts/_DiscriminatedUnionType/DiscriminatedUnionType_Discriminant.js",
+    "dist/generators/ts/_DiscriminatedUnionType/DiscriminatedUnionType_conversionFunctionExpression.d.ts",
+    "dist/generators/ts/_DiscriminatedUnionType/DiscriminatedUnionType_conversionFunctionExpression.js",
     "dist/generators/ts/_DiscriminatedUnionType/DiscriminatedUnionType_equalsFunctionExpression.d.ts",
     "dist/generators/ts/_DiscriminatedUnionType/DiscriminatedUnionType_equalsFunctionExpression.js",
     "dist/generators/ts/_DiscriminatedUnionType/DiscriminatedUnionType_filterFunctionExpression.d.ts",
@@ -729,5 +731,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.78"
+  "version": "4.0.79"
 }
