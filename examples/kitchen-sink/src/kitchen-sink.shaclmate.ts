@@ -10819,18 +10819,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
-      dateOrDateTime: $identityConversionFunction(
-        parameters.dateOrDateTime,
-        parameters.$defaultNamespace,
-      ),
+      dateOrDateTime: Either.of(parameters.dateOrDateTime),
       dateOrString: $identityConversionFunction(
         parameters.dateOrString,
         parameters.$defaultNamespace,
       ),
-      dateTimeOrDate: $identityConversionFunction(
-        parameters.dateTimeOrDate,
-        parameters.$defaultNamespace,
-      ),
+      dateTimeOrDate: Either.of(parameters.dateTimeOrDate),
       decimalOrString: $identityConversionFunction(
         parameters.decimalOrString,
         parameters.$defaultNamespace,
@@ -33019,10 +33013,7 @@ export namespace NamedTypesStruct {
         parameters.namedDiscriminatedUnion1,
         parameters.$defaultNamespace,
       ),
-      namedDiscriminatedUnion2: $identityConversionFunction(
-        parameters.namedDiscriminatedUnion2,
-        parameters.$defaultNamespace,
-      ),
+      namedDiscriminatedUnion2: Either.of(parameters.namedDiscriminatedUnion2),
       namedInIri: $convertToInIri<NamedInIri["value"]>(
         parameters.namedInIri,
         parameters.$defaultNamespace,
@@ -48384,18 +48375,11 @@ export namespace UnionDiscriminantsStruct {
         parameters.requiredIriOrString,
         parameters.$defaultNamespace,
       ),
-      requiredNodeOrLiteral: $identityConversionFunction(
-        parameters.requiredNodeOrLiteral,
-        parameters.$defaultNamespace,
-      ),
-      requiredNodeOrNodeOrString: $identityConversionFunction(
+      requiredNodeOrLiteral: Either.of(parameters.requiredNodeOrLiteral),
+      requiredNodeOrNodeOrString: Either.of(
         parameters.requiredNodeOrNodeOrString,
-        parameters.$defaultNamespace,
       ),
-      requiredTerm: $identityConversionFunction(
-        parameters.requiredTerm,
-        parameters.$defaultNamespace,
-      ),
+      requiredTerm: Either.of(parameters.requiredTerm),
       setIriOrString: $convertToScalarSet($identityConversionFunction)(
         parameters.setIriOrString,
         parameters.$defaultNamespace,
@@ -53932,10 +53916,10 @@ export type DiscriminatedUnion =
 
 export namespace DiscriminatedUnion {
   export const $toString = (value: DiscriminatedUnion): string => {
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.$toString(value);
     }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember2") {
       return DiscriminatedUnionMember2.$toString(value);
     }
 
@@ -53947,8 +53931,8 @@ export namespace DiscriminatedUnion {
     right: DiscriminatedUnion,
   ) => {
     if (
-      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(left) &&
-      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(right)
+      left["$type"] === "DiscriminatedUnionMember1" &&
+      right["$type"] === "DiscriminatedUnionMember1"
     ) {
       return DiscriminatedUnionMember1.equals(
         left as DiscriminatedUnionMember1,
@@ -53956,8 +53940,8 @@ export namespace DiscriminatedUnion {
       );
     }
     if (
-      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(left) &&
-      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(right)
+      left["$type"] === "DiscriminatedUnionMember2" &&
+      right["$type"] === "DiscriminatedUnionMember2"
     ) {
       return DiscriminatedUnionMember2.equals(
         left as DiscriminatedUnionMember2,
@@ -53990,7 +53974,7 @@ export namespace DiscriminatedUnion {
     }
     if (
       filter.on?.["DiscriminatedUnionMember1"] !== undefined &&
-      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)
+      value["$type"] === "DiscriminatedUnionMember1"
     ) {
       if (
         !DiscriminatedUnionMember1.filter(
@@ -54003,7 +53987,7 @@ export namespace DiscriminatedUnion {
     }
     if (
       filter.on?.["DiscriminatedUnionMember2"] !== undefined &&
-      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)
+      value["$type"] === "DiscriminatedUnionMember2"
     ) {
       if (
         !DiscriminatedUnionMember2.filter(
@@ -54169,10 +54153,10 @@ export namespace DiscriminatedUnion {
     hasher: HasherT,
     value: DiscriminatedUnion,
   ): HasherT => {
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.hash(hasher, value);
     }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember2") {
       return DiscriminatedUnionMember2.hash(hasher, value);
     }
     return hasher;
@@ -54301,10 +54285,10 @@ export namespace DiscriminatedUnion {
   export const toJson = (
     value: DiscriminatedUnion,
   ): DiscriminatedUnion.Json => {
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.toJson(value);
     }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember2") {
       return DiscriminatedUnionMember2.toJson(value);
     }
 
@@ -54328,7 +54312,7 @@ export namespace DiscriminatedUnion {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
       return [
         DiscriminatedUnionMember1.toRdfResource(value, {
           graph: _options.graph,
@@ -54336,7 +54320,7 @@ export namespace DiscriminatedUnion {
         }).identifier,
       ];
     }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember2") {
       return [
         DiscriminatedUnionMember2.toRdfResource(value, {
           graph: _options.graph,
@@ -54418,15 +54402,13 @@ export type FlattenDiscriminatedUnion =
 
 export namespace FlattenDiscriminatedUnion {
   export const $toString = (value: FlattenDiscriminatedUnion): string => {
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.$toString(value);
     }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember2") {
       return DiscriminatedUnionMember2.$toString(value);
     }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
-    ) {
+    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
       return FlattenDiscriminatedUnionMember3.$toString(value);
     }
 
@@ -54438,8 +54420,8 @@ export namespace FlattenDiscriminatedUnion {
     right: FlattenDiscriminatedUnion,
   ) => {
     if (
-      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(left) &&
-      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(right)
+      left["$type"] === "DiscriminatedUnionMember1" &&
+      right["$type"] === "DiscriminatedUnionMember1"
     ) {
       return DiscriminatedUnionMember1.equals(
         left as DiscriminatedUnionMember1,
@@ -54447,8 +54429,8 @@ export namespace FlattenDiscriminatedUnion {
       );
     }
     if (
-      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(left) &&
-      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(right)
+      left["$type"] === "DiscriminatedUnionMember2" &&
+      right["$type"] === "DiscriminatedUnionMember2"
     ) {
       return DiscriminatedUnionMember2.equals(
         left as DiscriminatedUnionMember2,
@@ -54456,10 +54438,8 @@ export namespace FlattenDiscriminatedUnion {
       );
     }
     if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(
-        left,
-      ) &&
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(right)
+      left["$type"] === "FlattenDiscriminatedUnionMember3" &&
+      right["$type"] === "FlattenDiscriminatedUnionMember3"
     ) {
       return FlattenDiscriminatedUnionMember3.equals(
         left as FlattenDiscriminatedUnionMember3,
@@ -54492,7 +54472,7 @@ export namespace FlattenDiscriminatedUnion {
     }
     if (
       filter.on?.["DiscriminatedUnionMember1"] !== undefined &&
-      DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)
+      value["$type"] === "DiscriminatedUnionMember1"
     ) {
       if (
         !DiscriminatedUnionMember1.filter(
@@ -54505,7 +54485,7 @@ export namespace FlattenDiscriminatedUnion {
     }
     if (
       filter.on?.["DiscriminatedUnionMember2"] !== undefined &&
-      DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)
+      value["$type"] === "DiscriminatedUnionMember2"
     ) {
       if (
         !DiscriminatedUnionMember2.filter(
@@ -54518,7 +54498,7 @@ export namespace FlattenDiscriminatedUnion {
     }
     if (
       filter.on?.["FlattenDiscriminatedUnionMember3"] !== undefined &&
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
+      value["$type"] === "FlattenDiscriminatedUnionMember3"
     ) {
       if (
         !FlattenDiscriminatedUnionMember3.filter(
@@ -54725,15 +54705,13 @@ export namespace FlattenDiscriminatedUnion {
     hasher: HasherT,
     value: FlattenDiscriminatedUnion,
   ): HasherT => {
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.hash(hasher, value);
     }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember2") {
       return DiscriminatedUnionMember2.hash(hasher, value);
     }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
-    ) {
+    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
       return FlattenDiscriminatedUnionMember3.hash(hasher, value);
     }
     return hasher;
@@ -54867,15 +54845,13 @@ export namespace FlattenDiscriminatedUnion {
   export const toJson = (
     value: FlattenDiscriminatedUnion,
   ): FlattenDiscriminatedUnion.Json => {
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.toJson(value);
     }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember2") {
       return DiscriminatedUnionMember2.toJson(value);
     }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
-    ) {
+    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
       return FlattenDiscriminatedUnionMember3.toJson(value);
     }
 
@@ -54905,7 +54881,7 @@ export namespace FlattenDiscriminatedUnion {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (DiscriminatedUnionMember1.isDiscriminatedUnionMember1(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
       return [
         DiscriminatedUnionMember1.toRdfResource(value, {
           graph: _options.graph,
@@ -54913,7 +54889,7 @@ export namespace FlattenDiscriminatedUnion {
         }).identifier,
       ];
     }
-    if (DiscriminatedUnionMember2.isDiscriminatedUnionMember2(value)) {
+    if (value["$type"] === "DiscriminatedUnionMember2") {
       return [
         DiscriminatedUnionMember2.toRdfResource(value, {
           graph: _options.graph,
@@ -54921,9 +54897,7 @@ export namespace FlattenDiscriminatedUnion {
         }).identifier,
       ];
     }
-    if (
-      FlattenDiscriminatedUnionMember3.isFlattenDiscriminatedUnionMember3(value)
-    ) {
+    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
       return [
         FlattenDiscriminatedUnionMember3.toRdfResource(value, {
           graph: _options.graph,
@@ -55023,18 +54997,10 @@ export namespace LazilyResolvedDiscriminatedUnion {
   export const $toString = (
     value: LazilyResolvedDiscriminatedUnion,
   ): string => {
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember1") {
       return LazilyResolvedDiscriminatedUnionMember1.$toString(value);
     }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember2") {
       return LazilyResolvedDiscriminatedUnionMember2.$toString(value);
     }
 
@@ -55046,12 +55012,8 @@ export namespace LazilyResolvedDiscriminatedUnion {
     right: LazilyResolvedDiscriminatedUnion,
   ) => {
     if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        left,
-      ) &&
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        right,
-      )
+      left["$type"] === "LazilyResolvedDiscriminatedUnionMember1" &&
+      right["$type"] === "LazilyResolvedDiscriminatedUnionMember1"
     ) {
       return LazilyResolvedDiscriminatedUnionMember1.equals(
         left as LazilyResolvedDiscriminatedUnionMember1,
@@ -55059,12 +55021,8 @@ export namespace LazilyResolvedDiscriminatedUnion {
       );
     }
     if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        left,
-      ) &&
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        right,
-      )
+      left["$type"] === "LazilyResolvedDiscriminatedUnionMember2" &&
+      right["$type"] === "LazilyResolvedDiscriminatedUnionMember2"
     ) {
       return LazilyResolvedDiscriminatedUnionMember2.equals(
         left as LazilyResolvedDiscriminatedUnionMember2,
@@ -55097,9 +55055,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
     }
     if (
       filter.on?.["LazilyResolvedDiscriminatedUnionMember1"] !== undefined &&
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
+      value["$type"] === "LazilyResolvedDiscriminatedUnionMember1"
     ) {
       if (
         !LazilyResolvedDiscriminatedUnionMember1.filter(
@@ -55112,9 +55068,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
     }
     if (
       filter.on?.["LazilyResolvedDiscriminatedUnionMember2"] !== undefined &&
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
+      value["$type"] === "LazilyResolvedDiscriminatedUnionMember2"
     ) {
       if (
         !LazilyResolvedDiscriminatedUnionMember2.filter(
@@ -55295,18 +55249,10 @@ export namespace LazilyResolvedDiscriminatedUnion {
     hasher: HasherT,
     value: LazilyResolvedDiscriminatedUnion,
   ): HasherT => {
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember1") {
       return LazilyResolvedDiscriminatedUnionMember1.hash(hasher, value);
     }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember2") {
       return LazilyResolvedDiscriminatedUnionMember2.hash(hasher, value);
     }
     return hasher;
@@ -55441,18 +55387,10 @@ export namespace LazilyResolvedDiscriminatedUnion {
   export const toJson = (
     value: LazilyResolvedDiscriminatedUnion,
   ): LazilyResolvedDiscriminatedUnion.Json => {
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember1") {
       return LazilyResolvedDiscriminatedUnionMember1.toJson(value);
     }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember2") {
       return LazilyResolvedDiscriminatedUnionMember2.toJson(value);
     }
 
@@ -55489,11 +55427,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (
-      LazilyResolvedDiscriminatedUnionMember1.isLazilyResolvedDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember1") {
       return [
         LazilyResolvedDiscriminatedUnionMember1.toRdfResource(value, {
           graph: _options.graph,
@@ -55501,11 +55435,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
         }).identifier,
       ];
     }
-    if (
-      LazilyResolvedDiscriminatedUnionMember2.isLazilyResolvedDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember2") {
       return [
         LazilyResolvedDiscriminatedUnionMember2.toRdfResource(value, {
           graph: _options.graph,
@@ -56139,18 +56069,10 @@ export type NoRdfTypeDiscriminatedUnion =
 
 export namespace NoRdfTypeDiscriminatedUnion {
   export const $toString = (value: NoRdfTypeDiscriminatedUnion): string => {
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
       return NoRdfTypeDiscriminatedUnionMember1.$toString(value);
     }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember2") {
       return NoRdfTypeDiscriminatedUnionMember2.$toString(value);
     }
 
@@ -56162,12 +56084,8 @@ export namespace NoRdfTypeDiscriminatedUnion {
     right: NoRdfTypeDiscriminatedUnion,
   ) => {
     if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        left,
-      ) &&
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        right,
-      )
+      left["$type"] === "NoRdfTypeDiscriminatedUnionMember1" &&
+      right["$type"] === "NoRdfTypeDiscriminatedUnionMember1"
     ) {
       return NoRdfTypeDiscriminatedUnionMember1.equals(
         left as NoRdfTypeDiscriminatedUnionMember1,
@@ -56175,12 +56093,8 @@ export namespace NoRdfTypeDiscriminatedUnion {
       );
     }
     if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        left,
-      ) &&
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        right,
-      )
+      left["$type"] === "NoRdfTypeDiscriminatedUnionMember2" &&
+      right["$type"] === "NoRdfTypeDiscriminatedUnionMember2"
     ) {
       return NoRdfTypeDiscriminatedUnionMember2.equals(
         left as NoRdfTypeDiscriminatedUnionMember2,
@@ -56213,9 +56127,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
     }
     if (
       filter.on?.["NoRdfTypeDiscriminatedUnionMember1"] !== undefined &&
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
+      value["$type"] === "NoRdfTypeDiscriminatedUnionMember1"
     ) {
       if (
         !NoRdfTypeDiscriminatedUnionMember1.filter(
@@ -56228,9 +56140,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
     }
     if (
       filter.on?.["NoRdfTypeDiscriminatedUnionMember2"] !== undefined &&
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
+      value["$type"] === "NoRdfTypeDiscriminatedUnionMember2"
     ) {
       if (
         !NoRdfTypeDiscriminatedUnionMember2.filter(
@@ -56408,18 +56318,10 @@ export namespace NoRdfTypeDiscriminatedUnion {
     hasher: HasherT,
     value: NoRdfTypeDiscriminatedUnion,
   ): HasherT => {
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
       return NoRdfTypeDiscriminatedUnionMember1.hash(hasher, value);
     }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember2") {
       return NoRdfTypeDiscriminatedUnionMember2.hash(hasher, value);
     }
     return hasher;
@@ -56548,18 +56450,10 @@ export namespace NoRdfTypeDiscriminatedUnion {
   export const toJson = (
     value: NoRdfTypeDiscriminatedUnion,
   ): NoRdfTypeDiscriminatedUnion.Json => {
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
       return NoRdfTypeDiscriminatedUnionMember1.toJson(value);
     }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember2") {
       return NoRdfTypeDiscriminatedUnionMember2.toJson(value);
     }
 
@@ -56590,11 +56484,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (
-      NoRdfTypeDiscriminatedUnionMember1.isNoRdfTypeDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
       return [
         NoRdfTypeDiscriminatedUnionMember1.toRdfResource(value, {
           graph: _options.graph,
@@ -56602,11 +56492,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
         }).identifier,
       ];
     }
-    if (
-      NoRdfTypeDiscriminatedUnionMember2.isNoRdfTypeDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember2") {
       return [
         NoRdfTypeDiscriminatedUnionMember2.toRdfResource(value, {
           graph: _options.graph,
@@ -56687,14 +56573,10 @@ export type PartialDiscriminatedUnion =
 
 export namespace PartialDiscriminatedUnion {
   export const $toString = (value: PartialDiscriminatedUnion): string => {
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
-    ) {
+    if (value["$type"] === "PartialDiscriminatedUnionMember1") {
       return PartialDiscriminatedUnionMember1.$toString(value);
     }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
-    ) {
+    if (value["$type"] === "PartialDiscriminatedUnionMember2") {
       return PartialDiscriminatedUnionMember2.$toString(value);
     }
 
@@ -56706,10 +56588,8 @@ export namespace PartialDiscriminatedUnion {
     right: PartialDiscriminatedUnion,
   ) => {
     if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(
-        left,
-      ) &&
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(right)
+      left["$type"] === "PartialDiscriminatedUnionMember1" &&
+      right["$type"] === "PartialDiscriminatedUnionMember1"
     ) {
       return PartialDiscriminatedUnionMember1.equals(
         left as PartialDiscriminatedUnionMember1,
@@ -56717,10 +56597,8 @@ export namespace PartialDiscriminatedUnion {
       );
     }
     if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(
-        left,
-      ) &&
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(right)
+      left["$type"] === "PartialDiscriminatedUnionMember2" &&
+      right["$type"] === "PartialDiscriminatedUnionMember2"
     ) {
       return PartialDiscriminatedUnionMember2.equals(
         left as PartialDiscriminatedUnionMember2,
@@ -56753,7 +56631,7 @@ export namespace PartialDiscriminatedUnion {
     }
     if (
       filter.on?.["PartialDiscriminatedUnionMember1"] !== undefined &&
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
+      value["$type"] === "PartialDiscriminatedUnionMember1"
     ) {
       if (
         !PartialDiscriminatedUnionMember1.filter(
@@ -56766,7 +56644,7 @@ export namespace PartialDiscriminatedUnion {
     }
     if (
       filter.on?.["PartialDiscriminatedUnionMember2"] !== undefined &&
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
+      value["$type"] === "PartialDiscriminatedUnionMember2"
     ) {
       if (
         !PartialDiscriminatedUnionMember2.filter(
@@ -56937,14 +56815,10 @@ export namespace PartialDiscriminatedUnion {
     hasher: HasherT,
     value: PartialDiscriminatedUnion,
   ): HasherT => {
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
-    ) {
+    if (value["$type"] === "PartialDiscriminatedUnionMember1") {
       return PartialDiscriminatedUnionMember1.hash(hasher, value);
     }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
-    ) {
+    if (value["$type"] === "PartialDiscriminatedUnionMember2") {
       return PartialDiscriminatedUnionMember2.hash(hasher, value);
     }
     return hasher;
@@ -57079,14 +56953,10 @@ export namespace PartialDiscriminatedUnion {
   export const toJson = (
     value: PartialDiscriminatedUnion,
   ): PartialDiscriminatedUnion.Json => {
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
-    ) {
+    if (value["$type"] === "PartialDiscriminatedUnionMember1") {
       return PartialDiscriminatedUnionMember1.toJson(value);
     }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
-    ) {
+    if (value["$type"] === "PartialDiscriminatedUnionMember2") {
       return PartialDiscriminatedUnionMember2.toJson(value);
     }
 
@@ -57117,9 +56987,7 @@ export namespace PartialDiscriminatedUnion {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (
-      PartialDiscriminatedUnionMember1.isPartialDiscriminatedUnionMember1(value)
-    ) {
+    if (value["$type"] === "PartialDiscriminatedUnionMember1") {
       return [
         PartialDiscriminatedUnionMember1.toRdfResource(value, {
           graph: _options.graph,
@@ -57127,9 +56995,7 @@ export namespace PartialDiscriminatedUnion {
         }).identifier,
       ];
     }
-    if (
-      PartialDiscriminatedUnionMember2.isPartialDiscriminatedUnionMember2(value)
-    ) {
+    if (value["$type"] === "PartialDiscriminatedUnionMember2") {
       return [
         PartialDiscriminatedUnionMember2.toRdfResource(value, {
           graph: _options.graph,
@@ -57210,18 +57076,10 @@ export type RecursiveDiscriminatedUnion =
 
 export namespace RecursiveDiscriminatedUnion {
   export const $toString = (value: RecursiveDiscriminatedUnion): string => {
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
       return RecursiveDiscriminatedUnionMember1.$toString(value);
     }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember2") {
       return RecursiveDiscriminatedUnionMember2.$toString(value);
     }
 
@@ -57233,12 +57091,8 @@ export namespace RecursiveDiscriminatedUnion {
     right: RecursiveDiscriminatedUnion,
   ) => {
     if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        left,
-      ) &&
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        right,
-      )
+      left["$type"] === "RecursiveDiscriminatedUnionMember1" &&
+      right["$type"] === "RecursiveDiscriminatedUnionMember1"
     ) {
       return RecursiveDiscriminatedUnionMember1.equals(
         left as RecursiveDiscriminatedUnionMember1,
@@ -57246,12 +57100,8 @@ export namespace RecursiveDiscriminatedUnion {
       );
     }
     if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        left,
-      ) &&
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        right,
-      )
+      left["$type"] === "RecursiveDiscriminatedUnionMember2" &&
+      right["$type"] === "RecursiveDiscriminatedUnionMember2"
     ) {
       return RecursiveDiscriminatedUnionMember2.equals(
         left as RecursiveDiscriminatedUnionMember2,
@@ -57284,9 +57134,7 @@ export namespace RecursiveDiscriminatedUnion {
     }
     if (
       filter.on?.["RecursiveDiscriminatedUnionMember1"] !== undefined &&
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
+      value["$type"] === "RecursiveDiscriminatedUnionMember1"
     ) {
       if (
         !RecursiveDiscriminatedUnionMember1.filter(
@@ -57299,9 +57147,7 @@ export namespace RecursiveDiscriminatedUnion {
     }
     if (
       filter.on?.["RecursiveDiscriminatedUnionMember2"] !== undefined &&
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
+      value["$type"] === "RecursiveDiscriminatedUnionMember2"
     ) {
       if (
         !RecursiveDiscriminatedUnionMember2.filter(
@@ -57479,18 +57325,10 @@ export namespace RecursiveDiscriminatedUnion {
     hasher: HasherT,
     value: RecursiveDiscriminatedUnion,
   ): HasherT => {
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
       return RecursiveDiscriminatedUnionMember1.hash(hasher, value);
     }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember2") {
       return RecursiveDiscriminatedUnionMember2.hash(hasher, value);
     }
     return hasher;
@@ -57619,18 +57457,10 @@ export namespace RecursiveDiscriminatedUnion {
   export const toJson = (
     value: RecursiveDiscriminatedUnion,
   ): RecursiveDiscriminatedUnion.Json => {
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
       return RecursiveDiscriminatedUnionMember1.toJson(value);
     }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember2") {
       return RecursiveDiscriminatedUnionMember2.toJson(value);
     }
 
@@ -57661,11 +57491,7 @@ export namespace RecursiveDiscriminatedUnion {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (
-      RecursiveDiscriminatedUnionMember1.isRecursiveDiscriminatedUnionMember1(
-        value,
-      )
-    ) {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
       return [
         RecursiveDiscriminatedUnionMember1.toRdfResource(value, {
           graph: _options.graph,
@@ -57673,11 +57499,7 @@ export namespace RecursiveDiscriminatedUnion {
         }).identifier,
       ];
     }
-    if (
-      RecursiveDiscriminatedUnionMember2.isRecursiveDiscriminatedUnionMember2(
-        value,
-      )
-    ) {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember2") {
       return [
         RecursiveDiscriminatedUnionMember2.toRdfResource(value, {
           graph: _options.graph,
