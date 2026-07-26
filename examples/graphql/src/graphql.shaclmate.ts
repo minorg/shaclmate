@@ -78,17 +78,25 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
-type $ConversionFunction<SourceT, TargetT> = (
+type $ConversionFunction<
+  SourceT,
+  TargetT,
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+> = (
   source: SourceT,
+  defaultNamespace?: DefaultNamespaceT,
 ) => Either<Error, TargetT>;
 
-function $convertToIdentifierProperty(
+function $convertToIdentifierProperty<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
   identifier:
     | (() => BlankNode | NamedNode)
     | BlankNode
     | NamedNode
-    | string
+    | (keyof DefaultNamespaceT & string)
     | undefined,
+  defaultNamespace?: DefaultNamespaceT,
 ): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
@@ -98,7 +106,9 @@ function $convertToIdentifierProperty(
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = dataFactory.namedNode(identifier);
+      const captureIdentifier = defaultNamespace
+        ? defaultNamespace(identifier)
+        : dataFactory.namedNode(identifier);
       return Either.of(() => captureIdentifier);
     }
     case "undefined": {
@@ -108,9 +118,15 @@ function $convertToIdentifierProperty(
   }
 }
 
-function $convertToIriIdentifierProperty<IriT extends string = string>(
-  identifier: (() => NamedNode<IriT>) | NamedNode<IriT> | IriT,
-): Either<Error, () => NamedNode<IriT>> {
+function $convertToIriIdentifierProperty<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  identifier:
+    | (() => NamedNode)
+    | NamedNode
+    | (keyof DefaultNamespaceT & string),
+  defaultNamespace?: DefaultNamespaceT,
+): Either<Error, () => NamedNode> {
   switch (typeof identifier) {
     case "function":
       return Either.of(identifier);
@@ -119,7 +135,9 @@ function $convertToIriIdentifierProperty<IriT extends string = string>(
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = dataFactory.namedNode<IriT>(identifier);
+      const captureIdentifier = defaultNamespace
+        ? defaultNamespace(identifier)
+        : dataFactory.namedNode(identifier);
       return Either.of(() => captureIdentifier);
     }
   }
@@ -128,16 +146,16 @@ function $convertToIriIdentifierProperty<IriT extends string = string>(
 function $convertToLazyOption<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
-) {
-  return (
-    value:
-      | $LazyOption<PartialT, ResolvedT>
-      | Maybe<PartialT>
-      | Maybe<ResolvedT>
-      | PartialT
-      | ResolvedT
-      | undefined,
-  ): Either<Error, $LazyOption<PartialT, ResolvedT>> => {
+): $ConversionFunction<
+  | $LazyOption<PartialT, ResolvedT>
+  | Maybe<PartialT>
+  | Maybe<ResolvedT>
+  | PartialT
+  | ResolvedT
+  | undefined,
+  $LazyOption<PartialT, ResolvedT>
+> {
+  return (value) => {
     if (value instanceof $LazyOption) {
       return Either.of(value);
     }
@@ -185,16 +203,16 @@ function $convertToLazyOption<PartialT, ResolvedT>(
 function $convertToLazySet<PartialT, ResolvedT>(
   isPartial: (object: PartialT | ResolvedT) => object is PartialT,
   resolvedToPartial: (resolved: ResolvedT) => PartialT,
-) {
-  return (
-    value:
-      | $LazySet<PartialT, ResolvedT>
-      | readonly PartialT[]
-      | readonly ResolvedT[]
-      | PartialT
-      | ResolvedT
-      | undefined,
-  ): Either<Error, $LazySet<PartialT, ResolvedT>> => {
+): $ConversionFunction<
+  | $LazySet<PartialT, ResolvedT>
+  | readonly PartialT[]
+  | readonly ResolvedT[]
+  | PartialT
+  | ResolvedT
+  | undefined,
+  $LazySet<PartialT, ResolvedT>
+> {
+  return (value) => {
     if (typeof value === "undefined") {
       return Either.of(
         new $LazySet<PartialT, ResolvedT>({
@@ -232,12 +250,22 @@ function $convertToLazySet<PartialT, ResolvedT>(
   };
 }
 
-function $convertToMaybe<ItemSourceT, ItemTargetT>(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-) {
-  return (
-    value: ItemSourceT | Maybe<ItemTargetT> | undefined,
-  ): Either<Error, Maybe<ItemTargetT>> => {
+function $convertToMaybe<
+  DefaultNamespaceT extends $NamespaceBuilder,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  ItemSourceT | Maybe<ItemTargetT> | undefined,
+  Maybe<ItemTargetT>,
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {
@@ -249,7 +277,7 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(value).map(Maybe.of);
+    return convertToItem(value, defaultNamespace).map(Maybe.of);
   };
 }
 
@@ -488,7 +516,10 @@ class $IdentifierSet {
   }
 }
 
-function $identityConversionFunction<T>(value: T): Either<Error, T> {
+function $identityConversionFunction<T>(
+  value: T,
+  _defaultNamespace?: $NamespaceBuilder,
+): Either<Error, T> {
   return Either.of(value);
 }
 
@@ -668,6 +699,15 @@ function $monkeyPatchObject<T extends object>(
 
   return obj;
 }
+
+/**
+ * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
+ */
+type $NamespaceBuilder<TermNames extends string = any> = Record<
+  TermNames,
+  NamedNode
+> &
+  ((property?: TemplateStringsArray | TermNames) => NamedNode);
 
 interface $NumericFilter<T> {
   readonly in?: readonly T[];
@@ -1109,15 +1149,21 @@ export namespace $DefaultPartial {
     _defaultPartial,
   ) => `$DefaultPartial(${JSON.stringify(toStringRecord(_defaultPartial))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
       | BlankNode
       | NamedNode
-      | string;
-  }) => Either<Error, $DefaultPartial> = (parameters) =>
+      | (keyof $DefaultNamespaceT & string);
+  }): Either<Error, $DefaultPartial> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -1127,12 +1173,15 @@ export namespace $DefaultPartial {
         $monkeyPatchObject(object, { $toString: $DefaultPartial.$toString }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
   }): $DefaultPartial {
     return create(parameters).unsafeCoerce();
   }
@@ -1313,20 +1362,27 @@ export namespace LazyObject {
   export const $toString: (_lazyObject: LazyObject) => string = (_lazyObject) =>
     `LazyObject(${JSON.stringify(toStringRecord(_lazyObject))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazyObject.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalNumberProperty?: number | Maybe<number>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
-  }) => Either<Error, LazyObject> = (parameters) =>
+  }): Either<Error, LazyObject> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNumberProperty,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalNumberProperty.type,
@@ -1335,6 +1391,7 @@ export namespace LazyObject {
       ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalStringProperty.type,
@@ -1348,12 +1405,15 @@ export namespace LazyObject {
         $monkeyPatchObject(object, { $toString: LazyObject.$toString }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => LazyObject.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalNumberProperty?: number | Maybe<number>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
@@ -1732,17 +1792,22 @@ export namespace RootObject {
                         $stringFromRdfResourceValues<string>,
                     }),
                   }).chain((properties) =>
-                    ((parameters: {
+                    (<
+                      $DefaultNamespaceT extends
+                        $NamespaceBuilder = $NamespaceBuilder,
+                    >(parameters: {
+                      readonly $defaultNamespace?: $DefaultNamespaceT;
                       readonly $identifier?:
                         | (() => BlankNode | NamedNode)
                         | BlankNode
                         | NamedNode
-                        | string;
+                        | (keyof $DefaultNamespaceT & string);
                       readonly requiredStringProperty: string;
                     }) =>
                       $sequenceRecord({
                         $identifier: $convertToIdentifierProperty(
                           parameters.$identifier,
+                          parameters.$defaultNamespace,
                         ),
                         requiredStringProperty: Either.of(
                           parameters.requiredStringProperty,
@@ -1866,8 +1931,14 @@ export namespace RootObject {
   export const $toString: (_rootObject: RootObject) => string = (_rootObject) =>
     `RootObject(${JSON.stringify(toStringRecord(_rootObject))})`;
 
-  export const create: (parameters: {
-    readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier:
+      | (() => RootObject.Identifier)
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode;
     readonly lazyObjectSetProperty?:
       | $LazySet<$DefaultPartial, LazyObject>
       | readonly $DefaultPartial[]
@@ -1882,11 +1953,12 @@ export namespace RootObject {
       | LazyObject;
     readonly optionalObjectProperty?:
       | {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
             | NamedNode
-            | string;
+            | (keyof $DefaultNamespaceT & string);
           readonly requiredStringProperty: string;
         }
       | Maybe<{
@@ -1899,30 +1971,37 @@ export namespace RootObject {
         }>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
-  }) => Either<Error, RootObject> = (parameters) =>
+  }): Either<Error, RootObject> =>
     $sequenceRecord({
-      $identifier: $convertToIriIdentifierProperty<string>(
+      $identifier: $convertToIriIdentifierProperty(
         parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       lazyObjectSetProperty: $convertToLazySet<$DefaultPartial, LazyObject>(
         $DefaultPartial.is$DefaultPartial,
         $DefaultPartial.createUnsafe,
-      )(parameters.lazyObjectSetProperty),
+      )(parameters.lazyObjectSetProperty, parameters.$defaultNamespace),
       optionalLazyProperty: $convertToLazyOption<$DefaultPartial, LazyObject>(
         $DefaultPartial.is$DefaultPartial,
         $DefaultPartial.createUnsafe,
-      )(parameters.optionalLazyProperty),
+      )(parameters.optionalLazyProperty, parameters.$defaultNamespace),
       optionalObjectProperty: $convertToMaybe(
-        (parameters: {
+        <
+          $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+        >(parameters: {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
             | NamedNode
-            | string;
+            | (keyof $DefaultNamespaceT & string);
           readonly requiredStringProperty: string;
         }) =>
           $sequenceRecord({
-            $identifier: $convertToIdentifierProperty(parameters.$identifier),
+            $identifier: $convertToIdentifierProperty(
+              parameters.$identifier,
+              parameters.$defaultNamespace,
+            ),
             requiredStringProperty: Either.of(
               parameters.requiredStringProperty,
             ),
@@ -1936,14 +2015,16 @@ export namespace RootObject {
                 ),
             }),
           ),
-      )(parameters.optionalObjectProperty).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          RootObject.schema.properties.optionalObjectProperty.type,
-          value,
-        ),
+      )(parameters.optionalObjectProperty, parameters.$defaultNamespace).chain(
+        (value) =>
+          $validateMaybe($identityValidationFunction)(
+            RootObject.schema.properties.optionalObjectProperty.type,
+            value,
+          ),
       ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalStringProperty.type,
@@ -1957,8 +2038,14 @@ export namespace RootObject {
         $monkeyPatchObject(object, { $toString: RootObject.$toString }),
       );
 
-  export function createUnsafe(parameters: {
-    readonly $identifier: (() => RootObject.Identifier) | string | NamedNode;
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier:
+      | (() => RootObject.Identifier)
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode;
     readonly lazyObjectSetProperty?:
       | $LazySet<$DefaultPartial, LazyObject>
       | readonly $DefaultPartial[]
@@ -1973,11 +2060,12 @@ export namespace RootObject {
       | LazyObject;
     readonly optionalObjectProperty?:
       | {
+          readonly $defaultNamespace?: $DefaultNamespaceT;
           readonly $identifier?:
             | (() => BlankNode | NamedNode)
             | BlankNode
             | NamedNode
-            | string;
+            | (keyof $DefaultNamespaceT & string);
           readonly requiredStringProperty: string;
         }
       | Maybe<{
@@ -2387,18 +2475,25 @@ export namespace UnionMember1 {
     _unionMember1,
   ) => `UnionMember1(${JSON.stringify(toStringRecord(_unionMember1))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => UnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalNumberProperty?: number | Maybe<number>;
-  }) => Either<Error, UnionMember1> = (parameters) =>
+  }): Either<Error, UnionMember1> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.optionalNumberProperty,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalNumberProperty.type,
@@ -2411,12 +2506,15 @@ export namespace UnionMember1 {
         $monkeyPatchObject(object, { $toString: UnionMember1.$toString }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => UnionMember1.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalNumberProperty?: number | Maybe<number>;
   }): UnionMember1 {
     return create(parameters).unsafeCoerce();
@@ -2597,18 +2695,25 @@ export namespace UnionMember2 {
     _unionMember2,
   ) => `UnionMember2(${JSON.stringify(toStringRecord(_unionMember2))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => UnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalStringProperty?: string | Maybe<string>;
-  }) => Either<Error, UnionMember2> = (parameters) =>
+  }): Either<Error, UnionMember2> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.optionalStringProperty,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           LazyObject.schema.properties.optionalStringProperty.type,
@@ -2621,12 +2726,15 @@ export namespace UnionMember2 {
         $monkeyPatchObject(object, { $toString: UnionMember2.$toString }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => UnionMember2.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly optionalStringProperty?: string | Maybe<string>;
   }): UnionMember2 {
     return create(parameters).unsafeCoerce();
@@ -2741,10 +2849,10 @@ export type Union = UnionMember1 | UnionMember2;
 
 export namespace Union {
   export const $toString = (value: Union): string => {
-    if (UnionMember1.isUnionMember1(value)) {
+    if (value["$type"] === "UnionMember1") {
       return UnionMember1.$toString(value);
     }
-    if (UnionMember2.isUnionMember2(value)) {
+    if (value["$type"] === "UnionMember2") {
       return UnionMember2.$toString(value);
     }
 
@@ -2760,7 +2868,7 @@ export namespace Union {
     }
     if (
       filter.on?.["UnionMember1"] !== undefined &&
-      UnionMember1.isUnionMember1(value)
+      value["$type"] === "UnionMember1"
     ) {
       if (!UnionMember1.filter(filter.on["UnionMember1"], value)) {
         return false;
@@ -2768,7 +2876,7 @@ export namespace Union {
     }
     if (
       filter.on?.["UnionMember2"] !== undefined &&
-      UnionMember2.isUnionMember2(value)
+      value["$type"] === "UnionMember2"
     ) {
       if (!UnionMember2.filter(filter.on["UnionMember2"], value)) {
         return false;
@@ -2876,7 +2984,7 @@ export namespace Union {
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
-    if (UnionMember1.isUnionMember1(value)) {
+    if (value["$type"] === "UnionMember1") {
       return [
         UnionMember1.toRdfResource(value, {
           graph: _options.graph,
@@ -2884,7 +2992,7 @@ export namespace Union {
         }).identifier,
       ];
     }
-    if (UnionMember2.isUnionMember2(value)) {
+    if (value["$type"] === "UnionMember2") {
       return [
         UnionMember2.toRdfResource(value, {
           graph: _options.graph,

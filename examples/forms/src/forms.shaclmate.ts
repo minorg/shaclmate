@@ -41,17 +41,25 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
-type $ConversionFunction<SourceT, TargetT> = (
+type $ConversionFunction<
+  SourceT,
+  TargetT,
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+> = (
   source: SourceT,
+  defaultNamespace?: DefaultNamespaceT,
 ) => Either<Error, TargetT>;
 
-function $convertToIdentifierProperty(
+function $convertToIdentifierProperty<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
   identifier:
     | (() => BlankNode | NamedNode)
     | BlankNode
     | NamedNode
-    | string
+    | (keyof DefaultNamespaceT & string)
     | undefined,
+  defaultNamespace?: DefaultNamespaceT,
 ): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
@@ -61,7 +69,9 @@ function $convertToIdentifierProperty(
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = dataFactory.namedNode(identifier);
+      const captureIdentifier = defaultNamespace
+        ? defaultNamespace(identifier)
+        : dataFactory.namedNode(identifier);
       return Either.of(() => captureIdentifier);
     }
     case "undefined": {
@@ -71,12 +81,22 @@ function $convertToIdentifierProperty(
   }
 }
 
-function $convertToMaybe<ItemSourceT, ItemTargetT>(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-) {
-  return (
-    value: ItemSourceT | Maybe<ItemTargetT> | undefined,
-  ): Either<Error, Maybe<ItemTargetT>> => {
+function $convertToMaybe<
+  DefaultNamespaceT extends $NamespaceBuilder,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  ItemSourceT | Maybe<ItemTargetT> | undefined,
+  Maybe<ItemTargetT>,
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {
@@ -88,42 +108,46 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(value).map(Maybe.of);
+    return convertToItem(value, defaultNamespace).map(Maybe.of);
   };
 }
 
 function $convertToScalarSet<
+  DefaultNamespaceT extends $NamespaceBuilder,
   ItemSourceT,
   ItemTargetT,
-  Readonly extends boolean,
 >(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type ItemTargetArrayT = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (
-    value: ItemSourceT | readonly ItemSourceT[] | undefined,
-  ): Either<Error, ItemTargetArrayT> => {
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  ItemSourceT | readonly ItemSourceT[] | undefined,
+  readonly ItemTargetT[],
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) => {
     if (typeof value === "undefined") {
-      return Either.of<Error, ItemTargetArrayT>(
-        [] as unknown as ItemTargetArrayT,
+      return Either.of<Error, readonly ItemTargetT[]>(
+        [] as unknown as readonly ItemTargetT[],
       );
     }
     if (Array.isArray(value)) {
-      return Either.sequence(value.map(convertToItem)) as Either<
-        Error,
-        ItemTargetArrayT
-      >;
+      return Either.sequence(
+        value.map((value) => convertToItem(value, defaultNamespace)),
+      ) as Either<Error, readonly ItemTargetT[]>;
     }
     return convertToItem(value as ItemSourceT).map((value) => [
       value,
-    ]) as Either<Error, ItemTargetArrayT>;
+    ]) as Either<Error, readonly ItemTargetT[]>;
   };
 }
 
-function $identityConversionFunction<T>(value: T): Either<Error, T> {
+function $identityConversionFunction<T>(
+  value: T,
+  _defaultNamespace?: $NamespaceBuilder,
+): Either<Error, T> {
   return Either.of(value);
 }
 
@@ -169,6 +193,15 @@ function $monkeyPatchObject<T extends object>(
 
   return obj;
 }
+
+/**
+ * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
+ */
+type $NamespaceBuilder<TermNames extends string = any> = Record<
+  TermNames,
+  NamedNode
+> &
+  ((property?: TemplateStringsArray | TermNames) => NamedNode);
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
@@ -273,28 +306,21 @@ export type $ToRdfResourceFunction<
   },
 ) => Resource<IdentifierT>;
 
-function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
+function $validateArray<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
-  _readonly: Readonly,
-) {
-  type EitherR = Readonly extends true
-    ? ReadonlyArray<ItemValueT>
-    : Array<ItemValueT>;
-  return (
-    schema: $CollectionSchema<ItemSchemaT>,
-    valueArray: readonly ItemValueT[],
-  ): Either<Error, EitherR> => {
+): $ValidationFunction<$CollectionSchema<ItemSchemaT>, readonly ItemValueT[]> {
+  return (schema, valueArray) => {
     if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
       return Left(
         new Error(
           `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
         ),
-      ) as Either<Error, EitherR>;
+      ) as Either<Error, readonly ItemValueT[]>;
     }
 
     return Either.sequence(
       valueArray.map((value) => validateItem(schema.itemType, value)),
-    ) as Either<Error, EitherR>;
+    ) as Either<Error, readonly ItemValueT[]>;
   };
 }
 
@@ -459,47 +485,60 @@ export namespace FormStruct {
   export const $toString: (_formStruct: FormStruct) => string = (_formStruct) =>
     `FormStruct(${JSON.stringify(toStringRecord(_formStruct))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => FormStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly emptyStringSetProperty?: string | readonly string[];
     readonly nestedStructProperty: {
+      readonly $defaultNamespace?: $DefaultNamespaceT;
       readonly $identifier?:
         | (() => BlankNode | NamedNode)
         | BlankNode
         | NamedNode
-        | string;
+        | (keyof $DefaultNamespaceT & string);
       readonly requiredStringProperty: string;
     };
     readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
     readonly requiredStringProperty: string;
-  }) => Either<Error, FormStruct> = (parameters) =>
+  }): Either<Error, FormStruct> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      emptyStringSetProperty: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.emptyStringSetProperty).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      emptyStringSetProperty: $convertToScalarSet($identityConversionFunction)(
+        parameters.emptyStringSetProperty,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           FormStruct.schema.properties.emptyStringSetProperty.type,
           value,
         ),
       ),
-      nestedStructProperty: ((parameters: {
+      nestedStructProperty: (<
+        $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+      >(parameters: {
+        readonly $defaultNamespace?: $DefaultNamespaceT;
         readonly $identifier?:
           | (() => BlankNode | NamedNode)
           | BlankNode
           | NamedNode
-          | string;
+          | (keyof $DefaultNamespaceT & string);
         readonly requiredStringProperty: string;
       }) =>
         $sequenceRecord({
-          $identifier: $convertToIdentifierProperty(parameters.$identifier),
+          $identifier: $convertToIdentifierProperty(
+            parameters.$identifier,
+            parameters.$defaultNamespace,
+          ),
           requiredStringProperty: Either.of(parameters.requiredStringProperty),
         }).map((object) =>
           $monkeyPatchObject(object, {
@@ -523,18 +562,21 @@ export namespace FormStruct {
                 }),
               ),
           }),
-        ))(parameters.nestedStructProperty),
+        ))(parameters.nestedStructProperty, parameters.$defaultNamespace),
       nonEmptyStringSetProperty: $convertToScalarSet(
         $identityConversionFunction,
-        true,
-      )(parameters.nonEmptyStringSetProperty).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      )(
+        parameters.nonEmptyStringSetProperty,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           FormStruct.schema.properties.nonEmptyStringSetProperty.type,
           value,
         ),
       ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           FormStruct.schema.properties.optionalStringProperty.type,
@@ -552,19 +594,23 @@ export namespace FormStruct {
         }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => FormStruct.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly emptyStringSetProperty?: string | readonly string[];
     readonly nestedStructProperty: {
+      readonly $defaultNamespace?: $DefaultNamespaceT;
       readonly $identifier?:
         | (() => BlankNode | NamedNode)
         | BlankNode
         | NamedNode
-        | string;
+        | (keyof $DefaultNamespaceT & string);
       readonly requiredStringProperty: string;
     };
     readonly nonEmptyStringSetProperty: string | readonly string[];
@@ -599,17 +645,21 @@ export namespace FormStruct {
               $json["requiredStringProperty"],
             ),
           }).chain(
-            (parameters: {
+            <
+              $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+            >(parameters: {
+              readonly $defaultNamespace?: $DefaultNamespaceT;
               readonly $identifier?:
                 | (() => BlankNode | NamedNode)
                 | BlankNode
                 | NamedNode
-                | string;
+                | (keyof $DefaultNamespaceT & string);
               readonly requiredStringProperty: string;
             }) =>
               $sequenceRecord({
                 $identifier: $convertToIdentifierProperty(
                   parameters.$identifier,
+                  parameters.$defaultNamespace,
                 ),
                 requiredStringProperty: Either.of(
                   parameters.requiredStringProperty,
