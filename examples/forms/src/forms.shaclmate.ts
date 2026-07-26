@@ -495,18 +495,14 @@ export namespace FormStruct {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: Omit<
-      {
-        readonly $defaultNamespace?: $DefaultNamespaceT;
-        readonly $identifier?:
-          | (() => BlankNode | NamedNode)
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string);
-        readonly requiredStringProperty: string;
-      },
-      "$defaultNamespace"
-    >;
+    readonly nestedStructProperty: {
+      readonly $identifier?:
+        | (() => BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | (keyof $DefaultNamespaceT & string);
+      readonly requiredStringProperty: string;
+    };
     readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
@@ -529,18 +525,14 @@ export namespace FormStruct {
       nestedStructProperty: (<
         $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
       >(
-        value: Omit<
-          {
-            readonly $defaultNamespace?: $DefaultNamespaceT;
-            readonly $identifier?:
-              | (() => BlankNode | NamedNode)
-              | BlankNode
-              | NamedNode
-              | (keyof $DefaultNamespaceT & string);
-            readonly requiredStringProperty: string;
-          },
-          "$defaultNamespace"
-        >,
+        value: {
+          readonly $identifier?:
+            | (() => BlankNode | NamedNode)
+            | BlankNode
+            | NamedNode
+            | (keyof $DefaultNamespaceT & string);
+          readonly requiredStringProperty: string;
+        },
         $defaultNamespace?: $DefaultNamespaceT,
       ) =>
         (<
@@ -629,18 +621,14 @@ export namespace FormStruct {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly emptyStringSetProperty?: string | readonly string[];
-    readonly nestedStructProperty: Omit<
-      {
-        readonly $defaultNamespace?: $DefaultNamespaceT;
-        readonly $identifier?:
-          | (() => BlankNode | NamedNode)
-          | BlankNode
-          | NamedNode
-          | (keyof $DefaultNamespaceT & string);
-        readonly requiredStringProperty: string;
-      },
-      "$defaultNamespace"
-    >;
+    readonly nestedStructProperty: {
+      readonly $identifier?:
+        | (() => BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | (keyof $DefaultNamespaceT & string);
+      readonly requiredStringProperty: string;
+    };
     readonly nonEmptyStringSetProperty: string | readonly string[];
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
