@@ -1,10 +1,10 @@
-import type { DiscriminatedUnionType } from "../DiscriminatedUnionType.js";
+import type { AbstractDiscriminatedUnionType } from "../AbstractDiscriminatedUnionType.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function DiscriminatedUnionType_fromJsonFunctionExpression<
+export function AbstractDiscriminatedUnionType_fromJsonFunctionExpression<
   MemberTypeT extends Type,
->(this: DiscriminatedUnionType<MemberTypeT>): Code {
+>(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
 ((value: ${this.jsonType().expression}): ${this.reusables.imports.Either}<Error, ${this.expression}> => {
 ${joinCode(

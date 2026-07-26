@@ -59,18 +59,19 @@ export class ListType<
 export namespace ListType {
   export type ItemType =
     | BlankNodeType
+    | DiscriminatedUnionType
     | IdentifierType
     | IntersectionType
     | IriType
     | ListType
     | LiteralType
     | StructType
-    | TermType
-    | DiscriminatedUnionType;
+    | TermType;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
       case "BlankNode":
+      case "DiscriminatedUnion":
       case "Identifier":
       case "Intersection":
       case "Iri":
@@ -78,7 +79,6 @@ export namespace ListType {
       case "Literal":
       case "Struct":
       case "Term":
-      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

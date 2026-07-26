@@ -1,10 +1,10 @@
-import type { DiscriminatedUnionType } from "../DiscriminatedUnionType.js";
+import type { AbstractDiscriminatedUnionType } from "../AbstractDiscriminatedUnionType.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
-export function DiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression<
+export function AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression<
   MemberTypeT extends Type,
->(this: DiscriminatedUnionType<MemberTypeT>): Code {
+>(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
 ((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
   let triples: ${this.reusables.imports.sparqljs}.Triple[] = [];

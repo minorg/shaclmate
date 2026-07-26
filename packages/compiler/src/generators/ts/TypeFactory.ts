@@ -239,12 +239,12 @@ export class TypeFactory {
 
   createDiscriminatedUnionType(
     astType: ast.DiscriminatedUnionType,
-  ): ObjectDiscriminatedUnionType | DiscriminatedUnionType<Type> {
+  ): DiscriminatedUnionType | ObjectDiscriminatedUnionType {
     if (astType.isStructDiscriminatedUnionType()) {
       return this.createObjectDiscriminatedUnionType(astType);
     }
 
-    return new DiscriminatedUnionType<Type>({
+    return new DiscriminatedUnionType({
       comment: astType.comment,
       configuration: this.configuration,
       identifierType: Maybe.empty(),

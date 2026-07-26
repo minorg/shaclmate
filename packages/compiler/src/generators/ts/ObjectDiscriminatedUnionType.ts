@@ -11,12 +11,12 @@ import { ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration } from "./_Ob
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
+import { AbstractDiscriminatedUnionType } from "./AbstractDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
-export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectType> {
+export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType<ObjectType> {
   override readonly kind = "ObjectDiscriminatedUnion";
 
   @Memoize()
@@ -34,13 +34,6 @@ export class ObjectDiscriminatedUnionType extends DiscriminatedUnionType<ObjectT
         }),
       )
       .unsafeCoerce();
-  }
-
-  @Memoize()
-  override get schemaType(): Code {
-    return this.name
-      .map(() => code`typeof ${this.schema}`)
-      .orDefault(super.schemaType);
   }
 
   @Memoize()

@@ -17,6 +17,7 @@ import type { TermType } from "./TermType.js";
 export type Type =
   | BlankNodeType
   | DefaultValueType
+  | DiscriminatedUnionType
   | IdentifierType
   | IntersectionType
   | IriType
@@ -28,8 +29,7 @@ export type Type =
   | StructType
   | OptionType
   | SetType
-  | TermType
-  | DiscriminatedUnionType;
+  | TermType;
 
 export namespace Type {
   export function equals(left: Type, right: Type): boolean {
@@ -42,6 +42,8 @@ export namespace Type {
         return left.equals(right as BlankNodeType);
       case "DefaultValue":
         return left.equals(right as DefaultValueType);
+      case "DiscriminatedUnion":
+        return left.equals(right as DiscriminatedUnionType);
       case "Identifier":
         return left.equals(right as IdentifierType);
       case "Intersection":
@@ -64,8 +66,6 @@ export namespace Type {
         return left.equals(right as OptionType);
       case "Term":
         return left.equals(right as TermType);
-      case "DiscriminatedUnion":
-        return left.equals(right as DiscriminatedUnionType);
       case "Set":
         return left.equals(right as SetType);
     }

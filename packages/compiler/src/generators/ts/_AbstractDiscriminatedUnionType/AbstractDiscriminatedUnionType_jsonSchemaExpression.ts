@@ -1,10 +1,10 @@
-import type { DiscriminatedUnionType } from "../DiscriminatedUnionType.js";
+import type { AbstractDiscriminatedUnionType } from "../AbstractDiscriminatedUnionType.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
-export function DiscriminatedUnionType_jsonSchemaExpression<
+export function AbstractDiscriminatedUnionType_jsonSchemaExpression<
   MemberTypeT extends Type,
->(this: DiscriminatedUnionType<MemberTypeT>): Code {
+>(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   const discriminant = this.discriminant; // To get type narrowing to work
   switch (discriminant.kind) {
     case "Extrinsic":

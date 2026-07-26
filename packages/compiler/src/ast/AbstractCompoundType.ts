@@ -88,18 +88,19 @@ export namespace AbstractCompoundType {
 
   export type MemberType =
     | BlankNodeType
+    | DiscriminatedUnionType
     | IdentifierType
     | IntersectionType
     | IriType
     | ListType
     | LiteralType
     | StructType
-    | TermType
-    | DiscriminatedUnionType;
+    | TermType;
 
   export function isMemberType(type: Type): type is MemberType {
     switch (type.kind) {
       case "BlankNode":
+      case "DiscriminatedUnion":
       case "Identifier":
       case "Intersection":
       case "Iri":
@@ -107,7 +108,6 @@ export namespace AbstractCompoundType {
       case "Literal":
       case "Struct":
       case "Term":
-      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

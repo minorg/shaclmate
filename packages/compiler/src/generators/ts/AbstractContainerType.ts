@@ -99,6 +99,7 @@ export namespace AbstractContainerType {
     | BooleanType
     | DateTimeType
     | DateType
+    | DiscriminatedUnionType
     | FloatType
     | IdentifierType
     | IntType
@@ -109,8 +110,7 @@ export namespace AbstractContainerType {
     | ObjectDiscriminatedUnionType
     | ObjectType
     | StringType
-    | TermType
-    | DiscriminatedUnionType<Type>;
+    | TermType;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
@@ -118,8 +118,9 @@ export namespace AbstractContainerType {
       case "BigInt":
       case "BlankNode":
       case "Boolean":
-      case "DateTime":
       case "Date":
+      case "DateTime":
+      case "DiscriminatedUnion":
       case "Float":
       case "Identifier":
       case "Int":
@@ -131,7 +132,6 @@ export namespace AbstractContainerType {
       case "ObjectDiscriminatedUnion":
       case "String":
       case "Term":
-      case "DiscriminatedUnion":
         return true;
       case "DefaultValue":
       case "LazyOption":

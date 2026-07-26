@@ -1,7 +1,7 @@
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
+import type { AbstractDiscriminatedUnionType } from "../AbstractDiscriminatedUnionType.js";
 import type { AbstractType } from "../AbstractType.js";
-import type { DiscriminatedUnionType } from "../DiscriminatedUnionType.js";
 import type { Type } from "../Type.js";
 import type { Typeof } from "../Typeof.js";
 
@@ -20,15 +20,15 @@ function termTypes(
   }
 }
 
-export function DiscriminatedUnionType_inferDiscriminant<
+export function AbstractDiscriminatedUnionType_inferDiscriminant<
   MemberTypeT extends Type,
 >(
-  this: DiscriminatedUnionType<MemberTypeT>,
+  this: AbstractDiscriminatedUnionType<MemberTypeT>,
   members: readonly {
     readonly discriminantValue: Maybe<number | string>;
     readonly type: Type;
   }[],
-): DiscriminatedUnionType.Discriminant {
+): AbstractDiscriminatedUnionType.Discriminant {
   // extrinsic with user-specified values
   if (members.some((member) => member.discriminantValue.isJust())) {
     return {

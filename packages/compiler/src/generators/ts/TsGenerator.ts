@@ -67,9 +67,7 @@ export class TsGenerator implements Generator {
           tsNamedObjectTypes.push(tsNamedType);
           break;
         case "ObjectDiscriminatedUnion":
-          tsNamedObjectDiscriminatedUnionTypes.push(
-            tsNamedType as ObjectDiscriminatedUnionType,
-          );
+          tsNamedObjectDiscriminatedUnionTypes.push(tsNamedType);
           break;
       }
     }
