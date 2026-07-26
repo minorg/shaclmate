@@ -1,7 +1,7 @@
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
+import type { AbstractDiscriminatedUnionType } from "../AbstractDiscriminatedUnionType.js";
 import type { AbstractType } from "../AbstractType.js";
-import type { DiscriminatedUnionType } from "../DiscriminatedUnionType.js";
 import type { Type } from "../Type.js";
 import type { Typeof } from "../Typeof.js";
 

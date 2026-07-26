@@ -1,5 +1,5 @@
+import type { AbstractDiscriminatedUnionType } from "../AbstractDiscriminatedUnionType.js";
 import { AbstractType } from "../AbstractType.js";
-import type { DiscriminatedUnionType } from "../DiscriminatedUnionType.js";
 import type { Type } from "../Type.js";
 import { code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 

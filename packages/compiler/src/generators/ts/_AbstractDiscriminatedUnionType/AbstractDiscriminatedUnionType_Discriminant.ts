@@ -1,7 +1,7 @@
 import type { AbstractType } from "../AbstractType.js";
 import type { Typeof } from "../Typeof.js";
 
-export type DiscriminatedUnionType_Discriminant =
+export type AbstractDiscriminatedUnionType_Discriminant =
   | ExtrinsicDiscriminant
   | HybridDiscriminant
   | IntrinsicDiscriminant
