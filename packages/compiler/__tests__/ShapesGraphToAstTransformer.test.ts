@@ -116,97 +116,71 @@ describe("ShapesGraphToAstTransformer", () => {
   });
 
   describe("ill-formed", () => {
-    it("sh:defaultValue and sh:hasValue conflict", async ({ expect }) => {
-      const error = new ShapesGraphToAstTransformer({
-        logger,
-        shapesGraph: (
-          await parseTestShapesGraph(
-            testShapesGraphs.defaultValueHasValueConflict,
-          )
-        ).unsafeCoerce(),
-      })
-        .transform()
-        .extract();
-      expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).includes(
-        "default value conflicts with has-value",
-      );
-    });
+    for (const [idString, testShapesGraph] of Object.entries(
+      testShapesGraphs,
+    )) {
+      if (testShapesGraph.kind !== "error") {
+        continue;
+      }
+      const id = idString as keyof typeof testShapesGraphs;
 
-    it("sh:defaultValue and multiple sh:hasValue", async ({ expect }) => {
-      const error = new ShapesGraphToAstTransformer({
-        logger,
-        shapesGraph: (
-          await parseTestShapesGraph(
-            testShapesGraphs.defaultValueMultipleHasValues,
-          )
-        ).unsafeCoerce(),
-      })
-        .transform()
-        .extract();
-      expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).includes(
-        "default value and multiple has-values",
-      );
-    });
+      if (id === "undefinedShape") {
+        continue;
+      }
 
-    it("sh:defaultValue and sh:in conflict", async ({ expect }) => {
-      const error = new ShapesGraphToAstTransformer({
-        logger,
-        shapesGraph: (
-          await parseTestShapesGraph(testShapesGraphs.defaultValueInConflict)
-        ).unsafeCoerce(),
-      })
-        .transform()
-        .extract();
-      expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).includes(
-        "default value conflicts with in value",
-      );
-    });
+      it(id, async ({ expect }) => {
+        const error = new ShapesGraphToAstTransformer({
+          logger,
+          shapesGraph: (
+            await parseTestShapesGraph(testShapesGraph)
+          ).unsafeCoerce(),
+        })
+          .transform()
+          .extract();
+        expect(error).toBeInstanceOf(Error);
+        const errorMessage = (error as Error).message;
 
-    it("ignored node shape reference", async ({ expect }) => {
-      const error = new ShapesGraphToAstTransformer({
-        logger,
-        shapesGraph: (
-          await parseTestShapesGraph(testShapesGraphs.ignoredNodeShapeReference)
-        ).unsafeCoerce(),
-      })
-        .transform()
-        .extract();
-      expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).includes("reference to ignored");
-    });
-
-    it("inverse paths can only have blank or IRI node kinds", async ({
-      expect,
-    }) => {
-      const error = new ShapesGraphToAstTransformer({
-        logger,
-        shapesGraph: (
-          await parseTestShapesGraph(
-            testShapesGraphs.inversePathNodeKindConflict,
-          )
-        ).unsafeCoerce(),
-      })
-        .transform()
-        .extract();
-      expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).includes("inverse paths can only");
-    });
-
-    it("no required property property", async ({ expect }) => {
-      const error = new ShapesGraphToAstTransformer({
-        logger,
-        shapesGraph: (
-          await parseTestShapesGraph(testShapesGraphs.noRequiredProperty)
-        ).unsafeCoerce(),
-      })
-        .transform()
-        .extract();
-      expect(error).toBeInstanceOf(Error);
-      invariant(error instanceof Error);
-      expect(error.message).includes("no required properties");
-    });
+        switch (id) {
+          case "defaultValueHasValueConflict":
+            expect(errorMessage).includes(
+              "default value conflicts with has-value",
+            );
+            break;
+          case "defaultValueInConflict":
+            expect(errorMessage).includes(
+              "default value conflicts with in value",
+            );
+            break;
+          case "defaultValueMultipleHasValues":
+            expect(errorMessage).includes(
+              "default value and multiple has-values",
+            );
+            break;
+          case "ignoredNodeShapeReference":
+            expect(errorMessage).includes("reference to ignored");
+            break;
+          case "inversePathNodeKindConflict":
+            expect(errorMessage).includes("inverse paths can only");
+            break;
+          case "noRequiredProperty":
+            expect(errorMessage).includes("no required properties");
+            break;
+          case "compilerInput":
+          case "featureCombinations":
+          case "graphqlExample":
+          case "empty":
+          case "kitchenSinkExample":
+          case "nodeShapeNameConflicts":
+          case "objectDiscriminantProperty":
+          case "propertyShapeNameConflicts":
+          case "shaclShacl":
+          case "syntax":
+            throw new RangeError(id);
+          default:
+            id satisfies never;
+            throw new RangeError(id);
+        }
+      });
+    }
   });
 });

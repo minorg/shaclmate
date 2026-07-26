@@ -15,11 +15,7 @@ export async function parseTestShapesGraph(testShapesGraph: {
         .unsafeCoerce()
         .parseInto(dataset, { prefixMap });
     }
-    if (dataset.size === 0) {
-      throw new Error(
-        `test shapes graph dataset is empty: ${JSON.stringify(testShapesGraph)}`,
-      );
-    }
+
     return await liftEither(ShapesGraph.fromDataset(dataset, { prefixMap }));
   });
 }

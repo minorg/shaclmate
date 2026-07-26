@@ -69,6 +69,12 @@ export const testShapesGraphs = {
     kind: "error",
   },
 
+  empty: {
+    description: "Empty .ttl file",
+    filePaths: [path.join(thisDirectoryPath, "empty.shaclmate.ttl")],
+    kind: "stress",
+  },
+
   featureCombinations: {
     description:
       "Minimal shapes graph to stress generator feature combinations",
