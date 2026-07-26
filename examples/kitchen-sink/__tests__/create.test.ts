@@ -1,15 +1,19 @@
 import { describe, it } from "vitest";
 import * as kitchenSink from "../src/index.js";
-import { harnesses } from "./harnesses.js";
 import "@rdfx/testing";
 import dataFactory from "@rdfx/data-factory";
 import { schema } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 
-describe("constructor", () => {
+describe("create", () => {
   describe("conversions", () => {
     it("undefined to []/Nothing", ({ expect }) => {
-      const instance = harnesses.propertyCardinalitiesStruct1.instance;
+      const instance = kitchenSink.PropertyCardinalitiesStruct.createUnsafe({
+        emptySet: undefined,
+        nonEmptySet: ["test"],
+        optional: undefined,
+        required: "test",
+      });
       expect(instance.emptySet).toHaveLength(0);
       expect(instance.nonEmptySet).toStrictEqual(["test"]);
       expect(instance.optional.isNothing()).toStrictEqual(true);
@@ -17,7 +21,12 @@ describe("constructor", () => {
     });
 
     it("Arrays and Maybes", ({ expect }) => {
-      const instance = harnesses.propertyCardinalitiesStruct2.instance;
+      const instance = kitchenSink.PropertyCardinalitiesStruct.createUnsafe({
+        emptySet: [],
+        nonEmptySet: ["test"],
+        optional: Maybe.of("test"),
+        required: "test",
+      });
       expect(instance.emptySet).toEqual([]);
       expect(instance.nonEmptySet).toEqual(["test"]);
       expect(instance.optional.extract()).toStrictEqual("test");
@@ -25,7 +34,12 @@ describe("constructor", () => {
     });
 
     it("scalar to container", ({ expect }) => {
-      const instance = harnesses.propertyCardinalitiesStruct3.instance;
+      const instance = kitchenSink.PropertyCardinalitiesStruct.createUnsafe({
+        emptySet: "test",
+        nonEmptySet: "test",
+        optional: "test",
+        required: "test",
+      });
       expect(instance.emptySet).toEqual(["test"]);
       expect(instance.nonEmptySet).toEqual(["test"]);
       expect(instance.optional.extract()).toStrictEqual("test");
@@ -507,11 +521,13 @@ describe("constructor", () => {
   });
 
   it("default values", ({ expect }) => {
-    const model = harnesses.defaultValuesStruct.instance;
-    expect(model.falseBooleanDefaultValue).toStrictEqual(false);
-    expect(model.dateTimeDefaultValue.getTime()).toStrictEqual(1523268000000);
-    expect(model.numberDefaultValue).toStrictEqual(0);
-    expect(model.stringDefaultValue).toStrictEqual("");
-    expect(model.trueBooleanDefaultValue).toStrictEqual(true);
+    const instance = kitchenSink.DefaultValuesStruct.createUnsafe();
+    expect(instance.falseBooleanDefaultValue).toStrictEqual(false);
+    expect(instance.dateTimeDefaultValue.getTime()).toStrictEqual(
+      1523268000000,
+    );
+    expect(instance.numberDefaultValue).toStrictEqual(0);
+    expect(instance.stringDefaultValue).toStrictEqual("");
+    expect(instance.trueBooleanDefaultValue).toStrictEqual(true);
   });
 });

@@ -84,30 +84,45 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
-type $ConversionFunction<SourceT, TargetT> = (
+type $ConversionFunction<
+  SourceT,
+  TargetT,
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+> = (
   source: SourceT,
+  defaultNamespace?: DefaultNamespaceT,
 ) => Either<Error, TargetT>;
 
-function $convertToIdentifier(
-  value: BlankNode | NamedNode | string | undefined,
+function $convertToIdentifier<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  value: BlankNode | NamedNode | (keyof DefaultNamespaceT & string) | undefined,
+  defaultNamespace?: DefaultNamespaceT,
 ): Either<Error, BlankNode | NamedNode> {
   switch (typeof value) {
     case "object":
       return Either.of(value);
     case "string":
-      return Either.of(dataFactory.namedNode(value));
+      return Either.of(
+        defaultNamespace
+          ? defaultNamespace(value)
+          : dataFactory.namedNode(value),
+      );
     case "undefined":
       return Either.of(dataFactory.blankNode());
   }
 }
 
-function $convertToIdentifierProperty(
+function $convertToIdentifierProperty<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
   identifier:
     | (() => BlankNode | NamedNode)
     | BlankNode
     | NamedNode
-    | string
+    | (keyof DefaultNamespaceT & string)
     | undefined,
+  defaultNamespace?: DefaultNamespaceT,
 ): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
@@ -117,7 +132,9 @@ function $convertToIdentifierProperty(
       return Either.of(() => captureIdentifier);
     }
     case "string": {
-      const captureIdentifier = dataFactory.namedNode(identifier);
+      const captureIdentifier = defaultNamespace
+        ? defaultNamespace(identifier)
+        : dataFactory.namedNode(identifier);
       return Either.of(() => captureIdentifier);
     }
     case "undefined": {
@@ -127,8 +144,9 @@ function $convertToIdentifierProperty(
   }
 }
 
-function $convertToIri<IriT extends string>(
+function $convertToInIri<IriT extends string>(
   value: IriT | NamedNode<IriT>,
+  _defaultNamespace?: $NamespaceBuilder,
 ): Either<Error, NamedNode<IriT>> {
   switch (typeof value) {
     case "object":
@@ -138,23 +156,49 @@ function $convertToIri<IriT extends string>(
   }
 }
 
-function $convertToList<ItemSourceT, ItemTargetT, Readonly extends boolean>(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type ItemTargetArrayT = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (value: readonly ItemSourceT[]): Either<Error, ItemTargetArrayT> =>
-    Either.sequence(value.map(convertToItem)) as Either<
-      Error,
-      ItemTargetArrayT
-    >;
+function $convertToIri<
+  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+>(
+  value: NamedNode | (keyof DefaultNamespaceT & string),
+  defaultNamespace?: DefaultNamespaceT,
+): Either<Error, NamedNode> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "string":
+      return Either.of(
+        defaultNamespace
+          ? defaultNamespace(value)
+          : dataFactory.namedNode(value),
+      );
+  }
 }
 
-function $convertToLiteral(
-  value: bigint | boolean | Date | number | string | Literal,
-): Either<Error, Literal> {
+function $convertToList<
+  DefaultNamespaceT extends $NamespaceBuilder,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  readonly ItemSourceT[],
+  readonly ItemTargetT[],
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) =>
+    Either.sequence(
+      value.map((value) => convertToItem(value, defaultNamespace)),
+    ) as Either<Error, readonly ItemTargetT[]>;
+}
+
+const $convertToLiteral: $ConversionFunction<
+  bigint | boolean | Date | number | string | Literal,
+  Literal
+> = (value) => {
   if (typeof value === "object") {
     if (value instanceof Date) {
       return Either.of($literalFactory.date(value));
@@ -163,14 +207,24 @@ function $convertToLiteral(
   }
 
   return Either.of($literalFactory.primitive(value));
-}
+};
 
-function $convertToMaybe<ItemSourceT, ItemTargetT>(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-) {
-  return (
-    value: ItemSourceT | Maybe<ItemTargetT> | undefined,
-  ): Either<Error, Maybe<ItemTargetT>> => {
+function $convertToMaybe<
+  DefaultNamespaceT extends $NamespaceBuilder,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  ItemSourceT | Maybe<ItemTargetT> | undefined,
+  Maybe<ItemTargetT>,
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {
@@ -182,38 +236,39 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(value).map(Maybe.of);
+    return convertToItem(value, defaultNamespace).map(Maybe.of);
   };
 }
 
 function $convertToScalarSet<
+  DefaultNamespaceT extends $NamespaceBuilder,
   ItemSourceT,
   ItemTargetT,
-  Readonly extends boolean,
 >(
-  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
-  _readonly: Readonly,
-) {
-  type ItemTargetArrayT = Readonly extends true
-    ? ReadonlyArray<ItemTargetT>
-    : Array<ItemTargetT>;
-  return (
-    value: ItemSourceT | readonly ItemSourceT[] | undefined,
-  ): Either<Error, ItemTargetArrayT> => {
+  convertToItem: $ConversionFunction<
+    ItemSourceT,
+    ItemTargetT,
+    DefaultNamespaceT
+  >,
+): $ConversionFunction<
+  ItemSourceT | readonly ItemSourceT[] | undefined,
+  readonly ItemTargetT[],
+  DefaultNamespaceT
+> {
+  return (value, defaultNamespace) => {
     if (typeof value === "undefined") {
-      return Either.of<Error, ItemTargetArrayT>(
-        [] as unknown as ItemTargetArrayT,
+      return Either.of<Error, readonly ItemTargetT[]>(
+        [] as unknown as readonly ItemTargetT[],
       );
     }
     if (Array.isArray(value)) {
-      return Either.sequence(value.map(convertToItem)) as Either<
-        Error,
-        ItemTargetArrayT
-      >;
+      return Either.sequence(
+        value.map((value) => convertToItem(value, defaultNamespace)),
+      ) as Either<Error, readonly ItemTargetT[]>;
     }
     return convertToItem(value as ItemSourceT).map((value) => [
       value,
-    ]) as Either<Error, ItemTargetArrayT>;
+    ]) as Either<Error, readonly ItemTargetT[]>;
   };
 }
 
@@ -297,7 +352,10 @@ interface $IdentifierSchema {
   readonly kind: "Identifier";
 }
 
-function $identityConversionFunction<T>(value: T): Either<Error, T> {
+function $identityConversionFunction<T>(
+  value: T,
+  _defaultNamespace?: $NamespaceBuilder,
+): Either<Error, T> {
   return Either.of(value);
 }
 
@@ -424,6 +482,15 @@ function $monkeyPatchObject<T extends object>(
 
   return obj;
 }
+
+/**
+ * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
+ */
+type $NamespaceBuilder<TermNames extends string = any> = Record<
+  TermNames,
+  NamedNode
+> &
+  ((property?: TemplateStringsArray | TermNames) => NamedNode);
 
 interface $NumericSchema<T> {
   readonly hasValues?: readonly Literal[];
@@ -757,28 +824,21 @@ interface $TermSchema<TermT extends BlankNode | Literal | NamedNode> {
   readonly types: readonly TermT["termType"][];
 }
 
-function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
+function $validateArray<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
-  _readonly: Readonly,
-) {
-  type EitherR = Readonly extends true
-    ? ReadonlyArray<ItemValueT>
-    : Array<ItemValueT>;
-  return (
-    schema: $CollectionSchema<ItemSchemaT>,
-    valueArray: readonly ItemValueT[],
-  ): Either<Error, EitherR> => {
+): $ValidationFunction<$CollectionSchema<ItemSchemaT>, readonly ItemValueT[]> {
+  return (schema, valueArray) => {
     if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
       return Left(
         new Error(
           `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
         ),
-      ) as Either<Error, EitherR>;
+      ) as Either<Error, readonly ItemValueT[]>;
     }
 
     return Either.sequence(
       valueArray.map((value) => validateItem(schema.itemType, value)),
-    ) as Either<Error, EitherR>;
+    ) as Either<Error, readonly ItemValueT[]>;
   };
 }
 
@@ -1440,26 +1500,40 @@ export namespace NodeShape {
   export const $toString: (_nodeShape: NodeShape) => string = (_nodeShape) =>
     `NodeShape(${JSON.stringify(toStringRecord(_nodeShape))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NodeShape.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly and?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly classes?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly closed?: boolean | Maybe<boolean>;
     readonly comment?: string | Maybe<string>;
-    readonly datatype?: string | NamedNode | Maybe<NamedNode>;
+    readonly datatype?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
     readonly flags?: string | Maybe<string>;
     readonly hasValues?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
     readonly ignoredProperties?:
-      | readonly (string | NamedNode)[]
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
       | Maybe<readonly NamedNode[]>;
     readonly in_?:
       | readonly (NamedNode | Literal)[]
@@ -1467,7 +1541,7 @@ export namespace NodeShape {
     readonly isDefinedBy?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly label?: string | Maybe<string>;
     readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
@@ -1509,7 +1583,7 @@ export namespace NodeShape {
     readonly node?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
       | (
@@ -1541,60 +1615,91 @@ export namespace NodeShape {
     readonly not?:
       | BlankNode
       | NamedNode
-      | string
-      | readonly (BlankNode | NamedNode | string | undefined)[];
+      | (keyof $DefaultNamespaceT & string)
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[];
     readonly or?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
     readonly pattern?: string | Maybe<string>;
     readonly properties?:
       | BlankNode
       | NamedNode
-      | string
-      | readonly (BlankNode | NamedNode | string | undefined)[];
+      | (keyof $DefaultNamespaceT & string)
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[];
     readonly severity?: Severity["value"] | Severity | Maybe<Severity>;
-    readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly targetClasses?:
-      | string
+    readonly subClassOf?:
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly targetClasses?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly targetNodes?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
     readonly targetObjectsOf?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly targetSubjectsOf?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
-    readonly types?: string | NamedNode | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly types?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly xone?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-  }) => Either<Error, NodeShape> = (parameters) =>
+  }): Either<Error, NodeShape> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      and: $convertToMaybe($convertToList($convertToIdentifier, true))(
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
+      and: $convertToMaybe($convertToList($convertToIdentifier))(
         parameters?.and,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.and.type,
           value,
         ),
       ),
-      classes: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters?.classes).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      classes: $convertToScalarSet($convertToIri)(
+        parameters?.classes,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.classes.type,
           value,
         ),
       ),
       closed: $convertToMaybe($identityConversionFunction)(
         parameters?.closed,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.closed.type,
@@ -1603,14 +1708,16 @@ export namespace NodeShape {
       ),
       comment: $convertToMaybe($identityConversionFunction)(
         parameters?.comment,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.comment.type,
           value,
         ),
       ),
-      datatype: $convertToMaybe($convertToIri<string>)(
+      datatype: $convertToMaybe($convertToIri)(
         parameters?.datatype,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.datatype.type,
@@ -1619,6 +1726,7 @@ export namespace NodeShape {
       ),
       deactivated: $convertToMaybe($identityConversionFunction)(
         parameters?.deactivated,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.deactivated.type,
@@ -1627,39 +1735,43 @@ export namespace NodeShape {
       ),
       flags: $convertToMaybe($identityConversionFunction)(
         parameters?.flags,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.flags.type,
           value,
         ),
       ),
-      hasValues: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters?.hasValues).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      hasValues: $convertToScalarSet($identityConversionFunction)(
+        parameters?.hasValues,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.hasValues.type,
           value,
         ),
       ),
-      ignoredProperties: $convertToMaybe(
-        $convertToList($convertToIri<string>, true),
-      )(parameters?.ignoredProperties).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+      ignoredProperties: $convertToMaybe($convertToList($convertToIri))(
+        parameters?.ignoredProperties,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.ignoredProperties.type,
           value,
         ),
       ),
-      in_: $convertToMaybe($convertToList($identityConversionFunction, true))(
+      in_: $convertToMaybe($convertToList($identityConversionFunction))(
         parameters?.in_,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.in_.type,
           value,
         ),
       ),
       isDefinedBy: $convertToMaybe($convertToIdentifier)(
         parameters?.isDefinedBy,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.isDefinedBy.type,
@@ -1668,22 +1780,25 @@ export namespace NodeShape {
       ),
       label: $convertToMaybe($identityConversionFunction)(
         parameters?.label,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.label.type,
           value,
         ),
       ),
-      languageIn: $convertToMaybe(
-        $convertToList($identityConversionFunction, true),
-      )(parameters?.languageIn).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+      languageIn: $convertToMaybe($convertToList($identityConversionFunction))(
+        parameters?.languageIn,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.languageIn.type,
           value,
         ),
       ),
       maxExclusive: $convertToMaybe($convertToLiteral)(
         parameters?.maxExclusive,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.maxExclusive.type,
@@ -1692,6 +1807,7 @@ export namespace NodeShape {
       ),
       maxInclusive: $convertToMaybe($convertToLiteral)(
         parameters?.maxInclusive,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.maxInclusive.type,
@@ -1700,6 +1816,7 @@ export namespace NodeShape {
       ),
       maxLength: $convertToMaybe($identityConversionFunction)(
         parameters?.maxLength,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.maxLength.type,
@@ -1708,6 +1825,7 @@ export namespace NodeShape {
       ),
       message: $convertToMaybe($identityConversionFunction)(
         parameters?.message,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.message.type,
@@ -1716,6 +1834,7 @@ export namespace NodeShape {
       ),
       minExclusive: $convertToMaybe($convertToLiteral)(
         parameters?.minExclusive,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.minExclusive.type,
@@ -1724,6 +1843,7 @@ export namespace NodeShape {
       ),
       minInclusive: $convertToMaybe($convertToLiteral)(
         parameters?.minInclusive,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.minInclusive.type,
@@ -1732,21 +1852,24 @@ export namespace NodeShape {
       ),
       minLength: $convertToMaybe($identityConversionFunction)(
         parameters?.minLength,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.minLength.type,
           value,
         ),
       ),
-      node: $convertToMaybe($convertToIdentifier)(parameters?.node).chain(
-        (value) =>
-          $validateMaybe($identityValidationFunction)(
-            NodeShape.schema.properties.node.type,
-            value,
-          ),
+      node: $convertToMaybe($convertToIdentifier)(
+        parameters?.node,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.node.type,
+          value,
+        ),
       ),
       nodeKind: $convertToMaybe(
-        $convertToIri<
+        $convertToInIri<
           | "http://www.w3.org/ns/shacl#BlankNode"
           | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
           | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
@@ -1754,112 +1877,116 @@ export namespace NodeShape {
           | "http://www.w3.org/ns/shacl#IRIOrLiteral"
           | "http://www.w3.org/ns/shacl#Literal"
         >,
-      )(parameters?.nodeKind).chain((value) =>
+      )(parameters?.nodeKind, parameters?.$defaultNamespace).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.nodeKind.type,
           value,
         ),
       ),
-      not: $convertToScalarSet(
-        $convertToIdentifier,
-        true,
-      )(parameters?.not).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      not: $convertToScalarSet($convertToIdentifier)(
+        parameters?.not,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.not.type,
           value,
         ),
       ),
-      or: $convertToMaybe($convertToList($convertToIdentifier, true))(
+      or: $convertToMaybe($convertToList($convertToIdentifier))(
         parameters?.or,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.or.type,
           value,
         ),
       ),
       pattern: $convertToMaybe($identityConversionFunction)(
         parameters?.pattern,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.pattern.type,
           value,
         ),
       ),
-      properties: $convertToScalarSet(
-        $convertToIdentifier,
-        true,
-      )(parameters?.properties).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      properties: $convertToScalarSet($convertToIdentifier)(
+        parameters?.properties,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.properties.type,
           value,
         ),
       ),
-      severity: $convertToMaybe($convertToIri<Severity["value"]>)(
+      severity: $convertToMaybe($convertToInIri<Severity["value"]>)(
         parameters?.severity,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.severity.type,
           value,
         ),
       ),
-      subClassOf: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters?.subClassOf).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      subClassOf: $convertToScalarSet($convertToIri)(
+        parameters?.subClassOf,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.subClassOf.type,
           value,
         ),
       ),
-      targetClasses: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters?.targetClasses).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      targetClasses: $convertToScalarSet($convertToIri)(
+        parameters?.targetClasses,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetClasses.type,
           value,
         ),
       ),
-      targetNodes: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters?.targetNodes).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      targetNodes: $convertToScalarSet($identityConversionFunction)(
+        parameters?.targetNodes,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetNodes.type,
           value,
         ),
       ),
-      targetObjectsOf: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters?.targetObjectsOf).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      targetObjectsOf: $convertToScalarSet($convertToIri)(
+        parameters?.targetObjectsOf,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetObjectsOf.type,
           value,
         ),
       ),
-      targetSubjectsOf: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters?.targetSubjectsOf).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      targetSubjectsOf: $convertToScalarSet($convertToIri)(
+        parameters?.targetSubjectsOf,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetSubjectsOf.type,
           value,
         ),
       ),
-      types: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters?.types).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      types: $convertToScalarSet($convertToIri)(
+        parameters?.types,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.types.type,
           value,
         ),
       ),
-      xone: $convertToMaybe($convertToList($convertToIdentifier, true))(
+      xone: $convertToMaybe($convertToList($convertToIdentifier))(
         parameters?.xone,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.xone.type,
           value,
         ),
@@ -1870,26 +1997,40 @@ export namespace NodeShape {
         $monkeyPatchObject(object, { $toString: NodeShape.$toString }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => NodeShape.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly and?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly classes?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly closed?: boolean | Maybe<boolean>;
     readonly comment?: string | Maybe<string>;
-    readonly datatype?: string | NamedNode | Maybe<NamedNode>;
+    readonly datatype?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
     readonly flags?: string | Maybe<string>;
     readonly hasValues?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
     readonly ignoredProperties?:
-      | readonly (string | NamedNode)[]
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[]
       | Maybe<readonly NamedNode[]>;
     readonly in_?:
       | readonly (NamedNode | Literal)[]
@@ -1897,7 +2038,7 @@ export namespace NodeShape {
     readonly isDefinedBy?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly label?: string | Maybe<string>;
     readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
@@ -1939,7 +2080,7 @@ export namespace NodeShape {
     readonly node?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
       | (
@@ -1971,37 +2112,63 @@ export namespace NodeShape {
     readonly not?:
       | BlankNode
       | NamedNode
-      | string
-      | readonly (BlankNode | NamedNode | string | undefined)[];
+      | (keyof $DefaultNamespaceT & string)
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[];
     readonly or?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
     readonly pattern?: string | Maybe<string>;
     readonly properties?:
       | BlankNode
       | NamedNode
-      | string
-      | readonly (BlankNode | NamedNode | string | undefined)[];
+      | (keyof $DefaultNamespaceT & string)
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[];
     readonly severity?: Severity["value"] | Severity | Maybe<Severity>;
-    readonly subClassOf?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly targetClasses?:
-      | string
+    readonly subClassOf?:
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly targetClasses?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly targetNodes?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
     readonly targetObjectsOf?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly targetSubjectsOf?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
-    readonly types?: string | NamedNode | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly types?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly xone?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
   }): NodeShape {
     return create(parameters).unsafeCoerce();
@@ -2416,19 +2583,26 @@ export namespace Ontology {
   export const $toString: (_ontology: Ontology) => string = (_ontology) =>
     `Ontology(${JSON.stringify(toStringRecord(_ontology))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => Ontology.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
-  }) => Either<Error, Ontology> = (parameters) =>
+  }): Either<Error, Ontology> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       comment: $convertToMaybe($identityConversionFunction)(
         parameters?.comment,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.comment.type,
@@ -2437,6 +2611,7 @@ export namespace Ontology {
       ),
       label: $convertToMaybe($identityConversionFunction)(
         parameters?.label,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.label.type,
@@ -2449,12 +2624,15 @@ export namespace Ontology {
         $monkeyPatchObject(object, { $toString: Ontology.$toString }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => Ontology.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
   }): Ontology {
@@ -2592,19 +2770,26 @@ export namespace PropertyGroup {
     _propertyGroup,
   ) => `PropertyGroup(${JSON.stringify(toStringRecord(_propertyGroup))})`;
 
-  export const create: (parameters?: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyGroup.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
-  }) => Either<Error, PropertyGroup> = (parameters) =>
+  }): Either<Error, PropertyGroup> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
       comment: $convertToMaybe($identityConversionFunction)(
         parameters?.comment,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.comment.type,
@@ -2613,6 +2798,7 @@ export namespace PropertyGroup {
       ),
       label: $convertToMaybe($identityConversionFunction)(
         parameters?.label,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.label.type,
@@ -2625,12 +2811,15 @@ export namespace PropertyGroup {
         $monkeyPatchObject(object, { $toString: PropertyGroup.$toString }),
       );
 
-  export function createUnsafe(parameters?: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyGroup.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
   }): PropertyGroup {
@@ -3498,29 +3687,54 @@ export namespace PropertyShape {
     _propertyShape,
   ) => `PropertyShape(${JSON.stringify(toStringRecord(_propertyShape))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyShape.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly and?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly classes?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly comment?: string | Maybe<string>;
-    readonly datatype?: string | NamedNode | Maybe<NamedNode>;
+    readonly datatype?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
     readonly defaultValue?: (NamedNode | Literal) | Maybe<NamedNode | Literal>;
     readonly description?: string | Maybe<string>;
-    readonly disjoint?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly equals?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly disjoint?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly equals?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly flags?: string | Maybe<string>;
     readonly groups?:
       | BlankNode
       | NamedNode
-      | string
-      | readonly (BlankNode | NamedNode | string | undefined)[];
+      | (keyof $DefaultNamespaceT & string)
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[];
     readonly hasValues?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
@@ -3530,15 +3744,18 @@ export namespace PropertyShape {
     readonly isDefinedBy?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly label?: string | Maybe<string>;
     readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
-    readonly lessThan?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly lessThanOrEquals?:
-      | string
+    readonly lessThan?:
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly lessThanOrEquals?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly maxCount?: bigint | Maybe<bigint>;
     readonly maxExclusive?:
       | bigint
@@ -3580,7 +3797,7 @@ export namespace PropertyShape {
     readonly node?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
       | (
@@ -3612,10 +3829,20 @@ export namespace PropertyShape {
     readonly not?:
       | BlankNode
       | NamedNode
-      | string
-      | readonly (BlankNode | NamedNode | string | undefined)[];
+      | (keyof $DefaultNamespaceT & string)
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[];
     readonly or?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
@@ -3625,59 +3852,70 @@ export namespace PropertyShape {
     readonly qualifiedValueShape?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly qualifiedValueShapesDisjoint?: boolean | Maybe<boolean>;
     readonly severity?: Severity["value"] | Severity | Maybe<Severity>;
     readonly targetClasses?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly targetNodes?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
     readonly targetObjectsOf?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly targetSubjectsOf?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-  }) => Either<Error, PropertyShape> = (parameters) =>
+  }): Either<Error, PropertyShape> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      and: $convertToMaybe($convertToList($convertToIdentifier, true))(
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      and: $convertToMaybe($convertToList($convertToIdentifier))(
         parameters.and,
+        parameters.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.and.type,
           value,
         ),
       ),
-      classes: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.classes).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      classes: $convertToScalarSet($convertToIri)(
+        parameters.classes,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.classes.type,
           value,
         ),
       ),
       comment: $convertToMaybe($identityConversionFunction)(
         parameters.comment,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.comment.type,
           value,
         ),
       ),
-      datatype: $convertToMaybe($convertToIri<string>)(
+      datatype: $convertToMaybe($convertToIri)(
         parameters.datatype,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.datatype.type,
@@ -3686,6 +3924,7 @@ export namespace PropertyShape {
       ),
       deactivated: $convertToMaybe($identityConversionFunction)(
         parameters.deactivated,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.deactivated.type,
@@ -3694,6 +3933,7 @@ export namespace PropertyShape {
       ),
       defaultValue: $convertToMaybe($identityConversionFunction)(
         parameters.defaultValue,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.defaultValue.type,
@@ -3702,66 +3942,70 @@ export namespace PropertyShape {
       ),
       description: $convertToMaybe($identityConversionFunction)(
         parameters.description,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.description.type,
           value,
         ),
       ),
-      disjoint: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.disjoint).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      disjoint: $convertToScalarSet($convertToIri)(
+        parameters.disjoint,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           PropertyShape.schema.properties.disjoint.type,
           value,
         ),
       ),
-      equals: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.equals).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      equals: $convertToScalarSet($convertToIri)(
+        parameters.equals,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           PropertyShape.schema.properties.equals.type,
           value,
         ),
       ),
       flags: $convertToMaybe($identityConversionFunction)(
         parameters.flags,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.flags.type,
           value,
         ),
       ),
-      groups: $convertToScalarSet(
-        $convertToIdentifier,
-        true,
-      )(parameters.groups).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      groups: $convertToScalarSet($convertToIdentifier)(
+        parameters.groups,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           PropertyShape.schema.properties.groups.type,
           value,
         ),
       ),
-      hasValues: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.hasValues).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      hasValues: $convertToScalarSet($identityConversionFunction)(
+        parameters.hasValues,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.hasValues.type,
           value,
         ),
       ),
-      in_: $convertToMaybe($convertToList($identityConversionFunction, true))(
+      in_: $convertToMaybe($convertToList($identityConversionFunction))(
         parameters.in_,
+        parameters.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.in_.type,
           value,
         ),
       ),
       isDefinedBy: $convertToMaybe($convertToIdentifier)(
         parameters.isDefinedBy,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.isDefinedBy.type,
@@ -3770,40 +4014,43 @@ export namespace PropertyShape {
       ),
       label: $convertToMaybe($identityConversionFunction)(
         parameters.label,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.label.type,
           value,
         ),
       ),
-      languageIn: $convertToMaybe(
-        $convertToList($identityConversionFunction, true),
-      )(parameters.languageIn).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+      languageIn: $convertToMaybe($convertToList($identityConversionFunction))(
+        parameters.languageIn,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.languageIn.type,
           value,
         ),
       ),
-      lessThan: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.lessThan).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      lessThan: $convertToScalarSet($convertToIri)(
+        parameters.lessThan,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           PropertyShape.schema.properties.lessThan.type,
           value,
         ),
       ),
-      lessThanOrEquals: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.lessThanOrEquals).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      lessThanOrEquals: $convertToScalarSet($convertToIri)(
+        parameters.lessThanOrEquals,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           PropertyShape.schema.properties.lessThanOrEquals.type,
           value,
         ),
       ),
       maxCount: $convertToMaybe($identityConversionFunction)(
         parameters.maxCount,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.maxCount.type,
@@ -3812,6 +4059,7 @@ export namespace PropertyShape {
       ),
       maxExclusive: $convertToMaybe($convertToLiteral)(
         parameters.maxExclusive,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.maxExclusive.type,
@@ -3820,6 +4068,7 @@ export namespace PropertyShape {
       ),
       maxInclusive: $convertToMaybe($convertToLiteral)(
         parameters.maxInclusive,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.maxInclusive.type,
@@ -3828,6 +4077,7 @@ export namespace PropertyShape {
       ),
       maxLength: $convertToMaybe($identityConversionFunction)(
         parameters.maxLength,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.maxLength.type,
@@ -3836,6 +4086,7 @@ export namespace PropertyShape {
       ),
       message: $convertToMaybe($identityConversionFunction)(
         parameters.message,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.message.type,
@@ -3844,6 +4095,7 @@ export namespace PropertyShape {
       ),
       minCount: $convertToMaybe($identityConversionFunction)(
         parameters.minCount,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.minCount.type,
@@ -3852,6 +4104,7 @@ export namespace PropertyShape {
       ),
       minExclusive: $convertToMaybe($convertToLiteral)(
         parameters.minExclusive,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.minExclusive.type,
@@ -3860,6 +4113,7 @@ export namespace PropertyShape {
       ),
       minInclusive: $convertToMaybe($convertToLiteral)(
         parameters.minInclusive,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.minInclusive.type,
@@ -3868,28 +4122,33 @@ export namespace PropertyShape {
       ),
       minLength: $convertToMaybe($identityConversionFunction)(
         parameters.minLength,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.minLength.type,
           value,
         ),
       ),
-      name: $convertToMaybe($identityConversionFunction)(parameters.name).chain(
-        (value) =>
-          $validateMaybe($identityValidationFunction)(
-            PropertyShape.schema.properties.name.type,
-            value,
-          ),
+      name: $convertToMaybe($identityConversionFunction)(
+        parameters.name,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.name.type,
+          value,
+        ),
       ),
-      node: $convertToMaybe($convertToIdentifier)(parameters.node).chain(
-        (value) =>
-          $validateMaybe($identityValidationFunction)(
-            NodeShape.schema.properties.node.type,
-            value,
-          ),
+      node: $convertToMaybe($convertToIdentifier)(
+        parameters.node,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.node.type,
+          value,
+        ),
       ),
       nodeKind: $convertToMaybe(
-        $convertToIri<
+        $convertToInIri<
           | "http://www.w3.org/ns/shacl#BlankNode"
           | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
           | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
@@ -3897,31 +4156,33 @@ export namespace PropertyShape {
           | "http://www.w3.org/ns/shacl#IRIOrLiteral"
           | "http://www.w3.org/ns/shacl#Literal"
         >,
-      )(parameters.nodeKind).chain((value) =>
+      )(parameters.nodeKind, parameters.$defaultNamespace).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.nodeKind.type,
           value,
         ),
       ),
-      not: $convertToScalarSet(
-        $convertToIdentifier,
-        true,
-      )(parameters.not).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      not: $convertToScalarSet($convertToIdentifier)(
+        parameters.not,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.not.type,
           value,
         ),
       ),
-      or: $convertToMaybe($convertToList($convertToIdentifier, true))(
+      or: $convertToMaybe($convertToList($convertToIdentifier))(
         parameters.or,
+        parameters.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.or.type,
           value,
         ),
       ),
       order: $convertToMaybe($identityConversionFunction)(
         parameters.order,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.order.type,
@@ -3931,6 +4192,7 @@ export namespace PropertyShape {
       path: Either.of(parameters.path),
       pattern: $convertToMaybe($identityConversionFunction)(
         parameters.pattern,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.pattern.type,
@@ -3939,6 +4201,7 @@ export namespace PropertyShape {
       ),
       qualifiedMaxCount: $convertToMaybe($identityConversionFunction)(
         parameters.qualifiedMaxCount,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.qualifiedMaxCount.type,
@@ -3947,6 +4210,7 @@ export namespace PropertyShape {
       ),
       qualifiedMinCount: $convertToMaybe($identityConversionFunction)(
         parameters.qualifiedMinCount,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.qualifiedMinCount.type,
@@ -3955,6 +4219,7 @@ export namespace PropertyShape {
       ),
       qualifiedValueShape: $convertToMaybe($convertToIdentifier)(
         parameters.qualifiedValueShape,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.qualifiedValueShape.type,
@@ -3963,68 +4228,74 @@ export namespace PropertyShape {
       ),
       qualifiedValueShapesDisjoint: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters.qualifiedValueShapesDisjoint).chain((value) =>
+      )(
+        parameters.qualifiedValueShapesDisjoint,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.qualifiedValueShapesDisjoint.type,
           value,
         ),
       ),
-      severity: $convertToMaybe($convertToIri<Severity["value"]>)(
+      severity: $convertToMaybe($convertToInIri<Severity["value"]>)(
         parameters.severity,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           NodeShape.schema.properties.severity.type,
           value,
         ),
       ),
-      targetClasses: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.targetClasses).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      targetClasses: $convertToScalarSet($convertToIri)(
+        parameters.targetClasses,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetClasses.type,
           value,
         ),
       ),
-      targetNodes: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.targetNodes).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      targetNodes: $convertToScalarSet($identityConversionFunction)(
+        parameters.targetNodes,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetNodes.type,
           value,
         ),
       ),
-      targetObjectsOf: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.targetObjectsOf).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      targetObjectsOf: $convertToScalarSet($convertToIri)(
+        parameters.targetObjectsOf,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetObjectsOf.type,
           value,
         ),
       ),
-      targetSubjectsOf: $convertToScalarSet(
-        $convertToIri<string>,
-        true,
-      )(parameters.targetSubjectsOf).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      targetSubjectsOf: $convertToScalarSet($convertToIri)(
+        parameters.targetSubjectsOf,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           NodeShape.schema.properties.targetSubjectsOf.type,
           value,
         ),
       ),
       uniqueLang: $convertToMaybe($identityConversionFunction)(
         parameters.uniqueLang,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           PropertyShape.schema.properties.uniqueLang.type,
           value,
         ),
       ),
-      xone: $convertToMaybe($convertToList($convertToIdentifier, true))(
+      xone: $convertToMaybe($convertToList($convertToIdentifier))(
         parameters.xone,
+        parameters.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($validateArray($identityValidationFunction, true))(
+        $validateMaybe($validateArray($identityValidationFunction))(
           NodeShape.schema.properties.xone.type,
           value,
         ),
@@ -4035,29 +4306,54 @@ export namespace PropertyShape {
         $monkeyPatchObject(object, { $toString: PropertyShape.$toString }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => PropertyShape.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly and?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
-    readonly classes?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly classes?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly comment?: string | Maybe<string>;
-    readonly datatype?: string | NamedNode | Maybe<NamedNode>;
+    readonly datatype?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly deactivated?: boolean | Maybe<boolean>;
     readonly defaultValue?: (NamedNode | Literal) | Maybe<NamedNode | Literal>;
     readonly description?: string | Maybe<string>;
-    readonly disjoint?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly equals?: string | NamedNode | readonly (string | NamedNode)[];
+    readonly disjoint?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly equals?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly flags?: string | Maybe<string>;
     readonly groups?:
       | BlankNode
       | NamedNode
-      | string
-      | readonly (BlankNode | NamedNode | string | undefined)[];
+      | (keyof $DefaultNamespaceT & string)
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[];
     readonly hasValues?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
@@ -4067,15 +4363,18 @@ export namespace PropertyShape {
     readonly isDefinedBy?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly label?: string | Maybe<string>;
     readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
-    readonly lessThan?: string | NamedNode | readonly (string | NamedNode)[];
-    readonly lessThanOrEquals?:
-      | string
+    readonly lessThan?:
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
+    readonly lessThanOrEquals?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly maxCount?: bigint | Maybe<bigint>;
     readonly maxExclusive?:
       | bigint
@@ -4117,7 +4416,7 @@ export namespace PropertyShape {
     readonly node?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
       | (
@@ -4149,10 +4448,20 @@ export namespace PropertyShape {
     readonly not?:
       | BlankNode
       | NamedNode
-      | string
-      | readonly (BlankNode | NamedNode | string | undefined)[];
+      | (keyof $DefaultNamespaceT & string)
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[];
     readonly or?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
@@ -4162,28 +4471,33 @@ export namespace PropertyShape {
     readonly qualifiedValueShape?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly qualifiedValueShapesDisjoint?: boolean | Maybe<boolean>;
     readonly severity?: Severity["value"] | Severity | Maybe<Severity>;
     readonly targetClasses?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly targetNodes?:
       | (NamedNode | Literal)
       | readonly (NamedNode | Literal)[];
     readonly targetObjectsOf?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly targetSubjectsOf?:
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | NamedNode
-      | readonly (string | NamedNode)[];
+      | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
     readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
-      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | readonly (
+          | BlankNode
+          | NamedNode
+          | (keyof $DefaultNamespaceT & string)
+          | undefined
+        )[]
       | Maybe<readonly (BlankNode | NamedNode)[]>;
   }): PropertyShape {
     return create(parameters).unsafeCoerce();
@@ -4723,30 +5037,37 @@ export namespace ValidationReport {
     _validationReport,
   ) => `ValidationReport(${JSON.stringify(toStringRecord(_validationReport))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ValidationReport.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly conforms: boolean;
     readonly results?: ValidationResult | readonly ValidationResult[];
     readonly shapesGraphWellFormed?: boolean | Maybe<boolean>;
-  }) => Either<Error, ValidationReport> = (parameters) =>
+  }): Either<Error, ValidationReport> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
       conforms: Either.of(parameters.conforms),
-      results: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.results).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      results: $convertToScalarSet($identityConversionFunction)(
+        parameters.results,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           ValidationReport.schema.properties.results.type,
           value,
         ),
       ),
       shapesGraphWellFormed: $convertToMaybe($identityConversionFunction)(
         parameters.shapesGraphWellFormed,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ValidationReport.schema.properties.shapesGraphWellFormed.type,
@@ -4762,12 +5083,15 @@ export namespace ValidationReport {
         $monkeyPatchObject(object, { $toString: ValidationReport.$toString }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ValidationReport.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly conforms: boolean;
     readonly results?: ValidationResult | readonly ValidationResult[];
     readonly shapesGraphWellFormed?: boolean | Maybe<boolean>;
@@ -5000,12 +5324,15 @@ export namespace ValidationResult {
     _validationResult,
   ) => `ValidationResult(${JSON.stringify(toStringRecord(_validationResult))})`;
 
-  export const create: (parameters: {
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ValidationResult.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly details?:
       | (BlankNode | NamedNode | Literal)
       | readonly (BlankNode | NamedNode | Literal)[];
@@ -5013,23 +5340,28 @@ export namespace ValidationResult {
     readonly message?: string | Maybe<string>;
     readonly path?: $PropertyPath | Maybe<$PropertyPath>;
     readonly severity: Severity["value"] | Severity;
-    readonly sourceConstraintComponent: string | NamedNode;
+    readonly sourceConstraintComponent:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode;
     readonly sourceShape?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly value?:
       | (BlankNode | NamedNode | Literal)
       | Maybe<BlankNode | NamedNode | Literal>;
-  }) => Either<Error, ValidationResult> = (parameters) =>
+  }): Either<Error, ValidationResult> =>
     $sequenceRecord({
-      $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      details: $convertToScalarSet(
-        $identityConversionFunction,
-        true,
-      )(parameters.details).chain((value) =>
-        $validateArray($identityValidationFunction, true)(
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      details: $convertToScalarSet($identityConversionFunction)(
+        parameters.details,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
           ValidationResult.schema.properties.details.type,
           value,
         ),
@@ -5037,25 +5369,33 @@ export namespace ValidationResult {
       focusNode: Either.of(parameters.focusNode),
       message: $convertToMaybe($identityConversionFunction)(
         parameters.message,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ValidationResult.schema.properties.message.type,
           value,
         ),
       ),
-      path: $convertToMaybe($identityConversionFunction)(parameters.path).chain(
-        (value) =>
-          $validateMaybe($identityValidationFunction)(
-            ValidationResult.schema.properties.path.type,
-            value,
-          ),
+      path: $convertToMaybe($identityConversionFunction)(
+        parameters.path,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ValidationResult.schema.properties.path.type,
+          value,
+        ),
       ),
-      severity: $convertToIri<Severity["value"]>(parameters.severity),
-      sourceConstraintComponent: $convertToIri<string>(
+      severity: $convertToInIri<Severity["value"]>(
+        parameters.severity,
+        parameters.$defaultNamespace,
+      ),
+      sourceConstraintComponent: $convertToIri(
         parameters.sourceConstraintComponent,
+        parameters.$defaultNamespace,
       ),
       sourceShape: $convertToMaybe($convertToIdentifier)(
         parameters.sourceShape,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ValidationResult.schema.properties.sourceShape.type,
@@ -5064,6 +5404,7 @@ export namespace ValidationResult {
       ),
       value: $convertToMaybe($identityConversionFunction)(
         parameters.value,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           ValidationResult.schema.properties.value.type,
@@ -5079,12 +5420,15 @@ export namespace ValidationResult {
         $monkeyPatchObject(object, { $toString: ValidationResult.$toString }),
       );
 
-  export function createUnsafe(parameters: {
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => ValidationResult.Identifier)
       | BlankNode
       | NamedNode
-      | string;
+      | (keyof $DefaultNamespaceT & string);
     readonly details?:
       | (BlankNode | NamedNode | Literal)
       | readonly (BlankNode | NamedNode | Literal)[];
@@ -5092,11 +5436,13 @@ export namespace ValidationResult {
     readonly message?: string | Maybe<string>;
     readonly path?: $PropertyPath | Maybe<$PropertyPath>;
     readonly severity: Severity["value"] | Severity;
-    readonly sourceConstraintComponent: string | NamedNode;
+    readonly sourceConstraintComponent:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode;
     readonly sourceShape?:
       | BlankNode
       | NamedNode
-      | string
+      | (keyof $DefaultNamespaceT & string)
       | Maybe<BlankNode | NamedNode>;
     readonly value?:
       | (BlankNode | NamedNode | Literal)
@@ -5229,10 +5575,10 @@ export type Shape = NodeShape | PropertyShape;
 
 export namespace Shape {
   export const $toString = (value: Shape): string => {
-    if (NodeShape.isNodeShape(value)) {
+    if (value["$type"] === "NodeShape") {
       return NodeShape.$toString(value);
     }
-    if (PropertyShape.isPropertyShape(value)) {
+    if (value["$type"] === "PropertyShape") {
       return PropertyShape.$toString(value);
     }
 

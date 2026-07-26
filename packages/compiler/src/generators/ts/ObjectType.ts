@@ -98,11 +98,22 @@ export class ObjectType extends AbstractType {
     if (this.name.isJust()) {
       return Maybe.empty();
     }
+
+    const sourceTypePropertySignatures: Code[] = [];
+    for (const property of this.properties) {
+      property.constructorParameter.ifJust((propertyConstructorParameter) => {
+        sourceTypePropertySignatures.push(
+          propertyConstructorParameter.signature,
+        );
+      });
+    }
+    const sourceTypeExpression = code`{ ${joinCode(sourceTypePropertySignatures)} }`;
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return Maybe.of({
-      code: this.createFunction,
+      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
       sourceTypes: [
         {
-          expression: this.constructorParameters.type.expression,
+          expression: sourceTypeExpression,
           jsType: {
             instanceof: "Object",
             typeof: "object",

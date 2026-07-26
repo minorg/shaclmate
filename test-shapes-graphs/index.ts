@@ -146,6 +146,18 @@ export const testShapesGraphs = {
     kind: "error",
   },
 
+  objectDiscriminantProperty: {
+    description:
+      "Change the object discriminant property to 'termType' to get nice discriminated unions between objects and RDF/JS terms",
+    filePaths: [
+      path.join(
+        thisDirectoryPath,
+        "object-discriminant-property.shaclmate.ttl",
+      ),
+    ],
+    kind: "stress",
+  },
+
   propertyShapeNameConflicts: {
     description:
       "Property shape names that might conflict with names synthesized by the generator",

@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+import { DiscriminatedUnionType_conversionFunctionExpression } from "./_DiscriminatedUnionType/DiscriminatedUnionType_conversionFunctionExpression.js";
 import type { DiscriminatedUnionType_Discriminant } from "./_DiscriminatedUnionType/DiscriminatedUnionType_Discriminant.js";
 import { DiscriminatedUnionType_equalsFunctionExpression } from "./_DiscriminatedUnionType/DiscriminatedUnionType_equalsFunctionExpression.js";
 import { DiscriminatedUnionType_filterFunctionExpression } from "./_DiscriminatedUnionType/DiscriminatedUnionType_filterFunctionExpression.js";
@@ -101,13 +102,14 @@ export class DiscriminatedUnionType<
               )})`;
             }
 
-            if (discriminant.kind === "Intrinsic" && !json) {
-              switch (member.type.kind) {
-                case "Object":
-                case "ObjectDiscriminatedUnion":
-                  return code`${member.type.name.unsafeCoerce()}.is${member.type.name.unsafeCoerce()}(${instance})`;
-              }
-            }
+            // Causes problems in mixed Object | other dicriminated unions
+            // if (discriminant.kind === "Intrinsic" && !json) {
+            //   switch (member.type.kind) {
+            //     case "Object":
+            //     case "ObjectDiscriminatedUnion":
+            //       return code`${member.type.name.unsafeCoerce()}.is${member.type.name.unsafeCoerce()}(${instance})`;
+            //   }
+            // }
 
             const discriminantName = json
               ? discriminant.jsonName
@@ -176,26 +178,18 @@ export class DiscriminatedUnionType<
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
-    return Maybe.of({
-      code: code`${this.reusables.snippets.identityConversionFunction}`,
-      sourceTypes:
-        this.discriminant.kind === "Typeof"
-          ? this.members.flatMap(({ type }) =>
-              type.jsTypes.map((jsType) => ({
-                expression: type.expression,
-                jsType,
-              })),
-            )
-          : [
-              {
-                expression: this.expression,
-                jsType: {
-                  instanceof: "Object",
-                  typeof: "object",
-                },
-              },
-            ],
-    });
+    if (this.conversionFunctionExpression.isNothing()) {
+      return this.conversionFunctionExpression;
+    }
+
+    return this.name
+      .map((name) =>
+        Maybe.of({
+          code: code`${name}.convert`,
+          sourceTypes: this.conversionFunctionExpression.extract()!.sourceTypes,
+        }),
+      )
+      .orDefault(this.conversionFunctionExpression);
   }
 
   @Memoize()
@@ -231,11 +225,6 @@ export class DiscriminatedUnionType<
     return this.name
       .map((name) => code`${name}.equals`)
       .orDefault(DiscriminatedUnionType_equalsFunctionExpression.call(this));
-  }
-
-  @Memoize()
-  protected override get inlineExpression(): Code {
-    return DiscriminatedUnionType_inlineExpression.call(this);
   }
 
   @Memoize()
@@ -379,6 +368,11 @@ export class DiscriminatedUnionType<
       );
   }
 
+  @Memoize()
+  protected override get inlineExpression(): Code {
+    return DiscriminatedUnionType_inlineExpression.call(this);
+  }
+
   protected override get schemaInitializers(): readonly Code[] {
     return super.schemaInitializers.concat(
       code`members: { ${joinCode(
@@ -394,12 +388,78 @@ export class DiscriminatedUnionType<
     );
   }
 
+  @Memoize()
+  private get conversionFunctionExpression(): Maybe<AbstractType.ConversionFunction> {
+    return DiscriminatedUnionType_conversionFunctionExpression.call(this);
+  }
+
+  override fromJsonExpression({
+    variables,
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
+    return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(DiscriminatedUnionType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
+  }
+
+  override graphqlResolveExpression({
+    variables,
+  }: {
+    variables: { value: Code };
+  }): Code {
+    return variables.value;
+  }
+
+  override jsonSchema({
+    context,
+  }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
+    const expression = this.name
+      .map((name) => code`${name}.Json.schema()`)
+      .orDefault(DiscriminatedUnionType_jsonSchemaExpression.call(this));
+    if (context === "property" && this.recursive) {
+      return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.jsonType().expression}> => ${expression})`;
+    }
+    return expression;
+  }
+
+  @Memoize()
+  override jsonType(): AbstractType.JsonType {
+    return this.name
+      .map((name) => new AbstractType.JsonType(code`${name}.Json`))
+      .orDefault(DiscriminatedUnionType_jsonTypeLiteral.call(this));
+  }
+
+  override jsonUiSchemaElement(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
+  override toJsonExpression({
+    variables,
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
+    return code`${this.name.map((name) => code`${name}.toJson`).orDefault(DiscriminatedUnionType_toJsonFunctionExpression.call(this))}(${variables.value})`;
+  }
+
+  override toRdfResourceValuesExpression({
+    variables,
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+    const { value: valueVariable, ...otherVariables } = variables;
+    return code`${this.name.map((name) => code`${name}.toRdfResourceValues`).orDefault(DiscriminatedUnionType_toRdfResourceValuesFunctionExpression.call(this))}(${valueVariable}, ${otherVariables})`;
+  }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(DiscriminatedUnionType_toStringFunctionExpression.call(this))}(${variables.value})`;
+  }
+
   protected override staticModuleDeclarations(
     name: string,
   ): Record<string, Code> {
     const staticModuleDeclarations: Record<string, Code> = {
       ...super.staticModuleDeclarations(name),
     };
+
+    this.conversionFunctionExpression.ifJust((conversionFunction) => {
+      staticModuleDeclarations["convert"] =
+        code`export const convert = ${conversionFunction.code};`;
+    });
 
     if (this.configuration.features.has("Object.equals")) {
       staticModuleDeclarations["equals"] =
@@ -471,62 +531,6 @@ export namespace Json {
     }
 
     return staticModuleDeclarations;
-  }
-
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(DiscriminatedUnionType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
-  }
-
-  override graphqlResolveExpression({
-    variables,
-  }: {
-    variables: { value: Code };
-  }): Code {
-    return variables.value;
-  }
-
-  override jsonSchema({
-    context,
-  }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    const expression = this.name
-      .map((name) => code`${name}.Json.schema()`)
-      .orDefault(DiscriminatedUnionType_jsonSchemaExpression.call(this));
-    if (context === "property" && this.recursive) {
-      return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.jsonType().expression}> => ${expression})`;
-    }
-    return expression;
-  }
-
-  @Memoize()
-  override jsonType(): AbstractType.JsonType {
-    return this.name
-      .map((name) => new AbstractType.JsonType(code`${name}.Json`))
-      .orDefault(DiscriminatedUnionType_jsonTypeLiteral.call(this));
-  }
-
-  override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
-  override toJsonExpression({
-    variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.toJson`).orDefault(DiscriminatedUnionType_toJsonFunctionExpression.call(this))}(${variables.value})`;
-  }
-
-  override toRdfResourceValuesExpression({
-    variables,
-  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    const { value: valueVariable, ...otherVariables } = variables;
-    return code`${this.name.map((name) => code`${name}.toRdfResourceValues`).orDefault(DiscriminatedUnionType_toRdfResourceValuesFunctionExpression.call(this))}(${valueVariable}, ${otherVariables})`;
-  }
-
-  override toStringExpression({
-    variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(DiscriminatedUnionType_toStringFunctionExpression.call(this))}(${variables.value})`;
   }
 
   private readonly lazyMembers: () => readonly DiscriminatedUnionType.Member<MemberTypeT>[];

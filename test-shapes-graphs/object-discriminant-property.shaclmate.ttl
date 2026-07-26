@@ -1,0 +1,57 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://example.com/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:DiscriminatedUnionsStruct
+    shaclmate:name "DiscriminatedUnionsStruct" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Struct with properties that use the discriminated union types, to test discriminated union conversion" ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :IriStructDiscriminatedUnion ;
+        sh:path :iriStructDiscriminatedUnion
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :StructStructDiscriminatedUnion ;
+        sh:path :structStructDiscriminatedUnion
+    ] .
+
+:DoubleStruct
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:double ;
+        sh:maxCount 1 ;
+        sh:path :doubleProperty
+    ] .
+
+:IriStructDiscriminatedUnion
+    shaclmate:name "IriStructDiscriminatedUnion" ;
+    a owl:Class, sh:NodeShape ;
+    sh:xone ([
+            sh:nodeKind sh:IRI
+        ]
+        :StringStruct
+    ) .
+
+:StringStruct
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :stringProperty
+    ] .
+
+:StructStructDiscriminatedUnion
+    shaclmate:name "StructStructDiscriminatedUnion" ;
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:xone (:DoubleStruct
+        :StringStruct
+    ) .
+
