@@ -102,13 +102,14 @@ export class DiscriminatedUnionType<
               )})`;
             }
 
-            if (discriminant.kind === "Intrinsic" && !json) {
-              switch (member.type.kind) {
-                case "Object":
-                case "ObjectDiscriminatedUnion":
-                  return code`${member.type.name.unsafeCoerce()}.is${member.type.name.unsafeCoerce()}(${instance})`;
-              }
-            }
+            // Causes problems in mixed Object | other dicriminated unions
+            // if (discriminant.kind === "Intrinsic" && !json) {
+            //   switch (member.type.kind) {
+            //     case "Object":
+            //     case "ObjectDiscriminatedUnion":
+            //       return code`${member.type.name.unsafeCoerce()}.is${member.type.name.unsafeCoerce()}(${instance})`;
+            //   }
+            // }
 
             const discriminantName = json
               ? discriminant.jsonName

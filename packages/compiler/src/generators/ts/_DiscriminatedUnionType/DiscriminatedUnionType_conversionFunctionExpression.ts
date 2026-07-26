@@ -27,6 +27,9 @@ export function DiscriminatedUnionType_conversionFunctionExpression<
   if (this.discriminant.kind === "Intrinsic") {
     // Allow discriminated unions with intrinsic discriminants (e.g., a "termType" property) to accept additional
     // source types with typeofs besides "object".
+    // @rdfx/builder relies on discriminated unions of IRI | SomeObjectType and forces SomeObjectType to use the discriminant property
+    // "termType" so the two members share it. These properties should accept (keyof DefaultNamespaceT & string) | NamedNode | SomeObjectType source types --
+    // the "string" typeof for IRI and then "object" identity typeofs for the IRI and SomeObjectType, respectively.
 
     const memberIdentitySourceTypes: AbstractType.ConversionFunction.SourceType[] =
       [];

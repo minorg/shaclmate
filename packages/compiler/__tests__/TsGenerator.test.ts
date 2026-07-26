@@ -104,7 +104,7 @@ describe("TsGenerator", () => {
     }, 60000);
   }
 
-  it.only("objectDiscriminantProperty", async () => {
+  it("objectDiscriminantProperty", async () => {
     const shapesGraph = (
       await parseTestShapesGraph(testShapesGraphs.objectDiscriminantProperty)
     ).unsafeCoerce();
@@ -112,9 +112,7 @@ describe("TsGenerator", () => {
 
     const source = generate(shapesGraph, {
       objectDiscriminantProperty: {
-        jsonName:
-          TsGenerator.Configuration.default_.objectDiscriminantProperty
-            .jsonName,
+        jsonName: "termType",
         name: "termType",
       },
     });
