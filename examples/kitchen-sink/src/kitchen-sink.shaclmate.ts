@@ -9972,6 +9972,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               return (
                 $dateFromRdfResourceValues(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["date"].type,
                 }).map((values) =>
                   values.map(
@@ -9995,6 +9996,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $dateTimeFromRdfResourceValues(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["dateTime"].type,
                     }).map((values) =>
                       values.map(
@@ -10059,6 +10061,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               return (
                 $dateFromRdfResourceValues(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["object"].type,
                 }) as Either<Error, Resource.Values<Date | string>>
               )
@@ -10066,6 +10069,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $stringFromRdfResourceValues<string>(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
                     }) as Either<Error, Resource.Values<Date | string>>,
                 )
@@ -10114,6 +10118,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               return (
                 $dateTimeFromRdfResourceValues(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["dateTime"].type,
                 }).map((values) =>
                   values.map(
@@ -10137,6 +10142,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $dateFromRdfResourceValues(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["date"].type,
                     }).map((values) =>
                       values.map(
@@ -10201,6 +10207,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               return (
                 $bigDecimalFromRdfResourceValues(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["object"].type,
                 }) as Either<Error, Resource.Values<BigDecimal | string>>
               )
@@ -10208,6 +10215,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $stringFromRdfResourceValues<string>(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
                     }) as Either<Error, Resource.Values<BigDecimal | string>>,
                 )
@@ -10264,6 +10272,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               return (
                 $booleanFromRdfResourceValues<boolean>(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["boolean"].type,
                 }) as Either<
                   Error,
@@ -10274,6 +10283,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $floatFromRdfResourceValues<number>(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["number"].type,
                     }) as Either<
                       Error,
@@ -10284,6 +10294,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $bigIntFromRdfResourceValues<bigint>(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
                     }) as Either<
                       Error,
@@ -10294,6 +10305,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $stringFromRdfResourceValues<string>(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
                     }) as Either<
                       Error,
@@ -10354,6 +10366,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               return (
                 $langStringFromRdfResourceValues(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["object"].type,
                 }) as Either<Error, Resource.Values<Literal | string>>
               )
@@ -10361,6 +10374,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $stringFromRdfResourceValues<string>(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
                     }) as Either<Error, Resource.Values<Literal | string>>,
                 )
@@ -10409,6 +10423,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               return (
                 $stringFromRdfResourceValues<string>(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["string"].type,
                 }) as Either<Error, Resource.Values<string | Date>>
               )
@@ -10416,6 +10431,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $dateFromRdfResourceValues(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
                     }) as Either<Error, Resource.Values<string | Date>>,
                 )
@@ -10464,6 +10480,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               return (
                 $stringFromRdfResourceValues<string>(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["string"].type,
                 }) as Either<Error, Resource.Values<string | BigDecimal>>
               )
@@ -10471,6 +10488,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $bigDecimalFromRdfResourceValues(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
                     }) as Either<Error, Resource.Values<string | BigDecimal>>,
                 )
@@ -10520,6 +10538,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               return (
                 $stringFromRdfResourceValues<string>(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["string"].type,
                 }) as Either<Error, Resource.Values<string | Literal>>
               )
@@ -10527,6 +10546,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                   () =>
                     $langStringFromRdfResourceValues(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
                     }) as Either<Error, Resource.Values<string | Literal>>,
                 )
@@ -29443,6 +29463,7 @@ export namespace ListSetsStruct {
                   $stringFromRdfResourceValues<string>,
                 )(valueAsValues, {
                   ...options,
+                  ignoreRdfType: false,
                   schema: options.schema.members["object"].type,
                 }) as Either<Error, Resource.Values<readonly string[] | string>>
               )
@@ -29450,6 +29471,7 @@ export namespace ListSetsStruct {
                   () =>
                     $stringFromRdfResourceValues<string>(valueAsValues, {
                       ...options,
+                      ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
                     }) as Either<
                       Error,
@@ -46515,6 +46537,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               $iriFromRdfResourceValues<string>(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema: options.schema.members["object"].type,
               }) as Either<Error, Resource.Values<NamedNode | string>>
             )
@@ -46522,6 +46545,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $stringFromRdfResourceValues<string>(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
                   }) as Either<Error, Resource.Values<NamedNode | string>>,
               )
@@ -46595,6 +46619,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["DiscriminatedUnionMember1"].type,
               }).map((values) =>
@@ -46625,6 +46650,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $literalFromRdfResourceValues(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
                   }) as Either<
                     Error,
@@ -46727,6 +46753,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["DiscriminatedUnionMember1"].type,
               }).map((values) =>
@@ -46767,6 +46794,7 @@ export namespace UnionDiscriminantsStruct {
                     valueAsValues,
                     {
                       ...options,
+                      ignoreRdfType: false,
                       schema:
                         options.schema.members["DiscriminatedUnionMember2"]
                           .type,
@@ -46807,6 +46835,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $stringFromRdfResourceValues<string>(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
                   }).map((values) =>
                     values.map(
@@ -46911,6 +46940,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               $identifierFromRdfResourceValues(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema: options.schema.members["BlankNode"].type,
               }) as Either<
                 Error,
@@ -46921,6 +46951,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $literalFromRdfResourceValues(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
                   }) as Either<
                     Error,
@@ -46972,6 +47003,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               $iriFromRdfResourceValues<string>(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema: options.schema.members["object"].type,
               }) as Either<Error, Resource.Values<NamedNode | string>>
             )
@@ -46979,6 +47011,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $stringFromRdfResourceValues<string>(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
                   }) as Either<Error, Resource.Values<NamedNode | string>>,
               )
@@ -47031,6 +47064,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["DiscriminatedUnionMember1"].type,
               }).map((values) =>
@@ -47061,6 +47095,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $literalFromRdfResourceValues(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
                   }) as Either<
                     Error,
@@ -47134,6 +47169,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["DiscriminatedUnionMember1"].type,
               }).map((values) =>
@@ -47174,6 +47210,7 @@ export namespace UnionDiscriminantsStruct {
                     valueAsValues,
                     {
                       ...options,
+                      ignoreRdfType: false,
                       schema:
                         options.schema.members["DiscriminatedUnionMember2"]
                           .type,
@@ -47214,6 +47251,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $stringFromRdfResourceValues<string>(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
                   }).map((values) =>
                     values.map(
@@ -47303,6 +47341,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               $identifierFromRdfResourceValues(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema: options.schema.members["BlankNode"].type,
               }) as Either<
                 Error,
@@ -47313,6 +47352,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $literalFromRdfResourceValues(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
                   }) as Either<
                     Error,
@@ -47379,6 +47419,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               $iriFromRdfResourceValues<string>(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema: options.schema.members["object"].type,
               }) as Either<Error, Resource.Values<NamedNode | string>>
             )
@@ -47386,6 +47427,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $stringFromRdfResourceValues<string>(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
                   }) as Either<Error, Resource.Values<NamedNode | string>>,
               )
@@ -47459,6 +47501,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["DiscriminatedUnionMember1"].type,
               }).map((values) =>
@@ -47489,6 +47532,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $literalFromRdfResourceValues(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
                   }) as Either<
                     Error,
@@ -47591,6 +47635,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["DiscriminatedUnionMember1"].type,
               }).map((values) =>
@@ -47631,6 +47676,7 @@ export namespace UnionDiscriminantsStruct {
                     valueAsValues,
                     {
                       ...options,
+                      ignoreRdfType: false,
                       schema:
                         options.schema.members["DiscriminatedUnionMember2"]
                           .type,
@@ -47671,6 +47717,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $stringFromRdfResourceValues<string>(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
                   }).map((values) =>
                     values.map(
@@ -47775,6 +47822,7 @@ export namespace UnionDiscriminantsStruct {
             return (
               $identifierFromRdfResourceValues(valueAsValues, {
                 ...options,
+                ignoreRdfType: false,
                 schema: options.schema.members["BlankNode"].type,
               }) as Either<
                 Error,
@@ -47785,6 +47833,7 @@ export namespace UnionDiscriminantsStruct {
                 () =>
                   $literalFromRdfResourceValues(valueAsValues, {
                     ...options,
+                    ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
                   }) as Either<
                     Error,
@@ -54144,6 +54193,7 @@ export namespace DiscriminatedUnion {
       return (
         DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
           ...options,
+          ignoreRdfType: false,
           schema: options.schema.members["DiscriminatedUnionMember1"].type,
         }) as Either<Error, Resource.Values<DiscriminatedUnion>>
       )
@@ -54151,6 +54201,7 @@ export namespace DiscriminatedUnion {
           () =>
             DiscriminatedUnionMember2.fromRdfResourceValues(valueAsValues, {
               ...options,
+              ignoreRdfType: false,
               schema: options.schema.members["DiscriminatedUnionMember2"].type,
             }) as Either<Error, Resource.Values<DiscriminatedUnion>>,
         )
@@ -54684,6 +54735,7 @@ export namespace FlattenDiscriminatedUnion {
       return (
         DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
           ...options,
+          ignoreRdfType: false,
           schema: options.schema.members["DiscriminatedUnionMember1"].type,
         }) as Either<Error, Resource.Values<FlattenDiscriminatedUnion>>
       )
@@ -54691,6 +54743,7 @@ export namespace FlattenDiscriminatedUnion {
           () =>
             DiscriminatedUnionMember2.fromRdfResourceValues(valueAsValues, {
               ...options,
+              ignoreRdfType: false,
               schema: options.schema.members["DiscriminatedUnionMember2"].type,
             }) as Either<Error, Resource.Values<FlattenDiscriminatedUnion>>,
         )
@@ -54700,6 +54753,7 @@ export namespace FlattenDiscriminatedUnion {
               valueAsValues,
               {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["FlattenDiscriminatedUnionMember3"]
                     .type,
@@ -55228,6 +55282,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
           valueAsValues,
           {
             ...options,
+            ignoreRdfType: false,
             schema:
               options.schema.members["LazilyResolvedDiscriminatedUnionMember1"]
                 .type,
@@ -55240,6 +55295,7 @@ export namespace LazilyResolvedDiscriminatedUnion {
               valueAsValues,
               {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members[
                     "LazilyResolvedDiscriminatedUnionMember2"
@@ -55614,6 +55670,7 @@ export namespace NamedDiscriminatedUnion1 {
       return (
         $iriFromRdfResourceValues<string>(valueAsValues, {
           ...options,
+          ignoreRdfType: false,
           schema: options.schema.members["object"].type,
         }) as Either<Error, Resource.Values<NamedDiscriminatedUnion1>>
       )
@@ -55621,6 +55678,7 @@ export namespace NamedDiscriminatedUnion1 {
           () =>
             $stringFromRdfResourceValues<string>(valueAsValues, {
               ...options,
+              ignoreRdfType: false,
               schema: options.schema.members["string"].type,
             }) as Either<Error, Resource.Values<NamedDiscriminatedUnion1>>,
         )
@@ -55875,6 +55933,7 @@ export namespace NamedDiscriminatedUnion2 {
       return (
         $dateFromRdfResourceValues(valueAsValues, {
           ...options,
+          ignoreRdfType: false,
           schema: options.schema.members["date"].type,
         }).map((values) =>
           values.map(
@@ -55887,6 +55946,7 @@ export namespace NamedDiscriminatedUnion2 {
           () =>
             $dateTimeFromRdfResourceValues(valueAsValues, {
               ...options,
+              ignoreRdfType: false,
               schema: options.schema.members["dateTime"].type,
             }).map((values) =>
               values.map(
@@ -56304,6 +56364,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
           valueAsValues,
           {
             ...options,
+            ignoreRdfType: false,
             schema:
               options.schema.members["NoRdfTypeDiscriminatedUnionMember1"].type,
           },
@@ -56315,6 +56376,7 @@ export namespace NoRdfTypeDiscriminatedUnion {
               valueAsValues,
               {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["NoRdfTypeDiscriminatedUnionMember2"]
                     .type,
@@ -56802,6 +56864,7 @@ export namespace PartialDiscriminatedUnion {
       return (
         PartialDiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
           ...options,
+          ignoreRdfType: false,
           schema:
             options.schema.members["PartialDiscriminatedUnionMember1"].type,
         }) as Either<Error, Resource.Values<PartialDiscriminatedUnion>>
@@ -56812,6 +56875,7 @@ export namespace PartialDiscriminatedUnion {
               valueAsValues,
               {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["PartialDiscriminatedUnionMember2"]
                     .type,
@@ -57311,6 +57375,7 @@ export namespace RecursiveDiscriminatedUnion {
           valueAsValues,
           {
             ...options,
+            ignoreRdfType: false,
             schema:
               options.schema.members["RecursiveDiscriminatedUnionMember1"].type,
           },
@@ -57322,6 +57387,7 @@ export namespace RecursiveDiscriminatedUnion {
               valueAsValues,
               {
                 ...options,
+                ignoreRdfType: false,
                 schema:
                   options.schema.members["RecursiveDiscriminatedUnionMember2"]
                     .type,

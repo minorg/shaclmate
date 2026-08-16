@@ -11,7 +11,7 @@ export function AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpr
     const valueAsValues = value.toValues();
     return ${this.members.reduce(
       (expression, { type, primaryDiscriminantValue }, memberI) => {
-        let typeExpression: Code = code`${type.fromRdfResourceValuesFunction}(valueAsValues, { ...options, schema: options.schema.members[${literalOf(primaryDiscriminantValue)}].type })`;
+        let typeExpression: Code = code`${type.fromRdfResourceValuesFunction}(valueAsValues, { ...options, ignoreRdfType: false, schema: options.schema.members[${literalOf(primaryDiscriminantValue)}].type })`;
         if (
           this.discriminant.kind === "Extrinsic" ||
           (this.discriminant.kind === "Hybrid" &&
