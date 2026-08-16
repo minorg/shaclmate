@@ -2929,6 +2929,7 @@ export namespace Union {
       return (
         UnionMember1.fromRdfResourceValues(valueAsValues, {
           ...options,
+          ignoreRdfType: false,
           schema: options.schema.members["UnionMember1"].type,
         }) as Either<Error, Resource.Values<Union>>
       )
@@ -2936,6 +2937,7 @@ export namespace Union {
           () =>
             UnionMember2.fromRdfResourceValues(valueAsValues, {
               ...options,
+              ignoreRdfType: false,
               schema: options.schema.members["UnionMember2"].type,
             }) as Either<Error, Resource.Values<Union>>,
         )
