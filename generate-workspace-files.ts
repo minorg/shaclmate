@@ -7,7 +7,7 @@ import type { CompilerOptions } from "typescript";
 
 const VERSION = "4.0.87";
 
-const rdfxVersion = "0.0.50";
+const rdfxVersion = "0.0.53";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -25,10 +25,11 @@ const externalDependencies = {
   "@rdfx/data-factory": rdfxVersion,
   "@rdfx/fs": rdfxVersion,
   "@rdfx/literal": rdfxVersion,
-  "@rdfx/parsers": rdfxVersion,
+  "@rdfx/logger": rdfxVersion,
+  "@rdfx/parser": rdfxVersion,
   "@rdfx/resource": rdfxVersion,
   "@rdfx/sparql-client": rdfxVersion,
-  "@rdfx/serializers": rdfxVersion,
+  "@rdfx/serializer": rdfxVersion,
   "@rdfx/testing": rdfxVersion,
   "@sindresorhus/base62": "~0.1.0",
   "@tpluscode/rdf-ns-builders": "~4.3.0",
@@ -63,7 +64,6 @@ const externalDependencies = {
   rimraf: "~6.0.1",
   sparqljs: "3.7.3",
   "tmp-promise": "~3.0.3",
-  "ts-log": "~3.0.2",
   "ts-poet": "~6.12.0",
   "ts-invariant": "~0.10.3",
   tsx: "~4.16.2",
@@ -160,12 +160,12 @@ const workspaces = {
           "@rdfx/collection",
           "@rdfx/data-factory",
           "@rdfx/fs",
-          "@rdfx/serializers",
+          "@rdfx/logger",
+          "@rdfx/serializer",
           "cmd-ts",
           "pino",
           "pino-pretty",
           "purify-ts",
-          "ts-log",
         ],
         internal: ["compiler", "validator"],
       },
@@ -205,7 +205,7 @@ const workspaces = {
           "@rdfx/collection",
           "@rdfx/data-factory",
           "@rdfx/resource",
-          "@rdfx/serializers",
+          "@rdfx/serializer",
           "@rdfjs/types",
           "react",
           "react-dom",
@@ -278,7 +278,7 @@ const workspaces = {
       devDependencies: {
         external: [
           "@rdfx/fs",
-          "@rdfx/serializers",
+          "@rdfx/serializer",
           "@rdfx/sparql-client",
           "@tpluscode/rdf-ns-builders",
           "@types/sparqljs",
@@ -297,6 +297,7 @@ const workspaces = {
           "@rdfx/collection",
           "@rdfx/data-factory",
           "@rdfx/literal",
+          "@rdfx/logger",
           "@rdfx/resource",
           "@sindresorhus/base62",
           "@tpluscode/rdf-ns-builders",
@@ -306,14 +307,13 @@ const workspaces = {
           "purify-ts",
           "reserved-identifiers",
           "ts-invariant",
-          "ts-log",
           "ts-poet",
           "typescript-memoize",
         ],
         internal: ["shacl-ast"],
       },
       devDependencies: {
-        external: ["@rdfx/fs", "@rdfx/serializers"],
+        external: ["@rdfx/fs", "@rdfx/serializer"],
         // internal: ["kitchen-sink-example"],
       },
       tsconfig: {
@@ -347,14 +347,14 @@ const workspaces = {
           "@rdfx/collection",
           "@rdfjs/types",
           "@rdfx/data-factory",
-          "@rdfx/parsers",
+          "@rdfx/logger",
+          "@rdfx/parser",
           "@rdfx/resource",
-          "@rdfx/serializers",
+          "@rdfx/serializer",
           "get-stream",
           "purify-ts",
           "rdf-validate-shacl",
           "tmp-promise",
-          "ts-log",
           "which",
         ],
         internal: ["shacl-ast"],
