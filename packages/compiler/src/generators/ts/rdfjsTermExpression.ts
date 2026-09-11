@@ -1,6 +1,6 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
+import type { Logger } from "@rdfx/logger";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
-import type { Logger } from "ts-log";
 import type { Imports } from "./Imports.js";
 import type { Snippets } from "./Snippets.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";

@@ -1,9 +1,9 @@
 import type { DatasetCore } from "@rdfjs/types";
 import { PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
+import { dummyLogger, type Logger } from "@rdfx/logger";
 import type { ValidationReport } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";
-import { dummyLogger, type Logger } from "ts-log";
 
 /**
  * Abstract base class for SHACL validator implementations.

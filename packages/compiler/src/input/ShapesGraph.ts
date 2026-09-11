@@ -1,8 +1,8 @@
 import type { DatasetCore } from "@rdfjs/types";
 import type { PrefixMap } from "@rdfx/collection";
+import type { Logger } from "@rdfx/logger";
 import { AbstractShapesGraph } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";
-import type { Logger } from "ts-log";
 import type { Ast } from "../ast/Ast.js";
 import { Compiler } from "../Compiler.js";
 import type { Generator } from "../generators/Generator.js";

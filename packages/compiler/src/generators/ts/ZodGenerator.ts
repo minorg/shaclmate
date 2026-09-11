@@ -1,4 +1,4 @@
-import type { Logger } from "ts-log";
+import type { Logger } from "@rdfx/logger";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { ObjectType_jsonSchemaExpression } from "./_ObjectType/ObjectType_jsonSchemaExpression.js";

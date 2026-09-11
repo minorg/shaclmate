@@ -1,5 +1,5 @@
+import type { Logger } from "@rdfx/logger";
 import type { Maybe } from "purify-ts";
-import type { Logger } from "ts-log";
 
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";

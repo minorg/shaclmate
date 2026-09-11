@@ -1,3 +1,3 @@
-import type { Logger } from "ts-log";
+import type { Logger } from "@rdfx/logger";
 
 export const logger: Logger = console;

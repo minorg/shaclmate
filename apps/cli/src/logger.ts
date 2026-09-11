@@ -1,5 +1,5 @@
+import type { Logger } from "@rdfx/logger";
 import { pino } from "pino";
-import type { Logger } from "ts-log";
 
 export const logger: Logger = pino({
   level:

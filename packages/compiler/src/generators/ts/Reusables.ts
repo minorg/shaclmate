@@ -1,4 +1,4 @@
-import type { Logger } from "ts-log";
+import type { Logger } from "@rdfx/logger";
 import { Imports } from "./Imports.js";
 import { Snippets } from "./Snippets.js";
 import type { TsGenerator } from "./TsGenerator.js";
