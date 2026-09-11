@@ -1,6 +1,6 @@
+import type { Logger } from "@rdfx/logger";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 
 import type { ObjectType } from "./ObjectType.js";

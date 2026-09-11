@@ -3,18 +3,18 @@
     "shaclmate": "dist/cli.js"
   },
   "dependencies": {
-    "@shaclmate/compiler": "4.0.87",
-    "@shaclmate/validator": "4.0.87",
+    "@shaclmate/compiler": "4.0.88",
+    "@shaclmate/validator": "4.0.88",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.50",
-    "@rdfx/data-factory": "0.0.50",
-    "@rdfx/fs": "0.0.50",
-    "@rdfx/serializers": "0.0.50",
+    "@rdfx/collection": "0.0.55",
+    "@rdfx/data-factory": "0.0.55",
+    "@rdfx/fs": "0.0.55",
+    "@rdfx/logger": "0.0.55",
+    "@rdfx/serializer": "0.0.55",
     "cmd-ts": "~0.15.0",
     "pino": "~9.1.0",
     "pino-pretty": "~13.1.2",
-    "purify-ts": "~2.1.4",
-    "ts-log": "~3.0.2"
+    "purify-ts": "~2.1.4"
   },
   "description": "Command line program to generate TypeScript code from SHACL shapes",
   "devDependencies": {},
@@ -61,5 +61,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.87"
+  "version": "4.0.88"
 }

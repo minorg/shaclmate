@@ -1,5 +1,5 @@
+import type { Logger } from "@rdfx/logger";
 import { invariant } from "ts-invariant";
-import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
 import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";

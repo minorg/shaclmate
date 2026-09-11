@@ -1,7 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-
+import type { Logger } from "@rdfx/logger";
 import { Maybe } from "purify-ts";
-import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 import { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
 import type { AbstractType_DiscriminantProperty } from "./_AbstractType/AbstractType_DiscriminantProperty.js";

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { Readable } from "node:stream";
-import serializers from "@rdfx/serializers";
+import serializers from "@rdfx/serializer";
 import { type Either, EitherAsync } from "purify-ts";
 import { parseInputs } from "../parseInputs.js";
 

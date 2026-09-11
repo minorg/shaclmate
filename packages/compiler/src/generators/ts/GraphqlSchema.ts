@@ -1,4 +1,4 @@
-import type { Logger } from "ts-log";
+import type { Logger } from "@rdfx/logger";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Reusables } from "./Reusables.js";

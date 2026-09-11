@@ -1,5 +1,5 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
-import type { Logger } from "ts-log";
+import type { Logger } from "@rdfx/logger";
 import type { Imports } from "./Imports.js";
 import type { Snippet } from "./Snippet.js";
 import type { Snippets } from "./Snippets.js";

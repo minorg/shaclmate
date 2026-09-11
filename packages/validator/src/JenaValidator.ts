@@ -4,14 +4,14 @@ import { Readable } from "node:stream";
 import type { DatasetCore } from "@rdfjs/types";
 import { datasetFactory, type PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
-import parsers from "@rdfx/parsers";
+import { type Logger, nopLogger } from "@rdfx/logger";
+import parsers from "@rdfx/parser";
 import { ResourceSet } from "@rdfx/resource";
-import { TurtleSerializer } from "@rdfx/serializers";
+import { serialize } from "@rdfx/serializer";
 import { ValidationReport } from "@shaclmate/shacl-ast";
 import { getStreamAsArray } from "get-stream";
 import { type Either, EitherAsync, Maybe } from "purify-ts";
 import tmp from "tmp-promise";
-import { dummyLogger, type Logger } from "ts-log";
 import which from "which";
 import { execPromisified } from "./execPromisified.js";
 import { Validator } from "./Validator.js";
@@ -30,7 +30,7 @@ export class JenaValidator extends Validator {
   }
 
   static async create({
-    logger = dummyLogger,
+    logger = nopLogger,
     prefixMap,
     shapesGraph,
   }: {
@@ -63,14 +63,15 @@ export class JenaValidator extends Validator {
           async ({ path: tmpDirectoryPath }) => {
             const dataGraphFilePath = path.join(tmpDirectoryPath, "data.ttl");
 
-            const serializer = new TurtleSerializer({
-              prefixes: this.prefixMap,
-            });
-
             this.logger.debug("writing data graph to %s", dataGraphFilePath);
             await fs.writeFile(
               dataGraphFilePath,
-              serializer.transform(dataGraph),
+              await liftEither(
+                await serialize(dataGraph, {
+                  format: "text/turtle",
+                  prefixes: this.prefixMap,
+                }),
+              ),
             );
             this.logger.debug("wrote data graph to %s", dataGraphFilePath);
 
@@ -84,7 +85,12 @@ export class JenaValidator extends Validator {
             );
             await fs.writeFile(
               shapesGraphFilePath,
-              serializer.transform(this.shapesGraph),
+              await liftEither(
+                await serialize(this.shapesGraph, {
+                  format: "text/turtle",
+                  prefixes: this.prefixMap,
+                }),
+              ),
             );
             this.logger.debug("wrote shapes graph to %s", shapesGraphFilePath);
 

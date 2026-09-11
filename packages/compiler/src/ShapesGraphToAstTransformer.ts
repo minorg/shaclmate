@@ -1,7 +1,7 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { TermMap } from "@rdfx/collection";
+import type { Logger } from "@rdfx/logger";
 import { Either } from "purify-ts";
-import type { Logger } from "ts-log";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
