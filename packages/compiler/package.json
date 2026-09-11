@@ -2,11 +2,11 @@
   "dependencies": {
     "@shaclmate/shacl-ast": "4.0.87",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.53",
-    "@rdfx/data-factory": "0.0.53",
-    "@rdfx/literal": "0.0.53",
-    "@rdfx/logger": "0.0.53",
-    "@rdfx/resource": "0.0.53",
+    "@rdfx/collection": "0.0.54",
+    "@rdfx/data-factory": "0.0.54",
+    "@rdfx/literal": "0.0.54",
+    "@rdfx/logger": "0.0.54",
+    "@rdfx/resource": "0.0.54",
     "@sindresorhus/base62": "~0.1.0",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "change-case": "~5.4.4",
@@ -19,8 +19,8 @@
     "typescript-memoize": "~1.1.1"
   },
   "devDependencies": {
-    "@rdfx/fs": "0.0.53",
-    "@rdfx/serializer": "0.0.53"
+    "@rdfx/fs": "0.0.54",
+    "@rdfx/serializer": "0.0.54"
   },
   "files": [
     "dist/Compiler.d.ts",
