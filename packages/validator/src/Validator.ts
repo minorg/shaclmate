@@ -1,7 +1,7 @@
 import type { DatasetCore } from "@rdfjs/types";
 import { PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
-import { dummyLogger, type Logger } from "@rdfx/logger";
+import { type Logger, nopLogger } from "@rdfx/logger";
 import type { ValidationReport } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";
 
@@ -14,7 +14,7 @@ export abstract class Validator {
   protected readonly shapesGraph: DatasetCore;
 
   constructor({
-    logger = dummyLogger,
+    logger = nopLogger,
     prefixMap,
     shapesGraph,
   }: { logger?: Logger; prefixMap?: PrefixMap; shapesGraph: DatasetCore }) {
