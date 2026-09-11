@@ -8,7 +8,7 @@ import dataFactory from "@rdfx/data-factory";
 import { type FC, useMemo, useState } from "react";
 import * as generated from "./forms.shaclmate.js";
 import { z } from "zod";
-import { TurtleSerializer } from "@rdfx/serializers";
+import { serializeSync } from "@rdfx/serializer";
 
 const classes = {
   container: {
@@ -64,9 +64,10 @@ const App: FC = () => {
       generated.FormStruct.Json.parse(data)
         .chain(generated.FormStruct.fromJson)
         .map((instance) => {
-          return new TurtleSerializer().transform([
-            ...generated.FormStruct.toRdfResource(instance).dataset,
-          ]);
+          return serializeSync(
+            generated.FormStruct.toRdfResource(instance).dataset,
+            {format: "text/turtle"}
+          ).unsafeCoerce();
         })
         .mapLeft((error) => error.toString())
         .extract(),

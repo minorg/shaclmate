@@ -1,7 +1,7 @@
 import type { Quad } from "@rdfjs/types";
 import { PrefixMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
-import { TurtleSerializer } from "@rdfx/serializers";
+import { serializeSync } from "@rdfx/serializer";
 import { rdf, rdfs, sh, xsd } from "@tpluscode/rdf-ns-builders";
 
 const prefixMap = new PrefixMap(
@@ -14,8 +14,9 @@ const prefixMap = new PrefixMap(
   { factory: dataFactory },
 );
 
-const serializer = new TurtleSerializer({ prefixes: prefixMap });
-
 export function quadsToTurtle(quads: Iterable<Quad>): string {
-  return serializer.transform(quads);
+  return serializeSync(quads, {
+    format: "text/turtle",
+    prefixes: prefixMap,
+  }).unsafeCoerce();
 }

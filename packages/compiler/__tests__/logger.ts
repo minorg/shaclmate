@@ -1,3 +1,3 @@
-import type { Logger } from "@rdfx/logger";
+import { ConsoleLogger, type Logger } from "@rdfx/logger";
 
-export const logger: Logger = console;
+export const logger: Logger = new ConsoleLogger();

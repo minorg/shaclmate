@@ -4,7 +4,6 @@ import { fileURLToPath } from "node:url";
 import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { RdfFile } from "@rdfx/fs";
-import { TurtleSerializer } from "@rdfx/serializers";
 import SHACLValidator from "rdf-validate-shacl";
 import { describe, it } from "vitest";
 import * as kitchenSink from "../src/index.js";
@@ -29,7 +28,7 @@ describe("toRdf", async () => {
     const resource = kitchenSink.NonClassStruct.toRdfResource(
       harnesses.nonClassStruct.instance,
     );
-    const ttl = new TurtleSerializer().transform([...resource.dataset]);
+    const ttl = quadsToTurtle(resource.dataset);
     expect(ttl).not.toHaveLength(0);
   });
 
