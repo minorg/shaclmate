@@ -181,6 +181,7 @@ const workspaces = {
       devDependencies: {
         external: [
           "@rdfjs/namespace",
+          "@rdfx/logger",
           "@tpluscode/rdf-ns-builders",
           "@types/rdfjs__namespace",
         ],
