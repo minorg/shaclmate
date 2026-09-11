@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.54",
-    "@rdfx/data-factory": "0.0.54",
-    "@rdfx/resource": "0.0.54",
+    "@rdfx/collection": "0.0.55",
+    "@rdfx/data-factory": "0.0.55",
+    "@rdfx/resource": "0.0.55",
     "graphql": "16.11.0",
     "graphql-yoga": "5.14.0",
     "purify-ts": "~2.1.4"
