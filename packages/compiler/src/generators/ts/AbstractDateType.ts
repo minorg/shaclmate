@@ -6,6 +6,9 @@ import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   protected override readonly inlineExpression = code`Date`;
 
+  /**
+   * Date has no conversion function to avoid source type overlap with other types (e.g., string).
+   */
   override readonly conversionFunction: Maybe<AbstractTypedLiteralType.ConversionFunction> =
     Maybe.empty();
   override readonly equalsFunction =

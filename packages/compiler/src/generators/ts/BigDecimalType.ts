@@ -10,6 +10,9 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   protected override readonly inlineExpression =
     code`${this.reusables.imports.BigDecimal}`;
 
+  /**
+   * BigDecimal has no conversion function to avoid source type overlap with other types (e.g., string).
+   */
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.empty();
   override readonly filterFunction =

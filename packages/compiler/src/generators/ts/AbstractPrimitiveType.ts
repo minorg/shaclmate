@@ -13,6 +13,11 @@ import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractPrimitiveType<
   ValueT extends Primitive,
 > extends AbstractTypedLiteralType<ValueT> {
+  /**
+   * Primitive types have no conversion functions to avoid source type overlap with other primitive types.
+   *
+   * A property that can take on multiple primitive types should be a union.
+   */
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.empty();
   override readonly equalsFunction =
