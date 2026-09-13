@@ -1,13 +1,13 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.88",
+    "@shaclmate/shacl-ast": "4.0.89",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/collection": "0.0.55",
-    "@rdfx/data-factory": "0.0.55",
-    "@rdfx/logger": "0.0.55",
-    "@rdfx/parser": "0.0.55",
-    "@rdfx/resource": "0.0.55",
-    "@rdfx/serializer": "0.0.55",
+    "@rdfx/collection": "0.0.56",
+    "@rdfx/data-factory": "0.0.56",
+    "@rdfx/logger": "0.0.56",
+    "@rdfx/parser": "0.0.56",
+    "@rdfx/resource": "0.0.56",
+    "@rdfx/serializer": "0.0.56",
     "get-stream": "~9.0.1",
     "purify-ts": "~2.1.4",
     "rdf-validate-shacl": "0.6.5",
@@ -15,7 +15,7 @@
     "which": "~6.0.1"
   },
   "devDependencies": {
-    "@rdfx/fs": "0.0.55",
+    "@rdfx/fs": "0.0.56",
     "@types/which": "~3.0.4"
   },
   "exports": {
@@ -75,5 +75,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.88"
+  "version": "4.0.89"
 }
