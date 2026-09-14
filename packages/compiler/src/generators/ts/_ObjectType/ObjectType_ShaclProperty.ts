@@ -230,8 +230,8 @@ export class ObjectType_ShaclProperty<
   >[0]): Maybe<Code> {
     return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
         { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
-        [left, ${this.accessExpression({ variables: { object: variables.leftObject } })}],
-        [right, ${this.accessExpression({ variables: { object: variables.rightObject } })}],
+        [left, ${variables.leftObject}.${this.name}],
+        [right, ${variables.rightObject}.${this.name}],
       )`);
   }
 
@@ -241,7 +241,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["filterExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.filterFunction}(${variables.filter}, ${this.accessExpression({ variables: { object: variables.object } })})`,
+      code`${this.type.filterFunction}(${variables.filter}, ${variables.object}.${this.name})`,
     );
   }
 
@@ -280,7 +280,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`${this.type.hashFunction}(${variables.hasher}, ${variables.value});`,
+      code`${this.type.hashFunction}(${variables.hasher}, ${variables.object}.${this.name});`,
     ];
   }
 
@@ -343,11 +343,13 @@ export class ObjectType_ShaclProperty<
     });
   }
 
-  override toJsonInitializer(
-    parameters: Parameters<ObjectType_AbstractProperty["toJsonInitializer"]>[0],
-  ): Maybe<Code> {
+  override toJsonInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toJsonInitializer"]
+  >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.toJsonExpression(parameters)}`,
+      code`${this.name}: ${this.type.toJsonExpression({ variables: { value: code`${variables.object}.${this.name}` } })}`,
     );
   }
 
@@ -375,22 +377,26 @@ export class ObjectType_ShaclProperty<
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
         {
-          variables: { ...variables, propertyPath },
+          variables: {
+            ...variables,
+            propertyPath,
+            value: code`${variables.object}.${this.name}`,
+          },
         },
       )}, ${variables.graph});`,
     ];
   }
 
-  override toStringInitializer(
-    parameters: Parameters<
-      ObjectType_AbstractProperty["toStringInitializer"]
-    >[0],
-  ): Maybe<Code> {
+  override toStringInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toStringInitializer"]
+  >[0]): Maybe<Code> {
     if (!this.display) {
       return Maybe.empty();
     }
     return Maybe.of(
-      code`${literalOf(this.name)}: ${this.type.toStringExpression(parameters)}`,
+      code`${literalOf(this.name)}: ${this.type.toStringExpression({ variables: { ...variables, value: code`${variables.object}.${this.name}` } })}`,
     );
   }
 

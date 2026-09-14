@@ -6,7 +6,7 @@ import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
-import { type Code, code } from "../ts-poet-wrapper.js";
+import type { Code } from "../ts-poet-wrapper.js";
 
 export abstract class ObjectType_AbstractProperty {
   protected readonly configuration: TsGenerator.Configuration;
@@ -129,13 +129,6 @@ export abstract class ObjectType_AbstractProperty {
   }
 
   /**
-   * Expression to access the value of this property on an object instance. May evaluate a thunk.
-   */
-  accessExpression({ variables }: { variables: { object: Code } }): Code {
-    return code`${variables.object}.${this.name}`;
-  }
-
-  /**
    * Initializer (name: value) from a constructor parameter.
    */
   abstract constructorInitializer(parameters: {
@@ -182,7 +175,7 @@ export abstract class ObjectType_AbstractProperty {
    * Statements to hash this property using a hasher instance.
    */
   abstract hashStatements(parameters: {
-    variables: { hasher: Code; value: Code };
+    variables: { hasher: Code; object: Code };
   }): readonly Code[];
 
   /**
@@ -242,7 +235,7 @@ export abstract class ObjectType_AbstractProperty {
    * Initializer (name: value) to JSON.
    */
   abstract toJsonInitializer(parameters: {
-    variables: { value: Code };
+    variables: { object: Code };
   }): Maybe<Code>;
 
   /**
@@ -251,15 +244,15 @@ export abstract class ObjectType_AbstractProperty {
   abstract toRdfRdfResourceValuesStatements(parameters: {
     variables: Omit<
       Parameters<Type["toRdfResourceValuesExpression"]>[0]["variables"],
-      "propertyPath"
-    >;
+      "propertyPath" | "value"
+    > & { object: Code };
   }): readonly Code[];
 
   /**
    * Initializer (name: value) to serialize this property to a human-readable string (toString).
    */
   abstract toStringInitializer(parameters: {
-    variables: { value: Code };
+    variables: { object: Code };
   }): Maybe<Code>;
 
   protected readonly rdfjsTermExpression: (

@@ -11,7 +11,7 @@ export function ObjectType_hashFunctionExpression(this: ObjectType): Code {
     const propertyHashStatements = property.hashStatements({
       variables: {
         hasher: hasherVariable,
-        value: code`${this.thisVariable}.${property.name}`,
+        object: code`${this.thisVariable}`,
       },
     });
     if (propertyHashStatements.length === 0) {

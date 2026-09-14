@@ -634,9 +634,7 @@ export class ObjectType extends AbstractType {
         property
           .toStringInitializer({
             variables: {
-              value: property.accessExpression({
-                variables: { object: variables.value },
-              }),
+              object: variables.value,
             },
           })
           .toList(),

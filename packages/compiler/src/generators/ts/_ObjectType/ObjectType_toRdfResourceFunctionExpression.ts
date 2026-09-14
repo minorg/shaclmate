@@ -16,14 +16,7 @@ export function ObjectType_toRdfResourceFunctionExpression(
   for (const property of this.properties) {
     statements.push(
       ...property.toRdfRdfResourceValuesStatements({
-        variables: {
-          graph: variables.graph,
-          resource: variables.resource,
-          resourceSet: variables.resourceSet,
-          value: property.accessExpression({
-            variables: { object: variables.object },
-          }),
-        },
+        variables,
       }),
     );
   }

@@ -109,7 +109,7 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     ObjectType_AbstractProperty["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}); }`,
+      code`if (${variables.object}.${this.name}) { ${variables.hasher}.update(${variables.object}.${this.name}); }`,
     ];
   }
 
@@ -139,7 +139,7 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   }: Parameters<
     ObjectType_AbstractProperty["toJsonInitializer"]
   >[0]): Maybe<Code> {
-    return Maybe.of(code`"${this.jsonName}": ${variables.value}`);
+    return Maybe.of(code`"${this.jsonName}": ${variables.object}.${this.name}`);
   }
 
   override toRdfRdfResourceValuesStatements(): readonly Code[] {

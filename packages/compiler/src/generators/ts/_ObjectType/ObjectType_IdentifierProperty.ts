@@ -67,8 +67,8 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   >[0]): Maybe<Code> {
     return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
         { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
-        [left, ${this.accessExpression({ variables: { object: variables.leftObject } })}],
-        [right, ${this.accessExpression({ variables: { object: variables.rightObject } })}],
+        [left, ${variables.leftObject}.${this.name}()],
+        [right, ${variables.rightObject}.${this.name}()],
       )`);
   }
 
@@ -86,7 +86,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     ObjectType_AbstractProperty["filterExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.filterFunction}(${variables.filter}, ${this.accessExpression({ variables: { object: variables.object } })})`,
+      code`${this.type.filterFunction}(${variables.filter}, ${variables.object}.${this.name}())`,
     );
   }
 
@@ -98,7 +98,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.type.stringifyFunction}(${this.accessExpression({ variables: { object: code`source` } })})`,
+      resolve: code`(source) => ${this.type.stringifyFunction}(source.${this.name}())`,
       type: this.type.graphqlType.expression,
     });
   }
@@ -172,12 +172,6 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       .orDefaultLazy(() => this.type.schema);
   }
 
-  override accessExpression({
-    variables,
-  }: Parameters<ObjectType_AbstractProperty["accessExpression"]>[0]): Code {
-    return code`${variables.object}.${this.name}()`;
-  }
-
   override constructorInitializer({
     variables,
   }: Parameters<
@@ -238,7 +232,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     ObjectType_AbstractProperty["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}().value); }`,
+      code`if (${variables.object}.${this.name}) { ${variables.hasher}.update(${variables.object}.${this.name}().value); }`,
     ];
   }
 
@@ -284,9 +278,9 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     const valueToNodeKinds = nodeKinds.map((nodeKind) => {
       switch (nodeKind) {
         case "BlankNode":
-          return code`\`_:\${${variables.value}.value}\``;
+          return code`\`_:\${${variables.object}.${this.name}().value}\``;
         case "IRI":
-          return code`${variables.value}.value`;
+          return code`${variables.object}.${this.name}().value`;
         default:
           throw new RangeError(nodeKind);
       }
@@ -296,7 +290,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     }
     invariant(valueToNodeKinds.length === 2);
     return Maybe.of(
-      code`"@id": ${variables.value}.termType === "${NodeKind.toTermType(nodeKinds[0])}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
+      code`"@id": ${variables.object}.${this.name}().termType === "${NodeKind.toTermType(nodeKinds[0])}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
     );
   }
 
@@ -304,13 +298,13 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return [];
   }
 
-  override toStringInitializer(
-    parameters: Parameters<
-      ObjectType_AbstractProperty["toStringInitializer"]
-    >[0],
-  ): Maybe<Code> {
+  override toStringInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toStringInitializer"]
+  >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${literalOf(this.name)}: ${this.type.toStringExpression(parameters)}`,
+      code`${literalOf(this.name)}: ${this.type.toStringExpression({ variables: { value: code`${variables.object}.${this.name}()` } })}`,
     );
   }
 }
