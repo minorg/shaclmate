@@ -1,24 +1,24 @@
-import { invariant } from "ts-invariant";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const variables = {
   filter: code`filter`,
-  object: code`object`,
+  object: code`value`,
 };
 
 export function ObjectType_filterFunctionExpression(this: ObjectType): Code {
   const statements: Code[] = [];
   for (const property of this.properties) {
-    const filterExpression = property.filterExpression({ variables }).extract();
-    const filterProperty = property.filterProperty.extract();
-    if (filterExpression && filterProperty) {
-      statements.push(
-        code`if (${variables.filter}.${filterProperty.name} !== undefined && !${filterExpression}) { return false; }`,
-      );
-    } else {
-      invariant(!filterExpression && !filterProperty);
-    }
+    property
+      .filterExpression({
+        variables,
+      })
+      .ifJust((filterExpression) => {
+        const filterProperty = property.filterProperty.unsafeCoerce();
+        statements.push(
+          code`if (${variables.filter}.${filterProperty.name} !== undefined && !${filterExpression}) { return false; }`,
+        );
+      });
   }
   statements.push(code`return true;`);
 

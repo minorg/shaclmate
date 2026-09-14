@@ -1,19 +1,20 @@
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-const variables = {
-  filter: code`parameters.filter`,
-  preferredLanguages: code`parameters.preferredLanguages`,
-  focusIdentifier: code`parameters.focusIdentifier`,
-  ignoreRdfType: code`parameters.ignoreRdfType`,
-  variablePrefix: code`parameters.variablePrefix`,
-};
-
 export function ObjectType_focusSparqlWherePatternsFunctionExpression(
   this: ObjectType,
 ): Code {
   let patternsVariableDeclarationKeyword = "const";
   const statements: Code[] = [];
+
+  const variables = {
+    filter: code`parameters.filter`,
+    preferredLanguages: code`parameters.preferredLanguages`,
+    focusIdentifier: code`parameters.focusIdentifier`,
+    ignoreRdfType: code`parameters.ignoreRdfType`,
+    schema: this.name.map((name) => code`${name}.schema`),
+    variablePrefix: code`parameters.variablePrefix`,
+  };
 
   for (const property of this.properties) {
     if (property.recursive) {

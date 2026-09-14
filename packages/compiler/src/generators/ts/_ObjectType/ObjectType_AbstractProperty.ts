@@ -147,6 +147,11 @@ export abstract class ObjectType_AbstractProperty {
 
   /**
    * Expression to filter this property using an instance of the ObjectType's filter.
+   *
+   * Parameters:
+   *   variables: runtime variables
+   *     - filter: an instance of the object's filterType or undefined
+   *     - object: an instance of the object
    */
   abstract filterExpression(parameters: {
     variables: { filter: Code; object: Code };
@@ -214,6 +219,7 @@ export abstract class ObjectType_AbstractProperty {
    *     - filter: an instance of the object's filterType or undefined
    *     - focusIdentifier: identifier (rdfjs.NamedNode or rdfjs.Variable) of the object that is the focus of the patterns
    *     - ignoreRdfType: whether the RDF type of objects/object unions should be ignored
+   *     - schema: an instance of the object's schema if available
    *     - preferredLanguages: array of preferred language code (strings)
    *     - variablePrefix: prefix to use for new SPARQL variables
    *
@@ -227,6 +233,7 @@ export abstract class ObjectType_AbstractProperty {
       focusIdentifier: Code;
       ignoreRdfType: Code;
       preferredLanguages: Code;
+      schema: Maybe<Code>;
       variablePrefix: Code;
     };
   }): Maybe<{ condition?: Code; patterns: Code }>;

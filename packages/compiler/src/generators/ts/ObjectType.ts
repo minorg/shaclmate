@@ -339,7 +339,10 @@ export class ObjectType extends AbstractType {
   get fromRdfTypeVariable(): Maybe<Code> {
     return this.rdfTypeProperty.map((rdfTypeProperty) =>
       this.name
-        .map((name) => code`${name}.schema.fromRdfType`)
+        .map(
+          (name) =>
+            code`${name}.schema.properties.${rdfTypeProperty.name}.fromRdfType`,
+        )
         .orDefaultLazy(() =>
           this.rdfjsTermExpression(rdfTypeProperty.fromRdfType),
         ),
@@ -410,6 +413,11 @@ export class ObjectType extends AbstractType {
   @Memoize()
   override get schemaExpression(): Code {
     return ObjectType_schemaExpression.call(this);
+  }
+
+  @Memoize()
+  get schemaVariable(): Maybe<Code> {
+    return this.name.map((name) => code`${name}.schema`);
   }
 
   @Memoize()
@@ -512,8 +520,11 @@ export class ObjectType extends AbstractType {
   @Memoize()
   protected get toRdfTypesVariable(): Maybe<Code> {
     return this.rdfTypeProperty.map((rdfTypeProperty) =>
-      this.name
-        .map((name) => code`${name}.schema.toRdfTypes`)
+      this.schemaVariable
+        .map(
+          (schemaVariable) =>
+            code`${schemaVariable}.properties.${rdfTypeProperty.name}.toRdfTypes`,
+        )
         .orDefaultLazy(
           () =>
             code`${arrayOf(...rdfTypeProperty.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,

@@ -241,7 +241,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["filterExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.filterFunction}(${variables.filter}, ${variables.object}.${this.name})`,
+      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name})`,
     );
   }
 
