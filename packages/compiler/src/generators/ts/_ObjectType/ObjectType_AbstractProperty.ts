@@ -7,12 +7,7 @@ import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export abstract class ObjectType_AbstractProperty<
-  TypeT extends Pick<
-    Type,
-    "expression" | "filterFunction" | "mutable" | "schema"
-  >,
-> {
+export abstract class ObjectType_AbstractProperty {
   protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
   protected readonly objectType: { readonly name: Maybe<string> };
@@ -107,32 +102,24 @@ export abstract class ObjectType_AbstractProperty<
    */
   abstract readonly schemaType: Maybe<Code>;
 
-  /**
-   * Property type
-.   */
-  readonly type: TypeT;
-
   constructor({
     configuration,
     logger,
     name,
     objectType,
     reusables,
-    type,
   }: {
     configuration: TsGenerator.Configuration;
     logger: Logger;
     name: string;
     objectType: { readonly name: Maybe<string> };
     reusables: Reusables;
-    type: TypeT;
   }) {
     this.configuration = configuration;
     this.logger = logger;
     this.name = name;
     this.objectType = objectType;
     this.reusables = reusables;
-    this.type = type;
     this.rdfjsTermExpression = rdfjsTermExpression.bind({
       imports: this.reusables.imports,
       logger: this.logger,
