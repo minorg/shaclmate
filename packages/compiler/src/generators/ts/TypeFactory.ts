@@ -130,12 +130,12 @@ export class TypeFactory {
             }),
           );
 
-        rdfTypeProperty.ifJust((rdfTypeProperty) => {
-          properties.splice(0, 0, rdfTypeProperty);
-        });
-
         discriminantProperty.ifJust((discriminantProperty) => {
           properties.splice(0, 0, discriminantProperty);
+        });
+
+        rdfTypeProperty.ifJust((rdfTypeProperty) => {
+          properties.splice(0, 0, rdfTypeProperty);
         });
 
         properties.splice(

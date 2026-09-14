@@ -29,6 +29,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   readonly toRdfTypes: readonly NamedNode[];
 
   constructor({
+    configuration,
     fromRdfType,
     toRdfTypes,
     ...superParameters
@@ -41,7 +42,8 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   >) {
     super({
       ...superParameters,
-      name: "rdfType",
+      configuration,
+      name: `${configuration.syntheticNamePrefix}rdfType`,
     });
     this.fromRdfType = fromRdfType;
     this.toRdfTypes = toRdfTypes;
