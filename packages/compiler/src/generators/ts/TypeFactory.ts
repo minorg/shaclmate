@@ -89,6 +89,18 @@ export class TypeFactory {
         }),
     );
 
+    const rdfTypeProperty = astType.fromRdfType.map(
+      (fromRdfType) =>
+        new ObjectType.RdfTypeProperty({
+          configuration: this.configuration,
+          fromRdfType,
+          logger: this.logger,
+          objectType: { name: astType.name },
+          reusables: this.reusables,
+          toRdfTypes: astType.toRdfTypes,
+        }),
+    );
+
     const identifierType = this.createIdentifierType(astType.identifierType);
 
     const objectType = new ObjectType({
@@ -96,7 +108,6 @@ export class TypeFactory {
       comment: astType.comment,
       configuration: this.configuration,
       extern: astType.extern,
-      fromRdfType: astType.fromRdfType,
       identifierType,
       label: astType.label,
       lazyProperties: (objectType: ObjectType) => {
@@ -118,6 +129,10 @@ export class TypeFactory {
               objectType,
             }),
           );
+
+        rdfTypeProperty.ifJust((rdfTypeProperty) => {
+          properties.splice(0, 0, rdfTypeProperty);
+        });
 
         discriminantProperty.ifJust((discriminantProperty) => {
           properties.splice(0, 0, discriminantProperty);
@@ -142,11 +157,11 @@ export class TypeFactory {
       name: astType.name.map((name) =>
         this.tsName(name, { synthetic: astType.synthetic }),
       ),
+      rdfTypeProperty,
       recursive: astType.recursive,
       reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
       synthetic: astType.synthetic,
-      toRdfTypes: astType.toRdfTypes,
     });
     this.cachedObjectTypesByShapeIdentifier.set(
       astType.shapeIdentifier,

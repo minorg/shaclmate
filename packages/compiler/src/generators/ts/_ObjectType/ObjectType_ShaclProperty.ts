@@ -85,7 +85,7 @@ export class ObjectType_ShaclProperty<
   }
 
   @Memoize()
-  override get declaration(): Code {
+  override get declaration(): Maybe<Code> {
     let declaration = code`${!this.mutable ? "readonly " : ""}${this.name}: ${this.type.expression};`;
     this.comment
       .alt(this.description)
@@ -94,7 +94,7 @@ export class ObjectType_ShaclProperty<
       .ifJust((comment) => {
         declaration = code`${comment}${declaration}`;
       });
-    return declaration;
+    return Maybe.of(declaration);
   }
 
   @Memoize()
@@ -118,7 +118,7 @@ export class ObjectType_ShaclProperty<
     });
   }
 
-  override get hashFunctionParameter(): Code {
+  override get hashFunctionParameter(): Maybe<Code> {
     return this.declaration;
   }
 
@@ -221,6 +221,28 @@ export class ObjectType_ShaclProperty<
     }
 
     return Maybe.of(code`${this.name}: ${rhs}`);
+  }
+
+  override equalsExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["equalsExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
+        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
+        [left, ${this.accessExpression({ variables: { object: variables.leftObject } })}],
+        [right, ${this.accessExpression({ variables: { object: variables.rightObject } })}],
+      )`);
+  }
+
+  override filterExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["filterExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.type.filterFunction}(${variables.filter}, ${this.accessExpression({ variables: { object: variables.object } })})`,
+    );
   }
 
   override fromJsonInitializer({

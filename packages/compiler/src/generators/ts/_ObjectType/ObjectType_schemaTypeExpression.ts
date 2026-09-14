@@ -5,10 +5,6 @@ import { type Code, code } from "../ts-poet-wrapper.js";
 export function ObjectType_schemaTypeExpression(this: ObjectType): Code {
   const schemaType: Record<string, unknown> = {};
 
-  this.fromRdfType.ifJust(() => {
-    schemaType["fromRdfType"] = code`${this.reusables.imports.NamedNode}`;
-  });
-
   const properties: Record<string, Code> = {};
   for (const property of this.properties) {
     property.schemaType.ifJust((propertySchemaType) => {

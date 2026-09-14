@@ -24,7 +24,7 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     value: string;
   } & Omit<
     ConstructorParameters<typeof ObjectType_AbstractProperty>[0],
-    "name" | "type"
+    "name"
   >) {
     super({
       ...superParameters,
@@ -35,13 +35,13 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   }
 
   @Memoize()
-  get declaration() {
-    return code`readonly ${this.name}: ${literalOf(this.value)};`;
+  get declaration(): Maybe<Code> {
+    return Maybe.of(code`readonly ${this.name}: ${literalOf(this.value)};`);
   }
 
   @Memoize()
-  get hashFunctionParameter() {
-    return code`readonly ${this.name}?: ${literalOf(this.value)};`;
+  get hashFunctionParameter(): Maybe<Code> {
+    return Maybe.of(code`readonly ${this.name}?: ${literalOf(this.value)};`);
   }
 
   @Memoize()
@@ -82,6 +82,16 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   }
 
   override constructorInitializer(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
+  @Memoize()
+  override equalsExpression(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
+  @Memoize()
+  override filterExpression(): Maybe<Code> {
     return Maybe.empty();
   }
 

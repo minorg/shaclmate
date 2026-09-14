@@ -1,20 +1,15 @@
 import type { ObjectType } from "../ObjectType.js";
-import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+
+const variables = {
+  leftObject: code`left`,
+  rightObject: code`right`,
+};
 
 export function ObjectType_equalsFunctionExpression(this: ObjectType): Code {
   const chain: Code[] = [];
   for (const property of this.properties) {
-    if (property.kind === "Discriminant") {
-      continue;
-    }
-
-    chain.push(
-      code`${this.reusables.snippets.propertyEquals}(
-        { equalsFunction: ${property.type.equalsFunction}, name: ${literalOf(property.name)} },
-        [left, ${property.accessExpression({ variables: { object: code`left` } })}],
-        [right, ${property.accessExpression({ variables: { object: code`right` } })}],
-      )`,
-    );
+    chain.push(...property.equalsExpression({ variables }).toList());
   }
 
   return code`\

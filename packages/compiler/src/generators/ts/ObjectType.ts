@@ -1,4 +1,3 @@
-import type { NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
 
 import { camelCase } from "change-case";
@@ -53,7 +52,7 @@ export class ObjectType extends AbstractType {
     { instanceof: "Object", typeof: "object" },
   ] as const;
   override readonly kind = "Object";
-  override readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
+  readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
   override readonly recursive: boolean;
   readonly synthetic: boolean;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
@@ -71,14 +70,12 @@ export class ObjectType extends AbstractType {
     discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
     comment: Maybe<string>;
     extern: boolean;
-    fromRdfType: Maybe<NamedNode>;
     identifierType: BlankNodeType | IdentifierType | IriType;
     label: Maybe<string>;
     lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
     rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
     recursive: boolean;
     synthetic: boolean;
-    toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.discriminantProperty = discriminantProperty;
@@ -340,10 +337,12 @@ export class ObjectType extends AbstractType {
 
   @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
-    return this.fromRdfType.map((fromRdfType) =>
+    return this.rdfTypeProperty.map((rdfTypeProperty) =>
       this.name
         .map((name) => code`${name}.schema.fromRdfType`)
-        .orDefaultLazy(() => this.rdfjsTermExpression(fromRdfType)),
+        .orDefaultLazy(() =>
+          this.rdfjsTermExpression(rdfTypeProperty.fromRdfType),
+        ),
     );
   }
 
@@ -534,7 +533,7 @@ export class ObjectType extends AbstractType {
 
   protected override get inlineExpression(): Code {
     return code`{ ${joinCode(
-      this.properties.map((property) => property.declaration),
+      this.properties.flatMap((property) => property.declaration.toList()),
       { on: "\n\n" },
     )} }`;
   }

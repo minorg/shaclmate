@@ -19,9 +19,15 @@ export function ObjectType_hashFunctionExpression(this: ObjectType): Code {
     }
     statements = statements.concat(propertyHashStatements);
 
-    if (!codeEquals(property.hashFunctionParameter, property.declaration)) {
+    const declaration = property.declaration.extract();
+    const hashFunctionParameter = property.hashFunctionParameter.extract();
+    if (
+      declaration &&
+      hashFunctionParameter &&
+      !codeEquals(hashFunctionParameter, declaration)
+    ) {
       replacePropertyDeclarations[property.name] =
-        code`${property.hashFunctionParameter}`;
+        code`${hashFunctionParameter}`;
     }
   }
   statements.push(code`return ${hasherVariable};`);

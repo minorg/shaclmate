@@ -56,8 +56,20 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  override get declaration(): Code {
-    return code`readonly ${this.name}: () => ${this.typeExpression};`;
+  override get declaration(): Maybe<Code> {
+    return Maybe.of(code`readonly ${this.name}: () => ${this.typeExpression};`);
+  }
+
+  override equalsExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["equalsExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
+        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
+        [left, ${this.accessExpression({ variables: { object: variables.leftObject } })}],
+        [right, ${this.accessExpression({ variables: { object: variables.rightObject } })}],
+      )`);
   }
 
   @Memoize()
@@ -66,6 +78,16 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       name: this.name,
       type: this.type.filterType,
     });
+  }
+
+  override filterExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["filterExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.type.filterFunction}(${variables.filter}, ${this.accessExpression({ variables: { object: variables.object } })})`,
+    );
   }
 
   @Memoize()
@@ -82,8 +104,10 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  override get hashFunctionParameter(): Code {
-    return code`readonly ${this.name}?: () => ${this.typeExpression};`;
+  override get hashFunctionParameter(): Maybe<Code> {
+    return Maybe.of(
+      code`readonly ${this.name}?: () => ${this.typeExpression};`,
+    );
   }
 
   @Memoize()

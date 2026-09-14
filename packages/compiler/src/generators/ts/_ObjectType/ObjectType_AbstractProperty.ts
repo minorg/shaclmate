@@ -1,4 +1,5 @@
 import type { Logger } from "@rdfx/logger";
+
 import type { Maybe } from "purify-ts";
 
 import type { Reusables } from "../Reusables.js";
@@ -24,7 +25,7 @@ export abstract class ObjectType_AbstractProperty {
   /**
    * Property declaration to include in the type declaration of the ObjectType.
    */
-  abstract readonly declaration: Code;
+  abstract readonly declaration: Maybe<Code>;
 
   /**
    * Optional property in the ObjectType's filter.
@@ -57,7 +58,7 @@ export abstract class ObjectType_AbstractProperty {
    *
    * Only specified if different from declaration.
    */
-  abstract readonly hashFunctionParameter: Code;
+  abstract readonly hashFunctionParameter: Maybe<Code>;
 
   /**
    * zod object key: schema.
@@ -142,6 +143,23 @@ export abstract class ObjectType_AbstractProperty {
   }): Maybe<Code>;
 
   /**
+   * An expression that compares two values of this property, returning a $EqualsResult.
+   */
+  abstract equalsExpression(parameters: {
+    variables: {
+      leftObject: Code;
+      rightObject: Code;
+    };
+  }): Maybe<Code>;
+
+  /**
+   * Expression to filter this property using an instance of the ObjectType's filter.
+   */
+  abstract filterExpression(parameters: {
+    variables: { filter: Code; object: Code };
+  }): Maybe<Code>;
+
+  /**
    * Initializer (name: value) from a JSON object.
    */
   abstract fromJsonInitializer(parameters: {
@@ -181,12 +199,18 @@ export abstract class ObjectType_AbstractProperty {
    *   variables: runtime variables
    *     - filter: an instance of the object's filterType or undefined
    *     - focusIdentifier: identifier (rdfjs.NamedNode or rdfjs.Variable) of the object that is the focus of the patterns
+   *     - ignoreRdfType: whether the RDF type of objects/object unions should be ignored
    *     - variablePrefix: prefix to use for new SPARQL variables
    *
    * Returns a (runtime) array of sparqljs.Triple.
    */
   abstract sparqlConstructTriplesExpression(parameters: {
-    variables: { filter: Code; focusIdentifier: Code; variablePrefix: Code };
+    variables: {
+      filter: Code;
+      focusIdentifier: Code;
+      ignoreRdfType: Code;
+      variablePrefix: Code;
+    };
   }): Maybe<Code>;
 
   /**
@@ -196,6 +220,7 @@ export abstract class ObjectType_AbstractProperty {
    *   variables: (at runtime)
    *     - filter: an instance of the object's filterType or undefined
    *     - focusIdentifier: identifier (rdfjs.NamedNode or rdfjs.Variable) of the object that is the focus of the patterns
+   *     - ignoreRdfType: whether the RDF type of objects/object unions should be ignored
    *     - preferredLanguages: array of preferred language code (strings)
    *     - variablePrefix: prefix to use for new SPARQL variables
    *
@@ -207,6 +232,7 @@ export abstract class ObjectType_AbstractProperty {
     variables: {
       filter: Code;
       focusIdentifier: Code;
+      ignoreRdfType: Code;
       preferredLanguages: Code;
       variablePrefix: Code;
     };
