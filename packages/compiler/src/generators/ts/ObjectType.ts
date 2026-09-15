@@ -1,4 +1,3 @@
-import type { NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
 
 import { camelCase } from "change-case";
@@ -24,6 +23,7 @@ import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonType
 import { ObjectType_jsonUiSchemaFunctionExpression } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionExpression.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import type { ObjectType_Property } from "./_ObjectType/ObjectType_Property.js";
+import { ObjectType_RdfTypeProperty } from "./_ObjectType/ObjectType_RdfTypeProperty.js";
 import { ObjectType_ShaclProperty } from "./_ObjectType/ObjectType_ShaclProperty.js";
 import { ObjectType_schemaExpression } from "./_ObjectType/ObjectType_schemaExpression.js";
 import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schemaTypeExpression.js";
@@ -44,17 +44,15 @@ import type { Type } from "./Type.js";
 import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ObjectType extends AbstractType {
-  protected readonly toRdfTypes: readonly NamedNode[];
-
   override readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
   readonly extern: boolean;
-  readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
   override readonly kind = "Object";
+  readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
   override readonly recursive: boolean;
   readonly synthetic: boolean;
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
@@ -62,35 +60,32 @@ export class ObjectType extends AbstractType {
   constructor({
     discriminantProperty,
     extern,
-    fromRdfType,
     identifierType,
     lazyProperties,
+    rdfTypeProperty,
     recursive,
     synthetic,
-    toRdfTypes,
     ...superParameters
   }: {
     discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
     comment: Maybe<string>;
     extern: boolean;
-    fromRdfType: Maybe<NamedNode>;
     identifierType: BlankNodeType | IdentifierType | IriType;
     label: Maybe<string>;
     lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
+    rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
     recursive: boolean;
     synthetic: boolean;
-    toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.discriminantProperty = discriminantProperty;
     this.extern = extern;
-    this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
     // Lazily initialize some members in getters to avoid recursive construction
     this.lazyProperties = lazyProperties;
+    this.rdfTypeProperty = rdfTypeProperty;
     this.recursive = recursive;
     this.synthetic = synthetic;
-    this.toRdfTypes = toRdfTypes;
   }
 
   @Memoize()
@@ -342,10 +337,15 @@ export class ObjectType extends AbstractType {
 
   @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
-    return this.fromRdfType.map((fromRdfType) =>
+    return this.rdfTypeProperty.map((rdfTypeProperty) =>
       this.name
-        .map((name) => code`${name}.schema.fromRdfType`)
-        .orDefaultLazy(() => this.rdfjsTermExpression(fromRdfType)),
+        .map(
+          (name) =>
+            code`${name}.schema.properties.${rdfTypeProperty.name}.fromRdfType`,
+        )
+        .orDefaultLazy(() =>
+          this.rdfjsTermExpression(rdfTypeProperty.fromRdfType),
+        ),
     );
   }
 
@@ -413,6 +413,11 @@ export class ObjectType extends AbstractType {
   @Memoize()
   override get schemaExpression(): Code {
     return ObjectType_schemaExpression.call(this);
+  }
+
+  @Memoize()
+  get schemaVariable(): Maybe<Code> {
+    return this.name.map((name) => code`${name}.schema`);
   }
 
   @Memoize()
@@ -514,15 +519,15 @@ export class ObjectType extends AbstractType {
 
   @Memoize()
   protected get toRdfTypesVariable(): Maybe<Code> {
-    if (this.toRdfTypes.length === 0) {
-      return Maybe.empty();
-    }
-    return Maybe.of(
-      this.name
-        .map((name) => code`${name}.schema.toRdfTypes`)
+    return this.rdfTypeProperty.map((rdfTypeProperty) =>
+      this.schemaVariable
+        .map(
+          (schemaVariable) =>
+            code`${schemaVariable}.properties.${rdfTypeProperty.name}.toRdfTypes`,
+        )
         .orDefaultLazy(
           () =>
-            code`${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
+            code`${arrayOf(...rdfTypeProperty.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
         ),
     );
   }
@@ -539,7 +544,7 @@ export class ObjectType extends AbstractType {
 
   protected override get inlineExpression(): Code {
     return code`{ ${joinCode(
-      this.properties.map((property) => property.declaration),
+      this.properties.flatMap((property) => property.declaration.toList()),
       { on: "\n\n" },
     )} }`;
   }
@@ -640,9 +645,7 @@ export class ObjectType extends AbstractType {
         property
           .toStringInitializer({
             variables: {
-              value: property.accessExpression({
-                variables: { object: variables.value },
-              }),
+              object: variables.value,
             },
           })
           .toList(),
@@ -671,4 +674,6 @@ export namespace ObjectType {
     ObjectType_ShaclProperty<TypeT>;
   export const DiscriminantProperty = ObjectType_DiscriminantProperty;
   export type DiscriminantProperty = ObjectType_DiscriminantProperty;
+  export const RdfTypeProperty = ObjectType_RdfTypeProperty;
+  export type RdfTypeProperty = ObjectType_RdfTypeProperty;
 }

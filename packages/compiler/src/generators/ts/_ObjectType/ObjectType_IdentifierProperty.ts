@@ -17,12 +17,21 @@ import {
 } from "../ts-poet-wrapper.js";
 import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
-export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
-  BlankNodeType | IdentifierType | IriType
-> {
+export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   override readonly kind = "Identifier";
   override readonly mutable = false;
   override readonly recursive = false;
+  readonly type: BlankNodeType | IdentifierType | IriType;
+
+  constructor({
+    type,
+    ...superParameters
+  }: { type: BlankNodeType | IdentifierType | IriType } & ConstructorParameters<
+    typeof ObjectType_AbstractProperty
+  >[0]) {
+    super(superParameters);
+    this.type = type;
+  }
 
   @Memoize()
   override get constructorParameter(): Maybe<{
@@ -47,8 +56,20 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
   }
 
   @Memoize()
-  override get declaration(): Code {
-    return code`readonly ${this.name}: () => ${this.typeExpression};`;
+  override get declaration(): Maybe<Code> {
+    return Maybe.of(code`readonly ${this.name}: () => ${this.typeExpression};`);
+  }
+
+  override equalsExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["equalsExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
+        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
+        [left, ${variables.leftObject}.${this.name}()],
+        [right, ${variables.rightObject}.${this.name}()],
+      )`);
   }
 
   @Memoize()
@@ -59,26 +80,38 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
     });
   }
 
+  override filterExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["filterExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name}())`,
+    );
+  }
+
   @Memoize()
-  override get graphqlField(): ObjectType_AbstractProperty<IdentifierType>["graphqlField"] {
+  override get graphqlField(): ObjectType_AbstractProperty["graphqlField"] {
     const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     invariant(this.name.startsWith(syntheticNamePrefix));
     return Maybe.of({
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.type.stringifyFunction}(${this.accessExpression({ variables: { object: code`source` } })})`,
+      resolve: code`(source) => ${this.type.stringifyFunction}(source.${this.name}())`,
       type: this.type.graphqlType.expression,
     });
   }
 
   @Memoize()
-  override get hashFunctionParameter(): Code {
-    return code`readonly ${this.name}?: () => ${this.typeExpression};`;
+  override get hashFunctionParameter(): Maybe<Code> {
+    return Maybe.of(
+      code`readonly ${this.name}?: () => ${this.typeExpression};`,
+    );
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty<IdentifierType>["jsonSchema"] {
+  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
     let schema: Code;
     if (this.type.in_.length > 0 && this.type.kind === "Iri") {
       // Treat sh:in as a union of the IRIs
@@ -139,20 +172,10 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
       .orDefaultLazy(() => this.type.schema);
   }
 
-  override accessExpression({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty<
-      BlankNodeType | IdentifierType | IriType
-    >["accessExpression"]
-  >[0]): Code {
-    return code`${variables.object}.${this.name}()`;
-  }
-
   override constructorInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<IdentifierType>["constructorInitializer"]
+    ObjectType_AbstractProperty["constructorInitializer"]
   >[0]): Maybe<Code> {
     const nodeKinds = this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>;
 
@@ -181,7 +204,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
   override fromJsonInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<IdentifierType>["fromJsonInitializer"]
+    ObjectType_AbstractProperty["fromJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: ${this.type.fromJsonExpression({
@@ -193,7 +216,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
   override fromRdfResourceValuesInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<IdentifierType>["fromRdfResourceValuesInitializer"]
+    ObjectType_AbstractProperty["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: ${this.type.fromRdfResourceValuesFunction}(
@@ -206,17 +229,17 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
   override hashStatements({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<IdentifierType>["hashStatements"]
+    ObjectType_AbstractProperty["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}().value); }`,
+      code`if (${variables.object}.${this.name}) { ${variables.hasher}.update(${variables.object}.${this.name}().value); }`,
     ];
   }
 
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<IdentifierType>["jsonUiSchemaElement"]
+    ObjectType_AbstractProperty["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
@@ -230,7 +253,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
   override sparqlWherePatternsExpression({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<IdentifierType>["sparqlWherePatternsExpression"]
+    ObjectType_AbstractProperty["sparqlWherePatternsExpression"]
   >[0]) {
     return Maybe.of({
       condition: code`${variables.focusIdentifier}.termType === "Variable"`,
@@ -249,15 +272,15 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
   override toJsonInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<IdentifierType>["toJsonInitializer"]
+    ObjectType_AbstractProperty["toJsonInitializer"]
   >[0]): Maybe<Code> {
     const nodeKinds = [...this.type.nodeKinds];
     const valueToNodeKinds = nodeKinds.map((nodeKind) => {
       switch (nodeKind) {
         case "BlankNode":
-          return code`\`_:\${${variables.value}.value}\``;
+          return code`\`_:\${${variables.object}.${this.name}().value}\``;
         case "IRI":
-          return code`${variables.value}.value`;
+          return code`${variables.object}.${this.name}().value`;
         default:
           throw new RangeError(nodeKind);
       }
@@ -267,7 +290,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
     }
     invariant(valueToNodeKinds.length === 2);
     return Maybe.of(
-      code`"@id": ${variables.value}.termType === "${NodeKind.toTermType(nodeKinds[0])}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
+      code`"@id": ${variables.object}.${this.name}().termType === "${NodeKind.toTermType(nodeKinds[0])}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
     );
   }
 
@@ -275,13 +298,13 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty<
     return [];
   }
 
-  override toStringInitializer(
-    parameters: Parameters<
-      ObjectType_AbstractProperty<IdentifierType>["toStringInitializer"]
-    >[0],
-  ): Maybe<Code> {
+  override toStringInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toStringInitializer"]
+  >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${literalOf(this.name)}: ${this.type.toStringExpression(parameters)}`,
+      code`${literalOf(this.name)}: ${this.type.toStringExpression({ variables: { value: code`${variables.object}.${this.name}()` } })}`,
     );
   }
 }

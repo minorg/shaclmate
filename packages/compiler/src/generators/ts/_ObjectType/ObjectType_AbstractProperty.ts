@@ -1,18 +1,14 @@
 import type { Logger } from "@rdfx/logger";
+
 import type { Maybe } from "purify-ts";
 
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
-import { type Code, code } from "../ts-poet-wrapper.js";
+import type { Code } from "../ts-poet-wrapper.js";
 
-export abstract class ObjectType_AbstractProperty<
-  TypeT extends Pick<
-    Type,
-    "expression" | "filterFunction" | "mutable" | "schema"
-  >,
-> {
+export abstract class ObjectType_AbstractProperty {
   protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
   protected readonly objectType: { readonly name: Maybe<string> };
@@ -29,7 +25,7 @@ export abstract class ObjectType_AbstractProperty<
   /**
    * Property declaration to include in the type declaration of the ObjectType.
    */
-  abstract readonly declaration: Code;
+  abstract readonly declaration: Maybe<Code>;
 
   /**
    * Optional property in the ObjectType's filter.
@@ -62,7 +58,7 @@ export abstract class ObjectType_AbstractProperty<
    *
    * Only specified if different from declaration.
    */
-  abstract readonly hashFunctionParameter: Code;
+  abstract readonly hashFunctionParameter: Maybe<Code>;
 
   /**
    * zod object key: schema.
@@ -107,32 +103,24 @@ export abstract class ObjectType_AbstractProperty<
    */
   abstract readonly schemaType: Maybe<Code>;
 
-  /**
-   * Property type
-.   */
-  readonly type: TypeT;
-
   constructor({
     configuration,
     logger,
     name,
     objectType,
     reusables,
-    type,
   }: {
     configuration: TsGenerator.Configuration;
     logger: Logger;
     name: string;
     objectType: { readonly name: Maybe<string> };
     reusables: Reusables;
-    type: TypeT;
   }) {
     this.configuration = configuration;
     this.logger = logger;
     this.name = name;
     this.objectType = objectType;
     this.reusables = reusables;
-    this.type = type;
     this.rdfjsTermExpression = rdfjsTermExpression.bind({
       imports: this.reusables.imports,
       logger: this.logger,
@@ -141,17 +129,32 @@ export abstract class ObjectType_AbstractProperty<
   }
 
   /**
-   * Expression to access the value of this property on an object instance. May evaluate a thunk.
-   */
-  accessExpression({ variables }: { variables: { object: Code } }): Code {
-    return code`${variables.object}.${this.name}`;
-  }
-
-  /**
    * Initializer (name: value) from a constructor parameter.
    */
   abstract constructorInitializer(parameters: {
     variables: { parameters: Code };
+  }): Maybe<Code>;
+
+  /**
+   * An expression that compares two values of this property, returning a $EqualsResult.
+   */
+  abstract equalsExpression(parameters: {
+    variables: {
+      leftObject: Code;
+      rightObject: Code;
+    };
+  }): Maybe<Code>;
+
+  /**
+   * Expression to filter this property using an instance of the ObjectType's filter.
+   *
+   * Parameters:
+   *   variables: runtime variables
+   *     - filter: an instance of the object's filterType or undefined
+   *     - object: an instance of the object
+   */
+  abstract filterExpression(parameters: {
+    variables: { filter: Code; object: Code };
   }): Maybe<Code>;
 
   /**
@@ -177,7 +180,7 @@ export abstract class ObjectType_AbstractProperty<
    * Statements to hash this property using a hasher instance.
    */
   abstract hashStatements(parameters: {
-    variables: { hasher: Code; value: Code };
+    variables: { hasher: Code; object: Code };
   }): readonly Code[];
 
   /**
@@ -194,12 +197,18 @@ export abstract class ObjectType_AbstractProperty<
    *   variables: runtime variables
    *     - filter: an instance of the object's filterType or undefined
    *     - focusIdentifier: identifier (rdfjs.NamedNode or rdfjs.Variable) of the object that is the focus of the patterns
+   *     - ignoreRdfType: whether the RDF type of objects/object unions should be ignored
    *     - variablePrefix: prefix to use for new SPARQL variables
    *
    * Returns a (runtime) array of sparqljs.Triple.
    */
   abstract sparqlConstructTriplesExpression(parameters: {
-    variables: { filter: Code; focusIdentifier: Code; variablePrefix: Code };
+    variables: {
+      filter: Code;
+      focusIdentifier: Code;
+      ignoreRdfType: Code;
+      variablePrefix: Code;
+    };
   }): Maybe<Code>;
 
   /**
@@ -209,6 +218,8 @@ export abstract class ObjectType_AbstractProperty<
    *   variables: (at runtime)
    *     - filter: an instance of the object's filterType or undefined
    *     - focusIdentifier: identifier (rdfjs.NamedNode or rdfjs.Variable) of the object that is the focus of the patterns
+   *     - ignoreRdfType: whether the RDF type of objects/object unions should be ignored
+   *     - schema: an instance of the object's schema if available
    *     - preferredLanguages: array of preferred language code (strings)
    *     - variablePrefix: prefix to use for new SPARQL variables
    *
@@ -220,7 +231,9 @@ export abstract class ObjectType_AbstractProperty<
     variables: {
       filter: Code;
       focusIdentifier: Code;
+      ignoreRdfType: Code;
       preferredLanguages: Code;
+      schema: Maybe<Code>;
       variablePrefix: Code;
     };
   }): Maybe<{ condition?: Code; patterns: Code }>;
@@ -229,7 +242,7 @@ export abstract class ObjectType_AbstractProperty<
    * Initializer (name: value) to JSON.
    */
   abstract toJsonInitializer(parameters: {
-    variables: { value: Code };
+    variables: { object: Code };
   }): Maybe<Code>;
 
   /**
@@ -238,15 +251,15 @@ export abstract class ObjectType_AbstractProperty<
   abstract toRdfRdfResourceValuesStatements(parameters: {
     variables: Omit<
       Parameters<Type["toRdfResourceValuesExpression"]>[0]["variables"],
-      "propertyPath"
-    >;
+      "propertyPath" | "value"
+    > & { object: Code };
   }): readonly Code[];
 
   /**
    * Initializer (name: value) to serialize this property to a human-readable string (toString).
    */
   abstract toStringInitializer(parameters: {
-    variables: { value: Code };
+    variables: { object: Code };
   }): Maybe<Code>;
 
   protected readonly rdfjsTermExpression: (

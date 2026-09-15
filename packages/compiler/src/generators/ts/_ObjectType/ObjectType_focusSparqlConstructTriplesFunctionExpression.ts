@@ -1,31 +1,18 @@
-import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const variables = {
   filter: code`parameters.filter`,
   focusIdentifier: code`parameters.focusIdentifier`,
+  ignoreRdfType: code`parameters.ignoreRdfType`,
   variablePrefix: code`parameters.variablePrefix`,
 };
 
 export function ObjectType_focusSparqlConstructTriplesFunctionExpression(
   this: ObjectType,
 ): Code {
-  const rdfClassVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
-  const rdfTypeVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
-
   let triplesVariableDeclarationKeyword = "const";
   const statements: Code[] = [];
-
-  if (this.fromRdfType.isJust()) {
-    statements.push(code`\
-if (!parameters?.ignoreRdfType) {
-  triples.push(
-    { subject: ${variables.focusIdentifier}, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
-    { subject: ${rdfTypeVariable}, predicate: ${this.rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} }
-  );
-}`);
-  }
 
   for (const property of this.properties) {
     if (property.recursive) {

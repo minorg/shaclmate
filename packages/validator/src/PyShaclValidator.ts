@@ -121,7 +121,7 @@ export class PyShaclValidator extends Validator {
             for (const rdfTypeQuad of validationReportDataset.match(
               null,
               null,
-              ValidationReport.schema.fromRdfType,
+              ValidationReport.schema.properties.$rdfType.fromRdfType,
             )) {
               return await liftEither(
                 ValidationReport.fromRdfResource(

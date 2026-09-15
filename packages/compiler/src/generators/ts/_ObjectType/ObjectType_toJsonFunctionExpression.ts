@@ -8,9 +8,7 @@ export function ObjectType_toJsonFunctionExpression(this: ObjectType): Code {
       property
         .toJsonInitializer({
           variables: {
-            value: property.accessExpression({
-              variables: { object: this.thisVariable },
-            }),
+            object: this.thisVariable,
           },
         })
         .toList(),

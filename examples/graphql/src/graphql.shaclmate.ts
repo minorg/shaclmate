@@ -1270,9 +1270,13 @@ export namespace LazyObject {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [LazyObject.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [LazyObject.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -1331,7 +1335,7 @@ export namespace LazyObject {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        LazyObject.schema.toRdfTypes,
+        LazyObject.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -1531,11 +1535,15 @@ export namespace LazyObject {
     object.$type === "LazyObject";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/LazyObject"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/LazyObject"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/LazyObject")],
       },
       $type: { kind: "Discriminant", value: "LazyObject" },
       optionalNumberProperty: {
@@ -1563,7 +1571,6 @@ export namespace LazyObject {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/LazyObject")],
   } as const;
 
   export type Schema = typeof schema;
@@ -1619,9 +1626,13 @@ export namespace RootObject {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [RootObject.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [RootObject.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -1860,7 +1871,7 @@ export namespace RootObject {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        RootObject.schema.toRdfTypes,
+        RootObject.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -2317,9 +2328,13 @@ export namespace RootObject {
     object.$type === "RootObject";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/RootObject"),
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/RootObject"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/RootObject")],
+      },
       $type: { kind: "Discriminant", value: "RootObject" },
       lazyObjectSetProperty: {
         kind: "Shacl",
@@ -2397,7 +2412,6 @@ export namespace RootObject {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/RootObject")],
   } as const;
 
   export type Schema = typeof schema;
@@ -2426,9 +2440,13 @@ export namespace UnionMember1 {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [UnionMember1.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [UnionMember1.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -2464,7 +2482,7 @@ export namespace UnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        UnionMember1.schema.toRdfTypes,
+        UnionMember1.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -2604,11 +2622,15 @@ export namespace UnionMember1 {
     object.$type === "UnionMember1";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember1"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/UnionMember1"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember1")],
       },
       $type: { kind: "Discriminant", value: "UnionMember1" },
       optionalNumberProperty: {
@@ -2619,7 +2641,6 @@ export namespace UnionMember1 {
         type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember1")],
   } as const;
 
   export type Schema = typeof schema;
@@ -2648,9 +2669,13 @@ export namespace UnionMember2 {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [UnionMember2.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [UnionMember2.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -2686,7 +2711,7 @@ export namespace UnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        UnionMember2.schema.toRdfTypes,
+        UnionMember2.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -2824,11 +2849,15 @@ export namespace UnionMember2 {
     object.$type === "UnionMember2";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/UnionMember2"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/UnionMember2"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember2")],
       },
       $type: { kind: "Discriminant", value: "UnionMember2" },
       optionalStringProperty: {
@@ -2842,7 +2871,6 @@ export namespace UnionMember2 {
         },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/UnionMember2")],
   } as const;
 
   export type Schema = typeof schema;
@@ -3266,7 +3294,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: LazyObject.filter,
         fromRdfResource: LazyObject.fromRdfResource,
-        fromRdfTypes: [LazyObject.schema.fromRdfType],
+        fromRdfTypes: [LazyObject.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -3338,7 +3366,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: RootObject.filter,
         fromRdfResource: RootObject.fromRdfResource,
-        fromRdfTypes: [RootObject.schema.fromRdfType],
+        fromRdfTypes: [RootObject.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -3410,7 +3438,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: UnionMember1.filter,
         fromRdfResource: UnionMember1.fromRdfResource,
-        fromRdfTypes: [UnionMember1.schema.fromRdfType],
+        fromRdfTypes: [UnionMember1.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -3482,7 +3510,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: UnionMember2.filter,
         fromRdfResource: UnionMember2.fromRdfResource,
-        fromRdfTypes: [UnionMember2.schema.fromRdfType],
+        fromRdfTypes: [UnionMember2.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -3549,12 +3577,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: Union.filter,
           fromRdfResource: UnionMember1.fromRdfResource,
-          fromRdfTypes: [UnionMember1.schema.fromRdfType],
+          fromRdfTypes: [UnionMember1.schema.properties.$rdfType.fromRdfType],
         },
         {
           filter: Union.filter,
           fromRdfResource: UnionMember2.fromRdfResource,
-          fromRdfTypes: [UnionMember2.schema.fromRdfType],
+          fromRdfTypes: [UnionMember2.schema.properties.$rdfType.fromRdfType],
         },
       ],
       query,

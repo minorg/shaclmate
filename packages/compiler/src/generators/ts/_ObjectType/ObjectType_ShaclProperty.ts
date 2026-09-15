@@ -10,7 +10,7 @@ import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
 export class ObjectType_ShaclProperty<
   TypeT extends Type,
-> extends ObjectType_AbstractProperty<TypeT> {
+> extends ObjectType_AbstractProperty {
   private readonly comment: Maybe<string>;
   private readonly description: Maybe<string>;
   private readonly display: boolean;
@@ -20,6 +20,7 @@ export class ObjectType_ShaclProperty<
   override readonly mutable: boolean;
   readonly path: PropertyPath;
   override readonly recursive: boolean;
+  readonly type: TypeT;
 
   constructor({
     comment,
@@ -29,6 +30,7 @@ export class ObjectType_ShaclProperty<
     mutable,
     path,
     recursive,
+    type,
     ...superParameters
   }: {
     comment: Maybe<string>;
@@ -38,7 +40,8 @@ export class ObjectType_ShaclProperty<
     mutable: boolean;
     path: PropertyPath;
     recursive: boolean;
-  } & ConstructorParameters<typeof ObjectType_AbstractProperty<TypeT>>[0]) {
+    type: TypeT;
+  } & ConstructorParameters<typeof ObjectType_AbstractProperty>[0]) {
     super(superParameters);
     this.comment = comment;
     this.description = description;
@@ -47,6 +50,7 @@ export class ObjectType_ShaclProperty<
     this.mutable = mutable;
     this.path = path;
     this.recursive = recursive;
+    this.type = type;
   }
 
   @Memoize()
@@ -81,7 +85,7 @@ export class ObjectType_ShaclProperty<
   }
 
   @Memoize()
-  override get declaration(): Code {
+  override get declaration(): Maybe<Code> {
     let declaration = code`${!this.mutable ? "readonly " : ""}${this.name}: ${this.type.expression};`;
     this.comment
       .alt(this.description)
@@ -90,7 +94,7 @@ export class ObjectType_ShaclProperty<
       .ifJust((comment) => {
         declaration = code`${comment}${declaration}`;
       });
-    return declaration;
+    return Maybe.of(declaration);
   }
 
   @Memoize()
@@ -102,7 +106,7 @@ export class ObjectType_ShaclProperty<
   }
 
   @Memoize()
-  override get graphqlField(): ObjectType_AbstractProperty<TypeT>["graphqlField"] {
+  override get graphqlField(): ObjectType_AbstractProperty["graphqlField"] {
     const args = this.type.graphqlArgs;
     const argsVariable = args.isJust() ? code`args` : code`_args`;
     return Maybe.of({
@@ -114,12 +118,12 @@ export class ObjectType_ShaclProperty<
     });
   }
 
-  override get hashFunctionParameter(): Code {
+  override get hashFunctionParameter(): Maybe<Code> {
     return this.declaration;
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty<TypeT>["jsonSchema"] {
+  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
     let schema = this.type.jsonSchema({
       context: "property",
     });
@@ -198,7 +202,7 @@ export class ObjectType_ShaclProperty<
   override constructorInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<TypeT>["constructorInitializer"]
+    ObjectType_AbstractProperty["constructorInitializer"]
   >[0]): Maybe<Code> {
     const parameterVariable = code`${variables.parameters}.${this.name}`;
     const defaultNamespaceVariable = code`${variables.parameters}.${this.configuration.syntheticNamePrefix}defaultNamespace`;
@@ -219,10 +223,32 @@ export class ObjectType_ShaclProperty<
     return Maybe.of(code`${this.name}: ${rhs}`);
   }
 
+  override equalsExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["equalsExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
+        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
+        [left, ${variables.leftObject}.${this.name}],
+        [right, ${variables.rightObject}.${this.name}],
+      )`);
+  }
+
+  override filterExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["filterExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name})`,
+    );
+  }
+
   override fromJsonInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<TypeT>["fromJsonInitializer"]
+    ObjectType_AbstractProperty["fromJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: ${this.type.fromJsonExpression({
@@ -234,7 +260,7 @@ export class ObjectType_ShaclProperty<
   override fromRdfResourceValuesInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<TypeT>["fromRdfResourceValuesInitializer"]
+    ObjectType_AbstractProperty["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}:
@@ -251,17 +277,17 @@ export class ObjectType_ShaclProperty<
   override hashStatements({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<TypeT>["hashStatements"]
+    ObjectType_AbstractProperty["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`${this.type.hashFunction}(${variables.hasher}, ${variables.value});`,
+      code`${this.type.hashFunction}(${variables.hasher}, ${variables.object}.${this.name});`,
     ];
   }
 
   jsonUiSchemaElement({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<TypeT>["jsonUiSchemaElement"]
+    ObjectType_AbstractProperty["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
     const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return this.type
@@ -276,7 +302,7 @@ export class ObjectType_ShaclProperty<
   override sparqlConstructTriplesExpression({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<TypeT>["sparqlConstructTriplesExpression"]
+    ObjectType_AbstractProperty["sparqlConstructTriplesExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.reusables.snippets.shaclPropertySparqlConstructTriples}(${{
@@ -297,9 +323,9 @@ export class ObjectType_ShaclProperty<
   override sparqlWherePatternsExpression({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<TypeT>["sparqlWherePatternsExpression"]
+    ObjectType_AbstractProperty["sparqlWherePatternsExpression"]
   >[0]): ReturnType<
-    ObjectType_AbstractProperty<TypeT>["sparqlWherePatternsExpression"]
+    ObjectType_AbstractProperty["sparqlWherePatternsExpression"]
   > {
     return Maybe.of({
       patterns: code`${this.reusables.snippets.shaclPropertySparqlWherePatterns}(${{
@@ -317,20 +343,20 @@ export class ObjectType_ShaclProperty<
     });
   }
 
-  override toJsonInitializer(
-    parameters: Parameters<
-      ObjectType_AbstractProperty<TypeT>["toJsonInitializer"]
-    >[0],
-  ): Maybe<Code> {
+  override toJsonInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toJsonInitializer"]
+  >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.toJsonExpression(parameters)}`,
+      code`${this.name}: ${this.type.toJsonExpression({ variables: { value: code`${variables.object}.${this.name}` } })}`,
     );
   }
 
   override toRdfRdfResourceValuesStatements({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<TypeT>["toRdfRdfResourceValuesStatements"]
+    ObjectType_AbstractProperty["toRdfRdfResourceValuesStatements"]
   >[0]): readonly Code[] {
     switch (this.path.termType) {
       case "NamedNode":
@@ -348,25 +374,32 @@ export class ObjectType_ShaclProperty<
       .map(() => code`${this.schemaVariable}.path`)
       .orDefault(this.propertyPathToCode(this.path));
 
+    const { object: objectVariable, ...otherVariables } = variables;
+
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
         {
-          variables: { ...variables, propertyPath },
+          variables: {
+            ...otherVariables,
+            propertyPath,
+            value: code`${objectVariable}.${this.name}`,
+          },
         },
       )}, ${variables.graph});`,
     ];
   }
 
-  override toStringInitializer(
-    parameters: Parameters<
-      ObjectType_AbstractProperty<TypeT>["toStringInitializer"]
-    >[0],
-  ): Maybe<Code> {
+  override toStringInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toStringInitializer"]
+  >[0]): Maybe<Code> {
     if (!this.display) {
       return Maybe.empty();
     }
+    const { object: objectVariable, ...otherVariables } = variables;
     return Maybe.of(
-      code`${literalOf(this.name)}: ${this.type.toStringExpression(parameters)}`,
+      code`${literalOf(this.name)}: ${this.type.toStringExpression({ variables: { ...otherVariables, value: code`${objectVariable}.${this.name}` } })}`,
     );
   }
 

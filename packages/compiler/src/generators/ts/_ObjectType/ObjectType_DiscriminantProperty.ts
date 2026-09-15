@@ -4,17 +4,13 @@ import { Memoize } from "typescript-memoize";
 import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
-export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type> {
-  override readonly constructorParameter: ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["constructorParameter"] =
+export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty {
+  override readonly constructorParameter: ObjectType_AbstractProperty["constructorParameter"] =
     Maybe.empty();
-  override readonly declaration =
-    code`readonly ${this.name}: ${this.type.expression};`;
-  override readonly filterProperty: ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["filterProperty"] =
+  override readonly filterProperty: ObjectType_AbstractProperty["filterProperty"] =
     Maybe.empty();
-  override readonly graphqlField: ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["graphqlField"] =
+  override readonly graphqlField: ObjectType_AbstractProperty["graphqlField"] =
     Maybe.empty();
-  override readonly hashFunctionParameter =
-    code`readonly ${this.name}?: ${this.type.expression};`;
   override readonly kind = "Discriminant";
   override readonly mutable = false;
   override readonly recursive = false;
@@ -28,15 +24,24 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     value: string;
   } & Omit<
     ConstructorParameters<typeof ObjectType_AbstractProperty>[0],
-    "name" | "type"
+    "name"
   >) {
     super({
       ...superParameters,
       configuration,
       name: configuration.objectDiscriminantProperty.name,
-      type: new ObjectType_DiscriminantProperty.Type(value),
     });
     this.value = value;
+  }
+
+  @Memoize()
+  get declaration(): Maybe<Code> {
+    return Maybe.of(code`readonly ${this.name}: ${literalOf(this.value)};`);
+  }
+
+  @Memoize()
+  get hashFunctionParameter(): Maybe<Code> {
+    return Maybe.of(code`readonly ${this.name}?: ${literalOf(this.value)};`);
   }
 
   @Memoize()
@@ -45,7 +50,7 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["jsonSchema"] {
+  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
     return Maybe.of({
       key: this.jsonName,
       schema: code`${this.reusables.imports.z}.literal(${literalOf(this.value)})`,
@@ -54,7 +59,9 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
 
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
-    return Maybe.of(code`readonly "${this.jsonName}": ${this.type.expression}`);
+    return Maybe.of(
+      code`readonly "${this.jsonName}": ${literalOf(this.value)}`,
+    );
   }
 
   override get schema(): Maybe<Code> {
@@ -78,6 +85,16 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     return Maybe.empty();
   }
 
+  @Memoize()
+  override equalsExpression(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
+  @Memoize()
+  override filterExpression(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
   override fromJsonInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
@@ -89,17 +106,17 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   override hashStatements({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["hashStatements"]
+    ObjectType_AbstractProperty["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`if (${variables.value}) { ${variables.hasher}.update(${variables.value}); }`,
+      code`if (${variables.object}.${this.name}) { ${variables.hasher}.update(${variables.object}.${this.name}); }`,
     ];
   }
 
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["jsonUiSchemaElement"]
+    ObjectType_AbstractProperty["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
     const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
     return Maybe.of(
@@ -112,7 +129,7 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   }
 
   override sparqlWherePatternsExpression(): ReturnType<
-    ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["sparqlWherePatternsExpression"]
+    ObjectType_AbstractProperty["sparqlWherePatternsExpression"]
   > {
     return Maybe.empty();
   }
@@ -120,9 +137,9 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   override toJsonInitializer({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty<ObjectType_DiscriminantProperty.Type>["toJsonInitializer"]
+    ObjectType_AbstractProperty["toJsonInitializer"]
   >[0]): Maybe<Code> {
-    return Maybe.of(code`"${this.jsonName}": ${variables.value}`);
+    return Maybe.of(code`"${this.jsonName}": ${variables.object}.${this.name}`);
   }
 
   override toRdfRdfResourceValuesStatements(): readonly Code[] {
@@ -131,24 +148,5 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
 
   override toStringInitializer(): Maybe<Code> {
     return Maybe.empty();
-  }
-}
-
-export namespace ObjectType_DiscriminantProperty {
-  export class Type {
-    readonly filterFunction = code`nonextant`;
-    readonly mutable = false;
-
-    constructor(readonly value: string) {}
-
-    @Memoize()
-    get expression(): Code {
-      return code`${literalOf(this.value)}`;
-    }
-
-    @Memoize()
-    get schema(): Code {
-      throw new Error("should never be called");
-    }
   }
 }
