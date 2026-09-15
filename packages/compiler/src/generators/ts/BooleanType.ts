@@ -1,12 +1,13 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
-
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
+  override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
+    Maybe.empty();
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBoolean}`;
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;

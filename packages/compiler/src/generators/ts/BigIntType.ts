@@ -15,9 +15,16 @@ import {
 
 export class BigIntType extends AbstractNumericType<bigint> {
   override readonly jsTypes = [{ typeof: "bigint" } as const];
-  override readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
-    Maybe.of({
-      code: code`${this.reusables.snippets.convertToBigDecimal}`,
+  override readonly kind = "BigInt";
+
+  @Memoize()
+  override get conversionFunction(): Maybe<AbstractNumericType.ConversionFunction> {
+    if (this.in_.length > 0) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      code: code`${this.reusables.snippets.convertToBigInt}`,
       sourceTypes: [
         {
           expression: code`bigint`,
@@ -33,7 +40,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
         },
       ],
     });
-  override readonly kind = "BigInt";
+  }
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {
