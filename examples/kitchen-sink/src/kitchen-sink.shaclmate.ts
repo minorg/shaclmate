@@ -4578,8 +4578,10 @@ export namespace AnonymousTypesStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [AnonymousTypesStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [AnonymousTypesStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -4726,7 +4728,7 @@ export namespace AnonymousTypesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        AnonymousTypesStruct.schema.toRdfTypes,
+        AnonymousTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -4980,20 +4982,28 @@ export namespace AnonymousTypesStruct {
     AnonymousTypesStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.anonymousStruct,
@@ -5057,48 +5067,6 @@ export namespace AnonymousTypesStruct {
     AnonymousTypesStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: AnonymousTypesStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -5112,6 +5080,52 @@ export namespace AnonymousTypesStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                AnonymousTypesStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.anonymousStruct,
@@ -5410,13 +5424,19 @@ export namespace AnonymousTypesStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/AnonymousTypesStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/AnonymousTypesStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/AnonymousTypesStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "AnonymousTypesStruct" },
       anonymousStruct: {
@@ -5442,9 +5462,6 @@ export namespace AnonymousTypesStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/AnonymousTypesStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -5596,8 +5613,10 @@ export namespace BlankNodeIdentifierStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [BlankNodeIdentifierStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [BlankNodeIdentifierStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -5637,7 +5656,7 @@ export namespace BlankNodeIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        BlankNodeIdentifierStruct.schema.toRdfTypes,
+        BlankNodeIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -5756,20 +5775,28 @@ export namespace BlankNodeIdentifierStruct {
     BlankNodeIdentifierStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.blankNodeIdentifierString,
@@ -5792,48 +5819,6 @@ export namespace BlankNodeIdentifierStruct {
     BlankNodeIdentifierStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: BlankNodeIdentifierStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $blankNodeSparqlWherePatterns({
@@ -5847,6 +5832,53 @@ export namespace BlankNodeIdentifierStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                BlankNodeIdentifierStruct.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.blankNodeIdentifierString,
@@ -5987,11 +6019,17 @@ export namespace BlankNodeIdentifierStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/BlankNodeIdentifierStruct",
-    ),
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "BlankNode" as const } },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/BlankNodeIdentifierStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/BlankNodeIdentifierStruct"),
+        ],
+      },
       $type: { kind: "Discriminant", value: "BlankNodeIdentifierStruct" },
       blankNodeIdentifierString: {
         kind: "Shacl",
@@ -6004,9 +6042,6 @@ export namespace BlankNodeIdentifierStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/BlankNodeIdentifierStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -6144,7 +6179,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [BlankNodeOrIriIdentifierStruct.schema.fromRdfType],
+          [
+            BlankNodeOrIriIdentifierStruct.schema.properties.$rdfType
+              .fromRdfType,
+          ],
           {
             graph: options.graph,
           },
@@ -6189,7 +6227,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        BlankNodeOrIriIdentifierStruct.schema.toRdfTypes,
+        BlankNodeOrIriIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -6314,20 +6352,28 @@ export namespace BlankNodeOrIriIdentifierStruct {
     BlankNodeOrIriIdentifierStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.blankNodeOrIriIdentifierString,
@@ -6351,48 +6397,6 @@ export namespace BlankNodeOrIriIdentifierStruct {
     BlankNodeOrIriIdentifierStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: BlankNodeOrIriIdentifierStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -6407,6 +6411,53 @@ export namespace BlankNodeOrIriIdentifierStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                BlankNodeOrIriIdentifierStruct.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.blankNodeOrIriIdentifierString,
@@ -6550,13 +6601,21 @@ export namespace BlankNodeOrIriIdentifierStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/BlankNodeOrIriIdentifierStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/BlankNodeOrIriIdentifierStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://example.com/BlankNodeOrIriIdentifierStruct",
+          ),
+        ],
       },
       $type: { kind: "Discriminant", value: "BlankNodeOrIriIdentifierStruct" },
       blankNodeOrIriIdentifierString: {
@@ -6570,11 +6629,6 @@ export namespace BlankNodeOrIriIdentifierStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode(
-        "http://example.com/BlankNodeOrIriIdentifierStruct",
-      ),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -6740,8 +6794,10 @@ export namespace ClassConstraintsStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [ClassConstraintsStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [ClassConstraintsStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -6830,7 +6886,7 @@ export namespace ClassConstraintsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        ClassConstraintsStruct.schema.toRdfTypes,
+        ClassConstraintsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -7127,20 +7183,28 @@ export namespace ClassConstraintsStruct {
     ClassConstraintsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.iriClass,
@@ -7218,48 +7282,6 @@ export namespace ClassConstraintsStruct {
     ClassConstraintsStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: ClassConstraintsStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -7273,6 +7295,52 @@ export namespace ClassConstraintsStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                ClassConstraintsStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.iriClass,
@@ -7537,13 +7605,19 @@ export namespace ClassConstraintsStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/ClassConstraintsStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/ClassConstraintsStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/ClassConstraintsStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "ClassConstraintsStruct" },
       iriClass: {
@@ -7592,9 +7666,6 @@ export namespace ClassConstraintsStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/ClassConstraintsStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -7780,8 +7851,10 @@ export namespace ConvertibleTypesStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [ConvertibleTypesStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [ConvertibleTypesStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -7961,7 +8034,7 @@ export namespace ConvertibleTypesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        ConvertibleTypesStruct.schema.toRdfTypes,
+        ConvertibleTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -8549,20 +8622,28 @@ export namespace ConvertibleTypesStruct {
     ConvertibleTypesStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.convertibleIri,
@@ -8741,48 +8822,6 @@ export namespace ConvertibleTypesStruct {
     ConvertibleTypesStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: ConvertibleTypesStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -8796,6 +8835,52 @@ export namespace ConvertibleTypesStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                ConvertibleTypesStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.convertibleIri,
@@ -9497,13 +9582,19 @@ export namespace ConvertibleTypesStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/ConvertibleTypesStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/ConvertibleTypesStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/ConvertibleTypesStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "ConvertibleTypesStruct" },
       convertibleIri: {
@@ -9608,9 +9699,6 @@ export namespace ConvertibleTypesStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/ConvertibleTypesStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -9926,7 +10014,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [DatatypeDiscriminatedUnionsStruct.schema.fromRdfType],
+          [
+            DatatypeDiscriminatedUnionsStruct.schema.properties.$rdfType
+              .fromRdfType,
+          ],
           {
             graph: options.graph,
           },
@@ -10580,7 +10671,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        DatatypeDiscriminatedUnionsStruct.schema.toRdfTypes,
+        DatatypeDiscriminatedUnionsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -10604,6 +10695,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           { $type: "date"; value: Date } | { $type: "dateTime"; value: Date }
         >
       )(parameters.object.dateOrDateTime, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -10627,6 +10719,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           throw new Error("unable to serialize to RDF");
         }) satisfies $ToRdfResourceValuesFunction<Date | string>
       )(parameters.object.dateOrString, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -10655,6 +10748,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           { $type: "dateTime"; value: Date } | { $type: "date"; value: Date }
         >
       )(parameters.object.dateTimeOrDate, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -10678,6 +10772,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           throw new Error("unable to serialize to RDF");
         }) satisfies $ToRdfResourceValuesFunction<BigDecimal | string>
       )(parameters.object.decimalOrString, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -10713,6 +10808,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           boolean | number | bigint | string
         >
       )(parameters.object.jsPrimitive, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -10736,6 +10832,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           throw new Error("unable to serialize to RDF");
         }) satisfies $ToRdfResourceValuesFunction<Literal | string>
       )(parameters.object.langStringOrString, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -10759,6 +10856,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           throw new Error("unable to serialize to RDF");
         }) satisfies $ToRdfResourceValuesFunction<string | Date>
       )(parameters.object.stringOrDate, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -10781,6 +10879,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           throw new Error("unable to serialize to RDF");
         }) satisfies $ToRdfResourceValuesFunction<string | BigDecimal>
       )(parameters.object.stringOrDecimal, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -10805,6 +10904,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           throw new Error("unable to serialize to RDF");
         }) satisfies $ToRdfResourceValuesFunction<string | Literal>
       )(parameters.object.stringOrLangString, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -11575,20 +11675,28 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     DatatypeDiscriminatedUnionsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.dateOrDateTime,
@@ -12146,48 +12254,6 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     DatatypeDiscriminatedUnionsStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: DatatypeDiscriminatedUnionsStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -12203,6 +12269,53 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                DatatypeDiscriminatedUnionsStruct.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.dateOrDateTime,
@@ -13506,13 +13619,21 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/DatatypeDiscriminatedUnionsStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/DatatypeDiscriminatedUnionsStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://example.com/DatatypeDiscriminatedUnionsStruct",
+          ),
+        ],
       },
       $type: {
         kind: "Discriminant",
@@ -13680,11 +13801,6 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode(
-        "http://example.com/DatatypeDiscriminatedUnionsStruct",
-      ),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -14043,9 +14159,13 @@ export namespace DatesStruct {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [DatesStruct.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [DatesStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -14103,7 +14223,7 @@ export namespace DatesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        DatesStruct.schema.toRdfTypes,
+        DatesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -14302,20 +14422,28 @@ export namespace DatesStruct {
     DatesStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.date,
@@ -14365,48 +14493,6 @@ export namespace DatesStruct {
     DatesStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: DatesStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -14420,6 +14506,51 @@ export namespace DatesStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: DatesStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.date,
@@ -14624,11 +14755,15 @@ export namespace DatesStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/DatesStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/DatesStruct"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/DatesStruct")],
       },
       $type: { kind: "Discriminant", value: "DatesStruct" },
       date: {
@@ -14653,7 +14788,6 @@ export namespace DatesStruct {
         },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/DatesStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -14812,8 +14946,10 @@ export namespace DefaultValuesStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [DefaultValuesStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [DefaultValuesStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -14921,7 +15057,7 @@ export namespace DefaultValuesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        DefaultValuesStruct.schema.toRdfTypes,
+        DefaultValuesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -15206,20 +15342,28 @@ export namespace DefaultValuesStruct {
     DefaultValuesStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.dateDefaultValue,
@@ -15298,48 +15442,6 @@ export namespace DefaultValuesStruct {
     DefaultValuesStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: DefaultValuesStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -15353,6 +15455,52 @@ export namespace DefaultValuesStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                DefaultValuesStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.dateDefaultValue,
@@ -15622,13 +15770,19 @@ export namespace DefaultValuesStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/DefaultValuesStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/DefaultValuesStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/DefaultValuesStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "DefaultValuesStruct" },
       dateDefaultValue: {
@@ -15705,9 +15859,6 @@ export namespace DefaultValuesStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/DefaultValuesStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -15849,8 +16000,10 @@ export namespace DirectRecursiveStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [DirectRecursiveStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [DirectRecursiveStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -15888,7 +16041,7 @@ export namespace DirectRecursiveStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        DirectRecursiveStruct.schema.toRdfTypes,
+        DirectRecursiveStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -16014,21 +16167,29 @@ export namespace DirectRecursiveStruct {
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     DirectRecursiveStruct.Filter
   > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     return triples;
   };
 
@@ -16036,48 +16197,6 @@ export namespace DirectRecursiveStruct {
     DirectRecursiveStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: DirectRecursiveStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -16091,6 +16210,52 @@ export namespace DirectRecursiveStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                DirectRecursiveStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     return patterns;
   };
 
@@ -16214,13 +16379,19 @@ export namespace DirectRecursiveStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/DirectRecursiveStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/DirectRecursiveStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/DirectRecursiveStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "DirectRecursiveStruct" },
       directRecursive: {
@@ -16236,9 +16407,6 @@ export namespace DirectRecursiveStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/DirectRecursiveStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -16375,8 +16543,10 @@ export namespace DiscriminatedUnionMember1 {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [DiscriminatedUnionMember1.schema.fromRdfType],
-          { graph: options.graph },
+          [DiscriminatedUnionMember1.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -16425,7 +16595,7 @@ export namespace DiscriminatedUnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        DiscriminatedUnionMember1.schema.toRdfTypes,
+        DiscriminatedUnionMember1.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -16578,20 +16748,28 @@ export namespace DiscriminatedUnionMember1 {
     DiscriminatedUnionMember1.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.discriminatedUnionMember1Distinct,
@@ -16625,48 +16803,6 @@ export namespace DiscriminatedUnionMember1 {
     DiscriminatedUnionMember1.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: DiscriminatedUnionMember1.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -16680,6 +16816,53 @@ export namespace DiscriminatedUnionMember1 {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                DiscriminatedUnionMember1.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.discriminatedUnionMember1Distinct,
@@ -16840,13 +17023,19 @@ export namespace DiscriminatedUnionMember1 {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/DiscriminatedUnionMember1",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/DiscriminatedUnionMember1",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/DiscriminatedUnionMember1"),
+        ],
       },
       $type: { kind: "Discriminant", value: "DiscriminatedUnionMember1" },
       discriminatedUnionMember1Distinct: {
@@ -16864,9 +17053,6 @@ export namespace DiscriminatedUnionMember1 {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/DiscriminatedUnionMember1"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -17006,8 +17192,10 @@ export namespace DiscriminatedUnionMember2 {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [DiscriminatedUnionMember2.schema.fromRdfType],
-          { graph: options.graph },
+          [DiscriminatedUnionMember2.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -17056,7 +17244,7 @@ export namespace DiscriminatedUnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        DiscriminatedUnionMember2.schema.toRdfTypes,
+        DiscriminatedUnionMember2.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -17209,20 +17397,28 @@ export namespace DiscriminatedUnionMember2 {
     DiscriminatedUnionMember2.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.discriminatedUnionMember2Distinct,
@@ -17256,48 +17452,6 @@ export namespace DiscriminatedUnionMember2 {
     DiscriminatedUnionMember2.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: DiscriminatedUnionMember2.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -17311,6 +17465,53 @@ export namespace DiscriminatedUnionMember2 {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                DiscriminatedUnionMember2.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.discriminatedUnionMember2Distinct,
@@ -17471,13 +17672,19 @@ export namespace DiscriminatedUnionMember2 {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/DiscriminatedUnionMember2",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/DiscriminatedUnionMember2",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/DiscriminatedUnionMember2"),
+        ],
       },
       $type: { kind: "Discriminant", value: "DiscriminatedUnionMember2" },
       discriminatedUnionMember2Distinct: {
@@ -17495,9 +17702,6 @@ export namespace DiscriminatedUnionMember2 {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/DiscriminatedUnionMember2"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -17650,9 +17854,13 @@ export namespace DisplayStruct {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [DisplayStruct.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [DisplayStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -17705,7 +17913,7 @@ export namespace DisplayStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        DisplayStruct.schema.toRdfTypes,
+        DisplayStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -17850,20 +18058,28 @@ export namespace DisplayStruct {
     DisplayStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.explicitFalseDisplay,
@@ -17904,48 +18120,6 @@ export namespace DisplayStruct {
     DisplayStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: DisplayStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -17959,6 +18133,51 @@ export namespace DisplayStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: DisplayStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.explicitFalseDisplay,
@@ -18137,11 +18356,15 @@ export namespace DisplayStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/DisplayStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/DisplayStruct"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/DisplayStruct")],
       },
       $type: { kind: "Discriminant", value: "DisplayStruct" },
       explicitFalseDisplay: {
@@ -18160,7 +18383,6 @@ export namespace DisplayStruct {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/DisplayStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -18300,8 +18522,10 @@ export namespace ExplicitFromToRdfTypesStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [ExplicitFromToRdfTypesStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [ExplicitFromToRdfTypesStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -18338,7 +18562,7 @@ export namespace ExplicitFromToRdfTypesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        ExplicitFromToRdfTypesStruct.schema.toRdfTypes,
+        ExplicitFromToRdfTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -18448,20 +18672,28 @@ export namespace ExplicitFromToRdfTypesStruct {
     ExplicitFromToRdfTypesStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.explicitFromToRdfTypesString,
@@ -18482,48 +18714,6 @@ export namespace ExplicitFromToRdfTypesStruct {
     ExplicitFromToRdfTypesStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: ExplicitFromToRdfTypesStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -18538,6 +18728,53 @@ export namespace ExplicitFromToRdfTypesStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                ExplicitFromToRdfTypesStruct.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.explicitFromToRdfTypesString,
@@ -18676,11 +18913,18 @@ export namespace ExplicitFromToRdfTypesStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/FromRdfType"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/FromRdfType"),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/ToRdfType"),
+          dataFactory.namedNode("http://example.com/FromRdfType"),
+        ],
       },
       $type: { kind: "Discriminant", value: "ExplicitFromToRdfTypesStruct" },
       explicitFromToRdfTypesString: {
@@ -18691,10 +18935,6 @@ export namespace ExplicitFromToRdfTypesStruct {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/ToRdfType"),
-      dataFactory.namedNode("http://example.com/FromRdfType"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -18835,8 +19075,10 @@ export namespace ExplicitRdfTypeStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [ExplicitRdfTypeStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [ExplicitRdfTypeStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -18871,7 +19113,7 @@ export namespace ExplicitRdfTypeStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        ExplicitRdfTypeStruct.schema.toRdfTypes,
+        ExplicitRdfTypeStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -18975,20 +19217,28 @@ export namespace ExplicitRdfTypeStruct {
     ExplicitRdfTypeStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.explicitRdfTypeString,
@@ -19008,48 +19258,6 @@ export namespace ExplicitRdfTypeStruct {
     ExplicitRdfTypeStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: ExplicitRdfTypeStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -19063,6 +19271,52 @@ export namespace ExplicitRdfTypeStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                ExplicitRdfTypeStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.explicitRdfTypeString,
@@ -19197,11 +19451,15 @@ export namespace ExplicitRdfTypeStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/RdfType"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/RdfType"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/RdfType")],
       },
       $type: { kind: "Discriminant", value: "ExplicitRdfTypeStruct" },
       explicitRdfTypeString: {
@@ -19210,7 +19468,6 @@ export namespace ExplicitRdfTypeStruct {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/RdfType")],
   } as const;
 
   export type Schema = typeof schema;
@@ -19343,7 +19600,10 @@ export namespace FlattenDiscriminatedUnionMember3 {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [FlattenDiscriminatedUnionMember3.schema.fromRdfType],
+          [
+            FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
+              .fromRdfType,
+          ],
           {
             graph: options.graph,
           },
@@ -19386,7 +19646,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        FlattenDiscriminatedUnionMember3.schema.toRdfTypes,
+        FlattenDiscriminatedUnionMember3.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -19503,20 +19763,28 @@ export namespace FlattenDiscriminatedUnionMember3 {
     FlattenDiscriminatedUnionMember3.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.flattenDiscriminatedUnionMember3String,
@@ -19537,48 +19805,6 @@ export namespace FlattenDiscriminatedUnionMember3 {
     FlattenDiscriminatedUnionMember3.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: FlattenDiscriminatedUnionMember3.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -19593,6 +19819,53 @@ export namespace FlattenDiscriminatedUnionMember3 {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.flattenDiscriminatedUnionMember3String,
@@ -19726,13 +19999,21 @@ export namespace FlattenDiscriminatedUnionMember3 {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/FlattenDiscriminatedUnionMember3",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/FlattenDiscriminatedUnionMember3",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://example.com/FlattenDiscriminatedUnionMember3",
+          ),
+        ],
       },
       $type: {
         kind: "Discriminant",
@@ -19746,11 +20027,6 @@ export namespace FlattenDiscriminatedUnionMember3 {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode(
-        "http://example.com/FlattenDiscriminatedUnionMember3",
-      ),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -21027,8 +21303,10 @@ export namespace IndirectRecursiveStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [IndirectRecursiveStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [IndirectRecursiveStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -21066,7 +21344,7 @@ export namespace IndirectRecursiveStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        IndirectRecursiveStruct.schema.toRdfTypes,
+        IndirectRecursiveStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -21197,21 +21475,29 @@ export namespace IndirectRecursiveStruct {
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     IndirectRecursiveStruct.Filter
   > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     return triples;
   };
 
@@ -21219,48 +21505,6 @@ export namespace IndirectRecursiveStruct {
     IndirectRecursiveStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: IndirectRecursiveStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -21274,6 +21518,52 @@ export namespace IndirectRecursiveStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                IndirectRecursiveStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     return patterns;
   };
 
@@ -21401,13 +21691,19 @@ export namespace IndirectRecursiveStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/IndirectRecursiveStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/IndirectRecursiveStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/IndirectRecursiveStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "IndirectRecursiveStruct" },
       indirectRecursiveHelper: {
@@ -21425,9 +21721,6 @@ export namespace IndirectRecursiveStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/IndirectRecursiveStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -21565,8 +21858,13 @@ export namespace IndirectRecursiveStructHelper {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [IndirectRecursiveStructHelper.schema.fromRdfType],
-          { graph: options.graph },
+          [
+            IndirectRecursiveStructHelper.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -21607,7 +21905,7 @@ export namespace IndirectRecursiveStructHelper {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        IndirectRecursiveStructHelper.schema.toRdfTypes,
+        IndirectRecursiveStructHelper.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -21734,21 +22032,29 @@ export namespace IndirectRecursiveStructHelper {
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     IndirectRecursiveStructHelper.Filter
   > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     return triples;
   };
 
@@ -21756,48 +22062,6 @@ export namespace IndirectRecursiveStructHelper {
     IndirectRecursiveStructHelper.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: IndirectRecursiveStructHelper.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -21812,6 +22076,53 @@ export namespace IndirectRecursiveStructHelper {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                IndirectRecursiveStructHelper.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     return patterns;
   };
 
@@ -21935,13 +22246,21 @@ export namespace IndirectRecursiveStructHelper {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/IndirectRecursiveStructHelper",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/IndirectRecursiveStructHelper",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://example.com/IndirectRecursiveStructHelper",
+          ),
+        ],
       },
       $type: { kind: "Discriminant", value: "IndirectRecursiveStructHelper" },
       indirectRecursive: {
@@ -21957,9 +22276,6 @@ export namespace IndirectRecursiveStructHelper {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/IndirectRecursiveStructHelper"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -22099,8 +22415,10 @@ export namespace InIdentifierStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [InIdentifierStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [InIdentifierStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -22138,7 +22456,7 @@ export namespace InIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        InIdentifierStruct.schema.toRdfTypes,
+        InIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -22268,20 +22586,28 @@ export namespace InIdentifierStruct {
     InIdentifierStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.inIdentifierString,
@@ -22303,48 +22629,6 @@ export namespace InIdentifierStruct {
     InIdentifierStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: InIdentifierStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
@@ -22358,6 +22642,52 @@ export namespace InIdentifierStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                InIdentifierStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.inIdentifierString,
@@ -22524,7 +22854,6 @@ export namespace InIdentifierStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/InIdentifierStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
@@ -22540,6 +22869,15 @@ export namespace InIdentifierStruct {
           ] as const,
         },
       },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/InIdentifierStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/InIdentifierStruct"),
+        ],
+      },
       $type: { kind: "Discriminant", value: "InIdentifierStruct" },
       inIdentifierString: {
         kind: "Shacl",
@@ -22550,9 +22888,6 @@ export namespace InIdentifierStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/InIdentifierStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -22697,8 +23032,10 @@ export namespace InPropertiesStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [InPropertiesStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [InPropertiesStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -22814,7 +23151,7 @@ export namespace InPropertiesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        InPropertiesStruct.schema.toRdfTypes,
+        InPropertiesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -23147,20 +23484,28 @@ export namespace InPropertiesStruct {
     InPropertiesStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.inBooleans,
@@ -23252,48 +23597,6 @@ export namespace InPropertiesStruct {
     InPropertiesStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: InPropertiesStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -23307,6 +23610,52 @@ export namespace InPropertiesStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                InPropertiesStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.inBooleans,
@@ -23581,11 +23930,19 @@ export namespace InPropertiesStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/InPropertiesStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/InPropertiesStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/InPropertiesStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "InPropertiesStruct" },
       inBooleans: {
@@ -23646,9 +24003,6 @@ export namespace InPropertiesStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/InPropertiesStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -23801,8 +24155,10 @@ export namespace IriIdentifierStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [IriIdentifierStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [IriIdentifierStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -23840,7 +24196,7 @@ export namespace IriIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        IriIdentifierStruct.schema.toRdfTypes,
+        IriIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -23959,20 +24315,28 @@ export namespace IriIdentifierStruct {
     IriIdentifierStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.iriIdentifierString,
@@ -23995,48 +24359,6 @@ export namespace IriIdentifierStruct {
     IriIdentifierStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: IriIdentifierStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
@@ -24050,6 +24372,52 @@ export namespace IriIdentifierStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                IriIdentifierStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.iriIdentifierString,
@@ -24180,11 +24548,17 @@ export namespace IriIdentifierStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/IriIdentifierStruct",
-    ),
     properties: {
       $identifier: { kind: "Identifier", type: { kind: "Iri" as const } },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/IriIdentifierStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/IriIdentifierStruct"),
+        ],
+      },
       $type: { kind: "Discriminant", value: "IriIdentifierStruct" },
       iriIdentifierString: {
         kind: "Shacl",
@@ -24195,9 +24569,6 @@ export namespace IriIdentifierStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/IriIdentifierStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -24833,10 +25204,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.fromRdfType],
-          {
-            graph: options.graph,
-          },
+          [
+            LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
+              .$rdfType.fromRdfType,
+          ],
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -24873,7 +25245,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.toRdfTypes,
+        LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties.$rdfType
+          .toRdfTypes,
         parameters.graph,
       );
     }
@@ -24980,20 +25353,28 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.lazilyResolved,
@@ -25014,49 +25395,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     LazilyResolvedBlankNodeOrIriIdentifierStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType:
-            LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -25072,6 +25410,53 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
+                  .$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.lazilyResolved,
@@ -25212,13 +25597,21 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
+          ),
+        ],
       },
       $type: {
         kind: "Discriminant",
@@ -25230,11 +25623,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode(
-        "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
-      ),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -25383,10 +25771,11 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [LazilyResolvedDiscriminatedUnionMember1.schema.fromRdfType],
-          {
-            graph: options.graph,
-          },
+          [
+            LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -25423,7 +25812,8 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        LazilyResolvedDiscriminatedUnionMember1.schema.toRdfTypes,
+        LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
+          .toRdfTypes,
         parameters.graph,
       );
     }
@@ -25530,20 +25920,28 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     LazilyResolvedDiscriminatedUnionMember1.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.lazilyResolved,
@@ -25564,48 +25962,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     LazilyResolvedDiscriminatedUnionMember1.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: LazilyResolvedDiscriminatedUnionMember1.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -25621,6 +25977,53 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                LazilyResolvedDiscriminatedUnionMember1.schema.properties
+                  .$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.lazilyResolved,
@@ -25756,13 +26159,21 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/LazilyResolvedDiscriminatedUnionMember1",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/LazilyResolvedDiscriminatedUnionMember1",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://example.com/LazilyResolvedDiscriminatedUnionMember1",
+          ),
+        ],
       },
       $type: {
         kind: "Discriminant",
@@ -25774,11 +26185,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode(
-        "http://example.com/LazilyResolvedDiscriminatedUnionMember1",
-      ),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -25918,10 +26324,11 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [LazilyResolvedDiscriminatedUnionMember2.schema.fromRdfType],
-          {
-            graph: options.graph,
-          },
+          [
+            LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+          { graph: options.graph },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -25958,7 +26365,8 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        LazilyResolvedDiscriminatedUnionMember2.schema.toRdfTypes,
+        LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
+          .toRdfTypes,
         parameters.graph,
       );
     }
@@ -26065,20 +26473,28 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     LazilyResolvedDiscriminatedUnionMember2.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.lazilyResolved,
@@ -26099,48 +26515,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     LazilyResolvedDiscriminatedUnionMember2.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: LazilyResolvedDiscriminatedUnionMember2.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -26156,6 +26530,53 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                LazilyResolvedDiscriminatedUnionMember2.schema.properties
+                  .$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.lazilyResolved,
@@ -26291,13 +26712,21 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/LazilyResolvedDiscriminatedUnionMember2",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/LazilyResolvedDiscriminatedUnionMember2",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://example.com/LazilyResolvedDiscriminatedUnionMember2",
+          ),
+        ],
       },
       $type: {
         kind: "Discriminant",
@@ -26309,11 +26738,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode(
-        "http://example.com/LazilyResolvedDiscriminatedUnionMember2",
-      ),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -27467,6 +27891,7 @@ export namespace LazyPropertiesStruct {
         .toList()
         .flatMap((value) =>
           PartialDiscriminatedUnion.toRdfResourceValues(value, {
+            ignoreRdfType: parameters.ignoreRdfType,
             graph: parameters.graph,
             resource: parameters.resource,
             resourceSet: parameters.resourceSet,
@@ -29404,9 +29829,13 @@ export namespace ListSetsStruct {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [ListSetsStruct.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [ListSetsStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -29547,7 +29976,7 @@ export namespace ListSetsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        ListSetsStruct.schema.toRdfTypes,
+        ListSetsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -29617,6 +30046,7 @@ export namespace ListSetsStruct {
             throw new Error("unable to serialize to RDF");
           }) satisfies $ToRdfResourceValuesFunction<readonly string[] | string>
         )(item, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -30052,20 +30482,28 @@ export namespace ListSetsStruct {
     ListSetsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.listDiscriminatedUnionSet,
@@ -30189,48 +30627,6 @@ export namespace ListSetsStruct {
     ListSetsStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: ListSetsStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -30244,6 +30640,51 @@ export namespace ListSetsStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: ListSetsStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.listDiscriminatedUnionSet,
@@ -30568,11 +31009,17 @@ export namespace ListSetsStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/ListSetsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/ListSetsStruct"),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/ListSetsStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "ListSetsStruct" },
       listDiscriminatedUnionSet: {
@@ -30626,7 +31073,6 @@ export namespace ListSetsStruct {
         },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/ListSetsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -30783,9 +31229,13 @@ export namespace ListsStruct {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [ListsStruct.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [ListsStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -30883,7 +31333,7 @@ export namespace ListsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        ListsStruct.schema.toRdfTypes,
+        ListsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -31397,20 +31847,28 @@ export namespace ListsStruct {
     ListsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.iriList,
@@ -31496,48 +31954,6 @@ export namespace ListsStruct {
     ListsStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: ListsStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -31551,6 +31967,51 @@ export namespace ListsStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: ListsStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.iriList,
@@ -31813,11 +32274,15 @@ export namespace ListsStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/ListsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/ListsStruct"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/ListsStruct")],
       },
       $type: { kind: "Discriminant", value: "ListsStruct" },
       iriList: {
@@ -31874,7 +32339,6 @@ export namespace ListsStruct {
         },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/ListsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -32030,8 +32494,10 @@ export namespace MutablePropertiesStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [MutablePropertiesStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [MutablePropertiesStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -32099,7 +32565,7 @@ export namespace MutablePropertiesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        MutablePropertiesStruct.schema.toRdfTypes,
+        MutablePropertiesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -32347,20 +32813,28 @@ export namespace MutablePropertiesStruct {
     MutablePropertiesStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.mutableList,
@@ -32414,48 +32888,6 @@ export namespace MutablePropertiesStruct {
     MutablePropertiesStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: MutablePropertiesStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -32469,6 +32901,52 @@ export namespace MutablePropertiesStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                MutablePropertiesStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.mutableList,
@@ -32666,13 +33144,19 @@ export namespace MutablePropertiesStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/MutablePropertiesStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/MutablePropertiesStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/MutablePropertiesStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "MutablePropertiesStruct" },
       mutableList: {
@@ -32700,9 +33184,6 @@ export namespace MutablePropertiesStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/MutablePropertiesStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -32884,8 +33365,10 @@ export namespace NamedTypesStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [NamedTypesStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [NamedTypesStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -32967,7 +33450,7 @@ export namespace NamedTypesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        NamedTypesStruct.schema.toRdfTypes,
+        NamedTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -32981,6 +33464,7 @@ export namespace NamedTypesStruct {
       NamedDiscriminatedUnion1.toRdfResourceValues(
         parameters.object.namedDiscriminatedUnion1,
         {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -32995,6 +33479,7 @@ export namespace NamedTypesStruct {
       NamedDiscriminatedUnion2.toRdfResourceValues(
         parameters.object.namedDiscriminatedUnion2,
         {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -33195,20 +33680,28 @@ export namespace NamedTypesStruct {
     NamedTypesStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.namedDatatype,
@@ -33275,48 +33768,6 @@ export namespace NamedTypesStruct {
     NamedTypesStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: NamedTypesStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -33330,6 +33781,51 @@ export namespace NamedTypesStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: NamedTypesStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.namedDatatype,
@@ -33549,11 +34045,19 @@ export namespace NamedTypesStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/NamedTypesStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/NamedTypesStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/NamedTypesStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "NamedTypesStruct" },
       namedDatatype: {
@@ -33596,7 +34100,6 @@ export namespace NamedTypesStruct {
         },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/NamedTypesStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -33735,9 +34238,11 @@ export namespace NewName {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [NewName.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [NewName.schema.properties.$rdfType.fromRdfType],
+          { graph: options.graph },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -33773,7 +34278,7 @@ export namespace NewName {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        NewName.schema.toRdfTypes,
+        NewName.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -33889,20 +34394,28 @@ export namespace NewName {
     NewName.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.newNameString,
@@ -33924,48 +34437,6 @@ export namespace NewName {
     NewName.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: NewName.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -33979,6 +34450,51 @@ export namespace NewName {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: NewName.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.newNameString,
@@ -34107,11 +34623,19 @@ export namespace NewName {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/OverrideNameStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/OverrideNameStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/OverrideNameStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "NewName" },
       newNameString: {
@@ -34123,9 +34647,6 @@ export namespace NewName {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/OverrideNameStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -34263,9 +34784,13 @@ export namespace NodeKindsStruct {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [NodeKindsStruct.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [NodeKindsStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -34346,7 +34871,7 @@ export namespace NodeKindsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        NodeKindsStruct.schema.toRdfTypes,
+        NodeKindsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -34601,20 +35126,28 @@ export namespace NodeKindsStruct {
     NodeKindsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.blankNodeKind,
@@ -34690,48 +35223,6 @@ export namespace NodeKindsStruct {
     NodeKindsStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: NodeKindsStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -34745,6 +35236,51 @@ export namespace NodeKindsStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: NodeKindsStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.blankNodeKind,
@@ -35059,11 +35595,19 @@ export namespace NodeKindsStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/NodeKindsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/NodeKindsStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/NodeKindsStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "NodeKindsStruct" },
       blankNodeKind: {
@@ -35101,7 +35645,6 @@ export namespace NodeKindsStruct {
         type: { kind: "Literal" as const },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/NodeKindsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -36671,9 +37214,13 @@ export namespace NumericsStruct {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [NumericsStruct.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [NumericsStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -36908,7 +37455,7 @@ export namespace NumericsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        NumericsStruct.schema.toRdfTypes,
+        NumericsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -37650,20 +38197,28 @@ export namespace NumericsStruct {
     NumericsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.byteNumeric,
@@ -37897,48 +38452,6 @@ export namespace NumericsStruct {
     NumericsStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: NumericsStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -37952,6 +38465,51 @@ export namespace NumericsStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: NumericsStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.byteNumeric,
@@ -38556,11 +39114,17 @@ export namespace NumericsStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/NumericsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/NumericsStruct"),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/NumericsStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "NumericsStruct" },
       byteNumeric: {
@@ -38676,7 +39240,6 @@ export namespace NumericsStruct {
         type: { kind: "Option" as const, itemType: { kind: "Int" as const } },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/NumericsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -39421,7 +39984,10 @@ export namespace PartialDiscriminatedUnionMember1 {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [PartialDiscriminatedUnionMember1.schema.fromRdfType],
+          [
+            PartialDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
           {
             graph: options.graph,
           },
@@ -39460,7 +40026,7 @@ export namespace PartialDiscriminatedUnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        PartialDiscriminatedUnionMember1.schema.toRdfTypes,
+        PartialDiscriminatedUnionMember1.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -39564,20 +40130,28 @@ export namespace PartialDiscriminatedUnionMember1 {
     PartialDiscriminatedUnionMember1.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.lazilyResolved,
@@ -39597,48 +40171,6 @@ export namespace PartialDiscriminatedUnionMember1 {
     PartialDiscriminatedUnionMember1.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: PartialDiscriminatedUnionMember1.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -39653,6 +40185,53 @@ export namespace PartialDiscriminatedUnionMember1 {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                PartialDiscriminatedUnionMember1.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.lazilyResolved,
@@ -39780,13 +40359,19 @@ export namespace PartialDiscriminatedUnionMember1 {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/DiscriminatedUnionMember1",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/DiscriminatedUnionMember1",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/DiscriminatedUnionMember1"),
+        ],
       },
       $type: {
         kind: "Discriminant",
@@ -39798,9 +40383,6 @@ export namespace PartialDiscriminatedUnionMember1 {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/DiscriminatedUnionMember1"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -39938,7 +40520,10 @@ export namespace PartialDiscriminatedUnionMember2 {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [PartialDiscriminatedUnionMember2.schema.fromRdfType],
+          [
+            PartialDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
           {
             graph: options.graph,
           },
@@ -39977,7 +40562,7 @@ export namespace PartialDiscriminatedUnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        PartialDiscriminatedUnionMember2.schema.toRdfTypes,
+        PartialDiscriminatedUnionMember2.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -40081,20 +40666,28 @@ export namespace PartialDiscriminatedUnionMember2 {
     PartialDiscriminatedUnionMember2.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.lazilyResolved,
@@ -40114,48 +40707,6 @@ export namespace PartialDiscriminatedUnionMember2 {
     PartialDiscriminatedUnionMember2.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: PartialDiscriminatedUnionMember2.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -40170,6 +40721,53 @@ export namespace PartialDiscriminatedUnionMember2 {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                PartialDiscriminatedUnionMember2.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.lazilyResolved,
@@ -40297,13 +40895,19 @@ export namespace PartialDiscriminatedUnionMember2 {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/DiscriminatedUnionMember2",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/DiscriminatedUnionMember2",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/DiscriminatedUnionMember2"),
+        ],
       },
       $type: {
         kind: "Discriminant",
@@ -40315,9 +40919,6 @@ export namespace PartialDiscriminatedUnionMember2 {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/DiscriminatedUnionMember2"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -41652,8 +42253,10 @@ export namespace PropertyNamesStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [PropertyNamesStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [PropertyNamesStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -41712,7 +42315,7 @@ export namespace PropertyNamesStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        PropertyNamesStruct.schema.toRdfTypes,
+        PropertyNamesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -41905,20 +42508,28 @@ export namespace PropertyNamesStruct {
     PropertyNamesStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.actualName1,
@@ -41981,48 +42592,6 @@ export namespace PropertyNamesStruct {
     PropertyNamesStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: PropertyNamesStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -42036,6 +42605,52 @@ export namespace PropertyNamesStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                PropertyNamesStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.actualName1,
@@ -42250,13 +42865,19 @@ export namespace PropertyNamesStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/PropertyNamesStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/PropertyNamesStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/PropertyNamesStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "PropertyNamesStruct" },
       actualName1: {
@@ -42285,9 +42906,6 @@ export namespace PropertyNamesStruct {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/PropertyNamesStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -42427,8 +43045,10 @@ export namespace PropertyPathsStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [PropertyPathsStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [PropertyPathsStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -42478,7 +43098,7 @@ export namespace PropertyPathsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        PropertyPathsStruct.schema.toRdfTypes,
+        PropertyPathsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -42643,20 +43263,28 @@ export namespace PropertyPathsStruct {
     PropertyPathsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.inversePath,
@@ -42692,48 +43320,6 @@ export namespace PropertyPathsStruct {
     PropertyPathsStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: PropertyPathsStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -42747,6 +43333,52 @@ export namespace PropertyPathsStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                PropertyPathsStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.inversePath,
@@ -42902,13 +43534,19 @@ export namespace PropertyPathsStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/PropertyPathsStruct",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/PropertyPathsStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/PropertyPathsStruct"),
+        ],
       },
       $type: { kind: "Discriminant", value: "PropertyPathsStruct" },
       inversePath: {
@@ -42928,9 +43566,6 @@ export namespace PropertyPathsStruct {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://example.com/PropertyPathsStruct"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -43066,7 +43701,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [RecursiveDiscriminatedUnionMember1.schema.fromRdfType],
+          [
+            RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
           {
             graph: options.graph,
           },
@@ -43112,7 +43750,8 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        RecursiveDiscriminatedUnionMember1.schema.toRdfTypes,
+        RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
+          .toRdfTypes,
         parameters.graph,
       );
     }
@@ -43123,6 +43762,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         .toList()
         .flatMap((value) =>
           RecursiveDiscriminatedUnion.toRdfResourceValues(value, {
+            ignoreRdfType: parameters.ignoreRdfType,
             graph: parameters.graph,
             resource: parameters.resource,
             resourceSet: parameters.resourceSet,
@@ -43252,21 +43892,29 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     RecursiveDiscriminatedUnionMember1.Filter
   > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     return triples;
   };
 
@@ -43274,48 +43922,6 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     RecursiveDiscriminatedUnionMember1.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: RecursiveDiscriminatedUnionMember1.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -43331,6 +43937,53 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     return patterns;
   };
 
@@ -43459,13 +44112,21 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/RecursiveDiscriminatedUnionMember1",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/RecursiveDiscriminatedUnionMember1",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://example.com/RecursiveDiscriminatedUnionMember1",
+          ),
+        ],
       },
       $type: {
         kind: "Discriminant",
@@ -43486,11 +44147,6 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode(
-        "http://example.com/RecursiveDiscriminatedUnionMember1",
-      ),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -43631,7 +44287,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [RecursiveDiscriminatedUnionMember2.schema.fromRdfType],
+          [
+            RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
           {
             graph: options.graph,
           },
@@ -43677,7 +44336,8 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        RecursiveDiscriminatedUnionMember2.schema.toRdfTypes,
+        RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
+          .toRdfTypes,
         parameters.graph,
       );
     }
@@ -43688,6 +44348,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         .toList()
         .flatMap((value) =>
           RecursiveDiscriminatedUnion.toRdfResourceValues(value, {
+            ignoreRdfType: parameters.ignoreRdfType,
             graph: parameters.graph,
             resource: parameters.resource,
             resourceSet: parameters.resourceSet,
@@ -43817,21 +44478,29 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     RecursiveDiscriminatedUnionMember2.Filter
   > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     return triples;
   };
 
@@ -43839,48 +44508,6 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     RecursiveDiscriminatedUnionMember2.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: RecursiveDiscriminatedUnionMember2.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -43896,6 +44523,53 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType:
+                RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
+                  .fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     return patterns;
   };
 
@@ -44024,13 +44698,21 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://example.com/RecursiveDiscriminatedUnionMember2",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/RecursiveDiscriminatedUnionMember2",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://example.com/RecursiveDiscriminatedUnionMember2",
+          ),
+        ],
       },
       $type: {
         kind: "Discriminant",
@@ -44051,11 +44733,6 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode(
-        "http://example.com/RecursiveDiscriminatedUnionMember2",
-      ),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -44201,8 +44878,10 @@ export namespace TargetClassStruct {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [TargetClassStruct.schema.fromRdfType],
-          { graph: options.graph },
+          [TargetClassStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -44236,7 +44915,7 @@ export namespace TargetClassStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        TargetClassStruct.schema.toRdfTypes,
+        TargetClassStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -44340,20 +45019,28 @@ export namespace TargetClassStruct {
     TargetClassStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.targetClassString,
@@ -44372,48 +45059,6 @@ export namespace TargetClassStruct {
     TargetClassStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: TargetClassStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -44427,6 +45072,51 @@ export namespace TargetClassStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: TargetClassStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.targetClassString,
@@ -44554,11 +45244,15 @@ export namespace TargetClassStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/RdfType"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/RdfType"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/RdfType")],
       },
       $type: { kind: "Discriminant", value: "TargetClassStruct" },
       targetClassString: {
@@ -44567,7 +45261,6 @@ export namespace TargetClassStruct {
         type: { kind: "String" as const },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/RdfType")],
   } as const;
 
   export type Schema = typeof schema;
@@ -44720,9 +45413,13 @@ export namespace TermsStruct {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [TermsStruct.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [TermsStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -44887,7 +45584,7 @@ export namespace TermsStruct {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
         $RdfVocabularies.rdf.type,
-        TermsStruct.schema.toRdfTypes,
+        TermsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
     }
@@ -45422,20 +46119,28 @@ export namespace TermsStruct {
     TermsStruct.Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.blankNodeTerm,
@@ -45597,48 +46302,6 @@ export namespace TermsStruct {
     TermsStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: TermsStruct.schema.fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -45652,6 +46315,51 @@ export namespace TermsStruct {
         }),
       );
     }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: TermsStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.blankNodeTerm,
@@ -46109,11 +46817,15 @@ export namespace TermsStruct {
   };
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://example.com/TermsStruct"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode("http://example.com/TermsStruct"),
+        kind: "RdfType",
+        toRdfTypes: [dataFactory.namedNode("http://example.com/TermsStruct")],
       },
       $type: { kind: "Discriminant", value: "TermsStruct" },
       blankNodeTerm: {
@@ -46199,7 +46911,6 @@ export namespace TermsStruct {
         },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://example.com/TermsStruct")],
   } as const;
 
   export type Schema = typeof schema;
@@ -47879,6 +48590,7 @@ export namespace UnionDiscriminantsStruct {
             throw new Error("unable to serialize to RDF");
           }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
         )(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -47914,6 +48626,7 @@ export namespace UnionDiscriminantsStruct {
             | Literal
           >
         )(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -47963,6 +48676,7 @@ export namespace UnionDiscriminantsStruct {
             | { $type: "string"; value: string }
           >
         )(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -47993,6 +48707,7 @@ export namespace UnionDiscriminantsStruct {
             (BlankNode | NamedNode) | Literal
           >
         )(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -48016,6 +48731,7 @@ export namespace UnionDiscriminantsStruct {
           throw new Error("unable to serialize to RDF");
         }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
       )(parameters.object.requiredIriOrString, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -48049,6 +48765,7 @@ export namespace UnionDiscriminantsStruct {
           | Literal
         >
       )(parameters.object.requiredNodeOrLiteral, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -48095,6 +48812,7 @@ export namespace UnionDiscriminantsStruct {
           | { $type: "string"; value: string }
         >
       )(parameters.object.requiredNodeOrNodeOrString, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -48123,6 +48841,7 @@ export namespace UnionDiscriminantsStruct {
           (BlankNode | NamedNode) | Literal
         >
       )(parameters.object.requiredTerm, {
+        ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
         resourceSet: parameters.resourceSet,
@@ -48146,6 +48865,7 @@ export namespace UnionDiscriminantsStruct {
             throw new Error("unable to serialize to RDF");
           }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
         )(item, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -48181,6 +48901,7 @@ export namespace UnionDiscriminantsStruct {
             | Literal
           >
         )(item, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -48228,6 +48949,7 @@ export namespace UnionDiscriminantsStruct {
             | { $type: "string"; value: string }
           >
         )(item, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -48258,6 +48980,7 @@ export namespace UnionDiscriminantsStruct {
             (BlankNode | NamedNode) | Literal
           >
         )(item, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
           resourceSet: parameters.resourceSet,
@@ -60071,7 +60794,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: AnonymousTypesStruct.filter,
         fromRdfResource: AnonymousTypesStruct.fromRdfResource,
-        fromRdfTypes: [AnonymousTypesStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          AnonymousTypesStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -60163,7 +60888,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: BlankNodeIdentifierStruct.filter,
         fromRdfResource: BlankNodeIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [BlankNodeIdentifierStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          BlankNodeIdentifierStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -60257,7 +60984,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: BlankNodeOrIriIdentifierStruct.filter,
         fromRdfResource: BlankNodeOrIriIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [BlankNodeOrIriIdentifierStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          BlankNodeOrIriIdentifierStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -60349,7 +61078,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ClassConstraintsStruct.filter,
         fromRdfResource: ClassConstraintsStruct.fromRdfResource,
-        fromRdfTypes: [ClassConstraintsStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          ClassConstraintsStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -60441,7 +61172,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ConvertibleTypesStruct.filter,
         fromRdfResource: ConvertibleTypesStruct.fromRdfResource,
-        fromRdfTypes: [ConvertibleTypesStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          ConvertibleTypesStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -60535,7 +61268,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DatatypeDiscriminatedUnionsStruct.filter,
         fromRdfResource: DatatypeDiscriminatedUnionsStruct.fromRdfResource,
-        fromRdfTypes: [DatatypeDiscriminatedUnionsStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          DatatypeDiscriminatedUnionsStruct.schema.properties.$rdfType
+            .fromRdfType,
+        ],
       },
       query,
     );
@@ -60607,7 +61343,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DatesStruct.filter,
         fromRdfResource: DatesStruct.fromRdfResource,
-        fromRdfTypes: [DatesStruct.schema.fromRdfType],
+        fromRdfTypes: [DatesStruct.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -60699,7 +61435,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DefaultValuesStruct.filter,
         fromRdfResource: DefaultValuesStruct.fromRdfResource,
-        fromRdfTypes: [DefaultValuesStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          DefaultValuesStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -60791,7 +61529,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DirectRecursiveStruct.filter,
         fromRdfResource: DirectRecursiveStruct.fromRdfResource,
-        fromRdfTypes: [DirectRecursiveStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          DirectRecursiveStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -60883,7 +61623,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DiscriminatedUnionMember1.filter,
         fromRdfResource: DiscriminatedUnionMember1.fromRdfResource,
-        fromRdfTypes: [DiscriminatedUnionMember1.schema.fromRdfType],
+        fromRdfTypes: [
+          DiscriminatedUnionMember1.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -60975,7 +61717,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DiscriminatedUnionMember2.filter,
         fromRdfResource: DiscriminatedUnionMember2.fromRdfResource,
-        fromRdfTypes: [DiscriminatedUnionMember2.schema.fromRdfType],
+        fromRdfTypes: [
+          DiscriminatedUnionMember2.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -61047,7 +61791,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: DisplayStruct.filter,
         fromRdfResource: DisplayStruct.fromRdfResource,
-        fromRdfTypes: [DisplayStruct.schema.fromRdfType],
+        fromRdfTypes: [DisplayStruct.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -61141,7 +61885,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ExplicitFromToRdfTypesStruct.filter,
         fromRdfResource: ExplicitFromToRdfTypesStruct.fromRdfResource,
-        fromRdfTypes: [ExplicitFromToRdfTypesStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          ExplicitFromToRdfTypesStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -61233,7 +61979,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ExplicitRdfTypeStruct.filter,
         fromRdfResource: ExplicitRdfTypeStruct.fromRdfResource,
-        fromRdfTypes: [ExplicitRdfTypeStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          ExplicitRdfTypeStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -61327,7 +62075,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: FlattenDiscriminatedUnionMember3.filter,
         fromRdfResource: FlattenDiscriminatedUnionMember3.fromRdfResource,
-        fromRdfTypes: [FlattenDiscriminatedUnionMember3.schema.fromRdfType],
+        fromRdfTypes: [
+          FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
+            .fromRdfType,
+        ],
       },
       query,
     );
@@ -61595,7 +62346,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: IndirectRecursiveStruct.filter,
         fromRdfResource: IndirectRecursiveStruct.fromRdfResource,
-        fromRdfTypes: [IndirectRecursiveStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          IndirectRecursiveStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -61689,7 +62442,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: IndirectRecursiveStructHelper.filter,
         fromRdfResource: IndirectRecursiveStructHelper.fromRdfResource,
-        fromRdfTypes: [IndirectRecursiveStructHelper.schema.fromRdfType],
+        fromRdfTypes: [
+          IndirectRecursiveStructHelper.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -61779,7 +62534,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: InIdentifierStruct.filter,
         fromRdfResource: InIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [InIdentifierStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          InIdentifierStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -61869,7 +62626,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: InPropertiesStruct.filter,
         fromRdfResource: InPropertiesStruct.fromRdfResource,
-        fromRdfTypes: [InPropertiesStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          InPropertiesStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -61961,7 +62720,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: IriIdentifierStruct.filter,
         fromRdfResource: IriIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [IriIdentifierStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          IriIdentifierStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -62154,7 +62915,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         fromRdfResource:
           LazilyResolvedBlankNodeOrIriIdentifierStruct.fromRdfResource,
         fromRdfTypes: [
-          LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.fromRdfType,
+          LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
+            .$rdfType.fromRdfType,
         ],
       },
       query,
@@ -62259,7 +63021,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         fromRdfResource:
           LazilyResolvedDiscriminatedUnionMember1.fromRdfResource,
         fromRdfTypes: [
-          LazilyResolvedDiscriminatedUnionMember1.schema.fromRdfType,
+          LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
+            .fromRdfType,
         ],
       },
       query,
@@ -62364,7 +63127,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         fromRdfResource:
           LazilyResolvedDiscriminatedUnionMember2.fromRdfResource,
         fromRdfTypes: [
-          LazilyResolvedDiscriminatedUnionMember2.schema.fromRdfType,
+          LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
+            .fromRdfType,
         ],
       },
       query,
@@ -62623,7 +63387,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ListSetsStruct.filter,
         fromRdfResource: ListSetsStruct.fromRdfResource,
-        fromRdfTypes: [ListSetsStruct.schema.fromRdfType],
+        fromRdfTypes: [ListSetsStruct.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -62695,7 +63459,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: ListsStruct.filter,
         fromRdfResource: ListsStruct.fromRdfResource,
-        fromRdfTypes: [ListsStruct.schema.fromRdfType],
+        fromRdfTypes: [ListsStruct.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -62787,7 +63551,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: MutablePropertiesStruct.filter,
         fromRdfResource: MutablePropertiesStruct.fromRdfResource,
-        fromRdfTypes: [MutablePropertiesStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          MutablePropertiesStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -62871,7 +63637,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: NamedTypesStruct.filter,
         fromRdfResource: NamedTypesStruct.fromRdfResource,
-        fromRdfTypes: [NamedTypesStruct.schema.fromRdfType],
+        fromRdfTypes: [NamedTypesStruct.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -62939,7 +63705,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: NewName.filter,
         fromRdfResource: NewName.fromRdfResource,
-        fromRdfTypes: [NewName.schema.fromRdfType],
+        fromRdfTypes: [NewName.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -63023,7 +63789,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: NodeKindsStruct.filter,
         fromRdfResource: NodeKindsStruct.fromRdfResource,
-        fromRdfTypes: [NodeKindsStruct.schema.fromRdfType],
+        fromRdfTypes: [NodeKindsStruct.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -63355,7 +64121,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: NumericsStruct.filter,
         fromRdfResource: NumericsStruct.fromRdfResource,
-        fromRdfTypes: [NumericsStruct.schema.fromRdfType],
+        fromRdfTypes: [NumericsStruct.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -63521,7 +64287,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: PartialDiscriminatedUnionMember1.filter,
         fromRdfResource: PartialDiscriminatedUnionMember1.fromRdfResource,
-        fromRdfTypes: [PartialDiscriminatedUnionMember1.schema.fromRdfType],
+        fromRdfTypes: [
+          PartialDiscriminatedUnionMember1.schema.properties.$rdfType
+            .fromRdfType,
+        ],
       },
       query,
     );
@@ -63615,7 +64384,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: PartialDiscriminatedUnionMember2.filter,
         fromRdfResource: PartialDiscriminatedUnionMember2.fromRdfResource,
-        fromRdfTypes: [PartialDiscriminatedUnionMember2.schema.fromRdfType],
+        fromRdfTypes: [
+          PartialDiscriminatedUnionMember2.schema.properties.$rdfType
+            .fromRdfType,
+        ],
       },
       query,
     );
@@ -63871,7 +64643,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: PropertyNamesStruct.filter,
         fromRdfResource: PropertyNamesStruct.fromRdfResource,
-        fromRdfTypes: [PropertyNamesStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          PropertyNamesStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -63963,7 +64737,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: PropertyPathsStruct.filter,
         fromRdfResource: PropertyPathsStruct.fromRdfResource,
-        fromRdfTypes: [PropertyPathsStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          PropertyPathsStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -64057,7 +64833,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: RecursiveDiscriminatedUnionMember1.filter,
         fromRdfResource: RecursiveDiscriminatedUnionMember1.fromRdfResource,
-        fromRdfTypes: [RecursiveDiscriminatedUnionMember1.schema.fromRdfType],
+        fromRdfTypes: [
+          RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
+            .fromRdfType,
+        ],
       },
       query,
     );
@@ -64151,7 +64930,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: RecursiveDiscriminatedUnionMember2.filter,
         fromRdfResource: RecursiveDiscriminatedUnionMember2.fromRdfResource,
-        fromRdfTypes: [RecursiveDiscriminatedUnionMember2.schema.fromRdfType],
+        fromRdfTypes: [
+          RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
+            .fromRdfType,
+        ],
       },
       query,
     );
@@ -64235,7 +65017,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: TargetClassStruct.filter,
         fromRdfResource: TargetClassStruct.fromRdfResource,
-        fromRdfTypes: [TargetClassStruct.schema.fromRdfType],
+        fromRdfTypes: [
+          TargetClassStruct.schema.properties.$rdfType.fromRdfType,
+        ],
       },
       query,
     );
@@ -64307,7 +65091,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         filter: TermsStruct.filter,
         fromRdfResource: TermsStruct.fromRdfResource,
-        fromRdfTypes: [TermsStruct.schema.fromRdfType],
+        fromRdfTypes: [TermsStruct.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -64490,12 +65274,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: DiscriminatedUnion.filter,
           fromRdfResource: DiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [DiscriminatedUnionMember1.schema.fromRdfType],
+          fromRdfTypes: [
+            DiscriminatedUnionMember1.schema.properties.$rdfType.fromRdfType,
+          ],
         },
         {
           filter: DiscriminatedUnion.filter,
           fromRdfResource: DiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [DiscriminatedUnionMember2.schema.fromRdfType],
+          fromRdfTypes: [
+            DiscriminatedUnionMember2.schema.properties.$rdfType.fromRdfType,
+          ],
         },
       ],
       query,
@@ -64589,17 +65377,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: FlattenDiscriminatedUnion.filter,
           fromRdfResource: DiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [DiscriminatedUnionMember1.schema.fromRdfType],
+          fromRdfTypes: [
+            DiscriminatedUnionMember1.schema.properties.$rdfType.fromRdfType,
+          ],
         },
         {
           filter: FlattenDiscriminatedUnion.filter,
           fromRdfResource: DiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [DiscriminatedUnionMember2.schema.fromRdfType],
+          fromRdfTypes: [
+            DiscriminatedUnionMember2.schema.properties.$rdfType.fromRdfType,
+          ],
         },
         {
           filter: FlattenDiscriminatedUnion.filter,
           fromRdfResource: FlattenDiscriminatedUnionMember3.fromRdfResource,
-          fromRdfTypes: [FlattenDiscriminatedUnionMember3.schema.fromRdfType],
+          fromRdfTypes: [
+            FlattenDiscriminatedUnionMember3.schema.properties.$rdfType
+              .fromRdfType,
+          ],
         },
       ],
       query,
@@ -64697,7 +65492,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           fromRdfResource:
             LazilyResolvedDiscriminatedUnionMember1.fromRdfResource,
           fromRdfTypes: [
-            LazilyResolvedDiscriminatedUnionMember1.schema.fromRdfType,
+            LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
           ],
         },
         {
@@ -64705,7 +65501,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           fromRdfResource:
             LazilyResolvedDiscriminatedUnionMember2.fromRdfResource,
           fromRdfTypes: [
-            LazilyResolvedDiscriminatedUnionMember2.schema.fromRdfType,
+            LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
           ],
         },
       ],
@@ -64899,12 +65696,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: PartialDiscriminatedUnion.filter,
           fromRdfResource: PartialDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [PartialDiscriminatedUnionMember1.schema.fromRdfType],
+          fromRdfTypes: [
+            PartialDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
         },
         {
           filter: PartialDiscriminatedUnion.filter,
           fromRdfResource: PartialDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [PartialDiscriminatedUnionMember2.schema.fromRdfType],
+          fromRdfTypes: [
+            PartialDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
         },
       ],
       query,
@@ -64998,12 +65801,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           filter: RecursiveDiscriminatedUnion.filter,
           fromRdfResource: RecursiveDiscriminatedUnionMember1.fromRdfResource,
-          fromRdfTypes: [RecursiveDiscriminatedUnionMember1.schema.fromRdfType],
+          fromRdfTypes: [
+            RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
+              .fromRdfType,
+          ],
         },
         {
           filter: RecursiveDiscriminatedUnion.filter,
           fromRdfResource: RecursiveDiscriminatedUnionMember2.fromRdfResource,
-          fromRdfTypes: [RecursiveDiscriminatedUnionMember2.schema.fromRdfType],
+          fromRdfTypes: [
+            RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
+              .fromRdfType,
+          ],
         },
       ],
       query,
