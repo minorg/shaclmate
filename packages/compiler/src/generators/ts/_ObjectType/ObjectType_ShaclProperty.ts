@@ -374,13 +374,15 @@ export class ObjectType_ShaclProperty<
       .map(() => code`${this.schemaVariable}.path`)
       .orDefault(this.propertyPathToCode(this.path));
 
+    const { object: objectVariable, ...otherVariables } = variables;
+
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
         {
           variables: {
-            ...variables,
+            ...otherVariables,
             propertyPath,
-            value: code`${variables.object}.${this.name}`,
+            value: code`${objectVariable}.${this.name}`,
           },
         },
       )}, ${variables.graph});`,
@@ -395,8 +397,9 @@ export class ObjectType_ShaclProperty<
     if (!this.display) {
       return Maybe.empty();
     }
+    const { object: objectVariable, ...otherVariables } = variables;
     return Maybe.of(
-      code`${literalOf(this.name)}: ${this.type.toStringExpression({ variables: { ...variables, value: code`${variables.object}.${this.name}` } })}`,
+      code`${literalOf(this.name)}: ${this.type.toStringExpression({ variables: { ...otherVariables, value: code`${objectVariable}.${this.name}` } })}`,
     );
   }
 

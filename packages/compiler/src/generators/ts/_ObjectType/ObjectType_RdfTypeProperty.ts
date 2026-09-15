@@ -123,7 +123,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     return Maybe.of({
       patterns: code`${variables.ignoreRdfType} ? [] : [${joinCode(
         [
-          code`${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${variables.schema.map((schema) => code`${schema}.${this.name}.fromRdfType`).orDefault(this.rdfjsTermExpression(this.fromRdfType))}, subject: ${variables.focusIdentifier} })`,
+          code`${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${variables.schema.map((schema) => code`${schema}.properties.${this.name}.fromRdfType`).orDefault(this.rdfjsTermExpression(this.fromRdfType))}, subject: ${variables.focusIdentifier} })`,
           code`{ triples: [{ subject: ${variables.focusIdentifier}, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} }], type: "bgp" as const }`,
           code`{
 patterns: [
