@@ -25,6 +25,7 @@ import { snippets_ConversionFunction } from "./_snippets/snippets_ConversionFunc
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_convertToArraySet } from "./_snippets/snippets_convertToArraySet.js";
 import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
+import { snippets_convertToBigInt } from "./_snippets/snippets_convertToBigInt.js";
 import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
@@ -528,6 +529,11 @@ export class Snippets {
   @Memoize()
   get convertToBigDecimal(): Snippet {
     return this.snippet(snippets_convertToBigDecimal);
+  }
+
+  @Memoize()
+  get convertToBigInt(): Snippet {
+    return this.snippet(snippets_convertToBigInt);
   }
 
   @Memoize()
