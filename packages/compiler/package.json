@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.90",
+    "@shaclmate/shacl-ast": "4.0.91",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.57",
     "@rdfx/data-factory": "0.0.57",
@@ -295,6 +295,8 @@
     "dist/generators/ts/_ObjectType/ObjectType_IdentifierProperty.js",
     "dist/generators/ts/_ObjectType/ObjectType_Property.d.ts",
     "dist/generators/ts/_ObjectType/ObjectType_Property.js",
+    "dist/generators/ts/_ObjectType/ObjectType_RdfTypeProperty.d.ts",
+    "dist/generators/ts/_ObjectType/ObjectType_RdfTypeProperty.js",
     "dist/generators/ts/_ObjectType/ObjectType_ShaclProperty.d.ts",
     "dist/generators/ts/_ObjectType/ObjectType_ShaclProperty.js",
     "dist/generators/ts/_ObjectType/ObjectType_createFunctionExpression.d.ts",
@@ -733,5 +735,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.90"
+  "version": "4.0.91"
 }
