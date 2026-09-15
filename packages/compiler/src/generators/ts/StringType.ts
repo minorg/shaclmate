@@ -1,6 +1,7 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
@@ -9,6 +10,8 @@ import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 export class StringType extends AbstractPrimitiveType<string> {
   private readonly languageIn: readonly string[];
 
+  override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
+    Maybe.empty();
   override readonly filterFunction =
     code`${this.reusables.snippets.filterString}`;
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
@@ -71,15 +74,15 @@ export class StringType extends AbstractPrimitiveType<string> {
     return super.jsonSchema(parameters);
   }
 
-  override valueExpression(literal: Literal | string): Code {
-    return code`${literalOf(typeof literal === "string" ? literal : literal.value)}`;
-  }
-
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<
     AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${this.rdfjsTermExpression(this.datatype)}` : ""})]`;
+  }
+
+  override valueExpression(literal: Literal | string): Code {
+    return code`${literalOf(typeof literal === "string" ? literal : literal.value)}`;
   }
 }

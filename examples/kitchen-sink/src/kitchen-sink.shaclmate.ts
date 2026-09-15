@@ -391,6 +391,16 @@ function $convertToArraySet<
         )) as Either<Error, readonly ItemTargetT[]>;
 }
 
+const $convertToBigDecimal: $ConversionFunction<
+  number | string | BigDecimal,
+  BigDecimal
+> = (value) => Either.encase(() => new BigDecimal(value));
+
+const $convertToBigInt: $ConversionFunction<
+  bigint | number | string,
+  bigint
+> = (value) => Either.encase(() => BigInt(value));
+
 const $convertToBlankNode: $ConversionFunction<
   BlankNode | undefined,
   BlankNode
@@ -37624,20 +37634,28 @@ export namespace NumericsStruct {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly byteNumeric?: number | Maybe<number>;
-    readonly decimalNumeric?: BigDecimal | Maybe<BigDecimal>;
+    readonly decimalNumeric?: BigDecimal | number | string | Maybe<BigDecimal>;
     readonly doubleNumeric?: number | Maybe<number>;
     readonly floatNumeric?: number | Maybe<number>;
-    readonly integerNumeric?: bigint | Maybe<bigint>;
+    readonly integerNumeric?: bigint | number | string | Maybe<bigint>;
     readonly intNumeric?: number | Maybe<number>;
-    readonly longNumeric?: bigint | Maybe<bigint>;
-    readonly negativeIntegerNumeric?: bigint | Maybe<bigint>;
-    readonly nonNegativeIntegerNumeric?: bigint | Maybe<bigint>;
-    readonly nonPositiveIntegerNumeric?: bigint | Maybe<bigint>;
-    readonly positiveIntegerNumeric?: bigint | Maybe<bigint>;
+    readonly longNumeric?: bigint | number | string | Maybe<bigint>;
+    readonly negativeIntegerNumeric?: bigint | number | string | Maybe<bigint>;
+    readonly nonNegativeIntegerNumeric?:
+      | bigint
+      | number
+      | string
+      | Maybe<bigint>;
+    readonly nonPositiveIntegerNumeric?:
+      | bigint
+      | number
+      | string
+      | Maybe<bigint>;
+    readonly positiveIntegerNumeric?: bigint | number | string | Maybe<bigint>;
     readonly shortNumeric?: number | Maybe<number>;
     readonly unsignedByteNumeric?: number | Maybe<number>;
     readonly unsignedIntNumeric?: number | Maybe<number>;
-    readonly unsignedLongNumeric?: bigint | Maybe<bigint>;
+    readonly unsignedLongNumeric?: bigint | number | string | Maybe<bigint>;
     readonly unsignedShortNumeric?: number | Maybe<number>;
   }): Either<Error, NumericsStruct> =>
     $sequenceRecord({
@@ -37654,7 +37672,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      decimalNumeric: $convertToMaybe($identityConversionFunction)(
+      decimalNumeric: $convertToMaybe($convertToBigDecimal)(
         parameters?.decimalNumeric,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -37681,7 +37699,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      integerNumeric: $convertToMaybe($identityConversionFunction)(
+      integerNumeric: $convertToMaybe($convertToBigInt)(
         parameters?.integerNumeric,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -37699,7 +37717,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      longNumeric: $convertToMaybe($identityConversionFunction)(
+      longNumeric: $convertToMaybe($convertToBigInt)(
         parameters?.longNumeric,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -37708,7 +37726,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      negativeIntegerNumeric: $convertToMaybe($identityConversionFunction)(
+      negativeIntegerNumeric: $convertToMaybe($convertToBigInt)(
         parameters?.negativeIntegerNumeric,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -37717,7 +37735,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      nonNegativeIntegerNumeric: $convertToMaybe($identityConversionFunction)(
+      nonNegativeIntegerNumeric: $convertToMaybe($convertToBigInt)(
         parameters?.nonNegativeIntegerNumeric,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -37726,7 +37744,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      nonPositiveIntegerNumeric: $convertToMaybe($identityConversionFunction)(
+      nonPositiveIntegerNumeric: $convertToMaybe($convertToBigInt)(
         parameters?.nonPositiveIntegerNumeric,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -37735,7 +37753,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      positiveIntegerNumeric: $convertToMaybe($identityConversionFunction)(
+      positiveIntegerNumeric: $convertToMaybe($convertToBigInt)(
         parameters?.positiveIntegerNumeric,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -37771,7 +37789,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      unsignedLongNumeric: $convertToMaybe($identityConversionFunction)(
+      unsignedLongNumeric: $convertToMaybe($convertToBigInt)(
         parameters?.unsignedLongNumeric,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -37811,20 +37829,28 @@ export namespace NumericsStruct {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly byteNumeric?: number | Maybe<number>;
-    readonly decimalNumeric?: BigDecimal | Maybe<BigDecimal>;
+    readonly decimalNumeric?: BigDecimal | number | string | Maybe<BigDecimal>;
     readonly doubleNumeric?: number | Maybe<number>;
     readonly floatNumeric?: number | Maybe<number>;
-    readonly integerNumeric?: bigint | Maybe<bigint>;
+    readonly integerNumeric?: bigint | number | string | Maybe<bigint>;
     readonly intNumeric?: number | Maybe<number>;
-    readonly longNumeric?: bigint | Maybe<bigint>;
-    readonly negativeIntegerNumeric?: bigint | Maybe<bigint>;
-    readonly nonNegativeIntegerNumeric?: bigint | Maybe<bigint>;
-    readonly nonPositiveIntegerNumeric?: bigint | Maybe<bigint>;
-    readonly positiveIntegerNumeric?: bigint | Maybe<bigint>;
+    readonly longNumeric?: bigint | number | string | Maybe<bigint>;
+    readonly negativeIntegerNumeric?: bigint | number | string | Maybe<bigint>;
+    readonly nonNegativeIntegerNumeric?:
+      | bigint
+      | number
+      | string
+      | Maybe<bigint>;
+    readonly nonPositiveIntegerNumeric?:
+      | bigint
+      | number
+      | string
+      | Maybe<bigint>;
+    readonly positiveIntegerNumeric?: bigint | number | string | Maybe<bigint>;
     readonly shortNumeric?: number | Maybe<number>;
     readonly unsignedByteNumeric?: number | Maybe<number>;
     readonly unsignedIntNumeric?: number | Maybe<number>;
-    readonly unsignedLongNumeric?: bigint | Maybe<bigint>;
+    readonly unsignedLongNumeric?: bigint | number | string | Maybe<bigint>;
     readonly unsignedShortNumeric?: number | Maybe<number>;
   }): NumericsStruct {
     return create(parameters).unsafeCoerce();

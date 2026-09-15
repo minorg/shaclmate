@@ -1,6 +1,7 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
 
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
@@ -15,6 +16,31 @@ import {
 export class BigIntType extends AbstractNumericType<bigint> {
   override readonly jsTypes = [{ typeof: "bigint" } as const];
   override readonly kind = "BigInt";
+
+  @Memoize()
+  override get conversionFunction(): Maybe<AbstractNumericType.ConversionFunction> {
+    if (this.in_.length > 0) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      code: code`${this.reusables.snippets.convertToBigInt}`,
+      sourceTypes: [
+        {
+          expression: code`bigint`,
+          jsType: this.jsTypes[0],
+        },
+        {
+          expression: code`number`,
+          jsType: { typeof: "number" },
+        },
+        {
+          expression: code`string`,
+          jsType: { typeof: "string" },
+        },
+      ],
+    });
+  }
 
   @Memoize()
   get fromRdfResourceValuesFunction(): Code {
