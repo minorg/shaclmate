@@ -1,4 +1,5 @@
 import type { Logger } from "@rdfx/logger";
+
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
@@ -23,6 +24,7 @@ import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema
 import { snippets_ConversionFunction } from "./_snippets/snippets_ConversionFunction.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_convertToArraySet } from "./_snippets/snippets_convertToArraySet.js";
+import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
 import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
@@ -521,6 +523,11 @@ export class Snippets {
   @Memoize()
   get convertToArraySet(): Snippet {
     return this.snippet(snippets_convertToArraySet);
+  }
+
+  @Memoize()
+  get convertToBigDecimal(): Snippet {
+    return this.snippet(snippets_convertToBigDecimal);
   }
 
   @Memoize()
