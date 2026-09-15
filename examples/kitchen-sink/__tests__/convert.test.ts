@@ -1,11 +1,22 @@
 import dataFactory from "@rdfx/data-factory";
-import { schema } from "@tpluscode/rdf-ns-builders";
+import { schema, xsd } from "@tpluscode/rdf-ns-builders";
+import { Decimal } from "decimal.js";
 import { Maybe } from "purify-ts";
 import { describe, it } from "vitest";
 import * as kitchenSink from "../src/index.js";
 
 describe("convert", () => {
   describe("to array", () => {
+    it("from array", ({ expect }) => {
+      const instance = kitchenSink.PropertyCardinalitiesStruct.createUnsafe({
+        emptySet: ["test"],
+        nonEmptySet: ["test"],
+        required: "test",
+      });
+      expect(instance.emptySet).toEqual(["test"]);
+      expect(instance.nonEmptySet).toEqual(["test"]);
+    });
+
     it("from undefined", ({ expect }) => {
       const instance = kitchenSink.PropertyCardinalitiesStruct.createUnsafe({
         nonEmptySet: ["test"],
@@ -25,25 +36,131 @@ describe("convert", () => {
     });
   });
 
+  describe("to Decimal", () => {
+    const expectedValue = new Decimal("23.1");
+    for (const value of [23.1, "23.1", expectedValue]) {
+      it(`from ${typeof value}`, ({ expect }) => {
+        expect(
+          kitchenSink.NumericsStruct.createUnsafe({
+            decimalNumeric: value,
+          })
+            .decimalNumeric.extract()
+            ?.equals(expectedValue),
+        ).toStrictEqual(true);
+      });
+    }
+  });
+
   describe("to bigint", () => {
     for (const value of [23, "23", 23n]) {
       it(`from ${typeof value}`, ({ expect }) => {
         expect(
           kitchenSink.NumericsStruct.createUnsafe({
-            integerNumeric: 23n,
+            integerNumeric: value,
           }).integerNumeric.extract(),
         ).toStrictEqual(23n);
       });
     }
   });
 
-  describe("to Maybe", () => {
+  describe("to BlankNode", () => {
+    it("from BlankNode", ({ expect }) => {
+      expect(
+        kitchenSink.TermsStruct.createUnsafe({
+          blankNodeTerm: dataFactory.blankNode(),
+        }).blankNodeTerm.extract()?.termType,
+      ).toStrictEqual("BlankNode");
+    });
+
     it("from undefined", ({ expect }) => {
+      expect(
+        kitchenSink.NodeKindsStruct.createUnsafe({
+          blankNodeKind: undefined,
+          blankNodeOrLiteralNodeKind: dataFactory.blankNode(),
+          iriNodeKind: dataFactory.namedNode(
+            "http://example.com/iriNodeKindPropertyValue",
+          ),
+          iriOrLiteralNodeKind: dataFactory.namedNode(
+            "http://example.com/iriOrLiteralNodeKindPropertyValue",
+          ),
+          literalNodeKind: dataFactory.literal("literalNodeKindValue"),
+        }).blankNodeKind.termType,
+      ).toStrictEqual("BlankNode");
+    });
+  });
+
+  describe("to IRI", () => {
+    const expected = dataFactory.namedNode("http://example.com");
+
+    for (const value of [expected.value, expected]) {
+      it(`from ${typeof value}`, ({ expect }) => {
+        expect(
+          kitchenSink.TermsStruct.createUnsafe({
+            iriTerm: value,
+          }).iriTerm.extract(),
+        ).toEqualRdfTerm(expected);
+      });
+    }
+  });
+
+  describe("to Literal", () => {
+    const expected = dataFactory.literal("test");
+    for (const value of [expected.value, expected]) {
+      it(`from ${typeof value === "object" ? "Literal" : typeof value}`, ({
+        expect,
+      }) => {
+        expect(
+          kitchenSink.TermsStruct.createUnsafe({
+            literalTerm: value,
+          }).literalTerm.extract(),
+        ).toEqualRdfTerm(expected);
+      });
+    }
+
+    it("from bigint", ({ expect }) => {
+      expect(
+        kitchenSink.TermsStruct.createUnsafe({
+          literalTerm: 2n,
+        }).literalTerm.extract(),
+      ).toEqualRdfTerm(dataFactory.literal("2", xsd.integer));
+    });
+
+    it("from boolean", ({ expect }) => {
+      expect(
+        kitchenSink.TermsStruct.createUnsafe({
+          literalTerm: true,
+        }).literalTerm.extract(),
+      ).toEqualRdfTerm(dataFactory.literal("true", xsd.boolean));
+    });
+
+    it("from Date", ({ expect }) => {
+      const expected = new Date();
+      expect(
+        kitchenSink.TermsStruct.createUnsafe({
+          literalTerm: expected,
+        }).literalTerm.extract(),
+      ).toEqualRdfTerm(
+        dataFactory.literal(expected.toISOString(), xsd.dateTime),
+      );
+    });
+
+    it("from number", ({ expect }) => {
+      expect(
+        kitchenSink.TermsStruct.createUnsafe({
+          literalTerm: 1.1,
+        }).literalTerm.extract(),
+      ).toEqualRdfTerm(dataFactory.literal("1.1e0", xsd.double));
+    });
+  });
+
+  describe("to Maybe", () => {
+    it("from Maybe", ({ expect }) => {
       const instance = kitchenSink.PropertyCardinalitiesStruct.createUnsafe({
         nonEmptySet: ["test"],
+        optional: Maybe.of("test"),
         required: "test",
       });
-      expect(instance.optional.isNothing()).toStrictEqual(true);
+      expect(instance.optional.extract()).toStrictEqual("test");
     });
 
     it("from scalar", ({ expect }) => {
@@ -52,8 +169,15 @@ describe("convert", () => {
         optional: "test",
         required: "test",
       });
-      expect(instance.emptySet).toHaveLength(0);
       expect(instance.optional.extract()).toStrictEqual("test");
+    });
+
+    it("from undefined", ({ expect }) => {
+      const instance = kitchenSink.PropertyCardinalitiesStruct.createUnsafe({
+        nonEmptySet: ["test"],
+        required: "test",
+      });
+      expect(instance.optional.isNothing()).toStrictEqual(true);
     });
   });
 
