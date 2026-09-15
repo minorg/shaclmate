@@ -1024,9 +1024,11 @@ export namespace NodeShape {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [NodeShape.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [NodeShape.schema.properties.$rdfType.fromRdfType],
+          { graph: options.graph },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -2482,11 +2484,19 @@ export namespace NodeShape {
     object.$type === "NodeShape";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#NodeShape",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
+        ],
       },
       $type: { kind: "Discriminant", value: "NodeShape" },
       and: {
@@ -2872,7 +2882,6 @@ export namespace NodeShape {
         },
       },
     },
-    toRdfTypes: [dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape")],
   } as const;
 
   export type Schema = typeof schema;
@@ -2904,9 +2913,11 @@ export namespace Ontology {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [Ontology.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [Ontology.schema.properties.$rdfType.fromRdfType],
+          { graph: options.graph },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -3030,13 +3041,19 @@ export namespace Ontology {
     object.$type === "Ontology";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://www.w3.org/2002/07/owl#Ontology",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://www.w3.org/2002/07/owl#Ontology",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://www.w3.org/2002/07/owl#Ontology"),
+        ],
       },
       $type: { kind: "Discriminant", value: "Ontology" },
       comment: {
@@ -3060,9 +3077,6 @@ export namespace Ontology {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://www.w3.org/2002/07/owl#Ontology"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -3090,9 +3104,13 @@ export namespace PropertyGroup {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [PropertyGroup.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [PropertyGroup.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -3217,13 +3235,19 @@ export namespace PropertyGroup {
     object.$type === "PropertyGroup";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://www.w3.org/ns/shacl#PropertyGroup",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#PropertyGroup",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyGroup"),
+        ],
       },
       $type: { kind: "Discriminant", value: "PropertyGroup" },
       comment: {
@@ -3247,9 +3271,6 @@ export namespace PropertyGroup {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyGroup"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -3391,9 +3412,13 @@ export namespace PropertyShape {
     options,
   ) =>
     (!options.ignoreRdfType
-      ? $ensureRdfResourceType(resource, [PropertyShape.schema.fromRdfType], {
-          graph: options.graph,
-        })
+      ? $ensureRdfResourceType(
+          resource,
+          [PropertyShape.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -5028,13 +5053,19 @@ export namespace PropertyShape {
     object.$type === "PropertyShape";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://www.w3.org/ns/shacl#PropertyShape",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#PropertyShape",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyShape"),
+        ],
       },
       $type: { kind: "Discriminant", value: "PropertyShape" },
       and: {
@@ -5487,9 +5518,6 @@ export namespace PropertyShape {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#PropertyShape"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -5542,8 +5570,10 @@ export namespace ValidationReport {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [ValidationReport.schema.fromRdfType],
-          { graph: options.graph },
+          [ValidationReport.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -5684,13 +5714,19 @@ export namespace ValidationReport {
   ): object is ValidationReport => object.$type === "ValidationReport";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://www.w3.org/ns/shacl#ValidationReport",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#ValidationReport",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationReport"),
+        ],
       },
       $type: { kind: "Discriminant", value: "ValidationReport" },
       conforms: {
@@ -5721,9 +5757,6 @@ export namespace ValidationReport {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationReport"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -5763,8 +5796,10 @@ export namespace ValidationResult {
     (!options.ignoreRdfType
       ? $ensureRdfResourceType(
           resource,
-          [ValidationResult.schema.fromRdfType],
-          { graph: options.graph },
+          [ValidationResult.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
         )
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
@@ -6036,13 +6071,19 @@ export namespace ValidationResult {
   ): object is ValidationResult => object.$type === "ValidationResult";
 
   export const schema = {
-    fromRdfType: dataFactory.namedNode(
-      "http://www.w3.org/ns/shacl#ValidationResult",
-    ),
     properties: {
       $identifier: {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#ValidationResult",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationResult"),
+        ],
       },
       $type: { kind: "Discriminant", value: "ValidationResult" },
       details: {
@@ -6120,9 +6161,6 @@ export namespace ValidationResult {
         },
       },
     },
-    toRdfTypes: [
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#ValidationResult"),
-    ],
   } as const;
 
   export type Schema = typeof schema;
@@ -6172,6 +6210,7 @@ export namespace Shape {
       return (
         NodeShape.fromRdfResourceValues(valueAsValues, {
           ...options,
+          ignoreRdfType: false,
           schema: options.schema.members["NodeShape"].type,
         }) as Either<Error, Resource.Values<Shape>>
       )
@@ -6179,6 +6218,7 @@ export namespace Shape {
           () =>
             PropertyShape.fromRdfResourceValues(valueAsValues, {
               ...options,
+              ignoreRdfType: false,
               schema: options.schema.members["PropertyShape"].type,
             }) as Either<Error, Resource.Values<Shape>>,
         )
