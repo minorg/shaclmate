@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.91",
+    "@shaclmate/shacl-ast": "4.0.92",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.57",
     "@rdfx/data-factory": "0.0.57",
@@ -483,6 +483,10 @@
     "dist/generators/ts/_snippets/snippets_compactRecord.js",
     "dist/generators/ts/_snippets/snippets_convertToArraySet.d.ts",
     "dist/generators/ts/_snippets/snippets_convertToArraySet.js",
+    "dist/generators/ts/_snippets/snippets_convertToBigDecimal.d.ts",
+    "dist/generators/ts/_snippets/snippets_convertToBigDecimal.js",
+    "dist/generators/ts/_snippets/snippets_convertToBigInt.d.ts",
+    "dist/generators/ts/_snippets/snippets_convertToBigInt.js",
     "dist/generators/ts/_snippets/snippets_convertToBlankNode.d.ts",
     "dist/generators/ts/_snippets/snippets_convertToBlankNode.js",
     "dist/generators/ts/_snippets/snippets_convertToBlankNodeIdentifierProperty.d.ts",
@@ -735,5 +739,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.91"
+  "version": "4.0.92"
 }
