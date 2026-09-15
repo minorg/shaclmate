@@ -391,6 +391,11 @@ function $convertToArraySet<
         )) as Either<Error, readonly ItemTargetT[]>;
 }
 
+const $convertToBigDecimal: $ConversionFunction<
+  number | string | BigDecimal,
+  BigDecimal
+> = (value) => Either.encase(() => new BigDecimal(value));
+
 const $convertToBlankNode: $ConversionFunction<
   BlankNode | undefined,
   BlankNode
@@ -37624,7 +37629,7 @@ export namespace NumericsStruct {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly byteNumeric?: number | Maybe<number>;
-    readonly decimalNumeric?: BigDecimal | Maybe<BigDecimal>;
+    readonly decimalNumeric?: BigDecimal | number | string | Maybe<BigDecimal>;
     readonly doubleNumeric?: number | Maybe<number>;
     readonly floatNumeric?: number | Maybe<number>;
     readonly integerNumeric?: bigint | Maybe<bigint>;
@@ -37654,7 +37659,7 @@ export namespace NumericsStruct {
           value,
         ),
       ),
-      decimalNumeric: $convertToMaybe($identityConversionFunction)(
+      decimalNumeric: $convertToMaybe($convertToBigDecimal)(
         parameters?.decimalNumeric,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -37811,7 +37816,7 @@ export namespace NumericsStruct {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly byteNumeric?: number | Maybe<number>;
-    readonly decimalNumeric?: BigDecimal | Maybe<BigDecimal>;
+    readonly decimalNumeric?: BigDecimal | number | string | Maybe<BigDecimal>;
     readonly doubleNumeric?: number | Maybe<number>;
     readonly floatNumeric?: number | Maybe<number>;
     readonly integerNumeric?: bigint | Maybe<bigint>;

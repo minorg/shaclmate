@@ -13,6 +13,8 @@ export function AbstractDiscriminatedUnionType_conversionFunctionExpression<
 ): Maybe<AbstractType.ConversionFunction> {
   if (this.discriminant.kind === "Typeof") {
     // If the members are discriminated by typeof, they can all be used as source types.
+    // Don't consider the member types' conversion functions, since the source types might overlap.
+    // Only consider the member types' declared type(s) (e.g., type.jsTypes).
     return Maybe.of({
       code: code`${this.reusables.snippets.identityConversionFunction}`,
       sourceTypes: this.members.flatMap(({ type }) =>

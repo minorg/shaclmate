@@ -1,7 +1,9 @@
 import type { Literal } from "@rdfjs/types";
+
 import type { Decimal } from "decimal.js";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
@@ -10,11 +12,31 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   protected override readonly inlineExpression =
     code`${this.reusables.imports.BigDecimal}`;
 
-  /**
-   * BigDecimal has no conversion function to avoid source type overlap with other types (e.g., string).
-   */
+  override readonly jsTypes = [
+    {
+      className: code`${this.reusables.imports.BigDecimal}`,
+      instanceof: "class",
+      typeof: "object",
+    },
+  ] as const;
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
-    Maybe.empty();
+    Maybe.of({
+      code: code`${this.reusables.snippets.convertToBigDecimal}`,
+      sourceTypes: [
+        {
+          expression: code`${this.reusables.imports.BigDecimal}`,
+          jsType: this.jsTypes[0],
+        },
+        {
+          expression: code`number`,
+          jsType: { typeof: "number" },
+        },
+        {
+          expression: code`string`,
+          jsType: { typeof: "string" },
+        },
+      ],
+    });
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBigDecimal}`;
   override readonly filterType =
@@ -23,9 +45,6 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
     code`${this.reusables.snippets.bigDecimalFromRdfResourceValues}`;
   override readonly hashFunction =
     code`${this.reusables.snippets.hashBigDecimal}`;
-  override readonly jsTypes = [
-    { instanceof: "Object", typeof: "object" },
-  ] as const;
   override readonly kind = "BigDecimal";
   override readonly schemaType =
     code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
@@ -62,10 +81,6 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
     );
   }
 
-  override valueExpression(literal: Literal): Code {
-    return code`new ${this.reusables.imports.BigDecimal}(${literalOf(literal.value)})`;
-  }
-
   override toJsonExpression({
     variables,
   }: Parameters<
@@ -80,5 +95,9 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
     AbstractLiteralType["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.bigDecimalLiteral}(${variables.value})]`;
+  }
+
+  override valueExpression(literal: Literal): Code {
+    return code`new ${this.reusables.imports.BigDecimal}(${literalOf(literal.value)})`;
   }
 }
