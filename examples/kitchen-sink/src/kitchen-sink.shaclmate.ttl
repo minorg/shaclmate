@@ -573,16 +573,33 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
+:LangStringStruct
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Struct node shape with rdf:langString properties" ;
+    sh:property [
+        sh:datatype rdf:langString ;
+        sh:maxCount 1 ;
+        sh:path :langString
+    ], [
+        sh:maxCount 1 ;
+        sh:path :langStringOrString ;
+        sh:xone ( [ sh:datatype rdf:langString ] [ sh:datatype xsd:string ])
+    ], [
+        sh:maxCount 1 ;
+        sh:path :stringOrLangString ;
+        sh:xone ( [ sh:datatype xsd:string ] [ sh:datatype rdf:langString ])
+    ] .
+
 :LanguageInStruct
     a sh:NodeShape ;
-    rdfs:comment "Struct node shape that uses the StringList in a property." ;
+    rdfs:comment "Struct node shape with sh:languageIn constraints" ;
     sh:property [
-        rdfs:comment "literal property for testing languageIn" ;
+        sh:datatype rdf:langString ;
         sh:languageIn ("en"
             "fr"
         ) ;
         sh:minCount 1 ;
-        sh:path :languageInLiteral
+        sh:path :languageIn
     ] .
 
 :LazilyResolvedBlankNodeOrIriIdentifierStruct

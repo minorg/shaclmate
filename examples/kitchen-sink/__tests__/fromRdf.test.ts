@@ -46,7 +46,7 @@ describe("fromRdf", () => {
         );
 
         switch (property.path.value) {
-          case "http://example.com/languageInLiteral":
+          case "http://example.com/languageIn":
             if (!validLanguageInLanguage.includes(language)) {
               continue;
             }
@@ -258,14 +258,10 @@ describe("fromRdf", () => {
     const instance = kitchenSink.LanguageInStruct.fromRdfResource(
       validLanguageInResource,
     ).unsafeCoerce();
-    expect(instance.languageInLiteral).toHaveLength(
-      validLanguageInLanguage.length,
-    );
+    expect(instance.languageIn).toHaveLength(validLanguageInLanguage.length);
     for (const language of validLanguageInLanguage) {
       expect(
-        instance.languageInLiteral.some(
-          (literal) => literal.language === language,
-        ),
+        instance.languageIn.some((literal) => literal.language === language),
       );
     }
   });
@@ -283,9 +279,7 @@ describe("fromRdf", () => {
         preferredLanguages: [],
       },
     ).unsafeCoerce();
-    expect(instance.languageInLiteral).toHaveLength(
-      validLanguageInLanguage.length,
-    );
+    expect(instance.languageIn).toHaveLength(validLanguageInLanguage.length);
   });
 
   it("preferredLanguages: ['en']", ({ expect }) => {
@@ -295,9 +289,9 @@ describe("fromRdf", () => {
         preferredLanguages: ["en"],
       },
     ).unsafeCoerce();
-    expect(instance.languageInLiteral).toHaveLength(1);
-    expect(instance.languageInLiteral[0].language).toStrictEqual("en");
-    expect(instance.languageInLiteral[0].value).toStrictEqual("envalue");
+    expect(instance.languageIn).toHaveLength(1);
+    expect(instance.languageIn[0].language).toStrictEqual("en");
+    expect(instance.languageIn[0].value).toStrictEqual("envalue");
   });
 
   it("preferredLanguages: ['']", ({ expect }) => {
@@ -315,9 +309,9 @@ describe("fromRdf", () => {
         preferredLanguages: ["", "en"],
       },
     ).unsafeCoerce();
-    expect(instance.languageInLiteral).toHaveLength(1);
-    expect(instance.languageInLiteral[0].language).toStrictEqual("en");
-    expect(instance.languageInLiteral[0].value).toStrictEqual("envalue");
+    expect(instance.languageIn).toHaveLength(1);
+    expect(instance.languageIn[0].language).toStrictEqual("en");
+    expect(instance.languageIn[0].value).toStrictEqual("envalue");
   });
 
   it("preferredLanguages: ['en', '']", ({ expect }) => {
@@ -327,9 +321,9 @@ describe("fromRdf", () => {
         preferredLanguages: ["en", ""],
       },
     ).unsafeCoerce();
-    expect(instance.languageInLiteral).toHaveLength(1);
-    expect(instance.languageInLiteral[0].language).toStrictEqual("en");
-    expect(instance.languageInLiteral[0].value).toStrictEqual("envalue");
+    expect(instance.languageIn).toHaveLength(1);
+    expect(instance.languageIn[0].language).toStrictEqual("en");
+    expect(instance.languageIn[0].value).toStrictEqual("envalue");
   });
 
   it("preferredLanguages: ['fr', 'en']", ({ expect }) => {
@@ -339,11 +333,11 @@ describe("fromRdf", () => {
         preferredLanguages: ["fr", "en"],
       },
     ).unsafeCoerce();
-    expect(instance.languageInLiteral).toHaveLength(2);
-    expect(instance.languageInLiteral[0].language).toStrictEqual("fr");
-    expect(instance.languageInLiteral[0].value).toStrictEqual("frvalue");
-    expect(instance.languageInLiteral[1].language).toStrictEqual("en");
-    expect(instance.languageInLiteral[1].value).toStrictEqual("envalue");
+    expect(instance.languageIn).toHaveLength(2);
+    expect(instance.languageIn[0].language).toStrictEqual("fr");
+    expect(instance.languageIn[0].value).toStrictEqual("frvalue");
+    expect(instance.languageIn[1].language).toStrictEqual("en");
+    expect(instance.languageIn[1].value).toStrictEqual("envalue");
   });
 
   it("accept right identifier type (NamedNode)", ({ expect }) => {

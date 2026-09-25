@@ -2390,7 +2390,7 @@ function $mutableSetFromRdfResourceValues<ItemT, ItemSchemaT>(
 /**
  * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
  */
-type $NamespaceBuilder<TermNames extends string = any> = Record<
+export type $NamespaceBuilder<TermNames extends string = any> = Record<
   TermNames,
   NamedNode
 > &
@@ -24693,7 +24693,1442 @@ export namespace IriIdentifierStruct {
       }),
     );
 } /**
- * Struct node shape that uses the StringList in a property.
+ * Struct node shape rdf:langString properties
+ */
+
+export type LangStringStruct = {
+  readonly $identifier: () => LangStringStruct.Identifier;
+
+  readonly $type: "LangStringStruct";
+
+  readonly langString: Maybe<Literal>;
+
+  readonly langStringOrString: Maybe<Literal | string>;
+
+  readonly stringOrLangString: Maybe<string | Literal>;
+};
+
+export namespace LangStringStruct {
+  export const _fromRdfResource: $_FromRdfResourceFunction<LangStringStruct> = (
+    resource,
+    options,
+  ) =>
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(
+          resource,
+          [LangStringStruct.schema.properties.$rdfType.fromRdfType],
+          {
+            graph: options.graph,
+          },
+        )
+      : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: $identifierFromRdfResourceValues(
+          $rdfResourceIdentifierValues(resource),
+          {
+            ...options,
+            focusResource: resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            schema: LangStringStruct.schema.properties.$identifier.type,
+          },
+        ).chain((values) => values.head()),
+        langString: $shaclPropertyFromRdf<
+          Maybe<Literal>,
+          $MaybeSchema<$LangStringSchema>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: LangStringStruct.schema.properties.langString,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal,
+            $LangStringSchema
+          >($langStringFromRdfResourceValues),
+        }),
+        langStringOrString: $shaclPropertyFromRdf<
+          Maybe<Literal | string>,
+          $MaybeSchema<{
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: LangStringStruct.schema.properties.langStringOrString,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            Literal | string,
+            {
+              kind: "DiscriminatedUnion";
+              members: {
+                readonly object: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $LangStringSchema;
+                };
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+              };
+            }
+          >(((values, options) =>
+            values.chainMap((value) => {
+              const valueAsValues = value.toValues();
+              return (
+                $langStringFromRdfResourceValues(valueAsValues, {
+                  ...options,
+                  ignoreRdfType: false,
+                  schema: options.schema.members["object"].type,
+                }) as Either<Error, Resource.Values<Literal | string>>
+              )
+                .altLazy(
+                  () =>
+                    $stringFromRdfResourceValues<string>(valueAsValues, {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    }) as Either<Error, Resource.Values<Literal | string>>,
+                )
+                .chain((values) => values.head());
+            })) satisfies $FromRdfResourceValuesFunction<
+            Literal | string,
+            {
+              kind: "DiscriminatedUnion";
+              members: {
+                readonly object: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $LangStringSchema;
+                };
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+              };
+            }
+          >),
+        }),
+        stringOrLangString: $shaclPropertyFromRdf<
+          Maybe<string | Literal>,
+          $MaybeSchema<{
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+            };
+          }>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: LangStringStruct.schema.properties.stringOrLangString,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string | Literal,
+            {
+              kind: "DiscriminatedUnion";
+              members: {
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+                readonly object: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $LangStringSchema;
+                };
+              };
+            }
+          >(((values, options) =>
+            values.chainMap((value) => {
+              const valueAsValues = value.toValues();
+              return (
+                $stringFromRdfResourceValues<string>(valueAsValues, {
+                  ...options,
+                  ignoreRdfType: false,
+                  schema: options.schema.members["string"].type,
+                }) as Either<Error, Resource.Values<string | Literal>>
+              )
+                .altLazy(
+                  () =>
+                    $langStringFromRdfResourceValues(valueAsValues, {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    }) as Either<Error, Resource.Values<string | Literal>>,
+                )
+                .chain((values) => values.head());
+            })) satisfies $FromRdfResourceValuesFunction<
+            string | Literal,
+            {
+              kind: "DiscriminatedUnion";
+              members: {
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+                readonly object: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $LangStringSchema;
+                };
+              };
+            }
+          >),
+        }),
+      }).chain((properties) => LangStringStruct.create(properties)),
+    );
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    LangStringStruct.Identifier,
+    LangStringStruct
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        LangStringStruct.schema.properties.$rdfType.toRdfTypes,
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      LangStringStruct.schema.properties.langString.path,
+      parameters.object.langString.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      LangStringStruct.schema.properties.langStringOrString.path,
+      parameters.object.langStringOrString.toList().flatMap((value) =>
+        (
+          ((value, _options): Literal[] => {
+            if (typeof value === "object") {
+              return [value];
+            }
+            if (typeof value === "string") {
+              return [$literalFactory.string(value)];
+            }
+
+            throw new Error("unable to serialize to RDF");
+          }) satisfies $ToRdfResourceValuesFunction<Literal | string>
+        )(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            LangStringStruct.schema.properties.langStringOrString.path,
+        }),
+      ),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      LangStringStruct.schema.properties.stringOrLangString.path,
+      parameters.object.stringOrLangString.toList().flatMap((value) =>
+        (
+          ((value, _options): Literal[] => {
+            if (typeof value === "string") {
+              return [$literalFactory.string(value)];
+            }
+            if (typeof value === "object") {
+              return [value];
+            }
+
+            throw new Error("unable to serialize to RDF");
+          }) satisfies $ToRdfResourceValuesFunction<string | Literal>
+        )(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            LangStringStruct.schema.properties.stringOrLangString.path,
+        }),
+      ),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const $toString: (_langStringStruct: LangStringStruct) => string = (
+    _langStringStruct,
+  ) => `LangStringStruct(${JSON.stringify(toStringRecord(_langStringStruct))})`;
+
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LangStringStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly langString?: Literal | Maybe<Literal>;
+    readonly langStringOrString?: Literal | string | Maybe<Literal | string>;
+    readonly stringOrLangString?: string | Literal | Maybe<string | Literal>;
+  }): Either<Error, LangStringStruct> =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
+      ),
+      langString: $convertToMaybe($convertToLangString)(
+        parameters?.langString,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          LangStringStruct.schema.properties.langString.type,
+          value,
+        ),
+      ),
+      langStringOrString: $convertToMaybe($identityConversionFunction)(
+        parameters?.langStringOrString,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          LangStringStruct.schema.properties.langStringOrString.type,
+          value,
+        ),
+      ),
+      stringOrLangString: $convertToMaybe($identityConversionFunction)(
+        parameters?.stringOrLangString,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          LangStringStruct.schema.properties.stringOrLangString.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "LangStringStruct" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          toJson: LangStringStruct.toJson,
+          $toString: LangStringStruct.$toString,
+        }),
+      );
+
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LangStringStruct.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly langString?: Literal | Maybe<Literal>;
+    readonly langStringOrString?: Literal | string | Maybe<Literal | string>;
+    readonly stringOrLangString?: string | Literal | Maybe<string | Literal>;
+  }): LangStringStruct {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const equals: (
+    left: LangStringStruct,
+    right: LangStringStruct,
+  ) => $EqualsResult = (left, right) =>
+    $propertyEquals(
+      { equalsFunction: $booleanEquals, name: "$identifier" },
+      [left, left.$identifier()],
+      [right, right.$identifier()],
+    )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(left, right, $booleanEquals),
+            name: "langString",
+          },
+          [left, left.langString],
+          [right, right.langString],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
+                left,
+                right,
+                (left: Literal | string, right: Literal | string) => {
+                  if (typeof left === "object" && typeof right === "object") {
+                    return $booleanEquals(left as Literal, right as Literal);
+                  }
+                  if (typeof left === "string" && typeof right === "string") {
+                    return $strictEquals(left as string, right as string);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
+                },
+              ),
+            name: "langStringOrString",
+          },
+          [left, left.langStringOrString],
+          [right, right.langStringOrString],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left, right) =>
+              $maybeEquals(
+                left,
+                right,
+                (left: string | Literal, right: string | Literal) => {
+                  if (typeof left === "string" && typeof right === "string") {
+                    return $strictEquals(left as string, right as string);
+                  }
+                  if (typeof left === "object" && typeof right === "object") {
+                    return $booleanEquals(left as Literal, right as Literal);
+                  }
+
+                  return Left({
+                    left,
+                    right,
+                    propertyName: "type",
+                    propertyValuesUnequal: {
+                      left: typeof left,
+                      right: typeof right,
+                      type: "boolean" as const,
+                    },
+                    type: "property" as const,
+                  });
+                },
+              ),
+            name: "stringOrLangString",
+          },
+          [left, left.stringOrLangString],
+          [right, right.stringOrLangString],
+        ),
+      );
+
+  export const filter: (
+    filter: LangStringStruct.Filter,
+    value: LangStringStruct,
+  ) => boolean = (filter, value) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.langString !== undefined &&
+      !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
+        filter.langString,
+        value.langString,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.langStringOrString !== undefined &&
+      !$filterMaybe<
+        Literal | string,
+        {
+          readonly on?: {
+            readonly object?: $LiteralFilter;
+            readonly string?: $StringFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly object?: $LiteralFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          value: Literal | string,
+        ) => {
+          if (
+            filter.on?.["object"] !== undefined &&
+            typeof value === "object"
+          ) {
+            if (!$filterLiteral(filter.on["object"], value)) {
+              return false;
+            }
+          }
+          if (
+            filter.on?.["string"] !== undefined &&
+            typeof value === "string"
+          ) {
+            if (!$filterString(filter.on["string"], value)) {
+              return false;
+            }
+          }
+
+          return true;
+        },
+      )(filter.langStringOrString, value.langStringOrString)
+    ) {
+      return false;
+    }
+    if (
+      filter.stringOrLangString !== undefined &&
+      !$filterMaybe<
+        string | Literal,
+        {
+          readonly on?: {
+            readonly string?: $StringFilter;
+            readonly object?: $LiteralFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly object?: $LiteralFilter;
+            };
+          },
+          value: string | Literal,
+        ) => {
+          if (
+            filter.on?.["string"] !== undefined &&
+            typeof value === "string"
+          ) {
+            if (!$filterString(filter.on["string"], value)) {
+              return false;
+            }
+          }
+          if (
+            filter.on?.["object"] !== undefined &&
+            typeof value === "object"
+          ) {
+            if (!$filterLiteral(filter.on["object"], value)) {
+              return false;
+            }
+          }
+
+          return true;
+        },
+      )(filter.stringOrLangString, value.stringOrLangString)
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly langString?: $MaybeFilter<$LiteralFilter>;
+    readonly langStringOrString?: $MaybeFilter<{
+      readonly on?: {
+        readonly object?: $LiteralFilter;
+        readonly string?: $StringFilter;
+      };
+    }>;
+    readonly stringOrLangString?: $MaybeFilter<{
+      readonly on?: {
+        readonly string?: $StringFilter;
+        readonly object?: $LiteralFilter;
+      };
+    }>;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    LangStringStruct.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+            },
+            {
+              subject: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfType`,
+              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
+              object: dataFactory.variable!(
+                `${parameters.variablePrefix}RdfClass`,
+              ),
+            },
+          ],
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.langString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "langString",
+        propertySchema: LangStringStruct.schema.properties.langString,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $LiteralFilter,
+          $LangStringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.langStringOrString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "langStringOrString",
+        propertySchema: LangStringStruct.schema.properties.langStringOrString,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly object?: $LiteralFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly object?: $LiteralFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringOrLangString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringOrLangString",
+        propertySchema: LangStringStruct.schema.properties.stringOrLangString,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly object?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly object?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    LangStringStruct.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: LangStringStruct.schema.properties.$identifier.type,
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      parameters.ignoreRdfType
+        ? []
+        : [
+            $sparqlInstancesOfPattern({
+              rdfType: LangStringStruct.schema.properties.$rdfType.fromRdfType,
+              subject: parameters.focusIdentifier,
+            }),
+            {
+              triples: [
+                {
+                  subject: parameters.focusIdentifier,
+                  predicate: $RdfVocabularies.rdf.type,
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfType`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      subject: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfType`,
+                      ),
+                      predicate: {
+                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        pathType: "+" as const,
+                        type: "path" as const,
+                      },
+                      object: dataFactory.variable!(
+                        `${parameters.variablePrefix}RdfClass`,
+                      ),
+                    },
+                  ],
+                  type: "bgp" as const,
+                },
+              ],
+              type: "optional" as const,
+            },
+          ],
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.langString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "langString",
+        propertySchema: LangStringStruct.schema.properties.langString,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $LiteralFilter,
+          $LangStringSchema
+        >($langStringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.langStringOrString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "langStringOrString",
+        propertySchema: LangStringStruct.schema.properties.langStringOrString,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly object?: $LiteralFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $langStringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly object?: $LiteralFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringOrLangString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringOrLangString",
+        propertySchema: LangStringStruct.schema.properties.stringOrLangString,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly object?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $langStringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly object?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $LangStringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export const fromJson: (
+    json: LangStringStruct.Json,
+  ) => Either<Error, LangStringStruct> = ($json) =>
+    $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      langString: Maybe.fromNullable($json["langString"])
+        .map((item) =>
+          Either.of<Error, Literal>(
+            dataFactory.literal(item["@value"], item["@language"]),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      langStringOrString: Maybe.fromNullable($json["langStringOrString"])
+        .map((item) =>
+          ((
+            value:
+              | { readonly "@language": string; readonly "@value": string }
+              | string,
+          ): Either<Error, Literal | string> => {
+            if (typeof value === "object") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  (
+                    value as {
+                      readonly "@language": string;
+                      readonly "@value": string;
+                    }
+                  )["@value"],
+                  (
+                    value as {
+                      readonly "@language": string;
+                      readonly "@value": string;
+                    }
+                  )["@language"],
+                ),
+              ).map((value) => value);
+            }
+            if (typeof value === "string") {
+              return Either.of<Error, string>(value as string).map(
+                (value) => value,
+              );
+            }
+
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      stringOrLangString: Maybe.fromNullable($json["stringOrLangString"])
+        .map((item) =>
+          ((
+            value:
+              | string
+              | { readonly "@language": string; readonly "@value": string },
+          ): Either<Error, string | Literal> => {
+            if (typeof value === "string") {
+              return Either.of<Error, string>(value as string).map(
+                (value) => value,
+              );
+            }
+            if (typeof value === "object") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  (
+                    value as {
+                      readonly "@language": string;
+                      readonly "@value": string;
+                    }
+                  )["@value"],
+                  (
+                    value as {
+                      readonly "@language": string;
+                      readonly "@value": string;
+                    }
+                  )["@language"],
+                ),
+              ).map((value) => value);
+            }
+
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(LangStringStruct.create);
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    LangStringStruct,
+    LangStringStruct.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export const hash = <HasherT extends $Hasher>(
+    hasher: HasherT,
+    _langStringStruct: Omit<LangStringStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => LangStringStruct.Identifier;
+      readonly $type?: "LangStringStruct";
+    },
+  ): HasherT => {
+    if (_langStringStruct.$identifier) {
+      hasher.update(_langStringStruct.$identifier().value);
+    }
+    if (_langStringStruct.$type) {
+      hasher.update(_langStringStruct.$type);
+    }
+    $hashMaybe($hashTerm)(hasher, _langStringStruct.langString);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: Literal | string,
+      ): HasherT => {
+        if (typeof value === "object") {
+          return $hashTerm(hasher, value);
+        }
+        if (typeof value === "string") {
+          return $hashString(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _langStringStruct.langStringOrString);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: string | Literal,
+      ): HasherT => {
+        if (typeof value === "string") {
+          return $hashString(hasher, value);
+        }
+        if (typeof value === "object") {
+          return $hashTerm(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _langStringStruct.stringOrLangString);
+    return hasher;
+  };
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export const isLangStringStruct = (
+    object: $Object,
+  ): object is LangStringStruct => object.$type === "LangStringStruct";
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LangStringStruct"),
+          langString: z
+            .object({ "@language": z.string(), "@value": z.string() })
+            .optional(),
+          langStringOrString: z
+            .union([
+              z.object({ "@language": z.string(), "@value": z.string() }),
+              z.string(),
+            ])
+            .readonly()
+            .optional(),
+          stringOrLangString: z
+            .union([
+              z.string(),
+              z.object({ "@language": z.string(), "@value": z.string() }),
+            ])
+            .readonly()
+            .optional(),
+        })
+        .meta({
+          description: "Struct node shape rdf:langString properties",
+        }) satisfies z.ZodType<Json>;
+    }
+
+    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "LangStringStruct" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          { scope: `${scopePrefix}/properties/langString`, type: "Control" },
+          {
+            scope: `${scopePrefix}/properties/langStringOrString`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/stringOrLangString`,
+            type: "Control",
+          },
+        ],
+        type: "Group",
+        label: "LangStringStruct",
+      };
+    };
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly $type: "LangStringStruct";
+    readonly langString?: {
+      readonly "@language": string;
+      readonly "@value": string;
+    };
+    readonly langStringOrString?:
+      | { readonly "@language": string; readonly "@value": string }
+      | string;
+    readonly stringOrLangString?:
+      | string
+      | { readonly "@language": string; readonly "@value": string };
+  };
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://example.com/LangStringStruct",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode("http://example.com/LangStringStruct"),
+        ],
+      },
+      $type: { kind: "Discriminant", value: "LangStringStruct" },
+      langString: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/langString"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "LangString" as const },
+        },
+      },
+      langStringOrString: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/langStringOrString"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "DiscriminatedUnion" as const,
+            members: {
+              object: {
+                discriminantValues: ["object"],
+                type: { kind: "LangString" as const },
+              },
+              string: {
+                discriminantValues: ["string"],
+                type: { kind: "String" as const },
+              },
+            },
+          },
+        },
+      },
+      stringOrLangString: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/stringOrLangString"),
+        type: {
+          kind: "Option" as const,
+          itemType: {
+            kind: "DiscriminatedUnion" as const,
+            members: {
+              string: {
+                discriminantValues: ["string"],
+                type: { kind: "String" as const },
+              },
+              object: {
+                discriminantValues: ["object"],
+                type: { kind: "LangString" as const },
+              },
+            },
+          },
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LangStringStruct.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "langStringStruct";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LangStringStruct.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LangStringStruct.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof LangStringStruct.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LangStringStruct.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const toJson: (
+    _langStringStruct: LangStringStruct,
+  ) => LangStringStruct.Json = (_langStringStruct) =>
+    JSON.parse(
+      JSON.stringify({
+        "@id":
+          _langStringStruct.$identifier().termType === "BlankNode"
+            ? `_:${_langStringStruct.$identifier().value}`
+            : _langStringStruct.$identifier().value,
+        $type: _langStringStruct.$type,
+        langString: _langStringStruct.langString
+          .map((item) => ({ "@language": item.language, "@value": item.value }))
+          .extract(),
+        langStringOrString: _langStringStruct.langStringOrString
+          .map((item) =>
+            ((
+              value: Literal | string,
+            ):
+              | { readonly "@language": string; readonly "@value": string }
+              | string => {
+              if (typeof value === "object") {
+                return { "@language": value.language, "@value": value.value };
+              }
+              if (typeof value === "string") {
+                return value;
+              }
+
+              throw new Error("unable to serialize to JSON");
+            })(item),
+          )
+          .extract(),
+        stringOrLangString: _langStringStruct.stringOrLangString
+          .map((item) =>
+            ((
+              value: string | Literal,
+            ):
+              | string
+              | { readonly "@language": string; readonly "@value": string } => {
+              if (typeof value === "string") {
+                return value;
+              }
+              if (typeof value === "object") {
+                return { "@language": value.language, "@value": value.value };
+              }
+
+              throw new Error("unable to serialize to JSON");
+            })(item),
+          )
+          .extract(),
+      } satisfies LangStringStruct.Json),
+    );
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export const toStringRecord: (
+    _langStringStruct: LangStringStruct,
+  ) => Record<string, string> = (_langStringStruct) =>
+    $compactRecord({ $identifier: _langStringStruct.$identifier().toString() });
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    LangStringStruct.Filter,
+    LangStringStruct.Schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    LangStringStruct.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    LangStringStruct.Filter,
+    LangStringStruct.Schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      LangStringStruct.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+} /**
+ * Struct node shape with sh:languageIn constraints
  */
 
 export type LanguageInStruct = {
@@ -24701,10 +26136,7 @@ export type LanguageInStruct = {
 
   readonly $type: "LanguageInStruct";
 
-  /**
-   * literal property for testing languageIn
-   */
-  readonly languageInLiteral: readonly Literal[];
+  readonly languageIn: readonly Literal[];
 };
 
 export namespace LanguageInStruct {
@@ -24722,18 +26154,18 @@ export namespace LanguageInStruct {
           schema: LanguageInStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
-      languageInLiteral: $shaclPropertyFromRdf<
+      languageIn: $shaclPropertyFromRdf<
         readonly Literal[],
-        $CollectionSchema<$LiteralSchema>
+        $CollectionSchema<$LangStringSchema>
       >({
         ...options,
         focusResource: resource,
         ignoreRdfType: true,
-        propertySchema: LanguageInStruct.schema.properties.languageInLiteral,
+        propertySchema: LanguageInStruct.schema.properties.languageIn,
         typeFromRdfResourceValues: $setFromRdfResourceValues<
           Literal,
-          $LiteralSchema
-        >($literalFromRdfResourceValues),
+          $LangStringSchema
+        >($langStringFromRdfResourceValues),
       }),
     }).chain((properties) => LanguageInStruct.create(properties));
 
@@ -24742,8 +26174,8 @@ export namespace LanguageInStruct {
     LanguageInStruct
   > = (parameters) => {
     parameters.resource.add(
-      LanguageInStruct.schema.properties.languageInLiteral.path,
-      parameters.object.languageInLiteral.flatMap((item) => [item]),
+      LanguageInStruct.schema.properties.languageIn.path,
+      parameters.object.languageIn.flatMap((item) => [item]),
       parameters.graph,
     );
     return parameters.resource;
@@ -24762,26 +26194,19 @@ export namespace LanguageInStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly languageInLiteral:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
+    readonly languageIn: Literal | readonly Literal[];
   }): Either<Error, LanguageInStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
-      languageInLiteral: $convertToScalarSet($convertToLiteral)(
-        parameters.languageInLiteral,
+      languageIn: $convertToScalarSet($convertToLangString)(
+        parameters.languageIn,
         parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
-          LanguageInStruct.schema.properties.languageInLiteral.type,
+          LanguageInStruct.schema.properties.languageIn.type,
           value,
         ),
       ),
@@ -24806,14 +26231,7 @@ export namespace LanguageInStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly languageInLiteral:
-      | bigint
-      | boolean
-      | number
-      | string
-      | Date
-      | Literal
-      | readonly (bigint | boolean | number | string | Date | Literal)[];
+    readonly languageIn: Literal | readonly Literal[];
   }): LanguageInStruct {
     return create(parameters).unsafeCoerce();
   }
@@ -24831,10 +26249,10 @@ export namespace LanguageInStruct {
         {
           equalsFunction: (left, right) =>
             $arrayEquals(left, right, $booleanEquals),
-          name: "languageInLiteral",
+          name: "languageIn",
         },
-        [left, left.languageInLiteral],
-        [right, right.languageInLiteral],
+        [left, left.languageIn],
+        [right, right.languageIn],
       ),
     );
 
@@ -24849,10 +26267,10 @@ export namespace LanguageInStruct {
       return false;
     }
     if (
-      filter.languageInLiteral !== undefined &&
+      filter.languageIn !== undefined &&
       !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
-        filter.languageInLiteral,
-        value.languageInLiteral,
+        filter.languageIn,
+        value.languageIn,
       )
     ) {
       return false;
@@ -24862,7 +26280,7 @@ export namespace LanguageInStruct {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly languageInLiteral?: $CollectionFilter<$LiteralFilter>;
+    readonly languageIn?: $CollectionFilter<$LiteralFilter>;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -24871,14 +26289,14 @@ export namespace LanguageInStruct {
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.languageInLiteral,
+        filter: parameters.filter?.languageIn,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "languageInLiteral",
-        propertySchema: LanguageInStruct.schema.properties.languageInLiteral,
+        propertyName: "languageIn",
+        propertySchema: LanguageInStruct.schema.properties.languageIn,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $LiteralFilter,
-          $LiteralSchema
+          $LangStringSchema
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -24905,16 +26323,16 @@ export namespace LanguageInStruct {
     }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.languageInLiteral,
+        filter: parameters.filter?.languageIn,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "languageInLiteral",
-        propertySchema: LanguageInStruct.schema.properties.languageInLiteral,
+        propertyName: "languageIn",
+        propertySchema: LanguageInStruct.schema.properties.languageIn,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $LiteralFilter,
-          $LiteralSchema
-        >($literalSparqlWherePatterns),
+          $LangStringSchema
+        >($langStringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -24930,17 +26348,10 @@ export namespace LanguageInStruct {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      languageInLiteral: Either.sequence<Error, Literal>(
-        $json["languageInLiteral"].map((item) =>
+      languageIn: Either.sequence<Error, Literal>(
+        $json["languageIn"].map((item) =>
           Either.of<Error, Literal>(
-            dataFactory.literal(
-              item["@value"],
-              item["@language"] !== undefined
-                ? item["@language"]
-                : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"]!)
-                  : undefined,
-            ),
+            dataFactory.literal(item["@value"], item["@language"]),
           ),
         ),
       ),
@@ -24972,7 +26383,7 @@ export namespace LanguageInStruct {
     if (_languageInStruct.$type) {
       hasher.update(_languageInStruct.$type);
     }
-    $hashArray($hashTerm)(hasher, _languageInStruct.languageInLiteral);
+    $hashArray($hashTerm)(hasher, _languageInStruct.languageIn);
     return hasher;
   };
 
@@ -25000,21 +26411,15 @@ export namespace LanguageInStruct {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("LanguageInStruct"),
-          languageInLiteral: z
-            .object({
-              "@language": z.string().optional(),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-            })
+          languageIn: z
+            .object({ "@language": z.string(), "@value": z.string() })
             .array()
             .nonempty()
             .min(1)
-            .readonly()
-            .meta({ description: "literal property for testing languageIn" }),
+            .readonly(),
         })
         .meta({
-          description:
-            "Struct node shape that uses the StringList in a property.",
+          description: "Struct node shape with sh:languageIn constraints",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -25038,10 +26443,7 @@ export namespace LanguageInStruct {
             scope: `${scopePrefix}/properties/$type`,
             type: "Control",
           },
-          {
-            scope: `${scopePrefix}/properties/languageInLiteral`,
-            type: "Control",
-          },
+          { scope: `${scopePrefix}/properties/languageIn`, type: "Control" },
         ],
         type: "Group",
         label: "LanguageInStruct",
@@ -25052,9 +26454,8 @@ export namespace LanguageInStruct {
   export type Json = {
     readonly "@id": string;
     readonly $type: "LanguageInStruct";
-    readonly languageInLiteral: readonly {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
+    readonly languageIn: readonly {
+      readonly "@language": string;
       readonly "@value": string;
     }[];
   };
@@ -25066,12 +26467,12 @@ export namespace LanguageInStruct {
         type: { kind: "Identifier" as const },
       },
       $type: { kind: "Discriminant", value: "LanguageInStruct" },
-      languageInLiteral: {
+      languageIn: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/languageInLiteral"),
+        path: dataFactory.namedNode("http://example.com/languageIn"),
         type: {
           kind: "Set" as const,
-          itemType: { kind: "Literal" as const, languageIn: ["en", "fr"] },
+          itemType: { kind: "LangString" as const, languageIn: ["en", "fr"] },
           minCount: 1,
         },
       },
@@ -25146,12 +26547,8 @@ export namespace LanguageInStruct {
             ? `_:${_languageInStruct.$identifier().value}`
             : _languageInStruct.$identifier().value,
         $type: _languageInStruct.$type,
-        languageInLiteral: _languageInStruct.languageInLiteral.map((item) => ({
-          "@language": item.language.length > 0 ? item.language : undefined,
-          "@type":
-            item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
-              ? item.datatype.value
-              : undefined,
+        languageIn: _languageInStruct.languageIn.map((item) => ({
+          "@language": item.language,
           "@value": item.value,
         })),
       } satisfies LanguageInStruct.Json),
@@ -58424,6 +59821,7 @@ export type $Object =
   | InIdentifierStruct
   | InPropertiesStruct
   | IriIdentifierStruct
+  | LangStringStruct
   | LanguageInStruct
   | LazilyResolvedBlankNodeOrIriIdentifierStruct
   | LazilyResolvedDiscriminatedUnionMember1
@@ -58560,6 +59958,8 @@ export namespace $Object {
         return InPropertiesStruct.equals(left, right as InPropertiesStruct);
       case "IriIdentifierStruct":
         return IriIdentifierStruct.equals(left, right as IriIdentifierStruct);
+      case "LangStringStruct":
+        return LangStringStruct.equals(left, right as LangStringStruct);
       case "LanguageInStruct":
         return LanguageInStruct.equals(left, right as LanguageInStruct);
       case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
@@ -58714,6 +60114,8 @@ export namespace $Object {
         return InPropertiesStruct.hash(hasher, object);
       case "IriIdentifierStruct":
         return IriIdentifierStruct.hash(hasher, object);
+      case "LangStringStruct":
+        return LangStringStruct.hash(hasher, object);
       case "LanguageInStruct":
         return LanguageInStruct.hash(hasher, object);
       case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
@@ -58829,6 +60231,8 @@ export namespace $Object {
         return InPropertiesStruct.toJson(object);
       case "IriIdentifierStruct":
         return IriIdentifierStruct.toJson(object);
+      case "LangStringStruct":
+        return LangStringStruct.toJson(object);
       case "LanguageInStruct":
         return LanguageInStruct.toJson(object);
       case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
@@ -58944,6 +60348,8 @@ export namespace $Object {
         return InPropertiesStruct.toRdfResource(object, options);
       case "IriIdentifierStruct":
         return IriIdentifierStruct.toRdfResource(object, options);
+      case "LangStringStruct":
+        return LangStringStruct.toRdfResource(object, options);
       case "LanguageInStruct":
         return LanguageInStruct.toRdfResource(object, options);
       case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
@@ -59077,6 +60483,8 @@ export namespace $Object {
         return InPropertiesStruct.$toString(object);
       case "IriIdentifierStruct":
         return IriIdentifierStruct.$toString(object);
+      case "LangStringStruct":
+        return LangStringStruct.$toString(object);
       case "LanguageInStruct":
         return LanguageInStruct.$toString(object);
       case "LazilyResolvedBlankNodeOrIriIdentifierStruct":
@@ -59764,6 +61172,32 @@ export interface $ObjectSet {
       IriIdentifierStruct.Identifier
     >,
   ): Promise<Either<Error, readonly IriIdentifierStruct[]>>;
+
+  langStringStruct(
+    identifier: LangStringStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LangStringStruct>>;
+
+  langStringStructCount(
+    query?: Pick<
+      $ObjectSet.Query<LangStringStruct.Filter, LangStringStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  langStringStructIdentifiers(
+    query?: $ObjectSet.Query<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly LangStringStruct.Identifier[]>>;
+
+  langStringStructs(
+    query?: $ObjectSet.Query<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly LangStringStruct[]>>;
 
   languageInStruct(
     identifier: LanguageInStruct.Identifier,
@@ -62749,6 +64183,90 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         fromRdfTypes: [
           IriIdentifierStruct.schema.properties.$rdfType.fromRdfType,
         ],
+      },
+      query,
+    );
+  }
+
+  async langStringStruct(
+    identifier: LangStringStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LangStringStruct>> {
+    return this.langStringStructSync(identifier, options);
+  }
+
+  langStringStructSync(
+    identifier: LangStringStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, LangStringStruct> {
+    return this.langStringStructsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async langStringStructCount(
+    query?: Pick<
+      $ObjectSet.Query<LangStringStruct.Filter, LangStringStruct.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.langStringStructCountSync(query);
+  }
+
+  langStringStructCountSync(
+    query?: Pick<
+      $ObjectSet.Query<LangStringStruct.Filter, LangStringStruct.Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.langStringStructsSync(query).map((objects) => objects.length);
+  }
+
+  async langStringStructIdentifiers(
+    query?: $ObjectSet.Query<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly LangStringStruct.Identifier[]>> {
+    return this.langStringStructIdentifiersSync(query);
+  }
+
+  langStringStructIdentifiersSync(
+    query?: $ObjectSet.Query<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >,
+  ): Either<Error, readonly LangStringStruct.Identifier[]> {
+    return this.langStringStructsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async langStringStructs(
+    query?: $ObjectSet.Query<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly LangStringStruct[]>> {
+    return this.langStringStructsSync(query);
+  }
+
+  langStringStructsSync(
+    query?: $ObjectSet.Query<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >,
+  ): Either<Error, readonly LangStringStruct[]> {
+    return this.#objectsSync<
+      LangStringStruct,
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >(
+      {
+        filter: LangStringStruct.filter,
+        fromRdfResource: LangStringStruct.fromRdfResource,
+        fromRdfTypes: [LangStringStruct.schema.properties.$rdfType.fromRdfType],
       },
       query,
     );
@@ -67293,6 +68811,58 @@ export class $SparqlObjectSet implements $ObjectSet {
       IriIdentifierStruct.Filter,
       IriIdentifierStruct.Identifier
     >(IriIdentifierStruct, query);
+  }
+
+  async langStringStruct(
+    identifier: LangStringStruct.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LangStringStruct>> {
+    return (
+      await this.langStringStructs({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async langStringStructCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        LangStringStruct.Filter,
+        LangStringStruct.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >(LangStringStruct, query);
+  }
+
+  async langStringStructIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly LangStringStruct.Identifier[]>> {
+    return this.#objectIdentifiers<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >(LangStringStruct, query);
+  }
+
+  async langStringStructs(
+    query?: $SparqlObjectSet.Query<
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >,
+  ): Promise<Either<Error, readonly LangStringStruct[]>> {
+    return this.#objects<
+      LangStringStruct,
+      LangStringStruct.Filter,
+      LangStringStruct.Identifier
+    >(LangStringStruct, query);
   }
 
   async languageInStruct(

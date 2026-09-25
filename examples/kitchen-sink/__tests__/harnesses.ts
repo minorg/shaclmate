@@ -275,7 +275,7 @@ export const harnesses = {
   languageInsStruct: new Harness(
     kitchenSink.LanguageInStruct.createUnsafe({
       $identifier,
-      languageInLiteral: [
+      languageIn: [
         dataFactory.literal("frvalue", "fr"),
         dataFactory.literal("envalue", "en"),
       ],
