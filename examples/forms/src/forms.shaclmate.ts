@@ -197,7 +197,7 @@ function $monkeyPatchObject<T extends object>(
 /**
  * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
  */
-type $NamespaceBuilder<TermNames extends string = any> = Record<
+export type $NamespaceBuilder<TermNames extends string = any> = Record<
   TermNames,
   NamedNode
 > &
