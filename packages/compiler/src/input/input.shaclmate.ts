@@ -93,6 +93,11 @@ type $ConversionFunction<
   defaultNamespace?: DefaultNamespaceT,
 ) => Either<Error, TargetT>;
 
+const $convertToBigInt: $ConversionFunction<
+  bigint | number | string,
+  bigint
+> = (value) => Either.encase(() => BigInt(value));
+
 function $convertToIdentifier<
   DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
 >(
@@ -521,7 +526,7 @@ function $monkeyPatchObject<T extends object>(
 /**
  * NamespaceBuilder type excerpted from @rdfjs/namespace (MIT license) in lieu of a type import.
  */
-type $NamespaceBuilder<TermNames extends string = any> = Record<
+export type $NamespaceBuilder<TermNames extends string = any> = Record<
   TermNames,
   NamedNode
 > &
@@ -1743,7 +1748,7 @@ export namespace NodeShape {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly maxLength?: bigint | Maybe<bigint>;
+    readonly maxLength?: bigint | number | string | Maybe<bigint>;
     readonly message?: string | Maybe<string>;
     readonly minExclusive?:
       | bigint
@@ -1761,7 +1766,7 @@ export namespace NodeShape {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly minLength?: bigint | Maybe<bigint>;
+    readonly minLength?: bigint | number | string | Maybe<bigint>;
     readonly mutable?: boolean | Maybe<boolean>;
     readonly node?:
       | BlankNode
@@ -2038,7 +2043,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      maxLength: $convertToMaybe($identityConversionFunction)(
+      maxLength: $convertToMaybe($convertToBigInt)(
         parameters?.maxLength,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -2074,7 +2079,7 @@ export namespace NodeShape {
           value,
         ),
       ),
-      minLength: $convertToMaybe($identityConversionFunction)(
+      minLength: $convertToMaybe($convertToBigInt)(
         parameters?.minLength,
         parameters?.$defaultNamespace,
       ).chain((value) =>
@@ -2334,7 +2339,7 @@ export namespace NodeShape {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly maxLength?: bigint | Maybe<bigint>;
+    readonly maxLength?: bigint | number | string | Maybe<bigint>;
     readonly message?: string | Maybe<string>;
     readonly minExclusive?:
       | bigint
@@ -2352,7 +2357,7 @@ export namespace NodeShape {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly minLength?: bigint | Maybe<bigint>;
+    readonly minLength?: bigint | number | string | Maybe<bigint>;
     readonly mutable?: boolean | Maybe<boolean>;
     readonly node?:
       | BlankNode
@@ -4232,7 +4237,7 @@ export namespace PropertyShape {
       | (keyof $DefaultNamespaceT & string)
       | NamedNode
       | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly maxCount?: bigint | Maybe<bigint>;
+    readonly maxCount?: bigint | number | string | Maybe<bigint>;
     readonly maxExclusive?:
       | bigint
       | boolean
@@ -4249,9 +4254,9 @@ export namespace PropertyShape {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly maxLength?: bigint | Maybe<bigint>;
+    readonly maxLength?: bigint | number | string | Maybe<bigint>;
     readonly message?: string | Maybe<string>;
-    readonly minCount?: bigint | Maybe<bigint>;
+    readonly minCount?: bigint | number | string | Maybe<bigint>;
     readonly minExclusive?:
       | bigint
       | boolean
@@ -4268,7 +4273,7 @@ export namespace PropertyShape {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly minLength?: bigint | Maybe<bigint>;
+    readonly minLength?: bigint | number | string | Maybe<bigint>;
     readonly mutable?: boolean | Maybe<boolean>;
     readonly name?: string | Maybe<string>;
     readonly node?:
@@ -4324,8 +4329,8 @@ export namespace PropertyShape {
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
     readonly pattern?: string | Maybe<string>;
-    readonly qualifiedMaxCount?: bigint | Maybe<bigint>;
-    readonly qualifiedMinCount?: bigint | Maybe<bigint>;
+    readonly qualifiedMaxCount?: bigint | number | string | Maybe<bigint>;
+    readonly qualifiedMinCount?: bigint | number | string | Maybe<bigint>;
     readonly qualifiedValueShape?:
       | BlankNode
       | NamedNode
@@ -4539,7 +4544,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      maxCount: $convertToMaybe($identityConversionFunction)(
+      maxCount: $convertToMaybe($convertToBigInt)(
         parameters.maxCount,
         parameters.$defaultNamespace,
       ).chain((value) =>
@@ -4566,7 +4571,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      maxLength: $convertToMaybe($identityConversionFunction)(
+      maxLength: $convertToMaybe($convertToBigInt)(
         parameters.maxLength,
         parameters.$defaultNamespace,
       ).chain((value) =>
@@ -4584,7 +4589,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      minCount: $convertToMaybe($identityConversionFunction)(
+      minCount: $convertToMaybe($convertToBigInt)(
         parameters.minCount,
         parameters.$defaultNamespace,
       ).chain((value) =>
@@ -4611,7 +4616,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      minLength: $convertToMaybe($identityConversionFunction)(
+      minLength: $convertToMaybe($convertToBigInt)(
         parameters.minLength,
         parameters.$defaultNamespace,
       ).chain((value) =>
@@ -4699,7 +4704,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      qualifiedMaxCount: $convertToMaybe($identityConversionFunction)(
+      qualifiedMaxCount: $convertToMaybe($convertToBigInt)(
         parameters.qualifiedMaxCount,
         parameters.$defaultNamespace,
       ).chain((value) =>
@@ -4708,7 +4713,7 @@ export namespace PropertyShape {
           value,
         ),
       ),
-      qualifiedMinCount: $convertToMaybe($identityConversionFunction)(
+      qualifiedMinCount: $convertToMaybe($convertToBigInt)(
         parameters.qualifiedMinCount,
         parameters.$defaultNamespace,
       ).chain((value) =>
@@ -4895,7 +4900,7 @@ export namespace PropertyShape {
       | (keyof $DefaultNamespaceT & string)
       | NamedNode
       | readonly ((keyof $DefaultNamespaceT & string) | NamedNode)[];
-    readonly maxCount?: bigint | Maybe<bigint>;
+    readonly maxCount?: bigint | number | string | Maybe<bigint>;
     readonly maxExclusive?:
       | bigint
       | boolean
@@ -4912,9 +4917,9 @@ export namespace PropertyShape {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly maxLength?: bigint | Maybe<bigint>;
+    readonly maxLength?: bigint | number | string | Maybe<bigint>;
     readonly message?: string | Maybe<string>;
-    readonly minCount?: bigint | Maybe<bigint>;
+    readonly minCount?: bigint | number | string | Maybe<bigint>;
     readonly minExclusive?:
       | bigint
       | boolean
@@ -4931,7 +4936,7 @@ export namespace PropertyShape {
       | Date
       | Literal
       | Maybe<Literal>;
-    readonly minLength?: bigint | Maybe<bigint>;
+    readonly minLength?: bigint | number | string | Maybe<bigint>;
     readonly mutable?: boolean | Maybe<boolean>;
     readonly name?: string | Maybe<string>;
     readonly node?:
@@ -4987,8 +4992,8 @@ export namespace PropertyShape {
     readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
     readonly pattern?: string | Maybe<string>;
-    readonly qualifiedMaxCount?: bigint | Maybe<bigint>;
-    readonly qualifiedMinCount?: bigint | Maybe<bigint>;
+    readonly qualifiedMaxCount?: bigint | number | string | Maybe<bigint>;
+    readonly qualifiedMinCount?: bigint | number | string | Maybe<bigint>;
     readonly qualifiedValueShape?:
       | BlankNode
       | NamedNode
@@ -6204,26 +6209,84 @@ export namespace Shape {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     Shape,
     typeof Shape.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        NodeShape.fromRdfResourceValues(valueAsValues, {
-          ...options,
-          ignoreRdfType: false,
-          schema: options.schema.members["NodeShape"].type,
-        }) as Either<Error, Resource.Values<Shape>>
-      )
-        .altLazy(
-          () =>
-            PropertyShape.fromRdfResourceValues(valueAsValues, {
+  > = ((inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither = NodeShape.fromRdfResourceValues(
+            inputValueAsValues,
+            {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["NodeShape"].type,
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither = PropertyShape.fromRdfResourceValues(
+            inputValueAsValues,
+            {
               ...options,
               ignoreRdfType: false,
               schema: options.schema.members["PropertyShape"].type,
-            }) as Either<Error, Resource.Values<Shape>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<Shape, typeof Shape.schema>;
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<Shape> = Resource.Values.empty({
+      focusResource: inputValues.focusResource,
+      propertyPath: inputValues.propertyPath,
+    });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...NodeShape.fromRdfResourceValues(memberInputValues[memberI], {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["NodeShape"].type,
+            }).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...PropertyShape.fromRdfResourceValues(memberInputValues[memberI], {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["PropertyShape"].type,
+            }).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  }) satisfies $FromRdfResourceValuesFunction<Shape, typeof Shape.schema>;
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
