@@ -272,10 +272,28 @@ export const harnesses = {
     }),
     kitchenSink.IriIdentifierStruct,
   ),
+  langStringStruct1: new Harness(
+    kitchenSink.LangStringStruct.createUnsafe({
+      $identifier,
+      langString: dataFactory.literal("testen", "en"),
+      langStringOrString: dataFactory.literal("testen", "en"),
+      stringOrLangString: "test",
+    }),
+    kitchenSink.LangStringStruct,
+  ),
+  langStringStruct2: new Harness(
+    kitchenSink.LangStringStruct.createUnsafe({
+      $identifier,
+      langString: dataFactory.literal("testen", "en"),
+      langStringOrString: "test",
+      stringOrLangString: dataFactory.literal("testen", "en"),
+    }),
+    kitchenSink.LangStringStruct,
+  ),
   languageInsStruct: new Harness(
     kitchenSink.LanguageInStruct.createUnsafe({
       $identifier,
-      languageInLiteral: [
+      languageIn: [
         dataFactory.literal("frvalue", "fr"),
         dataFactory.literal("envalue", "en"),
       ],

@@ -1,9 +1,6 @@
 import { describe, it } from "vitest";
 import * as kitchenSink from "../src/index.js";
 import "@rdfx/testing";
-import dataFactory from "@rdfx/data-factory";
-import { schema } from "@tpluscode/rdf-ns-builders";
-import { Maybe } from "purify-ts";
 
 describe("create", () => {
   it("default values", ({ expect }) => {
