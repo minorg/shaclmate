@@ -3350,7 +3350,7 @@
       ]
     },
     {
-      "comment": "Struct node shape rdf:langString properties",
+      "comment": "Struct node shape with rdf:langString properties",
       "kind": "Struct",
       "name": "LangStringStruct",
       "shapeIdentifier": {

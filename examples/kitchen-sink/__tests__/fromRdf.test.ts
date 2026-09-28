@@ -516,8 +516,8 @@ describe("fromRdf", () => {
       expect(availableLanguages).toContain(
         literalLanguage(instance.langStringOrString),
       );
-      expect(availableLanguages).toContain(
-        literalLanguage(instance.stringOrLangString),
+      expect(literalLanguage(instance.stringOrLangString)).toStrictEqual(
+        "string",
       );
     });
 
@@ -525,58 +525,40 @@ describe("fromRdf", () => {
       const instance = kitchenSink.LangStringStruct.fromRdfResource(resource, {
         preferredLanguages: ["en"],
       }).unsafeCoerce();
-      if (availableLanguages.length === 0) {
-        expect(instance.langString.extract()).toBeUndefined();
-        expect(instance.langStringOrString.extract()).toBeUndefined();
-        expect(instance.stringOrLangString.extract()).toBeUndefined();
-      } else {
-        expect(literalLanguage(instance.langString)).toStrictEqual("en");
-        expect(literalLanguage(instance.langStringOrString)).toStrictEqual(
-          "en",
-        );
-        expect(literalLanguage(instance.stringOrLangString)).toStrictEqual(
-          "en",
-        );
-      }
+      expect(literalLanguage(instance.langString)).toStrictEqual("en");
+      expect(literalLanguage(instance.langStringOrString)).toStrictEqual("en");
+      expect(literalLanguage(instance.stringOrLangString)).toStrictEqual("en");
     });
 
-    //   it("preferredLanguages: ['', 'en']", ({ expect }) => {
-    //     const instance = kitchenSink.LanguageInStruct.fromRdfResource(
-    //       validLanguageInResource,
-    //       {
-    //         preferredLanguages: ["", "en"],
-    //       },
-    //     ).unsafeCoerce();
-    //     expect(instance.languageIn).toHaveLength(1);
-    //     expect(instance.languageIn[0].language).toStrictEqual("en");
-    //     expect(instance.languageIn[0].value).toStrictEqual("envalue");
-    //   });
+    it("preferredLanguages: ['', 'en']", ({ expect }) => {
+      const instance = kitchenSink.LangStringStruct.fromRdfResource(resource, {
+        preferredLanguages: ["", "en"],
+      }).unsafeCoerce();
+      expect(literalLanguage(instance.langString)).toStrictEqual("en");
+      expect(literalLanguage(instance.langStringOrString)).toStrictEqual("en");
+      expect(literalLanguage(instance.stringOrLangString)).toStrictEqual(
+        "string",
+      );
+    });
 
-    //   it("preferredLanguages: ['en', '']", ({ expect }) => {
-    //     const instance = kitchenSink.LanguageInStruct.fromRdfResource(
-    //       validLanguageInResource,
-    //       {
-    //         preferredLanguages: ["en", ""],
-    //       },
-    //     ).unsafeCoerce();
-    //     expect(instance.languageIn).toHaveLength(1);
-    //     expect(instance.languageIn[0].language).toStrictEqual("en");
-    //     expect(instance.languageIn[0].value).toStrictEqual("envalue");
-    //   });
+    it("preferredLanguages: ['en', '']", ({ expect }) => {
+      const instance = kitchenSink.LangStringStruct.fromRdfResource(resource, {
+        preferredLanguages: ["en", ""],
+      }).unsafeCoerce();
+      expect(literalLanguage(instance.langString)).toStrictEqual("en");
+      expect(literalLanguage(instance.langStringOrString)).toStrictEqual("en");
+      expect(literalLanguage(instance.stringOrLangString)).toStrictEqual(
+        "string",
+      );
+    });
 
-    //   it("preferredLanguages: ['fr', 'en']", ({ expect }) => {
-    //     const instance = kitchenSink.LanguageInStruct.fromRdfResource(
-    //       validLanguageInResource,
-    //       {
-    //         preferredLanguages: ["fr", "en"],
-    //       },
-    //     ).unsafeCoerce();
-    //     expect(instance.languageIn).toHaveLength(2);
-    //     expect(instance.languageIn[0].language).toStrictEqual("fr");
-    //     expect(instance.languageIn[0].value).toStrictEqual("frvalue");
-    //     expect(instance.languageIn[1].language).toStrictEqual("en");
-    //     expect(instance.languageIn[1].value).toStrictEqual("envalue");
-    //   });
-    // });
+    it("preferredLanguages: ['fr', 'en']", ({ expect }) => {
+      const instance = kitchenSink.LangStringStruct.fromRdfResource(resource, {
+        preferredLanguages: ["fr", "en"],
+      }).unsafeCoerce();
+      expect(literalLanguage(instance.langString)).toStrictEqual("fr");
+      expect(literalLanguage(instance.langStringOrString)).toStrictEqual("fr");
+      expect(literalLanguage(instance.stringOrLangString)).toStrictEqual("fr");
+    });
   });
 });

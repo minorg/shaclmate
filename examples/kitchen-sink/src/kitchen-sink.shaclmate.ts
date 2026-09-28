@@ -10067,58 +10067,115 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrDateTime,
-          typeFromRdfResourceValues: ((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $dateFromRdfResourceValues(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["date"].type,
-                }).map((values) =>
-                  values.map(
-                    (value) =>
-                      ({
-                        $type: "date" as const,
-                        value,
-                      }) as
-                        | { $type: "date"; value: Date }
-                        | { $type: "dateTime"; value: Date },
-                  ),
-                ) as Either<
-                  Error,
-                  Resource.Values<
-                    | { $type: "date"; value: Date }
-                    | { $type: "dateTime"; value: Date }
-                  >
-                >
-              )
-                .altLazy(
-                  () =>
-                    $dateTimeFromRdfResourceValues(valueAsValues, {
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither = $dateFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["date"].type,
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither = $dateTimeFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["dateTime"].type,
-                    }).map((values) =>
-                      values.map(
-                        (value) =>
-                          ({
-                            $type: "dateTime" as const,
-                            value,
-                          }) as
-                            | { $type: "date"; value: Date }
-                            | { $type: "dateTime"; value: Date },
-                      ),
-                    ) as Either<
-                      Error,
-                      Resource.Values<
-                        | { $type: "date"; value: Date }
-                        | { $type: "dateTime"; value: Date }
-                      >
-                    >,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<
+              | { $type: "date"; value: Date }
+              | { $type: "dateTime"; value: Date }
+            > = Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["date"].type,
+                    })
+                      .map((values) =>
+                        values.map(
+                          (value) =>
+                            ({
+                              $type: "date" as const,
+                              value,
+                            }) as
+                              | { $type: "date"; value: Date }
+                              | { $type: "dateTime"; value: Date },
+                        ),
+                      )
+                      .unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$dateTimeFromRdfResourceValues(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["dateTime"].type,
+                      },
+                    )
+                      .map((values) =>
+                        values.map(
+                          (value) =>
+                            ({
+                              $type: "dateTime" as const,
+                              value,
+                            }) as
+                              | { $type: "date"; value: Date }
+                              | { $type: "dateTime"; value: Date },
+                        ),
+                      )
+                      .unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             { $type: "date"; value: Date } | { $type: "dateTime"; value: Date },
             {
               kind: "DiscriminatedUnion";
@@ -10156,26 +10213,87 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrString,
-          typeFromRdfResourceValues: ((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $dateFromRdfResourceValues(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["object"].type,
-                }) as Either<Error, Resource.Values<Date | string>>
-              )
-                .altLazy(
-                  () =>
-                    $stringFromRdfResourceValues<string>(valueAsValues, {
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither = $dateFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    }) as Either<Error, Resource.Values<Date | string>>,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<Date | string> =
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    }).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             Date | string,
             {
               kind: "DiscriminatedUnion";
@@ -10213,58 +10331,115 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.dateTimeOrDate,
-          typeFromRdfResourceValues: ((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $dateTimeFromRdfResourceValues(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["dateTime"].type,
-                }).map((values) =>
-                  values.map(
-                    (value) =>
-                      ({
-                        $type: "dateTime" as const,
-                        value,
-                      }) as
-                        | { $type: "dateTime"; value: Date }
-                        | { $type: "date"; value: Date },
-                  ),
-                ) as Either<
-                  Error,
-                  Resource.Values<
-                    | { $type: "dateTime"; value: Date }
-                    | { $type: "date"; value: Date }
-                  >
-                >
-              )
-                .altLazy(
-                  () =>
-                    $dateFromRdfResourceValues(valueAsValues, {
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither = $dateTimeFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["dateTime"].type,
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither = $dateFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["date"].type,
-                    }).map((values) =>
-                      values.map(
-                        (value) =>
-                          ({
-                            $type: "date" as const,
-                            value,
-                          }) as
-                            | { $type: "dateTime"; value: Date }
-                            | { $type: "date"; value: Date },
-                      ),
-                    ) as Either<
-                      Error,
-                      Resource.Values<
-                        | { $type: "dateTime"; value: Date }
-                        | { $type: "date"; value: Date }
-                      >
-                    >,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<
+              | { $type: "dateTime"; value: Date }
+              | { $type: "date"; value: Date }
+            > = Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$dateTimeFromRdfResourceValues(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["dateTime"].type,
+                      },
+                    )
+                      .map((values) =>
+                        values.map(
+                          (value) =>
+                            ({
+                              $type: "dateTime" as const,
+                              value,
+                            }) as
+                              | { $type: "dateTime"; value: Date }
+                              | { $type: "date"; value: Date },
+                        ),
+                      )
+                      .unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["date"].type,
+                    })
+                      .map((values) =>
+                        values.map(
+                          (value) =>
+                            ({
+                              $type: "date" as const,
+                              value,
+                            }) as
+                              | { $type: "dateTime"; value: Date }
+                              | { $type: "date"; value: Date },
+                        ),
+                      )
+                      .unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             { $type: "dateTime"; value: Date } | { $type: "date"; value: Date },
             {
               kind: "DiscriminatedUnion";
@@ -10302,26 +10477,90 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString,
-          typeFromRdfResourceValues: ((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $bigDecimalFromRdfResourceValues(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["object"].type,
-                }) as Either<Error, Resource.Values<BigDecimal | string>>
-              )
-                .altLazy(
-                  () =>
-                    $stringFromRdfResourceValues<string>(valueAsValues, {
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    }) as Either<Error, Resource.Values<BigDecimal | string>>,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<BigDecimal | string> =
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$bigDecimalFromRdfResourceValues(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["object"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             BigDecimal | string,
             {
               kind: "DiscriminatedUnion";
@@ -10367,54 +10606,137 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive,
-          typeFromRdfResourceValues: ((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $booleanFromRdfResourceValues<boolean>(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["boolean"].type,
-                }) as Either<
-                  Error,
-                  Resource.Values<boolean | number | bigint | string>
-                >
-              )
-                .altLazy(
-                  () =>
-                    $floatFromRdfResourceValues<number>(valueAsValues, {
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 4,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 4; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither =
+                    $booleanFromRdfResourceValues<boolean>(inputValueAsValues, {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["boolean"].type,
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither =
+                    $floatFromRdfResourceValues<number>(inputValueAsValues, {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["number"].type,
-                    }) as Either<
-                      Error,
-                      Resource.Values<boolean | number | bigint | string>
-                    >,
-                )
-                .altLazy(
-                  () =>
-                    $bigIntFromRdfResourceValues<bigint>(valueAsValues, {
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 2) {
+                  memberOutputValuesEither =
+                    $bigIntFromRdfResourceValues<bigint>(inputValueAsValues, {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["bigint"].type,
-                    }) as Either<
-                      Error,
-                      Resource.Values<boolean | number | bigint | string>
-                    >,
-                )
-                .altLazy(
-                  () =>
-                    $stringFromRdfResourceValues<string>(valueAsValues, {
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 3) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    }) as Either<
-                      Error,
-                      Resource.Values<boolean | number | bigint | string>
-                    >,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<
+              boolean | number | bigint | string
+            > = Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+            for (let memberI = 0; memberI < 4; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$booleanFromRdfResourceValues<boolean>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["boolean"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$floatFromRdfResourceValues<number>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["number"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 2:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$bigIntFromRdfResourceValues<bigint>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["bigint"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 3:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             boolean | number | bigint | string,
             {
               kind: "DiscriminatedUnion";
@@ -10461,26 +10783,90 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties
               .langStringOrString,
-          typeFromRdfResourceValues: ((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $langStringFromRdfResourceValues(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["object"].type,
-                }) as Either<Error, Resource.Values<Literal | string>>
-              )
-                .altLazy(
-                  () =>
-                    $stringFromRdfResourceValues<string>(valueAsValues, {
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither = $langStringFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    }) as Either<Error, Resource.Values<Literal | string>>,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<Literal | string> =
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$langStringFromRdfResourceValues(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["object"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             Literal | string,
             {
               kind: "DiscriminatedUnion";
@@ -10518,26 +10904,87 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDate,
-          typeFromRdfResourceValues: ((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $stringFromRdfResourceValues<string>(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["string"].type,
-                }) as Either<Error, Resource.Values<string | Date>>
-              )
-                .altLazy(
-                  () =>
-                    $dateFromRdfResourceValues(valueAsValues, {
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither = $dateFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
-                    }) as Either<Error, Resource.Values<string | Date>>,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<string | Date> =
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    }).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             string | Date,
             {
               kind: "DiscriminatedUnion";
@@ -10575,26 +11022,90 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDecimal,
-          typeFromRdfResourceValues: ((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $stringFromRdfResourceValues<string>(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["string"].type,
-                }) as Either<Error, Resource.Values<string | BigDecimal>>
-              )
-                .altLazy(
-                  () =>
-                    $bigDecimalFromRdfResourceValues(valueAsValues, {
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither = $bigDecimalFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
-                    }) as Either<Error, Resource.Values<string | BigDecimal>>,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<string | BigDecimal> =
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$bigDecimalFromRdfResourceValues(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["object"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             string | BigDecimal,
             {
               kind: "DiscriminatedUnion";
@@ -10633,26 +11144,90 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties
               .stringOrLangString,
-          typeFromRdfResourceValues: ((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $stringFromRdfResourceValues<string>(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["string"].type,
-                }) as Either<Error, Resource.Values<string | Literal>>
-              )
-                .altLazy(
-                  () =>
-                    $langStringFromRdfResourceValues(valueAsValues, {
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither = $langStringFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
-                    }) as Either<Error, Resource.Values<string | Literal>>,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<string | Literal> =
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$langStringFromRdfResourceValues(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["object"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             string | Literal,
             {
               kind: "DiscriminatedUnion";
@@ -24693,7 +25268,7 @@ export namespace IriIdentifierStruct {
       }),
     );
 } /**
- * Struct node shape rdf:langString properties
+ * Struct node shape with rdf:langString properties
  */
 
 export type LangStringStruct = {
@@ -24781,26 +25356,90 @@ export namespace LangStringStruct {
                 };
               };
             }
-          >(((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $langStringFromRdfResourceValues(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["object"].type,
-                }) as Either<Error, Resource.Values<Literal | string>>
-              )
-                .altLazy(
-                  () =>
-                    $stringFromRdfResourceValues<string>(valueAsValues, {
+          >(((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither = $langStringFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    }) as Either<Error, Resource.Values<Literal | string>>,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<Literal | string> =
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$langStringFromRdfResourceValues(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["object"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             Literal | string,
             {
               kind: "DiscriminatedUnion";
@@ -24852,26 +25491,90 @@ export namespace LangStringStruct {
                 };
               };
             }
-          >(((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $stringFromRdfResourceValues<string>(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["string"].type,
-                }) as Either<Error, Resource.Values<string | Literal>>
-              )
-                .altLazy(
-                  () =>
-                    $langStringFromRdfResourceValues(valueAsValues, {
+          >(((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither = $langStringFromRdfResourceValues(
+                    inputValueAsValues,
+                    {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["object"].type,
-                    }) as Either<Error, Resource.Values<string | Literal>>,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    },
+                  );
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<string | Literal> =
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$langStringFromRdfResourceValues(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["object"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             string | Literal,
             {
               kind: "DiscriminatedUnion";
@@ -25857,7 +26560,7 @@ export namespace LangStringStruct {
             .optional(),
         })
         .meta({
-          description: "Struct node shape rdf:langString properties",
+          description: "Struct node shape with rdf:langString properties",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -31291,31 +31994,94 @@ export namespace ListSetsStruct {
                 };
               };
             }
-          >(((values, options) =>
-            values.chainMap((value) => {
-              const valueAsValues = value.toValues();
-              return (
-                $listFromRdfResourceValues<string, $StringSchema<string>>(
-                  $stringFromRdfResourceValues<string>,
-                )(valueAsValues, {
-                  ...options,
-                  ignoreRdfType: false,
-                  schema: options.schema.members["object"].type,
-                }) as Either<Error, Resource.Values<readonly string[] | string>>
-              )
-                .altLazy(
-                  () =>
-                    $stringFromRdfResourceValues<string>(valueAsValues, {
+          >(((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither = $listFromRdfResourceValues<
+                    string,
+                    $StringSchema<string>
+                  >($stringFromRdfResourceValues<string>)(inputValueAsValues, {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
                       ...options,
                       ignoreRdfType: false,
                       schema: options.schema.members["string"].type,
-                    }) as Either<
-                      Error,
-                      Resource.Values<readonly string[] | string>
-                    >,
-                )
-                .chain((values) => values.head());
-            })) satisfies $FromRdfResourceValuesFunction<
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<
+              readonly string[] | string
+            > = Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$listFromRdfResourceValues<
+                      string,
+                      $StringSchema<string>
+                    >($stringFromRdfResourceValues<string>)(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["object"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
             readonly string[] | string,
             {
               kind: "DiscriminatedUnion";
@@ -48665,26 +49431,92 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >(((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              $iriFromRdfResourceValues<string>(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema: options.schema.members["object"].type,
-              }) as Either<Error, Resource.Values<NamedNode | string>>
-            )
-              .altLazy(
-                () =>
-                  $stringFromRdfResourceValues<string>(valueAsValues, {
+        >(((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $iriFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
-                  }) as Either<Error, Resource.Values<NamedNode | string>>,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<NamedNode | string> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$iriFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           NamedNode | string,
           {
             kind: "DiscriminatedUnion";
@@ -48747,58 +49579,114 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >(((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["DiscriminatedUnionMember1"].type,
-              }).map((values) =>
-                values.map(
-                  (value) =>
-                    ({
-                      termType: "DiscriminatedUnionMember1" as const,
-                      value,
-                    }) as
-                      | {
-                          termType: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | Literal,
-                ),
-              ) as Either<
-                Error,
-                Resource.Values<
-                  | {
-                      termType: "DiscriminatedUnionMember1";
-                      value: DiscriminatedUnionMember1;
-                    }
-                  | Literal
-                >
-              >
-            )
-              .altLazy(
-                () =>
-                  $literalFromRdfResourceValues(valueAsValues, {
+        >(((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither =
+                  DiscriminatedUnionMember1.fromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $literalFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
-                  }) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          termType: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | Literal
-                    >
-                  >,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            | {
+                termType: "DiscriminatedUnionMember1";
+                value: DiscriminatedUnionMember1;
+              }
+            | Literal
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...DiscriminatedUnionMember1.fromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            termType: "DiscriminatedUnionMember1" as const,
+                            value,
+                          }) as
+                            | {
+                                termType: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | Literal,
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$literalFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["Literal"].type,
+                  }).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           | {
               termType: "DiscriminatedUnionMember1";
               value: DiscriminatedUnionMember1;
@@ -48881,51 +49769,40 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >(((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["DiscriminatedUnionMember1"].type,
-              }).map((values) =>
-                values.map(
-                  (value) =>
-                    ({
-                      $type: "DiscriminatedUnionMember1" as const,
-                      value,
-                    }) as
-                      | {
-                          $type: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | {
-                          $type: "DiscriminatedUnionMember2";
-                          value: DiscriminatedUnionMember2;
-                        }
-                      | { $type: "string"; value: string },
-                ),
-              ) as Either<
-                Error,
-                Resource.Values<
-                  | {
-                      $type: "DiscriminatedUnionMember1";
-                      value: DiscriminatedUnionMember1;
-                    }
-                  | {
-                      $type: "DiscriminatedUnionMember2";
-                      value: DiscriminatedUnionMember2;
-                    }
-                  | { $type: "string"; value: string }
-                >
-              >
-            )
-              .altLazy(
-                () =>
+        >(((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 3,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 3; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither =
+                  DiscriminatedUnionMember1.fromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither =
                   DiscriminatedUnionMember2.fromRdfResourceValues(
-                    valueAsValues,
+                    inputValueAsValues,
                     {
                       ...options,
                       ignoreRdfType: false,
@@ -48933,78 +49810,153 @@ export namespace UnionDiscriminantsStruct {
                         options.schema.members["DiscriminatedUnionMember2"]
                           .type,
                     },
-                  ).map((values) =>
-                    values.map(
-                      (value) =>
-                        ({
-                          $type: "DiscriminatedUnionMember2" as const,
-                          value,
-                        }) as
-                          | {
-                              $type: "DiscriminatedUnionMember1";
-                              value: DiscriminatedUnionMember1;
-                            }
-                          | {
-                              $type: "DiscriminatedUnionMember2";
-                              value: DiscriminatedUnionMember2;
-                            }
-                          | { $type: "string"; value: string },
-                    ),
-                  ) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          $type: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | {
-                          $type: "DiscriminatedUnionMember2";
-                          value: DiscriminatedUnionMember2;
-                        }
-                      | { $type: "string"; value: string }
-                    >
-                  >,
-              )
-              .altLazy(
-                () =>
-                  $stringFromRdfResourceValues<string>(valueAsValues, {
+                  );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 2) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
-                  }).map((values) =>
-                    values.map(
-                      (value) =>
-                        ({
-                          $type: "string" as const,
-                          value,
-                        }) as
-                          | {
-                              $type: "DiscriminatedUnionMember1";
-                              value: DiscriminatedUnionMember1;
-                            }
-                          | {
-                              $type: "DiscriminatedUnionMember2";
-                              value: DiscriminatedUnionMember2;
-                            }
-                          | { $type: "string"; value: string },
-                    ),
-                  ) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          $type: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | {
-                          $type: "DiscriminatedUnionMember2";
-                          value: DiscriminatedUnionMember2;
-                        }
-                      | { $type: "string"; value: string }
-                    >
-                  >,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            | {
+                $type: "DiscriminatedUnionMember1";
+                value: DiscriminatedUnionMember1;
+              }
+            | {
+                $type: "DiscriminatedUnionMember2";
+                value: DiscriminatedUnionMember2;
+              }
+            | { $type: "string"; value: string }
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 3; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...DiscriminatedUnionMember1.fromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "DiscriminatedUnionMember1" as const,
+                            value,
+                          }) as
+                            | {
+                                $type: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | {
+                                $type: "DiscriminatedUnionMember2";
+                                value: DiscriminatedUnionMember2;
+                              }
+                            | { $type: "string"; value: string },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...DiscriminatedUnionMember2.fromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember2"]
+                          .type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "DiscriminatedUnionMember2" as const,
+                            value,
+                          }) as
+                            | {
+                                $type: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | {
+                                $type: "DiscriminatedUnionMember2";
+                                value: DiscriminatedUnionMember2;
+                              }
+                            | { $type: "string"; value: string },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 2:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "string" as const,
+                            value,
+                          }) as
+                            | {
+                                $type: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | {
+                                $type: "DiscriminatedUnionMember2";
+                                value: DiscriminatedUnionMember2;
+                              }
+                            | { $type: "string"; value: string },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           | {
               $type: "DiscriminatedUnionMember1";
               value: DiscriminatedUnionMember1;
@@ -49068,32 +50020,90 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >(((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              $identifierFromRdfResourceValues(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema: options.schema.members["BlankNode"].type,
-              }) as Either<
-                Error,
-                Resource.Values<(BlankNode | NamedNode) | Literal>
-              >
-            )
-              .altLazy(
-                () =>
-                  $literalFromRdfResourceValues(valueAsValues, {
+        >(((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $identifierFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["BlankNode"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $literalFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
-                  }) as Either<
-                    Error,
-                    Resource.Values<(BlankNode | NamedNode) | Literal>
-                  >,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            (BlankNode | NamedNode) | Literal
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$identifierFromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["BlankNode"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$literalFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["Literal"].type,
+                  }).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           (BlankNode | NamedNode) | Literal,
           {
             kind: "DiscriminatedUnion";
@@ -49131,26 +50141,92 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredIriOrString,
-        typeFromRdfResourceValues: ((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              $iriFromRdfResourceValues<string>(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema: options.schema.members["object"].type,
-              }) as Either<Error, Resource.Values<NamedNode | string>>
-            )
-              .altLazy(
-                () =>
-                  $stringFromRdfResourceValues<string>(valueAsValues, {
+        typeFromRdfResourceValues: ((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $iriFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
-                  }) as Either<Error, Resource.Values<NamedNode | string>>,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<NamedNode | string> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$iriFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           NamedNode | string,
           {
             kind: "DiscriminatedUnion";
@@ -49192,58 +50268,114 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral,
-        typeFromRdfResourceValues: ((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["DiscriminatedUnionMember1"].type,
-              }).map((values) =>
-                values.map(
-                  (value) =>
-                    ({
-                      termType: "DiscriminatedUnionMember1" as const,
-                      value,
-                    }) as
-                      | {
-                          termType: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | Literal,
-                ),
-              ) as Either<
-                Error,
-                Resource.Values<
-                  | {
-                      termType: "DiscriminatedUnionMember1";
-                      value: DiscriminatedUnionMember1;
-                    }
-                  | Literal
-                >
-              >
-            )
-              .altLazy(
-                () =>
-                  $literalFromRdfResourceValues(valueAsValues, {
+        typeFromRdfResourceValues: ((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither =
+                  DiscriminatedUnionMember1.fromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $literalFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
-                  }) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          termType: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | Literal
-                    >
-                  >,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            | {
+                termType: "DiscriminatedUnionMember1";
+                value: DiscriminatedUnionMember1;
+              }
+            | Literal
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...DiscriminatedUnionMember1.fromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            termType: "DiscriminatedUnionMember1" as const,
+                            value,
+                          }) as
+                            | {
+                                termType: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | Literal,
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$literalFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["Literal"].type,
+                  }).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           | {
               termType: "DiscriminatedUnionMember1";
               value: DiscriminatedUnionMember1;
@@ -49297,51 +50429,40 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString,
-        typeFromRdfResourceValues: ((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["DiscriminatedUnionMember1"].type,
-              }).map((values) =>
-                values.map(
-                  (value) =>
-                    ({
-                      $type: "DiscriminatedUnionMember1" as const,
-                      value,
-                    }) as
-                      | {
-                          $type: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | {
-                          $type: "DiscriminatedUnionMember2";
-                          value: DiscriminatedUnionMember2;
-                        }
-                      | { $type: "string"; value: string },
-                ),
-              ) as Either<
-                Error,
-                Resource.Values<
-                  | {
-                      $type: "DiscriminatedUnionMember1";
-                      value: DiscriminatedUnionMember1;
-                    }
-                  | {
-                      $type: "DiscriminatedUnionMember2";
-                      value: DiscriminatedUnionMember2;
-                    }
-                  | { $type: "string"; value: string }
-                >
-              >
-            )
-              .altLazy(
-                () =>
+        typeFromRdfResourceValues: ((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 3,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 3; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither =
+                  DiscriminatedUnionMember1.fromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither =
                   DiscriminatedUnionMember2.fromRdfResourceValues(
-                    valueAsValues,
+                    inputValueAsValues,
                     {
                       ...options,
                       ignoreRdfType: false,
@@ -49349,78 +50470,153 @@ export namespace UnionDiscriminantsStruct {
                         options.schema.members["DiscriminatedUnionMember2"]
                           .type,
                     },
-                  ).map((values) =>
-                    values.map(
-                      (value) =>
-                        ({
-                          $type: "DiscriminatedUnionMember2" as const,
-                          value,
-                        }) as
-                          | {
-                              $type: "DiscriminatedUnionMember1";
-                              value: DiscriminatedUnionMember1;
-                            }
-                          | {
-                              $type: "DiscriminatedUnionMember2";
-                              value: DiscriminatedUnionMember2;
-                            }
-                          | { $type: "string"; value: string },
-                    ),
-                  ) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          $type: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | {
-                          $type: "DiscriminatedUnionMember2";
-                          value: DiscriminatedUnionMember2;
-                        }
-                      | { $type: "string"; value: string }
-                    >
-                  >,
-              )
-              .altLazy(
-                () =>
-                  $stringFromRdfResourceValues<string>(valueAsValues, {
+                  );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 2) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
-                  }).map((values) =>
-                    values.map(
-                      (value) =>
-                        ({
-                          $type: "string" as const,
-                          value,
-                        }) as
-                          | {
-                              $type: "DiscriminatedUnionMember1";
-                              value: DiscriminatedUnionMember1;
-                            }
-                          | {
-                              $type: "DiscriminatedUnionMember2";
-                              value: DiscriminatedUnionMember2;
-                            }
-                          | { $type: "string"; value: string },
-                    ),
-                  ) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          $type: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | {
-                          $type: "DiscriminatedUnionMember2";
-                          value: DiscriminatedUnionMember2;
-                        }
-                      | { $type: "string"; value: string }
-                    >
-                  >,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            | {
+                $type: "DiscriminatedUnionMember1";
+                value: DiscriminatedUnionMember1;
+              }
+            | {
+                $type: "DiscriminatedUnionMember2";
+                value: DiscriminatedUnionMember2;
+              }
+            | { $type: "string"; value: string }
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 3; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...DiscriminatedUnionMember1.fromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "DiscriminatedUnionMember1" as const,
+                            value,
+                          }) as
+                            | {
+                                $type: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | {
+                                $type: "DiscriminatedUnionMember2";
+                                value: DiscriminatedUnionMember2;
+                              }
+                            | { $type: "string"; value: string },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...DiscriminatedUnionMember2.fromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember2"]
+                          .type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "DiscriminatedUnionMember2" as const,
+                            value,
+                          }) as
+                            | {
+                                $type: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | {
+                                $type: "DiscriminatedUnionMember2";
+                                value: DiscriminatedUnionMember2;
+                              }
+                            | { $type: "string"; value: string },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 2:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "string" as const,
+                            value,
+                          }) as
+                            | {
+                                $type: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | {
+                                $type: "DiscriminatedUnionMember2";
+                                value: DiscriminatedUnionMember2;
+                              }
+                            | { $type: "string"; value: string },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           | {
               $type: "DiscriminatedUnionMember1";
               value: DiscriminatedUnionMember1;
@@ -49469,32 +50665,90 @@ export namespace UnionDiscriminantsStruct {
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: UnionDiscriminantsStruct.schema.properties.requiredTerm,
-        typeFromRdfResourceValues: ((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              $identifierFromRdfResourceValues(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema: options.schema.members["BlankNode"].type,
-              }) as Either<
-                Error,
-                Resource.Values<(BlankNode | NamedNode) | Literal>
-              >
-            )
-              .altLazy(
-                () =>
-                  $literalFromRdfResourceValues(valueAsValues, {
+        typeFromRdfResourceValues: ((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $identifierFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["BlankNode"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $literalFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
-                  }) as Either<
-                    Error,
-                    Resource.Values<(BlankNode | NamedNode) | Literal>
-                  >,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            (BlankNode | NamedNode) | Literal
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$identifierFromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["BlankNode"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$literalFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["Literal"].type,
+                  }).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           (BlankNode | NamedNode) | Literal,
           {
             kind: "DiscriminatedUnion";
@@ -49547,26 +50801,92 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >(((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              $iriFromRdfResourceValues<string>(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema: options.schema.members["object"].type,
-              }) as Either<Error, Resource.Values<NamedNode | string>>
-            )
-              .altLazy(
-                () =>
-                  $stringFromRdfResourceValues<string>(valueAsValues, {
+        >(((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $iriFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["object"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
-                  }) as Either<Error, Resource.Values<NamedNode | string>>,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<NamedNode | string> =
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$iriFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["object"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           NamedNode | string,
           {
             kind: "DiscriminatedUnion";
@@ -49629,58 +50949,114 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >(((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["DiscriminatedUnionMember1"].type,
-              }).map((values) =>
-                values.map(
-                  (value) =>
-                    ({
-                      termType: "DiscriminatedUnionMember1" as const,
-                      value,
-                    }) as
-                      | {
-                          termType: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | Literal,
-                ),
-              ) as Either<
-                Error,
-                Resource.Values<
-                  | {
-                      termType: "DiscriminatedUnionMember1";
-                      value: DiscriminatedUnionMember1;
-                    }
-                  | Literal
-                >
-              >
-            )
-              .altLazy(
-                () =>
-                  $literalFromRdfResourceValues(valueAsValues, {
+        >(((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither =
+                  DiscriminatedUnionMember1.fromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $literalFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
-                  }) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          termType: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | Literal
-                    >
-                  >,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            | {
+                termType: "DiscriminatedUnionMember1";
+                value: DiscriminatedUnionMember1;
+              }
+            | Literal
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...DiscriminatedUnionMember1.fromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            termType: "DiscriminatedUnionMember1" as const,
+                            value,
+                          }) as
+                            | {
+                                termType: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | Literal,
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$literalFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["Literal"].type,
+                  }).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           | {
               termType: "DiscriminatedUnionMember1";
               value: DiscriminatedUnionMember1;
@@ -49763,51 +51139,40 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >(((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema:
-                  options.schema.members["DiscriminatedUnionMember1"].type,
-              }).map((values) =>
-                values.map(
-                  (value) =>
-                    ({
-                      $type: "DiscriminatedUnionMember1" as const,
-                      value,
-                    }) as
-                      | {
-                          $type: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | {
-                          $type: "DiscriminatedUnionMember2";
-                          value: DiscriminatedUnionMember2;
-                        }
-                      | { $type: "string"; value: string },
-                ),
-              ) as Either<
-                Error,
-                Resource.Values<
-                  | {
-                      $type: "DiscriminatedUnionMember1";
-                      value: DiscriminatedUnionMember1;
-                    }
-                  | {
-                      $type: "DiscriminatedUnionMember2";
-                      value: DiscriminatedUnionMember2;
-                    }
-                  | { $type: "string"; value: string }
-                >
-              >
-            )
-              .altLazy(
-                () =>
+        >(((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 3,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 3; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither =
+                  DiscriminatedUnionMember1.fromRdfResourceValues(
+                    inputValueAsValues,
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither =
                   DiscriminatedUnionMember2.fromRdfResourceValues(
-                    valueAsValues,
+                    inputValueAsValues,
                     {
                       ...options,
                       ignoreRdfType: false,
@@ -49815,78 +51180,153 @@ export namespace UnionDiscriminantsStruct {
                         options.schema.members["DiscriminatedUnionMember2"]
                           .type,
                     },
-                  ).map((values) =>
-                    values.map(
-                      (value) =>
-                        ({
-                          $type: "DiscriminatedUnionMember2" as const,
-                          value,
-                        }) as
-                          | {
-                              $type: "DiscriminatedUnionMember1";
-                              value: DiscriminatedUnionMember1;
-                            }
-                          | {
-                              $type: "DiscriminatedUnionMember2";
-                              value: DiscriminatedUnionMember2;
-                            }
-                          | { $type: "string"; value: string },
-                    ),
-                  ) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          $type: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | {
-                          $type: "DiscriminatedUnionMember2";
-                          value: DiscriminatedUnionMember2;
-                        }
-                      | { $type: "string"; value: string }
-                    >
-                  >,
-              )
-              .altLazy(
-                () =>
-                  $stringFromRdfResourceValues<string>(valueAsValues, {
+                  );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 2) {
+                memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["string"].type,
-                  }).map((values) =>
-                    values.map(
-                      (value) =>
-                        ({
-                          $type: "string" as const,
-                          value,
-                        }) as
-                          | {
-                              $type: "DiscriminatedUnionMember1";
-                              value: DiscriminatedUnionMember1;
-                            }
-                          | {
-                              $type: "DiscriminatedUnionMember2";
-                              value: DiscriminatedUnionMember2;
-                            }
-                          | { $type: "string"; value: string },
-                    ),
-                  ) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          $type: "DiscriminatedUnionMember1";
-                          value: DiscriminatedUnionMember1;
-                        }
-                      | {
-                          $type: "DiscriminatedUnionMember2";
-                          value: DiscriminatedUnionMember2;
-                        }
-                      | { $type: "string"; value: string }
-                    >
-                  >,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            | {
+                $type: "DiscriminatedUnionMember1";
+                value: DiscriminatedUnionMember1;
+              }
+            | {
+                $type: "DiscriminatedUnionMember2";
+                value: DiscriminatedUnionMember2;
+              }
+            | { $type: "string"; value: string }
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 3; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...DiscriminatedUnionMember1.fromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember1"]
+                          .type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "DiscriminatedUnionMember1" as const,
+                            value,
+                          }) as
+                            | {
+                                $type: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | {
+                                $type: "DiscriminatedUnionMember2";
+                                value: DiscriminatedUnionMember2;
+                              }
+                            | { $type: "string"; value: string },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...DiscriminatedUnionMember2.fromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema:
+                        options.schema.members["DiscriminatedUnionMember2"]
+                          .type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "DiscriminatedUnionMember2" as const,
+                            value,
+                          }) as
+                            | {
+                                $type: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | {
+                                $type: "DiscriminatedUnionMember2";
+                                value: DiscriminatedUnionMember2;
+                              }
+                            | { $type: "string"; value: string },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+              case 2:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$stringFromRdfResourceValues<string>(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    },
+                  )
+                    .map((values) =>
+                      values.map(
+                        (value) =>
+                          ({
+                            $type: "string" as const,
+                            value,
+                          }) as
+                            | {
+                                $type: "DiscriminatedUnionMember1";
+                                value: DiscriminatedUnionMember1;
+                              }
+                            | {
+                                $type: "DiscriminatedUnionMember2";
+                                value: DiscriminatedUnionMember2;
+                              }
+                            | { $type: "string"; value: string },
+                      ),
+                    )
+                    .unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           | {
               $type: "DiscriminatedUnionMember1";
               value: DiscriminatedUnionMember1;
@@ -49950,32 +51390,90 @@ export namespace UnionDiscriminantsStruct {
               };
             };
           }
-        >(((values, options) =>
-          values.chainMap((value) => {
-            const valueAsValues = value.toValues();
-            return (
-              $identifierFromRdfResourceValues(valueAsValues, {
-                ...options,
-                ignoreRdfType: false,
-                schema: options.schema.members["BlankNode"].type,
-              }) as Either<
-                Error,
-                Resource.Values<(BlankNode | NamedNode) | Literal>
-              >
-            )
-              .altLazy(
-                () =>
-                  $literalFromRdfResourceValues(valueAsValues, {
+        >(((inputValues, options) => {
+          const memberInputValues: Resource.Values[] = Array.from({
+            length: 2,
+          }).map(() =>
+            Resource.Values.empty({
+              focusResource: inputValues.focusResource,
+              propertyPath: inputValues.propertyPath,
+            }),
+          );
+          for (const inputValue of inputValues) {
+            const inputValueAsValues = inputValue.toValues();
+            let memberOutputValuesEither: Either<Error, unknown> | undefined;
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberI === 0) {
+                memberOutputValuesEither = $identifierFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["BlankNode"].type,
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              } else if (memberI === 1) {
+                memberOutputValuesEither = $literalFromRdfResourceValues(
+                  inputValueAsValues,
+                  {
                     ...options,
                     ignoreRdfType: false,
                     schema: options.schema.members["Literal"].type,
-                  }) as Either<
-                    Error,
-                    Resource.Values<(BlankNode | NamedNode) | Literal>
-                  >,
-              )
-              .chain((values) => values.head());
-          })) satisfies $FromRdfResourceValuesFunction<
+                  },
+                );
+                if (memberOutputValuesEither.isRight()) {
+                  memberInputValues[memberI] =
+                    memberInputValues[memberI].concat(inputValue);
+                  break;
+                }
+              }
+            }
+            if (memberOutputValuesEither!.isLeft()) {
+              return memberOutputValuesEither;
+            }
+          }
+
+          let collectedOutputValues: Resource.Values<
+            (BlankNode | NamedNode) | Literal
+          > = Resource.Values.empty({
+            focusResource: inputValues.focusResource,
+            propertyPath: inputValues.propertyPath,
+          });
+          for (let memberI = 0; memberI < 2; memberI++) {
+            if (memberInputValues[memberI].length === 0) {
+              continue;
+            }
+            switch (memberI) {
+              case 0:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$identifierFromRdfResourceValues(
+                    memberInputValues[memberI],
+                    {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["BlankNode"].type,
+                    },
+                  ).unsafeCoerce(),
+                );
+                break;
+              case 1:
+                collectedOutputValues = collectedOutputValues.concat(
+                  ...$literalFromRdfResourceValues(memberInputValues[memberI], {
+                    ...options,
+                    ignoreRdfType: false,
+                    schema: options.schema.members["Literal"].type,
+                  }).unsafeCoerce(),
+                );
+                break;
+            }
+          }
+          return Right(collectedOutputValues);
+        }) satisfies $FromRdfResourceValuesFunction<
           (BlankNode | NamedNode) | Literal,
           {
             kind: "DiscriminatedUnion";
@@ -56333,26 +57831,97 @@ export namespace DiscriminatedUnion {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     DiscriminatedUnion,
     typeof DiscriminatedUnion.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-          ...options,
-          ignoreRdfType: false,
-          schema: options.schema.members["DiscriminatedUnionMember1"].type,
-        }) as Either<Error, Resource.Values<DiscriminatedUnion>>
-      )
-        .altLazy(
-          () =>
-            DiscriminatedUnionMember2.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              ignoreRdfType: false,
-              schema: options.schema.members["DiscriminatedUnionMember2"].type,
-            }) as Either<Error, Resource.Values<DiscriminatedUnion>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
+  > = ((inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither =
+            DiscriminatedUnionMember1.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["DiscriminatedUnionMember1"].type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither =
+            DiscriminatedUnionMember2.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["DiscriminatedUnionMember2"].type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<DiscriminatedUnion> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...DiscriminatedUnionMember1.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["DiscriminatedUnionMember1"].type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...DiscriminatedUnionMember2.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["DiscriminatedUnionMember2"].type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  }) satisfies $FromRdfResourceValuesFunction<
     DiscriminatedUnion,
     typeof DiscriminatedUnion.schema
   >;
@@ -56875,28 +58444,54 @@ export namespace FlattenDiscriminatedUnion {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     FlattenDiscriminatedUnion,
     typeof FlattenDiscriminatedUnion.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        DiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-          ...options,
-          ignoreRdfType: false,
-          schema: options.schema.members["DiscriminatedUnionMember1"].type,
-        }) as Either<Error, Resource.Values<FlattenDiscriminatedUnion>>
-      )
-        .altLazy(
-          () =>
-            DiscriminatedUnionMember2.fromRdfResourceValues(valueAsValues, {
-              ...options,
-              ignoreRdfType: false,
-              schema: options.schema.members["DiscriminatedUnionMember2"].type,
-            }) as Either<Error, Resource.Values<FlattenDiscriminatedUnion>>,
-        )
-        .altLazy(
-          () =>
+  > = ((inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 3 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 3; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither =
+            DiscriminatedUnionMember1.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["DiscriminatedUnionMember1"].type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither =
+            DiscriminatedUnionMember2.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["DiscriminatedUnionMember2"].type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 2) {
+          memberOutputValuesEither =
             FlattenDiscriminatedUnionMember3.fromRdfResourceValues(
-              valueAsValues,
+              inputValueAsValues,
               {
                 ...options,
                 ignoreRdfType: false,
@@ -56904,10 +58499,73 @@ export namespace FlattenDiscriminatedUnion {
                   options.schema.members["FlattenDiscriminatedUnionMember3"]
                     .type,
               },
-            ) as Either<Error, Resource.Values<FlattenDiscriminatedUnion>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<FlattenDiscriminatedUnion> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 3; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...DiscriminatedUnionMember1.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["DiscriminatedUnionMember1"].type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...DiscriminatedUnionMember2.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["DiscriminatedUnionMember2"].type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+        case 2:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...FlattenDiscriminatedUnionMember3.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["FlattenDiscriminatedUnionMember3"]
+                    .type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  }) satisfies $FromRdfResourceValuesFunction<
     FlattenDiscriminatedUnion,
     typeof FlattenDiscriminatedUnion.schema
   >;
@@ -57420,25 +59078,40 @@ export namespace LazilyResolvedDiscriminatedUnion {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     LazilyResolvedDiscriminatedUnion,
     typeof LazilyResolvedDiscriminatedUnion.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        LazilyResolvedDiscriminatedUnionMember1.fromRdfResourceValues(
-          valueAsValues,
-          {
-            ...options,
-            ignoreRdfType: false,
-            schema:
-              options.schema.members["LazilyResolvedDiscriminatedUnionMember1"]
-                .type,
-          },
-        ) as Either<Error, Resource.Values<LazilyResolvedDiscriminatedUnion>>
-      )
-        .altLazy(
-          () =>
+  > = ((inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither =
+            LazilyResolvedDiscriminatedUnionMember1.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members[
+                    "LazilyResolvedDiscriminatedUnionMember1"
+                  ].type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither =
             LazilyResolvedDiscriminatedUnionMember2.fromRdfResourceValues(
-              valueAsValues,
+              inputValueAsValues,
               {
                 ...options,
                 ignoreRdfType: false,
@@ -57447,13 +59120,63 @@ export namespace LazilyResolvedDiscriminatedUnion {
                     "LazilyResolvedDiscriminatedUnionMember2"
                   ].type,
               },
-            ) as Either<
-              Error,
-              Resource.Values<LazilyResolvedDiscriminatedUnion>
-            >,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<LazilyResolvedDiscriminatedUnion> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...LazilyResolvedDiscriminatedUnionMember1.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members[
+                    "LazilyResolvedDiscriminatedUnionMember1"
+                  ].type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...LazilyResolvedDiscriminatedUnionMember2.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members[
+                    "LazilyResolvedDiscriminatedUnionMember2"
+                  ].type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  }) satisfies $FromRdfResourceValuesFunction<
     LazilyResolvedDiscriminatedUnion,
     typeof LazilyResolvedDiscriminatedUnion.schema
   >;
@@ -57810,26 +59533,88 @@ export namespace NamedDiscriminatedUnion1 {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     NamedDiscriminatedUnion1,
     typeof NamedDiscriminatedUnion1.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        $iriFromRdfResourceValues<string>(valueAsValues, {
-          ...options,
-          ignoreRdfType: false,
-          schema: options.schema.members["object"].type,
-        }) as Either<Error, Resource.Values<NamedDiscriminatedUnion1>>
-      )
-        .altLazy(
-          () =>
-            $stringFromRdfResourceValues<string>(valueAsValues, {
+  > = ((inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither = $iriFromRdfResourceValues<string>(
+            inputValueAsValues,
+            {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["object"].type,
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+            inputValueAsValues,
+            {
               ...options,
               ignoreRdfType: false,
               schema: options.schema.members["string"].type,
-            }) as Either<Error, Resource.Values<NamedDiscriminatedUnion1>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<NamedDiscriminatedUnion1> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...$iriFromRdfResourceValues<string>(memberInputValues[memberI], {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["object"].type,
+            }).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...$stringFromRdfResourceValues<string>(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema: options.schema.members["string"].type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  }) satisfies $FromRdfResourceValuesFunction<
     NamedDiscriminatedUnion1,
     typeof NamedDiscriminatedUnion1.schema
   >;
@@ -58073,39 +59858,105 @@ export namespace NamedDiscriminatedUnion2 {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     NamedDiscriminatedUnion2,
     typeof NamedDiscriminatedUnion2.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        $dateFromRdfResourceValues(valueAsValues, {
-          ...options,
-          ignoreRdfType: false,
-          schema: options.schema.members["date"].type,
-        }).map((values) =>
-          values.map(
-            (value) =>
-              ({ $type: "date" as const, value }) as NamedDiscriminatedUnion2,
-          ),
-        ) as Either<Error, Resource.Values<NamedDiscriminatedUnion2>>
-      )
-        .altLazy(
-          () =>
-            $dateTimeFromRdfResourceValues(valueAsValues, {
+  > = ((inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither = $dateFromRdfResourceValues(
+            inputValueAsValues,
+            {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["date"].type,
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither = $dateTimeFromRdfResourceValues(
+            inputValueAsValues,
+            {
               ...options,
               ignoreRdfType: false,
               schema: options.schema.members["dateTime"].type,
-            }).map((values) =>
-              values.map(
-                (value) =>
-                  ({
-                    $type: "dateTime" as const,
-                    value,
-                  }) as NamedDiscriminatedUnion2,
-              ),
-            ) as Either<Error, Resource.Values<NamedDiscriminatedUnion2>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<NamedDiscriminatedUnion2> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["date"].type,
+            })
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({
+                      $type: "date" as const,
+                      value,
+                    }) as NamedDiscriminatedUnion2,
+                ),
+              )
+              .unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...$dateTimeFromRdfResourceValues(memberInputValues[memberI], {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["dateTime"].type,
+            })
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({
+                      $type: "dateTime" as const,
+                      value,
+                    }) as NamedDiscriminatedUnion2,
+                ),
+              )
+              .unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  }) satisfies $FromRdfResourceValuesFunction<
     NamedDiscriminatedUnion2,
     typeof NamedDiscriminatedUnion2.schema
   >;
@@ -58502,24 +60353,39 @@ export namespace NoRdfTypeDiscriminatedUnion {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     NoRdfTypeDiscriminatedUnion,
     typeof NoRdfTypeDiscriminatedUnion.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        NoRdfTypeDiscriminatedUnionMember1.fromRdfResourceValues(
-          valueAsValues,
-          {
-            ...options,
-            ignoreRdfType: false,
-            schema:
-              options.schema.members["NoRdfTypeDiscriminatedUnionMember1"].type,
-          },
-        ) as Either<Error, Resource.Values<NoRdfTypeDiscriminatedUnion>>
-      )
-        .altLazy(
-          () =>
+  > = ((inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither =
+            NoRdfTypeDiscriminatedUnionMember1.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["NoRdfTypeDiscriminatedUnionMember1"]
+                    .type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither =
             NoRdfTypeDiscriminatedUnionMember2.fromRdfResourceValues(
-              valueAsValues,
+              inputValueAsValues,
               {
                 ...options,
                 ignoreRdfType: false,
@@ -58527,10 +60393,61 @@ export namespace NoRdfTypeDiscriminatedUnion {
                   options.schema.members["NoRdfTypeDiscriminatedUnionMember2"]
                     .type,
               },
-            ) as Either<Error, Resource.Values<NoRdfTypeDiscriminatedUnion>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<NoRdfTypeDiscriminatedUnion> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...NoRdfTypeDiscriminatedUnionMember1.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["NoRdfTypeDiscriminatedUnionMember1"]
+                    .type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...NoRdfTypeDiscriminatedUnionMember2.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["NoRdfTypeDiscriminatedUnionMember2"]
+                    .type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  }) satisfies $FromRdfResourceValuesFunction<
     NoRdfTypeDiscriminatedUnion,
     typeof NoRdfTypeDiscriminatedUnion.schema
   >;
@@ -59004,21 +60921,39 @@ export namespace PartialDiscriminatedUnion {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     PartialDiscriminatedUnion,
     typeof PartialDiscriminatedUnion.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        PartialDiscriminatedUnionMember1.fromRdfResourceValues(valueAsValues, {
-          ...options,
-          ignoreRdfType: false,
-          schema:
-            options.schema.members["PartialDiscriminatedUnionMember1"].type,
-        }) as Either<Error, Resource.Values<PartialDiscriminatedUnion>>
-      )
-        .altLazy(
-          () =>
+  > = ((inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither =
+            PartialDiscriminatedUnionMember1.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["PartialDiscriminatedUnionMember1"]
+                    .type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither =
             PartialDiscriminatedUnionMember2.fromRdfResourceValues(
-              valueAsValues,
+              inputValueAsValues,
               {
                 ...options,
                 ignoreRdfType: false,
@@ -59026,10 +60961,61 @@ export namespace PartialDiscriminatedUnion {
                   options.schema.members["PartialDiscriminatedUnionMember2"]
                     .type,
               },
-            ) as Either<Error, Resource.Values<PartialDiscriminatedUnion>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<PartialDiscriminatedUnion> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...PartialDiscriminatedUnionMember1.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["PartialDiscriminatedUnionMember1"]
+                    .type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...PartialDiscriminatedUnionMember2.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["PartialDiscriminatedUnionMember2"]
+                    .type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  }) satisfies $FromRdfResourceValuesFunction<
     PartialDiscriminatedUnion,
     typeof PartialDiscriminatedUnion.schema
   >;
@@ -59513,24 +61499,39 @@ export namespace RecursiveDiscriminatedUnion {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     RecursiveDiscriminatedUnion,
     typeof RecursiveDiscriminatedUnion.schema
-  > = ((values, options) =>
-    values.chainMap((value) => {
-      const valueAsValues = value.toValues();
-      return (
-        RecursiveDiscriminatedUnionMember1.fromRdfResourceValues(
-          valueAsValues,
-          {
-            ...options,
-            ignoreRdfType: false,
-            schema:
-              options.schema.members["RecursiveDiscriminatedUnionMember1"].type,
-          },
-        ) as Either<Error, Resource.Values<RecursiveDiscriminatedUnion>>
-      )
-        .altLazy(
-          () =>
+  > = ((inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither =
+            RecursiveDiscriminatedUnionMember1.fromRdfResourceValues(
+              inputValueAsValues,
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["RecursiveDiscriminatedUnionMember1"]
+                    .type,
+              },
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither =
             RecursiveDiscriminatedUnionMember2.fromRdfResourceValues(
-              valueAsValues,
+              inputValueAsValues,
               {
                 ...options,
                 ignoreRdfType: false,
@@ -59538,10 +61539,61 @@ export namespace RecursiveDiscriminatedUnion {
                   options.schema.members["RecursiveDiscriminatedUnionMember2"]
                     .type,
               },
-            ) as Either<Error, Resource.Values<RecursiveDiscriminatedUnion>>,
-        )
-        .chain((values) => values.head());
-    })) satisfies $FromRdfResourceValuesFunction<
+            );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<RecursiveDiscriminatedUnion> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...RecursiveDiscriminatedUnionMember1.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["RecursiveDiscriminatedUnionMember1"]
+                    .type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...RecursiveDiscriminatedUnionMember2.fromRdfResourceValues(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema:
+                  options.schema.members["RecursiveDiscriminatedUnionMember2"]
+                    .type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  }) satisfies $FromRdfResourceValuesFunction<
     RecursiveDiscriminatedUnion,
     typeof RecursiveDiscriminatedUnion.schema
   >;
