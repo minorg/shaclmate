@@ -1,4 +1,3 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import { AbstractConstruct } from "./AbstractConstruct.js";
@@ -30,7 +29,6 @@ export abstract class AbstractType extends AbstractConstruct {
     ...superParameters
   }: {
     name: Maybe<string>;
-    shapeIdentifier: BlankNode | NamedNode;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
     this.name = name;
