@@ -1,27 +1,13 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
-import { Maybe } from "purify-ts";
+import type { Maybe } from "purify-ts";
+import { AbstractConstruct } from "./AbstractConstruct.js";
 import { maybeEquals, strictEquals } from "./equals.js";
 
 /**
  * Abstract base class for Types.
  */
-export abstract class AbstractType {
-  /**
-   * Documentation comment from rdfs:comment.
-   */
-  readonly comment: Maybe<string> = Maybe.empty();
-
-  /**
-   * Type discriminant
-   */
-  abstract readonly kind: string;
-
-  /**
-   * Human-readable label from rdfs:label.
-   */
-  readonly label: Maybe<string> = Maybe.empty();
-
+export abstract class AbstractType extends AbstractConstruct {
   /**
    * Name of this type, from shaclmate:name or sh:name.
    */
@@ -39,34 +25,19 @@ export abstract class AbstractType {
    */
   abstract readonly recursive: boolean;
 
-  /**
-   * Identifier of the shape this type was derived from.
-   */
-  readonly shapeIdentifier: BlankNode | NamedNode;
-
   constructor({
-    comment,
-    label,
     name,
-    shapeIdentifier,
+    ...superParameters
   }: {
-    comment: Maybe<string>;
-    label: Maybe<string>;
     name: Maybe<string>;
     shapeIdentifier: BlankNode | NamedNode;
-  }) {
-    this.comment = comment;
-    this.label = label;
+  } & ConstructorParameters<typeof AbstractConstruct>[0]) {
+    super(superParameters);
     this.name = name;
-    this.shapeIdentifier = shapeIdentifier;
   }
 
-  equals(other: AbstractType): boolean {
-    if (!maybeEquals(strictEquals)(this.comment, other.comment)) {
-      return false;
-    }
-
-    if (!maybeEquals(strictEquals)(this.label, other.label)) {
+  override equals(other: AbstractType): boolean {
+    if (!super.equals(other)) {
       return false;
     }
 
@@ -77,18 +48,11 @@ export abstract class AbstractType {
     return true;
   }
 
-  toJSON() {
+  override toJSON() {
     return {
-      comment: this.comment.extract(),
-      kind: this.kind,
-      label: this.label.extract(),
+      ...super.toJSON(),
       name: this.name.extract(),
       recursive: this.recursive ? true : undefined,
-      shapeIdentifier: this.shapeIdentifier,
     };
-  }
-
-  toString(): string {
-    return JSON.stringify(this.toJSON());
   }
 }
