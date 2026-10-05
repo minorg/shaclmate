@@ -39,8 +39,8 @@ function transformOperation(
   return astConstructName(inputOperation).chain((name) => {
     return Either.of(
       new ast.Operation({
-        comment: Maybe.empty(),
-        label: Maybe.empty(),
+        comment: inputOperation.comment,
+        label: inputOperation.label,
         name,
       }),
     );
@@ -62,8 +62,8 @@ export function transformService(
     }
     return Either.of(
       new ast.Service({
-        comment: Maybe.empty(),
-        label: Maybe.empty(),
+        comment: inputService.comment,
+        label: inputService.label,
         name,
         operations: astOperations,
       }),

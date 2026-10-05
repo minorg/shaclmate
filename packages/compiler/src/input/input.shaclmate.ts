@@ -3098,11 +3098,15 @@ export type Operation = {
 
   readonly $type: "Operation";
 
+  readonly comment: Maybe<string>;
+
   readonly errors: readonly NodeShape[];
 
   readonly httpMethodName: Maybe<string>;
 
   readonly httpRequestURI: Maybe<string>;
+
+  readonly label: Maybe<string>;
 
   readonly name: Maybe<string>;
 
@@ -3126,6 +3130,19 @@ export namespace Operation {
           schema: Operation.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
+      comment: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.comment,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
       errors: $shaclPropertyFromRdf<
         readonly NodeShape[],
         $CollectionSchema<NodeShape.Schema>
@@ -3160,6 +3177,19 @@ export namespace Operation {
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: Operation.schema.properties.httpRequestURI,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      label: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: NodeShape.schema.properties.label,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
           string,
           $StringSchema<string>
@@ -3218,9 +3248,11 @@ export namespace Operation {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly comment?: string | Maybe<string>;
     readonly errors?: NodeShape | readonly NodeShape[];
     readonly httpMethodName?: string | Maybe<string>;
     readonly httpRequestURI?: string | Maybe<string>;
+    readonly label?: string | Maybe<string>;
     readonly name?: string | Maybe<string>;
     readonly parameters: readonly NodeShape[];
     readonly result?: NodeShape | Maybe<NodeShape>;
@@ -3229,6 +3261,15 @@ export namespace Operation {
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
+      ),
+      comment: $convertToMaybe($identityConversionFunction)(
+        parameters.comment,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.comment.type,
+          value,
+        ),
       ),
       errors: $convertToScalarSet($identityConversionFunction)(
         parameters.errors,
@@ -3254,6 +3295,15 @@ export namespace Operation {
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           Operation.schema.properties.httpRequestURI.type,
+          value,
+        ),
+      ),
+      label: $convertToMaybe($identityConversionFunction)(
+        parameters.label,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.label.type,
           value,
         ),
       ),
@@ -3299,9 +3349,11 @@ export namespace Operation {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly comment?: string | Maybe<string>;
     readonly errors?: NodeShape | readonly NodeShape[];
     readonly httpMethodName?: string | Maybe<string>;
     readonly httpRequestURI?: string | Maybe<string>;
+    readonly label?: string | Maybe<string>;
     readonly name?: string | Maybe<string>;
     readonly parameters: readonly NodeShape[];
     readonly result?: NodeShape | Maybe<NodeShape>;
@@ -3338,6 +3390,16 @@ export namespace Operation {
         type: { kind: "Identifier" as const },
       },
       $type: { kind: "Discriminant", value: "Operation" },
+      comment: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/2000/01/rdf-schema#comment",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
       errors: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#error"),
@@ -3361,6 +3423,16 @@ export namespace Operation {
       httpRequestURI: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/2011/http#requestURI"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
+      label: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/2000/01/rdf-schema#label",
+        ),
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -3412,6 +3484,7 @@ export namespace Operation {
   ) => Record<string, string> = (_operation) =>
     $compactRecord({
       $identifier: _operation.$identifier().toString(),
+      label: _operation.label.map((item) => item.toString()).extract(),
       name: _operation.name.map((item) => item.toString()).extract(),
     });
 }
@@ -5867,6 +5940,10 @@ export type Service = {
 
   readonly $type: "Service";
 
+  readonly comment: Maybe<string>;
+
+  readonly label: Maybe<string>;
+
   readonly name: Maybe<string>;
 
   readonly operations: readonly Operation[];
@@ -5895,6 +5972,32 @@ export namespace Service {
             schema: Service.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
+        comment: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: NodeShape.schema.properties.comment,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
+        }),
+        label: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: NodeShape.schema.properties.label,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
+        }),
         name: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
@@ -5936,6 +6039,8 @@ export namespace Service {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly comment?: string | Maybe<string>;
+    readonly label?: string | Maybe<string>;
     readonly name?: string | Maybe<string>;
     readonly operations?: Operation | readonly Operation[];
   }): Either<Error, Service> =>
@@ -5943,6 +6048,24 @@ export namespace Service {
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
         parameters?.$defaultNamespace,
+      ),
+      comment: $convertToMaybe($identityConversionFunction)(
+        parameters?.comment,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.comment.type,
+          value,
+        ),
+      ),
+      label: $convertToMaybe($identityConversionFunction)(
+        parameters?.label,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.label.type,
+          value,
+        ),
       ),
       name: $convertToMaybe($identityConversionFunction)(
         parameters?.name,
@@ -5977,6 +6100,8 @@ export namespace Service {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly comment?: string | Maybe<string>;
+    readonly label?: string | Maybe<string>;
     readonly name?: string | Maybe<string>;
     readonly operations?: Operation | readonly Operation[];
   }): Service {
@@ -6021,6 +6146,26 @@ export namespace Service {
         ],
       },
       $type: { kind: "Discriminant", value: "Service" },
+      comment: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/2000/01/rdf-schema#comment",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
+      label: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://www.w3.org/2000/01/rdf-schema#label",
+        ),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
       name: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
@@ -6053,6 +6198,7 @@ export namespace Service {
   ) =>
     $compactRecord({
       $identifier: _service.$identifier().toString(),
+      label: _service.label.map((item) => item.toString()).extract(),
       name: _service.name.map((item) => item.toString()).extract(),
     });
 }
