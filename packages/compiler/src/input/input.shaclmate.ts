@@ -5867,6 +5867,8 @@ export type Service = {
 
   readonly $type: "Service";
 
+  readonly name: Maybe<string>;
+
   readonly operations: readonly Operation[];
 };
 
@@ -5893,6 +5895,19 @@ export namespace Service {
             schema: Service.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
+        name: $shaclPropertyFromRdf<
+          Maybe<string>,
+          $MaybeSchema<$StringSchema<string>>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: Service.schema.properties.name,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            string,
+            $StringSchema<string>
+          >($stringFromRdfResourceValues<string>),
+        }),
         operations: $shaclPropertyFromRdf<
           readonly Operation[],
           $CollectionSchema<Operation.Schema>
@@ -5921,12 +5936,22 @@ export namespace Service {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly name?: string | Maybe<string>;
     readonly operations?: Operation | readonly Operation[];
   }): Either<Error, Service> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters?.$identifier,
         parameters?.$defaultNamespace,
+      ),
+      name: $convertToMaybe($identityConversionFunction)(
+        parameters?.name,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          Service.schema.properties.name.type,
+          value,
+        ),
       ),
       operations: $convertToScalarSet($identityConversionFunction)(
         parameters?.operations,
@@ -5952,6 +5977,7 @@ export namespace Service {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly name?: string | Maybe<string>;
     readonly operations?: Operation | readonly Operation[];
   }): Service {
     return create(parameters).unsafeCoerce();
@@ -5995,6 +6021,14 @@ export namespace Service {
         ],
       },
       $type: { kind: "Discriminant", value: "Service" },
+      name: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
       operations: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -6016,7 +6050,11 @@ export namespace Service {
 
   export const toStringRecord: (_service: Service) => Record<string, string> = (
     _service,
-  ) => $compactRecord({ $identifier: _service.$identifier().toString() });
+  ) =>
+    $compactRecord({
+      $identifier: _service.$identifier().toString(),
+      name: _service.name.map((item) => item.toString()).extract(),
+    });
 }
 export type Severity = NamedNode<(typeof Severity.schema)["inValues"][number]>;
 

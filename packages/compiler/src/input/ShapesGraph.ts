@@ -1,8 +1,10 @@
-import type { DatasetCore } from "@rdfjs/types";
-import type { PrefixMap } from "@rdfx/collection";
+import type { BlankNode, DatasetCore, NamedNode } from "@rdfjs/types";
+import { type PrefixMap, TermMap } from "@rdfx/collection";
+import dataFactory from "@rdfx/data-factory";
 import type { Logger } from "@rdfx/logger";
+import { ResourceSet } from "@rdfx/resource";
 import { AbstractShapesGraph } from "@shaclmate/shacl-ast";
-import type { Either } from "purify-ts";
+import { Either } from "purify-ts";
 import type { Ast } from "../ast/Ast.js";
 import { Compiler } from "../Compiler.js";
 import type { Generator } from "../generators/Generator.js";
@@ -15,6 +17,11 @@ export class ShapesGraph extends AbstractShapesGraph<
   generated.PropertyGroup,
   generated.PropertyShape
 > {
+  private readonly servicesByIdentifier: TermMap<
+    BlankNode | NamedNode,
+    generated.Service
+  > = new TermMap();
+
   protected readonly typeFunctions = typeFunctions;
 
   static fromDataset(
@@ -28,7 +35,22 @@ export class ShapesGraph extends AbstractShapesGraph<
       dataset,
       options,
       new ShapesGraph(),
-    );
+    ).chain((shapesGraph) => {
+      const resourceSet = new ResourceSet({ dataFactory, dataset });
+
+      for (const resource of resourceSet.instancesOf(
+        generated.Service.schema.properties.$rdfType.fromRdfType,
+      )) {
+        const serviceEither = generated.Service.fromRdfResource(resource);
+        if (serviceEither.isLeft()) {
+          return serviceEither;
+        }
+        const service = serviceEither.extract() as generated.Service;
+        shapesGraph.servicesByIdentifier.set(service.$identifier(), service);
+      }
+
+      return Either.of(shapesGraph);
+    });
   }
 
   static fromObjects(
@@ -37,9 +59,34 @@ export class ShapesGraph extends AbstractShapesGraph<
       | generated.Ontology
       | generated.PropertyGroup
       | generated.PropertyShape
+      | generated.Service
     )[]
   ): ShapesGraph {
-    return AbstractShapesGraph._fromObjects(new ShapesGraph(), ...objects);
+    const otherObjects: (
+      | generated.NodeShape
+      | generated.Ontology
+      | generated.PropertyGroup
+      | generated.PropertyShape
+    )[] = [];
+    const services: generated.Service[] = [];
+    for (const object of objects) {
+      if (generated.Service.isService(object)) {
+        services.push(object);
+      } else {
+        otherObjects.push(object);
+      }
+    }
+
+    const shapesGraph = AbstractShapesGraph._fromObjects(
+      new ShapesGraph(),
+      ...otherObjects,
+    );
+
+    for (const service of services) {
+      shapesGraph.servicesByIdentifier.set(service.$identifier(), service);
+    }
+
+    return shapesGraph;
   }
 
   /**

@@ -126,7 +126,14 @@ shaclmate:PropertyShape-resolve
 
 shaclmate:Service
     a rdfs:Class, sh:NodeShape ;
-    sh:property shaclmate:Service-operations .
+    sh:property shaclmate:Service-name, shaclmate:Service-operations .
+
+shaclmate:Service-name
+    shaclmate:display true ;
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:name .
 
 shaclmate:Service-operations
     a sh:PropertyShape ;
