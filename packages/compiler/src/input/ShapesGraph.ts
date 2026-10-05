@@ -4,8 +4,10 @@ import dataFactory from "@rdfx/data-factory";
 import type { Logger } from "@rdfx/logger";
 import { ResourceSet } from "@rdfx/resource";
 import { AbstractShapesGraph } from "@shaclmate/shacl-ast";
+
 import { Either } from "purify-ts";
 import type { Ast } from "../ast/Ast.js";
+
 import { Compiler } from "../Compiler.js";
 import type { Generator } from "../generators/Generator.js";
 import { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -23,6 +25,10 @@ export class ShapesGraph extends AbstractShapesGraph<
   > = new TermMap();
 
   protected readonly typeFunctions = typeFunctions;
+
+  get services(): readonly generated.Service[] {
+    return [...this.servicesByIdentifier.values()];
+  }
 
   static fromDataset(
     dataset: DatasetCore,

@@ -3,6 +3,7 @@ import { TermMap } from "@rdfx/collection";
 import type { Logger } from "@rdfx/logger";
 import { Either } from "purify-ts";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
+import { transformService } from "./_ShapesGraphToAstTransformer/transformService.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
 import type * as input from "./input/index.js";
@@ -73,6 +74,9 @@ export class ShapesGraphToAstTransformer {
         0,
       ),
       namedTypes: astNamedTypes.concat(this.syntheticAstStructTypes),
+      services: this.shapesGraph.services.map((service) =>
+        transformService.call(this, service),
+      ),
     });
   }
 }
