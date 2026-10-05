@@ -422,7 +422,7 @@ export abstract class AbstractShapesGraph<
     });
   }
 
-  protected static _fromShapes<
+  protected static _fromObjects<
     NodeShapeT extends generated.NodeShape,
     OntologyT extends generated.Ontology,
     PropertyGroupT extends generated.PropertyGroup,

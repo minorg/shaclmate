@@ -31,7 +31,7 @@ export class ShapesGraph extends AbstractShapesGraph<
     );
   }
 
-  static fromShapes(
+  static fromObjects(
     ...objects: readonly (
       | generated.NodeShape
       | generated.Ontology
@@ -39,7 +39,7 @@ export class ShapesGraph extends AbstractShapesGraph<
       | generated.PropertyShape
     )[]
   ): ShapesGraph {
-    return AbstractShapesGraph._fromShapes(new ShapesGraph(), ...objects);
+    return AbstractShapesGraph._fromObjects(new ShapesGraph(), ...objects);
   }
 
   /**
