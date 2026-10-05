@@ -59,6 +59,15 @@ export class ShapesGraphToAstTransformer {
       });
     }
 
+    const astServices: ast.Service[] = [];
+    for (const inputService of this.shapesGraph.services) {
+      const astServiceEither = transformService.call(this, inputService);
+      if (astServiceEither.isLeft()) {
+        return astServiceEither;
+      }
+      astServices.push(astServiceEither.extract() as ast.Service);
+    }
+
     return Either.of({
       lazyTypesCount: [...this.cachedAstTypesByShapeIdentifier.values()].reduce(
         (acc, astType) => {
@@ -74,9 +83,7 @@ export class ShapesGraphToAstTransformer {
         0,
       ),
       namedTypes: astNamedTypes.concat(this.syntheticAstStructTypes),
-      services: this.shapesGraph.services.map((service) =>
-        transformService.call(this, service),
-      ),
+      services: astServices,
     });
   }
 }

@@ -1,3 +1,4 @@
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import { AbstractConstruct } from "./AbstractConstruct.js";
@@ -29,14 +30,22 @@ export abstract class AbstractType extends AbstractConstruct {
    */
   abstract readonly recursive: boolean;
 
+  /**
+   * Identifier of the shape this type was derived from.
+   */
+  readonly shapeIdentifier: BlankNode | NamedNode;
+
   constructor({
     name,
+    shapeIdentifier,
     ...superParameters
   }: {
     name: Maybe<string>;
+    shapeIdentifier: BlankNode | NamedNode;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
     this.name = name;
+    this.shapeIdentifier = shapeIdentifier;
   }
 
   override equals(other: AbstractType): boolean {
@@ -57,6 +66,7 @@ export abstract class AbstractType extends AbstractConstruct {
       kind: this.kind,
       name: this.name.extract(),
       recursive: this.recursive ? true : undefined,
+      shapeIdentifier: this.shapeIdentifier,
     };
   }
 }

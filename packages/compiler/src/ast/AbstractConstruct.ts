@@ -1,4 +1,3 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import { maybeEquals, strictEquals } from "./equals.js";
 
@@ -16,23 +15,15 @@ export abstract class AbstractConstruct {
    */
   readonly label: Maybe<string> = Maybe.empty();
 
-  /**
-   * Identifier of the shape this type was derived from.
-   */
-  readonly shapeIdentifier: BlankNode | NamedNode;
-
   constructor({
     comment,
     label,
-    shapeIdentifier,
   }: {
     comment: Maybe<string>;
     label: Maybe<string>;
-    shapeIdentifier: BlankNode | NamedNode;
   }) {
     this.comment = comment;
     this.label = label;
-    this.shapeIdentifier = shapeIdentifier;
   }
 
   equals(other: AbstractConstruct): boolean {
@@ -51,7 +42,6 @@ export abstract class AbstractConstruct {
     return {
       comment: this.comment.extract(),
       label: this.label.extract(),
-      shapeIdentifier: this.shapeIdentifier,
     };
   }
 

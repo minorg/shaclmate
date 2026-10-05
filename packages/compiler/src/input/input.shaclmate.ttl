@@ -66,7 +66,7 @@ shaclmate:NodeShapeList
 
 shaclmate:Operation
     a sh:NodeShape ;
-    sh:property shaclmate:Operation-errors, shaclmate:Operation-httpMethodName, shaclmate:Operation-httpRequestURI, shaclmate:Operation-name, shaclmate:Operation-parameters, shaclmate:Operation-result .
+    sh:property shaclmate:Operation-errors, shaclmate:Operation-httpMethodName, shaclmate:Operation-httpRequestURI, shaclmate:Operation-name, shaclmate:Operation-parameters, shaclmate:Operation-result, shaclmate:comment, shaclmate:label .
 
 shaclmate:Operation-errors
     a sh:PropertyShape ;
@@ -126,7 +126,7 @@ shaclmate:PropertyShape-resolve
 
 shaclmate:Service
     a rdfs:Class, sh:NodeShape ;
-    sh:property shaclmate:Service-name, shaclmate:Service-operations .
+    sh:property shaclmate:Service-name, shaclmate:Service-operations, shaclmate:comment, shaclmate:label .
 
 shaclmate:Service-name
     shaclmate:display true ;
