@@ -12,11 +12,6 @@ export abstract class AbstractConstruct {
   readonly comment: Maybe<string> = Maybe.empty();
 
   /**
-   * Type discriminant
-   */
-  abstract readonly kind: string;
-
-  /**
    * Human-readable label from rdfs:label.
    */
   readonly label: Maybe<string> = Maybe.empty();
@@ -55,7 +50,6 @@ export abstract class AbstractConstruct {
   toJSON() {
     return {
       comment: this.comment.extract(),
-      kind: this.kind,
       label: this.label.extract(),
       shapeIdentifier: this.shapeIdentifier,
     };

@@ -8,6 +8,11 @@ import { maybeEquals, strictEquals } from "./equals.js";
  */
 export abstract class AbstractType extends AbstractConstruct {
   /**
+   * Type discriminant
+   */
+  abstract readonly kind: string;
+
+  /**
    * Name of this type, from shaclmate:name or sh:name.
    */
   readonly name: Maybe<string>;
@@ -49,6 +54,7 @@ export abstract class AbstractType extends AbstractConstruct {
   override toJSON() {
     return {
       ...super.toJSON(),
+      kind: this.kind,
       name: this.name.extract(),
       recursive: this.recursive ? true : undefined,
     };

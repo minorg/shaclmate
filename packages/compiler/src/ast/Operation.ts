@@ -1,8 +1,6 @@
 import { AbstractConstruct } from "./AbstractConstruct.js";
 
 export class Operation extends AbstractConstruct {
-  readonly kind = "Operation";
-
   /**
    * Name of this operation.
    */
