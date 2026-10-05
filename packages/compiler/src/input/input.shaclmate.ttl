@@ -1,5 +1,5 @@
-@prefix http: <http://www.w3.org/2011/http#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix http: <http://www.w3.org/2011/http#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
@@ -7,45 +7,56 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 shaclmate:Api
-  a sh:NodeShape ;
-  sh:property shaclmate:Api-operations .
+    a sh:NodeShape ;
+    sh:property shaclmate:Api-operations .
 
 shaclmate:Api-operations
-  a sh:PropertyShape ;
-  sh:node shaclmate:ApiOperation ;
-  sh:path shaclmate:apiOperation .
+    a sh:PropertyShape ;
+    sh:minCount 1 ;
+    sh:node shaclmate:ApiOperation ;
+    sh:path shaclmate:apiOperation .
 
 shaclmate:ApiOperation
-  a sh:NodeShape ;
-  sh:property shaclmate:ApiOperation-errors, shaclmate:ApiOperation-httpMethodName, shaclmate:ApiOperation-httpRequestURI, shaclmate:ApiOperation-parameters, shaclmate:ApiOperation-result .
+    a sh:NodeShape ;
+    sh:property shaclmate:ApiOperation-errors, shaclmate:ApiOperation-httpMethodName, shaclmate:ApiOperation-httpRequestURI, shaclmate:ApiOperation-name, shaclmate:ApiOperation-parameters, shaclmate:ApiOperation-result .
 
 shaclmate:ApiOperation-errors
-  a sh:PropertyShape ;
-  sh:node shaclmate:NodeShape ;
-  sh:path sh:apiError .
+    a sh:PropertyShape ;
+    sh:node shaclmate:NodeShape ;
+    sh:path sh:apiError .
 
 shaclmate:ApiOperation-httpMethodName
-  a sh:PropertyShape ;
-  sh:datatype xsd:string ;
-  sh:maxCount 1 ;
-  sh:path http:methodName .
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path http:methodName .
 
 shaclmate:ApiOperation-httpRequestURI
-  a sh:PropertyShape ;
-  sh:datatype xsd:string ;
-  sh:maxCount 1 ;
-  sh:path http:requestURI .
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path http:requestURI .
+
+shaclmate:ApiOperation-name
+    shaclmate:display true ;
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "name" ;
+    sh:path shaclmate:name .
 
 shaclmate:ApiOperation-parameters
-  a sh:PropertyShape ;
-  sh:node shaclmate:NodeShape ;
-  sh:path sh:apiParameter .
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:node shaclmate:NodeShapeList ;
+    sh:path sh:apiParameters .
 
 shaclmate:ApiOperation-result
-  a sh:PropertyShape ;
-  sh:maxCount 1 ;
-  sh:node shaclmate:NodeShape ;
-  sh:path sh:apiResult .
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:NodeShape ;
+    sh:path sh:apiResult .
 
 shaclmate:NodeShape
     sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
@@ -84,6 +95,26 @@ shaclmate:NodeShape-tsImports
     sh:datatype xsd:string ;
     sh:name "tsImports" ;
     sh:path shaclmate:tsImport .
+
+shaclmate:NodeShapeList
+    a sh:NodeShape ;
+    sh:xone ([
+            sh:hasValue ( )
+        ]
+        [
+            sh:property [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:node shaclmate:NodeShape ;
+                sh:path rdf:first
+            ], [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:node shaclmate:NodeShapeList ;
+                sh:path rdf:rest
+            ]
+        ]
+    ) .
 
 shaclmate:PropertyShape
     sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .

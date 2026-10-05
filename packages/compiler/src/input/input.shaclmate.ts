@@ -919,6 +919,463 @@ function $wrap_FromRdfResourceFunction<T>(
     });
   };
 }
+export type Api = {
+  readonly $identifier: () => Api.Identifier;
+
+  readonly $type: "Api";
+
+  readonly operations: readonly ApiOperation[];
+};
+
+export namespace Api {
+  export const _fromRdfResource: $_FromRdfResourceFunction<Api> = (
+    resource,
+    options,
+  ) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          schema: Api.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      operations: $shaclPropertyFromRdf<
+        readonly ApiOperation[],
+        $CollectionSchema<ApiOperation.Schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: Api.schema.properties.operations,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          ApiOperation,
+          ApiOperation.Schema
+        >(ApiOperation.fromRdfResourceValues),
+      }),
+    }).chain((properties) => Api.create(properties));
+
+  export const $toString: (_api: Api) => string = (_api) =>
+    `Api(${JSON.stringify(toStringRecord(_api))})`;
+
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => Api.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly operations: ApiOperation | readonly ApiOperation[];
+  }): Either<Error, Api> =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      operations: $convertToScalarSet($identityConversionFunction)(
+        parameters.operations,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          Api.schema.properties.operations.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({ ...properties, $type: "Api" as const }))
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: Api.$toString }),
+      );
+
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => Api.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly operations: ApiOperation | readonly ApiOperation[];
+  }): Api {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    Api,
+    Api.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export const isApi = (object: $Object): object is Api =>
+    object.$type === "Api";
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      $type: { kind: "Discriminant", value: "Api" },
+      operations: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#apiOperation",
+        ),
+        get type() {
+          return {
+            kind: "Set" as const,
+            get itemType() {
+              return ApiOperation.schema;
+            },
+            minCount: 1,
+          };
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toStringRecord: (_api: Api) => Record<string, string> = (_api) =>
+    $compactRecord({ $identifier: _api.$identifier().toString() });
+}
+export type ApiOperation = {
+  readonly $identifier: () => ApiOperation.Identifier;
+
+  readonly $type: "ApiOperation";
+
+  readonly errors: readonly NodeShape[];
+
+  readonly httpMethodName: Maybe<string>;
+
+  readonly httpRequestURI: Maybe<string>;
+
+  readonly name: Maybe<string>;
+
+  readonly parameters: readonly NodeShape[];
+
+  readonly result: Maybe<NodeShape>;
+};
+
+export namespace ApiOperation {
+  export const _fromRdfResource: $_FromRdfResourceFunction<ApiOperation> = (
+    resource,
+    options,
+  ) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          schema: ApiOperation.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      errors: $shaclPropertyFromRdf<
+        readonly NodeShape[],
+        $CollectionSchema<NodeShape.Schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ApiOperation.schema.properties.errors,
+        typeFromRdfResourceValues: $setFromRdfResourceValues<
+          NodeShape,
+          NodeShape.Schema
+        >(NodeShape.fromRdfResourceValues),
+      }),
+      httpMethodName: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ApiOperation.schema.properties.httpMethodName,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      httpRequestURI: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ApiOperation.schema.properties.httpRequestURI,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      name: $shaclPropertyFromRdf<
+        Maybe<string>,
+        $MaybeSchema<$StringSchema<string>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ApiOperation.schema.properties.name,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          string,
+          $StringSchema<string>
+        >($stringFromRdfResourceValues<string>),
+      }),
+      parameters: $shaclPropertyFromRdf<
+        readonly NodeShape[],
+        $CollectionSchema<NodeShape.Schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ApiOperation.schema.properties.parameters,
+        typeFromRdfResourceValues: $listFromRdfResourceValues<
+          NodeShape,
+          NodeShape.Schema
+        >(NodeShape.fromRdfResourceValues),
+      }),
+      result: $shaclPropertyFromRdf<
+        Maybe<NodeShape>,
+        $MaybeSchema<NodeShape.Schema>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: ApiOperation.schema.properties.result,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          NodeShape,
+          NodeShape.Schema
+        >(NodeShape.fromRdfResourceValues),
+      }),
+    }).chain((properties) => ApiOperation.create(properties));
+
+  export const $toString: (_apiOperation: ApiOperation) => string = (
+    _apiOperation,
+  ) => `ApiOperation(${JSON.stringify(toStringRecord(_apiOperation))})`;
+
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => ApiOperation.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly errors?: NodeShape | readonly NodeShape[];
+    readonly httpMethodName?: string | Maybe<string>;
+    readonly httpRequestURI?: string | Maybe<string>;
+    readonly name?: string | Maybe<string>;
+    readonly parameters: readonly NodeShape[];
+    readonly result?: NodeShape | Maybe<NodeShape>;
+  }): Either<Error, ApiOperation> =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      errors: $convertToScalarSet($identityConversionFunction)(
+        parameters.errors,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          ApiOperation.schema.properties.errors.type,
+          value,
+        ),
+      ),
+      httpMethodName: $convertToMaybe($identityConversionFunction)(
+        parameters.httpMethodName,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ApiOperation.schema.properties.httpMethodName.type,
+          value,
+        ),
+      ),
+      httpRequestURI: $convertToMaybe($identityConversionFunction)(
+        parameters.httpRequestURI,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ApiOperation.schema.properties.httpRequestURI.type,
+          value,
+        ),
+      ),
+      name: $convertToMaybe($identityConversionFunction)(
+        parameters.name,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ApiOperation.schema.properties.name.type,
+          value,
+        ),
+      ),
+      parameters: $convertToList($identityConversionFunction)(
+        parameters.parameters,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateArray($identityValidationFunction)(
+          ApiOperation.schema.properties.parameters.type,
+          value,
+        ),
+      ),
+      result: $convertToMaybe($identityConversionFunction)(
+        parameters.result,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ApiOperation.schema.properties.result.type,
+          value,
+        ),
+      ),
+    })
+      .map((properties) => ({ ...properties, $type: "ApiOperation" as const }))
+      .map((object) =>
+        $monkeyPatchObject(object, { $toString: ApiOperation.$toString }),
+      );
+
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => ApiOperation.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly errors?: NodeShape | readonly NodeShape[];
+    readonly httpMethodName?: string | Maybe<string>;
+    readonly httpRequestURI?: string | Maybe<string>;
+    readonly name?: string | Maybe<string>;
+    readonly parameters: readonly NodeShape[];
+    readonly result?: NodeShape | Maybe<NodeShape>;
+  }): ApiOperation {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ApiOperation,
+    ApiOperation.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export const isApiOperation = (object: $Object): object is ApiOperation =>
+    object.$type === "ApiOperation";
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      $type: { kind: "Discriminant", value: "ApiOperation" },
+      errors: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#apiError"),
+        get type() {
+          return {
+            kind: "Set" as const,
+            get itemType() {
+              return NodeShape.schema;
+            },
+          };
+        },
+      },
+      httpMethodName: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/2011/http#methodName"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
+      httpRequestURI: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/2011/http#requestURI"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
+      name: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+        type: {
+          kind: "Option" as const,
+          itemType: { kind: "String" as const },
+        },
+      },
+      parameters: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#apiParameters"),
+        get type() {
+          return {
+            kind: "List" as const,
+            get itemType() {
+              return NodeShape.schema;
+            },
+          };
+        },
+      },
+      result: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#apiResult"),
+        get type() {
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return NodeShape.schema;
+            },
+          };
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toStringRecord: (
+    _apiOperation: ApiOperation,
+  ) => Record<string, string> = (_apiOperation) =>
+    $compactRecord({
+      $identifier: _apiOperation.$identifier().toString(),
+      name: _apiOperation.name.map((item) => item.toString()).extract(),
+    });
+}
 export type NodeShape = {
   readonly $identifier: () => NodeShape.Identifier;
 
@@ -6609,6 +7066,8 @@ export namespace Shape {
   } as const;
 }
 export type $Object =
+  | Api
+  | ApiOperation
   | NodeShape
   | Ontology
   | PropertyGroup
@@ -6619,6 +7078,10 @@ export type $Object =
 export namespace $Object {
   export function $toString(object: $Object) {
     switch (object.$type) {
+      case "Api":
+        return Api.$toString(object);
+      case "ApiOperation":
+        return ApiOperation.$toString(object);
       case "NodeShape":
         return NodeShape.$toString(object);
       case "Ontology":
