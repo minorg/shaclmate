@@ -6,58 +6,6 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-shaclmate:Api
-    a sh:NodeShape ;
-    sh:property shaclmate:Api-operations .
-
-shaclmate:Api-operations
-    a sh:PropertyShape ;
-    sh:minCount 1 ;
-    sh:node shaclmate:ApiOperation ;
-    sh:path shaclmate:apiOperation .
-
-shaclmate:ApiOperation
-    a sh:NodeShape ;
-    sh:property shaclmate:ApiOperation-errors, shaclmate:ApiOperation-httpMethodName, shaclmate:ApiOperation-httpRequestURI, shaclmate:ApiOperation-name, shaclmate:ApiOperation-parameters, shaclmate:ApiOperation-result .
-
-shaclmate:ApiOperation-errors
-    a sh:PropertyShape ;
-    sh:node shaclmate:NodeShape ;
-    sh:path sh:apiError .
-
-shaclmate:ApiOperation-httpMethodName
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:path http:methodName .
-
-shaclmate:ApiOperation-httpRequestURI
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:path http:requestURI .
-
-shaclmate:ApiOperation-name
-    shaclmate:display true ;
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:name "name" ;
-    sh:path shaclmate:name .
-
-shaclmate:ApiOperation-parameters
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:node shaclmate:NodeShapeList ;
-    sh:path sh:apiParameters .
-
-shaclmate:ApiOperation-result
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:NodeShape ;
-    sh:path sh:apiResult .
-
 shaclmate:NodeShape
     sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
@@ -116,6 +64,48 @@ shaclmate:NodeShapeList
         ]
     ) .
 
+shaclmate:Operation
+    a sh:NodeShape ;
+    sh:property shaclmate:Operation-errors, shaclmate:Operation-httpMethodName, shaclmate:Operation-httpRequestURI, shaclmate:Operation-name, shaclmate:Operation-parameters, shaclmate:Operation-result .
+
+shaclmate:Operation-errors
+    a sh:PropertyShape ;
+    sh:node shaclmate:NodeShape ;
+    sh:path shaclmate:error .
+
+shaclmate:Operation-httpMethodName
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path http:methodName .
+
+shaclmate:Operation-httpRequestURI
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path http:requestURI .
+
+shaclmate:Operation-name
+    shaclmate:display true ;
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "name" ;
+    sh:path shaclmate:name .
+
+shaclmate:Operation-parameters
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:node shaclmate:NodeShapeList ;
+    sh:path shaclmate:parameters .
+
+shaclmate:Operation-result
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:NodeShape ;
+    sh:path shaclmate:result .
+
 shaclmate:PropertyShape
     sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
@@ -133,6 +123,15 @@ shaclmate:PropertyShape-resolve
     sh:name "resolve" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path shaclmate:resolve .
+
+shaclmate:Service
+    a rdfs:Class, sh:NodeShape ;
+    sh:property shaclmate:Service-operations .
+
+shaclmate:Service-operations
+    a sh:PropertyShape ;
+    sh:node shaclmate:Operation ;
+    sh:path shaclmate:operation .
 
 shaclmate:Shape-ignore
     a sh:PropertyShape ;
