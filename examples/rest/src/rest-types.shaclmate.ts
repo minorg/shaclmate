@@ -1,7 +1,15 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
-import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
-import type { Either } from "purify-ts";
+import { NTriplesIdentifier } from "@rdfx/string";
+import { type Either, Left, Right } from "purify-ts";
+
+export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
+  return $parseIdentifier(identifier).chain((identifier) =>
+    identifier.termType === "BlankNode"
+      ? Right(identifier)
+      : Left(new Error("expected identifier to be BlankNode")),
+  ) as Either<Error, BlankNode>;
+}
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
@@ -14,10 +22,9 @@ export type ExampleError = {
 };
 
 export namespace ExampleError {
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = BlankNode;
   export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
+    export const parse = $parseBlankNode;
   }
 
   export const isExampleError = (object: $Object): object is ExampleError =>

@@ -4,7 +4,7 @@ import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class Operation extends AbstractConstruct {
   readonly error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
@@ -34,7 +34,15 @@ export class Operation extends AbstractConstruct {
   @Memoize()
   get interfaceDeclaration(): Code {
     const parameter = this.parameter
-      .map((parameter) => code`parameters: ${parameter.expression}`)
+      .map(
+        (parameter) =>
+          code`parameters: { ${joinCode(
+            parameter.properties.flatMap((property) =>
+              property.kind === "Shacl" ? property.declaration.toList() : [],
+            ),
+            { on: "\n\n" },
+          )} }`,
+      )
       .orDefault(code``);
     const returnType = code`Promise<${this.reusables.imports.Either}<${this.error.map((error) => error.expression).orDefault(code`Error`)}, ${this.result.map((result) => result.expression).orDefault(code`void`)}>>`;
     return code`${this.name}(${parameter}): ${returnType}`;

@@ -8,6 +8,7 @@
 
 :ExampleError
     a sh:NodeShape ;
+    sh:nodeKind sh:BlankNode ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -20,6 +21,7 @@
         shaclmate:error :ExampleError ;
         shaclmate:name "get" ;
         shaclmate:parameter [
+            sh:nodeKind sh:BlankNode ;
             sh:property [
                 sh:maxCount 1 ;
                 sh:minCount 1 ;

@@ -38,8 +38,6 @@ export class StructType extends AbstractType {
 
   /**
    * Identifier type, derived from the node shape's node kinds.
-   *
-   * There may not be an identifier property.
    */
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
 
