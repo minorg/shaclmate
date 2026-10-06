@@ -22,6 +22,6 @@ export class Service extends AbstractConstruct {
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
     this.name = name;
-    this.operations = [];
+    this.operations = operations;
   }
 }

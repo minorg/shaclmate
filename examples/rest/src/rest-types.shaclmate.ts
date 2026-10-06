@@ -1,6 +1,7 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
 import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
+import type { Either } from "purify-ts";
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
@@ -25,4 +26,8 @@ export namespace ExampleError {
 
 export type $Object = ExampleError;
 
-export interface ExampleService {}
+export interface ExampleService {
+  get(parameters: {
+    readonly identifier: NamedNode;
+  }): Promise<Either<ExampleError, string>>;
+}

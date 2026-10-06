@@ -36,7 +36,7 @@ export class Operation extends AbstractConstruct {
     const parameter = this.parameter
       .map((parameter) => code`parameters: ${parameter.expression}`)
       .orDefault(code``);
-    const returnType = code`Promise<${this.reusables.imports.Either}<${this.error.map((error) => error.expression).orDefault(code`Error`)}, ${this.result.map((result) => result.expression).orDefault(code`void`)}>`;
+    const returnType = code`Promise<${this.reusables.imports.Either}<${this.error.map((error) => error.expression).orDefault(code`Error`)}, ${this.result.map((result) => result.expression).orDefault(code`void`)}>>`;
     return code`${this.name}(${parameter}): ${returnType}`;
   }
 }

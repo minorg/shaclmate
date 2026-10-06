@@ -133,6 +133,12 @@ export function transformService(
       }
       astOperations.push(astOperationEither.extract() as ast.Operation);
     }
+    if (astOperations.length === 0) {
+      return Left(
+        new Error(`service ${inputService.$identifier()} has no operations`),
+      );
+    }
+
     return Either.of(
       new ast.Service({
         comment: inputService.comment,
