@@ -41,15 +41,16 @@ function transformOperation(
 ): Either<Error, ast.Operation> {
   const self = this;
 
-  function transformShapeToAstStructType(
-    inputNodeShapeMaybe: Maybe<input.NodeShape>,
-  ): Either<Error, Maybe<ast.StructType | ast.StructCompoundType>> {
-    const inputNodeShape = inputNodeShapeMaybe.extract();
-    if (!inputNodeShape) {
+  function transformError(): Either<
+    Error,
+    Maybe<ast.StructType | ast.StructCompoundType>
+  > {
+    const inputError = inputOperation.error.extract();
+    if (!inputError) {
       return Either.of(Maybe.empty());
     }
     return transformShapeToAstType
-      .call(self, inputNodeShape, new ShapeStack())
+      .call(self, inputError, new ShapeStack())
       .chain((astParameter) => {
         if (
           astParameter.kind === "Struct" ||
@@ -62,7 +63,27 @@ function transformOperation(
         }
         return Left(
           new Error(
-            `expected ${inputNodeShape} to be a struct or discriminated union of structs`,
+            `expected ${inputError} to be a struct or discriminated union of structs`,
+          ),
+        );
+      })
+      .map(Maybe.of);
+  }
+
+  function transformParameter(): Either<Error, Maybe<ast.StructType>> {
+    const inputParameter = inputOperation.parameter.extract();
+    if (!inputParameter) {
+      return Either.of(Maybe.empty());
+    }
+    return transformShapeToAstType
+      .call(self, inputParameter, new ShapeStack())
+      .chain((astParameter) => {
+        if (astParameter.kind === "Struct") {
+          return Either.of<Error, ast.StructType>(astParameter);
+        }
+        return Left(
+          new Error(
+            `expected ${inputParameter} to be a struct or discriminated union of structs`,
           ),
         );
       })
@@ -80,9 +101,9 @@ function transformOperation(
   }
 
   return Eithers.chain4(
-    transformShapeToAstStructType(inputOperation.error),
+    transformError(),
     astConstructName(inputOperation),
-    transformShapeToAstStructType(inputOperation.parameter),
+    transformParameter(),
     transformResult(),
   ).chain(([error, name, parameter, result]) => {
     return Either.of(

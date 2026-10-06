@@ -18,7 +18,7 @@ export class Operation extends AbstractConstruct {
   /**
    * Parameter type.
    */
-  readonly parameter: Maybe<StructType | StructCompoundType>;
+  readonly parameter: Maybe<StructType>;
 
   /**
    * Result type.
