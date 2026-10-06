@@ -159,6 +159,7 @@ export class TsGenerator implements Generator {
                       typeFactory.createType(astType),
                     ),
                     reusables,
+                    service: { name: astService.name },
                   }),
               ),
               reusables,

@@ -2,7 +2,7 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { PropertyPath } from "@rdfx/resource";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 
-import type { Maybe } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -101,6 +101,12 @@ export class StructType extends AbstractType {
 
   get fields(): readonly StructType.Field[] {
     return this.#fields;
+  }
+
+  get identifierField(): Maybe<StructType.IdentifierField> {
+    return Maybe.fromNullable(
+      this.fields.find((field) => field.kind === "Identifier"),
+    );
   }
 
   override get recursive(): boolean {

@@ -12,9 +12,9 @@ export function ObjectDiscriminatedUnionType_identifierTypeDeclarations(
   return singleEntryRecord(
     `Identifier`,
     code`\
-export type Identifier = ${this.identifierType.unsafeCoerce().expression};
+export type Identifier = ${this.identifierType.expression};
 export namespace Identifier {
-  export const parse = ${this.identifierType.unsafeCoerce().parseFunction};
+  export const parse = ${this.identifierType.parseFunction};
 }`,
   );
 }

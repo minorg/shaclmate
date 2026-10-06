@@ -64,7 +64,7 @@ ${this.reusables.snippets.convertToLazy}<
     (
       (values, { objectSet, schema, ...otherOptions }) =>
         ${this.partialType.fromRdfResourceValuesFunction}(values, { ...otherOptions, objectSet, schema: schema.partialType })
-          .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => objectSet.${this.resolveType.objectSetMethodNames.object}(partial.${this.configuration.syntheticNamePrefix}identifier(), options) })))
+          .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => objectSet.${this.resolveType.objectSetMethodNames.object}(partial.${this.partialType.identifierProperty.unsafeCoerce().name}()(), options) })))
     ) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>
 )`;
   }

@@ -9,10 +9,10 @@ export function AbstractDiscriminatedUnionType_filterFunctionExpression<
   return code`\
 ((filter: ${this.filterType}, value: ${this.expression}) => {
 ${joinCode([
-  ...this.identifierType
+  ...this.identifierProperty
     .map(
-      (identifierType) => code`\
-if (filter.${syntheticNamePrefix}identifier !== undefined && !${identifierType.filterFunction}(filter.${syntheticNamePrefix}identifier, value.${syntheticNamePrefix}identifier())) {
+      (identifierProperty) => code`\
+if (filter.${syntheticNamePrefix}identifier !== undefined && !${identifierProperty.type.filterFunction}(filter.${identifierProperty.name}, value.${identifierProperty.name})) {
   return false;
 }`,
     )

@@ -11,7 +11,6 @@ export class Operation extends AbstractConstruct {
   private readonly name: string;
   private readonly parameter: Maybe<ObjectType>;
   private readonly result: Maybe<Type>;
-  private readonly;
 
   constructor({
     error,
@@ -40,7 +39,7 @@ export class Operation extends AbstractConstruct {
   }
 
   @Memoize()
-  get loggingClassMethodDeclaration() {
+  get loggingMethodDeclaration(): Code {
     let logContext: Code;
     if (this.parameter.isJust()) {
       logContext = code`JSON.parse(JSON.stringify({ ${joinCode(

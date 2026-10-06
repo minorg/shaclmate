@@ -8,7 +8,7 @@ export function AbstractDiscriminatedUnionType_filterTypeExpression<
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return code`\
   {
-   ${this.identifierType.map((identifierType) => code`readonly ${syntheticNamePrefix}identifier?: ${identifierType.filterType};`).orDefault(code``)}
+   ${this.identifierProperty.map((identifierProperty) => code`readonly ${syntheticNamePrefix}identifier?: ${identifierProperty.type.filterType};`).orDefault(code``)}
    readonly on?: { ${joinCode(
      this.members.map(
        ({ type, primaryDiscriminantValue }) =>

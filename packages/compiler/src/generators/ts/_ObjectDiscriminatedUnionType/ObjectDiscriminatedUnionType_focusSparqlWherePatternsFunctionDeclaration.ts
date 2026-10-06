@@ -18,12 +18,12 @@ ${joinCode([
   code`let patterns: ${this.reusables.snippets.SparqlPattern}[] = [];`,
   code`\
 if (focusIdentifier.termType === "Variable") {
-  patterns = patterns.concat(${this.identifierType.unsafeCoerce().valueSparqlWherePatternsFunction}({
+  patterns = patterns.concat(${this.identifierType.valueSparqlWherePatternsFunction}({
       filter: filter?.${this.configuration.syntheticNamePrefix}identifier,
       ignoreRdfType: false,
       preferredLanguages,
       propertyPatterns: [],
-      schema: ${this.identifierType.unsafeCoerce().schema},
+      schema: ${this.identifierType.schema},
       valueVariable: focusIdentifier,
       variablePrefix,
   }));

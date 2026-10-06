@@ -96,20 +96,17 @@ export class TypeFactory {
 
     const identifierType = this.createIdentifierType(astType.identifierType);
 
-    const identifierProperty = astType.fields.some(
-      (field) => field.kind === "Identifier",
-    )
-      ? Maybe.of(
-          new ObjectType.IdentifierProperty({
-            configuration: this.configuration,
-            logger: this.logger,
-            name: `${this.configuration.syntheticNamePrefix}identifier`,
-            objectType: objectTypeStub,
-            reusables: this.reusables,
-            type: identifierType,
-          }),
-        )
-      : Maybe.empty();
+    const identifierProperty = astType.identifierField.map(
+      () =>
+        new ObjectType.IdentifierProperty({
+          configuration: this.configuration,
+          logger: this.logger,
+          name: `${this.configuration.syntheticNamePrefix}identifier`,
+          objectType: objectTypeStub,
+          reusables: this.reusables,
+          type: identifierType,
+        }),
+    );
 
     const rdfTypeProperty = astType.fromRdfType.map(
       (fromRdfType) =>
@@ -128,6 +125,7 @@ export class TypeFactory {
       comment: astType.comment,
       configuration: this.configuration,
       extern: astType.extern,
+      identifierProperty,
       identifierType,
       label: astType.label,
       lazyProperties: (objectType: ObjectType) => {
@@ -191,14 +189,44 @@ export class TypeFactory {
       }
     }
 
+    const objectDiscriminatedUnionIdentifierType = this.createIdentifierType(
+      ast.StructCompoundType.identifierType(astType),
+    );
+
+    const objectDiscriminatedUnionTypeName = astType.name.map((name) =>
+      this.tsName(name),
+    );
+
     const objectDiscriminatedUnionType = new ObjectDiscriminatedUnionType({
       comment: astType.comment,
       configuration: this.configuration,
-      identifierType: Maybe.of(
-        this.createIdentifierType(
-          ast.StructCompoundType.identifierType(astType),
-        ),
-      ),
+      identifierProperty:
+        astType.isStructDiscriminatedUnionType() &&
+        astType.members.every((member) => {
+          switch (member.type.kind) {
+            case "DiscriminatedUnion":
+              return member.type.members.every((member) =>
+                member.type.identifierField.isJust(),
+              );
+            case "Struct":
+              return member.type.identifierField.isJust();
+            default:
+              member.type satisfies never;
+              throw new Error("should never reach this point");
+          }
+        })
+          ? Maybe.of(
+              new ObjectType.IdentifierProperty({
+                configuration: this.configuration,
+                logger: this.logger,
+                name: `${this.configuration.syntheticNamePrefix}identifier`,
+                objectType: { name: objectDiscriminatedUnionTypeName },
+                reusables: this.reusables,
+                type: objectDiscriminatedUnionIdentifierType,
+              }),
+            )
+          : Maybe.empty(),
+      identifierType: objectDiscriminatedUnionIdentifierType,
       label: astType.label,
       logger: this.logger,
       members: ast.StructCompoundType.memberStructTypes(astType).map(
@@ -207,7 +235,7 @@ export class TypeFactory {
           type: this.createObjectType(astStructType),
         }),
       ),
-      name: astType.name.map((name) => this.tsName(name)),
+      name: objectDiscriminatedUnionTypeName,
       recursive: astType.recursive,
       reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
@@ -270,7 +298,7 @@ export class TypeFactory {
     return new DiscriminatedUnionType({
       comment: astType.comment,
       configuration: this.configuration,
-      identifierType: Maybe.empty(),
+      identifierProperty: Maybe.empty(),
       label: astType.label,
       logger: this.logger,
       members: astType.members.map((member) => ({

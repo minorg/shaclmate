@@ -20,9 +20,7 @@ import { AbstractDiscriminatedUnionType_toStringFunctionExpression } from "./_Ab
 import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression.js";
 import { AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.js";
 import { AbstractType } from "./AbstractType.js";
-import type { BlankNodeType } from "./BlankNodeType.js";
-import type { IdentifierType } from "./IdentifierType.js";
-import type { IriType } from "./IriType.js";
+import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
@@ -32,7 +30,7 @@ export abstract class AbstractDiscriminatedUnionType<
   protected readonly discriminant: AbstractDiscriminatedUnionType.Discriminant;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly identifierType: Maybe<BlankNodeType | IdentifierType | IriType>;
+  readonly identifierProperty: Maybe<ObjectType.IdentifierProperty>;
   abstract override readonly kind:
     | "ObjectDiscriminatedUnion"
     | "DiscriminatedUnion";
@@ -40,12 +38,12 @@ export abstract class AbstractDiscriminatedUnionType<
   override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
-    identifierType,
+    identifierProperty,
     members,
     recursive,
     ...superParameters
   }: {
-    identifierType: Maybe<BlankNodeType | IdentifierType | IriType>;
+    identifierProperty: Maybe<ObjectType.IdentifierProperty>;
     members: readonly (Pick<
       AbstractDiscriminatedUnionType.Member<MemberTypeT>,
       "type"
@@ -56,7 +54,7 @@ export abstract class AbstractDiscriminatedUnionType<
     synthetic: boolean;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.identifierType = identifierType;
+    this.identifierProperty = identifierProperty;
     invariant(members.length >= 2);
     this.recursive = recursive;
     this.discriminant = AbstractDiscriminatedUnionType_inferDiscriminant.call(
