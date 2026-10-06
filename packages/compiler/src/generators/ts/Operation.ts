@@ -1,28 +1,13 @@
 import type { Maybe } from "purify-ts";
 import { AbstractConstruct } from "./AbstractConstruct.js";
-import type { StructDiscriminatedUnionType } from "./StructDiscriminatedUnionType.js";
-import type { StructType } from "./StructType.js";
+import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
 
 export class Operation extends AbstractConstruct {
-  /**
-   * Error(s) returned by this operation.
-   */
-  readonly error: Maybe<StructType | StructDiscriminatedUnionType>;
-
-  /**
-   * Name of this operation.
-   */
+  readonly error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
   readonly name: string;
-
-  /**
-   * Parameter type.
-   */
-  readonly parameter: Maybe<StructType>;
-
-  /**
-   * Result type.
-   */
+  readonly parameter: Maybe<ObjectType>;
   readonly result: Maybe<Type>;
 
   constructor({
@@ -32,9 +17,9 @@ export class Operation extends AbstractConstruct {
     result,
     ...superParameters
   }: {
-    error: Maybe<StructType | StructDiscriminatedUnionType>;
+    error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
     name: string;
-    parameter: Maybe<StructType>;
+    parameter: Maybe<ObjectType>;
     result: Maybe<Type>;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);

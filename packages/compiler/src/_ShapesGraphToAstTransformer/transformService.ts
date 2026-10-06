@@ -43,7 +43,7 @@ function transformOperation(
 
   function transformError(): Either<
     Error,
-    Maybe<ast.StructType | ast.StructCompoundType>
+    Maybe<ast.StructType | ast.StructDiscriminatedUnionType>
   > {
     const inputError = inputOperation.error.extract();
     if (!inputError) {
@@ -57,9 +57,10 @@ function transformOperation(
           (astParameter.kind === "DiscriminatedUnion" &&
             astParameter.isStructDiscriminatedUnionType())
         ) {
-          return Either.of<Error, ast.StructType | ast.StructCompoundType>(
-            astParameter,
-          );
+          return Either.of<
+            Error,
+            ast.StructType | ast.StructDiscriminatedUnionType
+          >(astParameter);
         }
         return Left(
           new Error(

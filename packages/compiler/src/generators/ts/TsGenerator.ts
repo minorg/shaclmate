@@ -5,18 +5,16 @@ import { GraphqlSchema } from "./GraphqlSchema.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
 import type { ObjectType } from "./ObjectType.js";
+import { Operation } from "./Operation.js";
 import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
+import { Service } from "./Service.js";
 import { SparqlObjectSetType } from "./SparqlObjectSetType.js";
 import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 import { UberObjectDiscriminatedUnionType } from "./UberObjectDiscriminatedUnionType.js";
-
-function compareTsNamedType(left: Type, right: Type): number {
-  return left.name.unsafeCoerce().localeCompare(right.name.unsafeCoerce());
-}
 
 export class TsGenerator implements Generator {
   private readonly configuration?: Partial<TsGenerator.Configuration>;
@@ -112,13 +110,59 @@ export class TsGenerator implements Generator {
       }).declaration.toList(),
     );
 
-    declarations.push(
-      ...this.objectSetTypeDeclarations({
+    declarations = declarations.concat(
+      this.objectSetTypeDeclarations({
         configuration,
         namedObjectTypes: tsNamedObjectTypes,
         namedObjectDiscriminatedUnionTypes:
           tsNamedObjectDiscriminatedUnionTypes,
         reusables,
+      }),
+    );
+
+    declarations = declarations.concat(
+      this.serviceDeclarations({
+        services: ast_.services.map(
+          (astService) =>
+            new Service({
+              configuration,
+              comment: astService.comment,
+              label: astService.label,
+              logger: this.logger,
+              name: astService.name,
+              operations: astService.operations.map(
+                (astOperation) =>
+                  new Operation({
+                    configuration,
+                    comment: astOperation.comment,
+                    error: astOperation.error.map((astType) => {
+                      switch (astType.kind) {
+                        case "DiscriminatedUnion":
+                          return typeFactory.createObjectDiscriminatedUnionType(
+                            astType,
+                          );
+                        case "Struct":
+                          return typeFactory.createObjectType(astType);
+                        default:
+                          astType satisfies never;
+                          throw new Error("should never reach this point");
+                      }
+                    }),
+                    label: astOperation.label,
+                    logger: this.logger,
+                    name: astOperation.name,
+                    parameter: astOperation.parameter.map((astType) =>
+                      typeFactory.createObjectType(astType),
+                    ),
+                    result: astOperation.result.map((astType) =>
+                      typeFactory.createType(astType),
+                    ),
+                    reusables,
+                  }),
+              ),
+              reusables,
+            }),
+        ),
       }),
     );
 
@@ -196,6 +240,22 @@ export class TsGenerator implements Generator {
 
     return declarations;
   }
+
+  private serviceDeclarations({
+    services,
+  }: {
+    services: readonly Service[];
+  }): readonly Code[] {
+    return services.flatMap((service) => {
+      const declarations: Code[] = [];
+      declarations.push(service.interfaceDeclaration);
+      return declarations;
+    });
+  }
+}
+
+function compareTsNamedType(left: Type, right: Type): number {
+  return left.name.unsafeCoerce().localeCompare(right.name.unsafeCoerce());
 }
 
 export namespace TsGenerator {

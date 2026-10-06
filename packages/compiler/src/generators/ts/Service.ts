@@ -1,15 +1,9 @@
+import { Memoize } from "typescript-memoize";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { Operation } from "./Operation.js";
 
 export class Service extends AbstractConstruct {
-  /**
-   * Name of this service.
-   */
   readonly name: string;
-
-  /**
-   * Operations associated with this service.
-   */
   readonly operations: readonly Operation[];
 
   constructor({
@@ -24,4 +18,7 @@ export class Service extends AbstractConstruct {
     this.name = name;
     this.operations = [];
   }
+
+  @Memoize()
+  get interfaceDeclaration(): Code {}
 }
