@@ -7,22 +7,25 @@ import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class Operation extends AbstractConstruct {
-  readonly error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
-  readonly name: string;
-  readonly parameter: Maybe<ObjectType>;
-  readonly result: Maybe<Type>;
+  private readonly error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
+  private readonly name: string;
+  private readonly parameter: Maybe<ObjectType>;
+  private readonly result: Maybe<Type>;
+  private readonly;
 
   constructor({
     error,
     name,
     parameter,
     result,
+    service,
     ...superParameters
   }: {
     error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
     name: string;
     parameter: Maybe<ObjectType>;
     result: Maybe<Type>;
+    service: { name: string };
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
     this.error = error;
@@ -32,19 +35,65 @@ export class Operation extends AbstractConstruct {
   }
 
   @Memoize()
-  get interfaceDeclaration(): Code {
-    const parameter = this.parameter
+  get interfaceSignature(): Code {
+    return code`${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation}`;
+  }
+
+  @Memoize()
+  get loggingClassMethodDeclaration() {
+    let logContext: Code;
+    if (this.parameter.isJust()) {
+      logContext = code`JSON.parse(JSON.stringify({ ${joinCode(
+        this.parameter.extract()!.properties.flatMap((property) =>
+          property.kind === "Shacl"
+            ? property
+                .toJsonInitializer({
+                  variables: {
+                    object: code`parameters`,
+                  },
+                })
+                .toList()
+            : [],
+        ),
+        { on: "," },
+      )} }`;
+    } else {
+      logContext = code`{}`;
+    }
+
+    return code`\
+async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
+  const logContext: Record<string, unknown> = ${logContext};
+  
+}`;
+  }
+
+  @Memoize()
+  private get returnTypeAnnotation(): Code {
+    return code`Promise<${this.reusables.imports.Either}<${this.error.map((error) => error.expression).orDefault(code`Error`)}, ${this.result.map((result) => result.expression).orDefault(code`void`)}>>`;
+  }
+
+  @Memoize()
+  private get parameterDeclaration(): Code {
+    return this.parameter
       .map(
         (parameter) =>
-          code`parameters: { ${joinCode(
-            parameter.properties.flatMap((property) =>
-              property.kind === "Shacl" ? property.declaration.toList() : [],
-            ),
-            { on: "\n\n" },
-          )} }`,
+          code`parameters: ${parameter.name
+            .map(
+              (name) =>
+                code`Omit<${name}, ${this.configuration.syntheticNamePrefix}identifier>`,
+            )
+            .orDefault(
+              code`{ ${joinCode(
+                parameter.properties.flatMap((property) =>
+                  property.kind === "Shacl"
+                    ? property.declaration.toList()
+                    : [],
+                ),
+                { on: "\n\n" },
+              )} }`,
+            )}`,
       )
       .orDefault(code``);
-    const returnType = code`Promise<${this.reusables.imports.Either}<${this.error.map((error) => error.expression).orDefault(code`Error`)}, ${this.result.map((result) => result.expression).orDefault(code`void`)}>>`;
-    return code`${this.name}(${parameter}): ${returnType}`;
   }
 }

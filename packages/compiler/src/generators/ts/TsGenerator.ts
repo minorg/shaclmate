@@ -122,6 +122,7 @@ export class TsGenerator implements Generator {
 
     declarations = declarations.concat(
       this.serviceDeclarations({
+        configuration,
         services: ast_.services.map(
           (astService) =>
             new Service({
@@ -242,13 +243,20 @@ export class TsGenerator implements Generator {
   }
 
   private serviceDeclarations({
+    configuration,
     services,
   }: {
+    configuration: TsGenerator.Configuration;
     services: readonly Service[];
   }): readonly Code[] {
     return services.flatMap((service) => {
       const declarations: Code[] = [];
-      declarations.push(service.interfaceDeclaration);
+      if (configuration.features.has("Service")) {
+        declarations.push(service.interfaceDeclaration);
+      }
+      if (configuration.features.has("LoggingService")) {
+        declarations.push(service.loggingClassDeclaration);
+      }
       return declarations;
     });
   }
@@ -292,6 +300,8 @@ export namespace TsGenerator {
 
       // Alias for other features, not dependencies per se
       JSON: ["Object.JSON"],
+
+      LoggingService: ["Service"],
 
       "Object.create": ["Object.schema", "Object.toString", "Object.type"],
 

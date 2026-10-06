@@ -24,6 +24,7 @@ export class Imports {
   readonly Left = imp("Left@purify-ts");
   readonly Literal = imp("Literal@@rdfjs/types");
   readonly LiteralFactory = imp("LiteralFactory@@rdfx/literal");
+  readonly Logger = imp("Logger@@rdfx/logger");
   readonly Maybe = imp("Maybe@purify-ts");
   readonly NamedNode = imp("NamedNode@@rdfjs/types");
   readonly NonEmptyList = imp("NonEmptyList@purify-ts");

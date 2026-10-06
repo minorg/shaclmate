@@ -22,6 +22,22 @@ export class Service extends AbstractConstruct {
 
   @Memoize()
   get interfaceDeclaration(): Code {
-    return code`export interface ${this.name} { ${joinCode(this.operations.map((operation) => operation.interfaceDeclaration))} }`;
+    return code`export interface ${this.name} { ${joinCode(this.operations.map((operation) => operation.interfaceSignature))} }`;
+  }
+
+  @Memoize()
+  get loggingClassDeclaration(): Code {
+    return code`\
+export class Logging${this.name} implements ${this.name} {
+  private readonly delegate: ${this.name};
+  private readonly logger: ${this.reusables.imports.Logger};
+
+  constructor({ delegate, logger }: { delegate: ${this.name}, logger: ${this.reusables.imports.Logger} }) {
+    this.delegate = delegate;
+    this.logger = logger;
+  }
+
+  ${joinCode(this.operations.map((operation) => operation.loggingMethodDeclaration))}  
+}`;
   }
 }

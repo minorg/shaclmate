@@ -3,6 +3,7 @@ export type TsFeature = (typeof TS_FEATURES)[number];
 export const TS_FEATURES = [
   "GraphQL",
   "JSON",
+  "LoggingService",
   "Object.create",
   "Object.equals",
   "Object.filter",
