@@ -40,6 +40,14 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
     );
   }
 
+  override toLoggableExpression({
+    variables,
+  }: Parameters<
+    AbstractTypedLiteralType<Date>["toLoggableExpression"]
+  >[0]): Code {
+    return code`${variables.value}.toISOString()`;
+  }
+
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<

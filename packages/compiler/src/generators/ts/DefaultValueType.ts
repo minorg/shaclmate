@@ -165,6 +165,12 @@ export class DefaultValueType<
     return this.itemType.toJsonExpression(parameters);
   }
 
+  override toLoggableExpression(
+    parameters: Parameters<AbstractType["toLoggableExpression"]>[0],
+  ): Code {
+    return this.itemType.toLoggableExpression(parameters);
+  }
+
   override toRdfResourceValuesExpression(
     parameters: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0],
   ): Code {

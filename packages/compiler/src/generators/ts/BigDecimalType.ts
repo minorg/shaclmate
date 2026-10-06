@@ -89,6 +89,14 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
     return code`{ "@type": ${literalOf(this.datatype.value)} as const, "@value": ${variables.value}.toFixed() }`;
   }
 
+  override toLoggableExpression({
+    variables,
+  }: Parameters<
+    AbstractTypedLiteralType<Decimal>["toLoggableExpression"]
+  >[0]): Code {
+    return code`${variables.value}.toFixed()`;
+  }
+
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<

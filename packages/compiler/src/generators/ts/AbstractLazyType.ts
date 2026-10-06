@@ -44,10 +44,6 @@ export abstract class AbstractLazyType<
     return code`((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
   }
 
-  override get inlineExpression(): Code {
-    return this.runtimeClass.name;
-  }
-
   @Memoize()
   get filterFunction(): Code {
     return code`((filter: ${this.filterType}, value: ${this.expression}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
@@ -64,6 +60,10 @@ export abstract class AbstractLazyType<
   @Memoize()
   override get hashFunction(): Code {
     return code`((hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName}))`;
+  }
+
+  override get inlineExpression(): Code {
+    return this.runtimeClass.name;
   }
 
   @Memoize()
@@ -135,6 +135,16 @@ export abstract class AbstractLazyType<
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     return this.partialType.toJsonExpression({
+      variables: {
+        value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
+      },
+    });
+  }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
+    return this.partialType.toLoggableExpression({
       variables: {
         value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
       },

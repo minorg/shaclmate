@@ -29,6 +29,12 @@ export abstract class AbstractIdentifierType<
   }: Parameters<AbstractTermType["graphqlResolveExpression"]>[0]): Code {
     return code`${this.reusables.imports.NTriplesTerm}.stringify(${value})`;
   }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractTermType<NamedNode>["toLoggableExpression"]>[0]): Code {
+    return code`${variables.value}.value`;
+  }
 }
 
 export namespace AbstractIdentifierType {

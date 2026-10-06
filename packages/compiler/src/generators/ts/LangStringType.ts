@@ -102,4 +102,10 @@ export class LangStringType extends AbstractLiteralType {
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
     return code`{ "@language": ${variables.value}.language${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@value": ${variables.value}.value }`;
   }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
+    return code`\`\${JSON.stringify(${variables.value}.value)@${variables.value}.language}\``;
+  }
 }

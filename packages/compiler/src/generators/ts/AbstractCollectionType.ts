@@ -101,6 +101,14 @@ export abstract class AbstractCollectionType<
   >[0]): Code {
     return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })}))`;
   }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toLoggableExpression"]
+  >[0]): Code {
+    return code`${variables.value}.map(item => (${this.itemType.toLoggableExpression({ variables: { value: code`item` } })}))`;
+  }
 }
 
 export namespace AbstractCollectionType {

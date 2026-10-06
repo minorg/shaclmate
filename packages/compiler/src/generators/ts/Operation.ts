@@ -45,17 +45,15 @@ export class Operation extends AbstractConstruct {
       logContext = code`JSON.parse(JSON.stringify({ ${joinCode(
         this.parameter.extract()!.properties.flatMap((property) =>
           property.kind === "Shacl"
-            ? property
-                .toJsonInitializer({
-                  variables: {
-                    object: code`parameters`,
-                  },
-                })
-                .toList()
+            ? property.type.toStringExpression({
+                variables: {
+                  value: code`parameters.${property.name}`,
+                },
+              })
             : [],
         ),
         { on: "," },
-      )} }`;
+      )} }))`;
     } else {
       logContext = code`{}`;
     }

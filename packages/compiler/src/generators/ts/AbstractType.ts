@@ -1,4 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
@@ -324,6 +325,13 @@ ${joinCode(
     variables: {
       value: Code;
     };
+  }): Code;
+
+  /**
+   * An expression that converts a value of this type to a value that can be logged.
+   */
+  abstract toLoggableExpression(parameters: {
+    variables: { value: Code };
   }): Code;
 
   /**

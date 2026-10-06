@@ -51,4 +51,12 @@ export class LoggingExampleService implements ExampleService {
     this.delegate = delegate;
     this.logger = logger;
   }
+
+  async get(parameters: {
+    readonly identifier: NamedNode;
+  }): Promise<Either<ExampleError, string>> {
+    const logContext: Record<string, unknown> = JSON.parse(
+      JSON.stringify({ identifier: { "@id": parameters.identifier.value } }),
+    );
+  }
 }

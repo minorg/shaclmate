@@ -167,6 +167,14 @@ export class OptionType<
     return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })})).extract()`;
   }
 
+  override toLoggableExpression({
+    variables,
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toLoggableExpression"]
+  >[0]): Code {
+    return code`${variables.value}.map(item => (${this.itemType.toLoggableExpression({ variables: { value: code`item` } })})).extract()`;
+  }
+
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<
