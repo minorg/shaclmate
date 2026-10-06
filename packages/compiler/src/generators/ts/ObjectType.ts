@@ -47,6 +47,7 @@ export class ObjectType extends AbstractType {
   override readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
   readonly extern: boolean;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  readonly identifierProperty: Maybe<ObjectType.IdentifierProperty>;
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
@@ -60,6 +61,7 @@ export class ObjectType extends AbstractType {
   constructor({
     discriminantProperty,
     extern,
+    identifierProperty,
     identifierType,
     lazyProperties,
     rdfTypeProperty,
@@ -70,6 +72,7 @@ export class ObjectType extends AbstractType {
     discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
     comment: Maybe<string>;
     extern: boolean;
+    identifierProperty: Maybe<ObjectType.IdentifierProperty>;
     identifierType: BlankNodeType | IdentifierType | IriType;
     label: Maybe<string>;
     lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
@@ -80,6 +83,7 @@ export class ObjectType extends AbstractType {
     super(superParameters);
     this.discriminantProperty = discriminantProperty;
     this.extern = extern;
+    this.identifierProperty = identifierProperty;
     this.identifierType = identifierType;
     // Lazily initialize some members in getters to avoid recursive construction
     this.lazyProperties = lazyProperties;

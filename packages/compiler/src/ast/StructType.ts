@@ -21,8 +21,6 @@ export class StructType extends AbstractType {
    */
   readonly #fields: StructType.Field[] = [];
 
-  private fieldNames: Set<string> = new Set();
-
   /**
    * If true, the code for this StructType is defined externally and should not be generated.
    *
@@ -39,7 +37,9 @@ export class StructType extends AbstractType {
   readonly fromRdfType: Maybe<NamedNode>;
 
   /**
-   * Identifier type.
+   * Identifier type, derived from the node shape's node kinds.
+   *
+   * There may not be an identifier property.
    */
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
 
@@ -47,6 +47,10 @@ export class StructType extends AbstractType {
    * Type discriminant.
    */
   readonly kind = "Struct";
+
+  /**
+   * Fixed node kinds.
+   */
   override readonly nodeKinds = nodeKinds;
 
   /**
@@ -105,19 +109,12 @@ export class StructType extends AbstractType {
     return this.fields.some((field) => field.recursive);
   }
 
-  addFields(...fields: readonly StructType.Field[]): void {
-    for (const field of fields) {
-      invariant(
-        Object.is(field.structType, this),
-        "field has unexpected .structType",
-      );
-      invariant(
-        !this.fieldNames.has(field.name),
-        `${field.structType.shapeIdentifier}: duplicate field name: ${field.name}`,
-      );
-      this.#fields.push(field);
-      this.fieldNames.add(field.name);
-    }
+  addField(field: StructType.Field): void {
+    invariant(
+      Object.is(field.structType, this),
+      "field has unexpected .structType",
+    );
+    this.#fields.push(field);
   }
 
   override equals(other: StructType): boolean {
@@ -141,7 +138,6 @@ export class StructType extends AbstractType {
     return {
       ...super.toJSON(),
       fromRdfType: this.fromRdfType.extract(),
-      identifierType: this.identifierType.toJSON(),
       synthetic: this.synthetic ? true : undefined,
       toRdfTypes: this.toRdfTypes.length > 0 ? this.toRdfTypes : undefined,
     };
@@ -151,7 +147,64 @@ export class StructType extends AbstractType {
 const nodeKinds: ReadonlySet<NodeKind> = new Set(["BlankNode", "IRI"]);
 
 export namespace StructType {
-  export class Field {
+  abstract class AbstractField {
+    /**
+     * Type discriminant.
+     */
+    abstract readonly kind: "Identifier" | "Shacl";
+
+    /**
+     * Relative order of this field among the fields of the struct.
+     */
+    abstract readonly order: number;
+
+    /**
+     * Does the field directly or indirectly reference the StructType itself?
+     */
+    abstract readonly recursive: boolean;
+
+    /**
+     * StructType this field belongs to.
+     */
+    readonly structType: StructType;
+
+    constructor({ structType }: { structType: StructType }) {
+      this.structType = structType;
+    }
+
+    toJSON() {
+      return {
+        kind: this.kind,
+      };
+    }
+
+    toString(): string {
+      return JSON.stringify(this.toJSON());
+    }
+  }
+
+  export class IdentifierField extends AbstractField {
+    override readonly kind = "Identifier";
+    override readonly order = 0;
+    override readonly recursive = false;
+
+    /**
+     * Identifier type.
+     */
+    readonly type: BlankNodeType | IdentifierType | IriType;
+
+    constructor({
+      type,
+      ...superParameters
+    }: {
+      type: BlankNodeType | IdentifierType | IriType;
+    } & ConstructorParameters<typeof AbstractField>[0]) {
+      super(superParameters);
+      this.type = type;
+    }
+  }
+
+  export class ShaclField extends AbstractField {
     /**
      * Documentation comment from rdfs:comment.
      */
@@ -166,6 +219,11 @@ export namespace StructType {
      * Should the field and its value be displayed in a toString()-type representation?
      */
     readonly display: boolean;
+
+    /**
+     * Type discriminant.
+     */
+    override readonly kind = "Shacl";
 
     /**
      * Human-readable label from rdfs:label.
@@ -199,11 +257,6 @@ export namespace StructType {
     readonly shapeIdentifier: BlankNode | NamedNode;
 
     /**
-     * StructType this field belongs to.
-     */
-    readonly structType: StructType;
-
-    /**
      * Type of this field.
      */
     readonly type: Type;
@@ -218,8 +271,8 @@ export namespace StructType {
       order,
       path,
       shapeIdentifier,
-      structType,
       type,
+      ...superParameters
     }: {
       comment: Maybe<string>;
       description: Maybe<string>;
@@ -230,31 +283,27 @@ export namespace StructType {
       order: number;
       path: PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
-      structType: StructType;
       type: Type;
-    }) {
+    } & ConstructorParameters<typeof AbstractField>[0]) {
+      super(superParameters);
       this.comment = comment;
       this.description = description;
       this.display = display;
       this.label = label;
       this.mutable = mutable;
       this.name = name;
-      this.structType = structType;
       this.order = order;
       this.path = path;
       this.shapeIdentifier = shapeIdentifier;
       this.type = type;
     }
 
-    equals(other: Field): boolean {
+    equals(other: ShaclField): boolean {
       return this.shapeIdentifier.equals(other.shapeIdentifier);
     }
 
-    /**
-     * Does the field directly or indirectly reference the StructType itself?
-     */
     @Memoize()
-    get recursive(): boolean {
+    override get recursive(): boolean {
       const DEBUG = false;
 
       const rootField = this;
@@ -262,7 +311,7 @@ export namespace StructType {
 
       function helper(
         stack: {
-          field: StructType.Field;
+          field: StructType.ShaclField;
           fieldType?: readonly Type[];
           structType: StructType;
         }[],
@@ -369,6 +418,7 @@ export namespace StructType {
             }
             for (const field of currentFieldType.fields) {
               if (
+                field.kind === "Shacl" &&
                 helper(
                   stack.concat({
                     structType: currentFieldType,
@@ -419,8 +469,9 @@ export namespace StructType {
       return helper([{ structType: rootStructType, field: rootField }]);
     }
 
-    toJSON() {
+    override toJSON() {
       return {
+        ...super.toJSON(),
         comment: this.comment.extract(),
         description: this.description.extract(),
         label: this.label.extract(),
@@ -433,9 +484,7 @@ export namespace StructType {
         type: this.type.toJSON(),
       };
     }
-
-    toString(): string {
-      return JSON.stringify(this.toJSON());
-    }
   }
+
+  export type Field = IdentifierField | ShaclField;
 }

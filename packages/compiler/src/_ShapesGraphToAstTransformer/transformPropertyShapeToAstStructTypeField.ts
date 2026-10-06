@@ -113,6 +113,12 @@ function synthesizePartialAstStructType(
     toRdfTypes: [],
     tsImports: [],
   });
+  partialAstStructType.addField(
+    new ast.StructType.IdentifierField({
+      structType: partialAstStructType,
+      type: identifierType,
+    }),
+  );
 
   this.syntheticAstStructTypes.push(partialAstStructType);
 
@@ -221,7 +227,7 @@ export function transformPropertyShapeToAstStructTypeField(
     propertyShape: input.PropertyShape;
     structType: ast.StructType;
   },
-): Either<Error, Maybe<ast.StructType.Field>> {
+): Either<Error, Maybe<ast.StructType.ShaclField>> {
   if (propertyShape.ignore) {
     return Either.of(Maybe.empty());
   }
@@ -400,7 +406,7 @@ export function transformPropertyShapeToAstStructTypeField(
 
     return Either.of(
       Maybe.of(
-        new ast.StructType.Field({
+        new ast.StructType.ShaclField({
           comment: propertyShape.comment,
           description: propertyShape.description,
           display: propertyShape.display,

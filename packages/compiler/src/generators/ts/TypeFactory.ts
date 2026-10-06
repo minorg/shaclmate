@@ -45,9 +45,9 @@ export class TypeFactory {
     BlankNode | NamedNode,
     ObjectDiscriminatedUnionType
   > = new TermMap();
-  private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
+  private cachedObjectTypeShaclPropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
-    ObjectType.Property
+    ObjectType.ShaclProperty<Type>
   > = new TermMap();
   private cachedObjectTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
@@ -78,16 +78,35 @@ export class TypeFactory {
       }
     }
 
+    const objectTypeStub = { name: astType.name };
+
     const discriminantProperty = astType.name.map(
       (name) =>
         new ObjectType.DiscriminantProperty({
           configuration: this.configuration,
           logger: this.logger,
-          objectType: { name: astType.name },
+          objectType: objectTypeStub,
           reusables: this.reusables,
           value: name,
         }),
     );
+
+    const identifierType = this.createIdentifierType(astType.identifierType);
+
+    const identifierProperty = astType.fields.some(
+      (field) => field.kind === "Identifier",
+    )
+      ? Maybe.of(
+          new ObjectType.IdentifierProperty({
+            configuration: this.configuration,
+            logger: this.logger,
+            name: `${this.configuration.syntheticNamePrefix}identifier`,
+            objectType: objectTypeStub,
+            reusables: this.reusables,
+            type: identifierType,
+          }),
+        )
+      : Maybe.empty();
 
     const rdfTypeProperty = astType.fromRdfType.map(
       (fromRdfType) =>
@@ -95,23 +114,23 @@ export class TypeFactory {
           configuration: this.configuration,
           fromRdfType,
           logger: this.logger,
-          objectType: { name: astType.name },
+          objectType: objectTypeStub,
           reusables: this.reusables,
           toRdfTypes: astType.toRdfTypes,
         }),
     );
-
-    const identifierType = this.createIdentifierType(astType.identifierType);
 
     const objectType = new ObjectType({
       discriminantProperty,
       comment: astType.comment,
       configuration: this.configuration,
       extern: astType.extern,
+      identifierProperty,
       identifierType,
       label: astType.label,
       lazyProperties: (objectType: ObjectType) => {
         const properties: ObjectType.Property[] = astType.fields
+          .filter((field) => field.kind === "Shacl")
           .toSorted((left, right) => {
             if (left.order < right.order) {
               return -1;
@@ -124,32 +143,21 @@ export class TypeFactory {
             );
           })
           .map((astField) =>
-            this.createObjectTypeProperty({
+            this.createObjectTypeShaclProperty({
               astStructField: astField,
               objectType,
             }),
           );
 
-        discriminantProperty.ifJust((discriminantProperty) => {
-          properties.splice(0, 0, discriminantProperty);
-        });
-
-        rdfTypeProperty.ifJust((rdfTypeProperty) => {
-          properties.splice(0, 0, rdfTypeProperty);
-        });
-
-        properties.splice(
-          0,
-          0,
-          new ObjectType.IdentifierProperty({
-            configuration: this.configuration,
-            logger: this.logger,
-            name: `${this.configuration.syntheticNamePrefix}identifier`,
-            objectType,
-            reusables: this.reusables,
-            type: identifierType,
-          }),
-        );
+        for (const specialProperty of [
+          discriminantProperty,
+          rdfTypeProperty,
+          identifierProperty,
+        ]) {
+          specialProperty.ifJust((specialProperty) => {
+            properties.splice(0, 0, specialProperty);
+          });
+        }
 
         return properties;
       },
@@ -508,16 +516,16 @@ export class TypeFactory {
     });
   }
 
-  private createObjectTypeProperty({
+  private createObjectTypeShaclProperty({
     astStructField,
     objectType,
   }: {
-    astStructField: ast.StructType.Field;
+    astStructField: ast.StructType.ShaclField;
     objectType: ObjectType;
-  }): ObjectType.Property {
+  }): ObjectType.ShaclProperty<Type> {
     {
       const cachedProperty =
-        this.cachedObjectTypePropertiesByShapeIdentifier.get(
+        this.cachedObjectTypeShaclPropertiesByShapeIdentifier.get(
           astStructField.shapeIdentifier,
         );
       if (cachedProperty) {
@@ -541,7 +549,7 @@ export class TypeFactory {
       type: this.createType(astStructField.type),
     });
 
-    this.cachedObjectTypePropertiesByShapeIdentifier.set(
+    this.cachedObjectTypeShaclPropertiesByShapeIdentifier.set(
       astStructField.shapeIdentifier,
       property,
     );
