@@ -2,6 +2,7 @@ import type { DatasetCore } from "@rdfjs/types";
 import type { PrefixMap } from "@rdfx/collection";
 import type { Either } from "purify-ts";
 import { AbstractShapesGraph } from "./AbstractShapesGraph.js";
+import { curieDataset } from "./curieDataset.js";
 import * as generated from "./shacl-ast.shaclmate.js";
 
 const typeFunctions = {
@@ -27,7 +28,7 @@ export class ShapesGraph extends AbstractShapesGraph<
     },
   ): Either<Error, ShapesGraph> {
     return AbstractShapesGraph._fromDataset(
-      dataset,
+      options?.prefixMap ? curieDataset(dataset, options.prefixMap) : dataset,
       options,
       new ShapesGraph(),
     );

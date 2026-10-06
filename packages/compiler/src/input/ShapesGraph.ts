@@ -3,7 +3,7 @@ import { type PrefixMap, TermMap } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import type { Logger } from "@rdfx/logger";
 import { ResourceSet } from "@rdfx/resource";
-import { AbstractShapesGraph } from "@shaclmate/shacl-ast";
+import { AbstractShapesGraph, curieDataset } from "@shaclmate/shacl-ast";
 
 import { Either } from "purify-ts";
 import type { Ast } from "../ast/Ast.js";
@@ -38,7 +38,7 @@ export class ShapesGraph extends AbstractShapesGraph<
     },
   ): Either<Error, ShapesGraph> {
     return AbstractShapesGraph._fromDataset(
-      dataset,
+      options?.prefixMap ? curieDataset(dataset, options.prefixMap) : dataset,
       options,
       new ShapesGraph(),
     ).chain((shapesGraph) => {

@@ -5,19 +5,12 @@ import type {
   NamedNode,
   Term,
 } from "@rdfjs/types";
-import {
-  datasetFactory,
-  type PrefixMap,
-  TermMap,
-  TermSet,
-} from "@rdfx/collection";
+import { TermMap, TermSet } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { type Resource, ResourceSet } from "@rdfx/resource";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
 
 import { Either, Left } from "purify-ts";
-import type { Curie } from "./Curie.js";
-import { CurieFactory } from "./CurieFactory.js";
 import type * as generated from "./shacl-ast.shaclmate.js";
 
 export abstract class AbstractShapesGraph<
@@ -118,7 +111,6 @@ export abstract class AbstractShapesGraph<
     options:
       | {
           ignoreUndefinedShapes?: boolean;
-          prefixMap?: PrefixMap;
         }
       | undefined,
     shapesGraph: ShapesGraphT,
@@ -134,56 +126,6 @@ export abstract class AbstractShapesGraph<
       }
       return false;
     }
-
-    let curieDataset: DatasetCore;
-    if (options?.prefixMap) {
-      const curieCache = new Map<string, Curie | NamedNode>();
-      curieDataset = datasetFactory.dataset();
-      const curieFactory = new CurieFactory({
-        prefixMap: options.prefixMap!,
-      });
-
-      const termToCurie = <TermT extends Term>(term: TermT): TermT => {
-        if (term.termType !== "NamedNode") {
-          return term;
-        }
-        const cachedCurie = curieCache.get(term.value);
-        if (cachedCurie) {
-          return cachedCurie as TermT;
-        }
-        const curie = curieFactory.create(term).extract() ?? term;
-        curieCache.set(term.value, curie);
-        return curie as TermT;
-      };
-
-      for (const quad of dataset) {
-        const curieObject = termToCurie(quad.object);
-        const curieSubject = termToCurie(quad.subject);
-
-        if (
-          !Object.is(curieObject, quad.object) ||
-          !Object.is(curieSubject, quad.subject)
-        ) {
-          curieDataset.add(
-            dataFactory.quad(
-              curieSubject,
-              quad.predicate,
-              curieObject,
-              quad.graph,
-            ),
-          );
-        } else {
-          curieDataset.add(quad);
-        }
-      }
-    } else {
-      curieDataset = dataset;
-    }
-
-    const curieResourceSet = new ResourceSet({
-      dataFactory,
-      dataset: curieDataset,
-    });
 
     return Either.encase(() => {
       function readGraph(): BlankNode | DefaultGraph | NamedNode | undefined {
@@ -209,13 +151,15 @@ export abstract class AbstractShapesGraph<
 
       const graph = readGraph();
 
+      const resourceSet = new ResourceSet({
+        dataFactory,
+        dataset,
+      });
+
       // Read ontologies
-      for (const ontologyResource of curieResourceSet.instancesOf(
-        owl.Ontology,
-        {
-          graph,
-        },
-      )) {
+      for (const ontologyResource of resourceSet.instancesOf(owl.Ontology, {
+        graph,
+      })) {
         if (
           shapesGraph.ontologiesByIdentifier.has(ontologyResource.identifier)
         ) {
@@ -232,7 +176,7 @@ export abstract class AbstractShapesGraph<
       }
 
       // Read property groups
-      for (const propertyGroupResource of curieResourceSet.instancesOf(
+      for (const propertyGroupResource of resourceSet.instancesOf(
         sh.PropertyGroup,
         { graph },
       )) {
@@ -249,7 +193,7 @@ export abstract class AbstractShapesGraph<
         }
 
         shapesGraph.typeFunctions.PropertyGroup.fromRdfResource(
-          curieResourceSet.resource(propertyGroupResource.identifier),
+          resourceSet.resource(propertyGroupResource.identifier),
           { ignoreRdfType: true },
         ).ifRight((propertyGroup) =>
           shapesGraph.propertyGroupsByIdentifier.set(
@@ -284,7 +228,7 @@ export abstract class AbstractShapesGraph<
 
       // Subject is a SHACL instance of sh:NodeShape or sh:PropertyShape
       for (const rdfType of [sh.NodeShape, sh.PropertyShape]) {
-        for (const resource of curieResourceSet.instancesOf(rdfType, {
+        for (const resource of resourceSet.instancesOf(rdfType, {
           graph,
         })) {
           addShapeNode(resource.identifier);
@@ -371,7 +315,7 @@ export abstract class AbstractShapesGraph<
               );
           }
 
-          for (const value of curieResourceSet
+          for (const value of resourceSet
             .resource(quad.object)
             .toList()
             .unsafeCoerce()) {
@@ -398,7 +342,7 @@ export abstract class AbstractShapesGraph<
           shapesGraph.propertyShapesByIdentifier.set(
             shapeNode,
             shapesGraph.typeFunctions.PropertyShape.fromRdfResource(
-              curieResourceSet.resource(shapeNode),
+              resourceSet.resource(shapeNode),
               {
                 ignoreRdfType: true,
               },
@@ -409,7 +353,7 @@ export abstract class AbstractShapesGraph<
           shapesGraph.nodeShapesByIdentifier.set(
             shapeNode,
             shapesGraph.typeFunctions.NodeShape.fromRdfResource(
-              curieResourceSet.resource(shapeNode),
+              resourceSet.resource(shapeNode),
               {
                 ignoreRdfType: true,
               },
