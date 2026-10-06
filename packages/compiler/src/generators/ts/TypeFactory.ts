@@ -128,7 +128,6 @@ export class TypeFactory {
       comment: astType.comment,
       configuration: this.configuration,
       extern: astType.extern,
-      identifierProperty,
       identifierType,
       label: astType.label,
       lazyProperties: (objectType: ObjectType) => {

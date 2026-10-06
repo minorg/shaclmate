@@ -53,9 +53,9 @@ function transformOperation(
       .call(self, inputError, new ShapeStack())
       .chain((astParameter) => {
         if (
-          astParameter.kind === "Struct" ||
           (astParameter.kind === "DiscriminatedUnion" &&
-            astParameter.isStructDiscriminatedUnionType())
+            astParameter.isStructDiscriminatedUnionType()) ||
+          astParameter.kind === "Struct"
         ) {
           return Either.of<
             Error,
