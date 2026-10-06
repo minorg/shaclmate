@@ -289,6 +289,21 @@ const workspaces = {
       },
       tsconfig: exampleTsconfig,
     },
+    rest: {
+      dependencies: {
+        external: [
+          "@rdfjs/types",
+          "@rdfx/collection",
+          "@rdfx/data-factory",
+          "@rdfx/resource",
+          "purify-ts",
+        ],
+      },
+      scripts: {
+        start: "NODE_ENV=development tsx src/server.ts",
+      },
+      tsconfig: exampleTsconfig,
+    },
   } satisfies Record<string, Workspace>,
   packages: {
     compiler: {
@@ -635,7 +650,7 @@ fs.writeFileSync(
         "check:write:unsafe": "biome check --write --unsafe",
         clean: "turbo run clean",
         depcheck: "turbo run depcheck",
-        dev: "turbo run --concurrency 14 dev dev:tests",
+        dev: "turbo run --concurrency 15 dev dev:tests",
         test: "vitest run",
         "test:coverage": "vitest run --coverage",
         "test:watch": "vitest watch",

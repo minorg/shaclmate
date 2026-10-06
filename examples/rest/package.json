@@ -1,0 +1,34 @@
+{
+  "dependencies": {
+    "@rdfjs/types": "~2.0.1",
+    "@rdfx/collection": "0.0.57",
+    "@rdfx/data-factory": "0.0.57",
+    "@rdfx/resource": "0.0.57",
+    "purify-ts": "~2.1.4"
+  },
+  "devDependencies": {},
+  "files": [
+    "dist/rest.shaclmate.d.ts",
+    "dist/rest.shaclmate.js"
+  ],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "name": "@shaclmate/rest-example",
+  "packageManager": "npm@11.11.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minorg/shaclmate.git"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "depcheck": "depcheck .",
+    "dev": "tsc -w --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
+    "start": "NODE_ENV=development tsx src/server.ts"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "version": "4.0.94"
+}
