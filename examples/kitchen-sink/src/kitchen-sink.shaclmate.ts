@@ -15,7 +15,7 @@ import {
   Resource,
   ResourceSet,
 } from "@rdfx/resource";
-import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
+import { NTriplesIdentifier } from "@rdfx/string";
 import { Decimal as BigDecimal } from "decimal.js";
 import { Either, EitherAsync, Left, Maybe, Right } from "purify-ts";
 import * as sparqljs from "sparqljs";
@@ -3881,6 +3881,7 @@ function $wrap_ToRdfResourceFunction<
     return resource;
   };
 }
+
 export type $DefaultPartial = {
   readonly $identifier: () => $DefaultPartial.Identifier;
 
@@ -4049,7 +4050,6 @@ export namespace $DefaultPartial {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const is$DefaultPartial = (
@@ -4224,6 +4224,7 @@ export namespace $DefaultPartial {
       }),
     );
 }
+
 export type $NamedDefaultPartial = {
   readonly $identifier: () => $NamedDefaultPartial.Identifier;
 
@@ -4391,7 +4392,6 @@ export namespace $NamedDefaultPartial {
   export type Identifier = NamedNode;
   export namespace Identifier {
     export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const is$NamedDefaultPartial = (
@@ -4563,10 +4563,11 @@ export namespace $NamedDefaultPartial {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with anonymous property types.
  */
-
 export type AnonymousTypesStruct = {
   readonly $identifier: () => AnonymousTypesStruct.Identifier;
 
@@ -5344,7 +5345,6 @@ export namespace AnonymousTypesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isAnonymousTypesStruct = (
@@ -5604,10 +5604,11 @@ export namespace AnonymousTypesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that can only have a blank node as an identifier
  */
-
 export type BlankNodeIdentifierStruct = {
   readonly $identifier: () => BlankNodeIdentifierStruct.Identifier;
 
@@ -5961,7 +5962,6 @@ export namespace BlankNodeIdentifierStruct {
   export type Identifier = BlankNode;
   export namespace Identifier {
     export const parse = $parseBlankNode;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isBlankNodeIdentifierStruct = (
@@ -6170,10 +6170,11 @@ export namespace BlankNodeIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that can have a blank node or IRI as an identifier
  */
-
 export type BlankNodeOrIriIdentifierStruct = {
   readonly $identifier: () => BlankNodeOrIriIdentifierStruct.Identifier;
 
@@ -6543,7 +6544,6 @@ export namespace BlankNodeOrIriIdentifierStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isBlankNodeOrIriIdentifierStruct = (
@@ -6762,10 +6762,11 @@ export namespace BlankNodeOrIriIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:class properties
  */
-
 export type ClassConstraintsStruct = {
   readonly $identifier: () => ClassConstraintsStruct.Identifier;
 
@@ -7511,7 +7512,6 @@ export namespace ClassConstraintsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isClassConstraintsStruct = (
@@ -7816,10 +7816,11 @@ export namespace ClassConstraintsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI.
  */
-
 export type ConvertibleTypesStruct = {
   readonly $identifier: () => ConvertibleTypesStruct.Identifier;
 
@@ -9303,7 +9304,6 @@ export namespace ConvertibleTypesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isConvertibleTypesStruct = (
@@ -9958,10 +9958,11 @@ export namespace ConvertibleTypesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models.
  */
-
 export type DatatypeDiscriminatedUnionsStruct = {
   readonly $identifier: () => DatatypeDiscriminatedUnionsStruct.Identifier;
 
@@ -13912,7 +13913,6 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDatatypeDiscriminatedUnionsStruct = (
@@ -14722,10 +14722,11 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with properties that have date sh:datatype's
  */
-
 export type DatesStruct = {
   readonly $identifier: () => DatesStruct.Identifier;
 
@@ -15245,7 +15246,6 @@ export namespace DatesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDatesStruct = (object: $Object): object is DatesStruct =>
@@ -15502,10 +15502,11 @@ export namespace DatesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:defaultValue properties.
  */
-
 export type DefaultValuesStruct = {
   readonly $identifier: () => DefaultValuesStruct.Identifier;
 
@@ -16247,7 +16248,6 @@ export namespace DefaultValuesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDefaultValuesStruct = (
@@ -16570,6 +16570,7 @@ export namespace DefaultValuesStruct {
       }),
     );
 }
+
 export type DirectRecursiveStruct = {
   readonly $identifier: () => DirectRecursiveStruct.Identifier;
 
@@ -16897,7 +16898,6 @@ export namespace DirectRecursiveStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDirectRecursiveStruct = (
@@ -17111,6 +17111,7 @@ export namespace DirectRecursiveStruct {
       }),
     );
 }
+
 export type DiscriminatedUnionMember1 = {
   readonly $identifier: () => DiscriminatedUnionMember1.Identifier;
 
@@ -17539,7 +17540,6 @@ export namespace DiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDiscriminatedUnionMember1 = (
@@ -17760,6 +17760,7 @@ export namespace DiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type DiscriminatedUnionMember2 = {
   readonly $identifier: () => DiscriminatedUnionMember2.Identifier;
 
@@ -18188,7 +18189,6 @@ export namespace DiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDiscriminatedUnionMember2 = (
@@ -18408,10 +18408,11 @@ export namespace DiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Demonstrates the use of shaclmate:display for excluding/including properties from toString()-type display representations
  */
-
 export type DisplayStruct = {
   readonly $identifier: () => DisplayStruct.Identifier;
 
@@ -18857,7 +18858,6 @@ export namespace DisplayStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDisplayStruct = (object: $Object): object is DisplayStruct =>
@@ -19085,13 +19085,14 @@ export namespace DisplayStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with custom rdf:type's.
  *
  * The shaclmate:fromRdfType is expected on deserialization.
  * shaclmate:toRdfType's are added an serialization.
  */
-
 export type ExplicitFromToRdfTypesStruct = {
   readonly $identifier: () => ExplicitFromToRdfTypesStruct.Identifier;
 
@@ -19430,7 +19431,6 @@ export namespace ExplicitFromToRdfTypesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isExplicitFromToRdfTypesStruct = (
@@ -19639,12 +19639,13 @@ export namespace ExplicitFromToRdfTypesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with custom rdf:type's.
  *
  * The shaclmate:rdfType is expected on deserialization and added on serialization.
  */
-
 export type ExplicitRdfTypeStruct = {
   readonly $identifier: () => ExplicitRdfTypeStruct.Identifier;
 
@@ -19968,7 +19969,6 @@ export namespace ExplicitRdfTypeStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isExplicitRdfTypeStruct = (
@@ -20170,6 +20170,7 @@ export namespace ExplicitRdfTypeStruct {
       }),
     );
 }
+
 export type FlattenDiscriminatedUnionMember3 = {
   readonly $identifier: () => FlattenDiscriminatedUnionMember3.Identifier;
 
@@ -20521,7 +20522,6 @@ export namespace FlattenDiscriminatedUnionMember3 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isFlattenDiscriminatedUnionMember3 = (
@@ -20734,10 +20734,11 @@ export namespace FlattenDiscriminatedUnionMember3 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:hasValue properties.
  */
-
 export type HasValuesStruct = {
   readonly $identifier: () => HasValuesStruct.Identifier;
 
@@ -21026,7 +21027,6 @@ export namespace HasValuesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isHasValuesStruct = (
@@ -21233,10 +21233,11 @@ export namespace HasValuesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that uses different methods to make SHACLmate ignore properties.
  */
-
 export type IgnoredPropertiesStruct = {
   readonly $identifier: () => IgnoredPropertiesStruct.Identifier;
 
@@ -21632,7 +21633,6 @@ export namespace IgnoredPropertiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isIgnoredPropertiesStruct = (
@@ -21873,6 +21873,7 @@ export namespace IgnoredPropertiesStruct {
       }),
     );
 }
+
 export type IndirectRecursiveStruct = {
   readonly $identifier: () => IndirectRecursiveStruct.Identifier;
 
@@ -22209,7 +22210,6 @@ export namespace IndirectRecursiveStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isIndirectRecursiveStruct = (
@@ -22428,6 +22428,7 @@ export namespace IndirectRecursiveStruct {
       }),
     );
 }
+
 export type IndirectRecursiveStructHelper = {
   readonly $identifier: () => IndirectRecursiveStructHelper.Identifier;
 
@@ -22764,7 +22765,6 @@ export namespace IndirectRecursiveStructHelper {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isIndirectRecursiveStructHelper = (
@@ -22981,10 +22981,11 @@ export namespace IndirectRecursiveStructHelper {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:in constraining its identifier.
  */
-
 export type InIdentifierStruct = {
   readonly $identifier: () => InIdentifierStruct.Identifier;
 
@@ -23367,7 +23368,6 @@ export namespace InIdentifierStruct {
             );
         }
       });
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isInIdentifierStruct = (
@@ -23586,10 +23586,11 @@ export namespace InIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:in properties.
  */
-
 export type InPropertiesStruct = {
   readonly $identifier: () => InPropertiesStruct.Identifier;
 
@@ -24412,7 +24413,6 @@ export namespace InPropertiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isInPropertiesStruct = (
@@ -24721,10 +24721,11 @@ export namespace InPropertiesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * A node shape that only allows IRI identifiers.
  */
-
 export type IriIdentifierStruct = {
   readonly $identifier: () => IriIdentifierStruct.Identifier;
 
@@ -25067,7 +25068,6 @@ export namespace IriIdentifierStruct {
   export type Identifier = NamedNode;
   export namespace Identifier {
     export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isIriIdentifierStruct = (
@@ -25267,10 +25267,11 @@ export namespace IriIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with rdf:langString properties
  */
-
 export type LangStringStruct = {
   readonly $identifier: () => LangStringStruct.Identifier;
 
@@ -26520,7 +26521,6 @@ export namespace LangStringStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLangStringStruct = (
@@ -26830,10 +26830,11 @@ export namespace LangStringStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:languageIn constraints
  */
-
 export type LanguageInStruct = {
   readonly $identifier: () => LanguageInStruct.Identifier;
 
@@ -27093,7 +27094,6 @@ export namespace LanguageInStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLanguageInStruct = (
@@ -27295,10 +27295,11 @@ export namespace LanguageInStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape resolved by LazyPropertiesStruct
  */
-
 export type LazilyResolvedBlankNodeOrIriIdentifierStruct = {
   readonly $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier;
 
@@ -27637,7 +27638,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazilyResolvedBlankNodeOrIriIdentifierStruct = (
@@ -27866,6 +27866,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       }),
     );
 }
+
 export type LazilyResolvedDiscriminatedUnionMember1 = {
   readonly $identifier: () => LazilyResolvedDiscriminatedUnionMember1.Identifier;
 
@@ -28204,7 +28205,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazilyResolvedDiscriminatedUnionMember1 = (
@@ -28419,6 +28419,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type LazilyResolvedDiscriminatedUnionMember2 = {
   readonly $identifier: () => LazilyResolvedDiscriminatedUnionMember2.Identifier;
 
@@ -28757,7 +28758,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazilyResolvedDiscriminatedUnionMember2 = (
@@ -28971,10 +28971,11 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape resolved by LazyPropertiesStruct
  */
-
 export type LazilyResolvedIriIdentifierStruct = {
   readonly $identifier: () => LazilyResolvedIriIdentifierStruct.Identifier;
 
@@ -29209,7 +29210,6 @@ export namespace LazilyResolvedIriIdentifierStruct {
   export type Identifier = NamedNode;
   export namespace Identifier {
     export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazilyResolvedIriIdentifierStruct = (
@@ -29405,10 +29405,11 @@ export namespace LazilyResolvedIriIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that has lazy properties.
  */
-
 export type LazyPropertiesStruct = {
   readonly $identifier: () => LazyPropertiesStruct.Identifier;
 
@@ -31448,7 +31449,6 @@ export namespace LazyPropertiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazyPropertiesStruct = (
@@ -31912,6 +31912,7 @@ export namespace LazyPropertiesStruct {
       }),
     );
 }
+
 export type ListSetsStruct = {
   readonly $identifier: () => ListSetsStruct.Identifier;
 
@@ -33088,7 +33089,6 @@ export namespace ListSetsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isListSetsStruct = (object: $Object): object is ListSetsStruct =>
@@ -33378,10 +33378,11 @@ export namespace ListSetsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that uses the list shapes in properties.
  */
-
 export type ListsStruct = {
   readonly $identifier: () => ListsStruct.Identifier;
 
@@ -34357,7 +34358,6 @@ export namespace ListsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isListsStruct = (object: $Object): object is ListsStruct =>
@@ -34635,10 +34635,11 @@ export namespace ListsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with shaclmate:mutable properties.
  */
-
 export type MutablePropertiesStruct = {
   readonly $identifier: () => MutablePropertiesStruct.Identifier;
 
@@ -35239,7 +35240,6 @@ export namespace MutablePropertiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isMutablePropertiesStruct = (
@@ -35482,11 +35482,13 @@ export namespace MutablePropertiesStruct {
       }),
     );
 }
+
 export type NamedDatatype = string;
 
 export namespace NamedDatatype {
   export const schema = { kind: "String" as const };
 }
+
 export type NamedInIri = NamedNode<
   (typeof NamedInIri.schema)["inValues"][number]
 >;
@@ -35503,6 +35505,7 @@ export namespace NamedInIri {
     inValues,
   };
 }
+
 export type NamedInLiteral = (typeof NamedInLiteral.schema)["in"][number];
 
 export namespace NamedInLiteral {
@@ -35510,10 +35513,11 @@ export namespace NamedInLiteral {
     kind: "String" as const,
     in: ["test1", "test2"] as const,
   };
-} /**
+}
+
+/**
  * Struct node shape that uses named types in properties with sh:node
  */
-
 export type NamedTypesStruct = {
   readonly $identifier: () => NamedTypesStruct.Identifier;
 
@@ -36131,7 +36135,6 @@ export namespace NamedTypesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNamedTypesStruct = (
@@ -36393,10 +36396,11 @@ export namespace NamedTypesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes
  */
-
 export type NewName = {
   readonly $identifier: () => NewName.Identifier;
 
@@ -36733,7 +36737,6 @@ export namespace NewName {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNewName = (object: $Object): object is NewName =>
@@ -36929,10 +36932,11 @@ export namespace NewName {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that has properties with different sh:nodeKind combinations
  */
-
 export type NodeKindsStruct = {
   readonly $identifier: () => NodeKindsStruct.Identifier;
 
@@ -37633,7 +37637,6 @@ export namespace NodeKindsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNodeKindsStruct = (
@@ -37986,10 +37989,11 @@ export namespace NodeKindsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that isn't an rdfs:Class.
  */
-
 export type NonClassStruct = {
   readonly $identifier: () => NonClassStruct.Identifier;
 
@@ -38216,7 +38220,6 @@ export namespace NonClassStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNonClassStruct = (object: $Object): object is NonClassStruct =>
@@ -38406,6 +38409,7 @@ export namespace NonClassStruct {
       }),
     );
 }
+
 export type NoRdfTypeDiscriminatedUnionMember1 = {
   readonly $identifier: () => NoRdfTypeDiscriminatedUnionMember1.Identifier;
 
@@ -38668,7 +38672,6 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNoRdfTypeDiscriminatedUnionMember1 = (
@@ -38873,6 +38876,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type NoRdfTypeDiscriminatedUnionMember2 = {
   readonly $identifier: () => NoRdfTypeDiscriminatedUnionMember2.Identifier;
 
@@ -39135,7 +39139,6 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNoRdfTypeDiscriminatedUnionMember2 = (
@@ -39339,10 +39342,11 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with properties that have numeric sh:datatype's
  */
-
 export type NumericsStruct = {
   readonly $identifier: () => NumericsStruct.Identifier;
 
@@ -41091,7 +41095,6 @@ export namespace NumericsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNumericsStruct = (object: $Object): object is NumericsStruct =>
@@ -41612,10 +41615,11 @@ export namespace NumericsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
  */
-
 export type OrderedStruct = {
   readonly $identifier: () => OrderedStruct.Identifier;
 
@@ -41952,7 +41956,6 @@ export namespace OrderedStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isOrderedStruct = (object: $Object): object is OrderedStruct =>
@@ -42158,6 +42161,7 @@ export namespace OrderedStruct {
       }),
     );
 }
+
 export type PartialDiscriminatedUnionMember1 = {
   readonly $identifier: () => PartialDiscriminatedUnionMember1.Identifier;
 
@@ -42485,7 +42489,6 @@ export namespace PartialDiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPartialDiscriminatedUnionMember1 = (
@@ -42694,6 +42697,7 @@ export namespace PartialDiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type PartialDiscriminatedUnionMember2 = {
   readonly $identifier: () => PartialDiscriminatedUnionMember2.Identifier;
 
@@ -43021,7 +43025,6 @@ export namespace PartialDiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPartialDiscriminatedUnionMember2 = (
@@ -43229,10 +43232,11 @@ export namespace PartialDiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape used as a partial by LazyPropertiesStruct
  */
-
 export type PartialStruct = {
   readonly $identifier: () => PartialStruct.Identifier;
 
@@ -43456,7 +43460,6 @@ export namespace PartialStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPartialStruct = (object: $Object): object is PartialStruct =>
@@ -43646,10 +43649,11 @@ export namespace PartialStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that has properties with different cardinalities
  */
-
 export type PropertyCardinalitiesStruct = {
   readonly $identifier: () => PropertyCardinalitiesStruct.Identifier;
 
@@ -44158,7 +44162,6 @@ export namespace PropertyCardinalitiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPropertyCardinalitiesStruct = (
@@ -44400,10 +44403,11 @@ export namespace PropertyCardinalitiesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that uses different methods to name properties
  */
-
 export type PropertyNamesStruct = {
   readonly $identifier: () => PropertyNamesStruct.Identifier;
 
@@ -44956,7 +44960,6 @@ export namespace PropertyNamesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPropertyNamesStruct = (
@@ -45213,10 +45216,11 @@ export namespace PropertyNamesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that uses different property path types in its properties
  */
-
 export type PropertyPathsStruct = {
   readonly $identifier: () => PropertyPathsStruct.Identifier;
 
@@ -45656,7 +45660,6 @@ export namespace PropertyPathsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPropertyPathsStruct = (
@@ -45875,6 +45878,7 @@ export namespace PropertyPathsStruct {
       }),
     );
 }
+
 export type RecursiveDiscriminatedUnionMember1 = {
   readonly $identifier: () => RecursiveDiscriminatedUnionMember1.Identifier;
 
@@ -46231,7 +46235,6 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isRecursiveDiscriminatedUnionMember1 = (
@@ -46461,6 +46464,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type RecursiveDiscriminatedUnionMember2 = {
   readonly $identifier: () => RecursiveDiscriminatedUnionMember2.Identifier;
 
@@ -46817,7 +46821,6 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isRecursiveDiscriminatedUnionMember2 = (
@@ -47046,12 +47049,13 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:targetClass.
  *
  * The sh:targetClass is expected on deserialization and added on serialization.
  */
-
 export type TargetClassStruct = {
   readonly $identifier: () => TargetClassStruct.Identifier;
 
@@ -47366,7 +47370,6 @@ export namespace TargetClassStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isTargetClassStruct = (
@@ -47564,10 +47567,11 @@ export namespace TargetClassStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with properties that are not nested objects
  */
-
 export type TermsStruct = {
   readonly $identifier: () => TermsStruct.Identifier;
 
@@ -48852,7 +48856,6 @@ export namespace TermsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isTermsStruct = (object: $Object): object is TermsStruct =>
@@ -49274,10 +49277,11 @@ export namespace TermsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.
  */
-
 export type UnionDiscriminantsStruct = {
   readonly $identifier: () => UnionDiscriminantsStruct.Identifier;
 
@@ -56405,7 +56409,6 @@ export namespace UnionDiscriminantsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isUnionDiscriminantsStruct = (
@@ -57610,10 +57613,11 @@ export namespace UnionDiscriminantsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
-
 export type DiscriminatedUnion =
   | DiscriminatedUnionMember1
   | DiscriminatedUnionMember2;
@@ -57942,7 +57946,6 @@ export namespace DiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isDiscriminatedUnion(
@@ -58168,10 +58171,11 @@ export namespace DiscriminatedUnion {
     DiscriminatedUnion.Filter,
     typeof DiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.
  */
-
 export type FlattenDiscriminatedUnion =
   | DiscriminatedUnionMember1
   | DiscriminatedUnionMember2
@@ -58589,7 +58593,6 @@ export namespace FlattenDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isFlattenDiscriminatedUnion(
@@ -58854,10 +58857,11 @@ export namespace FlattenDiscriminatedUnion {
     FlattenDiscriminatedUnion.Filter,
     typeof FlattenDiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
-
 export type LazilyResolvedDiscriminatedUnion =
   | LazilyResolvedDiscriminatedUnionMember1
   | LazilyResolvedDiscriminatedUnionMember2;
@@ -59197,7 +59201,6 @@ export namespace LazilyResolvedDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isLazilyResolvedDiscriminatedUnion(
@@ -59446,10 +59449,11 @@ export namespace LazilyResolvedDiscriminatedUnion {
     LazilyResolvedDiscriminatedUnion.Filter,
     typeof LazilyResolvedDiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Named discriminated union of IRI and string
  */
-
 export type NamedDiscriminatedUnion1 = NamedNode | string;
 
 export namespace NamedDiscriminatedUnion1 {
@@ -59752,10 +59756,11 @@ export namespace NamedDiscriminatedUnion1 {
     NamedDiscriminatedUnion1.Filter,
     typeof NamedDiscriminatedUnion1.schema
   >;
-} /**
+}
+
+/**
  * Named discriminated union of date and date-time
  */
-
 export type NamedDiscriminatedUnion2 =
   | { $type: "date"; value: Date }
   | { $type: "dateTime"; value: Date };
@@ -60129,10 +60134,11 @@ export namespace NamedDiscriminatedUnion2 {
     NamedDiscriminatedUnion2.Filter,
     typeof NamedDiscriminatedUnion2.schema
   >;
-} /**
+}
+
+/**
  * Node shape that sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's
  */
-
 export type NoRdfTypeDiscriminatedUnion =
   | NoRdfTypeDiscriminatedUnionMember1
   | NoRdfTypeDiscriminatedUnionMember2;
@@ -60468,7 +60474,6 @@ export namespace NoRdfTypeDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isNoRdfTypeDiscriminatedUnion(
@@ -60701,10 +60706,11 @@ export namespace NoRdfTypeDiscriminatedUnion {
     NoRdfTypeDiscriminatedUnion.Filter,
     typeof NoRdfTypeDiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Counterpart of DiscriminatedUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.
  */
-
 export type PartialDiscriminatedUnion =
   | PartialDiscriminatedUnionMember1
   | PartialDiscriminatedUnionMember2;
@@ -61036,7 +61042,6 @@ export namespace PartialDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isPartialDiscriminatedUnion(
@@ -61275,10 +61280,11 @@ export namespace PartialDiscriminatedUnion {
     PartialDiscriminatedUnion.Filter,
     typeof PartialDiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Node shape that sh:xone's node shapes that have properties with the union's type
  */
-
 export type RecursiveDiscriminatedUnion =
   | RecursiveDiscriminatedUnionMember1
   | RecursiveDiscriminatedUnionMember2;
@@ -61614,7 +61620,6 @@ export namespace RecursiveDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isRecursiveDiscriminatedUnion(
@@ -61848,6 +61853,7 @@ export namespace RecursiveDiscriminatedUnion {
     typeof RecursiveDiscriminatedUnion.schema
   >;
 }
+
 export type $Object =
   | $DefaultPartial
   | $NamedDefaultPartial
@@ -62599,6 +62605,7 @@ export namespace $Object {
     }
   }
 }
+
 export interface $ObjectSet {
   anonymousTypesStruct(
     identifier: AnonymousTypesStruct.Identifier,
@@ -64194,6 +64201,7 @@ export namespace $ObjectSet {
     readonly preferredLanguages?: readonly string[];
   }
 }
+
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
   readonly #dataset: DatasetCore | (() => DatasetCore);
   readonly #graph?: Exclude<Quad_Graph, Variable>;
@@ -69698,6 +69706,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return Right(objects);
   }
 }
+
 export class $SparqlObjectSet implements $ObjectSet {
   readonly #countVariable = dataFactory.variable!("count");
   readonly #graph?: Exclude<Quad_Graph, Variable>;

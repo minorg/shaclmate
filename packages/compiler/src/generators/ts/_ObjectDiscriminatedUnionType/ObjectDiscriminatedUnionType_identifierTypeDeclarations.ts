@@ -15,7 +15,6 @@ export function ObjectDiscriminatedUnionType_identifierTypeDeclarations(
 export type Identifier = ${this.identifierType.unsafeCoerce().expression};
 export namespace Identifier {
   export const parse = ${this.identifierType.unsafeCoerce().parseFunction};
-  export const stringify = ${this.identifierType.unsafeCoerce().stringifyFunction};
 }`,
   );
 }

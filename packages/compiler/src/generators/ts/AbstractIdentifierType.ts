@@ -15,8 +15,6 @@ export abstract class AbstractIdentifierType<
   abstract override readonly kind: "BlankNode" | "Identifier" | "Iri";
   abstract override readonly nodeKinds: ReadonlySet<IdentifierNodeKind>;
   abstract readonly parseFunction: Code;
-  readonly stringifyFunction =
-    code`${this.reusables.imports.NTriplesTerm}.stringify`;
 
   @Memoize()
   override get graphqlType() {
