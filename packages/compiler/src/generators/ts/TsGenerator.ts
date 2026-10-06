@@ -193,7 +193,7 @@ export class TsGenerator implements Generator {
       joinCode(reusables.snippets.ifUsed, { on: "\n\n" }),
     );
 
-    return joinCode(declarations).toString({});
+    return joinCode(declarations, { on: "\n\n" }).toString({});
   }
 
   private objectSetTypeDeclarations({
@@ -344,6 +344,8 @@ export namespace TsGenerator {
       RDF: ["Object.RDF", "RdfjsDatasetObjectSet"],
 
       RdfjsDatasetObjectSet: ["Object.fromRdf", "ObjectSet"],
+
+      Service: ["Object.type"],
 
       SPARQL: ["Object.SPARQL", "SparqlObjectSet"],
 

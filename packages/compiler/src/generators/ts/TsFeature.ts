@@ -26,4 +26,5 @@ export const TS_FEATURES = [
   "RdfjsDatasetObjectSet",
   "SPARQL",
   "SparqlObjectSet",
+  "Service",
 ] as const;
