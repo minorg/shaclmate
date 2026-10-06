@@ -34,7 +34,7 @@ export class Operation extends AbstractConstruct {
   }: {
     error: Maybe<StructType | StructCompoundType>;
     name: string;
-    parameter: Maybe<StructType | StructCompoundType>;
+    parameter: Maybe<StructType>;
     result: Maybe<Type>;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);

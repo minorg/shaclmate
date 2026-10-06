@@ -1,5 +1,4 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { Logger } from "@rdfx/logger";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
@@ -7,9 +6,7 @@ import type { AbstractType_DiscriminantProperty } from "./_AbstractType/Abstract
 import { AbstractType_GraphqlType } from "./_AbstractType/AbstractType_GraphqlType.js";
 import { AbstractType_JsonType } from "./_AbstractType/AbstractType_JsonType.js";
 import { AbstractType_JsType } from "./_AbstractType/AbstractType_JsType.js";
-import type { Reusables } from "./Reusables.js";
-import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { TsGenerator } from "./TsGenerator.js";
+import { AbstractConstruct } from "./AbstractConstruct.js";
 import {
   type Code,
   code,
@@ -22,21 +19,11 @@ import { tsComment } from "./tsComment.js";
 /**
  * Abstract base class all types.
  */
-export abstract class AbstractType {
-  protected readonly configuration: TsGenerator.Configuration;
-
+export abstract class AbstractType extends AbstractConstruct {
   /**
    * Inline TypeScript type expression.
    */
   protected abstract readonly inlineExpression: Code;
-
-  protected readonly logger: Logger;
-  protected readonly reusables: Reusables;
-
-  /**
-   * Comment from rdfs:comment.
-   */
-  readonly comment: Maybe<string>;
 
   /**
    * Function that takes a value of one or more source types to this type and returns Either<Error, ThisType>.
@@ -126,11 +113,6 @@ export abstract class AbstractType {
   abstract readonly kind: string;
 
   /**
-   * Label from rdfs:label.
-   */
-  readonly label: Maybe<string>;
-
-  /**
    * Is a value of this type mutable?
    */
   abstract readonly mutable: boolean;
@@ -206,33 +188,15 @@ export abstract class AbstractType {
   abstract readonly valueSparqlWherePatternsFunction: Code;
 
   constructor({
-    comment,
-    configuration,
-    label,
-    logger,
     name,
-    reusables,
     shapeIdentifier,
+    ...superParameters
   }: {
     name: Maybe<string>;
-    comment: Maybe<string>;
-    configuration: TsGenerator.Configuration;
-    label: Maybe<string>;
-    logger: Logger;
-    reusables: Reusables;
     shapeIdentifier: BlankNode | NamedNode;
-  }) {
-    this.comment = comment;
-    this.configuration = configuration;
-    this.label = label;
-    this.logger = logger;
+  } & ConstructorParameters<typeof AbstractConstruct>[0]) {
+    super(superParameters);
     this.name = name;
-    this.reusables = reusables;
-    this.rdfjsTermExpression = rdfjsTermExpression.bind({
-      imports: this.reusables.imports,
-      logger: this.logger,
-      snippets: this.reusables.snippets,
-    });
     this.shapeIdentifier = shapeIdentifier;
   }
 
@@ -387,10 +351,6 @@ ${joinCode(
    * An expression that converts a value of this type to a human-readable string (toString).
    */
   abstract toStringExpression(parameters: { variables: { value: Code } }): Code;
-
-  protected readonly rdfjsTermExpression: (
-    parameters: Parameters<typeof rdfjsTermExpression>[0],
-  ) => Code;
 
   protected staticModuleDeclarations(_name: string): Record<string, Code> {
     const staticModuleDeclarations: Record<string, Code> = {};
