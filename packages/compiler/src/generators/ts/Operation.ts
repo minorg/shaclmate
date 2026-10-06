@@ -78,9 +78,13 @@ async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
       .map(
         (parameter) =>
           code`parameters: ${parameter.name
-            .map(
-              (name) =>
-                code`Omit<${name}, ${this.configuration.syntheticNamePrefix}identifier>`,
+            .map((name) =>
+              parameter.identifierProperty
+                .map(
+                  (identifierProperty) =>
+                    code`Omit<${name}, ${identifierProperty.name}>`,
+                )
+                .orDefault(code`${name}`),
             )
             .orDefault(
               code`{ ${joinCode(

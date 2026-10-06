@@ -5,14 +5,13 @@ import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 export function AbstractDiscriminatedUnionType_filterFunctionExpression<
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
-  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return code`\
 ((filter: ${this.filterType}, value: ${this.expression}) => {
 ${joinCode([
   ...this.identifierProperty
     .map(
       (identifierProperty) => code`\
-if (filter.${syntheticNamePrefix}identifier !== undefined && !${identifierProperty.type.filterFunction}(filter.${identifierProperty.name}, value.${identifierProperty.name})) {
+if (filter.${identifierProperty.name} !== undefined && !${identifierProperty.type.filterFunction}(filter.${identifierProperty.name}, value.${identifierProperty.name})) {
   return false;
 }`,
     )
