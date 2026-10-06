@@ -78,7 +78,10 @@ export class TypeFactory {
       }
     }
 
-    const objectTypeStub = { name: astType.name };
+    const objectTypeName = astType.name.map((name) =>
+      this.tsName(name, { synthetic: astType.synthetic }),
+    );
+    const objectTypeStub = { name: objectTypeName };
 
     const discriminantProperty = astType.name.map(
       (name) =>
@@ -162,9 +165,7 @@ export class TypeFactory {
         return properties;
       },
       logger: this.logger,
-      name: astType.name.map((name) =>
-        this.tsName(name, { synthetic: astType.synthetic }),
-      ),
+      name: objectTypeName,
       rdfTypeProperty,
       recursive: astType.recursive,
       reusables: this.reusables,

@@ -1115,6 +1115,7 @@ function $wrap_ToRdfResourceFunction<
     return resource;
   };
 }
+
 export type $DefaultPartial = {
   readonly $identifier: () => $DefaultPartial.Identifier;
 
@@ -1243,6 +1244,7 @@ export namespace $DefaultPartial {
   ) => Record<string, string> = (_defaultPartial) =>
     $compactRecord({ $identifier: _defaultPartial.$identifier().toString() });
 }
+
 export type LazyObject = {
   readonly $identifier: () => LazyObject.Identifier;
 
@@ -1582,6 +1584,7 @@ export namespace LazyObject {
   ) => Record<string, string> = (_lazyObject) =>
     $compactRecord({ $identifier: _lazyObject.$identifier().toString() });
 }
+
 export type RootObject = {
   readonly $identifier: () => RootObject.Identifier;
 
@@ -2423,6 +2426,7 @@ export namespace RootObject {
   ) => Record<string, string> = (_rootObject) =>
     $compactRecord({ $identifier: _rootObject.$identifier().toString() });
 }
+
 export type UnionMember1 = {
   readonly $identifier: () => UnionMember1.Identifier;
 
@@ -2652,6 +2656,7 @@ export namespace UnionMember1 {
   ) => Record<string, string> = (_unionMember1) =>
     $compactRecord({ $identifier: _unionMember1.$identifier().toString() });
 }
+
 export type UnionMember2 = {
   readonly $identifier: () => UnionMember2.Identifier;
 
@@ -2882,6 +2887,7 @@ export namespace UnionMember2 {
   ) => Record<string, string> = (_unionMember2) =>
     $compactRecord({ $identifier: _unionMember2.$identifier().toString() });
 }
+
 export type Union = UnionMember1 | UnionMember2;
 
 export namespace Union {
@@ -3101,6 +3107,7 @@ export namespace Union {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<Union>;
 }
+
 export type $Object =
   | $DefaultPartial
   | LazyObject
@@ -3148,6 +3155,7 @@ export namespace $Object {
     }
   }
 }
+
 export interface $ObjectSet {
   lazyObject(
     identifier: LazyObject.Identifier,
@@ -3260,6 +3268,7 @@ export namespace $ObjectSet {
     readonly preferredLanguages?: readonly string[];
   }
 }
+
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
   readonly #dataset: DatasetCore | (() => DatasetCore);
   readonly #graph?: Exclude<Quad_Graph, Variable>;
@@ -3930,6 +3939,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return Right(objects);
   }
 }
+
 export const graphqlSchema = new GraphQLSchema({
   query: new GraphQLObjectType<null, { objectSet: $ObjectSet }>({
     name: "Query",
