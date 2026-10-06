@@ -19,6 +19,7 @@ export const TS_FEATURES = [
   "Object.schema",
   "Object.SPARQL",
   "Object.toJson",
+  "Object.toLoggable",
   "Object.toRdf",
   "Object.toString",
   "Object.type",

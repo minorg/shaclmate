@@ -15,6 +15,7 @@ import { AbstractDiscriminatedUnionType_jsonSchemaExpression } from "./_Abstract
 import { AbstractDiscriminatedUnionType_jsonTypeLiteral } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_jsonTypeLiteral.js";
 import { AbstractDiscriminatedUnionType_schemaTypeExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_schemaTypeExpression.js";
 import { AbstractDiscriminatedUnionType_toJsonFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toJsonFunctionExpression.js";
+import { AbstractDiscriminatedUnionType_toLoggableFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toLoggableFunctionExpression.js";
 import { AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression.js";
 import { AbstractDiscriminatedUnionType_toStringFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toStringFunctionExpression.js";
 import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression.js";
@@ -457,6 +458,12 @@ export abstract class AbstractDiscriminatedUnionType<
     return code`${this.name.map((name) => code`${name}.toRdfResourceValues`).orDefault(AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression.call(this))}(${valueVariable}, ${otherVariables})`;
   }
 
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
+    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toLoggable`).orDefault(AbstractDiscriminatedUnionType_toLoggableFunctionExpression.call(this))}(${variables.value})`;
+  }
+
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
@@ -536,6 +543,12 @@ export namespace Json {
 
       staticModuleDeclarations["valueSparqlWherePatterns"] =
         code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.call(this)};`;
+    }
+
+    if (this.configuration.features.has("Object.toLoggable")) {
+      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+      staticModuleDeclarations[`${syntheticNamePrefix}toLoggable`] =
+        code`export const ${syntheticNamePrefix}toLoggable = ${AbstractDiscriminatedUnionType_toLoggableFunctionExpression.call(this)};`;
     }
 
     if (this.configuration.features.has("Object.toString")) {

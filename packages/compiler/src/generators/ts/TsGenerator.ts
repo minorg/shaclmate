@@ -302,7 +302,7 @@ export namespace TsGenerator {
       // Alias for other features, not dependencies per se
       JSON: ["Object.JSON"],
 
-      LoggingService: ["Service"],
+      LoggingService: ["Object.toLoggable", "Service"],
 
       "Object.create": ["Object.schema", "Object.toString", "Object.type"],
 
@@ -340,6 +340,8 @@ export namespace TsGenerator {
       "Object.schema": [],
 
       "Object.toJson": ["Object.JSON.type", "Object.type"],
+
+      "Object.toLoggable": ["Object.type"],
 
       "Object.toRdf": ["Object.schema", "Object.type"],
 

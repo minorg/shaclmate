@@ -42,18 +42,20 @@ export class Operation extends AbstractConstruct {
   get loggingMethodDeclaration(): Code {
     let logContext: Code;
     if (this.parameter.isJust()) {
-      logContext = code`JSON.parse(JSON.stringify({ ${joinCode(
+      logContext = code`{ ${joinCode(
         this.parameter.extract()!.properties.flatMap((property) =>
           property.kind === "Shacl"
-            ? property.type.toStringExpression({
-                variables: {
-                  value: code`parameters.${property.name}`,
-                },
-              })
+            ? property
+                .toLoggableInitializer({
+                  variables: {
+                    object: code`parameters`,
+                  },
+                })
+                .toList()
             : [],
         ),
         { on: "," },
-      )} }))`;
+      )} }`;
     } else {
       logContext = code`{}`;
     }

@@ -246,6 +246,13 @@ export abstract class ObjectType_AbstractProperty {
   }): Maybe<Code>;
 
   /**
+   * Initializer (name: value) to serialize this property to a loggable value.
+   */
+  abstract toLoggableInitializer(parameters: {
+    variables: { object: Code };
+  }): Maybe<Code>;
+
+  /**
    * Statements to serialize this property to an RDF resource.
    */
   abstract toRdfRdfResourceValuesStatements(parameters: {

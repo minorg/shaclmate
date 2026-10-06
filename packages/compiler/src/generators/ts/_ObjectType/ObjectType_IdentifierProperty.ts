@@ -60,34 +60,12 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return Maybe.of(code`readonly ${this.name}: () => ${this.typeExpression};`);
   }
 
-  override equalsExpression({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["equalsExpression"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
-        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
-        [left, ${variables.leftObject}.${this.name}()],
-        [right, ${variables.rightObject}.${this.name}()],
-      )`);
-  }
-
   @Memoize()
   override get filterProperty() {
     return Maybe.of({
       name: this.name,
       type: this.type.filterType,
     });
-  }
-
-  override filterExpression({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["filterExpression"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name}())`,
-    );
   }
 
   @Memoize()
@@ -201,6 +179,28 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     );
   }
 
+  override equalsExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["equalsExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
+        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
+        [left, ${variables.leftObject}.${this.name}()],
+        [right, ${variables.rightObject}.${this.name}()],
+      )`);
+  }
+
+  override filterExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["filterExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name}())`,
+    );
+  }
+
   override fromJsonInitializer({
     variables,
   }: Parameters<
@@ -291,6 +291,16 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     invariant(valueToNodeKinds.length === 2);
     return Maybe.of(
       code`"@id": ${variables.object}.${this.name}().termType === "${NodeKind.toTermType(nodeKinds[0])}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
+    );
+  }
+
+  override toLoggableInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toLoggableInitializer"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${literalOf(this.name)}: ${this.type.toLoggableExpression({ variables: { value: code`${variables.object}.${this.name}()` } })}`,
     );
   }
 

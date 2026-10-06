@@ -389,6 +389,17 @@ export class ObjectType_ShaclProperty<
     ];
   }
 
+  override toLoggableInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toLoggableInitializer"]
+  >[0]): Maybe<Code> {
+    const { object: objectVariable, ...otherVariables } = variables;
+    return Maybe.of(
+      code`${literalOf(this.name)}: ${this.type.toLoggableExpression({ variables: { ...otherVariables, value: code`${objectVariable}.${this.name}` } })}`,
+    );
+  }
+
   override toStringInitializer({
     variables,
   }: Parameters<

@@ -156,6 +156,10 @@ type: "optional" as const
     return Maybe.empty();
   }
 
+  override toLoggableInitializer(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
   override toRdfRdfResourceValuesStatements(): readonly Code[] {
     return [];
   }

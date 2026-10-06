@@ -149,4 +149,8 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   override toStringInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
+
+  override toLoggableInitializer(): Maybe<Code> {
+    return Maybe.of(code`${literalOf(this.name)}: ${literalOf(this.value)}`);
+  }
 }

@@ -446,6 +446,17 @@ export class ObjectType extends AbstractType {
     return code`[${toRdfResourceFunction}(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
 
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
+    return this.name
+      .map(
+        (name) =>
+          code`${name}.${this.configuration.syntheticNamePrefix}toLoggable(${variables.value})`,
+      )
+      .orDefaultLazy(() => this.toLoggableRecordExpression({ variables }));
+  }
+
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
@@ -613,6 +624,11 @@ export class ObjectType extends AbstractType {
         code`export const toJson: (${this.thisVariable}: ${this.expression}) => ${this.jsonType().expression} = ${ObjectType_toJsonFunctionExpression.call(this)};`;
     }
 
+    if (this.configuration.features.has("Object.toLoggable")) {
+      staticModuleDeclarations[`${syntheticNamePrefix}toLoggable`] =
+        code`export const ${syntheticNamePrefix}toLoggable = (${this.thisVariable}: ${this.expression}) => ${this.toLoggableRecordExpression({ variables: { value: this.thisVariable } })});`;
+    }
+
     // toRdfResource
     if (this.configuration.features.has("Object.toRdf")) {
       staticModuleDeclarations["_toRdfResource"] =
@@ -640,6 +656,23 @@ export class ObjectType extends AbstractType {
     }
 
     return staticModuleDeclarations;
+  }
+
+  protected toLoggableRecordExpression({
+    variables,
+  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
+    return code`${this.reusables.snippets.compactRecord}({${joinCode(
+      this.properties.flatMap((property) =>
+        property
+          .toLoggableInitializer({
+            variables: {
+              object: variables.value,
+            },
+          })
+          .toList(),
+      ),
+      { on: "," },
+    )}})`;
   }
 
   protected toStringRecordExpression({

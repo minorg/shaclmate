@@ -4,6 +4,23 @@ import type { Logger } from "@rdfx/logger";
 import { NTriplesIdentifier } from "@rdfx/string";
 import { type Either, Left, Right } from "purify-ts";
 
+/**
+ * Remove undefined values from a record.
+ */
+function $compactRecord<KeyT extends string, ValueT extends {}>(
+  record: Record<KeyT, ValueT | undefined>,
+): Record<KeyT, ValueT> {
+  return globalThis.Object.entries(record).reduce(
+    (definedProperties, [propertyName, propertyValue]) => {
+      if (propertyValue !== undefined) {
+        definedProperties[propertyName as KeyT] = propertyValue as ValueT;
+      }
+      return definedProperties;
+    },
+    {} as Record<KeyT, ValueT>,
+  );
+}
+
 export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
   return $parseIdentifier(identifier).chain((identifier) =>
     identifier.termType === "BlankNode"
@@ -23,6 +40,13 @@ export type ExampleError = {
 };
 
 export namespace ExampleError {
+  export const $toLoggable = (_exampleError: ExampleError) =>
+    $compactRecord({
+      $identifier: _exampleError.$identifier().value,
+      $type: "ExampleError",
+      message: _exampleError.message,
+    });
+
   export type Identifier = BlankNode;
   export namespace Identifier {
     export const parse = $parseBlankNode;
@@ -55,8 +79,8 @@ export class LoggingExampleService implements ExampleService {
   async get(parameters: {
     readonly identifier: NamedNode;
   }): Promise<Either<ExampleError, string>> {
-    const logContext: Record<string, unknown> = JSON.parse(
-      JSON.stringify({ identifier: { "@id": parameters.identifier.value } }),
-    );
+    const logContext: Record<string, unknown> = {
+      identifier: parameters.identifier.value,
+    };
   }
 }
