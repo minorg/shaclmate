@@ -30,7 +30,7 @@ function astConstructName(
 
   return Left(
     new Error(
-      `${object.$type} ${objectIdentifier} has a blank node identifier and no shaclmate:name`,
+      `${object.$type} ${objectIdentifier} has a non-CURIE identifier (${objectIdentifier}) and no shaclmate:name`,
     ),
   );
 }
@@ -41,18 +41,30 @@ function transformOperation(
 ): Either<Error, ast.Operation> {
   const self = this;
 
-  function transformParameters(): Either<Error, Maybe<ast.StructType>> {
-    const inputParameters = inputOperation.parameters.extract();
-    if (!inputParameters) {
+  function transformShapeToAstStructType(
+    inputNodeShapeMaybe: Maybe<input.NodeShape>,
+  ): Either<Error, Maybe<ast.StructType | ast.StructCompoundType>> {
+    const inputNodeShape = inputNodeShapeMaybe.extract();
+    if (!inputNodeShape) {
       return Either.of(Maybe.empty());
     }
     return transformShapeToAstType
-      .call(self, inputParameters, new ShapeStack())
-      .chain((astParameters) => {
-        if (astParameters.kind !== "Struct") {
-          return Left(new Error(`${inputOperation} has non-struct parameters`));
+      .call(self, inputNodeShape, new ShapeStack())
+      .chain((astParameter) => {
+        if (
+          astParameter.kind === "Struct" ||
+          (astParameter.kind === "DiscriminatedUnion" &&
+            astParameter.isStructDiscriminatedUnionType())
+        ) {
+          return Either.of<Error, ast.StructType | ast.StructCompoundType>(
+            astParameter,
+          );
         }
-        return Either.of<Error, ast.StructType>(astParameters);
+        return Left(
+          new Error(
+            `expected ${inputNodeShape} to be a struct or discriminated union of structs`,
+          ),
+        );
       })
       .map(Maybe.of);
   }
@@ -67,17 +79,19 @@ function transformOperation(
       .map(Maybe.of);
   }
 
-  return Eithers.chain3(
+  return Eithers.chain4(
+    transformShapeToAstStructType(inputOperation.error),
     astConstructName(inputOperation),
-    transformParameters(),
+    transformShapeToAstStructType(inputOperation.parameter),
     transformResult(),
-  ).chain(([name, parameters, result]) => {
+  ).chain(([error, name, parameter, result]) => {
     return Either.of(
       new ast.Operation({
         comment: inputOperation.comment,
         label: inputOperation.label,
+        error,
         name,
-        parameters,
+        parameter,
         result,
       }),
     );

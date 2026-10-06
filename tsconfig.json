@@ -24,6 +24,7 @@
     "examples/graphql/__tests__/**/*.ts",
     "examples/kitchen-sink/src/**/*.ts*",
     "examples/kitchen-sink/__tests__/**/*.ts",
+    "examples/rest/src/**/*.ts*",
     "packages/compiler/src/**/*.ts*",
     "packages/compiler/__tests__/**/*.ts",
     "packages/shacl-ast/src/**/*.ts*",

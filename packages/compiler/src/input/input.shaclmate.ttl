@@ -46,10 +46,11 @@ shaclmate:NodeShape-tsImports
 
 shaclmate:Operation
     a rdfs:Class, sh:NodeShape ;
-    sh:property shaclmate:Operation-errors, shaclmate:Operation-httpMethodName, shaclmate:Operation-httpRequestURI, shaclmate:Operation-name, shaclmate:Operation-parameters, shaclmate:Operation-result, shaclmate:comment, shaclmate:label .
+    sh:property shaclmate:Operation-error, shaclmate:Operation-httpMethodName, shaclmate:Operation-httpRequestURI, shaclmate:Operation-name, shaclmate:Operation-parameter, shaclmate:Operation-result, shaclmate:comment, shaclmate:label .
 
-shaclmate:Operation-errors
+shaclmate:Operation-error
     a sh:PropertyShape ;
+    sh:maxCount 1 ;
     sh:node shaclmate:NodeShape ;
     sh:path shaclmate:error .
 
@@ -72,11 +73,11 @@ shaclmate:Operation-name
     sh:maxCount 1 ;
     sh:path shaclmate:name .
 
-shaclmate:Operation-parameters
+shaclmate:Operation-parameter
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:node shaclmate:NodeShape ;
-    sh:path shaclmate:parameters .
+    sh:path shaclmate:parameter .
 
 shaclmate:Operation-result
     a sh:PropertyShape ;

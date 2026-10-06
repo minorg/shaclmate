@@ -3100,7 +3100,7 @@ export type Operation = {
 
   readonly comment: Maybe<string>;
 
-  readonly errors: readonly NodeShape[];
+  readonly error: Maybe<NodeShape>;
 
   readonly httpMethodName: Maybe<string>;
 
@@ -3110,7 +3110,7 @@ export type Operation = {
 
   readonly name: Maybe<string>;
 
-  readonly parameters: Maybe<NodeShape>;
+  readonly parameter: Maybe<NodeShape>;
 
   readonly result: Maybe<PropertyShape>;
 };
@@ -3151,15 +3151,15 @@ export namespace Operation {
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
         }),
-        errors: $shaclPropertyFromRdf<
-          readonly NodeShape[],
-          $CollectionSchema<NodeShape.Schema>
+        error: $shaclPropertyFromRdf<
+          Maybe<NodeShape>,
+          $MaybeSchema<NodeShape.Schema>
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: Operation.schema.properties.errors,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
+          propertySchema: Operation.schema.properties.error,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NodeShape,
             NodeShape.Schema
           >(NodeShape.fromRdfResourceValues),
@@ -3216,14 +3216,14 @@ export namespace Operation {
             $StringSchema<string>
           >($stringFromRdfResourceValues<string>),
         }),
-        parameters: $shaclPropertyFromRdf<
+        parameter: $shaclPropertyFromRdf<
           Maybe<NodeShape>,
           $MaybeSchema<NodeShape.Schema>
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: Operation.schema.properties.parameters,
+          propertySchema: Operation.schema.properties.parameter,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             NodeShape,
             NodeShape.Schema
@@ -3258,12 +3258,12 @@ export namespace Operation {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly comment?: string | Maybe<string>;
-    readonly errors?: NodeShape | readonly NodeShape[];
+    readonly error?: NodeShape | Maybe<NodeShape>;
     readonly httpMethodName?: string | Maybe<string>;
     readonly httpRequestURI?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
     readonly name?: string | Maybe<string>;
-    readonly parameters?: NodeShape | Maybe<NodeShape>;
+    readonly parameter?: NodeShape | Maybe<NodeShape>;
     readonly result?: PropertyShape | Maybe<PropertyShape>;
   }): Either<Error, Operation> =>
     $sequenceRecord({
@@ -3280,12 +3280,12 @@ export namespace Operation {
           value,
         ),
       ),
-      errors: $convertToScalarSet($identityConversionFunction)(
-        parameters?.errors,
+      error: $convertToMaybe($identityConversionFunction)(
+        parameters?.error,
         parameters?.$defaultNamespace,
       ).chain((value) =>
-        $validateArray($identityValidationFunction)(
-          Operation.schema.properties.errors.type,
+        $validateMaybe($identityValidationFunction)(
+          Operation.schema.properties.error.type,
           value,
         ),
       ),
@@ -3325,12 +3325,12 @@ export namespace Operation {
           value,
         ),
       ),
-      parameters: $convertToMaybe($identityConversionFunction)(
-        parameters?.parameters,
+      parameter: $convertToMaybe($identityConversionFunction)(
+        parameters?.parameter,
         parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          Operation.schema.properties.parameters.type,
+          Operation.schema.properties.parameter.type,
           value,
         ),
       ),
@@ -3359,12 +3359,12 @@ export namespace Operation {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly comment?: string | Maybe<string>;
-    readonly errors?: NodeShape | readonly NodeShape[];
+    readonly error?: NodeShape | Maybe<NodeShape>;
     readonly httpMethodName?: string | Maybe<string>;
     readonly httpRequestURI?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
     readonly name?: string | Maybe<string>;
-    readonly parameters?: NodeShape | Maybe<NodeShape>;
+    readonly parameter?: NodeShape | Maybe<NodeShape>;
     readonly result?: PropertyShape | Maybe<PropertyShape>;
   }): Operation {
     return create(parameters).unsafeCoerce();
@@ -3418,12 +3418,12 @@ export namespace Operation {
           itemType: { kind: "String" as const },
         },
       },
-      errors: {
+      error: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#error"),
         get type() {
           return {
-            kind: "Set" as const,
+            kind: "Option" as const,
             get itemType() {
               return NodeShape.schema;
             },
@@ -3464,10 +3464,10 @@ export namespace Operation {
           itemType: { kind: "String" as const },
         },
       },
-      parameters: {
+      parameter: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#parameters",
+          "http://purl.org/shaclmate/ontology#parameter",
         ),
         get type() {
           return {
