@@ -37,8 +37,12 @@ export class ShapesGraph extends AbstractShapesGraph<
       prefixMap?: PrefixMap;
     },
   ): Either<Error, ShapesGraph> {
+    if (options?.prefixMap) {
+      dataset = curieDataset(dataset, options.prefixMap);
+    }
+
     return AbstractShapesGraph._fromDataset(
-      options?.prefixMap ? curieDataset(dataset, options.prefixMap) : dataset,
+      dataset,
       options,
       new ShapesGraph(),
     ).chain((shapesGraph) => {
