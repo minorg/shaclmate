@@ -81,9 +81,6 @@
       ],
       "properties": [
         {
-          "kind": "Identifier"
-        },
-        {
           "kind": "Shacl",
           "name": "blankNodeIdentifierString",
           "order": 0,

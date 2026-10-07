@@ -32,7 +32,7 @@ export const harnesses = {
     }),
     kitchenSink.BlankNodeOrIriIdentifierStruct,
   ),
-  blankNodeIdentifierStructWithoutExplicitIdentifier: new Harness(
+  blankNodeIdentifierStruct: new Harness(
     kitchenSink.BlankNodeIdentifierStruct.createUnsafe({}),
     kitchenSink.BlankNodeIdentifierStruct,
   ),

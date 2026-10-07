@@ -34,7 +34,7 @@ type $_FromRdfResourceFunction<T> = (
 
 export type $_ToRdfResourceFunction<
   IdentifierT extends Resource.Identifier,
-  ObjectT extends { $identifier: () => IdentifierT },
+  ObjectT extends object,
 > = (parameters: {
   graph: Exclude<Quad_Graph, Variable> | undefined;
   ignoreRdfType: boolean;
@@ -410,24 +410,6 @@ const $convertToBlankNode: $ConversionFunction<
       return Either.of(value);
     case "undefined":
       return Either.of(dataFactory.blankNode());
-  }
-};
-
-const $convertToBlankNodeIdentifierProperty: $ConversionFunction<
-  (() => BlankNode) | BlankNode | undefined,
-  () => BlankNode
-> = (identifier) => {
-  switch (typeof identifier) {
-    case "function":
-      return Either.of(identifier);
-    case "object": {
-      const captureIdentifier = identifier;
-      return Either.of(() => captureIdentifier);
-    }
-    case "undefined": {
-      const captureIdentifier = dataFactory.blankNode();
-      return Either.of(() => captureIdentifier);
-    }
   }
 };
 
@@ -3734,7 +3716,7 @@ export function $toIsoDateString(date: Date): string {
 }
 
 export type $ToRdfResourceFunction<
-  ObjectT,
+  ObjectT extends object,
   IdentifierT extends Resource.Identifier = Resource.Identifier,
 > = (
   object: ObjectT,
@@ -3861,6 +3843,18 @@ function $wrap_ToRdfResourceFunction<
   ObjectT extends { $identifier: () => IdentifierT },
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
+): $ToRdfResourceFunction<ObjectT, IdentifierT>;
+function $wrap_ToRdfResourceFunction<
+  _IdentifierT extends BlankNode,
+  ObjectT extends object,
+>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<BlankNode, ObjectT>,
+): $ToRdfResourceFunction<ObjectT, BlankNode>;
+function $wrap_ToRdfResourceFunction<
+  IdentifierT extends Resource.Identifier,
+  ObjectT extends object & { $identifier?: () => IdentifierT },
+>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
 ): $ToRdfResourceFunction<ObjectT, IdentifierT> {
   return (object, options) => {
     let { graph, ignoreRdfType = false, resourceSet } = options ?? {};
@@ -3870,7 +3864,11 @@ function $wrap_ToRdfResourceFunction<
         dataset: datasetFactory.dataset(),
       });
     }
-    const resource = resourceSet.resource(object.$identifier());
+    const resource = (
+      object.$identifier
+        ? resourceSet.resource(object.$identifier())
+        : resourceSet.resource(dataFactory.blankNode())
+    ) as Resource<IdentifierT>;
     _toRdfResourceFunction({
       graph,
       ignoreRdfType,
@@ -4185,7 +4183,10 @@ export namespace $DefaultPartial {
       } satisfies $DefaultPartial.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    $DefaultPartial
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _defaultPartial: $DefaultPartial,
@@ -4523,7 +4524,10 @@ export namespace $NamedDefaultPartial {
       } satisfies $NamedDefaultPartial.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    NamedNode,
+    $NamedDefaultPartial
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _namedDefaultPartial: $NamedDefaultPartial,
@@ -5564,7 +5568,10 @@ export namespace AnonymousTypesStruct {
       } satisfies AnonymousTypesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    AnonymousTypesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _anonymousTypesStruct: AnonymousTypesStruct,
@@ -5610,8 +5617,6 @@ export namespace AnonymousTypesStruct {
  * Struct node shape that can only have a blank node as an identifier
  */
 export type BlankNodeIdentifierStruct = {
-  readonly $identifier: () => BlankNodeIdentifierStruct.Identifier;
-
   readonly $type: "BlankNodeIdentifierStruct";
 
   readonly blankNodeIdentifierString: Maybe<string>;
@@ -5632,16 +5637,6 @@ export namespace BlankNodeIdentifierStruct {
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
-        $identifier: $blankNodeFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema:
-              BlankNodeIdentifierStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
         blankNodeIdentifierString: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
@@ -5691,16 +5686,9 @@ export namespace BlankNodeIdentifierStruct {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => BlankNodeIdentifierStruct.Identifier)
-      | BlankNode;
     readonly blankNodeIdentifierString?: string | Maybe<string>;
   }): Either<Error, BlankNodeIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToBlankNodeIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
-      ),
       blankNodeIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters?.blankNodeIdentifierString,
         parameters?.$defaultNamespace,
@@ -5727,9 +5715,6 @@ export namespace BlankNodeIdentifierStruct {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => BlankNodeIdentifierStruct.Identifier)
-      | BlankNode;
     readonly blankNodeIdentifierString?: string | Maybe<string>;
   }): BlankNodeIdentifierStruct {
     return create(parameters).unsafeCoerce();
@@ -5740,31 +5725,19 @@ export namespace BlankNodeIdentifierStruct {
     right: BlankNodeIdentifierStruct,
   ) => $EqualsResult = (left, right) =>
     $propertyEquals(
-      { equalsFunction: $booleanEquals, name: "$identifier" },
-      [left, left.$identifier()],
-      [right, right.$identifier()],
-    ).chain(() =>
-      $propertyEquals(
-        {
-          equalsFunction: (left, right) =>
-            $maybeEquals(left, right, $strictEquals),
-          name: "blankNodeIdentifierString",
-        },
-        [left, left.blankNodeIdentifierString],
-        [right, right.blankNodeIdentifierString],
-      ),
+      {
+        equalsFunction: (left, right) =>
+          $maybeEquals(left, right, $strictEquals),
+        name: "blankNodeIdentifierString",
+      },
+      [left, left.blankNodeIdentifierString],
+      [right, right.blankNodeIdentifierString],
     );
 
   export const filter: (
     filter: BlankNodeIdentifierStruct.Filter,
     value: BlankNodeIdentifierStruct,
   ) => boolean = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterBlankNode(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
     if (
       filter.blankNodeIdentifierString !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
@@ -5778,7 +5751,6 @@ export namespace BlankNodeIdentifierStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $BlankNodeFilter;
     readonly blankNodeIdentifierString?: $MaybeFilter<$StringFilter>;
   };
 
@@ -5830,19 +5802,6 @@ export namespace BlankNodeIdentifierStruct {
     BlankNodeIdentifierStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $blankNodeSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: BlankNodeIdentifierStruct.schema.properties.$identifier.type,
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
     patterns = patterns.concat(
       parameters.ignoreRdfType
         ? []
@@ -5913,9 +5872,6 @@ export namespace BlankNodeIdentifierStruct {
     json: BlankNodeIdentifierStruct.Json,
   ) => Either<Error, BlankNodeIdentifierStruct> = ($json) =>
     $sequenceRecord({
-      $identifier: Either.of<Error, BlankNode>(
-        dataFactory.blankNode($json["@id"].substring(2)),
-      ),
       blankNodeIdentifierString: Maybe.fromNullable(
         $json["blankNodeIdentifierString"],
       )
@@ -5938,17 +5894,10 @@ export namespace BlankNodeIdentifierStruct {
 
   export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-    _blankNodeIdentifierStruct: Omit<
-      BlankNodeIdentifierStruct,
-      "$identifier" | "$type"
-    > & {
-      readonly $identifier?: () => BlankNodeIdentifierStruct.Identifier;
+    _blankNodeIdentifierStruct: Omit<BlankNodeIdentifierStruct, "$type"> & {
       readonly $type?: "BlankNodeIdentifierStruct";
     },
   ): HasherT => {
-    if (_blankNodeIdentifierStruct.$identifier) {
-      hasher.update(_blankNodeIdentifierStruct.$identifier().value);
-    }
     if (_blankNodeIdentifierStruct.$type) {
       hasher.update(_blankNodeIdentifierStruct.$type);
     }
@@ -5981,7 +5930,6 @@ export namespace BlankNodeIdentifierStruct {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("BlankNodeIdentifierStruct"),
           blankNodeIdentifierString: z.string().optional(),
         })
@@ -5995,11 +5943,6 @@ export namespace BlankNodeIdentifierStruct {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
         elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
           {
             rule: {
               condition: {
@@ -6023,14 +5966,12 @@ export namespace BlankNodeIdentifierStruct {
   }
 
   export type Json = {
-    readonly "@id": string;
     readonly $type: "BlankNodeIdentifierStruct";
     readonly blankNodeIdentifierString?: string;
   };
 
   export const schema = {
     properties: {
-      $identifier: { kind: "Identifier", type: { kind: "BlankNode" as const } },
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/BlankNodeIdentifierStruct",
@@ -6121,7 +6062,6 @@ export namespace BlankNodeIdentifierStruct {
   ) => BlankNodeIdentifierStruct.Json = (_blankNodeIdentifierStruct) =>
     JSON.parse(
       JSON.stringify({
-        "@id": `_:${_blankNodeIdentifierStruct.$identifier().value}`,
         $type: _blankNodeIdentifierStruct.$type,
         blankNodeIdentifierString:
           _blankNodeIdentifierStruct.blankNodeIdentifierString
@@ -6130,14 +6070,15 @@ export namespace BlankNodeIdentifierStruct {
       } satisfies BlankNodeIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode,
+    BlankNodeIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _blankNodeIdentifierStruct: BlankNodeIdentifierStruct,
   ) => Record<string, string> = (_blankNodeIdentifierStruct) =>
-    $compactRecord({
-      $identifier: _blankNodeIdentifierStruct.$identifier().toString(),
-    });
+    $compactRecord({});
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     BlankNodeIdentifierStruct.Filter,
@@ -6722,7 +6663,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
       } satisfies BlankNodeOrIriIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    BlankNodeOrIriIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _blankNodeOrIriIdentifierStruct: BlankNodeOrIriIdentifierStruct,
@@ -7776,7 +7720,10 @@ export namespace ClassConstraintsStruct {
       } satisfies ClassConstraintsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ClassConstraintsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _classConstraintsStruct: ClassConstraintsStruct,
@@ -9918,7 +9865,10 @@ export namespace ConvertibleTypesStruct {
       } satisfies ConvertibleTypesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ConvertibleTypesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _convertibleTypesStruct: ConvertibleTypesStruct,
@@ -14682,7 +14632,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       } satisfies DatatypeDiscriminatedUnionsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DatatypeDiscriminatedUnionsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _datatypeDiscriminatedUnionsStruct: DatatypeDiscriminatedUnionsStruct,
@@ -15464,7 +15417,10 @@ export namespace DatesStruct {
       } satisfies DatesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DatesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _datesStruct: DatesStruct,
@@ -16529,7 +16485,10 @@ export namespace DefaultValuesStruct {
       } satisfies DefaultValuesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DefaultValuesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _defaultValuesStruct: DefaultValuesStruct,
@@ -17070,7 +17029,10 @@ export namespace DirectRecursiveStruct {
       } satisfies DirectRecursiveStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DirectRecursiveStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _directRecursiveStruct: DirectRecursiveStruct,
@@ -17719,7 +17681,10 @@ export namespace DiscriminatedUnionMember1 {
       } satisfies DiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _discriminatedUnionMember1: DiscriminatedUnionMember1,
@@ -18368,7 +18333,10 @@ export namespace DiscriminatedUnionMember2 {
       } satisfies DiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _discriminatedUnionMember2: DiscriminatedUnionMember2,
@@ -19044,7 +19012,10 @@ export namespace DisplayStruct {
       } satisfies DisplayStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DisplayStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _displayStruct: DisplayStruct,
@@ -19599,7 +19570,10 @@ export namespace ExplicitFromToRdfTypesStruct {
       } satisfies ExplicitFromToRdfTypesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ExplicitFromToRdfTypesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _explicitFromToRdfTypesStruct: ExplicitFromToRdfTypesStruct,
@@ -20129,7 +20103,10 @@ export namespace ExplicitRdfTypeStruct {
       } satisfies ExplicitRdfTypeStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ExplicitRdfTypeStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _explicitRdfTypeStruct: ExplicitRdfTypeStruct,
@@ -20694,7 +20671,10 @@ export namespace FlattenDiscriminatedUnionMember3 {
       } satisfies FlattenDiscriminatedUnionMember3.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    FlattenDiscriminatedUnionMember3
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _flattenDiscriminatedUnionMember3: FlattenDiscriminatedUnionMember3,
@@ -21195,7 +21175,10 @@ export namespace HasValuesStruct {
       } satisfies HasValuesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    HasValuesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _hasValuesStruct: HasValuesStruct,
@@ -21832,7 +21815,10 @@ export namespace IgnoredPropertiesStruct {
       } satisfies IgnoredPropertiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    IgnoredPropertiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _ignoredPropertiesStruct: IgnoredPropertiesStruct,
@@ -22387,7 +22373,10 @@ export namespace IndirectRecursiveStruct {
       } satisfies IndirectRecursiveStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    IndirectRecursiveStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _indirectRecursiveStruct: IndirectRecursiveStruct,
@@ -22941,7 +22930,10 @@ export namespace IndirectRecursiveStructHelper {
       } satisfies IndirectRecursiveStructHelper.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    IndirectRecursiveStructHelper
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _indirectRecursiveStructHelper: IndirectRecursiveStructHelper,
@@ -23546,7 +23538,13 @@ export namespace InIdentifierStruct {
       } satisfies InIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    NamedNode<
+      | "http://example.com/InIdentifierStructInstance1"
+      | "http://example.com/InIdentifierStructInstance2"
+    >,
+    InIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _inIdentifierStruct: InIdentifierStruct,
@@ -24681,7 +24679,10 @@ export namespace InPropertiesStruct {
       } satisfies InPropertiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    InPropertiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _inPropertiesStruct: InPropertiesStruct,
@@ -25227,7 +25228,10 @@ export namespace IriIdentifierStruct {
       } satisfies IriIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    NamedNode,
+    IriIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _iriIdentifierStruct: IriIdentifierStruct,
@@ -26792,7 +26796,10 @@ export namespace LangStringStruct {
       } satisfies LangStringStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LangStringStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _langStringStruct: LangStringStruct,
@@ -27257,7 +27264,10 @@ export namespace LanguageInStruct {
       } satisfies LanguageInStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LanguageInStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _languageInStruct: LanguageInStruct,
@@ -27821,7 +27831,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       } satisfies LazilyResolvedBlankNodeOrIriIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LazilyResolvedBlankNodeOrIriIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazilyResolvedBlankNodeOrIriIdentifierStruct: LazilyResolvedBlankNodeOrIriIdentifierStruct,
@@ -28376,7 +28389,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       } satisfies LazilyResolvedDiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LazilyResolvedDiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazilyResolvedDiscriminatedUnionMember1: LazilyResolvedDiscriminatedUnionMember1,
@@ -28929,7 +28945,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       } satisfies LazilyResolvedDiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LazilyResolvedDiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazilyResolvedDiscriminatedUnionMember2: LazilyResolvedDiscriminatedUnionMember2,
@@ -29365,7 +29384,10 @@ export namespace LazilyResolvedIriIdentifierStruct {
       } satisfies LazilyResolvedIriIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    NamedNode,
+    LazilyResolvedIriIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazilyResolvedIriIdentifierStruct: LazilyResolvedIriIdentifierStruct,
@@ -31871,7 +31893,10 @@ export namespace LazyPropertiesStruct {
       } satisfies LazyPropertiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LazyPropertiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazyPropertiesStruct: LazyPropertiesStruct,
@@ -33340,7 +33365,10 @@ export namespace ListSetsStruct {
       } satisfies ListSetsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ListSetsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _listSetsStruct: ListSetsStruct,
@@ -34597,7 +34625,10 @@ export namespace ListsStruct {
       } satisfies ListsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ListsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _listsStruct: ListsStruct,
@@ -35441,7 +35472,10 @@ export namespace MutablePropertiesStruct {
       } satisfies MutablePropertiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    MutablePropertiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _mutablePropertiesStruct: MutablePropertiesStruct,
@@ -36358,7 +36392,10 @@ export namespace NamedTypesStruct {
       } satisfies NamedTypesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NamedTypesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _namedTypesStruct: NamedTypesStruct,
@@ -36895,7 +36932,10 @@ export namespace NewName {
       } satisfies NewName.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NewName
+  >(_toRdfResource);
 
   export const toStringRecord: (_newName: NewName) => Record<string, string> = (
     _newName,
@@ -37951,7 +37991,10 @@ export namespace NodeKindsStruct {
       } satisfies NodeKindsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NodeKindsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _nodeKindsStruct: NodeKindsStruct,
@@ -38370,7 +38413,10 @@ export namespace NonClassStruct {
       } satisfies NonClassStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NonClassStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _nonClassStruct: NonClassStruct,
@@ -38835,7 +38881,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       } satisfies NoRdfTypeDiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NoRdfTypeDiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _noRdfTypeDiscriminatedUnionMember1: NoRdfTypeDiscriminatedUnionMember1,
@@ -39302,7 +39351,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       } satisfies NoRdfTypeDiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NoRdfTypeDiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _noRdfTypeDiscriminatedUnionMember2: NoRdfTypeDiscriminatedUnionMember2,
@@ -41577,7 +41629,10 @@ export namespace NumericsStruct {
       } satisfies NumericsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NumericsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _numericsStruct: NumericsStruct,
@@ -42122,7 +42177,10 @@ export namespace OrderedStruct {
       } satisfies OrderedStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    OrderedStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _orderedStruct: OrderedStruct,
@@ -42656,7 +42714,10 @@ export namespace PartialDiscriminatedUnionMember1 {
       } satisfies PartialDiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PartialDiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _partialDiscriminatedUnionMember1: PartialDiscriminatedUnionMember1,
@@ -43192,7 +43253,10 @@ export namespace PartialDiscriminatedUnionMember2 {
       } satisfies PartialDiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PartialDiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _partialDiscriminatedUnionMember2: PartialDiscriminatedUnionMember2,
@@ -43611,7 +43675,10 @@ export namespace PartialStruct {
       } satisfies PartialStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PartialStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _partialStruct: PartialStruct,
@@ -44363,7 +44430,10 @@ export namespace PropertyCardinalitiesStruct {
       } satisfies PropertyCardinalitiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PropertyCardinalitiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _propertyCardinalitiesStruct: PropertyCardinalitiesStruct,
@@ -45176,7 +45246,10 @@ export namespace PropertyNamesStruct {
       } satisfies PropertyNamesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PropertyNamesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _propertyNamesStruct: PropertyNamesStruct,
@@ -45837,7 +45910,10 @@ export namespace PropertyPathsStruct {
       } satisfies PropertyPathsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PropertyPathsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _propertyPathsStruct: PropertyPathsStruct,
@@ -46423,7 +46499,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       } satisfies RecursiveDiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    RecursiveDiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _recursiveDiscriminatedUnionMember1: RecursiveDiscriminatedUnionMember1,
@@ -47009,7 +47088,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       } satisfies RecursiveDiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    RecursiveDiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _recursiveDiscriminatedUnionMember2: RecursiveDiscriminatedUnionMember2,
@@ -47527,7 +47609,10 @@ export namespace TargetClassStruct {
       } satisfies TargetClassStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    TargetClassStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _targetClassStruct: TargetClassStruct,
@@ -49239,7 +49324,10 @@ export namespace TermsStruct {
       } satisfies TermsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    TermsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _termsStruct: TermsStruct,
@@ -57573,7 +57661,10 @@ export namespace UnionDiscriminantsStruct {
       } satisfies UnionDiscriminantsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    UnionDiscriminantsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _unionDiscriminantsStruct: UnionDiscriminantsStruct,
@@ -62636,35 +62727,6 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly AnonymousTypesStruct[]>>;
 
-  blankNodeIdentifierStruct(
-    identifier: BlankNodeIdentifierStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BlankNodeIdentifierStruct>>;
-
-  blankNodeIdentifierStructCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        BlankNodeIdentifierStruct.Filter,
-        BlankNodeIdentifierStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  blankNodeIdentifierStructIdentifiers(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct.Identifier[]>>;
-
-  blankNodeIdentifierStructs(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct[]>>;
-
   blankNodeOrIriIdentifierStruct(
     identifier: BlankNodeOrIriIdentifierStruct.Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -64316,100 +64378,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         fromRdfResource: AnonymousTypesStruct.fromRdfResource,
         fromRdfTypes: [
           AnonymousTypesStruct.schema.properties.$rdfType.fromRdfType,
-        ],
-      },
-      query,
-    );
-  }
-
-  async blankNodeIdentifierStruct(
-    identifier: BlankNodeIdentifierStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BlankNodeIdentifierStruct>> {
-    return this.blankNodeIdentifierStructSync(identifier, options);
-  }
-
-  blankNodeIdentifierStructSync(
-    identifier: BlankNodeIdentifierStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, BlankNodeIdentifierStruct> {
-    return this.blankNodeIdentifierStructsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async blankNodeIdentifierStructCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        BlankNodeIdentifierStruct.Filter,
-        BlankNodeIdentifierStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.blankNodeIdentifierStructCountSync(query);
-  }
-
-  blankNodeIdentifierStructCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        BlankNodeIdentifierStruct.Filter,
-        BlankNodeIdentifierStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.blankNodeIdentifierStructsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async blankNodeIdentifierStructIdentifiers(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct.Identifier[]>> {
-    return this.blankNodeIdentifierStructIdentifiersSync(query);
-  }
-
-  blankNodeIdentifierStructIdentifiersSync(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Either<Error, readonly BlankNodeIdentifierStruct.Identifier[]> {
-    return this.blankNodeIdentifierStructsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async blankNodeIdentifierStructs(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct[]>> {
-    return this.blankNodeIdentifierStructsSync(query);
-  }
-
-  blankNodeIdentifierStructsSync(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Either<Error, readonly BlankNodeIdentifierStruct[]> {
-    return this.#objectsSync<
-      BlankNodeIdentifierStruct,
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >(
-      {
-        filter: BlankNodeIdentifierStruct.filter,
-        fromRdfResource: BlankNodeIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [
-          BlankNodeIdentifierStruct.schema.properties.$rdfType.fromRdfType,
         ],
       },
       query,
@@ -69782,58 +69750,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       AnonymousTypesStruct.Filter,
       AnonymousTypesStruct.Identifier
     >(AnonymousTypesStruct, query);
-  }
-
-  async blankNodeIdentifierStruct(
-    identifier: BlankNodeIdentifierStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BlankNodeIdentifierStruct>> {
-    return (
-      await this.blankNodeIdentifierStructs({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async blankNodeIdentifierStructCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        BlankNodeIdentifierStruct.Filter,
-        BlankNodeIdentifierStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >(BlankNodeIdentifierStruct, query);
-  }
-
-  async blankNodeIdentifierStructIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct.Identifier[]>> {
-    return this.#objectIdentifiers<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >(BlankNodeIdentifierStruct, query);
-  }
-
-  async blankNodeIdentifierStructs(
-    query?: $SparqlObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct[]>> {
-    return this.#objects<
-      BlankNodeIdentifierStruct,
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >(BlankNodeIdentifierStruct, query);
   }
 
   async blankNodeOrIriIdentifierStruct(
