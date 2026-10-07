@@ -2,9 +2,9 @@ import { imp } from "./ts-poet-wrapper.js";
 
 export class Imports {
   readonly BigDecimal = imp("Decimal:BigDecimal@decimal.js");
-  readonly BlankNode = imp("BlankNode@@rdfjs/types");
+  readonly BlankNode = imp("t:BlankNode@@rdfjs/types");
   readonly dataFactory = imp("dataFactory=@rdfx/data-factory");
-  readonly DatasetCore = imp("DatasetCore@@rdfjs/types");
+  readonly DatasetCore = imp("t:DatasetCore@@rdfjs/types");
   readonly datasetFactory = imp("datasetFactory@@rdfx/collection");
   readonly Either = imp("Either@purify-ts");
   readonly EitherAsync = imp("EitherAsync@purify-ts");
@@ -22,16 +22,16 @@ export class Imports {
   readonly GraphQLString = imp("GraphQLString@graphql");
   readonly GraphQLUnionType = imp("GraphQLUnionType@graphql");
   readonly Left = imp("Left@purify-ts");
-  readonly Literal = imp("Literal@@rdfjs/types");
+  readonly Literal = imp("t:Literal@@rdfjs/types");
   readonly LiteralFactory = imp("LiteralFactory@@rdfx/literal");
-  readonly Logger = imp("Logger@@rdfx/logger");
+  readonly Logger = imp("t:Logger@@rdfx/logger");
   readonly Maybe = imp("Maybe@purify-ts");
-  readonly NamedNode = imp("NamedNode@@rdfjs/types");
+  readonly NamedNode = imp("t:NamedNode@@rdfjs/types");
   readonly NonEmptyList = imp("NonEmptyList@purify-ts");
   readonly NTriplesIdentifier = imp("NTriplesIdentifier@@rdfx/string");
   readonly NTriplesTerm = imp("NTriplesTerm@@rdfx/string");
-  readonly Quad = imp("Quad@@rdfjs/types");
-  readonly Quad_Graph = imp("Quad_Graph@@rdfjs/types");
+  readonly Quad = imp("t:Quad@@rdfjs/types");
+  readonly Quad_Graph = imp("t:Quad_Graph@@rdfjs/types");
   readonly RdfxResourcePropertyPath = imp(
     "PropertyPath:RdfxResourcePropertyPath@@rdfx/resource",
   );
@@ -39,6 +39,6 @@ export class Imports {
   readonly ResourceSet = imp("ResourceSet@@rdfx/resource");
   readonly Right = imp("Right@purify-ts");
   readonly sparqljs = imp("sparqljs*sparqljs");
-  readonly Variable = imp("Variable@@rdfjs/types");
+  readonly Variable = imp("t:Variable@@rdfjs/types");
   readonly z = imp("z@zod");
 }
