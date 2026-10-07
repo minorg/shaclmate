@@ -2,6 +2,7 @@ import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { ResourceSet } from "@rdfx/resource";
 import {
+  AnonymousObject,
   LazyObject,
   RootObject,
   UnionMember1,
@@ -29,9 +30,9 @@ for (let i = 0; i < 4; i++) {
       $identifier: dataFactory.namedNode(`http://example.com/rootObject${i}`),
       lazyObjectSetProperty: [lazyObject],
       optionalLazyProperty: lazyObject,
-      optionalObjectProperty: {
+      optionalObjectProperty: AnonymousObject.createUnsafe({
         requiredStringProperty: "required string (nested)",
-      },
+      }),
       optionalStringProperty: "optional string (root)",
       requiredStringProperty: "required string (root)",
     }),
