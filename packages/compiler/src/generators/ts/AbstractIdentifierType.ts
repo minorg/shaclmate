@@ -27,7 +27,7 @@ export abstract class AbstractIdentifierType<
   override graphqlResolveExpression({
     variables: { value },
   }: Parameters<AbstractTermType["graphqlResolveExpression"]>[0]): Code {
-    return code`${this.reusables.imports.NTriplesTerm}.stringify(${value})`;
+    return code`${this.reusables.imports.NTriplesIdentifier}.stringify(${value})`;
   }
 
   override toLoggableExpression({

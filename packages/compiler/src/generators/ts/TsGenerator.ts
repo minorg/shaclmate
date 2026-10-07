@@ -170,7 +170,9 @@ export class TsGenerator implements Generator {
 
     if (configuration.features.has("GraphQL")) {
       const graphqlNamedObjectTypes = tsNamedObjectTypes.filter(
-        (tsNamedObjectType) => !tsNamedObjectType.synthetic,
+        (tsNamedObjectType) =>
+          tsNamedObjectType.identifierProperty.isJust() &&
+          !tsNamedObjectType.synthetic,
       );
       const graphqlNamedObjectDiscriminatedUnionTypes =
         tsNamedObjectDiscriminatedUnionTypes;
@@ -216,7 +218,9 @@ export class TsGenerator implements Generator {
       logger: this.logger,
       namedObjectTypes: namedObjectTypes.filter(
         (namedObjectType) =>
-          !namedObjectType.extern && !namedObjectType.synthetic,
+          namedObjectType.identifierProperty.isJust() &&
+          !namedObjectType.extern &&
+          !namedObjectType.synthetic,
       ),
       namedObjectDiscriminatedUnionTypes,
       reusables,

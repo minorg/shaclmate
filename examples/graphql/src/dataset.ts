@@ -30,9 +30,6 @@ for (let i = 0; i < 4; i++) {
       lazyObjectSetProperty: [lazyObject],
       optionalLazyProperty: lazyObject,
       optionalObjectProperty: {
-        $identifier: dataFactory.namedNode(
-          `http://example.com/rootObject${i}/nestedObject`,
-        ),
         requiredStringProperty: "required string (nested)",
       },
       optionalStringProperty: "optional string (root)",

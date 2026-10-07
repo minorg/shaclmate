@@ -635,7 +635,7 @@ export class ObjectType extends AbstractType {
         code`export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}> = ${ObjectType_toRdfResourceFunctionExpression.call(this)};`;
 
       staticModuleDeclarations["toRdfResource"] =
-        code`export const toRdfResource = ${this.reusables.snippets.wrap_ToRdfResourceFunction}(_toRdfResource);`;
+        code`export const toRdfResource = ${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(_toRdfResource);`;
     }
 
     // toString / toStringRecord

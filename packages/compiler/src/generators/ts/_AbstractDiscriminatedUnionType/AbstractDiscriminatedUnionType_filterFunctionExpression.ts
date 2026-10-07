@@ -11,7 +11,7 @@ ${joinCode([
   ...this.identifierProperty
     .map(
       (identifierProperty) => code`\
-if (filter.${identifierProperty.name} !== undefined && !${identifierProperty.type.filterFunction}(filter.${identifierProperty.name}, value.${identifierProperty.name})) {
+if (filter.${identifierProperty.name} !== undefined && !${identifierProperty.type.filterFunction}(filter.${identifierProperty.name}, value.${identifierProperty.name}())) {
   return false;
 }`,
     )

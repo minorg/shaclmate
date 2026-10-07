@@ -76,7 +76,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.reusables.imports.NTriplesTerm}.stringify(source.${this.name}())`,
+      resolve: code`(source) => ${this.reusables.imports.NTriplesIdentifier}.stringify(source.${this.name}())`,
       type: this.type.graphqlType.expression,
     });
   }

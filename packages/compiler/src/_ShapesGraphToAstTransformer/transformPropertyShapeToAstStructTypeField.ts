@@ -75,13 +75,11 @@ function synthesizePartialAstStructType(
   {
     identifierType,
   }: {
-    identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
+    identifierType: ast.IdentifierType | ast.IriType;
   },
 ): ast.StructType {
   let syntheticName: string;
   switch (identifierType.kind) {
-    case "BlankNode":
-      throw new Error("should never happen");
     case "Identifier":
       syntheticName = "DefaultPartial";
       break;
@@ -315,7 +313,6 @@ export function transformPropertyShapeToAstStructTypeField(
 
       let astPartialItemType: ast.StructType | ast.StructDiscriminatedUnionType;
       switch (astItemType.kind) {
-        case "BlankNode":
         case "Identifier":
         case "Iri":
           astPartialItemType = synthesizePartialAstStructType.call(this, {

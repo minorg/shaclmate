@@ -184,12 +184,14 @@ export function transformShapeToAstStructType(
         tsImports: nodeShape.tsImports,
       });
 
-      structType.addField(
-        new ast.StructType.IdentifierField({
-          structType,
-          type: identifierType,
-        }),
-      );
+      if (identifierType.kind !== "BlankNode") {
+        structType.addField(
+          new ast.StructType.IdentifierField({
+            structType,
+            type: identifierType,
+          }),
+        );
+      }
 
       this.cachedAstTypesByShapeIdentifier.set(
         nodeShape.$identifier(),
