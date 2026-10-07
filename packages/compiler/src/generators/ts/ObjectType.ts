@@ -626,7 +626,7 @@ export class ObjectType extends AbstractType {
 
     if (this.configuration.features.has("Object.toLoggable")) {
       staticModuleDeclarations[`${syntheticNamePrefix}toLoggable`] =
-        code`export const ${syntheticNamePrefix}toLoggable = (${this.thisVariable}: ${this.expression}) => ${this.toLoggableRecordExpression({ variables: { value: this.thisVariable } })});`;
+        code`export const ${syntheticNamePrefix}toLoggable = (${this.thisVariable}: ${this.expression})${this.recursive ? code`: any` : code``} => ${this.toLoggableRecordExpression({ variables: { value: this.thisVariable } })};`;
     }
 
     // toRdfResource

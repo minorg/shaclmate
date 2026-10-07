@@ -3910,6 +3910,12 @@ export namespace $DefaultPartial {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_defaultPartial: $DefaultPartial) =>
+    $compactRecord({
+      $identifier: _defaultPartial.$identifier().value,
+      $type: "DefaultPartial",
+    });
+
   export const $toString: (_defaultPartial: $DefaultPartial) => string = (
     _defaultPartial,
   ) => `$DefaultPartial(${JSON.stringify(toStringRecord(_defaultPartial))})`;
@@ -4254,6 +4260,12 @@ export namespace $NamedDefaultPartial {
   > = (parameters) => {
     return parameters.resource;
   };
+
+  export const $toLoggable = (_namedDefaultPartial: $NamedDefaultPartial) =>
+    $compactRecord({
+      $identifier: _namedDefaultPartial.$identifier().value,
+      $type: "NamedDefaultPartial",
+    });
 
   export const $toString: (
     _namedDefaultPartial: $NamedDefaultPartial,
@@ -4772,6 +4784,20 @@ export namespace AnonymousTypesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_anonymousTypesStruct: AnonymousTypesStruct) =>
+    $compactRecord({
+      $identifier: _anonymousTypesStruct.$identifier().value,
+      $type: "AnonymousTypesStruct",
+      anonymousStruct: _anonymousTypesStruct.anonymousStruct
+        .map((item) =>
+          $compactRecord({
+            $identifier: item.$identifier().value,
+            anonymousStructString: item.anonymousStructString,
+          }),
+        )
+        .extract(),
+    });
 
   export const $toString: (
     _anonymousTypesStruct: AnonymousTypesStruct,
@@ -5614,7 +5640,7 @@ export namespace AnonymousTypesStruct {
 }
 
 /**
- * Struct node shape that can only have a blank node as an identifier
+ * Struct node shape that can only have a blank node as an identifier. This generates code without an identifier property.
  */
 export type BlankNodeIdentifierStruct = {
   readonly $type: "BlankNodeIdentifierStruct";
@@ -5676,6 +5702,17 @@ export namespace BlankNodeIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _blankNodeIdentifierStruct: BlankNodeIdentifierStruct,
+  ) =>
+    $compactRecord({
+      $type: "BlankNodeIdentifierStruct",
+      blankNodeIdentifierString:
+        _blankNodeIdentifierStruct.blankNodeIdentifierString
+          .map((item) => item)
+          .extract(),
+    });
 
   export const $toString: (
     _blankNodeIdentifierStruct: BlankNodeIdentifierStruct,
@@ -5935,7 +5972,7 @@ export namespace BlankNodeIdentifierStruct {
         })
         .meta({
           description:
-            "Struct node shape that can only have a blank node as an identifier",
+            "Struct node shape that can only have a blank node as an identifier. This generates code without an identifier property.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -6193,6 +6230,18 @@ export namespace BlankNodeOrIriIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _blankNodeOrIriIdentifierStruct: BlankNodeOrIriIdentifierStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _blankNodeOrIriIdentifierStruct.$identifier().value,
+      $type: "BlankNodeOrIriIdentifierStruct",
+      blankNodeOrIriIdentifierString:
+        _blankNodeOrIriIdentifierStruct.blankNodeOrIriIdentifierString
+          .map((item) => item)
+          .extract(),
+    });
 
   export const $toString: (
     _blankNodeOrIriIdentifierStruct: BlankNodeOrIriIdentifierStruct,
@@ -6882,6 +6931,29 @@ export namespace ClassConstraintsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _classConstraintsStruct: ClassConstraintsStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _classConstraintsStruct.$identifier().value,
+      $type: "ClassConstraintsStruct",
+      iriClass: _classConstraintsStruct.iriClass
+        .map((item) => item.value)
+        .extract(),
+      multiClass: _classConstraintsStruct.multiClass
+        .map((item) => item.value)
+        .extract(),
+      nodeClass1: _classConstraintsStruct.nodeClass1
+        .map((item) => NonClassStruct.$toLoggable(item))
+        .extract(),
+      nodeClass2: _classConstraintsStruct.nodeClass2
+        .map((item) => PartialStruct.$toLoggable(item))
+        .extract(),
+      singleClass: _classConstraintsStruct.singleClass
+        .map((item) => item.value)
+        .extract(),
+    });
 
   export const $toString: (
     _classConstraintsStruct: ClassConstraintsStruct,
@@ -8059,6 +8131,145 @@ export namespace ConvertibleTypesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _convertibleTypesStruct: ConvertibleTypesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _convertibleTypesStruct.$identifier().value,
+      $type: "ConvertibleTypesStruct",
+      convertibleIri: _convertibleTypesStruct.convertibleIri.value,
+      convertibleIriNonEmptySet:
+        _convertibleTypesStruct.convertibleIriNonEmptySet.map(
+          (item) => item.value,
+        ),
+      convertibleIriOption: _convertibleTypesStruct.convertibleIriOption
+        .map((item) => item.value)
+        .extract(),
+      convertibleIriSet: _convertibleTypesStruct.convertibleIriSet.map(
+        (item) => item.value,
+      ),
+      convertibleLiteral: {
+        "@language":
+          _convertibleTypesStruct.convertibleLiteral.language.length > 0
+            ? _convertibleTypesStruct.convertibleLiteral.language
+            : undefined,
+        "@type":
+          _convertibleTypesStruct.convertibleLiteral.datatype.value !==
+          "http://www.w3.org/2001/XMLSchema#string"
+            ? _convertibleTypesStruct.convertibleLiteral.datatype.value
+            : undefined,
+        "@value": _convertibleTypesStruct.convertibleLiteral.value,
+      },
+      convertibleLiteralNonEmptySet:
+        _convertibleTypesStruct.convertibleLiteralNonEmptySet.map((item) => ({
+          "@language": item.language.length > 0 ? item.language : undefined,
+          "@type":
+            item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+              ? item.datatype.value
+              : undefined,
+          "@value": item.value,
+        })),
+      convertibleLiteralOption: _convertibleTypesStruct.convertibleLiteralOption
+        .map((item) => ({
+          "@language": item.language.length > 0 ? item.language : undefined,
+          "@type":
+            item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+              ? item.datatype.value
+              : undefined,
+          "@value": item.value,
+        }))
+        .extract(),
+      convertibleLiteralSet: _convertibleTypesStruct.convertibleLiteralSet.map(
+        (item) => ({
+          "@language": item.language.length > 0 ? item.language : undefined,
+          "@type":
+            item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+              ? item.datatype.value
+              : undefined,
+          "@value": item.value,
+        }),
+      ),
+      convertibleTerm:
+        _convertibleTypesStruct.convertibleTerm.termType === "Literal"
+          ? {
+              "@language":
+                _convertibleTypesStruct.convertibleTerm.language.length > 0
+                  ? _convertibleTypesStruct.convertibleTerm.language
+                  : undefined,
+              "@type":
+                _convertibleTypesStruct.convertibleTerm.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? _convertibleTypesStruct.convertibleTerm.datatype.value
+                  : undefined,
+              "@value": _convertibleTypesStruct.convertibleTerm.value,
+              termType: "Literal" as const,
+            }
+          : _convertibleTypesStruct.convertibleTerm.termType === "NamedNode"
+            ? {
+                "@id": _convertibleTypesStruct.convertibleTerm.value,
+                termType: "NamedNode" as const,
+              }
+            : {
+                "@id": `_:${_convertibleTypesStruct.convertibleTerm.value}`,
+                termType: "BlankNode" as const,
+              },
+      convertibleTermNonEmptySet:
+        _convertibleTypesStruct.convertibleTermNonEmptySet.map((item) =>
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+                termType: "Literal" as const,
+              }
+            : item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+        ),
+      convertibleTermOption: _convertibleTypesStruct.convertibleTermOption
+        .map((item) =>
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+                termType: "Literal" as const,
+              }
+            : item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+        )
+        .extract(),
+      convertibleTermSet: _convertibleTypesStruct.convertibleTermSet.map(
+        (item) =>
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+                termType: "Literal" as const,
+              }
+            : item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+      ),
+    });
 
   export const $toString: (
     _convertibleTypesStruct: ConvertibleTypesStruct,
@@ -11453,6 +11664,91 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _datatypeDiscriminatedUnionsStruct: DatatypeDiscriminatedUnionsStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _datatypeDiscriminatedUnionsStruct.$identifier().value,
+      $type: "DatatypeDiscriminatedUnionsStruct",
+      dateOrDateTime: ((
+        value:
+          | { $type: "date"; value: Date }
+          | { $type: "dateTime"; value: Date },
+      ) => value.value.toISOString())(
+        _datatypeDiscriminatedUnionsStruct.dateOrDateTime,
+      ),
+      dateOrString: ((value: Date | string) => {
+        if (typeof value === "object") {
+          return value.toISOString();
+        }
+        if (typeof value === "string") {
+          return value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.dateOrString),
+      dateTimeOrDate: ((
+        value:
+          | { $type: "dateTime"; value: Date }
+          | { $type: "date"; value: Date },
+      ) => value.value.toISOString())(
+        _datatypeDiscriminatedUnionsStruct.dateTimeOrDate,
+      ),
+      decimalOrString: ((value: BigDecimal | string) => {
+        if (typeof value === "object") {
+          return value.toFixed();
+        }
+        if (typeof value === "string") {
+          return value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.decimalOrString),
+      jsPrimitive: ((value: boolean | number | bigint | string) => value)(
+        _datatypeDiscriminatedUnionsStruct.jsPrimitive,
+      ),
+      langStringOrString: ((value: Literal | string) => {
+        if (typeof value === "object") {
+          return `${JSON.stringify(value.value)}@${value.language}`;
+        }
+        if (typeof value === "string") {
+          return value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.langStringOrString),
+      stringOrDate: ((value: string | Date) => {
+        if (typeof value === "string") {
+          return value;
+        }
+        if (typeof value === "object") {
+          return value.toISOString();
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.stringOrDate),
+      stringOrDecimal: ((value: string | BigDecimal) => {
+        if (typeof value === "string") {
+          return value;
+        }
+        if (typeof value === "object") {
+          return value.toFixed();
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.stringOrDecimal),
+      stringOrLangString: ((value: string | Literal) => {
+        if (typeof value === "string") {
+          return value;
+        }
+        if (typeof value === "object") {
+          return `${JSON.stringify(value.value)}@${value.language}`;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.stringOrLangString),
+    });
+
   export const $toString: (
     _datatypeDiscriminatedUnionsStruct: DatatypeDiscriminatedUnionsStruct,
   ) => string = (_datatypeDiscriminatedUnionsStruct) =>
@@ -14796,6 +15092,19 @@ export namespace DatesStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_datesStruct: DatesStruct) =>
+    $compactRecord({
+      $identifier: _datesStruct.$identifier().value,
+      $type: "DatesStruct",
+      date: _datesStruct.date.map((item) => item.toISOString()).extract(),
+      dateTime: _datesStruct.dateTime
+        .map((item) => item.toISOString())
+        .extract(),
+      dateTimeStamp: _datesStruct.dateTimeStamp
+        .map((item) => item.toISOString())
+        .extract(),
+    });
+
   export const $toString: (_datesStruct: DatesStruct) => string = (
     _datesStruct,
   ) => `DatesStruct(${JSON.stringify(toStringRecord(_datesStruct))})`;
@@ -15678,6 +15987,19 @@ export namespace DefaultValuesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_defaultValuesStruct: DefaultValuesStruct) =>
+    $compactRecord({
+      $identifier: _defaultValuesStruct.$identifier().value,
+      $type: "DefaultValuesStruct",
+      dateDefaultValue: _defaultValuesStruct.dateDefaultValue.toISOString(),
+      dateTimeDefaultValue:
+        _defaultValuesStruct.dateTimeDefaultValue.toISOString(),
+      falseBooleanDefaultValue: _defaultValuesStruct.falseBooleanDefaultValue,
+      numberDefaultValue: _defaultValuesStruct.numberDefaultValue,
+      stringDefaultValue: _defaultValuesStruct.stringDefaultValue,
+      trueBooleanDefaultValue: _defaultValuesStruct.trueBooleanDefaultValue,
+    });
 
   export const $toString: (
     _defaultValuesStruct: DefaultValuesStruct,
@@ -16603,6 +16925,17 @@ export namespace DirectRecursiveStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _directRecursiveStruct: DirectRecursiveStruct,
+  ): any =>
+    $compactRecord({
+      $identifier: _directRecursiveStruct.$identifier().value,
+      $type: "DirectRecursiveStruct",
+      directRecursive: _directRecursiveStruct.directRecursive
+        .map((item) => DirectRecursiveStruct.$toLoggable(item))
+        .extract(),
+    });
+
   export const $toString: (
     _directRecursiveStruct: DirectRecursiveStruct,
   ) => string = (_directRecursiveStruct) =>
@@ -17169,6 +17502,18 @@ export namespace DiscriminatedUnionMember1 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _discriminatedUnionMember1: DiscriminatedUnionMember1,
+  ) =>
+    $compactRecord({
+      $identifier: _discriminatedUnionMember1.$identifier().value,
+      $type: "DiscriminatedUnionMember1",
+      discriminatedUnionMember1Distinct:
+        _discriminatedUnionMember1.discriminatedUnionMember1Distinct,
+      discriminatedUnionMemberCommon:
+        _discriminatedUnionMember1.discriminatedUnionMemberCommon,
+    });
 
   export const $toString: (
     _discriminatedUnionMember1: DiscriminatedUnionMember1,
@@ -17821,6 +18166,18 @@ export namespace DiscriminatedUnionMember2 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _discriminatedUnionMember2: DiscriminatedUnionMember2,
+  ) =>
+    $compactRecord({
+      $identifier: _discriminatedUnionMember2.$identifier().value,
+      $type: "DiscriminatedUnionMember2",
+      discriminatedUnionMember2Distinct:
+        _discriminatedUnionMember2.discriminatedUnionMember2Distinct,
+      discriminatedUnionMemberCommon:
+        _discriminatedUnionMember2.discriminatedUnionMemberCommon,
+    });
 
   export const $toString: (
     _discriminatedUnionMember2: DiscriminatedUnionMember2,
@@ -18489,6 +18846,15 @@ export namespace DisplayStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_displayStruct: DisplayStruct) =>
+    $compactRecord({
+      $identifier: _displayStruct.$identifier().value,
+      $type: "DisplayStruct",
+      explicitFalseDisplay: _displayStruct.explicitFalseDisplay,
+      explicitTrueDisplay: _displayStruct.explicitTrueDisplay,
+      implicitFalseDisplay: _displayStruct.implicitFalseDisplay,
+    });
+
   export const $toString: (_displayStruct: DisplayStruct) => string = (
     _displayStruct,
   ) => `DisplayStruct(${JSON.stringify(toStringRecord(_displayStruct))})`;
@@ -19132,6 +19498,16 @@ export namespace ExplicitFromToRdfTypesStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _explicitFromToRdfTypesStruct: ExplicitFromToRdfTypesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _explicitFromToRdfTypesStruct.$identifier().value,
+      $type: "ExplicitFromToRdfTypesStruct",
+      explicitFromToRdfTypesString:
+        _explicitFromToRdfTypesStruct.explicitFromToRdfTypesString,
+    });
+
   export const $toString: (
     _explicitFromToRdfTypesStruct: ExplicitFromToRdfTypesStruct,
   ) => string = (_explicitFromToRdfTypesStruct) =>
@@ -19685,6 +20061,13 @@ export namespace ExplicitRdfTypeStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_explicitRdfTypeStruct: ExplicitRdfTypeStruct) =>
+    $compactRecord({
+      $identifier: _explicitRdfTypeStruct.$identifier().value,
+      $type: "ExplicitRdfTypeStruct",
+      explicitRdfTypeString: _explicitRdfTypeStruct.explicitRdfTypeString,
+    });
+
   export const $toString: (
     _explicitRdfTypeStruct: ExplicitRdfTypeStruct,
   ) => string = (_explicitRdfTypeStruct) =>
@@ -20225,6 +20608,16 @@ export namespace FlattenDiscriminatedUnionMember3 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _flattenDiscriminatedUnionMember3: FlattenDiscriminatedUnionMember3,
+  ) =>
+    $compactRecord({
+      $identifier: _flattenDiscriminatedUnionMember3.$identifier().value,
+      $type: "FlattenDiscriminatedUnionMember3",
+      flattenDiscriminatedUnionMember3String:
+        _flattenDiscriminatedUnionMember3.flattenDiscriminatedUnionMember3String,
+    });
 
   export const $toString: (
     _flattenDiscriminatedUnionMember3: FlattenDiscriminatedUnionMember3,
@@ -20777,6 +21170,14 @@ export namespace HasValuesStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_hasValuesStruct: HasValuesStruct) =>
+    $compactRecord({
+      $identifier: _hasValuesStruct.$identifier().value,
+      $type: "HasValuesStruct",
+      hasIriValue: _hasValuesStruct.hasIriValue.value,
+      hasLiteralValue: _hasValuesStruct.hasLiteralValue,
+    });
+
   export const $toString: (_hasValuesStruct: HasValuesStruct) => string = (
     _hasValuesStruct,
   ) => `HasValuesStruct(${JSON.stringify(toStringRecord(_hasValuesStruct))})`;
@@ -21314,6 +21715,19 @@ export namespace IgnoredPropertiesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _ignoredPropertiesStruct: IgnoredPropertiesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _ignoredPropertiesStruct.$identifier().value,
+      $type: "IgnoredPropertiesStruct",
+      severityDefaultProperty: _ignoredPropertiesStruct.severityDefaultProperty,
+      severityViolationProperty:
+        _ignoredPropertiesStruct.severityViolationProperty,
+      shaclmateIgnoreFalseProperty:
+        _ignoredPropertiesStruct.shaclmateIgnoreFalseProperty,
+    });
 
   export const $toString: (
     _ignoredPropertiesStruct: IgnoredPropertiesStruct,
@@ -21933,6 +22347,17 @@ export namespace IndirectRecursiveStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _indirectRecursiveStruct: IndirectRecursiveStruct,
+  ): any =>
+    $compactRecord({
+      $identifier: _indirectRecursiveStruct.$identifier().value,
+      $type: "IndirectRecursiveStruct",
+      indirectRecursiveHelper: _indirectRecursiveStruct.indirectRecursiveHelper
+        .map((item) => IndirectRecursiveStructHelper.$toLoggable(item))
+        .extract(),
+    });
+
   export const $toString: (
     _indirectRecursiveStruct: IndirectRecursiveStruct,
   ) => string = (_indirectRecursiveStruct) =>
@@ -22497,6 +22922,17 @@ export namespace IndirectRecursiveStructHelper {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _indirectRecursiveStructHelper: IndirectRecursiveStructHelper,
+  ): any =>
+    $compactRecord({
+      $identifier: _indirectRecursiveStructHelper.$identifier().value,
+      $type: "IndirectRecursiveStructHelper",
+      indirectRecursive: _indirectRecursiveStructHelper.indirectRecursive
+        .map((item) => IndirectRecursiveStruct.$toLoggable(item))
+        .extract(),
+    });
+
   export const $toString: (
     _indirectRecursiveStructHelper: IndirectRecursiveStructHelper,
   ) => string = (_indirectRecursiveStructHelper) =>
@@ -23047,6 +23483,15 @@ export namespace InIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_inIdentifierStruct: InIdentifierStruct) =>
+    $compactRecord({
+      $identifier: _inIdentifierStruct.$identifier().value,
+      $type: "InIdentifierStruct",
+      inIdentifierString: _inIdentifierStruct.inIdentifierString
+        .map((item) => item)
+        .extract(),
+    });
 
   export const $toString: (_inIdentifierStruct: InIdentifierStruct) => string =
     (_inIdentifierStruct) =>
@@ -23789,6 +24234,20 @@ export namespace InPropertiesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_inPropertiesStruct: InPropertiesStruct) =>
+    $compactRecord({
+      $identifier: _inPropertiesStruct.$identifier().value,
+      $type: "InPropertiesStruct",
+      inBooleans: _inPropertiesStruct.inBooleans.map((item) => item).extract(),
+      inDateTimes: _inPropertiesStruct.inDateTimes
+        .map((item) => item.toISOString())
+        .extract(),
+      inDoubles: _inPropertiesStruct.inDoubles.map((item) => item).extract(),
+      inIntegers: _inPropertiesStruct.inIntegers.map((item) => item).extract(),
+      inIris: _inPropertiesStruct.inIris.map((item) => item.value).extract(),
+      inStrings: _inPropertiesStruct.inStrings.map((item) => item).extract(),
+    });
 
   export const $toString: (_inPropertiesStruct: InPropertiesStruct) => string =
     (_inPropertiesStruct) =>
@@ -24797,6 +25256,15 @@ export namespace IriIdentifierStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_iriIdentifierStruct: IriIdentifierStruct) =>
+    $compactRecord({
+      $identifier: _iriIdentifierStruct.$identifier().value,
+      $type: "IriIdentifierStruct",
+      iriIdentifierString: _iriIdentifierStruct.iriIdentifierString
+        .map((item) => item)
+        .extract(),
+    });
+
   export const $toString: (
     _iriIdentifierStruct: IriIdentifierStruct,
   ) => string = (_iriIdentifierStruct) =>
@@ -25667,6 +26135,43 @@ export namespace LangStringStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_langStringStruct: LangStringStruct) =>
+    $compactRecord({
+      $identifier: _langStringStruct.$identifier().value,
+      $type: "LangStringStruct",
+      langString: _langStringStruct.langString
+        .map((item) => `${JSON.stringify(item.value)}@${item.language}`)
+        .extract(),
+      langStringOrString: _langStringStruct.langStringOrString
+        .map((item) =>
+          ((value: Literal | string) => {
+            if (typeof value === "object") {
+              return `${JSON.stringify(value.value)}@${value.language}`;
+            }
+            if (typeof value === "string") {
+              return value;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+      stringOrLangString: _langStringStruct.stringOrLangString
+        .map((item) =>
+          ((value: string | Literal) => {
+            if (typeof value === "string") {
+              return value;
+            }
+            if (typeof value === "object") {
+              return `${JSON.stringify(value.value)}@${value.language}`;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+    });
 
   export const $toString: (_langStringStruct: LangStringStruct) => string = (
     _langStringStruct,
@@ -26892,6 +27397,15 @@ export namespace LanguageInStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_languageInStruct: LanguageInStruct) =>
+    $compactRecord({
+      $identifier: _languageInStruct.$identifier().value,
+      $type: "LanguageInStruct",
+      languageIn: _languageInStruct.languageIn.map(
+        (item) => `${JSON.stringify(item.value)}@${item.language}`,
+      ),
+    });
+
   export const $toString: (_languageInStruct: LanguageInStruct) => string = (
     _languageInStruct,
   ) => `LanguageInStruct(${JSON.stringify(toStringRecord(_languageInStruct))})`;
@@ -27379,6 +27893,17 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _lazilyResolvedBlankNodeOrIriIdentifierStruct: LazilyResolvedBlankNodeOrIriIdentifierStruct,
+  ) =>
+    $compactRecord({
+      $identifier:
+        _lazilyResolvedBlankNodeOrIriIdentifierStruct.$identifier().value,
+      $type: "LazilyResolvedBlankNodeOrIriIdentifierStruct",
+      lazilyResolved:
+        _lazilyResolvedBlankNodeOrIriIdentifierStruct.lazilyResolved,
+    });
 
   export const $toString: (
     _lazilyResolvedBlankNodeOrIriIdentifierStruct: LazilyResolvedBlankNodeOrIriIdentifierStruct,
@@ -27950,6 +28475,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _lazilyResolvedDiscriminatedUnionMember1: LazilyResolvedDiscriminatedUnionMember1,
+  ) =>
+    $compactRecord({
+      $identifier: _lazilyResolvedDiscriminatedUnionMember1.$identifier().value,
+      $type: "LazilyResolvedDiscriminatedUnionMember1",
+      lazilyResolved: _lazilyResolvedDiscriminatedUnionMember1.lazilyResolved,
+    });
+
   export const $toString: (
     _lazilyResolvedDiscriminatedUnionMember1: LazilyResolvedDiscriminatedUnionMember1,
   ) => string = (_lazilyResolvedDiscriminatedUnionMember1) =>
@@ -28506,6 +29040,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _lazilyResolvedDiscriminatedUnionMember2: LazilyResolvedDiscriminatedUnionMember2,
+  ) =>
+    $compactRecord({
+      $identifier: _lazilyResolvedDiscriminatedUnionMember2.$identifier().value,
+      $type: "LazilyResolvedDiscriminatedUnionMember2",
+      lazilyResolved: _lazilyResolvedDiscriminatedUnionMember2.lazilyResolved,
+    });
+
   export const $toString: (
     _lazilyResolvedDiscriminatedUnionMember2: LazilyResolvedDiscriminatedUnionMember2,
   ) => string = (_lazilyResolvedDiscriminatedUnionMember2) =>
@@ -29042,6 +29585,15 @@ export namespace LazilyResolvedIriIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _lazilyResolvedIriIdentifierStruct: LazilyResolvedIriIdentifierStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _lazilyResolvedIriIdentifierStruct.$identifier().value,
+      $type: "LazilyResolvedIriIdentifierStruct",
+      lazilyResolved: _lazilyResolvedIriIdentifierStruct.lazilyResolved,
+    });
 
   export const $toString: (
     _lazilyResolvedIriIdentifierStruct: LazilyResolvedIriIdentifierStruct,
@@ -30120,6 +30672,54 @@ export namespace LazyPropertiesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_lazyPropertiesStruct: LazyPropertiesStruct) =>
+    $compactRecord({
+      $identifier: _lazyPropertiesStruct.$identifier().value,
+      $type: "LazyPropertiesStruct",
+      optionalLazyToResolvedBlankNodeOrIriIdentifier:
+        _lazyPropertiesStruct.optionalLazyToResolvedBlankNodeOrIriIdentifier.partial
+          .map((item) => $DefaultPartial.$toLoggable(item))
+          .extract(),
+      optionalLazyToResolvedDiscriminatedUnion:
+        _lazyPropertiesStruct.optionalLazyToResolvedDiscriminatedUnion.partial
+          .map((item) => $DefaultPartial.$toLoggable(item))
+          .extract(),
+      optionalLazyToResolvedIriIdentifier:
+        _lazyPropertiesStruct.optionalLazyToResolvedIriIdentifier.partial
+          .map((item) => $NamedDefaultPartial.$toLoggable(item))
+          .extract(),
+      optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
+        _lazyPropertiesStruct.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion.partial
+          .map((item) => PartialDiscriminatedUnion.$toLoggable(item))
+          .extract(),
+      optionalPartialToResolvedBlankNodeOrIriIdentifier:
+        _lazyPropertiesStruct.optionalPartialToResolvedBlankNodeOrIriIdentifier.partial
+          .map((item) => PartialStruct.$toLoggable(item))
+          .extract(),
+      optionalPartialToResolvedDiscriminatedUnion:
+        _lazyPropertiesStruct.optionalPartialToResolvedDiscriminatedUnion.partial
+          .map((item) => PartialStruct.$toLoggable(item))
+          .extract(),
+      requiredLazyToResolvedBlankNodeOrIriIdentifier:
+        $DefaultPartial.$toLoggable(
+          _lazyPropertiesStruct.requiredLazyToResolvedBlankNodeOrIriIdentifier
+            .partial,
+        ),
+      requiredPartialToResolvedBlankNodeOrIriIdentifier:
+        PartialStruct.$toLoggable(
+          _lazyPropertiesStruct
+            .requiredPartialToResolvedBlankNodeOrIriIdentifier.partial,
+        ),
+      setLazyToResolvedBlankNodeOrIriIdentifier:
+        _lazyPropertiesStruct.setLazyToResolvedBlankNodeOrIriIdentifier.partials.map(
+          (item) => $DefaultPartial.$toLoggable(item),
+        ),
+      setPartialToResolvedBlankNodeOrIriIdentifier:
+        _lazyPropertiesStruct.setPartialToResolvedBlankNodeOrIriIdentifier.partials.map(
+          (item) => PartialStruct.$toLoggable(item),
+        ),
+    });
 
   export const $toString: (
     _lazyPropertiesStruct: LazyPropertiesStruct,
@@ -32419,6 +33019,29 @@ export namespace ListSetsStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_listSetsStruct: ListSetsStruct) =>
+    $compactRecord({
+      $identifier: _listSetsStruct.$identifier().value,
+      $type: "ListSetsStruct",
+      listDiscriminatedUnionSet: _listSetsStruct.listDiscriminatedUnionSet.map(
+        (item) =>
+          ((value: readonly string[] | string) => {
+            if (typeof value === "object") {
+              return value.map((item) => item);
+            }
+            if (typeof value === "string") {
+              return value;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+      ),
+      listListSet: _listSetsStruct.listListSet.map((item) =>
+        item.map((item) => item.map((item) => item)),
+      ),
+      listSet: _listSetsStruct.listSet.map((item) => item.map((item) => item)),
+    });
+
   export const $toString: (_listSetsStruct: ListSetsStruct) => string = (
     _listSetsStruct,
   ) => `ListSetsStruct(${JSON.stringify(toStringRecord(_listSetsStruct))})`;
@@ -33818,6 +34441,24 @@ export namespace ListsStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_listsStruct: ListsStruct) =>
+    $compactRecord({
+      $identifier: _listsStruct.$identifier().value,
+      $type: "ListsStruct",
+      iriList: _listsStruct.iriList
+        .map((item) => item.map((item) => item.value))
+        .extract(),
+      stringList: _listsStruct.stringList
+        .map((item) => item.map((item) => item))
+        .extract(),
+      stringListList: _listsStruct.stringListList
+        .map((item) => item.map((item) => item.map((item) => item)))
+        .extract(),
+      structList: _listsStruct.structList
+        .map((item) => item.map((item) => NonClassStruct.$toLoggable(item)))
+        .extract(),
+    });
+
   export const $toString: (_listsStruct: ListsStruct) => string = (
     _listsStruct,
   ) => `ListsStruct(${JSON.stringify(toStringRecord(_listsStruct))})`;
@@ -34846,6 +35487,21 @@ export namespace MutablePropertiesStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _mutablePropertiesStruct: MutablePropertiesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _mutablePropertiesStruct.$identifier().value,
+      $type: "MutablePropertiesStruct",
+      mutableList: _mutablePropertiesStruct.mutableList
+        .map((item) => item.map((item) => item))
+        .extract(),
+      mutableSet: _mutablePropertiesStruct.mutableSet.map((item) => item),
+      mutableString: _mutablePropertiesStruct.mutableString
+        .map((item) => item)
+        .extract(),
+    });
+
   export const $toString: (
     _mutablePropertiesStruct: MutablePropertiesStruct,
   ) => string = (_mutablePropertiesStruct) =>
@@ -35713,6 +36369,21 @@ export namespace NamedTypesStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_namedTypesStruct: NamedTypesStruct) =>
+    $compactRecord({
+      $identifier: _namedTypesStruct.$identifier().value,
+      $type: "NamedTypesStruct",
+      namedDatatype: _namedTypesStruct.namedDatatype,
+      namedDiscriminatedUnion1: NamedDiscriminatedUnion1.$toLoggable(
+        _namedTypesStruct.namedDiscriminatedUnion1,
+      ),
+      namedDiscriminatedUnion2: NamedDiscriminatedUnion2.$toLoggable(
+        _namedTypesStruct.namedDiscriminatedUnion2,
+      ),
+      namedInIri: _namedTypesStruct.namedInIri.value,
+      namedInLiteral: _namedTypesStruct.namedInLiteral,
+    });
+
   export const $toString: (_namedTypesStruct: NamedTypesStruct) => string = (
     _namedTypesStruct,
   ) => `NamedTypesStruct(${JSON.stringify(toStringRecord(_namedTypesStruct))})`;
@@ -36506,6 +37177,13 @@ export namespace NewName {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_newName: NewName) =>
+    $compactRecord({
+      $identifier: _newName.$identifier().value,
+      $type: "NewName",
+      newNameString: _newName.newNameString.map((item) => item).extract(),
+    });
+
   export const $toString: (_newName: NewName) => string = (_newName) =>
     `NewName(${JSON.stringify(toStringRecord(_newName))})`;
 
@@ -37124,6 +37802,65 @@ export namespace NodeKindsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_nodeKindsStruct: NodeKindsStruct) =>
+    $compactRecord({
+      $identifier: _nodeKindsStruct.$identifier().value,
+      $type: "NodeKindsStruct",
+      blankNodeKind: _nodeKindsStruct.blankNodeKind.value,
+      blankNodeOrIriNodeKind: _nodeKindsStruct.blankNodeOrIriNodeKind.value,
+      blankNodeOrLiteralNodeKind:
+        _nodeKindsStruct.blankNodeOrLiteralNodeKind.termType === "Literal"
+          ? {
+              "@language":
+                _nodeKindsStruct.blankNodeOrLiteralNodeKind.language.length > 0
+                  ? _nodeKindsStruct.blankNodeOrLiteralNodeKind.language
+                  : undefined,
+              "@type":
+                _nodeKindsStruct.blankNodeOrLiteralNodeKind.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? _nodeKindsStruct.blankNodeOrLiteralNodeKind.datatype.value
+                  : undefined,
+              "@value": _nodeKindsStruct.blankNodeOrLiteralNodeKind.value,
+              termType: "Literal" as const,
+            }
+          : {
+              "@id": `_:${_nodeKindsStruct.blankNodeOrLiteralNodeKind.value}`,
+              termType: "BlankNode" as const,
+            },
+      iriNodeKind: _nodeKindsStruct.iriNodeKind.value,
+      iriOrLiteralNodeKind:
+        _nodeKindsStruct.iriOrLiteralNodeKind.termType === "Literal"
+          ? {
+              "@language":
+                _nodeKindsStruct.iriOrLiteralNodeKind.language.length > 0
+                  ? _nodeKindsStruct.iriOrLiteralNodeKind.language
+                  : undefined,
+              "@type":
+                _nodeKindsStruct.iriOrLiteralNodeKind.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? _nodeKindsStruct.iriOrLiteralNodeKind.datatype.value
+                  : undefined,
+              "@value": _nodeKindsStruct.iriOrLiteralNodeKind.value,
+              termType: "Literal" as const,
+            }
+          : {
+              "@id": _nodeKindsStruct.iriOrLiteralNodeKind.value,
+              termType: "NamedNode" as const,
+            },
+      literalNodeKind: {
+        "@language":
+          _nodeKindsStruct.literalNodeKind.language.length > 0
+            ? _nodeKindsStruct.literalNodeKind.language
+            : undefined,
+        "@type":
+          _nodeKindsStruct.literalNodeKind.datatype.value !==
+          "http://www.w3.org/2001/XMLSchema#string"
+            ? _nodeKindsStruct.literalNodeKind.datatype.value
+            : undefined,
+        "@value": _nodeKindsStruct.literalNodeKind.value,
+      },
+    });
 
   export const $toString: (_nodeKindsStruct: NodeKindsStruct) => string = (
     _nodeKindsStruct,
@@ -38081,6 +38818,13 @@ export namespace NonClassStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_nonClassStruct: NonClassStruct) =>
+    $compactRecord({
+      $identifier: _nonClassStruct.$identifier().value,
+      $type: "NonClassStruct",
+      nonClassString: _nonClassStruct.nonClassString,
+    });
+
   export const $toString: (_nonClassStruct: NonClassStruct) => string = (
     _nonClassStruct,
   ) => `NonClassStruct(${JSON.stringify(toStringRecord(_nonClassStruct))})`;
@@ -38512,6 +39256,16 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _noRdfTypeDiscriminatedUnionMember1: NoRdfTypeDiscriminatedUnionMember1,
+  ) =>
+    $compactRecord({
+      $identifier: _noRdfTypeDiscriminatedUnionMember1.$identifier().value,
+      $type: "NoRdfTypeDiscriminatedUnionMember1",
+      noRdfTypeDiscriminatedUnionMember1String:
+        _noRdfTypeDiscriminatedUnionMember1.noRdfTypeDiscriminatedUnionMember1String,
+    });
 
   export const $toString: (
     _noRdfTypeDiscriminatedUnionMember1: NoRdfTypeDiscriminatedUnionMember1,
@@ -38982,6 +39736,16 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _noRdfTypeDiscriminatedUnionMember2: NoRdfTypeDiscriminatedUnionMember2,
+  ) =>
+    $compactRecord({
+      $identifier: _noRdfTypeDiscriminatedUnionMember2.$identifier().value,
+      $type: "NoRdfTypeDiscriminatedUnionMember2",
+      noRdfTypeDiscriminatedUnionMember2String:
+        _noRdfTypeDiscriminatedUnionMember2.noRdfTypeDiscriminatedUnionMember2String,
+    });
 
   export const $toString: (
     _noRdfTypeDiscriminatedUnionMember2: NoRdfTypeDiscriminatedUnionMember2,
@@ -39838,6 +40602,50 @@ export namespace NumericsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_numericsStruct: NumericsStruct) =>
+    $compactRecord({
+      $identifier: _numericsStruct.$identifier().value,
+      $type: "NumericsStruct",
+      byteNumeric: _numericsStruct.byteNumeric.map((item) => item).extract(),
+      decimalNumeric: _numericsStruct.decimalNumeric
+        .map((item) => item.toFixed())
+        .extract(),
+      doubleNumeric: _numericsStruct.doubleNumeric
+        .map((item) => item)
+        .extract(),
+      floatNumeric: _numericsStruct.floatNumeric.map((item) => item).extract(),
+      integerNumeric: _numericsStruct.integerNumeric
+        .map((item) => item)
+        .extract(),
+      intNumeric: _numericsStruct.intNumeric.map((item) => item).extract(),
+      longNumeric: _numericsStruct.longNumeric.map((item) => item).extract(),
+      negativeIntegerNumeric: _numericsStruct.negativeIntegerNumeric
+        .map((item) => item)
+        .extract(),
+      nonNegativeIntegerNumeric: _numericsStruct.nonNegativeIntegerNumeric
+        .map((item) => item)
+        .extract(),
+      nonPositiveIntegerNumeric: _numericsStruct.nonPositiveIntegerNumeric
+        .map((item) => item)
+        .extract(),
+      positiveIntegerNumeric: _numericsStruct.positiveIntegerNumeric
+        .map((item) => item)
+        .extract(),
+      shortNumeric: _numericsStruct.shortNumeric.map((item) => item).extract(),
+      unsignedByteNumeric: _numericsStruct.unsignedByteNumeric
+        .map((item) => item)
+        .extract(),
+      unsignedIntNumeric: _numericsStruct.unsignedIntNumeric
+        .map((item) => item)
+        .extract(),
+      unsignedLongNumeric: _numericsStruct.unsignedLongNumeric
+        .map((item) => item)
+        .extract(),
+      unsignedShortNumeric: _numericsStruct.unsignedShortNumeric
+        .map((item) => item)
+        .extract(),
+    });
 
   export const $toString: (_numericsStruct: NumericsStruct) => string = (
     _numericsStruct,
@@ -41747,6 +42555,15 @@ export namespace OrderedStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_orderedStruct: OrderedStruct) =>
+    $compactRecord({
+      $identifier: _orderedStruct.$identifier().value,
+      $type: "OrderedStruct",
+      orderedC: _orderedStruct.orderedC,
+      orderedB: _orderedStruct.orderedB,
+      orderedA: _orderedStruct.orderedA,
+    });
+
   export const $toString: (_orderedStruct: OrderedStruct) => string = (
     _orderedStruct,
   ) => `OrderedStruct(${JSON.stringify(toStringRecord(_orderedStruct))})`;
@@ -42289,6 +43106,15 @@ export namespace PartialDiscriminatedUnionMember1 {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _partialDiscriminatedUnionMember1: PartialDiscriminatedUnionMember1,
+  ) =>
+    $compactRecord({
+      $identifier: _partialDiscriminatedUnionMember1.$identifier().value,
+      $type: "PartialDiscriminatedUnionMember1",
+      lazilyResolved: _partialDiscriminatedUnionMember1.lazilyResolved,
+    });
+
   export const $toString: (
     _partialDiscriminatedUnionMember1: PartialDiscriminatedUnionMember1,
   ) => string = (_partialDiscriminatedUnionMember1) =>
@@ -42828,6 +43654,15 @@ export namespace PartialDiscriminatedUnionMember2 {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _partialDiscriminatedUnionMember2: PartialDiscriminatedUnionMember2,
+  ) =>
+    $compactRecord({
+      $identifier: _partialDiscriminatedUnionMember2.$identifier().value,
+      $type: "PartialDiscriminatedUnionMember2",
+      lazilyResolved: _partialDiscriminatedUnionMember2.lazilyResolved,
+    });
+
   export const $toString: (
     _partialDiscriminatedUnionMember2: PartialDiscriminatedUnionMember2,
   ) => string = (_partialDiscriminatedUnionMember2) =>
@@ -43345,6 +44180,13 @@ export namespace PartialStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_partialStruct: PartialStruct) =>
+    $compactRecord({
+      $identifier: _partialStruct.$identifier().value,
+      $type: "PartialStruct",
+      lazilyResolved: _partialStruct.lazilyResolved,
+    });
+
   export const $toString: (_partialStruct: PartialStruct) => string = (
     _partialStruct,
   ) => `PartialStruct(${JSON.stringify(toStringRecord(_partialStruct))})`;
@@ -43843,6 +44685,20 @@ export namespace PropertyCardinalitiesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _propertyCardinalitiesStruct: PropertyCardinalitiesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _propertyCardinalitiesStruct.$identifier().value,
+      $type: "PropertyCardinalitiesStruct",
+      emptySet: _propertyCardinalitiesStruct.emptySet.map((item) => item),
+      nonEmptySet: _propertyCardinalitiesStruct.nonEmptySet.map((item) => item),
+      optional: _propertyCardinalitiesStruct.optional
+        .map((item) => item)
+        .extract(),
+      required: _propertyCardinalitiesStruct.required,
+    });
 
   export const $toString: (
     _propertyCardinalitiesStruct: PropertyCardinalitiesStruct,
@@ -44609,6 +45465,17 @@ export namespace PropertyNamesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_propertyNamesStruct: PropertyNamesStruct) =>
+    $compactRecord({
+      $identifier: _propertyNamesStruct.$identifier().value,
+      $type: "PropertyNamesStruct",
+      actualName1: _propertyNamesStruct.actualName1,
+      actualName2: _propertyNamesStruct.actualName2,
+      actualName3: _propertyNamesStruct.actualName3,
+      actualName4: _propertyNamesStruct.actualName4,
+      actualName5: _propertyNamesStruct.actualName5,
+    });
 
   export const $toString: (
     _propertyNamesStruct: PropertyNamesStruct,
@@ -45383,6 +46250,18 @@ export namespace PropertyPathsStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (_propertyPathsStruct: PropertyPathsStruct) =>
+    $compactRecord({
+      $identifier: _propertyPathsStruct.$identifier().value,
+      $type: "PropertyPathsStruct",
+      inversePath: _propertyPathsStruct.inversePath
+        .map((item) => item.value)
+        .extract(),
+      predicatePath: _propertyPathsStruct.predicatePath
+        .map((item) => item)
+        .extract(),
+    });
+
   export const $toString: (
     _propertyPathsStruct: PropertyPathsStruct,
   ) => string = (_propertyPathsStruct) =>
@@ -46045,6 +46924,18 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _recursiveDiscriminatedUnionMember1: RecursiveDiscriminatedUnionMember1,
+  ): any =>
+    $compactRecord({
+      $identifier: _recursiveDiscriminatedUnionMember1.$identifier().value,
+      $type: "RecursiveDiscriminatedUnionMember1",
+      recursiveDiscriminatedUnionMember1Property:
+        _recursiveDiscriminatedUnionMember1.recursiveDiscriminatedUnionMember1Property
+          .map((item) => RecursiveDiscriminatedUnion.$toLoggable(item))
+          .extract(),
+    });
+
   export const $toString: (
     _recursiveDiscriminatedUnionMember1: RecursiveDiscriminatedUnionMember1,
   ) => string = (_recursiveDiscriminatedUnionMember1) =>
@@ -46634,6 +47525,18 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _recursiveDiscriminatedUnionMember2: RecursiveDiscriminatedUnionMember2,
+  ): any =>
+    $compactRecord({
+      $identifier: _recursiveDiscriminatedUnionMember2.$identifier().value,
+      $type: "RecursiveDiscriminatedUnionMember2",
+      recursiveDiscriminatedUnionMember2Property:
+        _recursiveDiscriminatedUnionMember2.recursiveDiscriminatedUnionMember2Property
+          .map((item) => RecursiveDiscriminatedUnion.$toLoggable(item))
+          .extract(),
+    });
+
   export const $toString: (
     _recursiveDiscriminatedUnionMember2: RecursiveDiscriminatedUnionMember2,
   ) => string = (_recursiveDiscriminatedUnionMember2) =>
@@ -47201,6 +48104,13 @@ export namespace TargetClassStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_targetClassStruct: TargetClassStruct) =>
+    $compactRecord({
+      $identifier: _targetClassStruct.$identifier().value,
+      $type: "TargetClassStruct",
+      targetClassString: _targetClassStruct.targetClassString,
+    });
 
   export const $toString: (_targetClassStruct: TargetClassStruct) => string = (
     _targetClassStruct,
@@ -47941,6 +48851,60 @@ export namespace TermsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_termsStruct: TermsStruct) =>
+    $compactRecord({
+      $identifier: _termsStruct.$identifier().value,
+      $type: "TermsStruct",
+      blankNodeTerm: _termsStruct.blankNodeTerm
+        .map((item) => item.value)
+        .extract(),
+      booleanTerm: _termsStruct.booleanTerm.map((item) => item).extract(),
+      dateTerm: _termsStruct.dateTerm
+        .map((item) => item.toISOString())
+        .extract(),
+      dateTimeTerm: _termsStruct.dateTimeTerm
+        .map((item) => item.toISOString())
+        .extract(),
+      doubleTerm: _termsStruct.doubleTerm.map((item) => item).extract(),
+      identifierTerm: _termsStruct.identifierTerm
+        .map((item) => item.value)
+        .extract(),
+      iriTerm: _termsStruct.iriTerm.map((item) => item.value).extract(),
+      langStringTerm: _termsStruct.langStringTerm
+        .map((item) => `${JSON.stringify(item.value)}@${item.language}`)
+        .extract(),
+      literalTerm: _termsStruct.literalTerm
+        .map((item) => ({
+          "@language": item.language.length > 0 ? item.language : undefined,
+          "@type":
+            item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+              ? item.datatype.value
+              : undefined,
+          "@value": item.value,
+        }))
+        .extract(),
+      stringTerm: _termsStruct.stringTerm.map((item) => item).extract(),
+      term: _termsStruct.term
+        .map((item) =>
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+                termType: "Literal" as const,
+              }
+            : item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+        )
+        .extract(),
+    });
 
   export const $toString: (_termsStruct: TermsStruct) => string = (
     _termsStruct,
@@ -52004,6 +52968,282 @@ export namespace UnionDiscriminantsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _unionDiscriminantsStruct: UnionDiscriminantsStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _unionDiscriminantsStruct.$identifier().value,
+      $type: "UnionDiscriminantsStruct",
+      optionalIriOrString: _unionDiscriminantsStruct.optionalIriOrString
+        .map((item) =>
+          ((value: NamedNode | string) => {
+            if (typeof value === "object") {
+              return value.value;
+            }
+            if (typeof value === "string") {
+              return value;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+      optionalNodeOrLiteral: _unionDiscriminantsStruct.optionalNodeOrLiteral
+        .map((item) =>
+          ((
+            value:
+              | {
+                  termType: "DiscriminatedUnionMember1";
+                  value: DiscriminatedUnionMember1;
+                }
+              | Literal,
+          ) => {
+            if (value["termType"] === "DiscriminatedUnionMember1") {
+              return DiscriminatedUnionMember1.$toLoggable(value.value);
+            }
+            if (value["termType"] === "Literal") {
+              return {
+                "@language":
+                  value.language.length > 0 ? value.language : undefined,
+                "@type":
+                  value.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? value.datatype.value
+                    : undefined,
+                "@value": value.value,
+              };
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+      optionalNodeOrNodeOrString:
+        _unionDiscriminantsStruct.optionalNodeOrNodeOrString
+          .map((item) =>
+            ((
+              value:
+                | {
+                    $type: "DiscriminatedUnionMember1";
+                    value: DiscriminatedUnionMember1;
+                  }
+                | {
+                    $type: "DiscriminatedUnionMember2";
+                    value: DiscriminatedUnionMember2;
+                  }
+                | { $type: "string"; value: string },
+            ) => {
+              if (value["$type"] === "DiscriminatedUnionMember1") {
+                return DiscriminatedUnionMember1.$toLoggable(value.value);
+              }
+              if (value["$type"] === "DiscriminatedUnionMember2") {
+                return DiscriminatedUnionMember2.$toLoggable(value.value);
+              }
+              if (value["$type"] === "string") {
+                return value.value;
+              }
+
+              throw new Error("unable to serialize to loggable");
+            })(item),
+          )
+          .extract(),
+      optionalTerm: _unionDiscriminantsStruct.optionalTerm
+        .map((item) =>
+          ((value: (BlankNode | NamedNode) | Literal) => {
+            if (
+              value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode"
+            ) {
+              return value.value;
+            }
+            if (value["termType"] === "Literal") {
+              return {
+                "@language":
+                  value.language.length > 0 ? value.language : undefined,
+                "@type":
+                  value.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? value.datatype.value
+                    : undefined,
+                "@value": value.value,
+              };
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+      requiredIriOrString: ((value: NamedNode | string) => {
+        if (typeof value === "object") {
+          return value.value;
+        }
+        if (typeof value === "string") {
+          return value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredIriOrString),
+      requiredNodeOrLiteral: ((
+        value:
+          | {
+              termType: "DiscriminatedUnionMember1";
+              value: DiscriminatedUnionMember1;
+            }
+          | Literal,
+      ) => {
+        if (value["termType"] === "DiscriminatedUnionMember1") {
+          return DiscriminatedUnionMember1.$toLoggable(value.value);
+        }
+        if (value["termType"] === "Literal") {
+          return {
+            "@language": value.language.length > 0 ? value.language : undefined,
+            "@type":
+              value.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? value.datatype.value
+                : undefined,
+            "@value": value.value,
+          };
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredNodeOrLiteral),
+      requiredNodeOrNodeOrString: ((
+        value:
+          | {
+              $type: "DiscriminatedUnionMember1";
+              value: DiscriminatedUnionMember1;
+            }
+          | {
+              $type: "DiscriminatedUnionMember2";
+              value: DiscriminatedUnionMember2;
+            }
+          | { $type: "string"; value: string },
+      ) => {
+        if (value["$type"] === "DiscriminatedUnionMember1") {
+          return DiscriminatedUnionMember1.$toLoggable(value.value);
+        }
+        if (value["$type"] === "DiscriminatedUnionMember2") {
+          return DiscriminatedUnionMember2.$toLoggable(value.value);
+        }
+        if (value["$type"] === "string") {
+          return value.value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredNodeOrNodeOrString),
+      requiredTerm: ((value: (BlankNode | NamedNode) | Literal) => {
+        if (
+          value["termType"] === "BlankNode" ||
+          value["termType"] === "NamedNode"
+        ) {
+          return value.value;
+        }
+        if (value["termType"] === "Literal") {
+          return {
+            "@language": value.language.length > 0 ? value.language : undefined,
+            "@type":
+              value.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? value.datatype.value
+                : undefined,
+            "@value": value.value,
+          };
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredTerm),
+      setIriOrString: _unionDiscriminantsStruct.setIriOrString.map((item) =>
+        ((value: NamedNode | string) => {
+          if (typeof value === "object") {
+            return value.value;
+          }
+          if (typeof value === "string") {
+            return value;
+          }
+
+          throw new Error("unable to serialize to loggable");
+        })(item),
+      ),
+      setNodeOrLiteral: _unionDiscriminantsStruct.setNodeOrLiteral.map((item) =>
+        ((
+          value:
+            | {
+                termType: "DiscriminatedUnionMember1";
+                value: DiscriminatedUnionMember1;
+              }
+            | Literal,
+        ) => {
+          if (value["termType"] === "DiscriminatedUnionMember1") {
+            return DiscriminatedUnionMember1.$toLoggable(value.value);
+          }
+          if (value["termType"] === "Literal") {
+            return {
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to loggable");
+        })(item),
+      ),
+      setNodeOrNodeOrString:
+        _unionDiscriminantsStruct.setNodeOrNodeOrString.map((item) =>
+          ((
+            value:
+              | {
+                  $type: "DiscriminatedUnionMember1";
+                  value: DiscriminatedUnionMember1;
+                }
+              | {
+                  $type: "DiscriminatedUnionMember2";
+                  value: DiscriminatedUnionMember2;
+                }
+              | { $type: "string"; value: string },
+          ) => {
+            if (value["$type"] === "DiscriminatedUnionMember1") {
+              return DiscriminatedUnionMember1.$toLoggable(value.value);
+            }
+            if (value["$type"] === "DiscriminatedUnionMember2") {
+              return DiscriminatedUnionMember2.$toLoggable(value.value);
+            }
+            if (value["$type"] === "string") {
+              return value.value;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        ),
+      setTerm: _unionDiscriminantsStruct.setTerm.map((item) =>
+        ((value: (BlankNode | NamedNode) | Literal) => {
+          if (
+            value["termType"] === "BlankNode" ||
+            value["termType"] === "NamedNode"
+          ) {
+            return value.value;
+          }
+          if (value["termType"] === "Literal") {
+            return {
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to loggable");
+        })(item),
+      ),
+    });
 
   export const $toString: (
     _unionDiscriminantsStruct: UnionDiscriminantsStruct,
@@ -57714,6 +58954,17 @@ export type DiscriminatedUnion =
   | DiscriminatedUnionMember2;
 
 export namespace DiscriminatedUnion {
+  export const $toLoggable = (value: DiscriminatedUnion) => {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
+      return DiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "DiscriminatedUnionMember2") {
+      return DiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: DiscriminatedUnion): string => {
     if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.$toString(value);
@@ -58273,6 +59524,20 @@ export type FlattenDiscriminatedUnion =
   | FlattenDiscriminatedUnionMember3;
 
 export namespace FlattenDiscriminatedUnion {
+  export const $toLoggable = (value: FlattenDiscriminatedUnion) => {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
+      return DiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "DiscriminatedUnionMember2") {
+      return DiscriminatedUnionMember2.$toLoggable(value);
+    }
+    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
+      return FlattenDiscriminatedUnionMember3.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: FlattenDiscriminatedUnion): string => {
     if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.$toString(value);
@@ -58958,6 +60223,17 @@ export type LazilyResolvedDiscriminatedUnion =
   | LazilyResolvedDiscriminatedUnionMember2;
 
 export namespace LazilyResolvedDiscriminatedUnion {
+  export const $toLoggable = (value: LazilyResolvedDiscriminatedUnion) => {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember1") {
+      return LazilyResolvedDiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember2") {
+      return LazilyResolvedDiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (
     value: LazilyResolvedDiscriminatedUnion,
   ): string => {
@@ -59548,6 +60824,17 @@ export namespace LazilyResolvedDiscriminatedUnion {
 export type NamedDiscriminatedUnion1 = NamedNode | string;
 
 export namespace NamedDiscriminatedUnion1 {
+  export const $toLoggable = (value: NamedDiscriminatedUnion1) => {
+    if (typeof value === "object") {
+      return value.value;
+    }
+    if (typeof value === "string") {
+      return value;
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: NamedDiscriminatedUnion1): string => {
     if (typeof value === "object") {
       return value.toString();
@@ -59857,6 +61144,9 @@ export type NamedDiscriminatedUnion2 =
   | { $type: "dateTime"; value: Date };
 
 export namespace NamedDiscriminatedUnion2 {
+  export const $toLoggable = (value: NamedDiscriminatedUnion2) =>
+    value.value.toISOString();
+
   export const $toString = (value: NamedDiscriminatedUnion2): string => {
     if (value["$type"] === "date") {
       return value.value.toString();
@@ -60235,6 +61525,17 @@ export type NoRdfTypeDiscriminatedUnion =
   | NoRdfTypeDiscriminatedUnionMember2;
 
 export namespace NoRdfTypeDiscriminatedUnion {
+  export const $toLoggable = (value: NoRdfTypeDiscriminatedUnion) => {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
+      return NoRdfTypeDiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember2") {
+      return NoRdfTypeDiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: NoRdfTypeDiscriminatedUnion): string => {
     if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
       return NoRdfTypeDiscriminatedUnionMember1.$toString(value);
@@ -60807,6 +62108,17 @@ export type PartialDiscriminatedUnion =
   | PartialDiscriminatedUnionMember2;
 
 export namespace PartialDiscriminatedUnion {
+  export const $toLoggable = (value: PartialDiscriminatedUnion) => {
+    if (value["$type"] === "PartialDiscriminatedUnionMember1") {
+      return PartialDiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "PartialDiscriminatedUnionMember2") {
+      return PartialDiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: PartialDiscriminatedUnion): string => {
     if (value["$type"] === "PartialDiscriminatedUnionMember1") {
       return PartialDiscriminatedUnionMember1.$toString(value);
@@ -61381,6 +62693,17 @@ export type RecursiveDiscriminatedUnion =
   | RecursiveDiscriminatedUnionMember2;
 
 export namespace RecursiveDiscriminatedUnion {
+  export const $toLoggable = (value: RecursiveDiscriminatedUnion): any => {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
+      return RecursiveDiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember2") {
+      return RecursiveDiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: RecursiveDiscriminatedUnion): string => {
     if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
       return RecursiveDiscriminatedUnionMember1.$toString(value);

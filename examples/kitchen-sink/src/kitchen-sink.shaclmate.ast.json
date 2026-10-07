@@ -56,7 +56,7 @@
       ]
     },
     {
-      "comment": "Struct node shape that can only have a blank node as an identifier",
+      "comment": "Struct node shape that can only have a blank node as an identifier. This generates code without an identifier property.",
       "kind": "Struct",
       "name": "BlankNodeIdentifierStruct",
       "shapeIdentifier": {
