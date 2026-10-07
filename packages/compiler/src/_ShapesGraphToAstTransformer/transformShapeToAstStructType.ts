@@ -14,36 +14,46 @@ import { transformPropertyShapeToAstStructTypeField } from "./transformPropertyS
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function isStructTypeFieldRequired(field: {
+  kind: ast.StructType.Field["kind"];
   type: ast.StructType.Field["type"];
 }): boolean {
-  switch (field.type.kind) {
-    case "DefaultValue":
-      return false;
-    case "LazyOption":
-      return false;
-    case "LazySet":
-      return field.type.partialType.minCount > 0n;
-    case "Option":
-      return false;
-    case "Set":
-      return field.type.minCount > 0;
-    case "DiscriminatedUnion":
-      return field.type.members.every((member) =>
-        isStructTypeFieldRequired({ type: member.type }),
-      );
-    case "BlankNode":
+  switch (field.kind) {
     case "Identifier":
-    case "Iri":
-    case "Lazy":
-    case "List":
-    case "Literal":
-    case "Struct":
-    case "Term":
-      return true;
-    case "Intersection":
-      throw new Error("unsupported");
+      return field.type.kind === "Iri";
+    case "Shacl": {
+      switch (field.type.kind) {
+        case "DefaultValue":
+          return false;
+        case "LazyOption":
+          return false;
+        case "LazySet":
+          return field.type.partialType.minCount > 0n;
+        case "Option":
+          return false;
+        case "Set":
+          return field.type.minCount > 0;
+        case "DiscriminatedUnion":
+          return field.type.members.every((member) =>
+            isStructTypeFieldRequired({ kind: "Shacl", type: member.type }),
+          );
+        case "BlankNode":
+        case "Identifier":
+        case "Iri":
+        case "Lazy":
+        case "List":
+        case "Literal":
+        case "Struct":
+        case "Term":
+          return true;
+        case "Intersection":
+          throw new Error("unsupported");
+        default:
+          field.type satisfies never;
+          throw new Error("should never reach this point");
+      }
+    }
     default:
-      field.type satisfies never;
+      field.kind satisfies never;
       throw new Error("should never reach this point");
   }
 }
