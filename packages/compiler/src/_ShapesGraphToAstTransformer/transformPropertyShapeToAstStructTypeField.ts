@@ -340,6 +340,33 @@ export function transformPropertyShapeToAstStructTypeField(
           );
       }
 
+      const astPartialItemIdentifierType =
+        astPartialItemType.kind === "Struct"
+          ? astPartialItemType.identifierType
+          : ast.StructCompoundType.identifierType(astPartialItemType);
+      const astResolveItemIdentifierType =
+        astResolveItemType.kind === "Struct"
+          ? astResolveItemType.identifierType
+          : ast.StructCompoundType.identifierType(astResolveItemType);
+
+      if (
+        astPartialItemIdentifierType.kind !== astResolveItemIdentifierType.kind
+      ) {
+        return Left(
+          new Error(
+            `${propertyShape} has a resolve with a different identifier type (${astResolveItemIdentifierType.kind}) than the partial's identifier type (${astPartialItemIdentifierType.kind})`,
+          ),
+        );
+      }
+
+      if (astPartialItemIdentifierType.kind === "BlankNode") {
+        return Left(
+          new Error(
+            `${propertyShape} has a ${astPartialItemIdentifierType.kind} identifier type, which is incompatible with shaclmate:resolve`,
+          ),
+        );
+      }
+
       const astAbstractTypeProperties = {
         comment: Maybe.empty(),
         label: Maybe.empty(),
