@@ -3,14 +3,16 @@ import { Memoize } from "typescript-memoize";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
+import type { Service } from "./Service.js";
 import type { Type } from "./Type.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class Operation extends AbstractConstruct {
   private readonly error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
   private readonly name: string;
   private readonly parameter: Maybe<ObjectType>;
   private readonly result: Maybe<Type>;
+  private readonly service: Pick<Service, "name">;
 
   constructor({
     error,
@@ -24,13 +26,14 @@ export class Operation extends AbstractConstruct {
     name: string;
     parameter: Maybe<ObjectType>;
     result: Maybe<Type>;
-    service: { name: string };
+    service: Pick<Service, "name">;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
     this.error = error;
     this.name = name;
     this.parameter = parameter;
     this.result = result;
+    this.service = service;
   }
 
   @Memoize()
@@ -40,28 +43,39 @@ export class Operation extends AbstractConstruct {
 
   @Memoize()
   get loggingMethodDeclaration(): Code {
-    let logContext: Code;
-    if (this.parameter.isJust()) {
-      logContext = code`{ ${joinCode(
-        this.parameter.extract()!.properties.flatMap((property) =>
-          property
-            .toLoggableInitializer({
-              variables: {
-                object: code`parameters`,
-              },
-            })
-            .toList(),
-        ),
-        { on: "," },
-      )} }`;
-    } else {
-      logContext = code`{}`;
-    }
-
+    const parametersVariableName = this.parameter
+      .map(() => code`parameters`)
+      .orDefault(code``);
     return code`\
 async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
-  const logContext: Record<string, unknown> = ${logContext};
-  
+  const logContext: Record<string, unknown> = {
+    service: ${literalOf(this.service.name)},
+    operation: ${literalOf(this.name)}${this.parameter
+      .map(
+        (parameter) =>
+          code`,\n    parameters: { ${joinCode(
+            parameter.properties.flatMap((property) =>
+              property
+                .toLoggableInitializer({
+                  variables: {
+                    object: parametersVariableName,
+                  },
+                })
+                .toList(),
+            ),
+            { on: "," },
+          )} }`,
+      )
+      .orDefault(code``)}
+  };
+  this.logger.trace(logContext, "called");
+  return (await this.delegate.${this.name}(${parametersVariableName}))
+    .ifLeft((error) => {
+      this.logger.error({ ...logContext, error }, "error");
+    })
+    .ifRight((${this.result.map(() => code`result`).orDefault(code``)}) => {
+      this.logger.debug(${this.result.map((result) => code`{ ...logContext, result: ${result.toLoggableExpression({ variables: { value: code`result` } })} }`).orDefault(code`logContext`)}, "success")
+    });
 }`;
   }
 

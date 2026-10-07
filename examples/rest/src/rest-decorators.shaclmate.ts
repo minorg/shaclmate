@@ -73,7 +73,17 @@ export class LoggingExampleService implements ExampleService {
     readonly identifier: NamedNode;
   }): Promise<Either<ExampleError, string>> {
     const logContext: Record<string, unknown> = {
-      identifier: parameters.identifier.value,
+      service: "ExampleService",
+      operation: "get",
+      parameters: { identifier: parameters.identifier.value },
     };
+    this.logger.trace(logContext, "called");
+    return (await this.delegate.get(parameters))
+      .ifLeft((error) => {
+        this.logger.error({ ...logContext, error }, "error");
+      })
+      .ifRight((result) => {
+        this.logger.debug({ ...logContext, result: result }, "success");
+      });
   }
 }
