@@ -44,15 +44,13 @@ export class Operation extends AbstractConstruct {
     if (this.parameter.isJust()) {
       logContext = code`{ ${joinCode(
         this.parameter.extract()!.properties.flatMap((property) =>
-          property.kind === "Shacl"
-            ? property
-                .toLoggableInitializer({
-                  variables: {
-                    object: code`parameters`,
-                  },
-                })
-                .toList()
-            : [],
+          property
+            .toLoggableInitializer({
+              variables: {
+                object: code`parameters`,
+              },
+            })
+            .toList(),
         ),
         { on: "," },
       )} }`;
@@ -78,20 +76,11 @@ async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
       .map(
         (parameter) =>
           code`parameters: ${parameter.name
-            .map((name) =>
-              parameter.identifierProperty
-                .map(
-                  (identifierProperty) =>
-                    code`Omit<${name}, ${identifierProperty.name}>`,
-                )
-                .orDefault(code`${name}`),
-            )
+            .map((name) => code`${name}`)
             .orDefault(
               code`{ ${joinCode(
                 parameter.properties.flatMap((property) =>
-                  property.kind === "Shacl"
-                    ? property.declaration.toList()
-                    : [],
+                  property.declaration.toList(),
                 ),
                 { on: "\n\n" },
               )} }`,

@@ -32,20 +32,13 @@ export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 export type ExampleError = {
-  readonly $identifier: () => ExampleError.Identifier;
-
   readonly $type: "ExampleError";
-
   readonly message: string;
 };
 
 export namespace ExampleError {
   export const $toLoggable = (_exampleError: ExampleError) =>
-    $compactRecord({
-      $identifier: _exampleError.$identifier().value,
-      $type: "ExampleError",
-      message: _exampleError.message,
-    });
+    $compactRecord({ $type: "ExampleError", message: _exampleError.message });
 
   export type Identifier = BlankNode;
   export namespace Identifier {

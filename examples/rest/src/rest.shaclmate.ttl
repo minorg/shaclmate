@@ -21,7 +21,6 @@
         shaclmate:error :ExampleError ;
         shaclmate:name "get" ;
         shaclmate:parameter [
-            sh:nodeKind sh:BlankNode ;
             sh:property [
                 sh:maxCount 1 ;
                 sh:minCount 1 ;

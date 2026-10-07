@@ -20,33 +20,6 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
-type $ConversionFunction<
-  SourceT,
-  TargetT,
-  DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-> = (
-  source: SourceT,
-  defaultNamespace?: DefaultNamespaceT,
-) => Either<Error, TargetT>;
-
-const $convertToBlankNodeIdentifierProperty: $ConversionFunction<
-  (() => BlankNode) | BlankNode | undefined,
-  () => BlankNode
-> = (identifier) => {
-  switch (typeof identifier) {
-    case "function":
-      return Either.of(identifier);
-    case "object": {
-      const captureIdentifier = identifier;
-      return Either.of(() => captureIdentifier);
-    }
-    case "undefined": {
-      const captureIdentifier = dataFactory.blankNode();
-      return Either.of(() => captureIdentifier);
-    }
-  }
-};
-
 function $monkeyPatchObject<T extends object>(
   obj: T,
   methods: { toJson?: (obj: T) => object; $toString?: (obj: T) => string },
@@ -112,10 +85,7 @@ function $sequenceRecord<T extends Record<string, unknown>>(
 }
 
 export type ExampleError = {
-  readonly $identifier: () => ExampleError.Identifier;
-
   readonly $type: "ExampleError";
-
   readonly message: string;
 };
 
@@ -128,17 +98,13 @@ export namespace ExampleError {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?: (() => ExampleError.Identifier) | BlankNode;
     readonly message: string;
   }): Either<Error, ExampleError> =>
-    $sequenceRecord({
-      $identifier: $convertToBlankNodeIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
-      ),
-      message: Either.of(parameters.message),
-    })
-      .map((properties) => ({ ...properties, $type: "ExampleError" as const }))
+    $sequenceRecord({ message: Either.of(parameters.message) })
+      .map((properties) => ({
+        ...properties,
+        $type: "ExampleError" as const,
+      }))
       .map((object) =>
         $monkeyPatchObject(object, { $toString: ExampleError.$toString }),
       );
@@ -147,7 +113,6 @@ export namespace ExampleError {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?: (() => ExampleError.Identifier) | BlankNode;
     readonly message: string;
   }): ExampleError {
     return create(parameters).unsafeCoerce();
@@ -163,7 +128,6 @@ export namespace ExampleError {
 
   export const schema = {
     properties: {
-      $identifier: { kind: "Identifier", type: { kind: "BlankNode" as const } },
       $type: { kind: "Discriminant", value: "ExampleError" },
       message: { kind: "Shacl", type: { kind: "String" as const } },
     },
@@ -173,8 +137,7 @@ export namespace ExampleError {
 
   export const toStringRecord: (
     _exampleError: ExampleError,
-  ) => Record<string, string> = (_exampleError) =>
-    $compactRecord({ $identifier: _exampleError.$identifier().toString() });
+  ) => Record<string, string> = (_exampleError) => $compactRecord({});
 }
 
 export type $Object = ExampleError;

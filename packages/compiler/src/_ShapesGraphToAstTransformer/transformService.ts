@@ -1,5 +1,6 @@
 import { Curie } from "@shaclmate/shacl-ast";
 import { Either, Left, Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
@@ -80,13 +81,46 @@ function transformOperation(
       .call(self, inputParameter, new ShapeStack())
       .chain((astParameter) => {
         if (astParameter.kind === "Struct") {
-          return Either.of<Error, ast.StructType>(astParameter);
+          let astStructType = astParameter;
+
+          if (!astStructType.extern && astStructType.identifierField.isJust()) {
+            // If the struct type has an identifier property, mint a new, anonymous struct type with the other properties
+            const fields = astStructType.fields;
+            astStructType = new ast.StructType({
+              comment: astStructType.comment,
+              extern: false,
+              fromRdfType: Maybe.empty(),
+              identifierType: new ast.BlankNodeType({
+                comment: Maybe.empty(),
+                label: Maybe.empty(),
+                name: Maybe.empty(),
+                shapeIdentifier: astStructType.identifierType.shapeIdentifier,
+              }),
+              label: astStructType.label,
+              name: Maybe.empty(),
+              shapeIdentifier: astStructType.shapeIdentifier,
+              synthetic: false,
+              toRdfTypes: [],
+              tsImports: [],
+            });
+            for (const field of fields) {
+              if (field.kind === "Identifier") {
+                continue;
+              }
+              invariant(field.kind === "Shacl");
+              astStructType.addField(
+                new ast.StructType.ShaclField({
+                  ...field,
+                  structType: astStructType,
+                }),
+              );
+            }
+          }
+
+          return Either.of<Error, ast.StructType>(astStructType);
         }
-        return Left(
-          new Error(
-            `expected ${inputParameter} to be a struct or discriminated union of structs`,
-          ),
-        );
+
+        return Left(new Error(`expected ${inputParameter} to be a struct`));
       })
       .map(Maybe.of);
   }
