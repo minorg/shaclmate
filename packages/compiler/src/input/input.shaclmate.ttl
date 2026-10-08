@@ -1,10 +1,22 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix schema: <http://schema.org/>
+@prefix schema: <http://schema.org/> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+shaclmate:HttpRequestMethod
+    a sh:NodeShape ;
+    sh:in ( "DELETE" "GET" "POST" "PUT" ) .
+
+shaclmate:HttpRequestContentType
+    a sh:NodeShape ;
+    sh:in ( "application/json" ) .
+
+shaclmate:HttpResponseContentType
+    a sh:NodeShape ;
+    sh:in ( "application/json" ) .
 
 shaclmate:HttpOperationBinding
     a rdfs:Class, sh:NodeShape ;
@@ -29,14 +41,14 @@ shaclmate:HttpOperationBindingRequest
 
 shaclmate:HttpOperationBindingRequest-contentType
     a sh:PropertyShape ;
-    sh:datatype xsd:string ;
     sh:maxCount 1 ;
+    sh:node shaclmate:HttpRequestContentType ;
     sh:path schema:encodingType .
 
 shaclmate:HttpOperationBindingRequest-method
     a sh:PropertyShape ;
-    sh:datatype xsd:string ;
     sh:maxCount 1 ;
+    sh:node shaclmate:HttpRequestMethod ;
     sh:path schema:httpMethod .
 
 shaclmate:HttpOperationBindingRequest-urlTemplate
@@ -52,8 +64,8 @@ shaclmate:HttpOperationBindingResponse
 
 shaclmate:HttpOperationBindingResponse-contentType
     a sh:PropertyShape ;
-    sh:datatype xsd:string ;
     sh:maxCount 1 ;
+    sh:node HttpResponseContentType ;
     sh:path schema:contentType .
 
 shaclmate:HttpOperationBindingResponse-statusCode
