@@ -23,8 +23,9 @@ shaclmate:HttpOperationBinding-response
     sh:path shaclmate:response .
 
 shaclmate:HttpOperationBindingRequest
-    a rdfs:Class, sh:NodeShape ;
+    a sh:NodeShape ;
     sh:maxCount 1 ;
+    sh:minCount 1 ;
     sh:property shaclmate:HttpOperationBindingRequest-contentType, shaclmate:HttpOperationBindingRequest-method, shaclmate:HttpOperationBindingRequest-urlTemplate .
 
 shaclmate:HttpOperationBindingRequest-contentType
@@ -43,6 +44,7 @@ shaclmate:HttpOperationBindingRequest-urlTemplate
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
+    sh:minCount 1 ;
     sh:path schema:urlTemplate .
 
 shaclmate:HttpOperationBindingResponse

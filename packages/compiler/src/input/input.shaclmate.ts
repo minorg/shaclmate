@@ -1117,77 +1117,60 @@ export type HttpOperationBindingRequest = {
 
   readonly method: Maybe<HttpRequestMethod>;
 
-  readonly urlTemplate: Maybe<string>;
+  readonly urlTemplate: string;
 };
 
 export namespace HttpOperationBindingRequest {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     HttpOperationBindingRequest
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [HttpOperationBindingRequest.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              HttpOperationBindingRequest.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        contentType: $shaclPropertyFromRdf<
-          Maybe<HttpRequestContentType>,
-          $MaybeSchema<$StringSchema<HttpRequestContentType>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            HttpOperationBindingRequest.schema.properties.contentType,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            HttpRequestContentType,
-            $StringSchema<HttpRequestContentType>
-          >($stringFromRdfResourceValues<HttpRequestContentType>),
-        }),
-        method: $shaclPropertyFromRdf<
-          Maybe<HttpRequestMethod>,
-          $MaybeSchema<$StringSchema<HttpRequestMethod>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: HttpOperationBindingRequest.schema.properties.method,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            HttpRequestMethod,
-            $StringSchema<HttpRequestMethod>
-          >($stringFromRdfResourceValues<HttpRequestMethod>),
-        }),
-        urlTemplate: $shaclPropertyFromRdf<
-          Maybe<string>,
-          $MaybeSchema<$StringSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            HttpOperationBindingRequest.schema.properties.urlTemplate,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            string,
-            $StringSchema<string>
-          >($stringFromRdfResourceValues<string>),
-        }),
-      }).chain((properties) => HttpOperationBindingRequest.create(properties)),
-    );
+          propertyPath: $rdf_subject,
+          schema:
+            HttpOperationBindingRequest.schema.properties.$identifier.type,
+        },
+      ).chain((values) => values.head()),
+      contentType: $shaclPropertyFromRdf<
+        Maybe<HttpRequestContentType>,
+        $MaybeSchema<$StringSchema<HttpRequestContentType>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          HttpOperationBindingRequest.schema.properties.contentType,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          HttpRequestContentType,
+          $StringSchema<HttpRequestContentType>
+        >($stringFromRdfResourceValues<HttpRequestContentType>),
+      }),
+      method: $shaclPropertyFromRdf<
+        Maybe<HttpRequestMethod>,
+        $MaybeSchema<$StringSchema<HttpRequestMethod>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema: HttpOperationBindingRequest.schema.properties.method,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          HttpRequestMethod,
+          $StringSchema<HttpRequestMethod>
+        >($stringFromRdfResourceValues<HttpRequestMethod>),
+      }),
+      urlTemplate: $shaclPropertyFromRdf<string, $StringSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          HttpOperationBindingRequest.schema.properties.urlTemplate,
+        typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
+      }),
+    }).chain((properties) => HttpOperationBindingRequest.create(properties));
 
   export const $toString: (
     _httpOperationBindingRequest: HttpOperationBindingRequest,
@@ -1196,7 +1179,7 @@ export namespace HttpOperationBindingRequest {
 
   export const create = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
+  >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => HttpOperationBindingRequest.Identifier)
@@ -1207,16 +1190,16 @@ export namespace HttpOperationBindingRequest {
       | HttpRequestContentType
       | Maybe<HttpRequestContentType>;
     readonly method?: HttpRequestMethod | Maybe<HttpRequestMethod>;
-    readonly urlTemplate?: string | Maybe<string>;
+    readonly urlTemplate: string;
   }): Either<Error, HttpOperationBindingRequest> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
+        parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       contentType: $convertToMaybe($identityConversionFunction)(
-        parameters?.contentType,
-        parameters?.$defaultNamespace,
+        parameters.contentType,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           HttpOperationBindingRequest.schema.properties.contentType.type,
@@ -1224,23 +1207,15 @@ export namespace HttpOperationBindingRequest {
         ),
       ),
       method: $convertToMaybe($identityConversionFunction)(
-        parameters?.method,
-        parameters?.$defaultNamespace,
+        parameters.method,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           HttpOperationBindingRequest.schema.properties.method.type,
           value,
         ),
       ),
-      urlTemplate: $convertToMaybe($identityConversionFunction)(
-        parameters?.urlTemplate,
-        parameters?.$defaultNamespace,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          HttpOperationBindingRequest.schema.properties.urlTemplate.type,
-          value,
-        ),
-      ),
+      urlTemplate: Either.of(parameters.urlTemplate),
     })
       .map((properties) => ({
         ...properties,
@@ -1254,7 +1229,7 @@ export namespace HttpOperationBindingRequest {
 
   export function createUnsafe<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
+  >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => HttpOperationBindingRequest.Identifier)
@@ -1265,7 +1240,7 @@ export namespace HttpOperationBindingRequest {
       | HttpRequestContentType
       | Maybe<HttpRequestContentType>;
     readonly method?: HttpRequestMethod | Maybe<HttpRequestMethod>;
-    readonly urlTemplate?: string | Maybe<string>;
+    readonly urlTemplate: string;
   }): HttpOperationBindingRequest {
     return create(parameters).unsafeCoerce();
   }
@@ -1299,17 +1274,6 @@ export namespace HttpOperationBindingRequest {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $rdfType: {
-        fromRdfType: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#HttpOperationBindingRequest",
-        ),
-        kind: "RdfType",
-        toRdfTypes: [
-          dataFactory.namedNode(
-            "http://purl.org/shaclmate/ontology#HttpOperationBindingRequest",
-          ),
-        ],
-      },
       $type: { kind: "Discriminant", value: "HttpOperationBindingRequest" },
       contentType: {
         kind: "Shacl",
@@ -1338,10 +1302,7 @@ export namespace HttpOperationBindingRequest {
       urlTemplate: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://schema.org/urlTemplate"),
-        type: {
-          kind: "Option" as const,
-          itemType: { kind: "String" as const },
-        },
+        type: { kind: "String" as const },
       },
     },
   } as const;
