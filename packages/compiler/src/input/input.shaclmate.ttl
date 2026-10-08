@@ -18,6 +18,13 @@ shaclmate:HttpResponseContentType
     a sh:NodeShape ;
     sh:in ( "application/json" ) .
 
+shaclmate:HttpResponseStatusCode
+    a sh:NodeShape ;
+    sh:datatype xsd:int ;
+    sh:maxCount 1 ;
+    sh:maxInclusive 599 ;
+    sh:minInclusive 100 .
+
 shaclmate:HttpOperationBinding
     a rdfs:Class, sh:NodeShape ;
     sh:property shaclmate:HttpOperationBinding-request, shaclmate:HttpOperationBinding-response .
@@ -70,10 +77,8 @@ shaclmate:HttpOperationBindingResponse-contentType
 
 shaclmate:HttpOperationBindingResponse-statusCode
     a sh:PropertyShape ;
-    sh:datatype xsd:int ;
     sh:maxCount 1 ;
-    sh:maxInclusive 599 ;
-    sh:minInclusive 100 ;
+    sh:node shaclmate:HttpResponseStatusCode ;
     sh:path shaclmate:httpStatusCode .
 
 shaclmate:NodeShape
