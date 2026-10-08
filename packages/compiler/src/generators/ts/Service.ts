@@ -1,4 +1,5 @@
 import { Memoize } from "typescript-memoize";
+
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { Operation } from "./Operation.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -18,6 +19,16 @@ export class Service extends AbstractConstruct {
     super(superParameters);
     this.name = name;
     this.operations = operations;
+  }
+
+  @Memoize()
+  get httpApiClassDeclaration(): Code {
+    return code`\
+export class ${this.name}HttpApi<EnvT extends ${this.reusables.imports.HonoEnv} = ${this.reusables.imports.HonoEnv}> extends ${this.reusables.imports.Hono}<EnvT> {
+  constructor(delegate: ${this.name}) {
+    super();
+  }
+}`;
   }
 
   @Memoize()

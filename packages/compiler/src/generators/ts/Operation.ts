@@ -1,5 +1,10 @@
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+import uriTemplate from "uri-template";
+import type {
+  HttpRequestMethod,
+  OperationHttpBinding,
+} from "../../input/input.shaclmate.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -8,6 +13,7 @@ import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class Operation extends AbstractConstruct {
+  private readonly bindings: readonly OperationHttpBinding[];
   private readonly error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
   private readonly name: string;
   private readonly parameter: Maybe<ObjectType>;
@@ -15,6 +21,7 @@ export class Operation extends AbstractConstruct {
   private readonly service: Pick<Service, "name">;
 
   constructor({
+    bindings,
     error,
     name,
     parameter,
@@ -22,6 +29,7 @@ export class Operation extends AbstractConstruct {
     service,
     ...superParameters
   }: {
+    bindings: readonly OperationHttpBinding[];
     error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
     name: string;
     parameter: Maybe<ObjectType>;
@@ -34,6 +42,17 @@ export class Operation extends AbstractConstruct {
     this.parameter = parameter;
     this.result = result;
     this.service = service;
+  }
+
+  @Memoize()
+  get httpApiRouteRegistration(): Code {}
+
+  @Memoize()
+  private httpRequestMethod(): HttpRequestMethod {}
+
+  @Memoize()
+  private httpRequestUrlTemplate() {
+    uriTemplate.parse(this.
   }
 
   @Memoize()

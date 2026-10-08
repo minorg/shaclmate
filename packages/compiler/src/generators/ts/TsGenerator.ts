@@ -262,6 +262,9 @@ export class TsGenerator implements Generator {
       if (configuration.features.has("LoggingService")) {
         declarations.push(service.loggingClassDeclaration);
       }
+      if (configuration.features.has("ServiceHttpApi")) {
+        declarations.push(service.httpApiClassDeclaration);
+      }
       return declarations;
     });
   }

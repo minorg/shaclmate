@@ -21,6 +21,8 @@ export class Imports {
   readonly GraphQLSchema = imp("GraphQLSchema@graphql");
   readonly GraphQLString = imp("GraphQLString@graphql");
   readonly GraphQLUnionType = imp("GraphQLUnionType@graphql");
+  readonly Hono = imp("Hono@hono");
+  readonly HonoEnv = imp("t:Env@hono");
   readonly Left = imp("Left@purify-ts");
   readonly Literal = imp("t:Literal@@rdfjs/types");
   readonly LiteralFactory = imp("LiteralFactory@@rdfx/literal");
