@@ -147,7 +147,7 @@ function $bigDecimalFromRdfResourceValues(
  * Create a Literal from a BigDecimal.
  */
 function $bigDecimalLiteral(value: BigDecimal): Literal {
-  return dataFactory.literal(value.toFixed(), $RdfVocabularies.xsd.decimal);
+  return dataFactory.literal(value.toFixed(), $xsd_decimal);
 }
 
 const $bigDecimalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
@@ -538,7 +538,7 @@ function $convertToIriIdentifierProperty<
 }
 
 const $convertToLangString: $ConversionFunction<Literal, Literal> = (value) => {
-  if (!value.datatype.equals($RdfVocabularies.rdf.langString)) {
+  if (!value.datatype.equals($rdf_langString)) {
     return Left(
       new Error(
         `expected Literal to have rdf:langString datatype, not ${value.datatype.value}`,
@@ -906,9 +906,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             filter.in.map((inValue) =>
               $literalFactory.date(
                 inValue,
-                schema.kind === "Date"
-                  ? $RdfVocabularies.xsd.date
-                  : $RdfVocabularies.xsd.dateTime,
+                schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
               ),
             ),
           ],
@@ -927,9 +925,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             valueVariable,
             $literalFactory.date(
               filter.maxExclusive,
-              schema.kind === "Date"
-                ? $RdfVocabularies.xsd.date
-                : $RdfVocabularies.xsd.dateTime,
+              schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
             ),
           ],
         },
@@ -947,9 +943,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             valueVariable,
             $literalFactory.date(
               filter.maxInclusive,
-              schema.kind === "Date"
-                ? $RdfVocabularies.xsd.date
-                : $RdfVocabularies.xsd.dateTime,
+              schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
             ),
           ],
         },
@@ -967,9 +961,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             valueVariable,
             $literalFactory.date(
               filter.minExclusive,
-              schema.kind === "Date"
-                ? $RdfVocabularies.xsd.date
-                : $RdfVocabularies.xsd.dateTime,
+              schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
             ),
           ],
         },
@@ -987,9 +979,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             valueVariable,
             $literalFactory.date(
               filter.minInclusive,
-              schema.kind === "Date"
-                ? $RdfVocabularies.xsd.date
-                : $RdfVocabularies.xsd.dateTime,
+              schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
             ),
           ],
         },
@@ -1091,7 +1081,7 @@ function $ensureRdfResourceType(
   options: { graph: Exclude<Quad_Graph, Variable> | undefined },
 ): Either<Error, undefined> {
   return resource
-    .value($RdfVocabularies.rdf.type, options)
+    .value($rdf_type, options)
     .chain((actualRdfTypeValue) => actualRdfTypeValue.toIri())
     .chain((actualRdfType) => {
       // Check the expected type and its known subtypes
@@ -1932,7 +1922,7 @@ function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
       const item0Variable = variable("Item0");
       triples.push({
         subject: listVariable,
-        predicate: $RdfVocabularies.rdf.first,
+        predicate: $rdf_first,
         object: item0Variable,
       });
       triples = triples.concat(
@@ -1948,7 +1938,7 @@ function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
     // ?list rdf:rest ?rest0
     triples.push({
       subject: listVariable,
-      predicate: $RdfVocabularies.rdf.rest,
+      predicate: $rdf_rest,
       object: variable("Rest0"),
     });
 
@@ -1960,7 +1950,7 @@ function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
       const itemNVariable = variable("ItemN");
       triples.push({
         subject: restNVariable,
-        predicate: $RdfVocabularies.rdf.first,
+        predicate: $rdf_first,
         object: itemNVariable,
       });
       triples = triples.concat(
@@ -1977,7 +1967,7 @@ function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
     // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
     triples.push({
       subject: restNVariable,
-      predicate: $RdfVocabularies.rdf.rest,
+      predicate: $rdf_rest,
       object: variable("RestNBasic"),
     });
 
@@ -2015,7 +2005,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
           triples: [
             {
               subject: listVariable,
-              predicate: $RdfVocabularies.rdf.first,
+              predicate: $rdf_first,
               object: item0Variable,
             },
           ],
@@ -2040,7 +2030,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
         triples: [
           {
             subject: listVariable,
-            predicate: $RdfVocabularies.rdf.rest,
+            predicate: $rdf_rest,
             object: rest0Variable,
           },
         ],
@@ -2057,11 +2047,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       triples: [
         {
           subject: listVariable,
-          predicate: {
-            type: "path",
-            pathType: "*",
-            items: [$RdfVocabularies.rdf.rest],
-          },
+          predicate: { type: "path", pathType: "*", items: [$rdf_rest] },
           object: restNVariable,
         },
       ],
@@ -2075,7 +2061,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
           triples: [
             {
               subject: restNVariable,
-              predicate: $RdfVocabularies.rdf.first,
+              predicate: $rdf_first,
               object: itemNVariable,
             },
           ],
@@ -2098,7 +2084,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       triples: [
         {
           subject: restNVariable,
-          predicate: $RdfVocabularies.rdf.rest,
+          predicate: $rdf_rest,
           object: variable("RestNBasic"),
         },
       ],
@@ -2669,87 +2655,42 @@ export namespace $PropertyPath {
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
+const $rdf_first = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+);
+
+const $rdf_langString = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
+);
+
+const $rdf_nil = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+);
+
+const $rdf_rest = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+);
+
+const $rdf_subject = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+);
+
+const $rdf_type = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+);
+
 function $rdfResourceIdentifierValues(resource: Resource): Resource.Values {
   return new Resource.Value({
     dataFactory: dataFactory,
     focusResource: resource,
-    propertyPath: $RdfVocabularies.rdf.subject,
+    propertyPath: $rdf_subject,
     term: resource.identifier,
   }).toValues();
 }
 
-namespace $RdfVocabularies {
-  export const rdf = {
-    first: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    ),
-    langString: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
-    ),
-    nil: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    ),
-    rest: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    ),
-    subject: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    ),
-    type: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    ),
-  };
-
-  export const rdfs = {
-    subClassOf: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    ),
-  };
-
-  export const xsd = {
-    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
-    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
-    dateTime: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTime",
-    ),
-    dateTimeStamp: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-    ),
-    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
-    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
-    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
-    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
-    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
-    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
-    negativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    ),
-    nonNegativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    ),
-    nonPositiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    ),
-    positiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    ),
-    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
-    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
-    unsignedByte: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    ),
-    unsignedInt: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    ),
-    unsignedLong: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    ),
-    unsignedShort: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    ),
-  };
-}
+const $rdfs_subClassOf = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+);
 
 function $sequenceRecord<T extends Record<string, unknown>>(
   record: { [K in keyof T]: Either<Error, T[K]> },
@@ -3192,12 +3133,8 @@ function $sparqlInstancesOfPattern({
         subject,
         predicate: {
           items: [
-            $RdfVocabularies.rdf.type,
-            {
-              items: [$RdfVocabularies.rdfs.subClassOf],
-              pathType: "*",
-              type: "path",
-            },
+            $rdf_type,
+            { items: [$rdfs_subClassOf], pathType: "*", type: "path" },
           ],
           pathType: "/",
           type: "path",
@@ -3880,6 +3817,84 @@ function $wrap_ToRdfResourceFunction<
   };
 }
 
+const $xsd_boolean = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#boolean",
+);
+
+const $xsd_byte = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#byte",
+);
+
+const $xsd_date = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#date",
+);
+
+const $xsd_dateTime = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#dateTime",
+);
+
+const $xsd_dateTimeStamp = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
+);
+
+const $xsd_decimal = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#decimal",
+);
+
+const $xsd_double = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#double",
+);
+
+const $xsd_float = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#float",
+);
+
+const $xsd_int = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int");
+
+const $xsd_integer = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#integer",
+);
+
+const $xsd_long = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#long",
+);
+
+const $xsd_negativeInteger = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#negativeInteger",
+);
+
+const $xsd_nonNegativeInteger = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+);
+
+const $xsd_nonPositiveInteger = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+);
+
+const $xsd_positiveInteger = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#positiveInteger",
+);
+
+const $xsd_short = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#short",
+);
+
+const $xsd_unsignedByte = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#unsignedByte",
+);
+
+const $xsd_unsignedInt = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#unsignedInt",
+);
+
+const $xsd_unsignedLong = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#unsignedLong",
+);
+
+const $xsd_unsignedShort = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#unsignedShort",
+);
+
 export type $DefaultPartial = {
   readonly $identifier: () => $DefaultPartial.Identifier;
 
@@ -3897,7 +3912,7 @@ export namespace $DefaultPartial {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: $DefaultPartial.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -4248,7 +4263,7 @@ export namespace $NamedDefaultPartial {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: $NamedDefaultPartial.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -4618,7 +4633,7 @@ export namespace AnonymousTypesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: AnonymousTypesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -4674,7 +4689,7 @@ export namespace AnonymousTypesStruct {
                       {
                         ...options,
                         focusResource: resource,
-                        propertyPath: $RdfVocabularies.rdf.subject,
+                        propertyPath: $rdf_subject,
                         schema: { kind: "Identifier" as const },
                       },
                     ).chain((values) => values.head()),
@@ -4754,7 +4769,7 @@ export namespace AnonymousTypesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         AnonymousTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -5029,7 +5044,7 @@ export namespace AnonymousTypesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -5038,7 +5053,7 @@ export namespace AnonymousTypesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -5134,7 +5149,7 @@ export namespace AnonymousTypesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -5151,7 +5166,7 @@ export namespace AnonymousTypesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -5687,7 +5702,7 @@ export namespace BlankNodeIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         BlankNodeIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -5801,7 +5816,7 @@ export namespace BlankNodeIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -5810,7 +5825,7 @@ export namespace BlankNodeIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -5853,7 +5868,7 @@ export namespace BlankNodeIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -5870,7 +5885,7 @@ export namespace BlankNodeIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -6184,7 +6199,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               BlankNodeOrIriIdentifierStruct.schema.properties.$identifier.type,
           },
@@ -6215,7 +6230,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         BlankNodeOrIriIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -6359,7 +6374,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -6368,7 +6383,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -6426,7 +6441,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -6443,7 +6458,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -6811,7 +6826,7 @@ export namespace ClassConstraintsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ClassConstraintsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -6889,7 +6904,7 @@ export namespace ClassConstraintsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ClassConstraintsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -7216,7 +7231,7 @@ export namespace ClassConstraintsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -7225,7 +7240,7 @@ export namespace ClassConstraintsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -7335,7 +7350,7 @@ export namespace ClassConstraintsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -7352,7 +7367,7 @@ export namespace ClassConstraintsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -7894,7 +7909,7 @@ export namespace ConvertibleTypesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -8063,7 +8078,7 @@ export namespace ConvertibleTypesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ConvertibleTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -8797,7 +8812,7 @@ export namespace ConvertibleTypesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -8806,7 +8821,7 @@ export namespace ConvertibleTypesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -9017,7 +9032,7 @@ export namespace ConvertibleTypesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -9034,7 +9049,7 @@ export namespace ConvertibleTypesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -10202,7 +10217,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               DatatypeDiscriminatedUnionsStruct.schema.properties.$identifier
                 .type,
@@ -11417,7 +11432,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DatatypeDiscriminatedUnionsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -11427,14 +11442,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       (
         ((value, _options): Literal[] => {
           if (value["$type"] === "date") {
-            return [
-              $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
-            ];
+            return [$literalFactory.date(value.value, $xsd_date)];
           }
           if (value["$type"] === "dateTime") {
-            return [
-              $literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime),
-            ];
+            return [$literalFactory.date(value.value, $xsd_dateTime)];
           }
 
           throw new Error("unable to serialize to RDF");
@@ -11457,7 +11468,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       (
         ((value, _options): Literal[] => {
           if (typeof value === "object") {
-            return [$literalFactory.date(value, $RdfVocabularies.xsd.date)];
+            return [$literalFactory.date(value, $xsd_date)];
           }
           if (typeof value === "string") {
             return [$literalFactory.string(value)];
@@ -11480,14 +11491,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       (
         ((value, _options): Literal[] => {
           if (value["$type"] === "dateTime") {
-            return [
-              $literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime),
-            ];
+            return [$literalFactory.date(value.value, $xsd_dateTime)];
           }
           if (value["$type"] === "date") {
-            return [
-              $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
-            ];
+            return [$literalFactory.date(value.value, $xsd_date)];
           }
 
           throw new Error("unable to serialize to RDF");
@@ -11534,17 +11541,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       (
         ((value, _options): Literal[] => {
           if (typeof value === "boolean") {
-            return [
-              $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
-            ];
+            return [$literalFactory.boolean(value, $xsd_boolean)];
           }
           if (typeof value === "number") {
-            return [$literalFactory.number(value, $RdfVocabularies.xsd.double)];
+            return [$literalFactory.number(value, $xsd_double)];
           }
           if (typeof value === "bigint") {
-            return [
-              $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
-            ];
+            return [$literalFactory.bigint(value, $xsd_integer)];
           }
           if (typeof value === "string") {
             return [$literalFactory.string(value)];
@@ -11597,7 +11600,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             return [$literalFactory.string(value)];
           }
           if (typeof value === "object") {
-            return [$literalFactory.date(value, $RdfVocabularies.xsd.date)];
+            return [$literalFactory.date(value, $xsd_date)];
           }
 
           throw new Error("unable to serialize to RDF");
@@ -12513,7 +12516,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -12522,7 +12525,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -13115,7 +13118,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -13132,7 +13135,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -15009,7 +15012,7 @@ export namespace DatesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: DatesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -15057,7 +15060,7 @@ export namespace DatesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DatesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -15066,27 +15069,21 @@ export namespace DatesStruct {
       DatesStruct.schema.properties.date.path,
       parameters.object.date
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.date),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_date)]),
       parameters.graph,
     );
     parameters.resource.add(
       DatesStruct.schema.properties.dateTime.path,
       parameters.object.dateTime
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_dateTime)]),
       parameters.graph,
     );
     parameters.resource.add(
       DatesStruct.schema.properties.dateTimeStamp.path,
       parameters.object.dateTimeStamp
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.dateTimeStamp),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_dateTimeStamp)]),
       parameters.graph,
     );
     return parameters.resource;
@@ -15276,7 +15273,7 @@ export namespace DatesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -15285,7 +15282,7 @@ export namespace DatesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -15366,7 +15363,7 @@ export namespace DatesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -15383,7 +15380,7 @@ export namespace DatesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -15810,7 +15807,7 @@ export namespace DefaultValuesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: DefaultValuesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -15907,7 +15904,7 @@ export namespace DefaultValuesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DefaultValuesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -15918,12 +15915,7 @@ export namespace DefaultValuesStruct {
         parameters.object.dateDefaultValue,
         new Date("2018-04-09T00:00:00.000Z"),
       ).isLeft()
-        ? [
-            $literalFactory.date(
-              parameters.object.dateDefaultValue,
-              $RdfVocabularies.xsd.date,
-            ),
-          ]
+        ? [$literalFactory.date(parameters.object.dateDefaultValue, $xsd_date)]
         : [],
       parameters.graph,
     );
@@ -15936,7 +15928,7 @@ export namespace DefaultValuesStruct {
         ? [
             $literalFactory.date(
               parameters.object.dateTimeDefaultValue,
-              $RdfVocabularies.xsd.dateTime,
+              $xsd_dateTime,
             ),
           ]
         : [],
@@ -15948,7 +15940,7 @@ export namespace DefaultValuesStruct {
         ? [
             $literalFactory.boolean(
               parameters.object.falseBooleanDefaultValue,
-              $RdfVocabularies.xsd.boolean,
+              $xsd_boolean,
             ),
           ]
         : [],
@@ -15960,7 +15952,7 @@ export namespace DefaultValuesStruct {
         ? [
             $literalFactory.number(
               parameters.object.numberDefaultValue,
-              $RdfVocabularies.xsd.double,
+              $xsd_double,
             ),
           ]
         : [],
@@ -15979,7 +15971,7 @@ export namespace DefaultValuesStruct {
         ? [
             $literalFactory.boolean(
               parameters.object.trueBooleanDefaultValue,
-              $RdfVocabularies.xsd.boolean,
+              $xsd_boolean,
             ),
           ]
         : [],
@@ -16212,7 +16204,7 @@ export namespace DefaultValuesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -16221,7 +16213,7 @@ export namespace DefaultValuesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -16332,7 +16324,7 @@ export namespace DefaultValuesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -16349,7 +16341,7 @@ export namespace DefaultValuesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -16654,10 +16646,7 @@ export namespace DefaultValuesStruct {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Date" as const },
-          defaultValue: dataFactory.literal(
-            "2018-04-09",
-            $RdfVocabularies.xsd.date,
-          ),
+          defaultValue: dataFactory.literal("2018-04-09", $xsd_date),
         },
       },
       dateTimeDefaultValue: {
@@ -16668,7 +16657,7 @@ export namespace DefaultValuesStruct {
           itemType: { kind: "DateTime" as const },
           defaultValue: dataFactory.literal(
             "2018-04-09T10:00:00Z",
-            $RdfVocabularies.xsd.dateTime,
+            $xsd_dateTime,
           ),
         },
       },
@@ -16680,10 +16669,7 @@ export namespace DefaultValuesStruct {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       numberDefaultValue: {
@@ -16692,10 +16678,7 @@ export namespace DefaultValuesStruct {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Float" as const },
-          defaultValue: dataFactory.literal(
-            "0.0e0",
-            $RdfVocabularies.xsd.double,
-          ),
+          defaultValue: dataFactory.literal("0.0e0", $xsd_double),
         },
       },
       stringDefaultValue: {
@@ -16715,10 +16698,7 @@ export namespace DefaultValuesStruct {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "true",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: dataFactory.literal("true", $xsd_boolean),
         },
       },
     },
@@ -16880,7 +16860,7 @@ export namespace DirectRecursiveStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: DirectRecursiveStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -16907,7 +16887,7 @@ export namespace DirectRecursiveStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DirectRecursiveStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -17052,7 +17032,7 @@ export namespace DirectRecursiveStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -17061,7 +17041,7 @@ export namespace DirectRecursiveStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -17101,7 +17081,7 @@ export namespace DirectRecursiveStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -17118,7 +17098,7 @@ export namespace DirectRecursiveStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -17437,7 +17417,7 @@ export namespace DiscriminatedUnionMember1 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               DiscriminatedUnionMember1.schema.properties.$identifier.type,
           },
@@ -17475,7 +17455,7 @@ export namespace DiscriminatedUnionMember1 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DiscriminatedUnionMember1.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -17647,7 +17627,7 @@ export namespace DiscriminatedUnionMember1 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -17656,7 +17636,7 @@ export namespace DiscriminatedUnionMember1 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -17723,7 +17703,7 @@ export namespace DiscriminatedUnionMember1 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -17740,7 +17720,7 @@ export namespace DiscriminatedUnionMember1 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -18101,7 +18081,7 @@ export namespace DiscriminatedUnionMember2 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               DiscriminatedUnionMember2.schema.properties.$identifier.type,
           },
@@ -18139,7 +18119,7 @@ export namespace DiscriminatedUnionMember2 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DiscriminatedUnionMember2.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -18311,7 +18291,7 @@ export namespace DiscriminatedUnionMember2 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -18320,7 +18300,7 @@ export namespace DiscriminatedUnionMember2 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -18387,7 +18367,7 @@ export namespace DiscriminatedUnionMember2 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -18404,7 +18384,7 @@ export namespace DiscriminatedUnionMember2 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -18780,7 +18760,7 @@ export namespace DisplayStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: DisplayStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -18823,7 +18803,7 @@ export namespace DisplayStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DisplayStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -18984,7 +18964,7 @@ export namespace DisplayStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -18993,7 +18973,7 @@ export namespace DisplayStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -19065,7 +19045,7 @@ export namespace DisplayStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -19082,7 +19062,7 @@ export namespace DisplayStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -19458,7 +19438,7 @@ export namespace ExplicitFromToRdfTypesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               ExplicitFromToRdfTypesStruct.schema.properties.$identifier.type,
           },
@@ -19484,7 +19464,7 @@ export namespace ExplicitFromToRdfTypesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ExplicitFromToRdfTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -19611,7 +19591,7 @@ export namespace ExplicitFromToRdfTypesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -19620,7 +19600,7 @@ export namespace ExplicitFromToRdfTypesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -19675,7 +19655,7 @@ export namespace ExplicitFromToRdfTypesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -19692,7 +19672,7 @@ export namespace ExplicitFromToRdfTypesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -20024,7 +20004,7 @@ export namespace ExplicitRdfTypeStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ExplicitRdfTypeStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -20048,7 +20028,7 @@ export namespace ExplicitRdfTypeStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ExplicitRdfTypeStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -20166,7 +20146,7 @@ export namespace ExplicitRdfTypeStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -20175,7 +20155,7 @@ export namespace ExplicitRdfTypeStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -20227,7 +20207,7 @@ export namespace ExplicitRdfTypeStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -20244,7 +20224,7 @@ export namespace ExplicitRdfTypeStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -20562,7 +20542,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               FlattenDiscriminatedUnionMember3.schema.properties.$identifier
                 .type,
@@ -20591,7 +20571,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         FlattenDiscriminatedUnionMember3.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -20725,7 +20705,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -20734,7 +20714,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -20789,7 +20769,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -20806,7 +20786,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -21133,7 +21113,7 @@ export namespace HasValuesStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: HasValuesStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -21653,7 +21633,7 @@ export namespace IgnoredPropertiesStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: IgnoredPropertiesStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -22302,7 +22282,7 @@ export namespace IndirectRecursiveStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -22329,7 +22309,7 @@ export namespace IndirectRecursiveStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         IndirectRecursiveStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -22479,7 +22459,7 @@ export namespace IndirectRecursiveStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -22488,7 +22468,7 @@ export namespace IndirectRecursiveStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -22528,7 +22508,7 @@ export namespace IndirectRecursiveStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -22545,7 +22525,7 @@ export namespace IndirectRecursiveStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -22874,7 +22854,7 @@ export namespace IndirectRecursiveStructHelper {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               IndirectRecursiveStructHelper.schema.properties.$identifier.type,
           },
@@ -22904,7 +22884,7 @@ export namespace IndirectRecursiveStructHelper {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         IndirectRecursiveStructHelper.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -23050,7 +23030,7 @@ export namespace IndirectRecursiveStructHelper {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -23059,7 +23039,7 @@ export namespace IndirectRecursiveStructHelper {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -23101,7 +23081,7 @@ export namespace IndirectRecursiveStructHelper {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -23118,7 +23098,7 @@ export namespace IndirectRecursiveStructHelper {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -23443,7 +23423,7 @@ export namespace InIdentifierStruct {
         >($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: InIdentifierStruct.schema.properties.$identifier.type,
         }).chain((values) => values.head()),
         inIdentifierString: $shaclPropertyFromRdf<
@@ -23469,7 +23449,7 @@ export namespace InIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         InIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -23615,7 +23595,7 @@ export namespace InIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -23624,7 +23604,7 @@ export namespace InIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -23678,7 +23658,7 @@ export namespace InIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -23695,7 +23675,7 @@ export namespace InIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -24074,7 +24054,7 @@ export namespace InPropertiesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: InPropertiesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -24179,7 +24159,7 @@ export namespace InPropertiesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         InPropertiesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -24188,36 +24168,28 @@ export namespace InPropertiesStruct {
       InPropertiesStruct.schema.properties.inBooleans.path,
       parameters.object.inBooleans
         .toList()
-        .flatMap((value) => [
-          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
-        ]),
+        .flatMap((value) => [$literalFactory.boolean(value, $xsd_boolean)]),
       parameters.graph,
     );
     parameters.resource.add(
       InPropertiesStruct.schema.properties.inDateTimes.path,
       parameters.object.inDateTimes
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_dateTime)]),
       parameters.graph,
     );
     parameters.resource.add(
       InPropertiesStruct.schema.properties.inDoubles.path,
       parameters.object.inDoubles
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_double)]),
       parameters.graph,
     );
     parameters.resource.add(
       InPropertiesStruct.schema.properties.inIntegers.path,
       parameters.object.inIntegers
         .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
-        ]),
+        .flatMap((value) => [$literalFactory.bigint(value, $xsd_integer)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -24533,7 +24505,7 @@ export namespace InPropertiesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -24542,7 +24514,7 @@ export namespace InPropertiesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -24666,7 +24638,7 @@ export namespace InPropertiesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -24683,7 +24655,7 @@ export namespace InPropertiesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -25214,7 +25186,7 @@ export namespace IriIdentifierStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: IriIdentifierStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -25241,7 +25213,7 @@ export namespace IriIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         IriIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -25376,7 +25348,7 @@ export namespace IriIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -25385,7 +25357,7 @@ export namespace IriIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -25440,7 +25412,7 @@ export namespace IriIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -25457,7 +25429,7 @@ export namespace IriIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -25777,7 +25749,7 @@ export namespace LangStringStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: LangStringStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -26073,7 +26045,7 @@ export namespace LangStringStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         LangStringStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -26474,7 +26446,7 @@ export namespace LangStringStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -26483,7 +26455,7 @@ export namespace LangStringStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -26680,7 +26652,7 @@ export namespace LangStringStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -26697,7 +26669,7 @@ export namespace LangStringStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -27366,7 +27338,7 @@ export namespace LanguageInStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: LanguageInStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -27853,7 +27825,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
                 .$identifier.type,
@@ -27879,7 +27851,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -28005,7 +27977,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -28014,7 +27986,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -28070,7 +28042,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -28087,7 +28059,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -28434,7 +28406,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               LazilyResolvedDiscriminatedUnionMember1.schema.properties
                 .$identifier.type,
@@ -28460,7 +28432,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -28584,7 +28556,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -28593,7 +28565,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -28649,7 +28621,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -28666,7 +28638,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -28999,7 +28971,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               LazilyResolvedDiscriminatedUnionMember2.schema.properties
                 .$identifier.type,
@@ -29025,7 +28997,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -29149,7 +29121,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -29158,7 +29130,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -29214,7 +29186,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -29231,7 +29203,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -29556,7 +29528,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema:
             LazilyResolvedIriIdentifierStruct.schema.properties.$identifier
               .type,
@@ -30050,7 +30022,7 @@ export namespace LazyPropertiesStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: LazyPropertiesStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -32580,7 +32552,7 @@ export namespace ListSetsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ListSetsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -32774,7 +32746,7 @@ export namespace ListSetsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ListSetsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -32802,7 +32774,7 @@ export namespace ListSetsStruct {
                               (() => dataFactory.blankNode())(),
                             );
                           currentSubListResource!.add(
-                            $RdfVocabularies.rdf.rest,
+                            $rdf_rest,
                             newSubListResource.identifier,
                             _options.graph,
                           );
@@ -32810,15 +32782,15 @@ export namespace ListSetsStruct {
                         }
 
                         currentSubListResource.add(
-                          $RdfVocabularies.rdf.first,
+                          $rdf_first,
                           [$literalFactory.string(item)],
                           _options.graph,
                         );
 
                         if (itemIndex + 1 === list.length) {
                           currentSubListResource.add(
-                            $RdfVocabularies.rdf.rest,
-                            $RdfVocabularies.rdf.nil,
+                            $rdf_rest,
+                            $rdf_nil,
                             _options.graph,
                           );
                         }
@@ -32835,7 +32807,7 @@ export namespace ListSetsStruct {
                         listResource: Resource<BlankNode>;
                       },
                     ).listResource.identifier
-                  : $RdfVocabularies.rdf.nil,
+                  : $rdf_nil,
               ];
             }
             if (typeof value === "string") {
@@ -32873,7 +32845,7 @@ export namespace ListSetsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -32881,7 +32853,7 @@ export namespace ListSetsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [
                     item.length > 0
                       ? item.reduce(
@@ -32899,7 +32871,7 @@ export namespace ListSetsStruct {
                                   (() => dataFactory.blankNode())(),
                                 );
                               currentSubListResource!.add(
-                                $RdfVocabularies.rdf.rest,
+                                $rdf_rest,
                                 newSubListResource.identifier,
                                 parameters.graph,
                               );
@@ -32907,15 +32879,15 @@ export namespace ListSetsStruct {
                             }
 
                             currentSubListResource.add(
-                              $RdfVocabularies.rdf.first,
+                              $rdf_first,
                               [$literalFactory.string(item)],
                               parameters.graph,
                             );
 
                             if (itemIndex + 1 === list.length) {
                               currentSubListResource.add(
-                                $RdfVocabularies.rdf.rest,
-                                $RdfVocabularies.rdf.nil,
+                                $rdf_rest,
+                                $rdf_nil,
                                 parameters.graph,
                               );
                             }
@@ -32932,15 +32904,15 @@ export namespace ListSetsStruct {
                             listResource: Resource<BlankNode>;
                           },
                         ).listResource.identifier
-                      : $RdfVocabularies.rdf.nil,
+                      : $rdf_nil,
                   ],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -32957,7 +32929,7 @@ export namespace ListSetsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -32979,7 +32951,7 @@ export namespace ListSetsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -32987,15 +32959,15 @@ export namespace ListSetsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [$literalFactory.string(item)],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -33012,7 +32984,7 @@ export namespace ListSetsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -33310,7 +33282,7 @@ export namespace ListSetsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -33319,7 +33291,7 @@ export namespace ListSetsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -33474,7 +33446,7 @@ export namespace ListSetsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -33491,7 +33463,7 @@ export namespace ListSetsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -34069,7 +34041,7 @@ export namespace ListsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ListsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -34157,7 +34129,7 @@ export namespace ListsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ListsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -34180,7 +34152,7 @@ export namespace ListsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -34188,15 +34160,15 @@ export namespace ListsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [item],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -34213,7 +34185,7 @@ export namespace ListsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -34235,7 +34207,7 @@ export namespace ListsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -34243,15 +34215,15 @@ export namespace ListsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [$literalFactory.string(item)],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -34268,7 +34240,7 @@ export namespace ListsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -34290,7 +34262,7 @@ export namespace ListsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -34298,7 +34270,7 @@ export namespace ListsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [
                     item.length > 0
                       ? item.reduce(
@@ -34316,7 +34288,7 @@ export namespace ListsStruct {
                                   (() => dataFactory.blankNode())(),
                                 );
                               currentSubListResource!.add(
-                                $RdfVocabularies.rdf.rest,
+                                $rdf_rest,
                                 newSubListResource.identifier,
                                 parameters.graph,
                               );
@@ -34324,15 +34296,15 @@ export namespace ListsStruct {
                             }
 
                             currentSubListResource.add(
-                              $RdfVocabularies.rdf.first,
+                              $rdf_first,
                               [$literalFactory.string(item)],
                               parameters.graph,
                             );
 
                             if (itemIndex + 1 === list.length) {
                               currentSubListResource.add(
-                                $RdfVocabularies.rdf.rest,
-                                $RdfVocabularies.rdf.nil,
+                                $rdf_rest,
+                                $rdf_nil,
                                 parameters.graph,
                               );
                             }
@@ -34349,15 +34321,15 @@ export namespace ListsStruct {
                             listResource: Resource<BlankNode>;
                           },
                         ).listResource.identifier
-                      : $RdfVocabularies.rdf.nil,
+                      : $rdf_nil,
                   ],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -34374,7 +34346,7 @@ export namespace ListsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -34396,7 +34368,7 @@ export namespace ListsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -34404,7 +34376,7 @@ export namespace ListsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [
                     NonClassStruct.toRdfResource(item, {
                       graph: parameters.graph,
@@ -34416,8 +34388,8 @@ export namespace ListsStruct {
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -34434,7 +34406,7 @@ export namespace ListsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -34696,7 +34668,7 @@ export namespace ListsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -34705,7 +34677,7 @@ export namespace ListsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -34822,7 +34794,7 @@ export namespace ListsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -34839,7 +34811,7 @@ export namespace ListsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -35353,7 +35325,7 @@ export namespace MutablePropertiesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: MutablePropertiesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -35410,7 +35382,7 @@ export namespace MutablePropertiesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         MutablePropertiesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -35433,7 +35405,7 @@ export namespace MutablePropertiesStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -35441,15 +35413,15 @@ export namespace MutablePropertiesStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [$literalFactory.string(item)],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -35466,7 +35438,7 @@ export namespace MutablePropertiesStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -35680,7 +35652,7 @@ export namespace MutablePropertiesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -35689,7 +35661,7 @@ export namespace MutablePropertiesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -35775,7 +35747,7 @@ export namespace MutablePropertiesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -35792,7 +35764,7 @@ export namespace MutablePropertiesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -36245,7 +36217,7 @@ export namespace NamedTypesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NamedTypesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -36316,7 +36288,7 @@ export namespace NamedTypesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         NamedTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -36568,7 +36540,7 @@ export namespace NamedTypesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -36577,7 +36549,7 @@ export namespace NamedTypesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -36675,7 +36647,7 @@ export namespace NamedTypesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -36692,7 +36664,7 @@ export namespace NamedTypesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -37136,7 +37108,7 @@ export namespace NewName {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NewName.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -37162,7 +37134,7 @@ export namespace NewName {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         NewName.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -37292,7 +37264,7 @@ export namespace NewName {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -37301,7 +37273,7 @@ export namespace NewName {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -37354,7 +37326,7 @@ export namespace NewName {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -37371,7 +37343,7 @@ export namespace NewName {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -37694,7 +37666,7 @@ export namespace NodeKindsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NodeKindsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -37765,7 +37737,7 @@ export namespace NodeKindsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         NodeKindsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -38086,7 +38058,7 @@ export namespace NodeKindsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -38095,7 +38067,7 @@ export namespace NodeKindsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -38202,7 +38174,7 @@ export namespace NodeKindsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -38219,7 +38191,7 @@ export namespace NodeKindsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -38793,7 +38765,7 @@ export namespace NonClassStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: NonClassStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -39218,7 +39190,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema:
             NoRdfTypeDiscriminatedUnionMember1.schema.properties.$identifier
               .type,
@@ -39698,7 +39670,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema:
             NoRdfTypeDiscriminatedUnionMember2.schema.properties.$identifier
               .type,
@@ -40222,7 +40194,7 @@ export namespace NumericsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NumericsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -40447,7 +40419,7 @@ export namespace NumericsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         NumericsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -40456,9 +40428,7 @@ export namespace NumericsStruct {
       NumericsStruct.schema.properties.byteNumeric.path,
       parameters.object.byteNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.byte),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_byte)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -40472,45 +40442,35 @@ export namespace NumericsStruct {
       NumericsStruct.schema.properties.doubleNumeric.path,
       parameters.object.doubleNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_double)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.floatNumeric.path,
       parameters.object.floatNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.float),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_float)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.integerNumeric.path,
       parameters.object.integerNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
-        ]),
+        .flatMap((value) => [$literalFactory.bigint(value, $xsd_integer)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.intNumeric.path,
       parameters.object.intNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.int),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_int)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.longNumeric.path,
       parameters.object.longNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.long),
-        ]),
+        .flatMap((value) => [$literalFactory.bigint(value, $xsd_long)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -40518,7 +40478,7 @@ export namespace NumericsStruct {
       parameters.object.negativeIntegerNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.negativeInteger),
+          $literalFactory.bigint(value, $xsd_negativeInteger),
         ]),
       parameters.graph,
     );
@@ -40527,10 +40487,7 @@ export namespace NumericsStruct {
       parameters.object.nonNegativeIntegerNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.bigint(
-            value,
-            $RdfVocabularies.xsd.nonNegativeInteger,
-          ),
+          $literalFactory.bigint(value, $xsd_nonNegativeInteger),
         ]),
       parameters.graph,
     );
@@ -40539,10 +40496,7 @@ export namespace NumericsStruct {
       parameters.object.nonPositiveIntegerNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.bigint(
-            value,
-            $RdfVocabularies.xsd.nonPositiveInteger,
-          ),
+          $literalFactory.bigint(value, $xsd_nonPositiveInteger),
         ]),
       parameters.graph,
     );
@@ -40551,7 +40505,7 @@ export namespace NumericsStruct {
       parameters.object.positiveIntegerNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.positiveInteger),
+          $literalFactory.bigint(value, $xsd_positiveInteger),
         ]),
       parameters.graph,
     );
@@ -40559,36 +40513,28 @@ export namespace NumericsStruct {
       NumericsStruct.schema.properties.shortNumeric.path,
       parameters.object.shortNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.short),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_short)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.unsignedByteNumeric.path,
       parameters.object.unsignedByteNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedByte),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_unsignedByte)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.unsignedIntNumeric.path,
       parameters.object.unsignedIntNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_unsignedInt)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.unsignedLongNumeric.path,
       parameters.object.unsignedLongNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.unsignedLong),
-        ]),
+        .flatMap((value) => [$literalFactory.bigint(value, $xsd_unsignedLong)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -40596,7 +40542,7 @@ export namespace NumericsStruct {
       parameters.object.unsignedShortNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedShort),
+          $literalFactory.number(value, $xsd_unsignedShort),
         ]),
       parameters.graph,
     );
@@ -41256,7 +41202,7 @@ export namespace NumericsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -41265,7 +41211,7 @@ export namespace NumericsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -41530,7 +41476,7 @@ export namespace NumericsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -41547,7 +41493,7 @@ export namespace NumericsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -42506,7 +42452,7 @@ export namespace OrderedStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: OrderedStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -43068,7 +43014,7 @@ export namespace PartialDiscriminatedUnionMember1 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               PartialDiscriminatedUnionMember1.schema.properties.$identifier
                 .type,
@@ -43093,7 +43039,7 @@ export namespace PartialDiscriminatedUnionMember1 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         PartialDiscriminatedUnionMember1.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -43213,7 +43159,7 @@ export namespace PartialDiscriminatedUnionMember1 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -43222,7 +43168,7 @@ export namespace PartialDiscriminatedUnionMember1 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -43276,7 +43222,7 @@ export namespace PartialDiscriminatedUnionMember1 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -43293,7 +43239,7 @@ export namespace PartialDiscriminatedUnionMember1 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -43616,7 +43562,7 @@ export namespace PartialDiscriminatedUnionMember2 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               PartialDiscriminatedUnionMember2.schema.properties.$identifier
                 .type,
@@ -43641,7 +43587,7 @@ export namespace PartialDiscriminatedUnionMember2 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         PartialDiscriminatedUnionMember2.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -43761,7 +43707,7 @@ export namespace PartialDiscriminatedUnionMember2 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -43770,7 +43716,7 @@ export namespace PartialDiscriminatedUnionMember2 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -43824,7 +43770,7 @@ export namespace PartialDiscriminatedUnionMember2 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -43841,7 +43787,7 @@ export namespace PartialDiscriminatedUnionMember2 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -44155,7 +44101,7 @@ export namespace PartialStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: PartialStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -44599,7 +44545,7 @@ export namespace PropertyCardinalitiesStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema:
             PropertyCardinalitiesStruct.schema.properties.$identifier.type,
         },
@@ -45385,7 +45331,7 @@ export namespace PropertyNamesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: PropertyNamesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -45433,7 +45379,7 @@ export namespace PropertyNamesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         PropertyNamesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -45644,7 +45590,7 @@ export namespace PropertyNamesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -45653,7 +45599,7 @@ export namespace PropertyNamesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -45748,7 +45694,7 @@ export namespace PropertyNamesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -45765,7 +45711,7 @@ export namespace PropertyNamesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -46191,7 +46137,7 @@ export namespace PropertyPathsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: PropertyPathsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -46230,7 +46176,7 @@ export namespace PropertyPathsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         PropertyPathsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -46414,7 +46360,7 @@ export namespace PropertyPathsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -46423,7 +46369,7 @@ export namespace PropertyPathsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -46491,7 +46437,7 @@ export namespace PropertyPathsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -46508,7 +46454,7 @@ export namespace PropertyPathsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -46865,7 +46811,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               RecursiveDiscriminatedUnionMember1.schema.properties.$identifier
                 .type,
@@ -46897,7 +46843,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -47059,7 +47005,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -47068,7 +47014,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -47111,7 +47057,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -47128,7 +47074,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -47466,7 +47412,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               RecursiveDiscriminatedUnionMember2.schema.properties.$identifier
                 .type,
@@ -47498,7 +47444,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -47660,7 +47606,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -47669,7 +47615,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -47712,7 +47658,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -47729,7 +47675,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -48069,7 +48015,7 @@ export namespace TargetClassStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: TargetClassStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -48092,7 +48038,7 @@ export namespace TargetClassStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         TargetClassStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -48210,7 +48156,7 @@ export namespace TargetClassStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -48219,7 +48165,7 @@ export namespace TargetClassStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -48269,7 +48215,7 @@ export namespace TargetClassStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -48286,7 +48232,7 @@ export namespace TargetClassStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -48616,7 +48562,7 @@ export namespace TermsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: TermsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -48771,7 +48717,7 @@ export namespace TermsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         TermsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -48785,36 +48731,28 @@ export namespace TermsStruct {
       TermsStruct.schema.properties.booleanTerm.path,
       parameters.object.booleanTerm
         .toList()
-        .flatMap((value) => [
-          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
-        ]),
+        .flatMap((value) => [$literalFactory.boolean(value, $xsd_boolean)]),
       parameters.graph,
     );
     parameters.resource.add(
       TermsStruct.schema.properties.dateTerm.path,
       parameters.object.dateTerm
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.date),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_date)]),
       parameters.graph,
     );
     parameters.resource.add(
       TermsStruct.schema.properties.dateTimeTerm.path,
       parameters.object.dateTimeTerm
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_dateTime)]),
       parameters.graph,
     );
     parameters.resource.add(
       TermsStruct.schema.properties.doubleTerm.path,
       parameters.object.doubleTerm
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_double)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -49367,7 +49305,7 @@ export namespace TermsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -49376,7 +49314,7 @@ export namespace TermsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -49569,7 +49507,7 @@ export namespace TermsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -49586,7 +49524,7 @@ export namespace TermsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -50447,7 +50385,7 @@ export namespace UnionDiscriminantsStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: UnionDiscriminantsStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -61447,10 +61385,10 @@ export namespace NamedDiscriminatedUnion2 {
 
   export const toRdfResourceValues = ((value, _options): Literal[] => {
     if (value["$type"] === "date") {
-      return [$literalFactory.date(value.value, $RdfVocabularies.xsd.date)];
+      return [$literalFactory.date(value.value, $xsd_date)];
     }
     if (value["$type"] === "dateTime") {
-      return [$literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime)];
+      return [$literalFactory.date(value.value, $xsd_dateTime)];
     }
 
     throw new Error("unable to serialize to RDF");

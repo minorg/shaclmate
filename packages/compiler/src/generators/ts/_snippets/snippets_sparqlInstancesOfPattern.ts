@@ -5,7 +5,6 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_sparqlInstancesOfPattern: SnippetFactory = ({
   imports,
   rdfjsTermExpression,
-  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(

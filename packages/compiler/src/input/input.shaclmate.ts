@@ -318,7 +318,7 @@ function $ensureRdfResourceType(
   options: { graph: Exclude<Quad_Graph, Variable> | undefined },
 ): Either<Error, undefined> {
   return resource
-    .value($RdfVocabularies.rdf.type, options)
+    .value($rdf_type, options)
     .chain((actualRdfTypeValue) => actualRdfTypeValue.toIri())
     .chain((actualRdfType) => {
       // Check the expected type and its known subtypes
@@ -578,94 +578,38 @@ export namespace $PropertyPath {
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
+const $rdf_subject = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+);
+
+const $rdf_type = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+);
+
 function $rdfResourceIdentifierValues(resource: Resource): Resource.Values {
   return new Resource.Value({
     dataFactory: dataFactory,
     focusResource: resource,
-    propertyPath: $RdfVocabularies.rdf.subject,
+    propertyPath: $rdf_subject,
     term: resource.identifier,
   }).toValues();
 }
 
-namespace $RdfVocabularies {
-  export const rdf = {
-    first: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    ),
-    langString: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
-    ),
-    nil: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    ),
-    rest: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    ),
-    subject: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    ),
-    type: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    ),
-  };
+const $rdfs_comment = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#comment",
+);
 
-  export const rdfs = {
-    comment: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#comment",
-    ),
-    isDefinedBy: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-    ),
-    label: dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-    subClassOf: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    ),
-  };
+const $rdfs_isDefinedBy = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+);
 
-  export const xsd = {
-    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
-    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
-    dateTime: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTime",
-    ),
-    dateTimeStamp: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-    ),
-    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
-    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
-    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
-    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
-    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
-    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
-    negativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    ),
-    nonNegativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    ),
-    nonPositiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    ),
-    positiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    ),
-    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
-    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
-    unsignedByte: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    ),
-    unsignedInt: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    ),
-    unsignedLong: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    ),
-    unsignedShort: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    ),
-  };
-}
+const $rdfs_label = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#label",
+);
+
+const $rdfs_subClassOf = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+);
 
 function $sequenceRecord<T extends Record<string, unknown>>(
   record: { [K in keyof T]: Either<Error, T[K]> },
@@ -942,6 +886,10 @@ function $wrap_FromRdfResourceFunction<T>(
   };
 }
 
+const $xsd_boolean = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#boolean",
+);
+
 export type HttpOperationBinding = {
   readonly $identifier: () => HttpOperationBinding.Identifier;
 
@@ -972,7 +920,7 @@ export namespace HttpOperationBinding {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: HttpOperationBinding.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -1192,7 +1140,7 @@ export namespace HttpOperationBindingRequest {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               HttpOperationBindingRequest.schema.properties.$identifier.type,
           },
@@ -1438,7 +1386,7 @@ export namespace HttpOperationBindingResponse {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               HttpOperationBindingResponse.schema.properties.$identifier.type,
           },
@@ -1786,7 +1734,7 @@ export namespace NodeShape {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NodeShape.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -3273,7 +3221,7 @@ export namespace NodeShape {
       },
       comment: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.comment,
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -3343,10 +3291,7 @@ export namespace NodeShape {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       ignoredProperties: {
@@ -3378,7 +3323,7 @@ export namespace NodeShape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.isDefinedBy,
+        path: $rdfs_isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -3386,7 +3331,7 @@ export namespace NodeShape {
       },
       label: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.label,
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -3563,7 +3508,7 @@ export namespace NodeShape {
       },
       subClassOf: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.subClassOf,
+        path: $rdfs_subClassOf,
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       targetClasses: {
@@ -3609,7 +3554,7 @@ export namespace NodeShape {
       },
       types: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdf.type,
+        path: $rdf_type,
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       xone: {
@@ -3669,7 +3614,7 @@ export namespace Ontology {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: Ontology.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -3800,7 +3745,7 @@ export namespace Ontology {
       $type: { kind: "Discriminant", value: "Ontology" },
       comment: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.comment,
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -3808,7 +3753,7 @@ export namespace Ontology {
       },
       label: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.label,
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -3866,7 +3811,7 @@ export namespace Operation {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: Operation.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -4131,7 +4076,7 @@ export namespace Operation {
       },
       comment: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.comment,
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4151,7 +4096,7 @@ export namespace Operation {
       },
       label: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.label,
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4239,7 +4184,7 @@ export namespace PropertyGroup {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: PropertyGroup.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -4371,7 +4316,7 @@ export namespace PropertyGroup {
       $type: { kind: "Discriminant", value: "PropertyGroup" },
       comment: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.comment,
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4379,7 +4324,7 @@ export namespace PropertyGroup {
       },
       label: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.label,
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4543,7 +4488,7 @@ export namespace PropertyShape {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: PropertyShape.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -6201,7 +6146,7 @@ export namespace PropertyShape {
       },
       comment: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.comment,
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -6249,10 +6194,7 @@ export namespace PropertyShape {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       equals: {
@@ -6292,10 +6234,7 @@ export namespace PropertyShape {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       in_: {
@@ -6314,7 +6253,7 @@ export namespace PropertyShape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.isDefinedBy,
+        path: $rdfs_isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -6322,7 +6261,7 @@ export namespace PropertyShape {
       },
       label: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.label,
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -6678,7 +6617,7 @@ export namespace Service {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: Service.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -6857,7 +6796,7 @@ export namespace Service {
       $type: { kind: "Discriminant", value: "Service" },
       comment: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.comment,
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -6865,7 +6804,7 @@ export namespace Service {
       },
       label: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.label,
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -6957,7 +6896,7 @@ export namespace ValidationReport {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ValidationReport.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -7183,7 +7122,7 @@ export namespace ValidationResult {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ValidationResult.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -7696,7 +7635,7 @@ export namespace Shape {
       },
       comment: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.comment,
+        path: $rdfs_comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -7739,10 +7678,7 @@ export namespace Shape {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       in_: {
@@ -7761,7 +7697,7 @@ export namespace Shape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.isDefinedBy,
+        path: $rdfs_isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -7769,7 +7705,7 @@ export namespace Shape {
       },
       label: {
         kind: "Shacl",
-        path: $RdfVocabularies.rdfs.label,
+        path: $rdfs_label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
