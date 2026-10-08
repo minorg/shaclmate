@@ -3472,7 +3472,7 @@ export type OperationHttpBinding = {
 
   readonly $type: "OperationHttpBinding";
 
-  readonly request: Maybe<OperationHttpRequestBinding>;
+  readonly request: OperationHttpRequestBinding;
 
   readonly response: Maybe<OperationHttpResponseBinding>;
 };
@@ -3502,17 +3502,15 @@ export namespace OperationHttpBinding {
           },
         ).chain((values) => values.head()),
         request: $shaclPropertyFromRdf<
-          Maybe<OperationHttpRequestBinding>,
-          $MaybeSchema<OperationHttpRequestBinding.Schema>
+          OperationHttpRequestBinding,
+          OperationHttpRequestBinding.Schema
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
           propertySchema: OperationHttpBinding.schema.properties.request,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            OperationHttpRequestBinding,
-            OperationHttpRequestBinding.Schema
-          >(OperationHttpRequestBinding.fromRdfResourceValues),
+          typeFromRdfResourceValues:
+            OperationHttpRequestBinding.fromRdfResourceValues,
         }),
         response: $shaclPropertyFromRdf<
           Maybe<OperationHttpResponseBinding>,
@@ -3537,37 +3535,27 @@ export namespace OperationHttpBinding {
 
   export const create = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
+  >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => OperationHttpBinding.Identifier)
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly request?:
-      | OperationHttpRequestBinding
-      | Maybe<OperationHttpRequestBinding>;
+    readonly request: OperationHttpRequestBinding;
     readonly response?:
       | OperationHttpResponseBinding
       | Maybe<OperationHttpResponseBinding>;
   }): Either<Error, OperationHttpBinding> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
+        parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
-      request: $convertToMaybe($identityConversionFunction)(
-        parameters?.request,
-        parameters?.$defaultNamespace,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          OperationHttpBinding.schema.properties.request.type,
-          value,
-        ),
-      ),
+      request: Either.of(parameters.request),
       response: $convertToMaybe($identityConversionFunction)(
-        parameters?.response,
-        parameters?.$defaultNamespace,
+        parameters.response,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           OperationHttpBinding.schema.properties.response.type,
@@ -3587,16 +3575,14 @@ export namespace OperationHttpBinding {
 
   export function createUnsafe<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
+  >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => OperationHttpBinding.Identifier)
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly request?:
-      | OperationHttpRequestBinding
-      | Maybe<OperationHttpRequestBinding>;
+    readonly request: OperationHttpRequestBinding;
     readonly response?:
       | OperationHttpResponseBinding
       | Maybe<OperationHttpResponseBinding>;
@@ -3650,12 +3636,7 @@ export namespace OperationHttpBinding {
           "http://purl.org/shaclmate/ontology#request",
         ),
         get type() {
-          return {
-            kind: "Option" as const,
-            get itemType() {
-              return OperationHttpRequestBinding.schema;
-            },
-          };
+          return OperationHttpRequestBinding.schema;
         },
       },
       response: {

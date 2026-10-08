@@ -116,6 +116,7 @@ shaclmate:OperationHttpBinding
 shaclmate:OperationHttpBinding-request
     a sh:PropertyShape ;
     sh:maxCount 1 ;
+    sh:minCount 1 ;
     sh:node shaclmate:OperationHttpRequestBinding ;
     sh:path shaclmate:request .
 
