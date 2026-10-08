@@ -303,7 +303,6 @@ const workspaces = {
         ],
       },
       scripts: {
-        dev: "NODE_ENV=development bun --watch src/main.ts",
         start: "NODE_ENV=development bun src/main.ts",
       },
       tsconfig: exampleTsconfig,

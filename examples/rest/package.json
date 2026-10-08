@@ -26,7 +26,7 @@
   "scripts": {
     "build": "tsc -b",
     "depcheck": "depcheck .",
-    "dev": "NODE_ENV=development bun --watch src/main.ts",
+    "dev": "tsc -w --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
     "start": "NODE_ENV=development bun src/main.ts"
