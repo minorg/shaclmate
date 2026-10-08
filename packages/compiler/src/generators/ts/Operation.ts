@@ -1,7 +1,6 @@
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type * as ast from "../../ast/index.js";
-import type { OperationHttpBinding } from "../../input/input.shaclmate.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
