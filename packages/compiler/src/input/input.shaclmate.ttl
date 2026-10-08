@@ -6,64 +6,6 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-shaclmate:HttpOperationBinding
-    a rdfs:Class, sh:NodeShape ;
-    sh:property shaclmate:HttpOperationBinding-request, shaclmate:HttpOperationBinding-response .
-
-shaclmate:HttpOperationBinding-request
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:HttpOperationBindingRequest ;
-    sh:path shaclmate:request .
-
-shaclmate:HttpOperationBinding-response
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:HttpOperationBindingResponse ;
-    sh:path shaclmate:response .
-
-shaclmate:HttpOperationBindingRequest
-    a sh:NodeShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:property shaclmate:HttpOperationBindingRequest-contentType, shaclmate:HttpOperationBindingRequest-method, shaclmate:HttpOperationBindingRequest-urlTemplate .
-
-shaclmate:HttpOperationBindingRequest-contentType
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:HttpRequestContentType ;
-    sh:path schema:encodingType .
-
-shaclmate:HttpOperationBindingRequest-method
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:HttpRequestMethod ;
-    sh:path schema:httpMethod .
-
-shaclmate:HttpOperationBindingRequest-urlTemplate
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path schema:urlTemplate .
-
-shaclmate:HttpOperationBindingResponse
-    a rdfs:Class, sh:NodeShape ;
-    sh:maxCount 1 ;
-    sh:property shaclmate:HttpOperationBindingResponse-contentType, shaclmate:HttpOperationBindingResponse-statusCode .
-
-shaclmate:HttpOperationBindingResponse-contentType
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:HttpResponseContentType ;
-    sh:path schema:contentType .
-
-shaclmate:HttpOperationBindingResponse-statusCode
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:HttpResponseStatusCode ;
-    sh:path shaclmate:httpStatusCode .
-
 shaclmate:HttpRequestContentType
     a sh:NodeShape ;
     sh:in ("application/json"
@@ -133,13 +75,13 @@ shaclmate:Operation
 
 shaclmate:Operation-binding
     a sh:PropertyShape ;
-    sh:datatype xsd:string ;
     sh:maxCount 1 ;
+    sh:node shaclmate:OperationHttpBinding ;
     sh:path shaclmate:binding .
 
 shaclmate:Operation-bindings
     a sh:PropertyShape ;
-    sh:node shaclmate:HttpOperationBinding ;
+    sh:node shaclmate:OperationHttpBinding ;
     sh:path shaclmate:binding .
 
 shaclmate:Operation-error
@@ -166,6 +108,64 @@ shaclmate:Operation-result
     sh:maxCount 1 ;
     sh:node shaclmate:PropertyShape ;
     sh:path shaclmate:result .
+
+shaclmate:OperationHttpBinding
+    a rdfs:Class, sh:NodeShape ;
+    sh:property shaclmate:OperationHttpBinding-request, shaclmate:OperationHttpBinding-response .
+
+shaclmate:OperationHttpBinding-request
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationHttpRequestBinding ;
+    sh:path shaclmate:request .
+
+shaclmate:OperationHttpBinding-response
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationHttpResponseBinding ;
+    sh:path shaclmate:response .
+
+shaclmate:OperationHttpRequestBinding
+    a sh:NodeShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:property shaclmate:OperationHttpRequestBinding-contentType, shaclmate:OperationHttpRequestBinding-method, shaclmate:OperationHttpRequestBinding-urlTemplate .
+
+shaclmate:OperationHttpRequestBinding-contentType
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:HttpRequestContentType ;
+    sh:path schema:encodingType .
+
+shaclmate:OperationHttpRequestBinding-method
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:HttpRequestMethod ;
+    sh:path schema:httpMethod .
+
+shaclmate:OperationHttpRequestBinding-urlTemplate
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path schema:urlTemplate .
+
+shaclmate:OperationHttpResponseBinding
+    a rdfs:Class, sh:NodeShape ;
+    sh:maxCount 1 ;
+    sh:property shaclmate:OperationHttpResponseBinding-contentType, shaclmate:OperationHttpResponseBinding-statusCode .
+
+shaclmate:OperationHttpResponseBinding-contentType
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:HttpResponseContentType ;
+    sh:path schema:contentType .
+
+shaclmate:OperationHttpResponseBinding-statusCode
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:HttpResponseStatusCode ;
+    sh:path shaclmate:httpStatusCode .
 
 shaclmate:PropertyShape
     sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
