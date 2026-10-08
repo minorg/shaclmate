@@ -8,8 +8,10 @@
   },
   "devDependencies": {},
   "files": [
-    "dist/rest.shaclmate.d.ts",
-    "dist/rest.shaclmate.js"
+    "dist/rest-decorators.shaclmate.d.ts",
+    "dist/rest-decorators.shaclmate.js",
+    "dist/rest-types.shaclmate.d.ts",
+    "dist/rest-types.shaclmate.js"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
