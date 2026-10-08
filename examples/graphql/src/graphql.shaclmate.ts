@@ -287,7 +287,7 @@ function $ensureRdfResourceType(
   options: { graph: Exclude<Quad_Graph, Variable> | undefined },
 ): Either<Error, undefined> {
   return resource
-    .value($RdfVocabularies.rdf.type, options)
+    .value($rdf_type, options)
     .chain((actualRdfTypeValue) => actualRdfTypeValue.toIri())
     .chain((actualRdfType) => {
       // Check the expected type and its known subtypes
@@ -773,86 +773,21 @@ export namespace $PropertyPath {
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
+const $rdf_subject = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+);
+
+const $rdf_type = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+);
+
 function $rdfResourceIdentifierValues(resource: Resource): Resource.Values {
   return new Resource.Value({
     dataFactory: dataFactory,
     focusResource: resource,
-    propertyPath: $RdfVocabularies.rdf.subject,
+    propertyPath: $rdf_subject,
     term: resource.identifier,
   }).toValues();
-}
-
-namespace $RdfVocabularies {
-  export const rdf = {
-    first: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    ),
-    langString: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
-    ),
-    nil: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    ),
-    rest: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    ),
-    subject: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    ),
-    type: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    ),
-  };
-
-  export const rdfs = {
-    subClassOf: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    ),
-  };
-
-  export const xsd = {
-    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
-    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
-    dateTime: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTime",
-    ),
-    dateTimeStamp: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-    ),
-    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
-    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
-    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
-    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
-    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
-    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
-    negativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    ),
-    nonNegativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    ),
-    nonPositiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    ),
-    positiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    ),
-    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
-    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
-    unsignedByte: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    ),
-    unsignedInt: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    ),
-    unsignedLong: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    ),
-    unsignedShort: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    ),
-  };
 }
 
 function $sequenceRecord<T extends Record<string, unknown>>(
@@ -1140,6 +1075,10 @@ function $wrap_ToRdfResourceFunction<
   };
 }
 
+const $xsd_double = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#double",
+);
+
 export type $DefaultPartial = {
   readonly $identifier: () => $DefaultPartial.Identifier;
 
@@ -1157,7 +1096,7 @@ export namespace $DefaultPartial {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: $DefaultPartial.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -1465,7 +1404,7 @@ export namespace LazyObject {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: LazyObject.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -1515,7 +1454,7 @@ export namespace LazyObject {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         LazyObject.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -1524,9 +1463,7 @@ export namespace LazyObject {
       LazyObject.schema.properties.optionalNumberProperty.path,
       parameters.object.optionalNumberProperty
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_double)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -1818,7 +1755,7 @@ export namespace RootObject {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: RootObject.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -1950,7 +1887,7 @@ export namespace RootObject {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         RootObject.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -2377,7 +2314,7 @@ export namespace UnionMember1 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: UnionMember1.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -2403,7 +2340,7 @@ export namespace UnionMember1 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         UnionMember1.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -2412,9 +2349,7 @@ export namespace UnionMember1 {
       LazyObject.schema.properties.optionalNumberProperty.path,
       parameters.object.optionalNumberProperty
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_double)]),
       parameters.graph,
     );
     return parameters.resource;
@@ -2609,7 +2544,7 @@ export namespace UnionMember2 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: UnionMember2.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -2635,7 +2570,7 @@ export namespace UnionMember2 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         UnionMember2.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );

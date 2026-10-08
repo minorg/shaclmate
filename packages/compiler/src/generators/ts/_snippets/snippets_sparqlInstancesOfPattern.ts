@@ -1,3 +1,4 @@
+import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
@@ -19,9 +20,9 @@ function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { 
         subject,
         predicate: {
           items: [
-            ${snippets.RdfVocabularies}.rdf.type,
+            ${snippets.rdfjsNamedNode(rdf.type)},
             {
-              items: [${snippets.RdfVocabularies}.rdfs.subClassOf],
+              items: [${snippets.rdfjsNamedNode(rdfs.subClassOf)}],
               pathType: "*",
               type: "path",
             },
