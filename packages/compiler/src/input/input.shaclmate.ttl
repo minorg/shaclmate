@@ -6,25 +6,6 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-shaclmate:HttpRequestMethod
-    a sh:NodeShape ;
-    sh:in ( "DELETE" "GET" "POST" "PUT" ) .
-
-shaclmate:HttpRequestContentType
-    a sh:NodeShape ;
-    sh:in ( "application/json" ) .
-
-shaclmate:HttpResponseContentType
-    a sh:NodeShape ;
-    sh:in ( "application/json" ) .
-
-shaclmate:HttpResponseStatusCode
-    a sh:NodeShape ;
-    sh:datatype xsd:int ;
-    sh:maxCount 1 ;
-    sh:maxInclusive 599 ;
-    sh:minInclusive 100 .
-
 shaclmate:HttpOperationBinding
     a rdfs:Class, sh:NodeShape ;
     sh:property shaclmate:HttpOperationBinding-request, shaclmate:HttpOperationBinding-response .
@@ -81,6 +62,31 @@ shaclmate:HttpOperationBindingResponse-statusCode
     sh:node shaclmate:HttpResponseStatusCode ;
     sh:path shaclmate:httpStatusCode .
 
+shaclmate:HttpRequestContentType
+    a sh:NodeShape ;
+    sh:in ("application/json"
+    ) .
+
+shaclmate:HttpRequestMethod
+    a sh:NodeShape ;
+    sh:in ("DELETE"
+        "GET"
+        "POST"
+        "PUT"
+    ) .
+
+shaclmate:HttpResponseContentType
+    a sh:NodeShape ;
+    sh:in ("application/json"
+    ) .
+
+shaclmate:HttpResponseStatusCode
+    a sh:NodeShape ;
+    sh:datatype xsd:int ;
+    sh:maxCount 1 ;
+    sh:maxInclusive 599 ;
+    sh:minInclusive 100 .
+
 shaclmate:NodeShape
     sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
@@ -123,6 +129,12 @@ shaclmate:Operation
     a rdfs:Class, sh:NodeShape ;
     sh:property shaclmate:Operation-bindings, shaclmate:Operation-error, shaclmate:Operation-name, shaclmate:Operation-parameter, shaclmate:Operation-result, shaclmate:comment, shaclmate:label .
 
+shaclmate:Operation-binding
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:binding .
+
 shaclmate:Operation-bindings
     a sh:PropertyShape ;
     sh:node shaclmate:HttpOperationBinding ;
@@ -133,12 +145,6 @@ shaclmate:Operation-error
     sh:maxCount 1 ;
     sh:node shaclmate:NodeShape ;
     sh:path shaclmate:error .
-
-shaclmate:Operation-binding
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:binding .
 
 shaclmate:Operation-name
     shaclmate:display true ;
