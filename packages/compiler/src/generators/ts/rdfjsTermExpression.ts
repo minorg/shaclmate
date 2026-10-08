@@ -43,6 +43,9 @@ export function rdfjsTermExpression(
           rdfs[""].value.length,
         );
         switch (unqualifiedName) {
+          case "comment":
+          case "isDefinedBy":
+          case "label":
           case "subClassOf":
             return code`${this.snippets.RdfVocabularies}.rdfs.${unqualifiedName}`;
           default:

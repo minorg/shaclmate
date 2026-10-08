@@ -19,6 +19,9 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
   };
 
   export const rdfs = {
+    comment: ${imports.dataFactory}.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+    isDefinedBy: ${imports.dataFactory}.namedNode("http://www.w3.org/2000/01/rdf-schema#isDefinedBy"),
+    label: ${imports.dataFactory}.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
     subClassOf: ${imports.dataFactory}.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf")
   };
 

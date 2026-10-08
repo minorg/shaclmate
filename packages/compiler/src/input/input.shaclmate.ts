@@ -610,6 +610,13 @@ namespace $RdfVocabularies {
   };
 
   export const rdfs = {
+    comment: dataFactory.namedNode(
+      "http://www.w3.org/2000/01/rdf-schema#comment",
+    ),
+    isDefinedBy: dataFactory.namedNode(
+      "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+    ),
+    label: dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
     subClassOf: dataFactory.namedNode(
       "http://www.w3.org/2000/01/rdf-schema#subClassOf",
     ),
@@ -3266,9 +3273,7 @@ export namespace NodeShape {
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $RdfVocabularies.rdfs.comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -3373,9 +3378,7 @@ export namespace NodeShape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        ),
+        path: $RdfVocabularies.rdfs.isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -3383,9 +3386,7 @@ export namespace NodeShape {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $RdfVocabularies.rdfs.label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -3799,9 +3800,7 @@ export namespace Ontology {
       $type: { kind: "Discriminant", value: "Ontology" },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $RdfVocabularies.rdfs.comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -3809,9 +3808,7 @@ export namespace Ontology {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $RdfVocabularies.rdfs.label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4134,9 +4131,7 @@ export namespace Operation {
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $RdfVocabularies.rdfs.comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4156,9 +4151,7 @@ export namespace Operation {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $RdfVocabularies.rdfs.label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4378,9 +4371,7 @@ export namespace PropertyGroup {
       $type: { kind: "Discriminant", value: "PropertyGroup" },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $RdfVocabularies.rdfs.comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -4388,9 +4379,7 @@ export namespace PropertyGroup {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $RdfVocabularies.rdfs.label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -6212,9 +6201,7 @@ export namespace PropertyShape {
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $RdfVocabularies.rdfs.comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -6327,9 +6314,7 @@ export namespace PropertyShape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        ),
+        path: $RdfVocabularies.rdfs.isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -6337,9 +6322,7 @@ export namespace PropertyShape {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $RdfVocabularies.rdfs.label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -6874,9 +6857,7 @@ export namespace Service {
       $type: { kind: "Discriminant", value: "Service" },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $RdfVocabularies.rdfs.comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -6884,9 +6865,7 @@ export namespace Service {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $RdfVocabularies.rdfs.label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -7717,9 +7696,7 @@ export namespace Shape {
       },
       comment: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#comment",
-        ),
+        path: $RdfVocabularies.rdfs.comment,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
@@ -7784,9 +7761,7 @@ export namespace Shape {
       },
       isDefinedBy: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        ),
+        path: $RdfVocabularies.rdfs.isDefinedBy,
         type: {
           kind: "Option" as const,
           itemType: { kind: "Identifier" as const },
@@ -7794,9 +7769,7 @@ export namespace Shape {
       },
       label: {
         kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
+        path: $RdfVocabularies.rdfs.label,
         type: {
           kind: "Option" as const,
           itemType: { kind: "String" as const },
