@@ -4,6 +4,7 @@ import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
+import type { OperationHttpBinding } from "../input/input.shaclmate.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
@@ -72,6 +73,12 @@ function transformOperation(
       .map(Maybe.of);
   }
 
+  function transformHttpBinding(
+    _inputHttpBinding: OperationHttpBinding,
+  ): Either<Error, ast.Operation.HttpBinding> {
+    return Left(new Error("not implemented yet"));
+  }
+
   function transformParameter(): Either<Error, Maybe<ast.StructType>> {
     const inputParameter = inputOperation.parameter.extract();
     if (!inputParameter) {
@@ -135,14 +142,16 @@ function transformOperation(
       .map(Maybe.of);
   }
 
-  return Eithers.chain4(
+  return Eithers.chain5(
+    Eithers.chainMap(inputOperation.bindings, transformHttpBinding),
     transformError(),
     astConstructName(inputOperation),
     transformParameter(),
     transformResult(),
-  ).chain(([error, name, parameter, result]) => {
+  ).chain(([bindings, error, name, parameter, result]) => {
     return Either.of(
       new ast.Operation({
+        bindings,
         comment: inputOperation.comment,
         label: inputOperation.label,
         error,

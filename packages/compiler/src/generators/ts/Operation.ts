@@ -9,7 +9,7 @@ import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class Operation extends AbstractConstruct {
-  private readonly bindings: readonly Operation.Binding[];
+  readonly bindings: readonly Operation.Binding[];
   private readonly error: Maybe<ObjectType | ObjectDiscriminatedUnionType>;
   private readonly name: string;
   private readonly parameter: Maybe<ObjectType>;

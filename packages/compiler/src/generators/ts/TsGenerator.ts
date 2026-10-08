@@ -134,6 +134,7 @@ export class TsGenerator implements Generator {
               operations: astService.operations.map(
                 (astOperation) =>
                   new Operation({
+                    bindings: astOperation.bindings,
                     configuration,
                     comment: astOperation.comment,
                     error: astOperation.error.map((astType) => {
