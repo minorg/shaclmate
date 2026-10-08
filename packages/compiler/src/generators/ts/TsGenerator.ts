@@ -10,7 +10,7 @@ import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
 import { Service } from "./Service.js";
 import { SparqlObjectSetType } from "./SparqlObjectSetType.js";
-import type { TsFeature } from "./TsFeature.js";
+import { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -300,75 +300,6 @@ export namespace TsGenerator {
       syntheticNamePrefix: "$",
     };
 
-    const featureDependenciesStatic: Record<TsFeature, TsFeature[]> = {
-      GraphQL: ["ObjectSet"],
-
-      // Alias for other features, not dependencies per se
-      JSON: ["Object.JSON"],
-
-      LoggingService: ["Object.toLoggable", "Service"],
-
-      "Object.create": ["Object.schema", "Object.toString", "Object.type"],
-
-      "Object.equals": ["Object.type"],
-
-      "Object.filter": ["Object.type"],
-
-      "Object.fromJson": ["Object.create", "Object.JSON.type", "Object.type"],
-
-      "Object.fromRdf": ["Object.create", "Object.schema"],
-
-      "Object.hash": [],
-
-      // Alias for other features, not dependencies per se
-      "Object.JSON": [
-        "Object.fromJson",
-        "Object.JSON.parse",
-        "Object.JSON.schema",
-        "Object.JSON.type",
-        "Object.JSON.uiSchema",
-        "Object.toJson",
-      ],
-
-      "Object.JSON.parse": ["Object.JSON.schema", "Object.JSON.type"],
-
-      "Object.JSON.type": [],
-
-      "Object.JSON.schema": ["Object.JSON.type"],
-
-      "Object.JSON.uiSchema": [],
-
-      // Alias for other features, not dependencies per se
-      "Object.RDF": ["Object.fromRdf", "Object.toRdf"],
-
-      "Object.schema": [],
-
-      "Object.toJson": ["Object.JSON.type", "Object.type"],
-
-      "Object.toLoggable": ["Object.type"],
-
-      "Object.toRdf": ["Object.schema", "Object.type"],
-
-      "Object.toString": ["Object.type"],
-
-      "Object.SPARQL": ["Object.schema"],
-
-      "Object.type": [], // Implies Object.Identifier
-
-      ObjectSet: ["Object.filter"],
-
-      // Alias for other features, not dependencies per se
-      RDF: ["Object.RDF", "RdfjsDatasetObjectSet"],
-
-      RdfjsDatasetObjectSet: ["Object.fromRdf", "ObjectSet"],
-
-      Service: ["Object.type"],
-
-      SPARQL: ["Object.SPARQL", "SparqlObjectSet"],
-
-      SparqlObjectSet: ["Object.SPARQL", "ObjectSet"],
-    };
-
     export function finalize(
       ast: ast.Ast,
       partialConfiguration?: Partial<Configuration>,
@@ -377,7 +308,7 @@ export namespace TsGenerator {
         partialConfiguration?.features ?? default_.features!;
 
       const featureDependencies = Object.fromEntries(
-        Object.entries(featureDependenciesStatic).map(([k, v]) => [k, [...v]]),
+        Object.entries(TsFeature.dependencies).map(([k, v]) => [k, [...v]]),
       ) as Record<TsFeature, TsFeature[]>;
 
       if (ast.lazyTypesCount > 0) {
