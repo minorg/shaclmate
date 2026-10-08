@@ -4,6 +4,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_sparqlInstancesOfPattern: SnippetFactory = ({
   imports,
+  rdfjsTermExpression,
   snippets,
   syntheticNamePrefix,
 }) =>
@@ -20,9 +21,9 @@ function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { 
         subject,
         predicate: {
           items: [
-            ${snippets.rdfjsNamedNode(rdf.type)},
+            ${rdfjsTermExpression(rdf.type)},
             {
-              items: [${snippets.rdfjsNamedNode(rdfs.subClassOf)}],
+              items: [${rdfjsTermExpression(rdfs.subClassOf)}],
               pathType: "*",
               type: "path",
             },

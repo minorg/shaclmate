@@ -4,6 +4,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_listSparqlConstructTriples: SnippetFactory = ({
   imports,
+  rdfjsTermExpression,
   snippets,
   syntheticNamePrefix,
 }) =>
@@ -19,13 +20,13 @@ function ${syntheticNamePrefix}listSparqlConstructTriples<ItemFilterT, ItemSchem
     {
       // ?list rdf:first ?item0
       const item0Variable = variable("Item0");
-      triples.push({ subject: listVariable, predicate: ${snippets.rdfjsNamedNode(rdf.first)}, object: item0Variable });
+      triples.push({ subject: listVariable, predicate: ${rdfjsTermExpression(rdf.first)}, object: item0Variable });
       triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, ignoreRdfType: false, schema: schema.itemType, valueVariable: item0Variable, variablePrefix: variablePrefix("Item0") }));
     }
 
     {
       // ?list rdf:rest ?rest0
-      triples.push({ subject: listVariable, predicate: ${snippets.rdfjsNamedNode(rdf.rest)}, object: variable("Rest0") });
+      triples.push({ subject: listVariable, predicate: ${rdfjsTermExpression(rdf.rest)}, object: variable("Rest0") });
     }
 
     // Don't do ?list rdf:rest+ ?restN in CONSTRUCT
@@ -34,12 +35,12 @@ function ${syntheticNamePrefix}listSparqlConstructTriples<ItemFilterT, ItemSchem
     {
       // ?rest rdf:first ?itemN
       const itemNVariable = variable("ItemN");
-      triples.push({ subject: restNVariable, predicate: ${snippets.rdfjsNamedNode(rdf.first)}, object: itemNVariable });
+      triples.push({ subject: restNVariable, predicate: ${rdfjsTermExpression(rdf.first)}, object: itemNVariable });
       triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, ignoreRdfType: false, schema: schema.itemType, valueVariable: itemNVariable, variablePrefix: variablePrefix("ItemN") }));
     }
 
     // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-    triples.push({ subject: restNVariable, predicate: ${snippets.rdfjsNamedNode(rdf.rest)}, object: variable("RestNBasic") });
+    triples.push({ subject: restNVariable, predicate: ${rdfjsTermExpression(rdf.rest)}, object: variable("RestNBasic") });
 
     return triples;
   }

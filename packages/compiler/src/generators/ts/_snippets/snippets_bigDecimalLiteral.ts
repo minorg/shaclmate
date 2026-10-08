@@ -4,7 +4,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_bigDecimalLiteral: SnippetFactory = ({
   imports,
-  snippets,
+  rdfjsTermExpression,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
@@ -14,6 +14,6 @@ export const snippets_bigDecimalLiteral: SnippetFactory = ({
  * Create a Literal from a BigDecimal.
  */  
 function ${syntheticNamePrefix}bigDecimalLiteral(value: ${imports.BigDecimal}): ${imports.Literal} {
-  return ${imports.dataFactory}.literal(value.toFixed(), ${snippets.rdfjsNamedNode(xsd.decimal)});
+  return ${imports.dataFactory}.literal(value.toFixed(), ${rdfjsTermExpression(xsd.decimal)});
 }`,
   );
