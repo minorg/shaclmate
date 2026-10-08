@@ -4,6 +4,7 @@
     "@rdfx/collection": "0.0.57",
     "@rdfx/data-factory": "0.0.57",
     "@rdfx/resource": "0.0.57",
+    "hono": "~4.13.13",
     "purify-ts": "~2.1.4"
   },
   "devDependencies": {},
@@ -25,10 +26,10 @@
   "scripts": {
     "build": "tsc -b",
     "depcheck": "depcheck .",
-    "dev": "tsc -w --preserveWatchOutput",
+    "dev": "NODE_ENV=development bun --watch src/main.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
-    "start": "NODE_ENV=development tsx src/server.ts"
+    "start": "NODE_ENV=development bun src/main.ts"
   },
   "type": "module",
   "types": "./dist/index.d.ts",

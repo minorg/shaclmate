@@ -29,4 +29,6 @@ export const TS_FEATURES = [
   "SPARQL",
   "SparqlObjectSet",
   "Service",
+  "ServiceHttpClient",
+  "ServiceHttpServer",
 ] as const;
