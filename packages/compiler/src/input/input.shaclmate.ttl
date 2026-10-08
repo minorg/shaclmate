@@ -65,7 +65,7 @@ shaclmate:HttpOperationBindingResponse
 shaclmate:HttpOperationBindingResponse-contentType
     a sh:PropertyShape ;
     sh:maxCount 1 ;
-    sh:node HttpResponseContentType ;
+    sh:node shaclmate:HttpResponseContentType ;
     sh:path schema:contentType .
 
 shaclmate:HttpOperationBindingResponse-statusCode
