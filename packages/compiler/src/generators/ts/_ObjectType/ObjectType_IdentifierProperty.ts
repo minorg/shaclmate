@@ -100,18 +100,12 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
         this.type.in_.length > 0 && this.type.kind === "Iri"
           ? this.jsonTypeFactory.string({
               in_: this.type.in_.map((iri) => iri.value),
-              minLength: Maybe.empty(),
-              name: Maybe.empty(),
             })
           : this.jsonTypeFactory.string({
-              in_: [],
-              minLength: Maybe.of(1n),
-              name: Maybe.empty(),
+              minLength: 1n,
             }),
-      uiSchemaElement: Maybe.of(
-        ({ variables }) =>
-          code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
-      ),
+      uiSchemaElement: ({ variables }) =>
+        code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
     });
   }
 

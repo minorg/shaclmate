@@ -59,13 +59,11 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
       recursive: this.recursive,
       type: this.jsonTypeFactory.string({
         in_: [this.value],
-        minLength: Maybe.empty(),
-        name: Maybe.empty(),
       }),
-      uiSchemaElement: Maybe.of(({ variables }) => {
+      uiSchemaElement: ({ variables }) => {
         const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
         return code`{ rule: { condition: { schema: { const: ${this.constValue} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`;
-      }),
+      },
     });
   }
 

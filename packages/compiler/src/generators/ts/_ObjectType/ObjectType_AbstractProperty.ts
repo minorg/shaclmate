@@ -71,9 +71,9 @@ export abstract class ObjectType_AbstractProperty {
     readonly optional: boolean;
     readonly recursive: boolean;
     readonly type: AbstractType.JsonType;
-    readonly uiSchemaElement: Maybe<
-      (parameters: { variables: { scopePrefix: Code } }) => Code
-    >;
+    readonly uiSchemaElement: (parameters: {
+      variables: { scopePrefix: Code };
+    }) => Code;
   }>;
 
   /**

@@ -410,7 +410,7 @@ export class ObjectType extends AbstractType {
       members: this.properties.flatMap((property) =>
         property.jsonObjectMember.toList(),
       ),
-      name: this.name.map((name) => [name, "Json"]),
+      name: this.name.map((name) => [name, "Json"]).extract(),
     });
   }
 

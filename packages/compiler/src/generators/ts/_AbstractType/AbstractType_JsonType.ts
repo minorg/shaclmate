@@ -290,35 +290,67 @@ class JsonTypeFactory {
     this.constructorParameters = constructorParameters;
   }
 
-  array(parameters: {
+  array({
+    itemType,
+    minCount,
+    name,
+  }: {
     itemType: JsonType;
-    minCount: bigint;
-    name: Maybe<AbstractJsonType.Name>;
+    minCount?: bigint;
+    name?: AbstractJsonType.Name;
   }): JsonArrayType {
     return new JsonArrayType({
       ...this.constructorParameters,
-      ...parameters,
+      itemType,
+      minCount: minCount ?? 0n,
+      name: Maybe.fromNullable(name),
     });
   }
 
-  object(parameters: {
-    members: readonly JsonObjectType.Member[];
-    name: Maybe<AbstractJsonType.Name>;
+  object({
+    members,
+    name,
+  }: {
+    members: readonly (Pick<JsonObjectType.Member, "name" | "type"> & {
+      description?: Maybe<string> | string;
+      label?: Maybe<string> | string;
+      optional?: boolean;
+      recursive?: boolean;
+      uiSchemaElement?: (parameters: {
+        variables: { scopePrefix: Code };
+      }) => Code;
+    })[];
+    name?: AbstractJsonType.Name;
   }): JsonObjectType {
     return new JsonObjectType({
       ...this.constructorParameters,
-      ...parameters,
+      members: members.map((member) => ({
+        description: Maybe.isMaybe(member.description)
+          ? member.description
+          : Maybe.fromNullable(member.description),
+        label: Maybe.isMaybe(member.label)
+          ? member.label
+          : Maybe.fromNullable(member.label),
+        optional: !!member.optional,
+        recursive: !!member.recursive,
+        name: member.name,
+        type: member.type,
+        uiSchemaElement: Maybe.fromNullable(member.uiSchemaElement),
+      })),
+      name: Maybe.fromNullable(name),
     });
   }
 
-  string(parameters: {
-    in_: readonly string[];
-    minLength: Maybe<bigint>;
-    name: Maybe<AbstractJsonType.Name>;
+  string(parameters?: {
+    in_?: readonly string[];
+    minLength?: bigint;
+    name?: AbstractJsonType.Name;
   }): JsonStringType {
     return new JsonStringType({
       ...this.constructorParameters,
-      ...parameters,
+      in_: parameters?.in_ ?? [],
+      minLength: Maybe.fromNullable(parameters?.minLength),
+      name: Maybe.fromNullable(parameters?.name),
     });
   }
 }

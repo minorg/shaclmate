@@ -144,7 +144,7 @@ export class ObjectType_ShaclProperty<
       optional: optional,
       recursive: this.recursive,
       type: this.type.jsonType(),
-      uiSchemaElement: Maybe.of(({ variables }) => {
+      uiSchemaElement: ({ variables }) => {
         const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
         return this.type
           .jsonType()
@@ -155,7 +155,7 @@ export class ObjectType_ShaclProperty<
             ),
           )
           .unsafeCoerce();
-      }),
+      },
     });
   }
 
