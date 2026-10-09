@@ -18,6 +18,11 @@
 
 :ExampleService
     shaclmate:operation [
+        shaclmate:binding [
+            shaclmate:request [
+                schema:urlTemplate "/{identifier}"
+            ] ;
+        ] ;
         shaclmate:error :ExampleError ;
         shaclmate:name "get" ;
         shaclmate:parameter [
@@ -29,9 +34,16 @@
             ]
         ] ;
         shaclmate:result [
-            sh:datatype xsd:string ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
+            sh:node [
+                sh:property [
+                    sh:datatype xsd:string ;
+                    sh:maxCount 1 ;
+                    sh:minCount 1 ;
+                    sh:path :result
+                ]
+            ] ;
             sh:path :result
         ]
     ] ;
