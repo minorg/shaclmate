@@ -139,24 +139,10 @@ export class DefaultValueType<
     return this.itemType.graphqlResolveExpression(parameters);
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    return this.itemType.jsonSchema(parameters);
-  }
-
   override jsonType(
     parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
   ): AbstractType.JsonType {
     return this.itemType.jsonType(parameters);
-  }
-
-  override jsonUiSchemaElement(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.jsonUiSchemaElement(parameters);
   }
 
   override toJsonExpression(

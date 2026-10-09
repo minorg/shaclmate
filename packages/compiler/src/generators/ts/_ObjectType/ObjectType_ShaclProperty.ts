@@ -128,8 +128,21 @@ export class ObjectType_ShaclProperty<
       description: this.description.alt(this.comment),
       label: this.label,
       name: this.name,
+      optional: this.type.kind === "Option",
       recursive: this.recursive,
       type: this.type.jsonType(),
+      uiSchemaElement: Maybe.of(({ variables }) => {
+        const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
+        return this.type
+          .jsonType()
+          .uiSchemaElement({ variables })
+          .altLazy(() =>
+            Maybe.of(
+              code`{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
+            ),
+          )
+          .unsafeCoerce();
+      }),
     });
   }
 
@@ -260,21 +273,6 @@ export class ObjectType_ShaclProperty<
     return [
       code`${this.type.hashFunction}(${variables.hasher}, ${variables.object}.${this.name});`,
     ];
-  }
-
-  jsonUiSchemaElement({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["jsonUiSchemaElement"]
-  >[0]): Maybe<Code> {
-    const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
-    return this.type
-      .jsonUiSchemaElement({ variables: { scopePrefix: scope } })
-      .altLazy(() =>
-        Maybe.of(
-          code`{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
-        ),
-      );
   }
 
   override sparqlConstructTriplesExpression({

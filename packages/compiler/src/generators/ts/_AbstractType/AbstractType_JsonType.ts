@@ -1,6 +1,8 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { Reusables } from "../Reusables.js";
+import type { TsGenerator } from "../TsGenerator.js";
 import {
   arrayOf,
   type Code,
@@ -10,21 +12,86 @@ import {
 } from "../ts-poet-wrapper.js";
 
 abstract class AbstractJsonType {
+  protected readonly configuration: TsGenerator.Configuration;
+  protected abstract readonly inlineExpression: Code;
   protected readonly reusables: Reusables;
+  protected abstract readonly schemaExpression: Code;
 
-  abstract readonly expression: Code;
   abstract readonly kind: string;
-  abstract readonly schema: Code;
+  readonly name: Maybe<AbstractJsonType.Name>;
 
-  constructor({ reusables }: { reusables: Reusables }) {
+  constructor({
+    configuration,
+    name,
+    reusables,
+  }: {
+    configuration: TsGenerator.Configuration;
+    name: Maybe<AbstractJsonType.Name>;
+    reusables: Reusables;
+  }) {
+    this.configuration = configuration;
+    this.name = name;
     this.reusables = reusables;
+  }
+
+  @Memoize()
+  get declaration(): Maybe<Code> {
+    if (this.name.isNothing()) {
+      return Maybe.empty();
+    }
+
+    const unqualifiedName = this.name.extract()!.at(-1)!;
+
+    const declarations: Code[] = [];
+
+    if (this.configuration.features.has("Object.JSON.type")) {
+      declarations.push(
+        code`export type ${unqualifiedName} = ${this.inlineExpression};`,
+      );
+    }
+
+    const moduleDeclarations: Code[] = [];
+
+    if (this.configuration.features.has("Object.JSON.schema")) {
+      moduleDeclarations.push(
+        code`export function schema() { return ${this.schemaExpression} satisfies ${this.reusables.imports.z}.ZodType<Json>; }`,
+      );
+    }
+
+    if (moduleDeclarations.length > 0) {
+      declarations.push(
+        code`export namespace Json { ${joinCode(moduleDeclarations, { on: "\n\n" })} }`,
+      );
+    }
+
+    return Maybe.of(joinCode(declarations, { on: "\n\n" }));
+  }
+
+  @Memoize()
+  get expression(): Code {
+    return this.name
+      .map((name) => code`${name.join(".")}`)
+      .orDefaultLazy(() => this.inlineExpression);
+  }
+
+  @Memoize()
+  get schema(): Code {
+    return this.name
+      .map((name) => code`${name.join(".")}.schema()`)
+      .orDefaultLazy(() => this.schemaExpression);
+  }
+
+  uiSchemaElement(_parameters: {
+    variables: { scopePrefix: Code };
+  }): Maybe<Code> {
+    return Maybe.empty();
   }
 }
 
 class JsonArrayType extends AbstractJsonType {
   readonly itemType: JsonArrayType.ItemType;
   override readonly kind = "JsonArray";
-  readonly minCount: Maybe<bigint>;
+  readonly minCount: bigint;
 
   constructor({
     itemType,
@@ -32,7 +99,7 @@ class JsonArrayType extends AbstractJsonType {
     ...superParameters
   }: {
     itemType: JsonArrayType.ItemType;
-    minCount: Maybe<bigint>;
+    minCount: bigint;
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
     this.itemType = itemType;
@@ -40,12 +107,12 @@ class JsonArrayType extends AbstractJsonType {
   }
 
   @Memoize()
-  get expression(): Code {
+  protected get inlineExpression(): Code {
     return code`(${this.itemType.expression})[]`;
   }
 
   @Memoize()
-  get schema(): Code {
+  protected get schemaExpression(): Code {
     return code`${this.reusables.imports.z}.array(${this.itemType.schema})`;
   }
 }
@@ -54,12 +121,12 @@ class JsonBooleanType extends AbstractJsonType {
   override readonly kind = "JsonBoolean";
 
   @Memoize()
-  get expression(): Code {
+  protected get inlineExpression(): Code {
     return code`boolean`;
   }
 
   @Memoize()
-  get schema(): Code {
+  protected get schemaExpression(): Code {
     return code`${this.reusables.imports.z}.boolean()`;
   }
 }
@@ -68,54 +135,76 @@ class JsonNumberType extends AbstractJsonType {
   override readonly kind = "JsonNumber";
 
   @Memoize()
-  get expression(): Code {
+  protected get inlineExpression(): Code {
     return code`number`;
   }
 
   @Memoize()
-  get schema(): Code {
+  protected get schemaExpression(): Code {
     return code`${this.reusables.imports.z}.number()`;
   }
 }
 
 class JsonObjectType extends AbstractJsonType {
   override readonly kind = "JsonObject";
-  readonly alias: Maybe<Code>;
   readonly members: readonly JsonObjectType.Member[];
 
   constructor({
-    alias,
     members,
     ...superParameters
   }: {
-    alias: Maybe<Code>;
     members: readonly JsonObjectType.Member[];
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
-    this.alias = alias;
     this.members = members;
   }
 
-  @Memoize()
-  get expression(): Code {
-    return this.alias.orDefaultLazy(() => this.inlineExpression);
+  override uiSchemaElement({
+    variables,
+  }: Parameters<AbstractJsonType["uiSchemaElement"]>[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.name
+        .map((name) => code`${name.join(".")}.uiSchema`)
+        .orDefaultLazy(
+          () => this.uiSchemaFunctionExpression,
+        )}({ scopePrefix: ${variables.scopePrefix} })`,
+    );
+  }
+
+  private get uiSchemaFunctionExpression() {
+    const variables = { scopePrefix: code`scopePrefix` };
+
+    const uiSchema: Record<string, Code | string> = {
+      elements: code`${arrayOf(
+        ...this.members.flatMap((member) =>
+          member.uiSchemaElement.map((f) => f({ variables })).toList(),
+        ),
+      )}`,
+      type: "Group",
+    };
+    this.name.ifJust((name) => {
+      uiSchema["label"] = code`${literalOf(name)}`;
+    });
+
+    return code`\
+((parameters?: { scopePrefix?: string }): any => {
+  const scopePrefix = parameters?.scopePrefix ?? "#";
+  return ${uiSchema};
+})`;
   }
 
   @Memoize()
-  get inlineExpression(): Code {
+  protected get inlineExpression(): Code {
     return code`{ ${joinCode(
       this.members.map((member) => {
-        if (member.type.kind === "JsonOption") {
-          return code`"${member.name}"?: ${member.type.itemType.expression}`;
-        }
-        return code`"${member.name}": ${member.type.expression}`;
+        return code`"${member.name}"${member.optional ? "?" : ""}: ${member.type.expression}`;
       }),
       { on: ", " },
     )} }`;
   }
 
   @Memoize()
-  get schema(): Code {
+  protected get schemaExpression(): Code {
     return code`${this.reusables.imports.z}.object({ ${joinCode(
       this.members.map((member) => {
         let schema = member.type.schema;
@@ -140,35 +229,11 @@ class JsonObjectType extends AbstractJsonType {
   }
 }
 
-class JsonOptionType extends AbstractJsonType {
-  readonly itemType: JsonOptionType.ItemType;
-  override readonly kind = "JsonOption";
-
-  constructor({
-    itemType,
-    ...superParameters
-  }: { itemType: JsonOptionType.ItemType } & ConstructorParameters<
-    typeof AbstractJsonType
-  >[0]) {
-    super(superParameters);
-    this.itemType = itemType;
-  }
-
-  @Memoize()
-  get expression(): Code {
-    throw new Error("should never be called");
-  }
-
-  @Memoize()
-  get schema(): Code {
-    return code`${this.itemType.schema}.optional()`;
-  }
-}
-
 class JsonStringType extends AbstractJsonType {
-  override readonly kind = "JsonString";
   private readonly in_: readonly string[];
   private readonly minLength: Maybe<bigint>;
+
+  override readonly kind = "JsonString";
 
   constructor({
     in_,
@@ -184,7 +249,7 @@ class JsonStringType extends AbstractJsonType {
   }
 
   @Memoize()
-  get expression(): Code {
+  protected get inlineExpression(): Code {
     if (this.in_.length > 0) {
       return joinCode(
         this.in_.map((value) => code`${literalOf(value)}`),
@@ -195,7 +260,7 @@ class JsonStringType extends AbstractJsonType {
   }
 
   @Memoize()
-  get schema(): Code {
+  protected get schemaExpression(): Code {
     switch (this.in_.length) {
       case 0: {
         let schema = code`${this.reusables.imports.z}.string()`;
@@ -213,52 +278,47 @@ class JsonStringType extends AbstractJsonType {
 }
 
 class JsonTypeFactory {
-  private readonly constructorParameters: { reusables: Reusables };
+  private readonly constructorParameters: {
+    configuration: TsGenerator.Configuration;
+    reusables: Reusables;
+  };
 
-  constructor({ reusables }: { reusables: Reusables }) {
-    this.constructorParameters = { reusables };
+  constructor(constructorParameters: {
+    configuration: TsGenerator.Configuration;
+    reusables: Reusables;
+  }) {
+    this.constructorParameters = constructorParameters;
   }
 
-  array(itemType: JsonType, options?: { minCount?: bigint }): JsonArrayType {
-    if (itemType.kind === "JsonOption") {
-      throw new RangeError(`${itemType.kind} not permitted in an array`);
-    }
+  array(parameters: {
+    itemType: JsonType;
+    minCount: bigint;
+    name: Maybe<AbstractJsonType.Name>;
+  }): JsonArrayType {
     return new JsonArrayType({
       ...this.constructorParameters,
-      itemType,
-      minCount: Maybe.fromNullable(options?.minCount),
+      ...parameters,
     });
   }
 
-  object({
-    alias,
-    members,
-  }: {
-    alias: Maybe<Code>;
+  object(parameters: {
     members: readonly JsonObjectType.Member[];
+    name: Maybe<AbstractJsonType.Name>;
   }): JsonObjectType {
     return new JsonObjectType({
       ...this.constructorParameters,
-      alias,
-      members,
+      ...parameters,
     });
   }
 
-  option(itemType: JsonType): JsonOptionType {
-    if (itemType.kind === "JsonOption") {
-      throw new RangeError(`${itemType.kind} not permitted in an option`);
-    }
-    return new JsonOptionType({ ...this.constructorParameters, itemType });
-  }
-
-  string(parameters?: {
-    in_?: readonly string[];
-    minLength?: bigint;
+  string(parameters: {
+    in_: readonly string[];
+    minLength: Maybe<bigint>;
+    name: Maybe<AbstractJsonType.Name>;
   }): JsonStringType {
     return new JsonStringType({
       ...this.constructorParameters,
-      in_: parameters?.in_ ?? [],
-      minLength: Maybe.fromNullable(parameters?.minLength),
+      ...parameters,
     });
   }
 }
@@ -268,13 +328,17 @@ type JsonType =
   | JsonBooleanType
   | JsonNumberType
   | JsonObjectType
-  | JsonOptionType
   | JsonStringType;
 
 export type AbstractType_JsonType = JsonType;
 
-export const AbstractType_JsonTypeFactory = JsonTypeFactory;
 export type AbstractType_JsonTypeFactory = JsonTypeFactory;
+
+export namespace AbstractJsonType {
+  export type Name = readonly string[];
+}
+
+export const AbstractType_JsonTypeFactory = JsonTypeFactory;
 
 // biome-ignore lint/correctness/noUnusedVariables: used for types
 namespace JsonArrayType {
@@ -292,17 +356,15 @@ namespace JsonObjectType {
     readonly description: Maybe<string>;
     readonly label: Maybe<string>;
     readonly name: string;
+    readonly optional: boolean;
     readonly recursive: boolean;
     readonly type: AbstractType_JsonType;
-  }
-}
 
-// biome-ignore lint/correctness/noUnusedVariables: used for types
-namespace JsonOptionType {
-  export type ItemType =
-    | JsonArrayType
-    | JsonBooleanType
-    | JsonNumberType
-    | JsonObjectType
-    | JsonStringType;
+    /**
+     * Element object (usually a control https://jsonforms.io/docs/uischema/controls) for a JSON Forms UI schema.
+     */
+    readonly uiSchemaElement: Maybe<
+      (parameters: { variables: { scopePrefix: Code } }) => Code
+    >;
+  }
 }

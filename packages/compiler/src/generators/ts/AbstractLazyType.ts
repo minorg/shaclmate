@@ -113,22 +113,10 @@ export abstract class AbstractLazyType<
     );
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractType["jsonSchema"]>[0],
-  ): Code {
-    return this.partialType.jsonSchema(parameters);
-  }
-
   override jsonType(
     parameters?: Parameters<AbstractType["jsonType"]>[0],
   ): AbstractType.JsonType {
     return this.partialType.jsonType(parameters);
-  }
-
-  override jsonUiSchemaElement(
-    parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
-  ): Maybe<Code> {
-    return this.partialType.jsonUiSchemaElement(parameters);
   }
 
   override toJsonExpression({
@@ -241,6 +229,5 @@ export namespace AbstractLazyType {
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
-  export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
 }

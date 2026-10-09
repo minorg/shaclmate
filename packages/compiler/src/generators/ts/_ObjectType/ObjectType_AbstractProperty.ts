@@ -68,8 +68,12 @@ export abstract class ObjectType_AbstractProperty {
     readonly description: Maybe<string>;
     readonly label: Maybe<string>;
     readonly name: string;
+    readonly optional: boolean;
     readonly recursive: boolean;
     readonly type: AbstractType.JsonType;
+    readonly uiSchemaElement: Maybe<
+      (parameters: { variables: { scopePrefix: Code } }) => Code
+    >;
   }>;
 
   /**
@@ -185,13 +189,6 @@ export abstract class ObjectType_AbstractProperty {
   abstract hashStatements(parameters: {
     variables: { hasher: Code; object: Code };
   }): readonly Code[];
-
-  /**
-   * Element object (usually a control https://jsonforms.io/docs/uischema/controls) for a JSON Forms UI schema.
-   */
-  abstract jsonUiSchemaElement(parameters: {
-    variables: { scopePrefix: Code };
-  }): Maybe<Code>;
 
   /**
    * SPARQL.js CONSTRUCT template triples for this property.

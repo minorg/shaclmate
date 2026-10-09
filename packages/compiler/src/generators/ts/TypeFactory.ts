@@ -72,7 +72,10 @@ export class TypeFactory {
     reusables: Reusables;
   }) {
     this.configuration = configuration;
-    this.jsonTypeFactory = new AbstractType_JsonTypeFactory({ reusables });
+    this.jsonTypeFactory = new AbstractType_JsonTypeFactory({
+      configuration,
+      reusables,
+    });
     this.logger = logger;
     this.constructorParameters = {
       configuration,

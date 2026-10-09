@@ -88,10 +88,6 @@ export abstract class AbstractTermType<
     return initializers;
   }
 
-  override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {

@@ -407,24 +407,11 @@ export class ObjectType extends AbstractType {
   @Memoize()
   override jsonType(): AbstractType.JsonType {
     return this.jsonTypeFactory.object({
-      alias: this.name.map((name) => code`${name}.Json`),
-      members: (memberFactory) =>
-        this.properties.flatMap((property) =>
-          property.jsonObjectMember.map(memberFactory).toList(),
-        ),
+      members: this.properties.flatMap((property) =>
+        property.jsonObjectMember.toList(),
+      ),
+      name: this.name.map((name) => [name, "Json"]),
     });
-  }
-
-  override jsonUiSchemaElement({
-    variables,
-  }: Parameters<AbstractType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.name
-        .map((name) => code`${name}.Json.uiSchema`)
-        .orDefaultLazy(() =>
-          ObjectType_jsonUiSchemaFunctionExpression.call(this),
-        )}({ scopePrefix: ${variables.scopePrefix} })`,
-    );
   }
 
   override toJsonExpression({

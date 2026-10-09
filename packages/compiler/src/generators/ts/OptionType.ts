@@ -138,15 +138,7 @@ export class OptionType<
   override jsonType(
     parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
   ): AbstractContainerType.JsonType {
-    return this.jsonTypeFactory.option(this.itemType.jsonType(parameters));
-  }
-
-  override jsonUiSchemaElement(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.jsonUiSchemaElement(parameters);
+    return this.itemType.jsonType(parameters);
   }
 
   override toJsonExpression({

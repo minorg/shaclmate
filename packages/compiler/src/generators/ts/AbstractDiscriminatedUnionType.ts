@@ -441,10 +441,6 @@ export abstract class AbstractDiscriminatedUnionType<
       .orDefault(AbstractDiscriminatedUnionType_jsonTypeLiteral.call(this));
   }
 
-  override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {

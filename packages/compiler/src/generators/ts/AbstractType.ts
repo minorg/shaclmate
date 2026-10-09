@@ -308,13 +308,6 @@ ${joinCode(
   }): AbstractType.JsonType;
 
   /**
-   * Element object for a JSON Forms UI schema.
-   */
-  abstract jsonUiSchemaElement(parameters: {
-    variables: { scopePrefix: Code };
-  }): Maybe<Code>;
-
-  /**
    * An expression that converts a value of this type to a JSON compatible value.
    */
   abstract toJsonExpression(parameters: {

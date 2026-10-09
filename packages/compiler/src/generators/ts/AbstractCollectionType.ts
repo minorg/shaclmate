@@ -86,14 +86,6 @@ export abstract class AbstractCollectionType<
     return variables.value;
   }
 
-  override jsonUiSchemaElement(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.jsonUiSchemaElement(parameters);
-  }
-
   override toJsonExpression({
     variables,
   }: Parameters<
