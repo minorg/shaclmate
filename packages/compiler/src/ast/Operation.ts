@@ -6,9 +6,9 @@ import type {
   HttpResponseContentType,
 } from "../input/input.shaclmate.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
+import type { OptionType } from "./OptionType.js";
 import type { StructDiscriminatedUnionType } from "./StructDiscriminatedUnionType.js";
 import type { StructType } from "./StructType.js";
-import type { Type } from "./Type.js";
 
 export class Operation extends AbstractConstruct {
   /**
@@ -19,7 +19,7 @@ export class Operation extends AbstractConstruct {
   /**
    * Error(s) returned by this operation.
    */
-  readonly error: Maybe<StructType | StructDiscriminatedUnionType>;
+  readonly error: Maybe<Operation.Error>;
 
   /**
    * Name of this operation.
@@ -29,12 +29,12 @@ export class Operation extends AbstractConstruct {
   /**
    * Parameter type.
    */
-  readonly parameter: Maybe<StructType>;
+  readonly parameter: Maybe<Operation.Parameter>;
 
   /**
    * Result type.
    */
-  readonly result: Maybe<Type>;
+  readonly result: Maybe<Operation.Result>;
 
   constructor({
     bindings,
@@ -45,10 +45,10 @@ export class Operation extends AbstractConstruct {
     ...superParameters
   }: {
     bindings: readonly Operation.Binding[];
-    error: Maybe<StructType | StructDiscriminatedUnionType>;
+    error: Maybe<Operation.Error>;
     name: string;
-    parameter: Maybe<StructType>;
-    result: Maybe<Type>;
+    parameter: Maybe<Operation.Parameter>;
+    result: Maybe<Operation.Result>;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
     this.bindings = bindings;
@@ -60,6 +60,8 @@ export class Operation extends AbstractConstruct {
 }
 
 export namespace Operation {
+  export type Error = StructType | StructDiscriminatedUnionType;
+
   export interface HttpBinding {
     readonly request: HttpBinding.Request;
     readonly response: HttpBinding.Response;
@@ -67,16 +69,20 @@ export namespace Operation {
 
   export namespace HttpBinding {
     export interface Request {
-      readonly contentType: HttpRequestContentType;
+      readonly contentType: Maybe<HttpRequestContentType>;
       readonly method: HttpRequestMethod;
       readonly uriTemplate: ReturnType<typeof uriTemplate.parse>;
     }
 
     export interface Response {
-      readonly contentType: HttpResponseContentType;
+      readonly contentType: Maybe<HttpResponseContentType>;
       readonly statusCode: number;
     }
   }
 
   export type Binding = HttpBinding;
+
+  export type Parameter = StructType;
+
+  export type Result = OptionType<StructType> | StructType;
 }

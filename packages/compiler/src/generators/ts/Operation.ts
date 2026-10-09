@@ -42,11 +42,6 @@ export class Operation extends AbstractConstruct {
   }
 
   @Memoize()
-  get httpApiRouteRegistration(): Code {
-    throw new Error("not implemented yet");
-  }
-
-  @Memoize()
   get interfaceSignature(): Code {
     return code`${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation}`;
   }
@@ -115,5 +110,17 @@ async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
 }
 
 export namespace Operation {
-  export type Binding = ast.Operation.Binding;
+  export class HttpBinding {
+    constructor(
+      readonly request: ast.Operation.HttpBinding.Request,
+      readonly response: ast.Operation.HttpBinding.Response,
+    ) {}
+
+    @Memoize()
+    get httpApiRouteRegistration(): Code {
+      throw new Error("not implemented yet");
+    }
+  }
+
+  export type Binding = HttpBinding;
 }

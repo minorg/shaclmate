@@ -22,12 +22,10 @@ export class Service extends AbstractConstruct {
   }
 
   @Memoize()
-  get httpApiClassDeclaration(): Code {
+  get httpApiFactoryFunction(): Code {
     return code`\
-export class ${this.name}HttpApi<EnvT extends ${this.reusables.imports.HonoEnv} = ${this.reusables.imports.HonoEnv}> extends ${this.reusables.imports.Hono}<EnvT> {
-  constructor(delegate: ${this.name}) {
-    super();
-  }
+export function create${this.name}HttpApi<EnvT extends ${this.reusables.imports.HonoEnv}(delegate: ${this.name}) {
+  return new ${this.reusables.imports.Hono}${joinCode(this.operations.flatMap((operation) => operation.bindings.map((binding) => code`.${binding.httpApiRouteRegistration}`)))};
 }`;
   }
 

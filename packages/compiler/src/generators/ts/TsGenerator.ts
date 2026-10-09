@@ -134,7 +134,13 @@ export class TsGenerator implements Generator {
               operations: astService.operations.map(
                 (astOperation) =>
                   new Operation({
-                    bindings: astOperation.bindings,
+                    bindings: astOperation.bindings.map(
+                      (astBinding) =>
+                        new Operation.HttpBinding(
+                          astBinding.request,
+                          astBinding.response,
+                        ),
+                    ),
                     configuration,
                     comment: astOperation.comment,
                     error: astOperation.error.map((astType) => {
@@ -264,7 +270,7 @@ export class TsGenerator implements Generator {
         declarations.push(service.loggingClassDeclaration);
       }
       if (configuration.features.has("ServiceHttpApi")) {
-        declarations.push(service.httpApiClassDeclaration);
+        declarations.push(service.httpApiFactoryFunction);
       }
       return declarations;
     });
