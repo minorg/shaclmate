@@ -50,18 +50,21 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
+  get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
     return Maybe.of({
-      key: this.jsonName,
-      schema: code`${this.reusables.imports.z}.literal(${literalOf(this.value)})`,
+      description: Maybe.empty(),
+      label: Maybe.empty(),
+      name: this.jsonName,
+      optional: false,
+      recursive: this.recursive,
+      type: this.jsonTypeFactory.string({
+        in_: [this.value],
+      }),
+      uiSchemaElement: ({ variables }) => {
+        const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
+        return code`{ rule: { condition: { schema: { const: ${this.constValue} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`;
+      },
     });
-  }
-
-  @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    return Maybe.of(
-      code`readonly "${this.jsonName}": ${literalOf(this.value)}`,
-    );
   }
 
   override get schema(): Maybe<Code> {
@@ -113,17 +116,6 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     ];
   }
 
-  override jsonUiSchemaElement({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["jsonUiSchemaElement"]
-  >[0]): Maybe<Code> {
-    const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
-    return Maybe.of(
-      code`{ rule: { condition: { schema: { const: ${this.constValue} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
-    );
-  }
-
   override sparqlConstructTriplesExpression(): Maybe<Code> {
     return Maybe.empty();
   }
@@ -148,5 +140,9 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
 
   override toStringInitializer(): Maybe<Code> {
     return Maybe.empty();
+  }
+
+  override toLoggableInitializer(): Maybe<Code> {
+    return Maybe.of(code`${literalOf(this.name)}: ${literalOf(this.value)}`);
   }
 }

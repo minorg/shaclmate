@@ -16,19 +16,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/AnonymousTypesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "AnonymousTypesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/AnonymousTypesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -39,6 +26,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "comment": "Anonymous struct node shape",
           "name": "anonymousStruct",
           "order": 0,
@@ -58,17 +49,6 @@
               "shapeIdentifier": {
                 "termType": "BlankNode",
                 "value": "df_0_134"
-              },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "termType": "BlankNode",
-                  "value": "df_0_134"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
               }
             }
           }
@@ -76,7 +56,7 @@
       ]
     },
     {
-      "comment": "Struct node shape that can only have a blank node as an identifier",
+      "comment": "Struct node shape that can only have a blank node as an identifier. This generates code without an identifier property.",
       "kind": "Struct",
       "name": "BlankNodeIdentifierStruct",
       "shapeIdentifier": {
@@ -91,18 +71,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/BlankNodeIdentifierStruct"
       },
-      "identifierType": {
-        "kind": "BlankNode",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "BlankNodeIdentifierStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/BlankNodeIdentifierStruct"
-        },
-        "nodeKinds": [
-          "BlankNode"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -113,6 +81,7 @@
       ],
       "properties": [
         {
+          "kind": "Shacl",
           "name": "blankNodeIdentifierString",
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeIdentifierString)",
@@ -162,19 +131,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/BlankNodeOrIriIdentifierStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "BlankNodeOrIriIdentifierStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/BlankNodeOrIriIdentifierStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -185,6 +141,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "blankNodeOrIriIdentifierString",
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeOrIriIdentifierString)",
@@ -234,19 +194,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ClassConstraintsStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "ClassConstraintsStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/ClassConstraintsStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -257,6 +204,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "comment": "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
           "name": "iriClass",
           "order": 0,
@@ -284,6 +235,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
           "name": "nodeClass1",
           "order": 0,
@@ -310,24 +262,12 @@
                 "reference": "NonClassStruct",
                 "termType": "NamedNode",
                 "value": "http://example.com/NonClassStruct"
-              },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "NonClassStruct",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/NonClassStruct"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
               }
             }
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
           "name": "nodeClass2",
           "order": 0,
@@ -354,24 +294,12 @@
                 "reference": "PartialStruct",
                 "termType": "NamedNode",
                 "value": "http://example.com/PartialStruct"
-              },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "PartialStruct",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/PartialStruct"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
               }
             }
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
           "name": "singleClass",
           "order": 0,
@@ -400,6 +328,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
           "name": "multiClass",
           "order": 0,
@@ -439,21 +368,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/NonClassStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "NonClassStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/NonClassStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "nonClassString",
           "order": 0,
           "path": "PredicatePath(http://example.com/nonClassString)",
@@ -490,21 +410,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/PartialStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "PartialStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/PartialStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "lazilyResolved",
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolved)",
@@ -547,19 +458,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ConvertibleTypesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "ConvertibleTypesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/ConvertibleTypesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -570,6 +468,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "convertibleIriOption",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleIriOption)",
@@ -596,6 +498,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleIriSet",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleIriSet)",
@@ -623,6 +526,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleIriNonEmptySet",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleIriNonEmptySet)",
@@ -650,6 +554,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleLiteral",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleLiteral)",
@@ -669,6 +574,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleLiteralOption",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleLiteralOption)",
@@ -695,6 +601,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleLiteralSet",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleLiteralSet)",
@@ -722,6 +629,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleLiteralNonEmptySet",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleLiteralNonEmptySet)",
@@ -749,6 +657,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleTerm)",
@@ -770,6 +679,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleTermOption",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleTermOption)",
@@ -798,6 +708,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleTermSet",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleTermSet)",
@@ -827,6 +738,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleTermNonEmptySet",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleTermNonEmptySet)",
@@ -856,6 +768,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "convertibleIri",
           "order": 0,
           "path": "PredicatePath(http://example.com/convertibleIri)",
@@ -892,19 +805,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DatatypeDiscriminatedUnionsStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "DatatypeDiscriminatedUnionsStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/DatatypeDiscriminatedUnionsStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -915,6 +815,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "comment": "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript.",
           "name": "stringOrLangString",
           "order": 0,
@@ -971,6 +875,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
           "name": "dateOrDateTime",
           "order": 0,
@@ -1029,6 +934,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
           "name": "dateTimeOrDate",
           "order": 0,
@@ -1087,6 +993,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Date or string. These don't need discriminant values because they're different types in TypeScript.",
           "name": "dateOrString",
           "order": 0,
@@ -1143,6 +1050,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Decimal or string. These don't need discriminant values because they're different types in TypeScript.",
           "name": "decimalOrString",
           "order": 0,
@@ -1199,6 +1107,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript.",
           "name": "langStringOrString",
           "order": 0,
@@ -1255,6 +1164,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "String or date. These don't need discriminant values because they're different types in TypeScript.",
           "name": "stringOrDate",
           "order": 0,
@@ -1311,6 +1221,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "String or decimal. These don't need discriminant values because they're different types in TypeScript.",
           "name": "stringOrDecimal",
           "order": 0,
@@ -1367,6 +1278,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript.",
           "name": "jsPrimitive",
           "order": 0,
@@ -1476,19 +1388,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DefaultValuesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "DefaultValuesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/DefaultValuesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -1499,6 +1398,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "stringDefaultValue",
           "order": 0,
           "path": "PredicatePath(http://example.com/stringDefaultValue)",
@@ -1532,6 +1435,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "trueBooleanDefaultValue",
           "order": 0,
           "path": "PredicatePath(http://example.com/trueBooleanDefaultValue)",
@@ -1565,6 +1469,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "falseBooleanDefaultValue",
           "order": 0,
           "path": "PredicatePath(http://example.com/falseBooleanDefaultValue)",
@@ -1598,6 +1503,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "dateDefaultValue",
           "order": 0,
           "path": "PredicatePath(http://example.com/dateDefaultValue)",
@@ -1631,6 +1537,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "dateTimeDefaultValue",
           "order": 0,
           "path": "PredicatePath(http://example.com/dateTimeDefaultValue)",
@@ -1664,6 +1571,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "numberDefaultValue",
           "order": 0,
           "path": "PredicatePath(http://example.com/numberDefaultValue)",
@@ -1714,19 +1622,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DirectRecursiveStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "DirectRecursiveStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/DirectRecursiveStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -1737,6 +1632,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "directRecursive",
           "order": 0,
           "path": "PredicatePath(http://example.com/directRecursive)",
@@ -1769,19 +1668,6 @@
                 "reference": "DirectRecursiveStruct",
                 "termType": "NamedNode",
                 "value": "http://example.com/DirectRecursiveStruct"
-              },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "DirectRecursiveStruct",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/DirectRecursiveStruct"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
               },
               "toRdfTypes": [
                 {
@@ -1823,19 +1709,6 @@
               "termType": "NamedNode",
               "value": "http://example.com/DiscriminatedUnionMember1"
             },
-            "identifierType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "DiscriminatedUnionMember1",
-                "termType": "NamedNode",
-                "value": "http://example.com/DiscriminatedUnionMember1"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
-            },
             "toRdfTypes": [
               {
                 "prefix": "",
@@ -1861,19 +1734,6 @@
               "reference": "DiscriminatedUnionMember2",
               "termType": "NamedNode",
               "value": "http://example.com/DiscriminatedUnionMember2"
-            },
-            "identifierType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "DiscriminatedUnionMember2",
-                "termType": "NamedNode",
-                "value": "http://example.com/DiscriminatedUnionMember2"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
             },
             "toRdfTypes": [
               {
@@ -1902,19 +1762,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DiscriminatedUnionMember1"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "DiscriminatedUnionMember1",
-          "termType": "NamedNode",
-          "value": "http://example.com/DiscriminatedUnionMember1"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -1925,6 +1772,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "discriminatedUnionMemberCommon",
           "order": 0,
           "path": "PredicatePath(http://example.com/discriminatedUnionMemberCommon)",
@@ -1954,6 +1805,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "discriminatedUnionMember1Distinct",
           "order": 0,
           "path": "PredicatePath(http://example.com/discriminatedUnionMember1Distinct)",
@@ -1995,19 +1847,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DiscriminatedUnionMember2"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "DiscriminatedUnionMember2",
-          "termType": "NamedNode",
-          "value": "http://example.com/DiscriminatedUnionMember2"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -2018,6 +1857,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "discriminatedUnionMemberCommon",
           "order": 0,
           "path": "PredicatePath(http://example.com/discriminatedUnionMemberCommon)",
@@ -2047,6 +1890,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "discriminatedUnionMember2Distinct",
           "order": 0,
           "path": "PredicatePath(http://example.com/discriminatedUnionMember2Distinct)",
@@ -2089,19 +1933,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DisplayStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "DisplayStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/DisplayStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -2112,6 +1943,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "comment": "Explicity exclude from the display",
           "name": "explicitFalseDisplay",
           "order": 0,
@@ -2138,6 +1973,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Explicity include in the display",
           "name": "explicitTrueDisplay",
           "order": 0,
@@ -2164,6 +2000,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Implicitly exclude from the display",
           "name": "implicitFalseDisplay",
           "order": 0,
@@ -2207,19 +2044,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/FromRdfType"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "ExplicitFromToRdfTypesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/ExplicitFromToRdfTypesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -2236,6 +2060,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "explicitFromToRdfTypesString",
           "order": 0,
           "path": "PredicatePath(http://example.com/explicitFromToRdfTypesString)",
@@ -2278,19 +2106,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/RdfType"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "ExplicitRdfTypeStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/ExplicitRdfTypeStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -2301,6 +2116,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "explicitRdfTypeString",
           "order": 0,
           "path": "PredicatePath(http://example.com/explicitRdfTypeString)",
@@ -2366,19 +2185,6 @@
                     "termType": "NamedNode",
                     "value": "http://example.com/DiscriminatedUnionMember1"
                   },
-                  "identifierType": {
-                    "kind": "Identifier",
-                    "shapeIdentifier": {
-                      "prefix": "",
-                      "reference": "DiscriminatedUnionMember1",
-                      "termType": "NamedNode",
-                      "value": "http://example.com/DiscriminatedUnionMember1"
-                    },
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
                   "toRdfTypes": [
                     {
                       "prefix": "",
@@ -2404,19 +2210,6 @@
                     "reference": "DiscriminatedUnionMember2",
                     "termType": "NamedNode",
                     "value": "http://example.com/DiscriminatedUnionMember2"
-                  },
-                  "identifierType": {
-                    "kind": "Identifier",
-                    "shapeIdentifier": {
-                      "prefix": "",
-                      "reference": "DiscriminatedUnionMember2",
-                      "termType": "NamedNode",
-                      "value": "http://example.com/DiscriminatedUnionMember2"
-                    },
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
                   },
                   "toRdfTypes": [
                     {
@@ -2447,19 +2240,6 @@
               "termType": "NamedNode",
               "value": "http://example.com/FlattenDiscriminatedUnionMember3"
             },
-            "identifierType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "FlattenDiscriminatedUnionMember3",
-                "termType": "NamedNode",
-                "value": "http://example.com/FlattenDiscriminatedUnionMember3"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
-            },
             "toRdfTypes": [
               {
                 "prefix": "",
@@ -2487,19 +2267,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/FlattenDiscriminatedUnionMember3"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "FlattenDiscriminatedUnionMember3",
-          "termType": "NamedNode",
-          "value": "http://example.com/FlattenDiscriminatedUnionMember3"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -2510,6 +2277,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "flattenDiscriminatedUnionMember3String",
           "order": 0,
           "path": "PredicatePath(http://example.com/flattenDiscriminatedUnionMember3String)",
@@ -2546,21 +2317,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/HasValuesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "HasValuesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/HasValuesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "hasIriValue",
           "order": 0,
           "path": "PredicatePath(http://example.com/hasIriValue)",
@@ -2588,6 +2350,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "hasLiteralValue",
           "order": 0,
           "path": "PredicatePath(http://example.com/hasLiteralValue)",
@@ -2627,21 +2390,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/IgnoredPropertiesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "IgnoredPropertiesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/IgnoredPropertiesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "comment": "A property without an sh:severity defaults to sh:Violation severity and is not ignored",
           "name": "severityDefaultProperty",
           "order": 0,
@@ -2668,6 +2422,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "A property with an explicit sh:severity sh:Violation is not ignored",
           "name": "severityViolationProperty",
           "order": 0,
@@ -2694,6 +2449,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "A property with shaclmate:ignore set to false (the default) is not ignored",
           "name": "shaclmateIgnoreFalseProperty",
           "order": 0,
@@ -2737,32 +2493,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/InIdentifierStruct"
       },
-      "identifierType": {
-        "kind": "Iri",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "InIdentifierStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/InIdentifierStruct"
-        },
-        "in": [
-          {
-            "prefix": "",
-            "reference": "InIdentifierStructInstance1",
-            "termType": "NamedNode",
-            "value": "http://example.com/InIdentifierStructInstance1"
-          },
-          {
-            "prefix": "",
-            "reference": "InIdentifierStructInstance2",
-            "termType": "NamedNode",
-            "value": "http://example.com/InIdentifierStructInstance2"
-          }
-        ],
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -2773,6 +2503,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "inIdentifierString",
           "order": 0,
           "path": "PredicatePath(http://example.com/inIdentifierString)",
@@ -2822,19 +2556,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/InPropertiesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "InPropertiesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/InPropertiesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -2845,6 +2566,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "inDoubles",
           "order": 0,
           "path": "PredicatePath(http://example.com/inDoubles)",
@@ -2887,6 +2612,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "inStrings",
           "order": 0,
           "path": "PredicatePath(http://example.com/inStrings)",
@@ -2929,6 +2655,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "inBooleans",
           "order": 0,
           "path": "PredicatePath(http://example.com/inBooleans)",
@@ -2964,6 +2691,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "inDateTimes",
           "order": 0,
           "path": "PredicatePath(http://example.com/inDateTimes)",
@@ -2999,6 +2727,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "inIntegers",
           "order": 0,
           "path": "PredicatePath(http://example.com/inIntegers)",
@@ -3041,6 +2770,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "inIris",
           "order": 0,
           "path": "PredicatePath(http://example.com/inIris)",
@@ -3098,19 +2828,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/IndirectRecursiveStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "IndirectRecursiveStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/IndirectRecursiveStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -3121,6 +2838,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "indirectRecursiveHelper",
           "order": 0,
           "path": "PredicatePath(http://example.com/indirectRecursiveHelper)",
@@ -3154,19 +2875,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/IndirectRecursiveStructHelper"
               },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "IndirectRecursiveStructHelper",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/IndirectRecursiveStructHelper"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
-              },
               "toRdfTypes": [
                 {
                   "prefix": "",
@@ -3196,19 +2904,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/IndirectRecursiveStructHelper"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "IndirectRecursiveStructHelper",
-          "termType": "NamedNode",
-          "value": "http://example.com/IndirectRecursiveStructHelper"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -3219,6 +2914,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "indirectRecursive",
           "order": 0,
           "path": "PredicatePath(http://example.com/indirectRecursive)",
@@ -3252,19 +2951,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/IndirectRecursiveStruct"
               },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "IndirectRecursiveStruct",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/IndirectRecursiveStruct"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
-              },
               "toRdfTypes": [
                 {
                   "prefix": "",
@@ -3294,18 +2980,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/IriIdentifierStruct"
       },
-      "identifierType": {
-        "kind": "Iri",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "IriIdentifierStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/IriIdentifierStruct"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -3316,6 +2990,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "iriIdentifierString",
           "order": 0,
           "path": "PredicatePath(http://example.com/iriIdentifierString)",
@@ -3365,19 +3043,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LangStringStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "LangStringStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/LangStringStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -3388,6 +3053,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "langString",
           "order": 0,
           "path": "PredicatePath(http://example.com/langString)",
@@ -3420,6 +3089,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "langStringOrString",
           "order": 0,
           "path": "PredicatePath(http://example.com/langStringOrString)",
@@ -3481,6 +3151,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "stringOrLangString",
           "order": 0,
           "path": "PredicatePath(http://example.com/stringOrLangString)",
@@ -3553,21 +3224,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/LanguageInStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "LanguageInStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/LanguageInStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "languageIn",
           "order": 0,
           "path": "PredicatePath(http://example.com/languageIn)",
@@ -3622,19 +3284,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -3645,6 +3294,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "lazilyResolved",
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolved)",
@@ -3698,19 +3351,6 @@
               "termType": "NamedNode",
               "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
             },
-            "identifierType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "LazilyResolvedDiscriminatedUnionMember1",
-                "termType": "NamedNode",
-                "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
-            },
             "toRdfTypes": [
               {
                 "prefix": "",
@@ -3736,19 +3376,6 @@
               "reference": "LazilyResolvedDiscriminatedUnionMember2",
               "termType": "NamedNode",
               "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
-            },
-            "identifierType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "LazilyResolvedDiscriminatedUnionMember2",
-                "termType": "NamedNode",
-                "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
             },
             "toRdfTypes": [
               {
@@ -3777,19 +3404,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "LazilyResolvedDiscriminatedUnionMember1",
-          "termType": "NamedNode",
-          "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -3800,6 +3414,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "lazilyResolved",
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolved)",
@@ -3841,19 +3459,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "LazilyResolvedDiscriminatedUnionMember2",
-          "termType": "NamedNode",
-          "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -3864,6 +3469,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "lazilyResolved",
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolved)",
@@ -3900,20 +3509,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazilyResolvedIriIdentifierStruct"
       },
-      "identifierType": {
-        "kind": "Iri",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "LazilyResolvedIriIdentifierStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/LazilyResolvedIriIdentifierStruct"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "lazilyResolved",
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolved)",
@@ -3950,21 +3551,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazyPropertiesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "LazyPropertiesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/LazyPropertiesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "requiredLazyToResolvedBlankNodeOrIriIdentifier",
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredLazyToResolvedBlankNodeOrIriIdentifier)",
@@ -3985,17 +3577,6 @@
                 "termType": "NamedNode",
                 "value": "urn:shaclmate:synthetic:DefaultPartial"
               },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "termType": "BlankNode",
-                  "value": "df_0_286"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
-              },
               "synthetic": true
             },
             "resolveType": {
@@ -4014,19 +3595,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
               },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
-              },
               "toRdfTypes": [
                 {
                   "prefix": "",
@@ -4039,6 +3607,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "optionalLazyToResolvedIriIdentifier",
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedIriIdentifier)",
@@ -4065,16 +3634,6 @@
                   "termType": "NamedNode",
                   "value": "urn:shaclmate:synthetic:NamedDefaultPartial"
                 },
-                "identifierType": {
-                  "kind": "Iri",
-                  "shapeIdentifier": {
-                    "termType": "BlankNode",
-                    "value": "df_0_287"
-                  },
-                  "nodeKinds": [
-                    "IRI"
-                  ]
-                },
                 "synthetic": true
               }
             },
@@ -4096,24 +3655,13 @@
                   "reference": "LazilyResolvedIriIdentifierStruct",
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedIriIdentifierStruct"
-                },
-                "identifierType": {
-                  "kind": "Iri",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "LazilyResolvedIriIdentifierStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedIriIdentifierStruct"
-                  },
-                  "nodeKinds": [
-                    "IRI"
-                  ]
                 }
               }
             }
           }
         },
         {
+          "kind": "Shacl",
           "name": "optionalLazyToResolvedDiscriminatedUnion",
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedDiscriminatedUnion)",
@@ -4139,17 +3687,6 @@
                 "shapeIdentifier": {
                   "termType": "NamedNode",
                   "value": "urn:shaclmate:synthetic:DefaultPartial"
-                },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "termType": "BlankNode",
-                    "value": "df_0_286"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
                 },
                 "synthetic": true
               }
@@ -4190,19 +3727,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
                       },
-                      "identifierType": {
-                        "kind": "Identifier",
-                        "shapeIdentifier": {
-                          "prefix": "",
-                          "reference": "LazilyResolvedDiscriminatedUnionMember1",
-                          "termType": "NamedNode",
-                          "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
-                        },
-                        "nodeKinds": [
-                          "BlankNode",
-                          "IRI"
-                        ]
-                      },
                       "toRdfTypes": [
                         {
                           "prefix": "",
@@ -4229,19 +3753,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
                       },
-                      "identifierType": {
-                        "kind": "Identifier",
-                        "shapeIdentifier": {
-                          "prefix": "",
-                          "reference": "LazilyResolvedDiscriminatedUnionMember2",
-                          "termType": "NamedNode",
-                          "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
-                        },
-                        "nodeKinds": [
-                          "BlankNode",
-                          "IRI"
-                        ]
-                      },
                       "toRdfTypes": [
                         {
                           "prefix": "",
@@ -4258,6 +3769,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "optionalPartialToResolvedBlankNodeOrIriIdentifier",
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalPartialToResolvedBlankNodeOrIriIdentifier)",
@@ -4289,19 +3801,6 @@
                   "reference": "PartialStruct",
                   "termType": "NamedNode",
                   "value": "http://example.com/PartialStruct"
-                },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "PartialStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/PartialStruct"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
                 }
               }
             },
@@ -4330,19 +3829,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
                 },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
-                },
                 "toRdfTypes": [
                   {
                     "prefix": "",
@@ -4356,6 +3842,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "setPartialToResolvedBlankNodeOrIriIdentifier",
           "order": 0,
           "path": "PredicatePath(http://example.com/setPartialToResolvedBlankNodeOrIriIdentifier)",
@@ -4387,19 +3874,6 @@
                   "reference": "PartialStruct",
                   "termType": "NamedNode",
                   "value": "http://example.com/PartialStruct"
-                },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "PartialStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/PartialStruct"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
                 }
               },
               "minCount": 0
@@ -4429,19 +3903,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
                 },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
-                },
                 "toRdfTypes": [
                   {
                     "prefix": "",
@@ -4456,6 +3917,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "requiredPartialToResolvedBlankNodeOrIriIdentifier",
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredPartialToResolvedBlankNodeOrIriIdentifier)",
@@ -4478,19 +3940,6 @@
                 "reference": "PartialStruct",
                 "termType": "NamedNode",
                 "value": "http://example.com/PartialStruct"
-              },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "PartialStruct",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/PartialStruct"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
               }
             },
             "resolveType": {
@@ -4509,19 +3958,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
               },
-              "identifierType": {
-                "kind": "Identifier",
-                "shapeIdentifier": {
-                  "prefix": "",
-                  "reference": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
-                },
-                "nodeKinds": [
-                  "BlankNode",
-                  "IRI"
-                ]
-              },
               "toRdfTypes": [
                 {
                   "prefix": "",
@@ -4534,6 +3970,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "optionalPartialToResolvedDiscriminatedUnion",
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalPartialToResolvedDiscriminatedUnion)",
@@ -4565,19 +4002,6 @@
                   "reference": "PartialStruct",
                   "termType": "NamedNode",
                   "value": "http://example.com/PartialStruct"
-                },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "PartialStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/PartialStruct"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
                 }
               }
             },
@@ -4617,19 +4041,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
                       },
-                      "identifierType": {
-                        "kind": "Identifier",
-                        "shapeIdentifier": {
-                          "prefix": "",
-                          "reference": "LazilyResolvedDiscriminatedUnionMember1",
-                          "termType": "NamedNode",
-                          "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
-                        },
-                        "nodeKinds": [
-                          "BlankNode",
-                          "IRI"
-                        ]
-                      },
                       "toRdfTypes": [
                         {
                           "prefix": "",
@@ -4656,19 +4067,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
                       },
-                      "identifierType": {
-                        "kind": "Identifier",
-                        "shapeIdentifier": {
-                          "prefix": "",
-                          "reference": "LazilyResolvedDiscriminatedUnionMember2",
-                          "termType": "NamedNode",
-                          "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
-                        },
-                        "nodeKinds": [
-                          "BlankNode",
-                          "IRI"
-                        ]
-                      },
                       "toRdfTypes": [
                         {
                           "prefix": "",
@@ -4685,6 +4083,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion",
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion)",
@@ -4734,19 +4133,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/DiscriminatedUnionMember1"
                       },
-                      "identifierType": {
-                        "kind": "Identifier",
-                        "shapeIdentifier": {
-                          "prefix": "",
-                          "reference": "PartialDiscriminatedUnionMember1",
-                          "termType": "NamedNode",
-                          "value": "http://example.com/PartialDiscriminatedUnionMember1"
-                        },
-                        "nodeKinds": [
-                          "BlankNode",
-                          "IRI"
-                        ]
-                      },
                       "toRdfTypes": [
                         {
                           "prefix": "",
@@ -4772,19 +4158,6 @@
                         "reference": "DiscriminatedUnionMember2",
                         "termType": "NamedNode",
                         "value": "http://example.com/DiscriminatedUnionMember2"
-                      },
-                      "identifierType": {
-                        "kind": "Identifier",
-                        "shapeIdentifier": {
-                          "prefix": "",
-                          "reference": "PartialDiscriminatedUnionMember2",
-                          "termType": "NamedNode",
-                          "value": "http://example.com/PartialDiscriminatedUnionMember2"
-                        },
-                        "nodeKinds": [
-                          "BlankNode",
-                          "IRI"
-                        ]
                       },
                       "toRdfTypes": [
                         {
@@ -4835,19 +4208,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
                       },
-                      "identifierType": {
-                        "kind": "Identifier",
-                        "shapeIdentifier": {
-                          "prefix": "",
-                          "reference": "LazilyResolvedDiscriminatedUnionMember1",
-                          "termType": "NamedNode",
-                          "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember1"
-                        },
-                        "nodeKinds": [
-                          "BlankNode",
-                          "IRI"
-                        ]
-                      },
                       "toRdfTypes": [
                         {
                           "prefix": "",
@@ -4874,19 +4234,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
                       },
-                      "identifierType": {
-                        "kind": "Identifier",
-                        "shapeIdentifier": {
-                          "prefix": "",
-                          "reference": "LazilyResolvedDiscriminatedUnionMember2",
-                          "termType": "NamedNode",
-                          "value": "http://example.com/LazilyResolvedDiscriminatedUnionMember2"
-                        },
-                        "nodeKinds": [
-                          "BlankNode",
-                          "IRI"
-                        ]
-                      },
                       "toRdfTypes": [
                         {
                           "prefix": "",
@@ -4903,6 +4250,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "optionalLazyToResolvedBlankNodeOrIriIdentifier",
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedBlankNodeOrIriIdentifier)",
@@ -4928,17 +4276,6 @@
                 "shapeIdentifier": {
                   "termType": "NamedNode",
                   "value": "urn:shaclmate:synthetic:DefaultPartial"
-                },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "termType": "BlankNode",
-                    "value": "df_0_286"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
                 },
                 "synthetic": true
               }
@@ -4968,19 +4305,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
                 },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
-                },
                 "toRdfTypes": [
                   {
                     "prefix": "",
@@ -4994,6 +4318,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "setLazyToResolvedBlankNodeOrIriIdentifier",
           "order": 0,
           "path": "PredicatePath(http://example.com/setLazyToResolvedBlankNodeOrIriIdentifier)",
@@ -5019,17 +4344,6 @@
                 "shapeIdentifier": {
                   "termType": "NamedNode",
                   "value": "urn:shaclmate:synthetic:DefaultPartial"
-                },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "termType": "BlankNode",
-                    "value": "df_0_286"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
                 },
                 "synthetic": true
               },
@@ -5059,19 +4373,6 @@
                   "reference": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
-                },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "LazilyResolvedBlankNodeOrIriIdentifierStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
                 },
                 "toRdfTypes": [
                   {
@@ -5115,19 +4416,6 @@
               "termType": "NamedNode",
               "value": "http://example.com/DiscriminatedUnionMember1"
             },
-            "identifierType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "PartialDiscriminatedUnionMember1",
-                "termType": "NamedNode",
-                "value": "http://example.com/PartialDiscriminatedUnionMember1"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
-            },
             "toRdfTypes": [
               {
                 "prefix": "",
@@ -5153,19 +4441,6 @@
               "reference": "DiscriminatedUnionMember2",
               "termType": "NamedNode",
               "value": "http://example.com/DiscriminatedUnionMember2"
-            },
-            "identifierType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "PartialDiscriminatedUnionMember2",
-                "termType": "NamedNode",
-                "value": "http://example.com/PartialDiscriminatedUnionMember2"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
             },
             "toRdfTypes": [
               {
@@ -5194,19 +4469,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ListSetsStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "ListSetsStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/ListSetsStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -5217,6 +4479,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "comment": "Set of lists",
           "name": "listSet",
           "order": 0,
@@ -5264,6 +4530,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Set of lists of lists",
           "name": "listListSet",
           "order": 0,
@@ -5321,6 +4588,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Set of typeof union that includes a list",
           "name": "listDiscriminatedUnionSet",
           "order": 0,
@@ -5413,19 +4681,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ListsStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "ListsStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/ListsStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -5436,6 +4691,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "structList",
           "order": 0,
           "path": "PredicatePath(http://example.com/structList)",
@@ -5470,25 +4729,13 @@
                   "reference": "NonClassStruct",
                   "termType": "NamedNode",
                   "value": "http://example.com/NonClassStruct"
-                },
-                "identifierType": {
-                  "kind": "Identifier",
-                  "shapeIdentifier": {
-                    "prefix": "",
-                    "reference": "NonClassStruct",
-                    "termType": "NamedNode",
-                    "value": "http://example.com/NonClassStruct"
-                  },
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
                 }
               }
             }
           }
         },
         {
+          "kind": "Shacl",
           "name": "iriList",
           "order": 0,
           "path": "PredicatePath(http://example.com/iriList)",
@@ -5528,6 +4775,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "stringList",
           "order": 0,
           "path": "PredicatePath(http://example.com/stringList)",
@@ -5573,6 +4821,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "stringListList",
           "order": 0,
           "path": "PredicatePath(http://example.com/stringListList)",
@@ -5645,19 +4894,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/MutablePropertiesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "MutablePropertiesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/MutablePropertiesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -5668,6 +4904,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "description": "String-valued property that can be re-assigned",
           "mutable": true,
           "name": "mutableString",
@@ -5702,6 +4942,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "description": "List-valued property that can't be reassigned but whose value can be mutated",
           "name": "mutableList",
           "order": 0,
@@ -5749,6 +4990,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "description": "Set-valued property that can't be reassigned but whose value can be mutated",
           "mutable": true,
           "name": "mutableSet",
@@ -5971,19 +5213,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/NamedTypesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "NamedTypesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/NamedTypesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -5994,6 +5223,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "namedDatatype",
           "order": 0,
           "path": "PredicatePath(http://example.com/namedDatatype)",
@@ -6022,6 +5255,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "namedDiscriminatedUnion1",
           "order": 0,
           "path": "PredicatePath(http://example.com/namedDiscriminatedUnion1)",
@@ -6074,6 +5308,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "namedDiscriminatedUnion2",
           "order": 0,
           "path": "PredicatePath(http://example.com/namedDiscriminatedUnion2)",
@@ -6134,6 +5369,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "namedInIri",
           "order": 0,
           "path": "PredicatePath(http://example.com/namedInIri)",
@@ -6170,6 +5406,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "namedInLiteral",
           "order": 0,
           "path": "PredicatePath(http://example.com/namedInLiteral)",
@@ -6229,19 +5466,6 @@
               "reference": "NoRdfTypeDiscriminatedUnionMember1",
               "termType": "NamedNode",
               "value": "http://example.com/NoRdfTypeDiscriminatedUnionMember1"
-            },
-            "identifierType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "NoRdfTypeDiscriminatedUnionMember1",
-                "termType": "NamedNode",
-                "value": "http://example.com/NoRdfTypeDiscriminatedUnionMember1"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
             }
           }
         },
@@ -6254,19 +5478,6 @@
               "reference": "NoRdfTypeDiscriminatedUnionMember2",
               "termType": "NamedNode",
               "value": "http://example.com/NoRdfTypeDiscriminatedUnionMember2"
-            },
-            "identifierType": {
-              "kind": "Identifier",
-              "shapeIdentifier": {
-                "prefix": "",
-                "reference": "NoRdfTypeDiscriminatedUnionMember2",
-                "termType": "NamedNode",
-                "value": "http://example.com/NoRdfTypeDiscriminatedUnionMember2"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
             }
           }
         }
@@ -6281,21 +5492,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/NoRdfTypeDiscriminatedUnionMember1"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "NoRdfTypeDiscriminatedUnionMember1",
-          "termType": "NamedNode",
-          "value": "http://example.com/NoRdfTypeDiscriminatedUnionMember1"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "noRdfTypeDiscriminatedUnionMember1String",
           "order": 0,
           "path": "PredicatePath(http://example.com/noRdfTypeDiscriminatedUnionMember1String)",
@@ -6331,21 +5533,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/NoRdfTypeDiscriminatedUnionMember2"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "NoRdfTypeDiscriminatedUnionMember2",
-          "termType": "NamedNode",
-          "value": "http://example.com/NoRdfTypeDiscriminatedUnionMember2"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "noRdfTypeDiscriminatedUnionMember2String",
           "order": 0,
           "path": "PredicatePath(http://example.com/noRdfTypeDiscriminatedUnionMember2String)",
@@ -6388,19 +5581,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/NodeKindsStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "NodeKindsStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/NodeKindsStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -6411,6 +5591,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "blankNodeKind",
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeKind)",
@@ -6430,6 +5614,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "blankNodeOrIriNodeKind",
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeOrIriNodeKind)",
@@ -6450,6 +5635,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "blankNodeOrLiteralNodeKind",
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeOrLiteralNodeKind)",
@@ -6470,6 +5656,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "iriNodeKind",
           "order": 0,
           "path": "PredicatePath(http://example.com/iriNodeKind)",
@@ -6489,6 +5676,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "iriOrLiteralNodeKind",
           "order": 0,
           "path": "PredicatePath(http://example.com/iriOrLiteralNodeKind)",
@@ -6509,6 +5697,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "literalNodeKind",
           "order": 0,
           "path": "PredicatePath(http://example.com/literalNodeKind)",
@@ -6545,19 +5734,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DatesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "DatesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/DatesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -6568,6 +5744,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "date",
           "order": 0,
           "path": "PredicatePath(http://example.com/date)",
@@ -6600,6 +5780,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "dateTime",
           "order": 0,
           "path": "PredicatePath(http://example.com/dateTime)",
@@ -6632,6 +5813,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "dateTimeStamp",
           "order": 0,
           "path": "PredicatePath(http://example.com/dateTimeStamp)",
@@ -6681,19 +5863,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/NumericsStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "NumericsStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/NumericsStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -6704,6 +5873,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "byteNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/byteNumeric)",
@@ -6736,6 +5909,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "decimalNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/decimalNumeric)",
@@ -6768,6 +5942,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "doubleNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/doubleNumeric)",
@@ -6800,6 +5975,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "floatNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/floatNumeric)",
@@ -6832,6 +6008,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "intNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/intNumeric)",
@@ -6864,6 +6041,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "integerNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/integerNumeric)",
@@ -6896,6 +6074,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "longNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/longNumeric)",
@@ -6928,6 +6107,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "negativeIntegerNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/negativeIntegerNumeric)",
@@ -6960,6 +6140,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "nonNegativeIntegerNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/nonNegativeIntegerNumeric)",
@@ -6992,6 +6173,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "nonPositiveIntegerNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/nonPositiveIntegerNumeric)",
@@ -7024,6 +6206,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "positiveIntegerNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/positiveIntegerNumeric)",
@@ -7056,6 +6239,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "shortNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/shortNumeric)",
@@ -7088,6 +6272,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "unsignedByteNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/unsignedByteNumeric)",
@@ -7120,6 +6305,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "unsignedIntNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/unsignedIntNumeric)",
@@ -7152,6 +6338,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "unsignedLongNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/unsignedLongNumeric)",
@@ -7184,6 +6371,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "unsignedShortNumeric",
           "order": 0,
           "path": "PredicatePath(http://example.com/unsignedShortNumeric)",
@@ -7227,21 +6415,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/OrderedStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "OrderedStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/OrderedStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "orderedC",
           "order": 1,
           "path": "PredicatePath(http://example.com/orderedC)",
@@ -7267,6 +6446,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "orderedB",
           "order": 2,
           "path": "PredicatePath(http://example.com/orderedB)",
@@ -7292,6 +6472,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "orderedA",
           "order": 3,
           "path": "PredicatePath(http://example.com/orderedA)",
@@ -7334,19 +6515,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/OverrideNameStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "OverrideNameStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/OverrideNameStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -7357,6 +6525,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "newNameString",
           "order": 0,
           "path": "PredicatePath(http://example.com/newNameString)",
@@ -7405,19 +6577,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DiscriminatedUnionMember1"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "PartialDiscriminatedUnionMember1",
-          "termType": "NamedNode",
-          "value": "http://example.com/PartialDiscriminatedUnionMember1"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -7428,6 +6587,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "lazilyResolved",
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolved)",
@@ -7469,19 +6632,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DiscriminatedUnionMember2"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "PartialDiscriminatedUnionMember2",
-          "termType": "NamedNode",
-          "value": "http://example.com/PartialDiscriminatedUnionMember2"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -7492,6 +6642,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "lazilyResolved",
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolved)",
@@ -7528,21 +6682,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/PropertyCardinalitiesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "PropertyCardinalitiesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/PropertyCardinalitiesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "comment": "Required: maxCount=minCount=1",
           "name": "required",
           "order": 0,
@@ -7569,6 +6714,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Option: maxCount=1, minCount=0",
           "name": "optional",
           "order": 0,
@@ -7602,6 +6748,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Set: minCount implicitly=0, no maxCount",
           "name": "emptySet",
           "order": 0,
@@ -7636,6 +6783,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Set: minCount=1, no maxCount",
           "name": "nonEmptySet",
           "order": 0,
@@ -7687,19 +6835,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/PropertyNamesStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "PropertyNamesStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/PropertyNamesStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -7710,6 +6845,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "comment": "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
           "name": "actualName5",
           "order": 0,
@@ -7740,6 +6879,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "sh:path: overrides property shape identifier",
           "name": "actualName1",
           "order": 0,
@@ -7766,6 +6906,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "sh:name: overrides sh:path and rdfs:label",
           "label": "ignoreName2",
           "name": "actualName2",
@@ -7793,6 +6934,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
           "name": "actualName3",
           "order": 0,
@@ -7819,6 +6961,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "rdfs:label: overrides sh:path",
           "label": "actualName4",
           "name": "actualName4",
@@ -7863,19 +7006,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/PropertyPathsStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "PropertyPathsStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/PropertyPathsStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -7886,6 +7016,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "inversePath",
           "order": 0,
           "path": "InversePath(PredicatePath(http://example.com/inversePath))",
@@ -7912,6 +7046,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "predicatePath",
           "order": 0,
           "path": "PredicatePath(http://example.com/predicatePath)",
@@ -7973,19 +7108,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/RecursiveDiscriminatedUnionMember1"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "RecursiveDiscriminatedUnionMember1",
-          "termType": "NamedNode",
-          "value": "http://example.com/RecursiveDiscriminatedUnionMember1"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -7996,6 +7118,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "recursiveDiscriminatedUnionMember1Property",
           "order": 0,
           "path": "PredicatePath(http://example.com/recursiveDiscriminatedUnionMember1Property)",
@@ -8046,19 +7172,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/RecursiveDiscriminatedUnionMember2"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "RecursiveDiscriminatedUnionMember2",
-          "termType": "NamedNode",
-          "value": "http://example.com/RecursiveDiscriminatedUnionMember2"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -8069,6 +7182,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "recursiveDiscriminatedUnionMember2Property",
           "order": 0,
           "path": "PredicatePath(http://example.com/recursiveDiscriminatedUnionMember2Property)",
@@ -8119,19 +7236,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/RdfType"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "TargetClassStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/TargetClassStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -8142,6 +7246,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "targetClassString",
           "order": 0,
           "path": "PredicatePath(http://example.com/targetClassString)",
@@ -8184,19 +7292,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/TermsStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "TermsStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/TermsStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "toRdfTypes": [
         {
           "prefix": "",
@@ -8207,6 +7302,10 @@
       ],
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "name": "blankNodeTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeTerm)",
@@ -8233,6 +7332,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "booleanTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/booleanTerm)",
@@ -8265,6 +7365,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "dateTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/dateTerm)",
@@ -8297,6 +7398,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "dateTimeTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/dateTimeTerm)",
@@ -8329,6 +7431,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "doubleTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/doubleTerm)",
@@ -8361,6 +7464,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "identifierTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/identifierTerm)",
@@ -8388,6 +7492,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "iriTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/iriTerm)",
@@ -8414,6 +7519,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "langStringTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/langStringTerm)",
@@ -8446,6 +7552,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "literalTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/literalTerm)",
@@ -8472,6 +7579,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "stringTerm",
           "order": 0,
           "path": "PredicatePath(http://example.com/stringTerm)",
@@ -8504,6 +7612,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "name": "term",
           "order": 0,
           "path": "PredicatePath(http://example.com/term)",
@@ -8543,21 +7652,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/UnionDiscriminantsStruct"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "UnionDiscriminantsStruct",
-          "termType": "NamedNode",
-          "value": "http://example.com/UnionDiscriminantsStruct"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "properties": [
         {
+          "kind": "Identifier"
+        },
+        {
+          "kind": "Shacl",
           "comment": "Discriminated union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
           "name": "optionalNodeOrNodeOrString",
           "order": 0,
@@ -8597,19 +7697,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/DiscriminatedUnionMember1"
                     },
-                    "identifierType": {
-                      "kind": "Identifier",
-                      "shapeIdentifier": {
-                        "prefix": "",
-                        "reference": "DiscriminatedUnionMember1",
-                        "termType": "NamedNode",
-                        "value": "http://example.com/DiscriminatedUnionMember1"
-                      },
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
                     "toRdfTypes": [
                       {
                         "prefix": "",
@@ -8635,19 +7722,6 @@
                       "reference": "DiscriminatedUnionMember2",
                       "termType": "NamedNode",
                       "value": "http://example.com/DiscriminatedUnionMember2"
-                    },
-                    "identifierType": {
-                      "kind": "Identifier",
-                      "shapeIdentifier": {
-                        "prefix": "",
-                        "reference": "DiscriminatedUnionMember2",
-                        "termType": "NamedNode",
-                        "value": "http://example.com/DiscriminatedUnionMember2"
-                      },
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
                     },
                     "toRdfTypes": [
                       {
@@ -8682,6 +7756,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
           "name": "optionalTerm",
           "order": 0,
@@ -8735,6 +7810,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           "name": "optionalNodeOrLiteral",
           "order": 0,
@@ -8774,19 +7850,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/DiscriminatedUnionMember1"
                     },
-                    "identifierType": {
-                      "kind": "Identifier",
-                      "shapeIdentifier": {
-                        "prefix": "",
-                        "reference": "DiscriminatedUnionMember1",
-                        "termType": "NamedNode",
-                        "value": "http://example.com/DiscriminatedUnionMember1"
-                      },
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
                     "toRdfTypes": [
                       {
                         "prefix": "",
@@ -8814,6 +7877,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union that can be discriminated by typeof.",
           "name": "optionalIriOrString",
           "order": 0,
@@ -8872,6 +7936,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           "name": "requiredNodeOrLiteral",
           "order": 0,
@@ -8904,19 +7969,6 @@
                     "termType": "NamedNode",
                     "value": "http://example.com/DiscriminatedUnionMember1"
                   },
-                  "identifierType": {
-                    "kind": "Identifier",
-                    "shapeIdentifier": {
-                      "prefix": "",
-                      "reference": "DiscriminatedUnionMember1",
-                      "termType": "NamedNode",
-                      "value": "http://example.com/DiscriminatedUnionMember1"
-                    },
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
                   "toRdfTypes": [
                     {
                       "prefix": "",
@@ -8943,6 +7995,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
           "name": "requiredNodeOrNodeOrString",
           "order": 0,
@@ -8975,19 +8028,6 @@
                     "termType": "NamedNode",
                     "value": "http://example.com/DiscriminatedUnionMember1"
                   },
-                  "identifierType": {
-                    "kind": "Identifier",
-                    "shapeIdentifier": {
-                      "prefix": "",
-                      "reference": "DiscriminatedUnionMember1",
-                      "termType": "NamedNode",
-                      "value": "http://example.com/DiscriminatedUnionMember1"
-                    },
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
                   "toRdfTypes": [
                     {
                       "prefix": "",
@@ -9013,19 +8053,6 @@
                     "reference": "DiscriminatedUnionMember2",
                     "termType": "NamedNode",
                     "value": "http://example.com/DiscriminatedUnionMember2"
-                  },
-                  "identifierType": {
-                    "kind": "Identifier",
-                    "shapeIdentifier": {
-                      "prefix": "",
-                      "reference": "DiscriminatedUnionMember2",
-                      "termType": "NamedNode",
-                      "value": "http://example.com/DiscriminatedUnionMember2"
-                    },
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
                   },
                   "toRdfTypes": [
                     {
@@ -9059,6 +8086,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           "name": "setNodeOrLiteral",
           "order": 0,
@@ -9098,19 +8126,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/DiscriminatedUnionMember1"
                     },
-                    "identifierType": {
-                      "kind": "Identifier",
-                      "shapeIdentifier": {
-                        "prefix": "",
-                        "reference": "DiscriminatedUnionMember1",
-                        "termType": "NamedNode",
-                        "value": "http://example.com/DiscriminatedUnionMember1"
-                      },
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
                     "toRdfTypes": [
                       {
                         "prefix": "",
@@ -9139,6 +8154,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
           "name": "requiredTerm",
           "order": 0,
@@ -9184,6 +8200,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union that can be discriminated by typeof.",
           "name": "requiredIriOrString",
           "order": 0,
@@ -9234,6 +8251,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
           "name": "setNodeOrNodeOrString",
           "order": 0,
@@ -9273,19 +8291,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/DiscriminatedUnionMember1"
                     },
-                    "identifierType": {
-                      "kind": "Identifier",
-                      "shapeIdentifier": {
-                        "prefix": "",
-                        "reference": "DiscriminatedUnionMember1",
-                        "termType": "NamedNode",
-                        "value": "http://example.com/DiscriminatedUnionMember1"
-                      },
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
                     "toRdfTypes": [
                       {
                         "prefix": "",
@@ -9311,19 +8316,6 @@
                       "reference": "DiscriminatedUnionMember2",
                       "termType": "NamedNode",
                       "value": "http://example.com/DiscriminatedUnionMember2"
-                    },
-                    "identifierType": {
-                      "kind": "Identifier",
-                      "shapeIdentifier": {
-                        "prefix": "",
-                        "reference": "DiscriminatedUnionMember2",
-                        "termType": "NamedNode",
-                        "value": "http://example.com/DiscriminatedUnionMember2"
-                      },
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
                     },
                     "toRdfTypes": [
                       {
@@ -9359,6 +8351,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
           "name": "setTerm",
           "order": 0,
@@ -9413,6 +8406,7 @@
           }
         },
         {
+          "kind": "Shacl",
           "comment": "Discriminated union that can be discriminated by typeof.",
           "name": "setIriOrString",
           "order": 0,
@@ -9480,19 +8474,12 @@
         "termType": "NamedNode",
         "value": "urn:shaclmate:synthetic:DefaultPartial"
       },
-      "identifierType": {
-        "kind": "Identifier",
-        "shapeIdentifier": {
-          "termType": "BlankNode",
-          "value": "df_0_286"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
       "synthetic": true,
-      "properties": []
+      "properties": [
+        {
+          "kind": "Identifier"
+        }
+      ]
     },
     {
       "kind": "Struct",
@@ -9501,18 +8488,12 @@
         "termType": "NamedNode",
         "value": "urn:shaclmate:synthetic:NamedDefaultPartial"
       },
-      "identifierType": {
-        "kind": "Iri",
-        "shapeIdentifier": {
-          "termType": "BlankNode",
-          "value": "df_0_287"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
       "synthetic": true,
-      "properties": []
+      "properties": [
+        {
+          "kind": "Identifier"
+        }
+      ]
     }
   ]
 }

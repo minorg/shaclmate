@@ -1,0 +1,52 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://example.com/> .
+@prefix http: <http://www.w3.org/2011/http#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:ExampleError
+    a sh:NodeShape ;
+    sh:nodeKind sh:BlankNode ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :message
+    ] .
+
+:ExampleService
+    shaclmate:operation [
+        shaclmate:binding [
+            shaclmate:request [
+                schema:urlTemplate "/{identifier}"
+            ]
+        ] ;
+        shaclmate:error :ExampleError ;
+        shaclmate:name "get" ;
+        shaclmate:parameter [
+            sh:property [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:nodeKind sh:IRI ;
+                sh:path :identifier
+            ]
+        ] ;
+        shaclmate:result [
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:node [
+                sh:property [
+                    sh:datatype xsd:string ;
+                    sh:maxCount 1 ;
+                    sh:minCount 1 ;
+                    sh:path :result
+                ]
+            ] ;
+            sh:path :result
+        ]
+    ] ;
+    a shaclmate:Service .
+

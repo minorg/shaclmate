@@ -134,29 +134,11 @@ export class OptionType<
     return code`${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    return code`${this.itemType.jsonSchema(parameters)}.optional()`;
-  }
-
   @Memoize()
   override jsonType(
     parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
   ): AbstractContainerType.JsonType {
-    const itemTypeJsonType = this.itemType.jsonType(parameters);
-    invariant(!itemTypeJsonType.optional);
-    return new AbstractContainerType.JsonType(itemTypeJsonType.expression, {
-      optional: true,
-    });
-  }
-
-  override jsonUiSchemaElement(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.jsonUiSchemaElement(parameters);
+    return this.itemType.jsonType(parameters);
   }
 
   override toJsonExpression({
@@ -165,6 +147,14 @@ export class OptionType<
     AbstractContainerType<ItemTypeT>["toJsonExpression"]
   >[0]): Code {
     return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })})).extract()`;
+  }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toLoggableExpression"]
+  >[0]): Code {
+    return code`${variables.value}.map(item => (${this.itemType.toLoggableExpression({ variables: { value: code`item` } })})).extract()`;
   }
 
   override toRdfResourceValuesExpression({

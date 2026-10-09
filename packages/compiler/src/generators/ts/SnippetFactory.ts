@@ -11,11 +11,7 @@ export type SnippetFactory = (parameters: {
   imports: Imports;
   logger: Logger;
   rdfjsTermExpression: (
-    rdfjsTerm:
-      | Omit<BlankNode, "equals">
-      | Omit<Literal, "equals">
-      | Omit<NamedNode, "equals">
-      | Omit<Variable, "equals">,
+    rdfjsTerm: BlankNode | Literal | NamedNode | Variable,
   ) => Code;
   snippets: Snippets;
   syntheticNamePrefix: string;

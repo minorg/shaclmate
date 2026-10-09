@@ -19,9 +19,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     Maybe.empty();
   override readonly hashFunctionParameter: ObjectType_AbstractProperty["hashFunctionParameter"] =
     Maybe.empty();
-  override readonly jsonSchema: ObjectType_AbstractProperty["jsonSchema"] =
-    Maybe.empty();
-  override readonly jsonSignature: ObjectType_AbstractProperty["jsonSignature"] =
+  override readonly jsonObjectMember: ObjectType_AbstractProperty["jsonObjectMember"] =
     Maybe.empty();
   override readonly kind = "RdfType";
   override readonly mutable = false;
@@ -87,10 +85,6 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     return [];
   }
 
-  override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
   override sparqlConstructTriplesExpression({
     variables,
   }: Parameters<
@@ -153,6 +147,10 @@ type: "optional" as const
   }
 
   override toJsonInitializer(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
+  override toLoggableInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
 

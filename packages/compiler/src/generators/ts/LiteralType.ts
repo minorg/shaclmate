@@ -103,14 +103,20 @@ export class LiteralType extends AbstractLiteralType {
     );
   }
 
-  override valueExpression(literal: Literal): Code {
-    return this.rdfjsTermExpression(literal);
-  }
-
   override toJsonExpression({
     includeDiscriminantProperty,
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
     return code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
+  }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
+    return this.toJsonExpression({ variables });
+  }
+
+  override valueExpression(literal: Literal): Code {
+    return this.rdfjsTermExpression(literal);
   }
 }

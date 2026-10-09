@@ -12,12 +12,28 @@ import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_object
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { AbstractDiscriminatedUnionType } from "./AbstractDiscriminatedUnionType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
+import type { IdentifierType } from "./IdentifierType.js";
+import type { IriType } from "./IriType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType<ObjectType> {
   override readonly kind = "ObjectDiscriminatedUnion";
+  readonly identifierType: BlankNodeType | IdentifierType | IriType;
+
+  constructor({
+    identifierType,
+    ...superParameters
+  }: {
+    identifierType: BlankNodeType | IdentifierType | IriType;
+  } & ConstructorParameters<
+    typeof AbstractDiscriminatedUnionType<ObjectType>
+  >[0]) {
+    super(superParameters);
+    this.identifierType = identifierType;
+  }
 
   @Memoize()
   get identifierTypeAlias(): Code {

@@ -1,0 +1,40 @@
+{
+  "dependencies": {
+    "@hono/zod-validator": "~0.9.1",
+    "@rdfjs/types": "~2.0.1",
+    "@rdfx/collection": "0.0.57",
+    "@rdfx/data-factory": "0.0.57",
+    "@rdfx/resource": "0.0.57",
+    "hono": "~4.13.13",
+    "purify-ts": "~2.1.4"
+  },
+  "devDependencies": {},
+  "files": [
+    "dist/rest-decorators.shaclmate.d.ts",
+    "dist/rest-decorators.shaclmate.js",
+    "dist/rest-http-api.shaclmate.d.ts",
+    "dist/rest-http-api.shaclmate.js",
+    "dist/rest-types.shaclmate.d.ts",
+    "dist/rest-types.shaclmate.js"
+  ],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "name": "@shaclmate/rest-example",
+  "packageManager": "npm@11.11.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minorg/shaclmate.git"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "depcheck": "depcheck .",
+    "dev": "tsc -w --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
+    "start": "NODE_ENV=development bun src/main.ts"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "version": "4.0.94"
+}

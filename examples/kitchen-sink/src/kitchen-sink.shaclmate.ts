@@ -15,7 +15,7 @@ import {
   Resource,
   ResourceSet,
 } from "@rdfx/resource";
-import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
+import { NTriplesIdentifier } from "@rdfx/string";
 import { Decimal as BigDecimal } from "decimal.js";
 import { Either, EitherAsync, Left, Maybe, Right } from "purify-ts";
 import * as sparqljs from "sparqljs";
@@ -34,7 +34,7 @@ type $_FromRdfResourceFunction<T> = (
 
 export type $_ToRdfResourceFunction<
   IdentifierT extends Resource.Identifier,
-  ObjectT extends { $identifier: () => IdentifierT },
+  ObjectT extends object,
 > = (parameters: {
   graph: Exclude<Quad_Graph, Variable> | undefined;
   ignoreRdfType: boolean;
@@ -147,7 +147,7 @@ function $bigDecimalFromRdfResourceValues(
  * Create a Literal from a BigDecimal.
  */
 function $bigDecimalLiteral(value: BigDecimal): Literal {
-  return dataFactory.literal(value.toFixed(), $RdfVocabularies.xsd.decimal);
+  return dataFactory.literal(value.toFixed(), $xsd_decimal);
 }
 
 const $bigDecimalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
@@ -413,24 +413,6 @@ const $convertToBlankNode: $ConversionFunction<
   }
 };
 
-const $convertToBlankNodeIdentifierProperty: $ConversionFunction<
-  (() => BlankNode) | BlankNode | undefined,
-  () => BlankNode
-> = (identifier) => {
-  switch (typeof identifier) {
-    case "function":
-      return Either.of(identifier);
-    case "object": {
-      const captureIdentifier = identifier;
-      return Either.of(() => captureIdentifier);
-    }
-    case "undefined": {
-      const captureIdentifier = dataFactory.blankNode();
-      return Either.of(() => captureIdentifier);
-    }
-  }
-};
-
 function $convertToIdentifier<
   DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
 >(
@@ -556,7 +538,7 @@ function $convertToIriIdentifierProperty<
 }
 
 const $convertToLangString: $ConversionFunction<Literal, Literal> = (value) => {
-  if (!value.datatype.equals($RdfVocabularies.rdf.langString)) {
+  if (!value.datatype.equals($rdf_langString)) {
     return Left(
       new Error(
         `expected Literal to have rdf:langString datatype, not ${value.datatype.value}`,
@@ -924,9 +906,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             filter.in.map((inValue) =>
               $literalFactory.date(
                 inValue,
-                schema.kind === "Date"
-                  ? $RdfVocabularies.xsd.date
-                  : $RdfVocabularies.xsd.dateTime,
+                schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
               ),
             ),
           ],
@@ -945,9 +925,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             valueVariable,
             $literalFactory.date(
               filter.maxExclusive,
-              schema.kind === "Date"
-                ? $RdfVocabularies.xsd.date
-                : $RdfVocabularies.xsd.dateTime,
+              schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
             ),
           ],
         },
@@ -965,9 +943,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             valueVariable,
             $literalFactory.date(
               filter.maxInclusive,
-              schema.kind === "Date"
-                ? $RdfVocabularies.xsd.date
-                : $RdfVocabularies.xsd.dateTime,
+              schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
             ),
           ],
         },
@@ -985,9 +961,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             valueVariable,
             $literalFactory.date(
               filter.minExclusive,
-              schema.kind === "Date"
-                ? $RdfVocabularies.xsd.date
-                : $RdfVocabularies.xsd.dateTime,
+              schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
             ),
           ],
         },
@@ -1005,9 +979,7 @@ const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
             valueVariable,
             $literalFactory.date(
               filter.minInclusive,
-              schema.kind === "Date"
-                ? $RdfVocabularies.xsd.date
-                : $RdfVocabularies.xsd.dateTime,
+              schema.kind === "Date" ? $xsd_date : $xsd_dateTime,
             ),
           ],
         },
@@ -1109,7 +1081,7 @@ function $ensureRdfResourceType(
   options: { graph: Exclude<Quad_Graph, Variable> | undefined },
 ): Either<Error, undefined> {
   return resource
-    .value($RdfVocabularies.rdf.type, options)
+    .value($rdf_type, options)
     .chain((actualRdfTypeValue) => actualRdfTypeValue.toIri())
     .chain((actualRdfType) => {
       // Check the expected type and its known subtypes
@@ -1950,7 +1922,7 @@ function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
       const item0Variable = variable("Item0");
       triples.push({
         subject: listVariable,
-        predicate: $RdfVocabularies.rdf.first,
+        predicate: $rdf_first,
         object: item0Variable,
       });
       triples = triples.concat(
@@ -1966,7 +1938,7 @@ function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
     // ?list rdf:rest ?rest0
     triples.push({
       subject: listVariable,
-      predicate: $RdfVocabularies.rdf.rest,
+      predicate: $rdf_rest,
       object: variable("Rest0"),
     });
 
@@ -1978,7 +1950,7 @@ function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
       const itemNVariable = variable("ItemN");
       triples.push({
         subject: restNVariable,
-        predicate: $RdfVocabularies.rdf.first,
+        predicate: $rdf_first,
         object: itemNVariable,
       });
       triples = triples.concat(
@@ -1995,7 +1967,7 @@ function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
     // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
     triples.push({
       subject: restNVariable,
-      predicate: $RdfVocabularies.rdf.rest,
+      predicate: $rdf_rest,
       object: variable("RestNBasic"),
     });
 
@@ -2033,7 +2005,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
           triples: [
             {
               subject: listVariable,
-              predicate: $RdfVocabularies.rdf.first,
+              predicate: $rdf_first,
               object: item0Variable,
             },
           ],
@@ -2058,7 +2030,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
         triples: [
           {
             subject: listVariable,
-            predicate: $RdfVocabularies.rdf.rest,
+            predicate: $rdf_rest,
             object: rest0Variable,
           },
         ],
@@ -2075,11 +2047,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       triples: [
         {
           subject: listVariable,
-          predicate: {
-            type: "path",
-            pathType: "*",
-            items: [$RdfVocabularies.rdf.rest],
-          },
+          predicate: { type: "path", pathType: "*", items: [$rdf_rest] },
           object: restNVariable,
         },
       ],
@@ -2093,7 +2061,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
           triples: [
             {
               subject: restNVariable,
-              predicate: $RdfVocabularies.rdf.first,
+              predicate: $rdf_first,
               object: itemNVariable,
             },
           ],
@@ -2116,7 +2084,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       triples: [
         {
           subject: restNVariable,
-          predicate: $RdfVocabularies.rdf.rest,
+          predicate: $rdf_rest,
           object: variable("RestNBasic"),
         },
       ],
@@ -2687,87 +2655,42 @@ export namespace $PropertyPath {
   export const $toString = RdfxResourcePropertyPath.toString;
 }
 
+const $rdf_first = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+);
+
+const $rdf_langString = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
+);
+
+const $rdf_nil = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+);
+
+const $rdf_rest = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+);
+
+const $rdf_subject = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+);
+
+const $rdf_type = dataFactory.namedNode(
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+);
+
 function $rdfResourceIdentifierValues(resource: Resource): Resource.Values {
   return new Resource.Value({
     dataFactory: dataFactory,
     focusResource: resource,
-    propertyPath: $RdfVocabularies.rdf.subject,
+    propertyPath: $rdf_subject,
     term: resource.identifier,
   }).toValues();
 }
 
-namespace $RdfVocabularies {
-  export const rdf = {
-    first: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    ),
-    langString: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
-    ),
-    nil: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    ),
-    rest: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    ),
-    subject: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    ),
-    type: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    ),
-  };
-
-  export const rdfs = {
-    subClassOf: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    ),
-  };
-
-  export const xsd = {
-    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
-    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
-    dateTime: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTime",
-    ),
-    dateTimeStamp: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-    ),
-    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
-    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
-    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
-    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
-    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
-    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
-    negativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    ),
-    nonNegativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    ),
-    nonPositiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    ),
-    positiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    ),
-    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
-    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
-    unsignedByte: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    ),
-    unsignedInt: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    ),
-    unsignedLong: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    ),
-    unsignedShort: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    ),
-  };
-}
+const $rdfs_subClassOf = dataFactory.namedNode(
+  "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+);
 
 function $sequenceRecord<T extends Record<string, unknown>>(
   record: { [K in keyof T]: Either<Error, T[K]> },
@@ -3210,12 +3133,8 @@ function $sparqlInstancesOfPattern({
         subject,
         predicate: {
           items: [
-            $RdfVocabularies.rdf.type,
-            {
-              items: [$RdfVocabularies.rdfs.subClassOf],
-              pathType: "*",
-              type: "path",
-            },
+            $rdf_type,
+            { items: [$rdfs_subClassOf], pathType: "*", type: "path" },
           ],
           pathType: "/",
           type: "path",
@@ -3734,7 +3653,7 @@ export function $toIsoDateString(date: Date): string {
 }
 
 export type $ToRdfResourceFunction<
-  ObjectT,
+  ObjectT extends object,
   IdentifierT extends Resource.Identifier = Resource.Identifier,
 > = (
   object: ObjectT,
@@ -3861,6 +3780,18 @@ function $wrap_ToRdfResourceFunction<
   ObjectT extends { $identifier: () => IdentifierT },
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
+): $ToRdfResourceFunction<ObjectT, IdentifierT>;
+function $wrap_ToRdfResourceFunction<
+  _IdentifierT extends BlankNode,
+  ObjectT extends object,
+>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<BlankNode, ObjectT>,
+): $ToRdfResourceFunction<ObjectT, BlankNode>;
+function $wrap_ToRdfResourceFunction<
+  IdentifierT extends Resource.Identifier,
+  ObjectT extends object & { $identifier?: () => IdentifierT },
+>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
 ): $ToRdfResourceFunction<ObjectT, IdentifierT> {
   return (object, options) => {
     let { graph, ignoreRdfType = false, resourceSet } = options ?? {};
@@ -3870,7 +3801,11 @@ function $wrap_ToRdfResourceFunction<
         dataset: datasetFactory.dataset(),
       });
     }
-    const resource = resourceSet.resource(object.$identifier());
+    const resource = (
+      object.$identifier
+        ? resourceSet.resource(object.$identifier())
+        : resourceSet.resource(dataFactory.blankNode())
+    ) as Resource<IdentifierT>;
     _toRdfResourceFunction({
       graph,
       ignoreRdfType,
@@ -3881,6 +3816,85 @@ function $wrap_ToRdfResourceFunction<
     return resource;
   };
 }
+
+const $xsd_boolean = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#boolean",
+);
+
+const $xsd_byte = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#byte",
+);
+
+const $xsd_date = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#date",
+);
+
+const $xsd_dateTime = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#dateTime",
+);
+
+const $xsd_dateTimeStamp = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
+);
+
+const $xsd_decimal = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#decimal",
+);
+
+const $xsd_double = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#double",
+);
+
+const $xsd_float = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#float",
+);
+
+const $xsd_int = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int");
+
+const $xsd_integer = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#integer",
+);
+
+const $xsd_long = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#long",
+);
+
+const $xsd_negativeInteger = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#negativeInteger",
+);
+
+const $xsd_nonNegativeInteger = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+);
+
+const $xsd_nonPositiveInteger = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+);
+
+const $xsd_positiveInteger = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#positiveInteger",
+);
+
+const $xsd_short = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#short",
+);
+
+const $xsd_unsignedByte = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#unsignedByte",
+);
+
+const $xsd_unsignedInt = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#unsignedInt",
+);
+
+const $xsd_unsignedLong = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#unsignedLong",
+);
+
+const $xsd_unsignedShort = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#unsignedShort",
+);
+
 export type $DefaultPartial = {
   readonly $identifier: () => $DefaultPartial.Identifier;
 
@@ -3898,7 +3912,7 @@ export namespace $DefaultPartial {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: $DefaultPartial.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -3910,6 +3924,12 @@ export namespace $DefaultPartial {
   > = (parameters) => {
     return parameters.resource;
   };
+
+  export const $toLoggable = (_defaultPartial: $DefaultPartial) =>
+    $compactRecord({
+      $identifier: _defaultPartial.$identifier().value,
+      $type: "DefaultPartial",
+    });
 
   export const $toString: (_defaultPartial: $DefaultPartial) => string = (
     _defaultPartial,
@@ -4049,7 +4069,6 @@ export namespace $DefaultPartial {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const is$DefaultPartial = (
@@ -4185,7 +4204,10 @@ export namespace $DefaultPartial {
       } satisfies $DefaultPartial.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    $DefaultPartial
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _defaultPartial: $DefaultPartial,
@@ -4224,6 +4246,7 @@ export namespace $DefaultPartial {
       }),
     );
 }
+
 export type $NamedDefaultPartial = {
   readonly $identifier: () => $NamedDefaultPartial.Identifier;
 
@@ -4240,7 +4263,7 @@ export namespace $NamedDefaultPartial {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: $NamedDefaultPartial.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -4252,6 +4275,12 @@ export namespace $NamedDefaultPartial {
   > = (parameters) => {
     return parameters.resource;
   };
+
+  export const $toLoggable = (_namedDefaultPartial: $NamedDefaultPartial) =>
+    $compactRecord({
+      $identifier: _namedDefaultPartial.$identifier().value,
+      $type: "NamedDefaultPartial",
+    });
 
   export const $toString: (
     _namedDefaultPartial: $NamedDefaultPartial,
@@ -4391,7 +4420,6 @@ export namespace $NamedDefaultPartial {
   export type Identifier = NamedNode;
   export namespace Identifier {
     export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const is$NamedDefaultPartial = (
@@ -4523,7 +4551,10 @@ export namespace $NamedDefaultPartial {
       } satisfies $NamedDefaultPartial.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    NamedNode,
+    $NamedDefaultPartial
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _namedDefaultPartial: $NamedDefaultPartial,
@@ -4563,10 +4594,11 @@ export namespace $NamedDefaultPartial {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with anonymous property types.
  */
-
 export type AnonymousTypesStruct = {
   readonly $identifier: () => AnonymousTypesStruct.Identifier;
 
@@ -4601,7 +4633,7 @@ export namespace AnonymousTypesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: AnonymousTypesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -4657,7 +4689,7 @@ export namespace AnonymousTypesStruct {
                       {
                         ...options,
                         focusResource: resource,
-                        propertyPath: $RdfVocabularies.rdf.subject,
+                        propertyPath: $rdf_subject,
                         schema: { kind: "Identifier" as const },
                       },
                     ).chain((values) => values.head()),
@@ -4737,7 +4769,7 @@ export namespace AnonymousTypesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         AnonymousTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -4767,6 +4799,20 @@ export namespace AnonymousTypesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_anonymousTypesStruct: AnonymousTypesStruct) =>
+    $compactRecord({
+      $identifier: _anonymousTypesStruct.$identifier().value,
+      $type: "AnonymousTypesStruct",
+      anonymousStruct: _anonymousTypesStruct.anonymousStruct
+        .map((item) =>
+          $compactRecord({
+            $identifier: item.$identifier().value,
+            anonymousStructString: item.anonymousStructString,
+          }),
+        )
+        .extract(),
+    });
 
   export const $toString: (
     _anonymousTypesStruct: AnonymousTypesStruct,
@@ -4998,7 +5044,7 @@ export namespace AnonymousTypesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -5007,7 +5053,7 @@ export namespace AnonymousTypesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -5103,7 +5149,7 @@ export namespace AnonymousTypesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -5120,7 +5166,7 @@ export namespace AnonymousTypesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -5344,7 +5390,6 @@ export namespace AnonymousTypesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isAnonymousTypesStruct = (
@@ -5564,7 +5609,10 @@ export namespace AnonymousTypesStruct {
       } satisfies AnonymousTypesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    AnonymousTypesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _anonymousTypesStruct: AnonymousTypesStruct,
@@ -5604,13 +5652,12 @@ export namespace AnonymousTypesStruct {
         variablePrefix,
       }),
     );
-} /**
- * Struct node shape that can only have a blank node as an identifier
+}
+
+/**
+ * Struct node shape that can only have a blank node as an identifier. This generates code without an identifier property.
  */
-
 export type BlankNodeIdentifierStruct = {
-  readonly $identifier: () => BlankNodeIdentifierStruct.Identifier;
-
   readonly $type: "BlankNodeIdentifierStruct";
 
   readonly blankNodeIdentifierString: Maybe<string>;
@@ -5631,16 +5678,6 @@ export namespace BlankNodeIdentifierStruct {
       : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
-        $identifier: $blankNodeFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            schema:
-              BlankNodeIdentifierStruct.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
         blankNodeIdentifierString: $shaclPropertyFromRdf<
           Maybe<string>,
           $MaybeSchema<$StringSchema<string>>
@@ -5665,7 +5702,7 @@ export namespace BlankNodeIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         BlankNodeIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -5681,6 +5718,17 @@ export namespace BlankNodeIdentifierStruct {
     return parameters.resource;
   };
 
+  export const $toLoggable = (
+    _blankNodeIdentifierStruct: BlankNodeIdentifierStruct,
+  ) =>
+    $compactRecord({
+      $type: "BlankNodeIdentifierStruct",
+      blankNodeIdentifierString:
+        _blankNodeIdentifierStruct.blankNodeIdentifierString
+          .map((item) => item)
+          .extract(),
+    });
+
   export const $toString: (
     _blankNodeIdentifierStruct: BlankNodeIdentifierStruct,
   ) => string = (_blankNodeIdentifierStruct) =>
@@ -5690,16 +5738,9 @@ export namespace BlankNodeIdentifierStruct {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => BlankNodeIdentifierStruct.Identifier)
-      | BlankNode;
     readonly blankNodeIdentifierString?: string | Maybe<string>;
   }): Either<Error, BlankNodeIdentifierStruct> =>
     $sequenceRecord({
-      $identifier: $convertToBlankNodeIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
-      ),
       blankNodeIdentifierString: $convertToMaybe($identityConversionFunction)(
         parameters?.blankNodeIdentifierString,
         parameters?.$defaultNamespace,
@@ -5726,9 +5767,6 @@ export namespace BlankNodeIdentifierStruct {
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
-    readonly $identifier?:
-      | (() => BlankNodeIdentifierStruct.Identifier)
-      | BlankNode;
     readonly blankNodeIdentifierString?: string | Maybe<string>;
   }): BlankNodeIdentifierStruct {
     return create(parameters).unsafeCoerce();
@@ -5739,31 +5777,19 @@ export namespace BlankNodeIdentifierStruct {
     right: BlankNodeIdentifierStruct,
   ) => $EqualsResult = (left, right) =>
     $propertyEquals(
-      { equalsFunction: $booleanEquals, name: "$identifier" },
-      [left, left.$identifier()],
-      [right, right.$identifier()],
-    ).chain(() =>
-      $propertyEquals(
-        {
-          equalsFunction: (left, right) =>
-            $maybeEquals(left, right, $strictEquals),
-          name: "blankNodeIdentifierString",
-        },
-        [left, left.blankNodeIdentifierString],
-        [right, right.blankNodeIdentifierString],
-      ),
+      {
+        equalsFunction: (left, right) =>
+          $maybeEquals(left, right, $strictEquals),
+        name: "blankNodeIdentifierString",
+      },
+      [left, left.blankNodeIdentifierString],
+      [right, right.blankNodeIdentifierString],
     );
 
   export const filter: (
     filter: BlankNodeIdentifierStruct.Filter,
     value: BlankNodeIdentifierStruct,
   ) => boolean = (filter, value) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterBlankNode(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
     if (
       filter.blankNodeIdentifierString !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
@@ -5777,7 +5803,6 @@ export namespace BlankNodeIdentifierStruct {
   };
 
   export type Filter = {
-    readonly $identifier?: $BlankNodeFilter;
     readonly blankNodeIdentifierString?: $MaybeFilter<$StringFilter>;
   };
 
@@ -5791,7 +5816,7 @@ export namespace BlankNodeIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -5800,7 +5825,7 @@ export namespace BlankNodeIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -5829,19 +5854,6 @@ export namespace BlankNodeIdentifierStruct {
     BlankNodeIdentifierStruct.Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $blankNodeSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: BlankNodeIdentifierStruct.schema.properties.$identifier.type,
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
     patterns = patterns.concat(
       parameters.ignoreRdfType
         ? []
@@ -5856,7 +5868,7 @@ export namespace BlankNodeIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -5873,7 +5885,7 @@ export namespace BlankNodeIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -5912,9 +5924,6 @@ export namespace BlankNodeIdentifierStruct {
     json: BlankNodeIdentifierStruct.Json,
   ) => Either<Error, BlankNodeIdentifierStruct> = ($json) =>
     $sequenceRecord({
-      $identifier: Either.of<Error, BlankNode>(
-        dataFactory.blankNode($json["@id"].substring(2)),
-      ),
       blankNodeIdentifierString: Maybe.fromNullable(
         $json["blankNodeIdentifierString"],
       )
@@ -5937,17 +5946,10 @@ export namespace BlankNodeIdentifierStruct {
 
   export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-    _blankNodeIdentifierStruct: Omit<
-      BlankNodeIdentifierStruct,
-      "$identifier" | "$type"
-    > & {
-      readonly $identifier?: () => BlankNodeIdentifierStruct.Identifier;
+    _blankNodeIdentifierStruct: Omit<BlankNodeIdentifierStruct, "$type"> & {
       readonly $type?: "BlankNodeIdentifierStruct";
     },
   ): HasherT => {
-    if (_blankNodeIdentifierStruct.$identifier) {
-      hasher.update(_blankNodeIdentifierStruct.$identifier().value);
-    }
     if (_blankNodeIdentifierStruct.$type) {
       hasher.update(_blankNodeIdentifierStruct.$type);
     }
@@ -5961,7 +5963,6 @@ export namespace BlankNodeIdentifierStruct {
   export type Identifier = BlankNode;
   export namespace Identifier {
     export const parse = $parseBlankNode;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isBlankNodeIdentifierStruct = (
@@ -5981,13 +5982,12 @@ export namespace BlankNodeIdentifierStruct {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("BlankNodeIdentifierStruct"),
           blankNodeIdentifierString: z.string().optional(),
         })
         .meta({
           description:
-            "Struct node shape that can only have a blank node as an identifier",
+            "Struct node shape that can only have a blank node as an identifier. This generates code without an identifier property.",
         }) satisfies z.ZodType<Json>;
     }
 
@@ -5995,11 +5995,6 @@ export namespace BlankNodeIdentifierStruct {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
         elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
           {
             rule: {
               condition: {
@@ -6023,14 +6018,12 @@ export namespace BlankNodeIdentifierStruct {
   }
 
   export type Json = {
-    readonly "@id": string;
     readonly $type: "BlankNodeIdentifierStruct";
     readonly blankNodeIdentifierString?: string;
   };
 
   export const schema = {
     properties: {
-      $identifier: { kind: "Identifier", type: { kind: "BlankNode" as const } },
       $rdfType: {
         fromRdfType: dataFactory.namedNode(
           "http://example.com/BlankNodeIdentifierStruct",
@@ -6121,7 +6114,6 @@ export namespace BlankNodeIdentifierStruct {
   ) => BlankNodeIdentifierStruct.Json = (_blankNodeIdentifierStruct) =>
     JSON.parse(
       JSON.stringify({
-        "@id": `_:${_blankNodeIdentifierStruct.$identifier().value}`,
         $type: _blankNodeIdentifierStruct.$type,
         blankNodeIdentifierString:
           _blankNodeIdentifierStruct.blankNodeIdentifierString
@@ -6130,14 +6122,15 @@ export namespace BlankNodeIdentifierStruct {
       } satisfies BlankNodeIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode,
+    BlankNodeIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _blankNodeIdentifierStruct: BlankNodeIdentifierStruct,
   ) => Record<string, string> = (_blankNodeIdentifierStruct) =>
-    $compactRecord({
-      $identifier: _blankNodeIdentifierStruct.$identifier().toString(),
-    });
+    $compactRecord({});
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     BlankNodeIdentifierStruct.Filter,
@@ -6170,10 +6163,11 @@ export namespace BlankNodeIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that can have a blank node or IRI as an identifier
  */
-
 export type BlankNodeOrIriIdentifierStruct = {
   readonly $identifier: () => BlankNodeOrIriIdentifierStruct.Identifier;
 
@@ -6205,7 +6199,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               BlankNodeOrIriIdentifierStruct.schema.properties.$identifier.type,
           },
@@ -6236,7 +6230,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         BlankNodeOrIriIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -6251,6 +6245,18 @@ export namespace BlankNodeOrIriIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _blankNodeOrIriIdentifierStruct: BlankNodeOrIriIdentifierStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _blankNodeOrIriIdentifierStruct.$identifier().value,
+      $type: "BlankNodeOrIriIdentifierStruct",
+      blankNodeOrIriIdentifierString:
+        _blankNodeOrIriIdentifierStruct.blankNodeOrIriIdentifierString
+          .map((item) => item)
+          .extract(),
+    });
 
   export const $toString: (
     _blankNodeOrIriIdentifierStruct: BlankNodeOrIriIdentifierStruct,
@@ -6368,7 +6374,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -6377,7 +6383,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -6435,7 +6441,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -6452,7 +6458,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -6543,7 +6549,6 @@ export namespace BlankNodeOrIriIdentifierStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isBlankNodeOrIriIdentifierStruct = (
@@ -6722,7 +6727,10 @@ export namespace BlankNodeOrIriIdentifierStruct {
       } satisfies BlankNodeOrIriIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    BlankNodeOrIriIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _blankNodeOrIriIdentifierStruct: BlankNodeOrIriIdentifierStruct,
@@ -6762,10 +6770,11 @@ export namespace BlankNodeOrIriIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:class properties
  */
-
 export type ClassConstraintsStruct = {
   readonly $identifier: () => ClassConstraintsStruct.Identifier;
 
@@ -6817,7 +6826,7 @@ export namespace ClassConstraintsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ClassConstraintsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -6895,7 +6904,7 @@ export namespace ClassConstraintsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ClassConstraintsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -6937,6 +6946,29 @@ export namespace ClassConstraintsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _classConstraintsStruct: ClassConstraintsStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _classConstraintsStruct.$identifier().value,
+      $type: "ClassConstraintsStruct",
+      iriClass: _classConstraintsStruct.iriClass
+        .map((item) => item.value)
+        .extract(),
+      multiClass: _classConstraintsStruct.multiClass
+        .map((item) => item.value)
+        .extract(),
+      nodeClass1: _classConstraintsStruct.nodeClass1
+        .map((item) => NonClassStruct.$toLoggable(item))
+        .extract(),
+      nodeClass2: _classConstraintsStruct.nodeClass2
+        .map((item) => PartialStruct.$toLoggable(item))
+        .extract(),
+      singleClass: _classConstraintsStruct.singleClass
+        .map((item) => item.value)
+        .extract(),
+    });
 
   export const $toString: (
     _classConstraintsStruct: ClassConstraintsStruct,
@@ -7199,7 +7231,7 @@ export namespace ClassConstraintsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -7208,7 +7240,7 @@ export namespace ClassConstraintsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -7318,7 +7350,7 @@ export namespace ClassConstraintsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -7335,7 +7367,7 @@ export namespace ClassConstraintsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -7511,7 +7543,6 @@ export namespace ClassConstraintsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isClassConstraintsStruct = (
@@ -7776,7 +7807,10 @@ export namespace ClassConstraintsStruct {
       } satisfies ClassConstraintsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ClassConstraintsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _classConstraintsStruct: ClassConstraintsStruct,
@@ -7816,10 +7850,11 @@ export namespace ClassConstraintsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI.
  */
-
 export type ConvertibleTypesStruct = {
   readonly $identifier: () => ConvertibleTypesStruct.Identifier;
 
@@ -7874,7 +7909,7 @@ export namespace ConvertibleTypesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ConvertibleTypesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -8043,7 +8078,7 @@ export namespace ConvertibleTypesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ConvertibleTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -8111,6 +8146,145 @@ export namespace ConvertibleTypesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _convertibleTypesStruct: ConvertibleTypesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _convertibleTypesStruct.$identifier().value,
+      $type: "ConvertibleTypesStruct",
+      convertibleIri: _convertibleTypesStruct.convertibleIri.value,
+      convertibleIriNonEmptySet:
+        _convertibleTypesStruct.convertibleIriNonEmptySet.map(
+          (item) => item.value,
+        ),
+      convertibleIriOption: _convertibleTypesStruct.convertibleIriOption
+        .map((item) => item.value)
+        .extract(),
+      convertibleIriSet: _convertibleTypesStruct.convertibleIriSet.map(
+        (item) => item.value,
+      ),
+      convertibleLiteral: {
+        "@language":
+          _convertibleTypesStruct.convertibleLiteral.language.length > 0
+            ? _convertibleTypesStruct.convertibleLiteral.language
+            : undefined,
+        "@type":
+          _convertibleTypesStruct.convertibleLiteral.datatype.value !==
+          "http://www.w3.org/2001/XMLSchema#string"
+            ? _convertibleTypesStruct.convertibleLiteral.datatype.value
+            : undefined,
+        "@value": _convertibleTypesStruct.convertibleLiteral.value,
+      },
+      convertibleLiteralNonEmptySet:
+        _convertibleTypesStruct.convertibleLiteralNonEmptySet.map((item) => ({
+          "@language": item.language.length > 0 ? item.language : undefined,
+          "@type":
+            item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+              ? item.datatype.value
+              : undefined,
+          "@value": item.value,
+        })),
+      convertibleLiteralOption: _convertibleTypesStruct.convertibleLiteralOption
+        .map((item) => ({
+          "@language": item.language.length > 0 ? item.language : undefined,
+          "@type":
+            item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+              ? item.datatype.value
+              : undefined,
+          "@value": item.value,
+        }))
+        .extract(),
+      convertibleLiteralSet: _convertibleTypesStruct.convertibleLiteralSet.map(
+        (item) => ({
+          "@language": item.language.length > 0 ? item.language : undefined,
+          "@type":
+            item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+              ? item.datatype.value
+              : undefined,
+          "@value": item.value,
+        }),
+      ),
+      convertibleTerm:
+        _convertibleTypesStruct.convertibleTerm.termType === "Literal"
+          ? {
+              "@language":
+                _convertibleTypesStruct.convertibleTerm.language.length > 0
+                  ? _convertibleTypesStruct.convertibleTerm.language
+                  : undefined,
+              "@type":
+                _convertibleTypesStruct.convertibleTerm.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? _convertibleTypesStruct.convertibleTerm.datatype.value
+                  : undefined,
+              "@value": _convertibleTypesStruct.convertibleTerm.value,
+              termType: "Literal" as const,
+            }
+          : _convertibleTypesStruct.convertibleTerm.termType === "NamedNode"
+            ? {
+                "@id": _convertibleTypesStruct.convertibleTerm.value,
+                termType: "NamedNode" as const,
+              }
+            : {
+                "@id": `_:${_convertibleTypesStruct.convertibleTerm.value}`,
+                termType: "BlankNode" as const,
+              },
+      convertibleTermNonEmptySet:
+        _convertibleTypesStruct.convertibleTermNonEmptySet.map((item) =>
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+                termType: "Literal" as const,
+              }
+            : item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+        ),
+      convertibleTermOption: _convertibleTypesStruct.convertibleTermOption
+        .map((item) =>
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+                termType: "Literal" as const,
+              }
+            : item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+        )
+        .extract(),
+      convertibleTermSet: _convertibleTypesStruct.convertibleTermSet.map(
+        (item) =>
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+                termType: "Literal" as const,
+              }
+            : item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+      ),
+    });
 
   export const $toString: (
     _convertibleTypesStruct: ConvertibleTypesStruct,
@@ -8638,7 +8812,7 @@ export namespace ConvertibleTypesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -8647,7 +8821,7 @@ export namespace ConvertibleTypesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -8858,7 +9032,7 @@ export namespace ConvertibleTypesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -8875,7 +9049,7 @@ export namespace ConvertibleTypesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -9303,7 +9477,6 @@ export namespace ConvertibleTypesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isConvertibleTypesStruct = (
@@ -9918,7 +10091,10 @@ export namespace ConvertibleTypesStruct {
       } satisfies ConvertibleTypesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ConvertibleTypesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _convertibleTypesStruct: ConvertibleTypesStruct,
@@ -9958,10 +10134,11 @@ export namespace ConvertibleTypesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models.
  */
-
 export type DatatypeDiscriminatedUnionsStruct = {
   readonly $identifier: () => DatatypeDiscriminatedUnionsStruct.Identifier;
 
@@ -10040,7 +10217,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               DatatypeDiscriminatedUnionsStruct.schema.properties.$identifier
                 .type,
@@ -11255,7 +11432,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DatatypeDiscriminatedUnionsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -11265,14 +11442,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       (
         ((value, _options): Literal[] => {
           if (value["$type"] === "date") {
-            return [
-              $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
-            ];
+            return [$literalFactory.date(value.value, $xsd_date)];
           }
           if (value["$type"] === "dateTime") {
-            return [
-              $literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime),
-            ];
+            return [$literalFactory.date(value.value, $xsd_dateTime)];
           }
 
           throw new Error("unable to serialize to RDF");
@@ -11295,7 +11468,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       (
         ((value, _options): Literal[] => {
           if (typeof value === "object") {
-            return [$literalFactory.date(value, $RdfVocabularies.xsd.date)];
+            return [$literalFactory.date(value, $xsd_date)];
           }
           if (typeof value === "string") {
             return [$literalFactory.string(value)];
@@ -11318,14 +11491,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       (
         ((value, _options): Literal[] => {
           if (value["$type"] === "dateTime") {
-            return [
-              $literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime),
-            ];
+            return [$literalFactory.date(value.value, $xsd_dateTime)];
           }
           if (value["$type"] === "date") {
-            return [
-              $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
-            ];
+            return [$literalFactory.date(value.value, $xsd_date)];
           }
 
           throw new Error("unable to serialize to RDF");
@@ -11372,17 +11541,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       (
         ((value, _options): Literal[] => {
           if (typeof value === "boolean") {
-            return [
-              $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
-            ];
+            return [$literalFactory.boolean(value, $xsd_boolean)];
           }
           if (typeof value === "number") {
-            return [$literalFactory.number(value, $RdfVocabularies.xsd.double)];
+            return [$literalFactory.number(value, $xsd_double)];
           }
           if (typeof value === "bigint") {
-            return [
-              $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
-            ];
+            return [$literalFactory.bigint(value, $xsd_integer)];
           }
           if (typeof value === "string") {
             return [$literalFactory.string(value)];
@@ -11435,7 +11600,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             return [$literalFactory.string(value)];
           }
           if (typeof value === "object") {
-            return [$literalFactory.date(value, $RdfVocabularies.xsd.date)];
+            return [$literalFactory.date(value, $xsd_date)];
           }
 
           throw new Error("unable to serialize to RDF");
@@ -11501,6 +11666,91 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _datatypeDiscriminatedUnionsStruct: DatatypeDiscriminatedUnionsStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _datatypeDiscriminatedUnionsStruct.$identifier().value,
+      $type: "DatatypeDiscriminatedUnionsStruct",
+      dateOrDateTime: ((
+        value:
+          | { $type: "date"; value: Date }
+          | { $type: "dateTime"; value: Date },
+      ) => value.value.toISOString())(
+        _datatypeDiscriminatedUnionsStruct.dateOrDateTime,
+      ),
+      dateOrString: ((value: Date | string) => {
+        if (typeof value === "object") {
+          return value.toISOString();
+        }
+        if (typeof value === "string") {
+          return value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.dateOrString),
+      dateTimeOrDate: ((
+        value:
+          | { $type: "dateTime"; value: Date }
+          | { $type: "date"; value: Date },
+      ) => value.value.toISOString())(
+        _datatypeDiscriminatedUnionsStruct.dateTimeOrDate,
+      ),
+      decimalOrString: ((value: BigDecimal | string) => {
+        if (typeof value === "object") {
+          return value.toFixed();
+        }
+        if (typeof value === "string") {
+          return value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.decimalOrString),
+      jsPrimitive: ((value: boolean | number | bigint | string) => value)(
+        _datatypeDiscriminatedUnionsStruct.jsPrimitive,
+      ),
+      langStringOrString: ((value: Literal | string) => {
+        if (typeof value === "object") {
+          return `${JSON.stringify(value.value)}@${value.language}`;
+        }
+        if (typeof value === "string") {
+          return value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.langStringOrString),
+      stringOrDate: ((value: string | Date) => {
+        if (typeof value === "string") {
+          return value;
+        }
+        if (typeof value === "object") {
+          return value.toISOString();
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.stringOrDate),
+      stringOrDecimal: ((value: string | BigDecimal) => {
+        if (typeof value === "string") {
+          return value;
+        }
+        if (typeof value === "object") {
+          return value.toFixed();
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.stringOrDecimal),
+      stringOrLangString: ((value: string | Literal) => {
+        if (typeof value === "string") {
+          return value;
+        }
+        if (typeof value === "object") {
+          return `${JSON.stringify(value.value)}@${value.language}`;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.stringOrLangString),
+    });
 
   export const $toString: (
     _datatypeDiscriminatedUnionsStruct: DatatypeDiscriminatedUnionsStruct,
@@ -12266,7 +12516,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -12275,7 +12525,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -12868,7 +13118,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -12885,7 +13135,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -13912,7 +14162,6 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDatatypeDiscriminatedUnionsStruct = (
@@ -14682,7 +14931,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       } satisfies DatatypeDiscriminatedUnionsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DatatypeDiscriminatedUnionsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _datatypeDiscriminatedUnionsStruct: DatatypeDiscriminatedUnionsStruct,
@@ -14722,10 +14974,11 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with properties that have date sh:datatype's
  */
-
 export type DatesStruct = {
   readonly $identifier: () => DatesStruct.Identifier;
 
@@ -14759,7 +15012,7 @@ export namespace DatesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: DatesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -14807,7 +15060,7 @@ export namespace DatesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DatesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -14816,31 +15069,38 @@ export namespace DatesStruct {
       DatesStruct.schema.properties.date.path,
       parameters.object.date
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.date),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_date)]),
       parameters.graph,
     );
     parameters.resource.add(
       DatesStruct.schema.properties.dateTime.path,
       parameters.object.dateTime
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_dateTime)]),
       parameters.graph,
     );
     parameters.resource.add(
       DatesStruct.schema.properties.dateTimeStamp.path,
       parameters.object.dateTimeStamp
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.dateTimeStamp),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_dateTimeStamp)]),
       parameters.graph,
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_datesStruct: DatesStruct) =>
+    $compactRecord({
+      $identifier: _datesStruct.$identifier().value,
+      $type: "DatesStruct",
+      date: _datesStruct.date.map((item) => item.toISOString()).extract(),
+      dateTime: _datesStruct.dateTime
+        .map((item) => item.toISOString())
+        .extract(),
+      dateTimeStamp: _datesStruct.dateTimeStamp
+        .map((item) => item.toISOString())
+        .extract(),
+    });
 
   export const $toString: (_datesStruct: DatesStruct) => string = (
     _datesStruct,
@@ -15013,7 +15273,7 @@ export namespace DatesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -15022,7 +15282,7 @@ export namespace DatesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -15103,7 +15363,7 @@ export namespace DatesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -15120,7 +15380,7 @@ export namespace DatesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -15245,7 +15505,6 @@ export namespace DatesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDatesStruct = (object: $Object): object is DatesStruct =>
@@ -15464,7 +15723,10 @@ export namespace DatesStruct {
       } satisfies DatesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DatesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _datesStruct: DatesStruct,
@@ -15502,10 +15764,11 @@ export namespace DatesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:defaultValue properties.
  */
-
 export type DefaultValuesStruct = {
   readonly $identifier: () => DefaultValuesStruct.Identifier;
 
@@ -15544,7 +15807,7 @@ export namespace DefaultValuesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: DefaultValuesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -15641,7 +15904,7 @@ export namespace DefaultValuesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DefaultValuesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -15652,12 +15915,7 @@ export namespace DefaultValuesStruct {
         parameters.object.dateDefaultValue,
         new Date("2018-04-09T00:00:00.000Z"),
       ).isLeft()
-        ? [
-            $literalFactory.date(
-              parameters.object.dateDefaultValue,
-              $RdfVocabularies.xsd.date,
-            ),
-          ]
+        ? [$literalFactory.date(parameters.object.dateDefaultValue, $xsd_date)]
         : [],
       parameters.graph,
     );
@@ -15670,7 +15928,7 @@ export namespace DefaultValuesStruct {
         ? [
             $literalFactory.date(
               parameters.object.dateTimeDefaultValue,
-              $RdfVocabularies.xsd.dateTime,
+              $xsd_dateTime,
             ),
           ]
         : [],
@@ -15682,7 +15940,7 @@ export namespace DefaultValuesStruct {
         ? [
             $literalFactory.boolean(
               parameters.object.falseBooleanDefaultValue,
-              $RdfVocabularies.xsd.boolean,
+              $xsd_boolean,
             ),
           ]
         : [],
@@ -15694,7 +15952,7 @@ export namespace DefaultValuesStruct {
         ? [
             $literalFactory.number(
               parameters.object.numberDefaultValue,
-              $RdfVocabularies.xsd.double,
+              $xsd_double,
             ),
           ]
         : [],
@@ -15713,7 +15971,7 @@ export namespace DefaultValuesStruct {
         ? [
             $literalFactory.boolean(
               parameters.object.trueBooleanDefaultValue,
-              $RdfVocabularies.xsd.boolean,
+              $xsd_boolean,
             ),
           ]
         : [],
@@ -15721,6 +15979,19 @@ export namespace DefaultValuesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_defaultValuesStruct: DefaultValuesStruct) =>
+    $compactRecord({
+      $identifier: _defaultValuesStruct.$identifier().value,
+      $type: "DefaultValuesStruct",
+      dateDefaultValue: _defaultValuesStruct.dateDefaultValue.toISOString(),
+      dateTimeDefaultValue:
+        _defaultValuesStruct.dateTimeDefaultValue.toISOString(),
+      falseBooleanDefaultValue: _defaultValuesStruct.falseBooleanDefaultValue,
+      numberDefaultValue: _defaultValuesStruct.numberDefaultValue,
+      stringDefaultValue: _defaultValuesStruct.stringDefaultValue,
+      trueBooleanDefaultValue: _defaultValuesStruct.trueBooleanDefaultValue,
+    });
 
   export const $toString: (
     _defaultValuesStruct: DefaultValuesStruct,
@@ -15933,7 +16204,7 @@ export namespace DefaultValuesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -15942,7 +16213,7 @@ export namespace DefaultValuesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -16053,7 +16324,7 @@ export namespace DefaultValuesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -16070,7 +16341,7 @@ export namespace DefaultValuesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -16247,7 +16518,6 @@ export namespace DefaultValuesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDefaultValuesStruct = (
@@ -16376,10 +16646,7 @@ export namespace DefaultValuesStruct {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Date" as const },
-          defaultValue: dataFactory.literal(
-            "2018-04-09",
-            $RdfVocabularies.xsd.date,
-          ),
+          defaultValue: dataFactory.literal("2018-04-09", $xsd_date),
         },
       },
       dateTimeDefaultValue: {
@@ -16390,7 +16657,7 @@ export namespace DefaultValuesStruct {
           itemType: { kind: "DateTime" as const },
           defaultValue: dataFactory.literal(
             "2018-04-09T10:00:00Z",
-            $RdfVocabularies.xsd.dateTime,
+            $xsd_dateTime,
           ),
         },
       },
@@ -16402,10 +16669,7 @@ export namespace DefaultValuesStruct {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: dataFactory.literal("false", $xsd_boolean),
         },
       },
       numberDefaultValue: {
@@ -16414,10 +16678,7 @@ export namespace DefaultValuesStruct {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Float" as const },
-          defaultValue: dataFactory.literal(
-            "0.0e0",
-            $RdfVocabularies.xsd.double,
-          ),
+          defaultValue: dataFactory.literal("0.0e0", $xsd_double),
         },
       },
       stringDefaultValue: {
@@ -16437,10 +16698,7 @@ export namespace DefaultValuesStruct {
         type: {
           kind: "DefaultValue" as const,
           itemType: { kind: "Boolean" as const },
-          defaultValue: dataFactory.literal(
-            "true",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: dataFactory.literal("true", $xsd_boolean),
         },
       },
     },
@@ -16529,7 +16787,10 @@ export namespace DefaultValuesStruct {
       } satisfies DefaultValuesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DefaultValuesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _defaultValuesStruct: DefaultValuesStruct,
@@ -16570,6 +16831,7 @@ export namespace DefaultValuesStruct {
       }),
     );
 }
+
 export type DirectRecursiveStruct = {
   readonly $identifier: () => DirectRecursiveStruct.Identifier;
 
@@ -16598,7 +16860,7 @@ export namespace DirectRecursiveStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: DirectRecursiveStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -16625,7 +16887,7 @@ export namespace DirectRecursiveStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DirectRecursiveStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -16642,6 +16904,17 @@ export namespace DirectRecursiveStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _directRecursiveStruct: DirectRecursiveStruct,
+  ): any =>
+    $compactRecord({
+      $identifier: _directRecursiveStruct.$identifier().value,
+      $type: "DirectRecursiveStruct",
+      directRecursive: _directRecursiveStruct.directRecursive
+        .map((item) => DirectRecursiveStruct.$toLoggable(item))
+        .extract(),
+    });
 
   export const $toString: (
     _directRecursiveStruct: DirectRecursiveStruct,
@@ -16759,7 +17032,7 @@ export namespace DirectRecursiveStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -16768,7 +17041,7 @@ export namespace DirectRecursiveStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -16808,7 +17081,7 @@ export namespace DirectRecursiveStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -16825,7 +17098,7 @@ export namespace DirectRecursiveStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -16897,7 +17170,6 @@ export namespace DirectRecursiveStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDirectRecursiveStruct = (
@@ -17070,7 +17342,10 @@ export namespace DirectRecursiveStruct {
       } satisfies DirectRecursiveStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DirectRecursiveStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _directRecursiveStruct: DirectRecursiveStruct,
@@ -17111,6 +17386,7 @@ export namespace DirectRecursiveStruct {
       }),
     );
 }
+
 export type DiscriminatedUnionMember1 = {
   readonly $identifier: () => DiscriminatedUnionMember1.Identifier;
 
@@ -17141,7 +17417,7 @@ export namespace DiscriminatedUnionMember1 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               DiscriminatedUnionMember1.schema.properties.$identifier.type,
           },
@@ -17179,7 +17455,7 @@ export namespace DiscriminatedUnionMember1 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DiscriminatedUnionMember1.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -17206,6 +17482,18 @@ export namespace DiscriminatedUnionMember1 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _discriminatedUnionMember1: DiscriminatedUnionMember1,
+  ) =>
+    $compactRecord({
+      $identifier: _discriminatedUnionMember1.$identifier().value,
+      $type: "DiscriminatedUnionMember1",
+      discriminatedUnionMember1Distinct:
+        _discriminatedUnionMember1.discriminatedUnionMember1Distinct,
+      discriminatedUnionMemberCommon:
+        _discriminatedUnionMember1.discriminatedUnionMemberCommon,
+    });
 
   export const $toString: (
     _discriminatedUnionMember1: DiscriminatedUnionMember1,
@@ -17339,7 +17627,7 @@ export namespace DiscriminatedUnionMember1 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -17348,7 +17636,7 @@ export namespace DiscriminatedUnionMember1 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -17415,7 +17703,7 @@ export namespace DiscriminatedUnionMember1 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -17432,7 +17720,7 @@ export namespace DiscriminatedUnionMember1 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -17539,7 +17827,6 @@ export namespace DiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDiscriminatedUnionMember1 = (
@@ -17719,7 +18006,10 @@ export namespace DiscriminatedUnionMember1 {
       } satisfies DiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _discriminatedUnionMember1: DiscriminatedUnionMember1,
@@ -17760,6 +18050,7 @@ export namespace DiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type DiscriminatedUnionMember2 = {
   readonly $identifier: () => DiscriminatedUnionMember2.Identifier;
 
@@ -17790,7 +18081,7 @@ export namespace DiscriminatedUnionMember2 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               DiscriminatedUnionMember2.schema.properties.$identifier.type,
           },
@@ -17828,7 +18119,7 @@ export namespace DiscriminatedUnionMember2 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DiscriminatedUnionMember2.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -17855,6 +18146,18 @@ export namespace DiscriminatedUnionMember2 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _discriminatedUnionMember2: DiscriminatedUnionMember2,
+  ) =>
+    $compactRecord({
+      $identifier: _discriminatedUnionMember2.$identifier().value,
+      $type: "DiscriminatedUnionMember2",
+      discriminatedUnionMember2Distinct:
+        _discriminatedUnionMember2.discriminatedUnionMember2Distinct,
+      discriminatedUnionMemberCommon:
+        _discriminatedUnionMember2.discriminatedUnionMemberCommon,
+    });
 
   export const $toString: (
     _discriminatedUnionMember2: DiscriminatedUnionMember2,
@@ -17988,7 +18291,7 @@ export namespace DiscriminatedUnionMember2 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -17997,7 +18300,7 @@ export namespace DiscriminatedUnionMember2 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -18064,7 +18367,7 @@ export namespace DiscriminatedUnionMember2 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -18081,7 +18384,7 @@ export namespace DiscriminatedUnionMember2 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -18188,7 +18491,6 @@ export namespace DiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDiscriminatedUnionMember2 = (
@@ -18368,7 +18670,10 @@ export namespace DiscriminatedUnionMember2 {
       } satisfies DiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _discriminatedUnionMember2: DiscriminatedUnionMember2,
@@ -18408,10 +18713,11 @@ export namespace DiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Demonstrates the use of shaclmate:display for excluding/including properties from toString()-type display representations
  */
-
 export type DisplayStruct = {
   readonly $identifier: () => DisplayStruct.Identifier;
 
@@ -18454,7 +18760,7 @@ export namespace DisplayStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: DisplayStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -18497,7 +18803,7 @@ export namespace DisplayStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         DisplayStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -18519,6 +18825,15 @@ export namespace DisplayStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_displayStruct: DisplayStruct) =>
+    $compactRecord({
+      $identifier: _displayStruct.$identifier().value,
+      $type: "DisplayStruct",
+      explicitFalseDisplay: _displayStruct.explicitFalseDisplay,
+      explicitTrueDisplay: _displayStruct.explicitTrueDisplay,
+      implicitFalseDisplay: _displayStruct.implicitFalseDisplay,
+    });
 
   export const $toString: (_displayStruct: DisplayStruct) => string = (
     _displayStruct,
@@ -18649,7 +18964,7 @@ export namespace DisplayStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -18658,7 +18973,7 @@ export namespace DisplayStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -18730,7 +19045,7 @@ export namespace DisplayStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -18747,7 +19062,7 @@ export namespace DisplayStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -18857,7 +19172,6 @@ export namespace DisplayStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isDisplayStruct = (object: $Object): object is DisplayStruct =>
@@ -19044,7 +19358,10 @@ export namespace DisplayStruct {
       } satisfies DisplayStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    DisplayStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _displayStruct: DisplayStruct,
@@ -19085,13 +19402,14 @@ export namespace DisplayStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with custom rdf:type's.
  *
  * The shaclmate:fromRdfType is expected on deserialization.
  * shaclmate:toRdfType's are added an serialization.
  */
-
 export type ExplicitFromToRdfTypesStruct = {
   readonly $identifier: () => ExplicitFromToRdfTypesStruct.Identifier;
 
@@ -19120,7 +19438,7 @@ export namespace ExplicitFromToRdfTypesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               ExplicitFromToRdfTypesStruct.schema.properties.$identifier.type,
           },
@@ -19146,7 +19464,7 @@ export namespace ExplicitFromToRdfTypesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ExplicitFromToRdfTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -19159,6 +19477,16 @@ export namespace ExplicitFromToRdfTypesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _explicitFromToRdfTypesStruct: ExplicitFromToRdfTypesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _explicitFromToRdfTypesStruct.$identifier().value,
+      $type: "ExplicitFromToRdfTypesStruct",
+      explicitFromToRdfTypesString:
+        _explicitFromToRdfTypesStruct.explicitFromToRdfTypesString,
+    });
 
   export const $toString: (
     _explicitFromToRdfTypesStruct: ExplicitFromToRdfTypesStruct,
@@ -19263,7 +19591,7 @@ export namespace ExplicitFromToRdfTypesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -19272,7 +19600,7 @@ export namespace ExplicitFromToRdfTypesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -19327,7 +19655,7 @@ export namespace ExplicitFromToRdfTypesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -19344,7 +19672,7 @@ export namespace ExplicitFromToRdfTypesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -19430,7 +19758,6 @@ export namespace ExplicitFromToRdfTypesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isExplicitFromToRdfTypesStruct = (
@@ -19599,7 +19926,10 @@ export namespace ExplicitFromToRdfTypesStruct {
       } satisfies ExplicitFromToRdfTypesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ExplicitFromToRdfTypesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _explicitFromToRdfTypesStruct: ExplicitFromToRdfTypesStruct,
@@ -19639,12 +19969,13 @@ export namespace ExplicitFromToRdfTypesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with custom rdf:type's.
  *
  * The shaclmate:rdfType is expected on deserialization and added on serialization.
  */
-
 export type ExplicitRdfTypeStruct = {
   readonly $identifier: () => ExplicitRdfTypeStruct.Identifier;
 
@@ -19673,7 +20004,7 @@ export namespace ExplicitRdfTypeStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ExplicitRdfTypeStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -19697,7 +20028,7 @@ export namespace ExplicitRdfTypeStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ExplicitRdfTypeStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -19709,6 +20040,13 @@ export namespace ExplicitRdfTypeStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_explicitRdfTypeStruct: ExplicitRdfTypeStruct) =>
+    $compactRecord({
+      $identifier: _explicitRdfTypeStruct.$identifier().value,
+      $type: "ExplicitRdfTypeStruct",
+      explicitRdfTypeString: _explicitRdfTypeStruct.explicitRdfTypeString,
+    });
 
   export const $toString: (
     _explicitRdfTypeStruct: ExplicitRdfTypeStruct,
@@ -19808,7 +20146,7 @@ export namespace ExplicitRdfTypeStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -19817,7 +20155,7 @@ export namespace ExplicitRdfTypeStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -19869,7 +20207,7 @@ export namespace ExplicitRdfTypeStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -19886,7 +20224,7 @@ export namespace ExplicitRdfTypeStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -19968,7 +20306,6 @@ export namespace ExplicitRdfTypeStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isExplicitRdfTypeStruct = (
@@ -20129,7 +20466,10 @@ export namespace ExplicitRdfTypeStruct {
       } satisfies ExplicitRdfTypeStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ExplicitRdfTypeStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _explicitRdfTypeStruct: ExplicitRdfTypeStruct,
@@ -20170,6 +20510,7 @@ export namespace ExplicitRdfTypeStruct {
       }),
     );
 }
+
 export type FlattenDiscriminatedUnionMember3 = {
   readonly $identifier: () => FlattenDiscriminatedUnionMember3.Identifier;
 
@@ -20201,7 +20542,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               FlattenDiscriminatedUnionMember3.schema.properties.$identifier
                 .type,
@@ -20230,7 +20571,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         FlattenDiscriminatedUnionMember3.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -20247,6 +20588,16 @@ export namespace FlattenDiscriminatedUnionMember3 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _flattenDiscriminatedUnionMember3: FlattenDiscriminatedUnionMember3,
+  ) =>
+    $compactRecord({
+      $identifier: _flattenDiscriminatedUnionMember3.$identifier().value,
+      $type: "FlattenDiscriminatedUnionMember3",
+      flattenDiscriminatedUnionMember3String:
+        _flattenDiscriminatedUnionMember3.flattenDiscriminatedUnionMember3String,
+    });
 
   export const $toString: (
     _flattenDiscriminatedUnionMember3: FlattenDiscriminatedUnionMember3,
@@ -20354,7 +20705,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -20363,7 +20714,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -20418,7 +20769,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -20435,7 +20786,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -20521,7 +20872,6 @@ export namespace FlattenDiscriminatedUnionMember3 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isFlattenDiscriminatedUnionMember3 = (
@@ -20694,7 +21044,10 @@ export namespace FlattenDiscriminatedUnionMember3 {
       } satisfies FlattenDiscriminatedUnionMember3.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    FlattenDiscriminatedUnionMember3
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _flattenDiscriminatedUnionMember3: FlattenDiscriminatedUnionMember3,
@@ -20734,10 +21087,11 @@ export namespace FlattenDiscriminatedUnionMember3 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:hasValue properties.
  */
-
 export type HasValuesStruct = {
   readonly $identifier: () => HasValuesStruct.Identifier;
 
@@ -20759,7 +21113,7 @@ export namespace HasValuesStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: HasValuesStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -20795,6 +21149,14 @@ export namespace HasValuesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_hasValuesStruct: HasValuesStruct) =>
+    $compactRecord({
+      $identifier: _hasValuesStruct.$identifier().value,
+      $type: "HasValuesStruct",
+      hasIriValue: _hasValuesStruct.hasIriValue.value,
+      hasLiteralValue: _hasValuesStruct.hasLiteralValue,
+    });
 
   export const $toString: (_hasValuesStruct: HasValuesStruct) => string = (
     _hasValuesStruct,
@@ -21026,7 +21388,6 @@ export namespace HasValuesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isHasValuesStruct = (
@@ -21195,7 +21556,10 @@ export namespace HasValuesStruct {
       } satisfies HasValuesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    HasValuesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _hasValuesStruct: HasValuesStruct,
@@ -21233,10 +21597,11 @@ export namespace HasValuesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that uses different methods to make SHACLmate ignore properties.
  */
-
 export type IgnoredPropertiesStruct = {
   readonly $identifier: () => IgnoredPropertiesStruct.Identifier;
 
@@ -21268,7 +21633,7 @@ export namespace IgnoredPropertiesStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: IgnoredPropertiesStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -21330,6 +21695,19 @@ export namespace IgnoredPropertiesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _ignoredPropertiesStruct: IgnoredPropertiesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _ignoredPropertiesStruct.$identifier().value,
+      $type: "IgnoredPropertiesStruct",
+      severityDefaultProperty: _ignoredPropertiesStruct.severityDefaultProperty,
+      severityViolationProperty:
+        _ignoredPropertiesStruct.severityViolationProperty,
+      shaclmateIgnoreFalseProperty:
+        _ignoredPropertiesStruct.shaclmateIgnoreFalseProperty,
+    });
 
   export const $toString: (
     _ignoredPropertiesStruct: IgnoredPropertiesStruct,
@@ -21632,7 +22010,6 @@ export namespace IgnoredPropertiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isIgnoredPropertiesStruct = (
@@ -21832,7 +22209,10 @@ export namespace IgnoredPropertiesStruct {
       } satisfies IgnoredPropertiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    IgnoredPropertiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _ignoredPropertiesStruct: IgnoredPropertiesStruct,
@@ -21873,6 +22253,7 @@ export namespace IgnoredPropertiesStruct {
       }),
     );
 }
+
 export type IndirectRecursiveStruct = {
   readonly $identifier: () => IndirectRecursiveStruct.Identifier;
 
@@ -21901,7 +22282,7 @@ export namespace IndirectRecursiveStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: IndirectRecursiveStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -21928,7 +22309,7 @@ export namespace IndirectRecursiveStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         IndirectRecursiveStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -21945,6 +22326,17 @@ export namespace IndirectRecursiveStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _indirectRecursiveStruct: IndirectRecursiveStruct,
+  ): any =>
+    $compactRecord({
+      $identifier: _indirectRecursiveStruct.$identifier().value,
+      $type: "IndirectRecursiveStruct",
+      indirectRecursiveHelper: _indirectRecursiveStruct.indirectRecursiveHelper
+        .map((item) => IndirectRecursiveStructHelper.$toLoggable(item))
+        .extract(),
+    });
 
   export const $toString: (
     _indirectRecursiveStruct: IndirectRecursiveStruct,
@@ -22067,7 +22459,7 @@ export namespace IndirectRecursiveStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -22076,7 +22468,7 @@ export namespace IndirectRecursiveStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -22116,7 +22508,7 @@ export namespace IndirectRecursiveStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -22133,7 +22525,7 @@ export namespace IndirectRecursiveStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -22209,7 +22601,6 @@ export namespace IndirectRecursiveStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isIndirectRecursiveStruct = (
@@ -22387,7 +22778,10 @@ export namespace IndirectRecursiveStruct {
       } satisfies IndirectRecursiveStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    IndirectRecursiveStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _indirectRecursiveStruct: IndirectRecursiveStruct,
@@ -22428,6 +22822,7 @@ export namespace IndirectRecursiveStruct {
       }),
     );
 }
+
 export type IndirectRecursiveStructHelper = {
   readonly $identifier: () => IndirectRecursiveStructHelper.Identifier;
 
@@ -22459,7 +22854,7 @@ export namespace IndirectRecursiveStructHelper {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               IndirectRecursiveStructHelper.schema.properties.$identifier.type,
           },
@@ -22489,7 +22884,7 @@ export namespace IndirectRecursiveStructHelper {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         IndirectRecursiveStructHelper.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -22506,6 +22901,17 @@ export namespace IndirectRecursiveStructHelper {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _indirectRecursiveStructHelper: IndirectRecursiveStructHelper,
+  ): any =>
+    $compactRecord({
+      $identifier: _indirectRecursiveStructHelper.$identifier().value,
+      $type: "IndirectRecursiveStructHelper",
+      indirectRecursive: _indirectRecursiveStructHelper.indirectRecursive
+        .map((item) => IndirectRecursiveStruct.$toLoggable(item))
+        .extract(),
+    });
 
   export const $toString: (
     _indirectRecursiveStructHelper: IndirectRecursiveStructHelper,
@@ -22624,7 +23030,7 @@ export namespace IndirectRecursiveStructHelper {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -22633,7 +23039,7 @@ export namespace IndirectRecursiveStructHelper {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -22675,7 +23081,7 @@ export namespace IndirectRecursiveStructHelper {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -22692,7 +23098,7 @@ export namespace IndirectRecursiveStructHelper {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -22764,7 +23170,6 @@ export namespace IndirectRecursiveStructHelper {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isIndirectRecursiveStructHelper = (
@@ -22941,7 +23346,10 @@ export namespace IndirectRecursiveStructHelper {
       } satisfies IndirectRecursiveStructHelper.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    IndirectRecursiveStructHelper
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _indirectRecursiveStructHelper: IndirectRecursiveStructHelper,
@@ -22981,10 +23389,11 @@ export namespace IndirectRecursiveStructHelper {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:in constraining its identifier.
  */
-
 export type InIdentifierStruct = {
   readonly $identifier: () => InIdentifierStruct.Identifier;
 
@@ -23014,7 +23423,7 @@ export namespace InIdentifierStruct {
         >($rdfResourceIdentifierValues(resource), {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: InIdentifierStruct.schema.properties.$identifier.type,
         }).chain((values) => values.head()),
         inIdentifierString: $shaclPropertyFromRdf<
@@ -23040,7 +23449,7 @@ export namespace InIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         InIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -23054,6 +23463,15 @@ export namespace InIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_inIdentifierStruct: InIdentifierStruct) =>
+    $compactRecord({
+      $identifier: _inIdentifierStruct.$identifier().value,
+      $type: "InIdentifierStruct",
+      inIdentifierString: _inIdentifierStruct.inIdentifierString
+        .map((item) => item)
+        .extract(),
+    });
 
   export const $toString: (_inIdentifierStruct: InIdentifierStruct) => string =
     (_inIdentifierStruct) =>
@@ -23177,7 +23595,7 @@ export namespace InIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -23186,7 +23604,7 @@ export namespace InIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -23240,7 +23658,7 @@ export namespace InIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -23257,7 +23675,7 @@ export namespace InIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -23367,7 +23785,6 @@ export namespace InIdentifierStruct {
             );
         }
       });
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isInIdentifierStruct = (
@@ -23546,7 +23963,13 @@ export namespace InIdentifierStruct {
       } satisfies InIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    NamedNode<
+      | "http://example.com/InIdentifierStructInstance1"
+      | "http://example.com/InIdentifierStructInstance2"
+    >,
+    InIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _inIdentifierStruct: InIdentifierStruct,
@@ -23586,10 +24009,11 @@ export namespace InIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:in properties.
  */
-
 export type InPropertiesStruct = {
   readonly $identifier: () => InPropertiesStruct.Identifier;
 
@@ -23630,7 +24054,7 @@ export namespace InPropertiesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: InPropertiesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -23735,7 +24159,7 @@ export namespace InPropertiesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         InPropertiesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -23744,36 +24168,28 @@ export namespace InPropertiesStruct {
       InPropertiesStruct.schema.properties.inBooleans.path,
       parameters.object.inBooleans
         .toList()
-        .flatMap((value) => [
-          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
-        ]),
+        .flatMap((value) => [$literalFactory.boolean(value, $xsd_boolean)]),
       parameters.graph,
     );
     parameters.resource.add(
       InPropertiesStruct.schema.properties.inDateTimes.path,
       parameters.object.inDateTimes
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_dateTime)]),
       parameters.graph,
     );
     parameters.resource.add(
       InPropertiesStruct.schema.properties.inDoubles.path,
       parameters.object.inDoubles
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_double)]),
       parameters.graph,
     );
     parameters.resource.add(
       InPropertiesStruct.schema.properties.inIntegers.path,
       parameters.object.inIntegers
         .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
-        ]),
+        .flatMap((value) => [$literalFactory.bigint(value, $xsd_integer)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -23790,6 +24206,20 @@ export namespace InPropertiesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_inPropertiesStruct: InPropertiesStruct) =>
+    $compactRecord({
+      $identifier: _inPropertiesStruct.$identifier().value,
+      $type: "InPropertiesStruct",
+      inBooleans: _inPropertiesStruct.inBooleans.map((item) => item).extract(),
+      inDateTimes: _inPropertiesStruct.inDateTimes
+        .map((item) => item.toISOString())
+        .extract(),
+      inDoubles: _inPropertiesStruct.inDoubles.map((item) => item).extract(),
+      inIntegers: _inPropertiesStruct.inIntegers.map((item) => item).extract(),
+      inIris: _inPropertiesStruct.inIris.map((item) => item.value).extract(),
+      inStrings: _inPropertiesStruct.inStrings.map((item) => item).extract(),
+    });
 
   export const $toString: (_inPropertiesStruct: InPropertiesStruct) => string =
     (_inPropertiesStruct) =>
@@ -24075,7 +24505,7 @@ export namespace InPropertiesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -24084,7 +24514,7 @@ export namespace InPropertiesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -24208,7 +24638,7 @@ export namespace InPropertiesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -24225,7 +24655,7 @@ export namespace InPropertiesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -24412,7 +24842,6 @@ export namespace InPropertiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isInPropertiesStruct = (
@@ -24681,7 +25110,10 @@ export namespace InPropertiesStruct {
       } satisfies InPropertiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    InPropertiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _inPropertiesStruct: InPropertiesStruct,
@@ -24721,10 +25153,11 @@ export namespace InPropertiesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * A node shape that only allows IRI identifiers.
  */
-
 export type IriIdentifierStruct = {
   readonly $identifier: () => IriIdentifierStruct.Identifier;
 
@@ -24753,7 +25186,7 @@ export namespace IriIdentifierStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: IriIdentifierStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -24780,7 +25213,7 @@ export namespace IriIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         IriIdentifierStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -24794,6 +25227,15 @@ export namespace IriIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_iriIdentifierStruct: IriIdentifierStruct) =>
+    $compactRecord({
+      $identifier: _iriIdentifierStruct.$identifier().value,
+      $type: "IriIdentifierStruct",
+      iriIdentifierString: _iriIdentifierStruct.iriIdentifierString
+        .map((item) => item)
+        .extract(),
+    });
 
   export const $toString: (
     _iriIdentifierStruct: IriIdentifierStruct,
@@ -24906,7 +25348,7 @@ export namespace IriIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -24915,7 +25357,7 @@ export namespace IriIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -24970,7 +25412,7 @@ export namespace IriIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -24987,7 +25429,7 @@ export namespace IriIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -25067,7 +25509,6 @@ export namespace IriIdentifierStruct {
   export type Identifier = NamedNode;
   export namespace Identifier {
     export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isIriIdentifierStruct = (
@@ -25227,7 +25668,10 @@ export namespace IriIdentifierStruct {
       } satisfies IriIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    NamedNode,
+    IriIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _iriIdentifierStruct: IriIdentifierStruct,
@@ -25267,10 +25711,11 @@ export namespace IriIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with rdf:langString properties
  */
-
 export type LangStringStruct = {
   readonly $identifier: () => LangStringStruct.Identifier;
 
@@ -25304,7 +25749,7 @@ export namespace LangStringStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: LangStringStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -25600,7 +26045,7 @@ export namespace LangStringStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         LangStringStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -25662,6 +26107,43 @@ export namespace LangStringStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_langStringStruct: LangStringStruct) =>
+    $compactRecord({
+      $identifier: _langStringStruct.$identifier().value,
+      $type: "LangStringStruct",
+      langString: _langStringStruct.langString
+        .map((item) => `${JSON.stringify(item.value)}@${item.language}`)
+        .extract(),
+      langStringOrString: _langStringStruct.langStringOrString
+        .map((item) =>
+          ((value: Literal | string) => {
+            if (typeof value === "object") {
+              return `${JSON.stringify(value.value)}@${value.language}`;
+            }
+            if (typeof value === "string") {
+              return value;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+      stringOrLangString: _langStringStruct.stringOrLangString
+        .map((item) =>
+          ((value: string | Literal) => {
+            if (typeof value === "string") {
+              return value;
+            }
+            if (typeof value === "object") {
+              return `${JSON.stringify(value.value)}@${value.language}`;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+    });
 
   export const $toString: (_langStringStruct: LangStringStruct) => string = (
     _langStringStruct,
@@ -25964,7 +26446,7 @@ export namespace LangStringStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -25973,7 +26455,7 @@ export namespace LangStringStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -26170,7 +26652,7 @@ export namespace LangStringStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -26187,7 +26669,7 @@ export namespace LangStringStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -26520,7 +27002,6 @@ export namespace LangStringStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLangStringStruct = (
@@ -26792,7 +27273,10 @@ export namespace LangStringStruct {
       } satisfies LangStringStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LangStringStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _langStringStruct: LangStringStruct,
@@ -26830,10 +27314,11 @@ export namespace LangStringStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:languageIn constraints
  */
-
 export type LanguageInStruct = {
   readonly $identifier: () => LanguageInStruct.Identifier;
 
@@ -26853,7 +27338,7 @@ export namespace LanguageInStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: LanguageInStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -26883,6 +27368,15 @@ export namespace LanguageInStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_languageInStruct: LanguageInStruct) =>
+    $compactRecord({
+      $identifier: _languageInStruct.$identifier().value,
+      $type: "LanguageInStruct",
+      languageIn: _languageInStruct.languageIn.map(
+        (item) => `${JSON.stringify(item.value)}@${item.language}`,
+      ),
+    });
 
   export const $toString: (_languageInStruct: LanguageInStruct) => string = (
     _languageInStruct,
@@ -27093,7 +27587,6 @@ export namespace LanguageInStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLanguageInStruct = (
@@ -27257,7 +27750,10 @@ export namespace LanguageInStruct {
       } satisfies LanguageInStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LanguageInStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _languageInStruct: LanguageInStruct,
@@ -27295,10 +27791,11 @@ export namespace LanguageInStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape resolved by LazyPropertiesStruct
  */
-
 export type LazilyResolvedBlankNodeOrIriIdentifierStruct = {
   readonly $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier;
 
@@ -27328,7 +27825,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties
                 .$identifier.type,
@@ -27354,7 +27851,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         LazilyResolvedBlankNodeOrIriIdentifierStruct.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -27368,6 +27865,17 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _lazilyResolvedBlankNodeOrIriIdentifierStruct: LazilyResolvedBlankNodeOrIriIdentifierStruct,
+  ) =>
+    $compactRecord({
+      $identifier:
+        _lazilyResolvedBlankNodeOrIriIdentifierStruct.$identifier().value,
+      $type: "LazilyResolvedBlankNodeOrIriIdentifierStruct",
+      lazilyResolved:
+        _lazilyResolvedBlankNodeOrIriIdentifierStruct.lazilyResolved,
+    });
 
   export const $toString: (
     _lazilyResolvedBlankNodeOrIriIdentifierStruct: LazilyResolvedBlankNodeOrIriIdentifierStruct,
@@ -27469,7 +27977,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -27478,7 +27986,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -27534,7 +28042,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -27551,7 +28059,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -27637,7 +28145,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazilyResolvedBlankNodeOrIriIdentifierStruct = (
@@ -27821,7 +28328,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       } satisfies LazilyResolvedBlankNodeOrIriIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LazilyResolvedBlankNodeOrIriIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazilyResolvedBlankNodeOrIriIdentifierStruct: LazilyResolvedBlankNodeOrIriIdentifierStruct,
@@ -27866,6 +28376,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       }),
     );
 }
+
 export type LazilyResolvedDiscriminatedUnionMember1 = {
   readonly $identifier: () => LazilyResolvedDiscriminatedUnionMember1.Identifier;
 
@@ -27895,7 +28406,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               LazilyResolvedDiscriminatedUnionMember1.schema.properties
                 .$identifier.type,
@@ -27921,7 +28432,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         LazilyResolvedDiscriminatedUnionMember1.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -27935,6 +28446,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _lazilyResolvedDiscriminatedUnionMember1: LazilyResolvedDiscriminatedUnionMember1,
+  ) =>
+    $compactRecord({
+      $identifier: _lazilyResolvedDiscriminatedUnionMember1.$identifier().value,
+      $type: "LazilyResolvedDiscriminatedUnionMember1",
+      lazilyResolved: _lazilyResolvedDiscriminatedUnionMember1.lazilyResolved,
+    });
 
   export const $toString: (
     _lazilyResolvedDiscriminatedUnionMember1: LazilyResolvedDiscriminatedUnionMember1,
@@ -28036,7 +28556,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -28045,7 +28565,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -28101,7 +28621,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -28118,7 +28638,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -28204,7 +28724,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazilyResolvedDiscriminatedUnionMember1 = (
@@ -28376,7 +28895,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       } satisfies LazilyResolvedDiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LazilyResolvedDiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazilyResolvedDiscriminatedUnionMember1: LazilyResolvedDiscriminatedUnionMember1,
@@ -28419,6 +28941,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type LazilyResolvedDiscriminatedUnionMember2 = {
   readonly $identifier: () => LazilyResolvedDiscriminatedUnionMember2.Identifier;
 
@@ -28448,7 +28971,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               LazilyResolvedDiscriminatedUnionMember2.schema.properties
                 .$identifier.type,
@@ -28474,7 +28997,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         LazilyResolvedDiscriminatedUnionMember2.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -28488,6 +29011,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _lazilyResolvedDiscriminatedUnionMember2: LazilyResolvedDiscriminatedUnionMember2,
+  ) =>
+    $compactRecord({
+      $identifier: _lazilyResolvedDiscriminatedUnionMember2.$identifier().value,
+      $type: "LazilyResolvedDiscriminatedUnionMember2",
+      lazilyResolved: _lazilyResolvedDiscriminatedUnionMember2.lazilyResolved,
+    });
 
   export const $toString: (
     _lazilyResolvedDiscriminatedUnionMember2: LazilyResolvedDiscriminatedUnionMember2,
@@ -28589,7 +29121,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -28598,7 +29130,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -28654,7 +29186,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -28671,7 +29203,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -28757,7 +29289,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazilyResolvedDiscriminatedUnionMember2 = (
@@ -28929,7 +29460,10 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       } satisfies LazilyResolvedDiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LazilyResolvedDiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazilyResolvedDiscriminatedUnionMember2: LazilyResolvedDiscriminatedUnionMember2,
@@ -28971,10 +29505,11 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape resolved by LazyPropertiesStruct
  */
-
 export type LazilyResolvedIriIdentifierStruct = {
   readonly $identifier: () => LazilyResolvedIriIdentifierStruct.Identifier;
 
@@ -28993,7 +29528,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema:
             LazilyResolvedIriIdentifierStruct.schema.properties.$identifier
               .type,
@@ -29022,6 +29557,15 @@ export namespace LazilyResolvedIriIdentifierStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _lazilyResolvedIriIdentifierStruct: LazilyResolvedIriIdentifierStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _lazilyResolvedIriIdentifierStruct.$identifier().value,
+      $type: "LazilyResolvedIriIdentifierStruct",
+      lazilyResolved: _lazilyResolvedIriIdentifierStruct.lazilyResolved,
+    });
 
   export const $toString: (
     _lazilyResolvedIriIdentifierStruct: LazilyResolvedIriIdentifierStruct,
@@ -29209,7 +29753,6 @@ export namespace LazilyResolvedIriIdentifierStruct {
   export type Identifier = NamedNode;
   export namespace Identifier {
     export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazilyResolvedIriIdentifierStruct = (
@@ -29365,7 +29908,10 @@ export namespace LazilyResolvedIriIdentifierStruct {
       } satisfies LazilyResolvedIriIdentifierStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    NamedNode,
+    LazilyResolvedIriIdentifierStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazilyResolvedIriIdentifierStruct: LazilyResolvedIriIdentifierStruct,
@@ -29405,10 +29951,11 @@ export namespace LazilyResolvedIriIdentifierStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that has lazy properties.
  */
-
 export type LazyPropertiesStruct = {
   readonly $identifier: () => LazyPropertiesStruct.Identifier;
 
@@ -29475,7 +30022,7 @@ export namespace LazyPropertiesStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: LazyPropertiesStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -30097,6 +30644,54 @@ export namespace LazyPropertiesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_lazyPropertiesStruct: LazyPropertiesStruct) =>
+    $compactRecord({
+      $identifier: _lazyPropertiesStruct.$identifier().value,
+      $type: "LazyPropertiesStruct",
+      optionalLazyToResolvedBlankNodeOrIriIdentifier:
+        _lazyPropertiesStruct.optionalLazyToResolvedBlankNodeOrIriIdentifier.partial
+          .map((item) => $DefaultPartial.$toLoggable(item))
+          .extract(),
+      optionalLazyToResolvedDiscriminatedUnion:
+        _lazyPropertiesStruct.optionalLazyToResolvedDiscriminatedUnion.partial
+          .map((item) => $DefaultPartial.$toLoggable(item))
+          .extract(),
+      optionalLazyToResolvedIriIdentifier:
+        _lazyPropertiesStruct.optionalLazyToResolvedIriIdentifier.partial
+          .map((item) => $NamedDefaultPartial.$toLoggable(item))
+          .extract(),
+      optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
+        _lazyPropertiesStruct.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion.partial
+          .map((item) => PartialDiscriminatedUnion.$toLoggable(item))
+          .extract(),
+      optionalPartialToResolvedBlankNodeOrIriIdentifier:
+        _lazyPropertiesStruct.optionalPartialToResolvedBlankNodeOrIriIdentifier.partial
+          .map((item) => PartialStruct.$toLoggable(item))
+          .extract(),
+      optionalPartialToResolvedDiscriminatedUnion:
+        _lazyPropertiesStruct.optionalPartialToResolvedDiscriminatedUnion.partial
+          .map((item) => PartialStruct.$toLoggable(item))
+          .extract(),
+      requiredLazyToResolvedBlankNodeOrIriIdentifier:
+        $DefaultPartial.$toLoggable(
+          _lazyPropertiesStruct.requiredLazyToResolvedBlankNodeOrIriIdentifier
+            .partial,
+        ),
+      requiredPartialToResolvedBlankNodeOrIriIdentifier:
+        PartialStruct.$toLoggable(
+          _lazyPropertiesStruct
+            .requiredPartialToResolvedBlankNodeOrIriIdentifier.partial,
+        ),
+      setLazyToResolvedBlankNodeOrIriIdentifier:
+        _lazyPropertiesStruct.setLazyToResolvedBlankNodeOrIriIdentifier.partials.map(
+          (item) => $DefaultPartial.$toLoggable(item),
+        ),
+      setPartialToResolvedBlankNodeOrIriIdentifier:
+        _lazyPropertiesStruct.setPartialToResolvedBlankNodeOrIriIdentifier.partials.map(
+          (item) => PartialStruct.$toLoggable(item),
+        ),
+    });
 
   export const $toString: (
     _lazyPropertiesStruct: LazyPropertiesStruct,
@@ -31448,7 +32043,6 @@ export namespace LazyPropertiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isLazyPropertiesStruct = (
@@ -31871,7 +32465,10 @@ export namespace LazyPropertiesStruct {
       } satisfies LazyPropertiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    LazyPropertiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _lazyPropertiesStruct: LazyPropertiesStruct,
@@ -31912,6 +32509,7 @@ export namespace LazyPropertiesStruct {
       }),
     );
 }
+
 export type ListSetsStruct = {
   readonly $identifier: () => ListSetsStruct.Identifier;
 
@@ -31954,7 +32552,7 @@ export namespace ListSetsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ListSetsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -32148,7 +32746,7 @@ export namespace ListSetsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ListSetsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -32176,7 +32774,7 @@ export namespace ListSetsStruct {
                               (() => dataFactory.blankNode())(),
                             );
                           currentSubListResource!.add(
-                            $RdfVocabularies.rdf.rest,
+                            $rdf_rest,
                             newSubListResource.identifier,
                             _options.graph,
                           );
@@ -32184,15 +32782,15 @@ export namespace ListSetsStruct {
                         }
 
                         currentSubListResource.add(
-                          $RdfVocabularies.rdf.first,
+                          $rdf_first,
                           [$literalFactory.string(item)],
                           _options.graph,
                         );
 
                         if (itemIndex + 1 === list.length) {
                           currentSubListResource.add(
-                            $RdfVocabularies.rdf.rest,
-                            $RdfVocabularies.rdf.nil,
+                            $rdf_rest,
+                            $rdf_nil,
                             _options.graph,
                           );
                         }
@@ -32209,7 +32807,7 @@ export namespace ListSetsStruct {
                         listResource: Resource<BlankNode>;
                       },
                     ).listResource.identifier
-                  : $RdfVocabularies.rdf.nil,
+                  : $rdf_nil,
               ];
             }
             if (typeof value === "string") {
@@ -32247,7 +32845,7 @@ export namespace ListSetsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -32255,7 +32853,7 @@ export namespace ListSetsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [
                     item.length > 0
                       ? item.reduce(
@@ -32273,7 +32871,7 @@ export namespace ListSetsStruct {
                                   (() => dataFactory.blankNode())(),
                                 );
                               currentSubListResource!.add(
-                                $RdfVocabularies.rdf.rest,
+                                $rdf_rest,
                                 newSubListResource.identifier,
                                 parameters.graph,
                               );
@@ -32281,15 +32879,15 @@ export namespace ListSetsStruct {
                             }
 
                             currentSubListResource.add(
-                              $RdfVocabularies.rdf.first,
+                              $rdf_first,
                               [$literalFactory.string(item)],
                               parameters.graph,
                             );
 
                             if (itemIndex + 1 === list.length) {
                               currentSubListResource.add(
-                                $RdfVocabularies.rdf.rest,
-                                $RdfVocabularies.rdf.nil,
+                                $rdf_rest,
+                                $rdf_nil,
                                 parameters.graph,
                               );
                             }
@@ -32306,15 +32904,15 @@ export namespace ListSetsStruct {
                             listResource: Resource<BlankNode>;
                           },
                         ).listResource.identifier
-                      : $RdfVocabularies.rdf.nil,
+                      : $rdf_nil,
                   ],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -32331,7 +32929,7 @@ export namespace ListSetsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -32353,7 +32951,7 @@ export namespace ListSetsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -32361,15 +32959,15 @@ export namespace ListSetsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [$literalFactory.string(item)],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -32386,12 +32984,35 @@ export namespace ListSetsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_listSetsStruct: ListSetsStruct) =>
+    $compactRecord({
+      $identifier: _listSetsStruct.$identifier().value,
+      $type: "ListSetsStruct",
+      listDiscriminatedUnionSet: _listSetsStruct.listDiscriminatedUnionSet.map(
+        (item) =>
+          ((value: readonly string[] | string) => {
+            if (typeof value === "object") {
+              return value.map((item) => item);
+            }
+            if (typeof value === "string") {
+              return value;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+      ),
+      listListSet: _listSetsStruct.listListSet.map((item) =>
+        item.map((item) => item.map((item) => item)),
+      ),
+      listSet: _listSetsStruct.listSet.map((item) => item.map((item) => item)),
+    });
 
   export const $toString: (_listSetsStruct: ListSetsStruct) => string = (
     _listSetsStruct,
@@ -32661,7 +33282,7 @@ export namespace ListSetsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -32670,7 +33291,7 @@ export namespace ListSetsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -32825,7 +33446,7 @@ export namespace ListSetsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -32842,7 +33463,7 @@ export namespace ListSetsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -33088,7 +33709,6 @@ export namespace ListSetsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isListSetsStruct = (object: $Object): object is ListSetsStruct =>
@@ -33340,7 +33960,10 @@ export namespace ListSetsStruct {
       } satisfies ListSetsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ListSetsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _listSetsStruct: ListSetsStruct,
@@ -33378,10 +34001,11 @@ export namespace ListSetsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that uses the list shapes in properties.
  */
-
 export type ListsStruct = {
   readonly $identifier: () => ListsStruct.Identifier;
 
@@ -33417,7 +34041,7 @@ export namespace ListsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: ListsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -33505,7 +34129,7 @@ export namespace ListsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         ListsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -33528,7 +34152,7 @@ export namespace ListsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -33536,15 +34160,15 @@ export namespace ListsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [item],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -33561,7 +34185,7 @@ export namespace ListsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -33583,7 +34207,7 @@ export namespace ListsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -33591,15 +34215,15 @@ export namespace ListsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [$literalFactory.string(item)],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -33616,7 +34240,7 @@ export namespace ListsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -33638,7 +34262,7 @@ export namespace ListsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -33646,7 +34270,7 @@ export namespace ListsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [
                     item.length > 0
                       ? item.reduce(
@@ -33664,7 +34288,7 @@ export namespace ListsStruct {
                                   (() => dataFactory.blankNode())(),
                                 );
                               currentSubListResource!.add(
-                                $RdfVocabularies.rdf.rest,
+                                $rdf_rest,
                                 newSubListResource.identifier,
                                 parameters.graph,
                               );
@@ -33672,15 +34296,15 @@ export namespace ListsStruct {
                             }
 
                             currentSubListResource.add(
-                              $RdfVocabularies.rdf.first,
+                              $rdf_first,
                               [$literalFactory.string(item)],
                               parameters.graph,
                             );
 
                             if (itemIndex + 1 === list.length) {
                               currentSubListResource.add(
-                                $RdfVocabularies.rdf.rest,
-                                $RdfVocabularies.rdf.nil,
+                                $rdf_rest,
+                                $rdf_nil,
                                 parameters.graph,
                               );
                             }
@@ -33697,15 +34321,15 @@ export namespace ListsStruct {
                             listResource: Resource<BlankNode>;
                           },
                         ).listResource.identifier
-                      : $RdfVocabularies.rdf.nil,
+                      : $rdf_nil,
                   ],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -33722,7 +34346,7 @@ export namespace ListsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -33744,7 +34368,7 @@ export namespace ListsStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -33752,7 +34376,7 @@ export namespace ListsStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [
                     NonClassStruct.toRdfResource(item, {
                       graph: parameters.graph,
@@ -33764,8 +34388,8 @@ export namespace ListsStruct {
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -33782,12 +34406,30 @@ export namespace ListsStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_listsStruct: ListsStruct) =>
+    $compactRecord({
+      $identifier: _listsStruct.$identifier().value,
+      $type: "ListsStruct",
+      iriList: _listsStruct.iriList
+        .map((item) => item.map((item) => item.value))
+        .extract(),
+      stringList: _listsStruct.stringList
+        .map((item) => item.map((item) => item))
+        .extract(),
+      stringListList: _listsStruct.stringListList
+        .map((item) => item.map((item) => item.map((item) => item)))
+        .extract(),
+      structList: _listsStruct.structList
+        .map((item) => item.map((item) => NonClassStruct.$toLoggable(item)))
+        .extract(),
+    });
 
   export const $toString: (_listsStruct: ListsStruct) => string = (
     _listsStruct,
@@ -34026,7 +34668,7 @@ export namespace ListsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -34035,7 +34677,7 @@ export namespace ListsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -34152,7 +34794,7 @@ export namespace ListsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -34169,7 +34811,7 @@ export namespace ListsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -34357,7 +34999,6 @@ export namespace ListsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isListsStruct = (object: $Object): object is ListsStruct =>
@@ -34597,7 +35238,10 @@ export namespace ListsStruct {
       } satisfies ListsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    ListsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _listsStruct: ListsStruct,
@@ -34635,10 +35279,11 @@ export namespace ListsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with shaclmate:mutable properties.
  */
-
 export type MutablePropertiesStruct = {
   readonly $identifier: () => MutablePropertiesStruct.Identifier;
 
@@ -34680,7 +35325,7 @@ export namespace MutablePropertiesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: MutablePropertiesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -34737,7 +35382,7 @@ export namespace MutablePropertiesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         MutablePropertiesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -34760,7 +35405,7 @@ export namespace MutablePropertiesStruct {
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
-                    $RdfVocabularies.rdf.rest,
+                    $rdf_rest,
                     newSubListResource.identifier,
                     parameters.graph,
                   );
@@ -34768,15 +35413,15 @@ export namespace MutablePropertiesStruct {
                 }
 
                 currentSubListResource.add(
-                  $RdfVocabularies.rdf.first,
+                  $rdf_first,
                   [$literalFactory.string(item)],
                   parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    $RdfVocabularies.rdf.rest,
-                    $RdfVocabularies.rdf.nil,
+                    $rdf_rest,
+                    $rdf_nil,
                     parameters.graph,
                   );
                 }
@@ -34793,7 +35438,7 @@ export namespace MutablePropertiesStruct {
                 listResource: Resource<BlankNode>;
               },
             ).listResource.identifier
-          : $RdfVocabularies.rdf.nil,
+          : $rdf_nil,
       ]),
       parameters.graph,
     );
@@ -34813,6 +35458,21 @@ export namespace MutablePropertiesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _mutablePropertiesStruct: MutablePropertiesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _mutablePropertiesStruct.$identifier().value,
+      $type: "MutablePropertiesStruct",
+      mutableList: _mutablePropertiesStruct.mutableList
+        .map((item) => item.map((item) => item))
+        .extract(),
+      mutableSet: _mutablePropertiesStruct.mutableSet.map((item) => item),
+      mutableString: _mutablePropertiesStruct.mutableString
+        .map((item) => item)
+        .extract(),
+    });
 
   export const $toString: (
     _mutablePropertiesStruct: MutablePropertiesStruct,
@@ -34992,7 +35652,7 @@ export namespace MutablePropertiesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -35001,7 +35661,7 @@ export namespace MutablePropertiesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -35087,7 +35747,7 @@ export namespace MutablePropertiesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -35104,7 +35764,7 @@ export namespace MutablePropertiesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -35239,7 +35899,6 @@ export namespace MutablePropertiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isMutablePropertiesStruct = (
@@ -35441,7 +36100,10 @@ export namespace MutablePropertiesStruct {
       } satisfies MutablePropertiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    MutablePropertiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _mutablePropertiesStruct: MutablePropertiesStruct,
@@ -35482,11 +36144,13 @@ export namespace MutablePropertiesStruct {
       }),
     );
 }
+
 export type NamedDatatype = string;
 
 export namespace NamedDatatype {
   export const schema = { kind: "String" as const };
 }
+
 export type NamedInIri = NamedNode<
   (typeof NamedInIri.schema)["inValues"][number]
 >;
@@ -35503,6 +36167,7 @@ export namespace NamedInIri {
     inValues,
   };
 }
+
 export type NamedInLiteral = (typeof NamedInLiteral.schema)["in"][number];
 
 export namespace NamedInLiteral {
@@ -35510,10 +36175,11 @@ export namespace NamedInLiteral {
     kind: "String" as const,
     in: ["test1", "test2"] as const,
   };
-} /**
+}
+
+/**
  * Struct node shape that uses named types in properties with sh:node
  */
-
 export type NamedTypesStruct = {
   readonly $identifier: () => NamedTypesStruct.Identifier;
 
@@ -35551,7 +36217,7 @@ export namespace NamedTypesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NamedTypesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -35622,7 +36288,7 @@ export namespace NamedTypesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         NamedTypesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -35674,6 +36340,21 @@ export namespace NamedTypesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_namedTypesStruct: NamedTypesStruct) =>
+    $compactRecord({
+      $identifier: _namedTypesStruct.$identifier().value,
+      $type: "NamedTypesStruct",
+      namedDatatype: _namedTypesStruct.namedDatatype,
+      namedDiscriminatedUnion1: NamedDiscriminatedUnion1.$toLoggable(
+        _namedTypesStruct.namedDiscriminatedUnion1,
+      ),
+      namedDiscriminatedUnion2: NamedDiscriminatedUnion2.$toLoggable(
+        _namedTypesStruct.namedDiscriminatedUnion2,
+      ),
+      namedInIri: _namedTypesStruct.namedInIri.value,
+      namedInLiteral: _namedTypesStruct.namedInLiteral,
+    });
 
   export const $toString: (_namedTypesStruct: NamedTypesStruct) => string = (
     _namedTypesStruct,
@@ -35859,7 +36540,7 @@ export namespace NamedTypesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -35868,7 +36549,7 @@ export namespace NamedTypesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -35966,7 +36647,7 @@ export namespace NamedTypesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -35983,7 +36664,7 @@ export namespace NamedTypesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -36131,7 +36812,6 @@ export namespace NamedTypesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNamedTypesStruct = (
@@ -36355,7 +37035,10 @@ export namespace NamedTypesStruct {
       } satisfies NamedTypesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NamedTypesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _namedTypesStruct: NamedTypesStruct,
@@ -36393,10 +37076,11 @@ export namespace NamedTypesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes
  */
-
 export type NewName = {
   readonly $identifier: () => NewName.Identifier;
 
@@ -36424,7 +37108,7 @@ export namespace NewName {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NewName.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -36450,7 +37134,7 @@ export namespace NewName {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         NewName.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -36464,6 +37148,13 @@ export namespace NewName {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_newName: NewName) =>
+    $compactRecord({
+      $identifier: _newName.$identifier().value,
+      $type: "NewName",
+      newNameString: _newName.newNameString.map((item) => item).extract(),
+    });
 
   export const $toString: (_newName: NewName) => string = (_newName) =>
     `NewName(${JSON.stringify(toStringRecord(_newName))})`;
@@ -36573,7 +37264,7 @@ export namespace NewName {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -36582,7 +37273,7 @@ export namespace NewName {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -36635,7 +37326,7 @@ export namespace NewName {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -36652,7 +37343,7 @@ export namespace NewName {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -36733,7 +37424,6 @@ export namespace NewName {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNewName = (object: $Object): object is NewName =>
@@ -36892,7 +37582,10 @@ export namespace NewName {
       } satisfies NewName.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NewName
+  >(_toRdfResource);
 
   export const toStringRecord: (_newName: NewName) => Record<string, string> = (
     _newName,
@@ -36929,10 +37622,11 @@ export namespace NewName {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that has properties with different sh:nodeKind combinations
  */
-
 export type NodeKindsStruct = {
   readonly $identifier: () => NodeKindsStruct.Identifier;
 
@@ -36972,7 +37666,7 @@ export namespace NodeKindsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NodeKindsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -37043,7 +37737,7 @@ export namespace NodeKindsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         NodeKindsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -37080,6 +37774,65 @@ export namespace NodeKindsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_nodeKindsStruct: NodeKindsStruct) =>
+    $compactRecord({
+      $identifier: _nodeKindsStruct.$identifier().value,
+      $type: "NodeKindsStruct",
+      blankNodeKind: _nodeKindsStruct.blankNodeKind.value,
+      blankNodeOrIriNodeKind: _nodeKindsStruct.blankNodeOrIriNodeKind.value,
+      blankNodeOrLiteralNodeKind:
+        _nodeKindsStruct.blankNodeOrLiteralNodeKind.termType === "Literal"
+          ? {
+              "@language":
+                _nodeKindsStruct.blankNodeOrLiteralNodeKind.language.length > 0
+                  ? _nodeKindsStruct.blankNodeOrLiteralNodeKind.language
+                  : undefined,
+              "@type":
+                _nodeKindsStruct.blankNodeOrLiteralNodeKind.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? _nodeKindsStruct.blankNodeOrLiteralNodeKind.datatype.value
+                  : undefined,
+              "@value": _nodeKindsStruct.blankNodeOrLiteralNodeKind.value,
+              termType: "Literal" as const,
+            }
+          : {
+              "@id": `_:${_nodeKindsStruct.blankNodeOrLiteralNodeKind.value}`,
+              termType: "BlankNode" as const,
+            },
+      iriNodeKind: _nodeKindsStruct.iriNodeKind.value,
+      iriOrLiteralNodeKind:
+        _nodeKindsStruct.iriOrLiteralNodeKind.termType === "Literal"
+          ? {
+              "@language":
+                _nodeKindsStruct.iriOrLiteralNodeKind.language.length > 0
+                  ? _nodeKindsStruct.iriOrLiteralNodeKind.language
+                  : undefined,
+              "@type":
+                _nodeKindsStruct.iriOrLiteralNodeKind.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? _nodeKindsStruct.iriOrLiteralNodeKind.datatype.value
+                  : undefined,
+              "@value": _nodeKindsStruct.iriOrLiteralNodeKind.value,
+              termType: "Literal" as const,
+            }
+          : {
+              "@id": _nodeKindsStruct.iriOrLiteralNodeKind.value,
+              termType: "NamedNode" as const,
+            },
+      literalNodeKind: {
+        "@language":
+          _nodeKindsStruct.literalNodeKind.language.length > 0
+            ? _nodeKindsStruct.literalNodeKind.language
+            : undefined,
+        "@type":
+          _nodeKindsStruct.literalNodeKind.datatype.value !==
+          "http://www.w3.org/2001/XMLSchema#string"
+            ? _nodeKindsStruct.literalNodeKind.datatype.value
+            : undefined,
+        "@value": _nodeKindsStruct.literalNodeKind.value,
+      },
+    });
 
   export const $toString: (_nodeKindsStruct: NodeKindsStruct) => string = (
     _nodeKindsStruct,
@@ -37305,7 +38058,7 @@ export namespace NodeKindsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -37314,7 +38067,7 @@ export namespace NodeKindsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -37421,7 +38174,7 @@ export namespace NodeKindsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -37438,7 +38191,7 @@ export namespace NodeKindsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -37633,7 +38386,6 @@ export namespace NodeKindsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNodeKindsStruct = (
@@ -37948,7 +38700,10 @@ export namespace NodeKindsStruct {
       } satisfies NodeKindsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NodeKindsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _nodeKindsStruct: NodeKindsStruct,
@@ -37986,10 +38741,11 @@ export namespace NodeKindsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that isn't an rdfs:Class.
  */
-
 export type NonClassStruct = {
   readonly $identifier: () => NonClassStruct.Identifier;
 
@@ -38009,7 +38765,7 @@ export namespace NonClassStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: NonClassStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -38033,6 +38789,13 @@ export namespace NonClassStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_nonClassStruct: NonClassStruct) =>
+    $compactRecord({
+      $identifier: _nonClassStruct.$identifier().value,
+      $type: "NonClassStruct",
+      nonClassString: _nonClassStruct.nonClassString,
+    });
 
   export const $toString: (_nonClassStruct: NonClassStruct) => string = (
     _nonClassStruct,
@@ -38216,7 +38979,6 @@ export namespace NonClassStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNonClassStruct = (object: $Object): object is NonClassStruct =>
@@ -38367,7 +39129,10 @@ export namespace NonClassStruct {
       } satisfies NonClassStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NonClassStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _nonClassStruct: NonClassStruct,
@@ -38406,6 +39171,7 @@ export namespace NonClassStruct {
       }),
     );
 }
+
 export type NoRdfTypeDiscriminatedUnionMember1 = {
   readonly $identifier: () => NoRdfTypeDiscriminatedUnionMember1.Identifier;
 
@@ -38424,7 +39190,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema:
             NoRdfTypeDiscriminatedUnionMember1.schema.properties.$identifier
               .type,
@@ -38462,6 +39228,16 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _noRdfTypeDiscriminatedUnionMember1: NoRdfTypeDiscriminatedUnionMember1,
+  ) =>
+    $compactRecord({
+      $identifier: _noRdfTypeDiscriminatedUnionMember1.$identifier().value,
+      $type: "NoRdfTypeDiscriminatedUnionMember1",
+      noRdfTypeDiscriminatedUnionMember1String:
+        _noRdfTypeDiscriminatedUnionMember1.noRdfTypeDiscriminatedUnionMember1String,
+    });
 
   export const $toString: (
     _noRdfTypeDiscriminatedUnionMember1: NoRdfTypeDiscriminatedUnionMember1,
@@ -38668,7 +39444,6 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNoRdfTypeDiscriminatedUnionMember1 = (
@@ -38832,7 +39607,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       } satisfies NoRdfTypeDiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NoRdfTypeDiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _noRdfTypeDiscriminatedUnionMember1: NoRdfTypeDiscriminatedUnionMember1,
@@ -38873,6 +39651,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type NoRdfTypeDiscriminatedUnionMember2 = {
   readonly $identifier: () => NoRdfTypeDiscriminatedUnionMember2.Identifier;
 
@@ -38891,7 +39670,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema:
             NoRdfTypeDiscriminatedUnionMember2.schema.properties.$identifier
               .type,
@@ -38929,6 +39708,16 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _noRdfTypeDiscriminatedUnionMember2: NoRdfTypeDiscriminatedUnionMember2,
+  ) =>
+    $compactRecord({
+      $identifier: _noRdfTypeDiscriminatedUnionMember2.$identifier().value,
+      $type: "NoRdfTypeDiscriminatedUnionMember2",
+      noRdfTypeDiscriminatedUnionMember2String:
+        _noRdfTypeDiscriminatedUnionMember2.noRdfTypeDiscriminatedUnionMember2String,
+    });
 
   export const $toString: (
     _noRdfTypeDiscriminatedUnionMember2: NoRdfTypeDiscriminatedUnionMember2,
@@ -39135,7 +39924,6 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNoRdfTypeDiscriminatedUnionMember2 = (
@@ -39299,7 +40087,10 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       } satisfies NoRdfTypeDiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NoRdfTypeDiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _noRdfTypeDiscriminatedUnionMember2: NoRdfTypeDiscriminatedUnionMember2,
@@ -39339,10 +40130,11 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with properties that have numeric sh:datatype's
  */
-
 export type NumericsStruct = {
   readonly $identifier: () => NumericsStruct.Identifier;
 
@@ -39402,7 +40194,7 @@ export namespace NumericsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: NumericsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -39627,7 +40419,7 @@ export namespace NumericsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         NumericsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -39636,9 +40428,7 @@ export namespace NumericsStruct {
       NumericsStruct.schema.properties.byteNumeric.path,
       parameters.object.byteNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.byte),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_byte)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -39652,45 +40442,35 @@ export namespace NumericsStruct {
       NumericsStruct.schema.properties.doubleNumeric.path,
       parameters.object.doubleNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_double)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.floatNumeric.path,
       parameters.object.floatNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.float),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_float)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.integerNumeric.path,
       parameters.object.integerNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
-        ]),
+        .flatMap((value) => [$literalFactory.bigint(value, $xsd_integer)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.intNumeric.path,
       parameters.object.intNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.int),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_int)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.longNumeric.path,
       parameters.object.longNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.long),
-        ]),
+        .flatMap((value) => [$literalFactory.bigint(value, $xsd_long)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -39698,7 +40478,7 @@ export namespace NumericsStruct {
       parameters.object.negativeIntegerNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.negativeInteger),
+          $literalFactory.bigint(value, $xsd_negativeInteger),
         ]),
       parameters.graph,
     );
@@ -39707,10 +40487,7 @@ export namespace NumericsStruct {
       parameters.object.nonNegativeIntegerNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.bigint(
-            value,
-            $RdfVocabularies.xsd.nonNegativeInteger,
-          ),
+          $literalFactory.bigint(value, $xsd_nonNegativeInteger),
         ]),
       parameters.graph,
     );
@@ -39719,10 +40496,7 @@ export namespace NumericsStruct {
       parameters.object.nonPositiveIntegerNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.bigint(
-            value,
-            $RdfVocabularies.xsd.nonPositiveInteger,
-          ),
+          $literalFactory.bigint(value, $xsd_nonPositiveInteger),
         ]),
       parameters.graph,
     );
@@ -39731,7 +40505,7 @@ export namespace NumericsStruct {
       parameters.object.positiveIntegerNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.positiveInteger),
+          $literalFactory.bigint(value, $xsd_positiveInteger),
         ]),
       parameters.graph,
     );
@@ -39739,36 +40513,28 @@ export namespace NumericsStruct {
       NumericsStruct.schema.properties.shortNumeric.path,
       parameters.object.shortNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.short),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_short)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.unsignedByteNumeric.path,
       parameters.object.unsignedByteNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedByte),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_unsignedByte)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.unsignedIntNumeric.path,
       parameters.object.unsignedIntNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_unsignedInt)]),
       parameters.graph,
     );
     parameters.resource.add(
       NumericsStruct.schema.properties.unsignedLongNumeric.path,
       parameters.object.unsignedLongNumeric
         .toList()
-        .flatMap((value) => [
-          $literalFactory.bigint(value, $RdfVocabularies.xsd.unsignedLong),
-        ]),
+        .flatMap((value) => [$literalFactory.bigint(value, $xsd_unsignedLong)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -39776,12 +40542,56 @@ export namespace NumericsStruct {
       parameters.object.unsignedShortNumeric
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedShort),
+          $literalFactory.number(value, $xsd_unsignedShort),
         ]),
       parameters.graph,
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_numericsStruct: NumericsStruct) =>
+    $compactRecord({
+      $identifier: _numericsStruct.$identifier().value,
+      $type: "NumericsStruct",
+      byteNumeric: _numericsStruct.byteNumeric.map((item) => item).extract(),
+      decimalNumeric: _numericsStruct.decimalNumeric
+        .map((item) => item.toFixed())
+        .extract(),
+      doubleNumeric: _numericsStruct.doubleNumeric
+        .map((item) => item)
+        .extract(),
+      floatNumeric: _numericsStruct.floatNumeric.map((item) => item).extract(),
+      integerNumeric: _numericsStruct.integerNumeric
+        .map((item) => item)
+        .extract(),
+      intNumeric: _numericsStruct.intNumeric.map((item) => item).extract(),
+      longNumeric: _numericsStruct.longNumeric.map((item) => item).extract(),
+      negativeIntegerNumeric: _numericsStruct.negativeIntegerNumeric
+        .map((item) => item)
+        .extract(),
+      nonNegativeIntegerNumeric: _numericsStruct.nonNegativeIntegerNumeric
+        .map((item) => item)
+        .extract(),
+      nonPositiveIntegerNumeric: _numericsStruct.nonPositiveIntegerNumeric
+        .map((item) => item)
+        .extract(),
+      positiveIntegerNumeric: _numericsStruct.positiveIntegerNumeric
+        .map((item) => item)
+        .extract(),
+      shortNumeric: _numericsStruct.shortNumeric.map((item) => item).extract(),
+      unsignedByteNumeric: _numericsStruct.unsignedByteNumeric
+        .map((item) => item)
+        .extract(),
+      unsignedIntNumeric: _numericsStruct.unsignedIntNumeric
+        .map((item) => item)
+        .extract(),
+      unsignedLongNumeric: _numericsStruct.unsignedLongNumeric
+        .map((item) => item)
+        .extract(),
+      unsignedShortNumeric: _numericsStruct.unsignedShortNumeric
+        .map((item) => item)
+        .extract(),
+    });
 
   export const $toString: (_numericsStruct: NumericsStruct) => string = (
     _numericsStruct,
@@ -40392,7 +41202,7 @@ export namespace NumericsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -40401,7 +41211,7 @@ export namespace NumericsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -40666,7 +41476,7 @@ export namespace NumericsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -40683,7 +41493,7 @@ export namespace NumericsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -41091,7 +41901,6 @@ export namespace NumericsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isNumericsStruct = (object: $Object): object is NumericsStruct =>
@@ -41574,7 +42383,10 @@ export namespace NumericsStruct {
       } satisfies NumericsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    NumericsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _numericsStruct: NumericsStruct,
@@ -41612,10 +42424,11 @@ export namespace NumericsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
  */
-
 export type OrderedStruct = {
   readonly $identifier: () => OrderedStruct.Identifier;
 
@@ -41639,7 +42452,7 @@ export namespace OrderedStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: OrderedStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -41687,6 +42500,15 @@ export namespace OrderedStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_orderedStruct: OrderedStruct) =>
+    $compactRecord({
+      $identifier: _orderedStruct.$identifier().value,
+      $type: "OrderedStruct",
+      orderedC: _orderedStruct.orderedC,
+      orderedB: _orderedStruct.orderedB,
+      orderedA: _orderedStruct.orderedA,
+    });
 
   export const $toString: (_orderedStruct: OrderedStruct) => string = (
     _orderedStruct,
@@ -41952,7 +42774,6 @@ export namespace OrderedStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isOrderedStruct = (object: $Object): object is OrderedStruct =>
@@ -42119,7 +42940,10 @@ export namespace OrderedStruct {
       } satisfies OrderedStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    OrderedStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _orderedStruct: OrderedStruct,
@@ -42158,6 +42982,7 @@ export namespace OrderedStruct {
       }),
     );
 }
+
 export type PartialDiscriminatedUnionMember1 = {
   readonly $identifier: () => PartialDiscriminatedUnionMember1.Identifier;
 
@@ -42189,7 +43014,7 @@ export namespace PartialDiscriminatedUnionMember1 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               PartialDiscriminatedUnionMember1.schema.properties.$identifier
                 .type,
@@ -42214,7 +43039,7 @@ export namespace PartialDiscriminatedUnionMember1 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         PartialDiscriminatedUnionMember1.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -42226,6 +43051,15 @@ export namespace PartialDiscriminatedUnionMember1 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _partialDiscriminatedUnionMember1: PartialDiscriminatedUnionMember1,
+  ) =>
+    $compactRecord({
+      $identifier: _partialDiscriminatedUnionMember1.$identifier().value,
+      $type: "PartialDiscriminatedUnionMember1",
+      lazilyResolved: _partialDiscriminatedUnionMember1.lazilyResolved,
+    });
 
   export const $toString: (
     _partialDiscriminatedUnionMember1: PartialDiscriminatedUnionMember1,
@@ -42325,7 +43159,7 @@ export namespace PartialDiscriminatedUnionMember1 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -42334,7 +43168,7 @@ export namespace PartialDiscriminatedUnionMember1 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -42388,7 +43222,7 @@ export namespace PartialDiscriminatedUnionMember1 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -42405,7 +43239,7 @@ export namespace PartialDiscriminatedUnionMember1 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -42485,7 +43319,6 @@ export namespace PartialDiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPartialDiscriminatedUnionMember1 = (
@@ -42653,7 +43486,10 @@ export namespace PartialDiscriminatedUnionMember1 {
       } satisfies PartialDiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PartialDiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _partialDiscriminatedUnionMember1: PartialDiscriminatedUnionMember1,
@@ -42694,6 +43530,7 @@ export namespace PartialDiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type PartialDiscriminatedUnionMember2 = {
   readonly $identifier: () => PartialDiscriminatedUnionMember2.Identifier;
 
@@ -42725,7 +43562,7 @@ export namespace PartialDiscriminatedUnionMember2 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               PartialDiscriminatedUnionMember2.schema.properties.$identifier
                 .type,
@@ -42750,7 +43587,7 @@ export namespace PartialDiscriminatedUnionMember2 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         PartialDiscriminatedUnionMember2.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -42762,6 +43599,15 @@ export namespace PartialDiscriminatedUnionMember2 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _partialDiscriminatedUnionMember2: PartialDiscriminatedUnionMember2,
+  ) =>
+    $compactRecord({
+      $identifier: _partialDiscriminatedUnionMember2.$identifier().value,
+      $type: "PartialDiscriminatedUnionMember2",
+      lazilyResolved: _partialDiscriminatedUnionMember2.lazilyResolved,
+    });
 
   export const $toString: (
     _partialDiscriminatedUnionMember2: PartialDiscriminatedUnionMember2,
@@ -42861,7 +43707,7 @@ export namespace PartialDiscriminatedUnionMember2 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -42870,7 +43716,7 @@ export namespace PartialDiscriminatedUnionMember2 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -42924,7 +43770,7 @@ export namespace PartialDiscriminatedUnionMember2 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -42941,7 +43787,7 @@ export namespace PartialDiscriminatedUnionMember2 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -43021,7 +43867,6 @@ export namespace PartialDiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPartialDiscriminatedUnionMember2 = (
@@ -43189,7 +44034,10 @@ export namespace PartialDiscriminatedUnionMember2 {
       } satisfies PartialDiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PartialDiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _partialDiscriminatedUnionMember2: PartialDiscriminatedUnionMember2,
@@ -43229,10 +44077,11 @@ export namespace PartialDiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape used as a partial by LazyPropertiesStruct
  */
-
 export type PartialStruct = {
   readonly $identifier: () => PartialStruct.Identifier;
 
@@ -43252,7 +44101,7 @@ export namespace PartialStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: PartialStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -43276,6 +44125,13 @@ export namespace PartialStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_partialStruct: PartialStruct) =>
+    $compactRecord({
+      $identifier: _partialStruct.$identifier().value,
+      $type: "PartialStruct",
+      lazilyResolved: _partialStruct.lazilyResolved,
+    });
 
   export const $toString: (_partialStruct: PartialStruct) => string = (
     _partialStruct,
@@ -43456,7 +44312,6 @@ export namespace PartialStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPartialStruct = (object: $Object): object is PartialStruct =>
@@ -43608,7 +44463,10 @@ export namespace PartialStruct {
       } satisfies PartialStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PartialStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _partialStruct: PartialStruct,
@@ -43646,10 +44504,11 @@ export namespace PartialStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that has properties with different cardinalities
  */
-
 export type PropertyCardinalitiesStruct = {
   readonly $identifier: () => PropertyCardinalitiesStruct.Identifier;
 
@@ -43686,7 +44545,7 @@ export namespace PropertyCardinalitiesStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema:
             PropertyCardinalitiesStruct.schema.properties.$identifier.type,
         },
@@ -43772,6 +44631,20 @@ export namespace PropertyCardinalitiesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _propertyCardinalitiesStruct: PropertyCardinalitiesStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _propertyCardinalitiesStruct.$identifier().value,
+      $type: "PropertyCardinalitiesStruct",
+      emptySet: _propertyCardinalitiesStruct.emptySet.map((item) => item),
+      nonEmptySet: _propertyCardinalitiesStruct.nonEmptySet.map((item) => item),
+      optional: _propertyCardinalitiesStruct.optional
+        .map((item) => item)
+        .extract(),
+      required: _propertyCardinalitiesStruct.required,
+    });
 
   export const $toString: (
     _propertyCardinalitiesStruct: PropertyCardinalitiesStruct,
@@ -44158,7 +45031,6 @@ export namespace PropertyCardinalitiesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPropertyCardinalitiesStruct = (
@@ -44360,7 +45232,10 @@ export namespace PropertyCardinalitiesStruct {
       } satisfies PropertyCardinalitiesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PropertyCardinalitiesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _propertyCardinalitiesStruct: PropertyCardinalitiesStruct,
@@ -44400,10 +45275,11 @@ export namespace PropertyCardinalitiesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that uses different methods to name properties
  */
-
 export type PropertyNamesStruct = {
   readonly $identifier: () => PropertyNamesStruct.Identifier;
 
@@ -44455,7 +45331,7 @@ export namespace PropertyNamesStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: PropertyNamesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -44503,7 +45379,7 @@ export namespace PropertyNamesStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         PropertyNamesStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -44535,6 +45411,17 @@ export namespace PropertyNamesStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_propertyNamesStruct: PropertyNamesStruct) =>
+    $compactRecord({
+      $identifier: _propertyNamesStruct.$identifier().value,
+      $type: "PropertyNamesStruct",
+      actualName1: _propertyNamesStruct.actualName1,
+      actualName2: _propertyNamesStruct.actualName2,
+      actualName3: _propertyNamesStruct.actualName3,
+      actualName4: _propertyNamesStruct.actualName4,
+      actualName5: _propertyNamesStruct.actualName5,
+    });
 
   export const $toString: (
     _propertyNamesStruct: PropertyNamesStruct,
@@ -44703,7 +45590,7 @@ export namespace PropertyNamesStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -44712,7 +45599,7 @@ export namespace PropertyNamesStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -44807,7 +45694,7 @@ export namespace PropertyNamesStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -44824,7 +45711,7 @@ export namespace PropertyNamesStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -44956,7 +45843,6 @@ export namespace PropertyNamesStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPropertyNamesStruct = (
@@ -45173,7 +46059,10 @@ export namespace PropertyNamesStruct {
       } satisfies PropertyNamesStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PropertyNamesStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _propertyNamesStruct: PropertyNamesStruct,
@@ -45213,10 +46102,11 @@ export namespace PropertyNamesStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape that uses different property path types in its properties
  */
-
 export type PropertyPathsStruct = {
   readonly $identifier: () => PropertyPathsStruct.Identifier;
 
@@ -45247,7 +46137,7 @@ export namespace PropertyPathsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: PropertyPathsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -45286,7 +46176,7 @@ export namespace PropertyPathsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         PropertyPathsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -45305,6 +46195,18 @@ export namespace PropertyPathsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_propertyPathsStruct: PropertyPathsStruct) =>
+    $compactRecord({
+      $identifier: _propertyPathsStruct.$identifier().value,
+      $type: "PropertyPathsStruct",
+      inversePath: _propertyPathsStruct.inversePath
+        .map((item) => item.value)
+        .extract(),
+      predicatePath: _propertyPathsStruct.predicatePath
+        .map((item) => item)
+        .extract(),
+    });
 
   export const $toString: (
     _propertyPathsStruct: PropertyPathsStruct,
@@ -45458,7 +46360,7 @@ export namespace PropertyPathsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -45467,7 +46369,7 @@ export namespace PropertyPathsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -45535,7 +46437,7 @@ export namespace PropertyPathsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -45552,7 +46454,7 @@ export namespace PropertyPathsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -45656,7 +46558,6 @@ export namespace PropertyPathsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isPropertyPathsStruct = (
@@ -45834,7 +46735,10 @@ export namespace PropertyPathsStruct {
       } satisfies PropertyPathsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    PropertyPathsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _propertyPathsStruct: PropertyPathsStruct,
@@ -45875,6 +46779,7 @@ export namespace PropertyPathsStruct {
       }),
     );
 }
+
 export type RecursiveDiscriminatedUnionMember1 = {
   readonly $identifier: () => RecursiveDiscriminatedUnionMember1.Identifier;
 
@@ -45906,7 +46811,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               RecursiveDiscriminatedUnionMember1.schema.properties.$identifier
                 .type,
@@ -45938,7 +46843,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         RecursiveDiscriminatedUnionMember1.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -45964,6 +46869,18 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _recursiveDiscriminatedUnionMember1: RecursiveDiscriminatedUnionMember1,
+  ): any =>
+    $compactRecord({
+      $identifier: _recursiveDiscriminatedUnionMember1.$identifier().value,
+      $type: "RecursiveDiscriminatedUnionMember1",
+      recursiveDiscriminatedUnionMember1Property:
+        _recursiveDiscriminatedUnionMember1.recursiveDiscriminatedUnionMember1Property
+          .map((item) => RecursiveDiscriminatedUnion.$toLoggable(item))
+          .extract(),
+    });
 
   export const $toString: (
     _recursiveDiscriminatedUnionMember1: RecursiveDiscriminatedUnionMember1,
@@ -46088,7 +47005,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -46097,7 +47014,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -46140,7 +47057,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -46157,7 +47074,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -46231,7 +47148,6 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isRecursiveDiscriminatedUnionMember1 = (
@@ -46420,7 +47336,10 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       } satisfies RecursiveDiscriminatedUnionMember1.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    RecursiveDiscriminatedUnionMember1
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _recursiveDiscriminatedUnionMember1: RecursiveDiscriminatedUnionMember1,
@@ -46461,6 +47380,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       }),
     );
 }
+
 export type RecursiveDiscriminatedUnionMember2 = {
   readonly $identifier: () => RecursiveDiscriminatedUnionMember2.Identifier;
 
@@ -46492,7 +47412,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema:
               RecursiveDiscriminatedUnionMember2.schema.properties.$identifier
                 .type,
@@ -46524,7 +47444,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         RecursiveDiscriminatedUnionMember2.schema.properties.$rdfType
           .toRdfTypes,
         parameters.graph,
@@ -46550,6 +47470,18 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _recursiveDiscriminatedUnionMember2: RecursiveDiscriminatedUnionMember2,
+  ): any =>
+    $compactRecord({
+      $identifier: _recursiveDiscriminatedUnionMember2.$identifier().value,
+      $type: "RecursiveDiscriminatedUnionMember2",
+      recursiveDiscriminatedUnionMember2Property:
+        _recursiveDiscriminatedUnionMember2.recursiveDiscriminatedUnionMember2Property
+          .map((item) => RecursiveDiscriminatedUnion.$toLoggable(item))
+          .extract(),
+    });
 
   export const $toString: (
     _recursiveDiscriminatedUnionMember2: RecursiveDiscriminatedUnionMember2,
@@ -46674,7 +47606,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -46683,7 +47615,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -46726,7 +47658,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -46743,7 +47675,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -46817,7 +47749,6 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isRecursiveDiscriminatedUnionMember2 = (
@@ -47006,7 +47937,10 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       } satisfies RecursiveDiscriminatedUnionMember2.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    RecursiveDiscriminatedUnionMember2
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _recursiveDiscriminatedUnionMember2: RecursiveDiscriminatedUnionMember2,
@@ -47046,12 +47980,13 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with sh:targetClass.
  *
  * The sh:targetClass is expected on deserialization and added on serialization.
  */
-
 export type TargetClassStruct = {
   readonly $identifier: () => TargetClassStruct.Identifier;
 
@@ -47080,7 +48015,7 @@ export namespace TargetClassStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: TargetClassStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -47103,7 +48038,7 @@ export namespace TargetClassStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         TargetClassStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -47115,6 +48050,13 @@ export namespace TargetClassStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_targetClassStruct: TargetClassStruct) =>
+    $compactRecord({
+      $identifier: _targetClassStruct.$identifier().value,
+      $type: "TargetClassStruct",
+      targetClassString: _targetClassStruct.targetClassString,
+    });
 
   export const $toString: (_targetClassStruct: TargetClassStruct) => string = (
     _targetClassStruct,
@@ -47214,7 +48156,7 @@ export namespace TargetClassStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -47223,7 +48165,7 @@ export namespace TargetClassStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -47273,7 +48215,7 @@ export namespace TargetClassStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -47290,7 +48232,7 @@ export namespace TargetClassStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -47366,7 +48308,6 @@ export namespace TargetClassStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isTargetClassStruct = (
@@ -47524,7 +48465,10 @@ export namespace TargetClassStruct {
       } satisfies TargetClassStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    TargetClassStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _targetClassStruct: TargetClassStruct,
@@ -47564,10 +48508,11 @@ export namespace TargetClassStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape with properties that are not nested objects
  */
-
 export type TermsStruct = {
   readonly $identifier: () => TermsStruct.Identifier;
 
@@ -47617,7 +48562,7 @@ export namespace TermsStruct {
           {
             ...options,
             focusResource: resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
+            propertyPath: $rdf_subject,
             schema: TermsStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
@@ -47772,7 +48717,7 @@ export namespace TermsStruct {
   > = (parameters) => {
     if (!parameters.ignoreRdfType) {
       parameters.resource.add(
-        $RdfVocabularies.rdf.type,
+        $rdf_type,
         TermsStruct.schema.properties.$rdfType.toRdfTypes,
         parameters.graph,
       );
@@ -47786,36 +48731,28 @@ export namespace TermsStruct {
       TermsStruct.schema.properties.booleanTerm.path,
       parameters.object.booleanTerm
         .toList()
-        .flatMap((value) => [
-          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
-        ]),
+        .flatMap((value) => [$literalFactory.boolean(value, $xsd_boolean)]),
       parameters.graph,
     );
     parameters.resource.add(
       TermsStruct.schema.properties.dateTerm.path,
       parameters.object.dateTerm
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.date),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_date)]),
       parameters.graph,
     );
     parameters.resource.add(
       TermsStruct.schema.properties.dateTimeTerm.path,
       parameters.object.dateTimeTerm
         .toList()
-        .flatMap((value) => [
-          $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
-        ]),
+        .flatMap((value) => [$literalFactory.date(value, $xsd_dateTime)]),
       parameters.graph,
     );
     parameters.resource.add(
       TermsStruct.schema.properties.doubleTerm.path,
       parameters.object.doubleTerm
         .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
+        .flatMap((value) => [$literalFactory.number(value, $xsd_double)]),
       parameters.graph,
     );
     parameters.resource.add(
@@ -47852,6 +48789,60 @@ export namespace TermsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (_termsStruct: TermsStruct) =>
+    $compactRecord({
+      $identifier: _termsStruct.$identifier().value,
+      $type: "TermsStruct",
+      blankNodeTerm: _termsStruct.blankNodeTerm
+        .map((item) => item.value)
+        .extract(),
+      booleanTerm: _termsStruct.booleanTerm.map((item) => item).extract(),
+      dateTerm: _termsStruct.dateTerm
+        .map((item) => item.toISOString())
+        .extract(),
+      dateTimeTerm: _termsStruct.dateTimeTerm
+        .map((item) => item.toISOString())
+        .extract(),
+      doubleTerm: _termsStruct.doubleTerm.map((item) => item).extract(),
+      identifierTerm: _termsStruct.identifierTerm
+        .map((item) => item.value)
+        .extract(),
+      iriTerm: _termsStruct.iriTerm.map((item) => item.value).extract(),
+      langStringTerm: _termsStruct.langStringTerm
+        .map((item) => `${JSON.stringify(item.value)}@${item.language}`)
+        .extract(),
+      literalTerm: _termsStruct.literalTerm
+        .map((item) => ({
+          "@language": item.language.length > 0 ? item.language : undefined,
+          "@type":
+            item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+              ? item.datatype.value
+              : undefined,
+          "@value": item.value,
+        }))
+        .extract(),
+      stringTerm: _termsStruct.stringTerm.map((item) => item).extract(),
+      term: _termsStruct.term
+        .map((item) =>
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+                termType: "Literal" as const,
+              }
+            : item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+        )
+        .extract(),
+    });
 
   export const $toString: (_termsStruct: TermsStruct) => string = (
     _termsStruct,
@@ -48314,7 +49305,7 @@ export namespace TermsStruct {
         : [
             {
               subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
+              predicate: $rdf_type,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
@@ -48323,7 +49314,7 @@ export namespace TermsStruct {
               subject: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfType`,
               ),
-              predicate: $RdfVocabularies.rdfs.subClassOf,
+              predicate: $rdfs_subClassOf,
               object: dataFactory.variable!(
                 `${parameters.variablePrefix}RdfClass`,
               ),
@@ -48516,7 +49507,7 @@ export namespace TermsStruct {
               triples: [
                 {
                   subject: parameters.focusIdentifier,
-                  predicate: $RdfVocabularies.rdf.type,
+                  predicate: $rdf_type,
                   object: dataFactory.variable!(
                     `${parameters.variablePrefix}RdfType`,
                   ),
@@ -48533,7 +49524,7 @@ export namespace TermsStruct {
                         `${parameters.variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
+                        items: [$rdfs_subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -48852,7 +49843,6 @@ export namespace TermsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isTermsStruct = (object: $Object): object is TermsStruct =>
@@ -49236,7 +50226,10 @@ export namespace TermsStruct {
       } satisfies TermsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    TermsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _termsStruct: TermsStruct,
@@ -49274,10 +50267,11 @@ export namespace TermsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Struct node shape shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.
  */
-
 export type UnionDiscriminantsStruct = {
   readonly $identifier: () => UnionDiscriminantsStruct.Identifier;
 
@@ -49391,7 +50385,7 @@ export namespace UnionDiscriminantsStruct {
         {
           ...options,
           focusResource: resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
+          propertyPath: $rdf_subject,
           schema: UnionDiscriminantsStruct.schema.properties.$identifier.type,
         },
       ).chain((values) => values.head()),
@@ -51912,6 +52906,282 @@ export namespace UnionDiscriminantsStruct {
     );
     return parameters.resource;
   };
+
+  export const $toLoggable = (
+    _unionDiscriminantsStruct: UnionDiscriminantsStruct,
+  ) =>
+    $compactRecord({
+      $identifier: _unionDiscriminantsStruct.$identifier().value,
+      $type: "UnionDiscriminantsStruct",
+      optionalIriOrString: _unionDiscriminantsStruct.optionalIriOrString
+        .map((item) =>
+          ((value: NamedNode | string) => {
+            if (typeof value === "object") {
+              return value.value;
+            }
+            if (typeof value === "string") {
+              return value;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+      optionalNodeOrLiteral: _unionDiscriminantsStruct.optionalNodeOrLiteral
+        .map((item) =>
+          ((
+            value:
+              | {
+                  termType: "DiscriminatedUnionMember1";
+                  value: DiscriminatedUnionMember1;
+                }
+              | Literal,
+          ) => {
+            if (value["termType"] === "DiscriminatedUnionMember1") {
+              return DiscriminatedUnionMember1.$toLoggable(value.value);
+            }
+            if (value["termType"] === "Literal") {
+              return {
+                "@language":
+                  value.language.length > 0 ? value.language : undefined,
+                "@type":
+                  value.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? value.datatype.value
+                    : undefined,
+                "@value": value.value,
+              };
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+      optionalNodeOrNodeOrString:
+        _unionDiscriminantsStruct.optionalNodeOrNodeOrString
+          .map((item) =>
+            ((
+              value:
+                | {
+                    $type: "DiscriminatedUnionMember1";
+                    value: DiscriminatedUnionMember1;
+                  }
+                | {
+                    $type: "DiscriminatedUnionMember2";
+                    value: DiscriminatedUnionMember2;
+                  }
+                | { $type: "string"; value: string },
+            ) => {
+              if (value["$type"] === "DiscriminatedUnionMember1") {
+                return DiscriminatedUnionMember1.$toLoggable(value.value);
+              }
+              if (value["$type"] === "DiscriminatedUnionMember2") {
+                return DiscriminatedUnionMember2.$toLoggable(value.value);
+              }
+              if (value["$type"] === "string") {
+                return value.value;
+              }
+
+              throw new Error("unable to serialize to loggable");
+            })(item),
+          )
+          .extract(),
+      optionalTerm: _unionDiscriminantsStruct.optionalTerm
+        .map((item) =>
+          ((value: (BlankNode | NamedNode) | Literal) => {
+            if (
+              value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode"
+            ) {
+              return value.value;
+            }
+            if (value["termType"] === "Literal") {
+              return {
+                "@language":
+                  value.language.length > 0 ? value.language : undefined,
+                "@type":
+                  value.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? value.datatype.value
+                    : undefined,
+                "@value": value.value,
+              };
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        )
+        .extract(),
+      requiredIriOrString: ((value: NamedNode | string) => {
+        if (typeof value === "object") {
+          return value.value;
+        }
+        if (typeof value === "string") {
+          return value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredIriOrString),
+      requiredNodeOrLiteral: ((
+        value:
+          | {
+              termType: "DiscriminatedUnionMember1";
+              value: DiscriminatedUnionMember1;
+            }
+          | Literal,
+      ) => {
+        if (value["termType"] === "DiscriminatedUnionMember1") {
+          return DiscriminatedUnionMember1.$toLoggable(value.value);
+        }
+        if (value["termType"] === "Literal") {
+          return {
+            "@language": value.language.length > 0 ? value.language : undefined,
+            "@type":
+              value.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? value.datatype.value
+                : undefined,
+            "@value": value.value,
+          };
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredNodeOrLiteral),
+      requiredNodeOrNodeOrString: ((
+        value:
+          | {
+              $type: "DiscriminatedUnionMember1";
+              value: DiscriminatedUnionMember1;
+            }
+          | {
+              $type: "DiscriminatedUnionMember2";
+              value: DiscriminatedUnionMember2;
+            }
+          | { $type: "string"; value: string },
+      ) => {
+        if (value["$type"] === "DiscriminatedUnionMember1") {
+          return DiscriminatedUnionMember1.$toLoggable(value.value);
+        }
+        if (value["$type"] === "DiscriminatedUnionMember2") {
+          return DiscriminatedUnionMember2.$toLoggable(value.value);
+        }
+        if (value["$type"] === "string") {
+          return value.value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredNodeOrNodeOrString),
+      requiredTerm: ((value: (BlankNode | NamedNode) | Literal) => {
+        if (
+          value["termType"] === "BlankNode" ||
+          value["termType"] === "NamedNode"
+        ) {
+          return value.value;
+        }
+        if (value["termType"] === "Literal") {
+          return {
+            "@language": value.language.length > 0 ? value.language : undefined,
+            "@type":
+              value.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? value.datatype.value
+                : undefined,
+            "@value": value.value,
+          };
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredTerm),
+      setIriOrString: _unionDiscriminantsStruct.setIriOrString.map((item) =>
+        ((value: NamedNode | string) => {
+          if (typeof value === "object") {
+            return value.value;
+          }
+          if (typeof value === "string") {
+            return value;
+          }
+
+          throw new Error("unable to serialize to loggable");
+        })(item),
+      ),
+      setNodeOrLiteral: _unionDiscriminantsStruct.setNodeOrLiteral.map((item) =>
+        ((
+          value:
+            | {
+                termType: "DiscriminatedUnionMember1";
+                value: DiscriminatedUnionMember1;
+              }
+            | Literal,
+        ) => {
+          if (value["termType"] === "DiscriminatedUnionMember1") {
+            return DiscriminatedUnionMember1.$toLoggable(value.value);
+          }
+          if (value["termType"] === "Literal") {
+            return {
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to loggable");
+        })(item),
+      ),
+      setNodeOrNodeOrString:
+        _unionDiscriminantsStruct.setNodeOrNodeOrString.map((item) =>
+          ((
+            value:
+              | {
+                  $type: "DiscriminatedUnionMember1";
+                  value: DiscriminatedUnionMember1;
+                }
+              | {
+                  $type: "DiscriminatedUnionMember2";
+                  value: DiscriminatedUnionMember2;
+                }
+              | { $type: "string"; value: string },
+          ) => {
+            if (value["$type"] === "DiscriminatedUnionMember1") {
+              return DiscriminatedUnionMember1.$toLoggable(value.value);
+            }
+            if (value["$type"] === "DiscriminatedUnionMember2") {
+              return DiscriminatedUnionMember2.$toLoggable(value.value);
+            }
+            if (value["$type"] === "string") {
+              return value.value;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        ),
+      setTerm: _unionDiscriminantsStruct.setTerm.map((item) =>
+        ((value: (BlankNode | NamedNode) | Literal) => {
+          if (
+            value["termType"] === "BlankNode" ||
+            value["termType"] === "NamedNode"
+          ) {
+            return value.value;
+          }
+          if (value["termType"] === "Literal") {
+            return {
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to loggable");
+        })(item),
+      ),
+    });
 
   export const $toString: (
     _unionDiscriminantsStruct: UnionDiscriminantsStruct,
@@ -56405,7 +57675,6 @@ export namespace UnionDiscriminantsStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isUnionDiscriminantsStruct = (
@@ -57570,7 +58839,10 @@ export namespace UnionDiscriminantsStruct {
       } satisfies UnionDiscriminantsStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    UnionDiscriminantsStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _unionDiscriminantsStruct: UnionDiscriminantsStruct,
@@ -57610,15 +58882,27 @@ export namespace UnionDiscriminantsStruct {
         variablePrefix,
       }),
     );
-} /**
+}
+
+/**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
-
 export type DiscriminatedUnion =
   | DiscriminatedUnionMember1
   | DiscriminatedUnionMember2;
 
 export namespace DiscriminatedUnion {
+  export const $toLoggable = (value: DiscriminatedUnion) => {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
+      return DiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "DiscriminatedUnionMember2") {
+      return DiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: DiscriminatedUnion): string => {
     if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.$toString(value);
@@ -57942,7 +59226,6 @@ export namespace DiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isDiscriminatedUnion(
@@ -58168,16 +59451,31 @@ export namespace DiscriminatedUnion {
     DiscriminatedUnion.Filter,
     typeof DiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.
  */
-
 export type FlattenDiscriminatedUnion =
   | DiscriminatedUnionMember1
   | DiscriminatedUnionMember2
   | FlattenDiscriminatedUnionMember3;
 
 export namespace FlattenDiscriminatedUnion {
+  export const $toLoggable = (value: FlattenDiscriminatedUnion) => {
+    if (value["$type"] === "DiscriminatedUnionMember1") {
+      return DiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "DiscriminatedUnionMember2") {
+      return DiscriminatedUnionMember2.$toLoggable(value);
+    }
+    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
+      return FlattenDiscriminatedUnionMember3.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: FlattenDiscriminatedUnion): string => {
     if (value["$type"] === "DiscriminatedUnionMember1") {
       return DiscriminatedUnionMember1.$toString(value);
@@ -58589,7 +59887,6 @@ export namespace FlattenDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isFlattenDiscriminatedUnion(
@@ -58854,15 +60151,27 @@ export namespace FlattenDiscriminatedUnion {
     FlattenDiscriminatedUnion.Filter,
     typeof FlattenDiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
-
 export type LazilyResolvedDiscriminatedUnion =
   | LazilyResolvedDiscriminatedUnionMember1
   | LazilyResolvedDiscriminatedUnionMember2;
 
 export namespace LazilyResolvedDiscriminatedUnion {
+  export const $toLoggable = (value: LazilyResolvedDiscriminatedUnion) => {
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember1") {
+      return LazilyResolvedDiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember2") {
+      return LazilyResolvedDiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (
     value: LazilyResolvedDiscriminatedUnion,
   ): string => {
@@ -59197,7 +60506,6 @@ export namespace LazilyResolvedDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isLazilyResolvedDiscriminatedUnion(
@@ -59446,13 +60754,25 @@ export namespace LazilyResolvedDiscriminatedUnion {
     LazilyResolvedDiscriminatedUnion.Filter,
     typeof LazilyResolvedDiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Named discriminated union of IRI and string
  */
-
 export type NamedDiscriminatedUnion1 = NamedNode | string;
 
 export namespace NamedDiscriminatedUnion1 {
+  export const $toLoggable = (value: NamedDiscriminatedUnion1) => {
+    if (typeof value === "object") {
+      return value.value;
+    }
+    if (typeof value === "string") {
+      return value;
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: NamedDiscriminatedUnion1): string => {
     if (typeof value === "object") {
       return value.toString();
@@ -59752,15 +61072,19 @@ export namespace NamedDiscriminatedUnion1 {
     NamedDiscriminatedUnion1.Filter,
     typeof NamedDiscriminatedUnion1.schema
   >;
-} /**
+}
+
+/**
  * Named discriminated union of date and date-time
  */
-
 export type NamedDiscriminatedUnion2 =
   | { $type: "date"; value: Date }
   | { $type: "dateTime"; value: Date };
 
 export namespace NamedDiscriminatedUnion2 {
+  export const $toLoggable = (value: NamedDiscriminatedUnion2) =>
+    value.value.toISOString();
+
   export const $toString = (value: NamedDiscriminatedUnion2): string => {
     if (value["$type"] === "date") {
       return value.value.toString();
@@ -60061,10 +61385,10 @@ export namespace NamedDiscriminatedUnion2 {
 
   export const toRdfResourceValues = ((value, _options): Literal[] => {
     if (value["$type"] === "date") {
-      return [$literalFactory.date(value.value, $RdfVocabularies.xsd.date)];
+      return [$literalFactory.date(value.value, $xsd_date)];
     }
     if (value["$type"] === "dateTime") {
-      return [$literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime)];
+      return [$literalFactory.date(value.value, $xsd_dateTime)];
     }
 
     throw new Error("unable to serialize to RDF");
@@ -60129,15 +61453,27 @@ export namespace NamedDiscriminatedUnion2 {
     NamedDiscriminatedUnion2.Filter,
     typeof NamedDiscriminatedUnion2.schema
   >;
-} /**
+}
+
+/**
  * Node shape that sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's
  */
-
 export type NoRdfTypeDiscriminatedUnion =
   | NoRdfTypeDiscriminatedUnionMember1
   | NoRdfTypeDiscriminatedUnionMember2;
 
 export namespace NoRdfTypeDiscriminatedUnion {
+  export const $toLoggable = (value: NoRdfTypeDiscriminatedUnion) => {
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
+      return NoRdfTypeDiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember2") {
+      return NoRdfTypeDiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: NoRdfTypeDiscriminatedUnion): string => {
     if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
       return NoRdfTypeDiscriminatedUnionMember1.$toString(value);
@@ -60468,7 +61804,6 @@ export namespace NoRdfTypeDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isNoRdfTypeDiscriminatedUnion(
@@ -60701,15 +62036,27 @@ export namespace NoRdfTypeDiscriminatedUnion {
     NoRdfTypeDiscriminatedUnion.Filter,
     typeof NoRdfTypeDiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Counterpart of DiscriminatedUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.
  */
-
 export type PartialDiscriminatedUnion =
   | PartialDiscriminatedUnionMember1
   | PartialDiscriminatedUnionMember2;
 
 export namespace PartialDiscriminatedUnion {
+  export const $toLoggable = (value: PartialDiscriminatedUnion) => {
+    if (value["$type"] === "PartialDiscriminatedUnionMember1") {
+      return PartialDiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "PartialDiscriminatedUnionMember2") {
+      return PartialDiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: PartialDiscriminatedUnion): string => {
     if (value["$type"] === "PartialDiscriminatedUnionMember1") {
       return PartialDiscriminatedUnionMember1.$toString(value);
@@ -61036,7 +62383,6 @@ export namespace PartialDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isPartialDiscriminatedUnion(
@@ -61275,15 +62621,27 @@ export namespace PartialDiscriminatedUnion {
     PartialDiscriminatedUnion.Filter,
     typeof PartialDiscriminatedUnion.schema
   >;
-} /**
+}
+
+/**
  * Node shape that sh:xone's node shapes that have properties with the union's type
  */
-
 export type RecursiveDiscriminatedUnion =
   | RecursiveDiscriminatedUnionMember1
   | RecursiveDiscriminatedUnionMember2;
 
 export namespace RecursiveDiscriminatedUnion {
+  export const $toLoggable = (value: RecursiveDiscriminatedUnion): any => {
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
+      return RecursiveDiscriminatedUnionMember1.$toLoggable(value);
+    }
+    if (value["$type"] === "RecursiveDiscriminatedUnionMember2") {
+      return RecursiveDiscriminatedUnionMember2.$toLoggable(value);
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
   export const $toString = (value: RecursiveDiscriminatedUnion): string => {
     if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
       return RecursiveDiscriminatedUnionMember1.$toString(value);
@@ -61614,7 +62972,6 @@ export namespace RecursiveDiscriminatedUnion {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export function isRecursiveDiscriminatedUnion(
@@ -61848,6 +63205,7 @@ export namespace RecursiveDiscriminatedUnion {
     typeof RecursiveDiscriminatedUnion.schema
   >;
 }
+
 export type $Object =
   | $DefaultPartial
   | $NamedDefaultPartial
@@ -62599,6 +63957,7 @@ export namespace $Object {
     }
   }
 }
+
 export interface $ObjectSet {
   anonymousTypesStruct(
     identifier: AnonymousTypesStruct.Identifier,
@@ -62628,35 +63987,6 @@ export interface $ObjectSet {
       AnonymousTypesStruct.Identifier
     >,
   ): Promise<Either<Error, readonly AnonymousTypesStruct[]>>;
-
-  blankNodeIdentifierStruct(
-    identifier: BlankNodeIdentifierStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BlankNodeIdentifierStruct>>;
-
-  blankNodeIdentifierStructCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        BlankNodeIdentifierStruct.Filter,
-        BlankNodeIdentifierStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  blankNodeIdentifierStructIdentifiers(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct.Identifier[]>>;
-
-  blankNodeIdentifierStructs(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct[]>>;
 
   blankNodeOrIriIdentifierStruct(
     identifier: BlankNodeOrIriIdentifierStruct.Identifier,
@@ -64194,6 +65524,7 @@ export namespace $ObjectSet {
     readonly preferredLanguages?: readonly string[];
   }
 }
+
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
   readonly #dataset: DatasetCore | (() => DatasetCore);
   readonly #graph?: Exclude<Quad_Graph, Variable>;
@@ -64308,100 +65639,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         fromRdfResource: AnonymousTypesStruct.fromRdfResource,
         fromRdfTypes: [
           AnonymousTypesStruct.schema.properties.$rdfType.fromRdfType,
-        ],
-      },
-      query,
-    );
-  }
-
-  async blankNodeIdentifierStruct(
-    identifier: BlankNodeIdentifierStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BlankNodeIdentifierStruct>> {
-    return this.blankNodeIdentifierStructSync(identifier, options);
-  }
-
-  blankNodeIdentifierStructSync(
-    identifier: BlankNodeIdentifierStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, BlankNodeIdentifierStruct> {
-    return this.blankNodeIdentifierStructsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async blankNodeIdentifierStructCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        BlankNodeIdentifierStruct.Filter,
-        BlankNodeIdentifierStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.blankNodeIdentifierStructCountSync(query);
-  }
-
-  blankNodeIdentifierStructCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        BlankNodeIdentifierStruct.Filter,
-        BlankNodeIdentifierStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.blankNodeIdentifierStructsSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async blankNodeIdentifierStructIdentifiers(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct.Identifier[]>> {
-    return this.blankNodeIdentifierStructIdentifiersSync(query);
-  }
-
-  blankNodeIdentifierStructIdentifiersSync(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Either<Error, readonly BlankNodeIdentifierStruct.Identifier[]> {
-    return this.blankNodeIdentifierStructsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async blankNodeIdentifierStructs(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct[]>> {
-    return this.blankNodeIdentifierStructsSync(query);
-  }
-
-  blankNodeIdentifierStructsSync(
-    query?: $ObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Either<Error, readonly BlankNodeIdentifierStruct[]> {
-    return this.#objectsSync<
-      BlankNodeIdentifierStruct,
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >(
-      {
-        filter: BlankNodeIdentifierStruct.filter,
-        fromRdfResource: BlankNodeIdentifierStruct.fromRdfResource,
-        fromRdfTypes: [
-          BlankNodeIdentifierStruct.schema.properties.$rdfType.fromRdfType,
         ],
       },
       query,
@@ -69698,6 +70935,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return Right(objects);
   }
 }
+
 export class $SparqlObjectSet implements $ObjectSet {
   readonly #countVariable = dataFactory.variable!("count");
   readonly #graph?: Exclude<Quad_Graph, Variable>;
@@ -69773,58 +71011,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       AnonymousTypesStruct.Filter,
       AnonymousTypesStruct.Identifier
     >(AnonymousTypesStruct, query);
-  }
-
-  async blankNodeIdentifierStruct(
-    identifier: BlankNodeIdentifierStruct.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BlankNodeIdentifierStruct>> {
-    return (
-      await this.blankNodeIdentifierStructs({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async blankNodeIdentifierStructCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        BlankNodeIdentifierStruct.Filter,
-        BlankNodeIdentifierStruct.Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >(BlankNodeIdentifierStruct, query);
-  }
-
-  async blankNodeIdentifierStructIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct.Identifier[]>> {
-    return this.#objectIdentifiers<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >(BlankNodeIdentifierStruct, query);
-  }
-
-  async blankNodeIdentifierStructs(
-    query?: $SparqlObjectSet.Query<
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >,
-  ): Promise<Either<Error, readonly BlankNodeIdentifierStruct[]>> {
-    return this.#objects<
-      BlankNodeIdentifierStruct,
-      BlankNodeIdentifierStruct.Filter,
-      BlankNodeIdentifierStruct.Identifier
-    >(BlankNodeIdentifierStruct, query);
   }
 
   async blankNodeOrIriIdentifierStruct(

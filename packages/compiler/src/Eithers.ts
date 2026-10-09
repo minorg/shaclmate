@@ -1,6 +1,23 @@
-import type { Either } from "purify-ts";
+import { Either } from "purify-ts";
 
 export namespace Eithers {
+  export function chainMap<OldT, NewT>(
+    oldValues: readonly OldT[],
+    callback: (value: OldT, index: number) => Either<Error, NewT>,
+  ): Either<Error, readonly NewT[]> {
+    const newValues: NewT[] = [];
+    let valueI = 0;
+    for (const oldValue of oldValues) {
+      const callbackResult = callback(oldValue, valueI);
+      if (callbackResult.isLeft()) {
+        return callbackResult;
+      }
+      newValues.push(callbackResult.extract() as NewT);
+      valueI++;
+    }
+    return Either.of(newValues);
+  }
+
   export function chain2<R1, R2>(
     either1: Either<Error, R1>,
     either2: Either<Error, R2>,

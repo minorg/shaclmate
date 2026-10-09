@@ -15,8 +15,6 @@ export abstract class AbstractIdentifierType<
   abstract override readonly kind: "BlankNode" | "Identifier" | "Iri";
   abstract override readonly nodeKinds: ReadonlySet<IdentifierNodeKind>;
   abstract readonly parseFunction: Code;
-  readonly stringifyFunction =
-    code`${this.reusables.imports.NTriplesTerm}.stringify`;
 
   @Memoize()
   override get graphqlType() {
@@ -29,7 +27,13 @@ export abstract class AbstractIdentifierType<
   override graphqlResolveExpression({
     variables: { value },
   }: Parameters<AbstractTermType["graphqlResolveExpression"]>[0]): Code {
-    return code`${this.reusables.imports.NTriplesTerm}.stringify(${value})`;
+    return code`${this.reusables.imports.NTriplesIdentifier}.stringify(${value})`;
+  }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractTermType<NamedNode>["toLoggableExpression"]>[0]): Code {
+    return code`${variables.value}.value`;
   }
 }
 

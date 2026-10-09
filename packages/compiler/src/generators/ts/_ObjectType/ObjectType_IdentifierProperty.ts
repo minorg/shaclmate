@@ -4,7 +4,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
+import { AbstractType } from "../AbstractType.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { IriType } from "../IriType.js";
@@ -60,34 +60,12 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return Maybe.of(code`readonly ${this.name}: () => ${this.typeExpression};`);
   }
 
-  override equalsExpression({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["equalsExpression"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
-        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
-        [left, ${variables.leftObject}.${this.name}()],
-        [right, ${variables.rightObject}.${this.name}()],
-      )`);
-  }
-
   @Memoize()
   override get filterProperty() {
     return Maybe.of({
       name: this.name,
       type: this.type.filterType,
     });
-  }
-
-  override filterExpression({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["filterExpression"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name}())`,
-    );
   }
 
   @Memoize()
@@ -98,7 +76,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.type.stringifyFunction}(source.${this.name}())`,
+      resolve: code`(source) => ${this.reusables.imports.NTriplesIdentifier}.stringify(source.${this.name}())`,
       type: this.type.graphqlType.expression,
     });
   }
@@ -111,31 +89,24 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
-    let schema: Code;
-    if (this.type.in_.length > 0 && this.type.kind === "Iri") {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      schema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.type.in_.map((iri) => iri.value))})`;
-    } else {
-      schema = code`${this.reusables.imports.z}.string().min(1)`;
-    }
-
+  get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
     return Maybe.of({
-      key: "@id",
-      schema,
+      description: Maybe.empty(),
+      label: Maybe.empty(),
+      name: "@id",
+      optional: false,
+      recursive: this.recursive,
+      type:
+        this.type.in_.length > 0 && this.type.kind === "Iri"
+          ? this.jsonTypeFactory.string({
+              in_: this.type.in_.map((iri) => iri.value),
+            })
+          : this.jsonTypeFactory.string({
+              minLength: 1n,
+            }),
+      uiSchemaElement: ({ variables }) =>
+        code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
     });
-  }
-
-  @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    if (this.type.in_.length > 0) {
-      return Maybe.of(
-        code`readonly "@id": ${this.type.in_.map((iri) => `"${iri.value}"`).join(" | ")}`,
-      );
-    }
-
-    return Maybe.of(code`readonly "@id": string`);
   }
 
   override get schema(): Maybe<Code> {
@@ -201,6 +172,28 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     );
   }
 
+  override equalsExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["equalsExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
+        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
+        [left, ${variables.leftObject}.${this.name}()],
+        [right, ${variables.rightObject}.${this.name}()],
+      )`);
+  }
+
+  override filterExpression({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["filterExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name}())`,
+    );
+  }
+
   override fromJsonInitializer({
     variables,
   }: Parameters<
@@ -234,16 +227,6 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return [
       code`if (${variables.object}.${this.name}) { ${variables.hasher}.update(${variables.object}.${this.name}().value); }`,
     ];
-  }
-
-  override jsonUiSchemaElement({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["jsonUiSchemaElement"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(
-      code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
-    );
   }
 
   override sparqlConstructTriplesExpression(): Maybe<Code> {
@@ -291,6 +274,16 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     invariant(valueToNodeKinds.length === 2);
     return Maybe.of(
       code`"@id": ${variables.object}.${this.name}().termType === "${NodeKind.toTermType(nodeKinds[0])}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
+    );
+  }
+
+  override toLoggableInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toLoggableInitializer"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${literalOf(this.name)}: ${this.type.toLoggableExpression({ variables: { value: code`${variables.object}.${this.name}()` } })}`,
     );
   }
 

@@ -12,6 +12,7 @@ const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
   "@biomejs/biome": "2.3.10",
+  "@hono/zod-validator": "~0.9.1",
   "@jsonforms/core": "3.5.1",
   "@jsonforms/material-renderers": "3.5.1",
   "@jsonforms/react": "3.5.1",
@@ -51,6 +52,7 @@ const externalDependencies = {
   graphql: "16.11.0",
   "graphql-scalars": "1.24.2",
   "graphql-yoga": "5.14.0",
+  hono: "~4.13.13",
   "js-sha256": "~0.11.0",
   oxigraph: "0.5.8",
   pino: "~9.1.0",
@@ -70,6 +72,7 @@ const externalDependencies = {
   typescript: "6.0.3",
   "typescript-memoize": "~1.1.1",
   turbo: "~2.5.5",
+  "uri-template": "~2.0.0",
   vite: "6.0.7",
   vitest: vitestVersion,
   "vitest-fetch-mock": "~0.4.5",
@@ -260,7 +263,7 @@ const workspaces = {
         ],
       },
       scripts: {
-        start: "NODE_ENV=development tsx src/server.ts",
+        start: "NODE_ENV=development tsx src/main.ts",
       },
       tsconfig: exampleTsconfig,
     },
@@ -289,6 +292,23 @@ const workspaces = {
       },
       tsconfig: exampleTsconfig,
     },
+    rest: {
+      dependencies: {
+        external: [
+          "@hono/zod-validator",
+          "@rdfjs/types",
+          "@rdfx/collection",
+          "@rdfx/data-factory",
+          "@rdfx/resource",
+          "hono",
+          "purify-ts",
+        ],
+      },
+      scripts: {
+        start: "NODE_ENV=development bun src/main.ts",
+      },
+      tsconfig: exampleTsconfig,
+    },
   } satisfies Record<string, Workspace>,
   packages: {
     compiler: {
@@ -310,6 +330,7 @@ const workspaces = {
           "ts-invariant",
           "ts-poet",
           "typescript-memoize",
+          "uri-template",
         ],
         internal: ["shacl-ast"],
       },
@@ -635,7 +656,7 @@ fs.writeFileSync(
         "check:write:unsafe": "biome check --write --unsafe",
         clean: "turbo run clean",
         depcheck: "turbo run depcheck",
-        dev: "turbo run --concurrency 14 dev dev:tests",
+        dev: "turbo run --concurrency 15 dev dev:tests",
         test: "vitest run",
         "test:coverage": "vitest run --coverage",
         "test:watch": "vitest watch",

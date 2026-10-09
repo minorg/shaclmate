@@ -46,13 +46,13 @@ export class TermType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.termFromRdfResourceValues}<${this.expression}>`;
+  override get filterType(): Code {
+    return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
   }
 
   @Memoize()
-  override get filterType(): Code {
-    return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.termFromRdfResourceValues}<${this.expression}>`;
   }
 
   override get graphqlType(): AbstractTermType.GraphqlType {
@@ -183,5 +183,11 @@ export class TermType<
       },
       null as Code | null,
     )!;
+  }
+
+  override toLoggableExpression(
+    parameters: Parameters<AbstractTermType["toLoggableExpression"]>[0],
+  ): Code {
+    return this.toJsonExpression(parameters);
   }
 }

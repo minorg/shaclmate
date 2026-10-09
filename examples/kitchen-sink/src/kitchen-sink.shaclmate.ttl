@@ -25,7 +25,7 @@
 
 :BlankNodeIdentifierStruct
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Struct node shape that can only have a blank node as an identifier" ;
+    rdfs:comment "Struct node shape that can only have a blank node as an identifier. This generates code without an identifier property." ;
     sh:nodeKind sh:BlankNode ;
     sh:property [
         sh:datatype xsd:string ;

@@ -1,7 +1,9 @@
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_dateSparqlWherePatterns: SnippetFactory = ({
+  rdfjsTermExpression,
   snippets,
   syntheticNamePrefix,
 }) =>
@@ -18,7 +20,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets.ValueSparqlWhere
           expression: {
             type: "operation",
             operator: "in",
-            args: [valueVariable, filter.in.map(inValue => ${snippets.literalFactory}.date(inValue, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime))],
+            args: [valueVariable, filter.in.map(inValue => ${snippets.literalFactory}.date(inValue, schema.kind === "Date" ? ${rdfjsTermExpression(xsd.date)} : ${rdfjsTermExpression(xsd.dateTime)}))],
           },
           lift: true,
           type: "filter",
@@ -30,7 +32,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets.ValueSparqlWhere
           expression: {
             type: "operation",
             operator: "<",
-            args: [valueVariable, ${snippets.literalFactory}.date(filter.maxExclusive, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime)],
+            args: [valueVariable, ${snippets.literalFactory}.date(filter.maxExclusive, schema.kind === "Date" ? ${rdfjsTermExpression(xsd.date)} : ${rdfjsTermExpression(xsd.dateTime)})],
           },
           lift: true,
           type: "filter"
@@ -42,7 +44,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets.ValueSparqlWhere
           expression: {
             type: "operation",
             operator: "<=",
-            args: [valueVariable, ${snippets.literalFactory}.date(filter.maxInclusive, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime)],
+            args: [valueVariable, ${snippets.literalFactory}.date(filter.maxInclusive, schema.kind === "Date" ? ${rdfjsTermExpression(xsd.date)} : ${rdfjsTermExpression(xsd.dateTime)})],
           },
           lift: true,
           type: "filter"
@@ -54,7 +56,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets.ValueSparqlWhere
           expression: {
             type: "operation",
             operator: ">",
-            args: [valueVariable, ${snippets.literalFactory}.date(filter.minExclusive, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime)],
+            args: [valueVariable, ${snippets.literalFactory}.date(filter.minExclusive, schema.kind === "Date" ? ${rdfjsTermExpression(xsd.date)} : ${rdfjsTermExpression(xsd.dateTime)})],
           },
           lift: true,
           type: "filter"
@@ -66,7 +68,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets.ValueSparqlWhere
           expression: {
             type: "operation",
             operator: ">=",
-            args: [valueVariable, ${snippets.literalFactory}.date(filter.minInclusive, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime)],
+            args: [valueVariable, ${snippets.literalFactory}.date(filter.minInclusive, schema.kind === "Date" ? ${rdfjsTermExpression(xsd.date)} : ${rdfjsTermExpression(xsd.dateTime)})],
           },
           lift: true,
           type: "filter"

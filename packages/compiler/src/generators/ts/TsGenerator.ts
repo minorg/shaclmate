@@ -5,18 +5,16 @@ import { GraphqlSchema } from "./GraphqlSchema.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
 import type { ObjectType } from "./ObjectType.js";
+import { Operation } from "./Operation.js";
 import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
+import { Service } from "./Service.js";
 import { SparqlObjectSetType } from "./SparqlObjectSetType.js";
-import type { TsFeature } from "./TsFeature.js";
+import { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 import { UberObjectDiscriminatedUnionType } from "./UberObjectDiscriminatedUnionType.js";
-
-function compareTsNamedType(left: Type, right: Type): number {
-  return left.name.unsafeCoerce().localeCompare(right.name.unsafeCoerce());
-}
 
 export class TsGenerator implements Generator {
   private readonly configuration?: Partial<TsGenerator.Configuration>;
@@ -112,8 +110,8 @@ export class TsGenerator implements Generator {
       }).declaration.toList(),
     );
 
-    declarations.push(
-      ...this.objectSetTypeDeclarations({
+    declarations = declarations.concat(
+      this.objectSetTypeDeclarations({
         configuration,
         namedObjectTypes: tsNamedObjectTypes,
         namedObjectDiscriminatedUnionTypes:
@@ -122,9 +120,69 @@ export class TsGenerator implements Generator {
       }),
     );
 
+    declarations = declarations.concat(
+      this.serviceDeclarations({
+        configuration,
+        services: ast_.services.map(
+          (astService) =>
+            new Service({
+              configuration,
+              comment: astService.comment,
+              label: astService.label,
+              logger: this.logger,
+              name: astService.name,
+              operations: astService.operations.map((astOperation) => {
+                const operation = new Operation({
+                  configuration,
+                  comment: astOperation.comment,
+                  error: astOperation.error.map((astType) => {
+                    switch (astType.kind) {
+                      case "DiscriminatedUnion":
+                        return typeFactory.createObjectDiscriminatedUnionType(
+                          astType,
+                        );
+                      case "Struct":
+                        return typeFactory.createObjectType(astType);
+                      default:
+                        astType satisfies never;
+                        throw new Error("should never reach this point");
+                    }
+                  }),
+                  label: astOperation.label,
+                  lazyBindings: (): readonly Operation.Binding[] =>
+                    astOperation.bindings.map(
+                      (astBinding) =>
+                        new Operation.HttpBinding({
+                          operation,
+                          request: astBinding.request,
+                          response: astBinding.response,
+                          reusables,
+                        }),
+                    ),
+                  logger: this.logger,
+                  name: astOperation.name,
+                  parameter: astOperation.parameter.map((astType) =>
+                    typeFactory.createObjectType(astType),
+                  ),
+                  result: astOperation.result.map((astType) =>
+                    typeFactory.createType(astType),
+                  ),
+                  reusables,
+                  service: { name: astService.name },
+                });
+                return operation;
+              }),
+              reusables,
+            }),
+        ),
+      }),
+    );
+
     if (configuration.features.has("GraphQL")) {
       const graphqlNamedObjectTypes = tsNamedObjectTypes.filter(
-        (tsNamedObjectType) => !tsNamedObjectType.synthetic,
+        (tsNamedObjectType) =>
+          tsNamedObjectType.identifierProperty.isJust() &&
+          !tsNamedObjectType.synthetic,
       );
       const graphqlNamedObjectDiscriminatedUnionTypes =
         tsNamedObjectDiscriminatedUnionTypes;
@@ -149,7 +207,7 @@ export class TsGenerator implements Generator {
       joinCode(reusables.snippets.ifUsed, { on: "\n\n" }),
     );
 
-    return joinCode(declarations).toString({});
+    return joinCode(declarations, { on: "\n\n" }).toString({});
   }
 
   private objectSetTypeDeclarations({
@@ -170,7 +228,9 @@ export class TsGenerator implements Generator {
       logger: this.logger,
       namedObjectTypes: namedObjectTypes.filter(
         (namedObjectType) =>
-          !namedObjectType.extern && !namedObjectType.synthetic,
+          namedObjectType.identifierProperty.isJust() &&
+          !namedObjectType.extern &&
+          !namedObjectType.synthetic,
       ),
       namedObjectDiscriminatedUnionTypes,
       reusables,
@@ -196,6 +256,32 @@ export class TsGenerator implements Generator {
 
     return declarations;
   }
+
+  private serviceDeclarations({
+    configuration,
+    services,
+  }: {
+    configuration: TsGenerator.Configuration;
+    services: readonly Service[];
+  }): readonly Code[] {
+    return services.flatMap((service) => {
+      const declarations: Code[] = [];
+      if (configuration.features.has("Service")) {
+        declarations.push(service.interfaceDeclaration);
+      }
+      if (configuration.features.has("LoggingService")) {
+        declarations.push(service.loggingClassDeclaration);
+      }
+      if (configuration.features.has("ServiceHttpApi")) {
+        declarations.push(service.httpApiFactoryFunction);
+      }
+      return declarations;
+    });
+  }
+}
+
+function compareTsNamedType(left: Type, right: Type): number {
+  return left.name.unsafeCoerce().localeCompare(right.name.unsafeCoerce());
 }
 
 export namespace TsGenerator {
@@ -227,69 +313,6 @@ export namespace TsGenerator {
       syntheticNamePrefix: "$",
     };
 
-    const featureDependenciesStatic: Record<TsFeature, TsFeature[]> = {
-      GraphQL: ["ObjectSet"],
-
-      // Alias for other features, not dependencies per se
-      JSON: ["Object.JSON"],
-
-      "Object.create": ["Object.schema", "Object.toString", "Object.type"],
-
-      "Object.equals": ["Object.type"],
-
-      "Object.filter": ["Object.type"],
-
-      "Object.fromJson": ["Object.create", "Object.JSON.type", "Object.type"],
-
-      "Object.fromRdf": ["Object.create", "Object.schema"],
-
-      "Object.hash": [],
-
-      // Alias for other features, not dependencies per se
-      "Object.JSON": [
-        "Object.fromJson",
-        "Object.JSON.parse",
-        "Object.JSON.schema",
-        "Object.JSON.type",
-        "Object.JSON.uiSchema",
-        "Object.toJson",
-      ],
-
-      "Object.JSON.parse": ["Object.JSON.schema", "Object.JSON.type"],
-
-      "Object.JSON.type": [],
-
-      "Object.JSON.schema": ["Object.JSON.type"],
-
-      "Object.JSON.uiSchema": [],
-
-      // Alias for other features, not dependencies per se
-      "Object.RDF": ["Object.fromRdf", "Object.toRdf"],
-
-      "Object.schema": [],
-
-      "Object.toJson": ["Object.JSON.type", "Object.type"],
-
-      "Object.toRdf": ["Object.schema", "Object.type"],
-
-      "Object.toString": ["Object.type"],
-
-      "Object.SPARQL": ["Object.schema"],
-
-      "Object.type": [], // Implies Object.Identifier
-
-      ObjectSet: ["Object.filter"],
-
-      // Alias for other features, not dependencies per se
-      RDF: ["Object.RDF", "RdfjsDatasetObjectSet"],
-
-      RdfjsDatasetObjectSet: ["Object.fromRdf", "ObjectSet"],
-
-      SPARQL: ["Object.SPARQL", "SparqlObjectSet"],
-
-      SparqlObjectSet: ["Object.SPARQL", "ObjectSet"],
-    };
-
     export function finalize(
       ast: ast.Ast,
       partialConfiguration?: Partial<Configuration>,
@@ -298,7 +321,7 @@ export namespace TsGenerator {
         partialConfiguration?.features ?? default_.features!;
 
       const featureDependencies = Object.fromEntries(
-        Object.entries(featureDependenciesStatic).map(([k, v]) => [k, [...v]]),
+        Object.entries(TsFeature.dependencies).map(([k, v]) => [k, [...v]]),
       ) as Record<TsFeature, TsFeature[]>;
 
       if (ast.lazyTypesCount > 0) {

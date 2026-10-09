@@ -75,13 +75,11 @@ function synthesizePartialAstStructType(
   {
     identifierType,
   }: {
-    identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
+    identifierType: ast.IdentifierType | ast.IriType;
   },
 ): ast.StructType {
   let syntheticName: string;
   switch (identifierType.kind) {
-    case "BlankNode":
-      throw new Error("should never happen");
     case "Identifier":
       syntheticName = "DefaultPartial";
       break;
@@ -113,6 +111,12 @@ function synthesizePartialAstStructType(
     toRdfTypes: [],
     tsImports: [],
   });
+  partialAstStructType.addField(
+    new ast.StructType.IdentifierField({
+      structType: partialAstStructType,
+      type: identifierType,
+    }),
+  );
 
   this.syntheticAstStructTypes.push(partialAstStructType);
 
@@ -221,7 +225,7 @@ export function transformPropertyShapeToAstStructTypeField(
     propertyShape: input.PropertyShape;
     structType: ast.StructType;
   },
-): Either<Error, Maybe<ast.StructType.Field>> {
+): Either<Error, Maybe<ast.StructType.ShaclField>> {
   if (propertyShape.ignore) {
     return Either.of(Maybe.empty());
   }
@@ -309,7 +313,6 @@ export function transformPropertyShapeToAstStructTypeField(
 
       let astPartialItemType: ast.StructType | ast.StructDiscriminatedUnionType;
       switch (astItemType.kind) {
-        case "BlankNode":
         case "Identifier":
         case "Iri":
           astPartialItemType = synthesizePartialAstStructType.call(this, {
@@ -335,6 +338,33 @@ export function transformPropertyShapeToAstStructTypeField(
               `${propertyShape} has a resolve with an incompatible partial type ${astItemType.kind}`,
             ),
           );
+      }
+
+      const astPartialItemIdentifierType =
+        astPartialItemType.kind === "Struct"
+          ? astPartialItemType.identifierType
+          : ast.StructCompoundType.identifierType(astPartialItemType);
+      const astResolveItemIdentifierType =
+        astResolveItemType.kind === "Struct"
+          ? astResolveItemType.identifierType
+          : ast.StructCompoundType.identifierType(astResolveItemType);
+
+      if (
+        astPartialItemIdentifierType.kind !== astResolveItemIdentifierType.kind
+      ) {
+        return Left(
+          new Error(
+            `${propertyShape} has a resolve with a different identifier type (${astResolveItemIdentifierType.kind}) than the partial's identifier type (${astPartialItemIdentifierType.kind})`,
+          ),
+        );
+      }
+
+      if (astPartialItemIdentifierType.kind === "BlankNode") {
+        return Left(
+          new Error(
+            `${propertyShape} has a ${astPartialItemIdentifierType.kind} identifier type, which is incompatible with shaclmate:resolve`,
+          ),
+        );
       }
 
       const astAbstractTypeProperties = {
@@ -400,7 +430,7 @@ export function transformPropertyShapeToAstStructTypeField(
 
     return Either.of(
       Maybe.of(
-        new ast.StructType.Field({
+        new ast.StructType.ShaclField({
           comment: propertyShape.comment,
           description: propertyShape.description,
           display: propertyShape.display,

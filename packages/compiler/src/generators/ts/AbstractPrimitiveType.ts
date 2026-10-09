@@ -73,6 +73,12 @@ export abstract class AbstractPrimitiveType<
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
     return variables.value;
   }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
+    return variables.value;
+  }
 }
 
 export namespace AbstractPrimitiveType {

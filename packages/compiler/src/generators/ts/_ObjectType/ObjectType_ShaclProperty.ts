@@ -123,36 +123,40 @@ export class ObjectType_ShaclProperty<
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
-    let schema = this.type.jsonSchema({
-      context: "property",
-    });
-
-    const meta: Record<string, string> = {
-      // id: `${this.namedObjectType.name}-${this.name}`, // id's must be unique
-    };
-    this.comment.alt(this.description).ifJust((description) => {
-      meta["description"] = description;
-    });
-    this.label.ifJust((label) => {
-      meta["title"] = label;
-    });
-    if (Object.keys(meta).length > 0) {
-      schema = code`${schema}.meta(${meta})`;
+  get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
+    let optional: boolean;
+    switch (this.type.kind) {
+      case "Option":
+        optional = true;
+        break;
+      case "Set":
+        optional = this.type.minCount === 0n;
+        break;
+      default:
+        optional = false;
+        break;
     }
 
     return Maybe.of({
-      key: this.name,
-      schema,
+      description: this.description.alt(this.comment),
+      label: this.label,
+      name: this.name,
+      optional: optional,
+      recursive: this.recursive,
+      type: this.type.jsonType(),
+      uiSchemaElement: ({ variables }) => {
+        const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
+        return this.type
+          .jsonType()
+          .uiSchemaElement({ variables })
+          .altLazy(() =>
+            Maybe.of(
+              code`{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
+            ),
+          )
+          .unsafeCoerce();
+      },
     });
-  }
-
-  @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    const typeJsonType = this.type.jsonType();
-    return Maybe.of(
-      code`${!this.mutable ? "readonly " : ""}${this.name}${typeJsonType.optional ? "?" : ""}: ${typeJsonType.requiredExpression}`,
-    );
   }
 
   override get schema(): Maybe<Code> {
@@ -284,21 +288,6 @@ export class ObjectType_ShaclProperty<
     ];
   }
 
-  jsonUiSchemaElement({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["jsonUiSchemaElement"]
-  >[0]): Maybe<Code> {
-    const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
-    return this.type
-      .jsonUiSchemaElement({ variables: { scopePrefix: scope } })
-      .altLazy(() =>
-        Maybe.of(
-          code`{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
-        ),
-      );
-  }
-
   override sparqlConstructTriplesExpression({
     variables,
   }: Parameters<
@@ -387,6 +376,17 @@ export class ObjectType_ShaclProperty<
         },
       )}, ${variables.graph});`,
     ];
+  }
+
+  override toLoggableInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toLoggableInitializer"]
+  >[0]): Maybe<Code> {
+    const { object: objectVariable, ...otherVariables } = variables;
+    return Maybe.of(
+      code`${literalOf(this.name)}: ${this.type.toLoggableExpression({ variables: { ...otherVariables, value: code`${objectVariable}.${this.name}` } })}`,
+    );
   }
 
   override toStringInitializer({

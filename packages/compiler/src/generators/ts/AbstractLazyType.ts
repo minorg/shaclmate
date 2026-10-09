@@ -44,10 +44,6 @@ export abstract class AbstractLazyType<
     return code`((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
   }
 
-  override get inlineExpression(): Code {
-    return this.runtimeClass.name;
-  }
-
   @Memoize()
   get filterFunction(): Code {
     return code`((filter: ${this.filterType}, value: ${this.expression}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
@@ -64,6 +60,10 @@ export abstract class AbstractLazyType<
   @Memoize()
   override get hashFunction(): Code {
     return code`((hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName}))`;
+  }
+
+  override get inlineExpression(): Code {
+    return this.runtimeClass.name;
   }
 
   @Memoize()
@@ -113,28 +113,26 @@ export abstract class AbstractLazyType<
     );
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractType["jsonSchema"]>[0],
-  ): Code {
-    return this.partialType.jsonSchema(parameters);
-  }
-
   override jsonType(
     parameters?: Parameters<AbstractType["jsonType"]>[0],
   ): AbstractType.JsonType {
     return this.partialType.jsonType(parameters);
   }
 
-  override jsonUiSchemaElement(
-    parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
-  ): Maybe<Code> {
-    return this.partialType.jsonUiSchemaElement(parameters);
-  }
-
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     return this.partialType.toJsonExpression({
+      variables: {
+        value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
+      },
+    });
+  }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
+    return this.partialType.toLoggableExpression({
       variables: {
         value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
       },
@@ -231,6 +229,5 @@ export namespace AbstractLazyType {
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
-  export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
 }
