@@ -1,7 +1,7 @@
 import type { Logger } from "@rdfx/logger";
 
 import type { Maybe } from "purify-ts";
-
+import type { AbstractType } from "../AbstractType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { TsGenerator } from "../TsGenerator.js";
@@ -10,6 +10,7 @@ import type { Code } from "../ts-poet-wrapper.js";
 
 export abstract class ObjectType_AbstractProperty {
   protected readonly configuration: TsGenerator.Configuration;
+  protected readonly jsonTypeFactory: AbstractType.JsonTypeFactory;
   protected readonly logger: Logger;
   protected readonly objectType: { readonly name: Maybe<string> };
   protected readonly reusables: Reusables;
@@ -61,17 +62,15 @@ export abstract class ObjectType_AbstractProperty {
   abstract readonly hashFunctionParameter: Maybe<Code>;
 
   /**
-   * zod object key: schema.
+   * This property as a Member of a JsonObjectType.
    */
-  abstract readonly jsonSchema: Maybe<{
-    readonly key: string;
-    readonly schema: Code;
+  abstract readonly jsonObjectMember: Maybe<{
+    readonly description: Maybe<string>;
+    readonly label: Maybe<string>;
+    readonly name: string;
+    readonly recursive: boolean;
+    readonly type: AbstractType.JsonType;
   }>;
-
-  /**
-   * Signature of the property when serialized to JSON.
-   */
-  abstract readonly jsonSignature: Maybe<Code>;
 
   /**
    * Property type discriminant e.g., "Shacl".
@@ -105,18 +104,21 @@ export abstract class ObjectType_AbstractProperty {
 
   constructor({
     configuration,
+    jsonTypeFactory,
     logger,
     name,
     objectType,
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
+    jsonTypeFactory: AbstractType.JsonTypeFactory;
     logger: Logger;
     name: string;
     objectType: { readonly name: Maybe<string> };
     reusables: Reusables;
   }) {
     this.configuration = configuration;
+    this.jsonTypeFactory = jsonTypeFactory;
     this.logger = logger;
     this.name = name;
     this.objectType = objectType;
@@ -161,6 +163,7 @@ export abstract class ObjectType_AbstractProperty {
    * Initializer (name: value) from a JSON object.
    */
   abstract fromJsonInitializer(parameters: {
+    discriminated: boolean;
     variables: {
       jsonObject: Code;
     };
@@ -242,6 +245,7 @@ export abstract class ObjectType_AbstractProperty {
    * Initializer (name: value) to JSON.
    */
   abstract toJsonInitializer(parameters: {
+    discriminated: boolean;
     variables: { object: Code };
   }): Maybe<Code>;
 

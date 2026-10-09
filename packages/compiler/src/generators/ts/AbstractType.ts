@@ -5,7 +5,10 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType_ConversionFunction } from "./_AbstractType/AbstractType_ConversionFunction.js";
 import type { AbstractType_DiscriminantProperty } from "./_AbstractType/AbstractType_DiscriminantProperty.js";
 import { AbstractType_GraphqlType } from "./_AbstractType/AbstractType_GraphqlType.js";
-import { AbstractType_JsonType } from "./_AbstractType/AbstractType_JsonType.js";
+import type {
+  AbstractType_JsonType,
+  AbstractType_JsonTypeFactory,
+} from "./_AbstractType/AbstractType_JsonType.js";
 import { AbstractType_JsType } from "./_AbstractType/AbstractType_JsType.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import {
@@ -25,6 +28,11 @@ export abstract class AbstractType extends AbstractConstruct {
    * Inline TypeScript type expression.
    */
   protected abstract readonly inlineExpression: Code;
+
+  /**
+   * Factory for AbstractType.JsonType.
+   */
+  protected readonly jsonTypeFactory: AbstractType.JsonTypeFactory;
 
   /**
    * Function that takes a value of one or more source types to this type and returns Either<Error, ThisType>.
@@ -189,14 +197,17 @@ export abstract class AbstractType extends AbstractConstruct {
   abstract readonly valueSparqlWherePatternsFunction: Code;
 
   constructor({
+    jsonTypeFactory,
     name,
     shapeIdentifier,
     ...superParameters
   }: {
+    jsonTypeFactory: AbstractType.JsonTypeFactory;
     name: Maybe<string>;
     shapeIdentifier: BlankNode | NamedNode;
   } & ConstructorParameters<typeof AbstractConstruct>[0]) {
     super(superParameters);
+    this.jsonTypeFactory = jsonTypeFactory;
     this.name = name;
     this.shapeIdentifier = shapeIdentifier;
   }
@@ -273,7 +284,7 @@ ${joinCode(
    * An expression that converts this type's JSON type to an Either<Error, ThisType>.
    */
   abstract fromJsonExpression(parameters: {
-    includeDiscriminantProperty?: boolean;
+    discriminated?: boolean;
     variables: {
       value: Code;
     };
@@ -290,24 +301,10 @@ ${joinCode(
   }): Code;
 
   /**
-   * Zod schema for the JSON type of this type.
-   *
-   * This method is called in two contexts:
-   * "property": from a ShaclProperty, while generating the z.object properties of an ObjectType
-   * "type": from another Type e.g., an OptionType or DiscriminatedUnionType
-   *
-   * z.lazy() should only be returned for "property".
+   * JSON-compatible version of the type for use outside discriminated unions.
    */
-  abstract jsonSchema(parameters: {
-    includeDiscriminantProperty?: boolean;
-    context: "property" | "type";
-  }): Code;
-
-  /**
-   * JSON-compatible version of the type.
-   */
-  abstract jsonType(parameters?: {
-    includeDiscriminantProperty?: boolean;
+  abstract jsonType(parameters: {
+    discriminated?: boolean;
   }): AbstractType.JsonType;
 
   /**
@@ -318,11 +315,10 @@ ${joinCode(
   }): Maybe<Code>;
 
   /**
-   * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence
-   * of the correct JSON-LD context.
+   * An expression that converts a value of this type to a JSON compatible value.
    */
   abstract toJsonExpression(parameters: {
-    includeDiscriminantProperty?: boolean;
+    discriminated?: boolean;
     variables: {
       value: Code;
     };
@@ -387,6 +383,6 @@ export namespace AbstractType {
   export type GraphqlType = AbstractType_GraphqlType;
   export type JsType = AbstractType_JsType;
   export const JsType = AbstractType_JsType;
-  export const JsonType = AbstractType_JsonType;
   export type JsonType = AbstractType_JsonType;
+  export type JsonTypeFactory = AbstractType_JsonTypeFactory;
 }
