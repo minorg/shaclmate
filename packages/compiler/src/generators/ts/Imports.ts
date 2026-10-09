@@ -23,6 +23,12 @@ export class Imports {
   readonly GraphQLUnionType = imp("GraphQLUnionType@graphql");
   readonly Hono = imp("Hono@hono");
   readonly HonoEnv = imp("t:Env@hono");
+  readonly HonoValidationTargets = imp(
+    "t:ValidationTargets:HonoValidationTargets@hono",
+  );
+  readonly honoZodValidator = imp(
+    "zValidator:honoZodValidator@@hono/zod-validator",
+  );
   readonly Left = imp("Left@purify-ts");
   readonly Literal = imp("t:Literal@@rdfjs/types");
   readonly LiteralFactory = imp("LiteralFactory@@rdfx/literal");
@@ -43,4 +49,5 @@ export class Imports {
   readonly sparqljs = imp("sparqljs*sparqljs");
   readonly Variable = imp("t:Variable@@rdfjs/types");
   readonly z = imp("z@zod");
+  readonly ZodType = imp("t:ZodType@zod");
 }

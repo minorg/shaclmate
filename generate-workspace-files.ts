@@ -12,6 +12,7 @@ const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
   "@biomejs/biome": "2.3.10",
+  "@hono/zod-validator": "~0.9.1",
   "@jsonforms/core": "3.5.1",
   "@jsonforms/material-renderers": "3.5.1",
   "@jsonforms/react": "3.5.1",
@@ -294,6 +295,7 @@ const workspaces = {
     rest: {
       dependencies: {
         external: [
+          "@hono/zod-validator",
           "@rdfjs/types",
           "@rdfx/collection",
           "@rdfx/data-factory",

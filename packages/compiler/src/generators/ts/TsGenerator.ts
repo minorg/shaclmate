@@ -131,44 +131,47 @@ export class TsGenerator implements Generator {
               label: astService.label,
               logger: this.logger,
               name: astService.name,
-              operations: astService.operations.map(
-                (astOperation) =>
-                  new Operation({
-                    bindings: astOperation.bindings.map(
-                      (astBinding) =>
-                        new Operation.HttpBinding(
-                          astBinding.request,
-                          astBinding.response,
-                        ),
-                    ),
-                    configuration,
-                    comment: astOperation.comment,
-                    error: astOperation.error.map((astType) => {
-                      switch (astType.kind) {
-                        case "DiscriminatedUnion":
-                          return typeFactory.createObjectDiscriminatedUnionType(
-                            astType,
-                          );
-                        case "Struct":
-                          return typeFactory.createObjectType(astType);
-                        default:
-                          astType satisfies never;
-                          throw new Error("should never reach this point");
-                      }
-                    }),
-                    label: astOperation.label,
-                    logger: this.logger,
-                    name: astOperation.name,
-                    parameter: astOperation.parameter.map((astType) =>
-                      typeFactory.createObjectType(astType),
-                    ),
-                    result: astOperation.result.map((astType) =>
-                      typeFactory.createType(astType),
-                    ),
-                    reusables,
-                    service: { name: astService.name },
+              operations: astService.operations.map((astOperation) => {
+                const operation = new Operation({
+                  configuration,
+                  comment: astOperation.comment,
+                  error: astOperation.error.map((astType) => {
+                    switch (astType.kind) {
+                      case "DiscriminatedUnion":
+                        return typeFactory.createObjectDiscriminatedUnionType(
+                          astType,
+                        );
+                      case "Struct":
+                        return typeFactory.createObjectType(astType);
+                      default:
+                        astType satisfies never;
+                        throw new Error("should never reach this point");
+                    }
                   }),
-              ),
+                  label: astOperation.label,
+                  lazyBindings: (): readonly Operation.Binding[] =>
+                    astOperation.bindings.map(
+                      (astBinding) =>
+                        new Operation.HttpBinding({
+                          operation,
+                          request: astBinding.request,
+                          response: astBinding.response,
+                          reusables,
+                        }),
+                    ),
+                  logger: this.logger,
+                  name: astOperation.name,
+                  parameter: astOperation.parameter.map((astType) =>
+                    typeFactory.createObjectType(astType),
+                  ),
+                  result: astOperation.result.map((astType) =>
+                    typeFactory.createType(astType),
+                  ),
+                  reusables,
+                  service: { name: astService.name },
+                });
+                return operation;
+              }),
               reusables,
             }),
         ),

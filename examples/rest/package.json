@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@hono/zod-validator": "~0.9.1",
     "@rdfjs/types": "~2.0.1",
     "@rdfx/collection": "0.0.57",
     "@rdfx/data-factory": "0.0.57",
@@ -11,6 +12,8 @@
   "files": [
     "dist/rest-decorators.shaclmate.d.ts",
     "dist/rest-decorators.shaclmate.js",
+    "dist/rest-http-api.shaclmate.d.ts",
+    "dist/rest-http-api.shaclmate.js",
     "dist/rest-types.shaclmate.d.ts",
     "dist/rest-types.shaclmate.js"
   ],

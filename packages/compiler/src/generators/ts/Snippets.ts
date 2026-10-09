@@ -2,6 +2,7 @@ import type { NamedNode } from "@rdfjs/types";
 import { TermMap } from "@rdfx/collection";
 import type { Logger } from "@rdfx/logger";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
@@ -177,6 +178,7 @@ import { snippets_validateMaybe } from "./_snippets/snippets_validateMaybe.js";
 import { snippets_validateMutableArray } from "./_snippets/snippets_validateMutableArray.js";
 import { snippets_wrap_FromRdfResourceFunction } from "./_snippets/snippets_wrap_FromRdfResourceFunction.js";
 import { snippets_wrap_ToRdfResourceFunction } from "./_snippets/snippets_wrap_ToRdfResourceFunction.js";
+import { snippets_zValidator } from "./_snippets/snippets_zValidator.js";
 import type { Imports } from "./Imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Snippet } from "./Snippet.js";
@@ -812,35 +814,6 @@ export class Snippets {
     return this.snippet(snippets_identityValidationFunction);
   }
 
-  rdfjsNamedNode(namedNode: NamedNode): Maybe<Snippet> {
-    {
-      const snippet = this.rdfjsNamedNodeSnippets.get(namedNode);
-      if (snippet !== undefined) {
-        return snippet;
-      }
-    }
-
-    for (const [prefix, namespace] of Object.entries({
-      rdf,
-      rdfs,
-      xsd,
-    } as const)) {
-      if (namedNode.value.startsWith(namespace[""].value)) {
-        const variable = `${this.configuration.syntheticNamePrefix}${prefix}_${namedNode.value.substring(namespace[""].value.length)}`;
-        const snippet = Maybe.of(
-          conditionalOutput(
-            variable,
-            code`const ${variable} = ${this.imports.dataFactory}.namedNode(${literalOf(namedNode.value)})`,
-          ),
-        );
-        this.rdfjsNamedNodeSnippets.set(namedNode, snippet);
-        return snippet;
-      }
-    }
-    this.rdfjsNamedNodeSnippets.set(namedNode, Maybe.empty());
-    return Maybe.empty();
-  }
-
   get ifUsed(): Code[] {
     const snippets: Snippet[] = [];
 
@@ -1132,8 +1105,42 @@ export class Snippets {
     return this.snippet(snippets_wrap_ToRdfResourceFunction);
   }
 
+  @Memoize()
+  get zValidator(): Snippet {
+    return this.snippet(snippets_zValidator);
+  }
+
   protected get snippets(): Snippets {
     return this;
+  }
+
+  rdfjsNamedNode(namedNode: NamedNode): Maybe<Snippet> {
+    {
+      const snippet = this.rdfjsNamedNodeSnippets.get(namedNode);
+      if (snippet !== undefined) {
+        return snippet;
+      }
+    }
+
+    for (const [prefix, namespace] of Object.entries({
+      rdf,
+      rdfs,
+      xsd,
+    } as const)) {
+      if (namedNode.value.startsWith(namespace[""].value)) {
+        const variable = `${this.configuration.syntheticNamePrefix}${prefix}_${namedNode.value.substring(namespace[""].value.length)}`;
+        const snippet = Maybe.of(
+          conditionalOutput(
+            variable,
+            code`const ${variable} = ${this.imports.dataFactory}.namedNode(${literalOf(namedNode.value)})`,
+          ),
+        );
+        this.rdfjsNamedNodeSnippets.set(namedNode, snippet);
+        return snippet;
+      }
+    }
+    this.rdfjsNamedNodeSnippets.set(namedNode, Maybe.empty());
+    return Maybe.empty();
   }
 
   private snippet(snippetFactory: SnippetFactory): Snippet {

@@ -97,7 +97,10 @@ function transformOperation(
             )
             .orDefault([]),
         );
-        const parameterSources = new Map<string, "query" | "path">();
+        const parameterSources = new Map<
+          string,
+          ast.Operation.HttpBinding.Request.ParameterSource
+        >();
 
         for (const part of parsedUrlTemplate.ast.parts) {
           if (part.type === "literal") {
@@ -127,10 +130,17 @@ function transformOperation(
           }
         }
 
+        let bodyParametersCount = 0;
+        for (const parameterName of parameterNames) {
+          if (!parameterSources.has(parameterName)) {
+            parameterSources.set(parameterName, "body");
+            bodyParametersCount++;
+          }
+        }
+
         let method = inputRequest.method.extract();
         if (!method) {
-          if (parameterSources.size < parameterNames.size) {
-            // There are unaccounted-for parameters - must be in the body.
+          if (bodyParametersCount > 0) {
             method = "POST";
           } else {
             method = "GET";
@@ -139,8 +149,7 @@ function transformOperation(
 
         let contentType = inputRequest.contentType.extract();
         if (!contentType) {
-          if (parameterSources.size < parameterNames.size) {
-            // There are unaccounted-for parameters - put them in a JSON body.
+          if (bodyParametersCount > 0) {
             contentType = "application/json";
           }
         }
@@ -148,7 +157,8 @@ function transformOperation(
         return {
           contentType: Maybe.fromNullable(contentType),
           method,
-          uriTemplate: parsedUrlTemplate,
+          parameterSources,
+          uriTemplate: parsedUrlTemplate.ast,
         } satisfies ast.Operation.HttpBinding.Request;
       });
     }

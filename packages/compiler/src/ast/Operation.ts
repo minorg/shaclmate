@@ -71,7 +71,12 @@ export namespace Operation {
     export interface Request {
       readonly contentType: Maybe<HttpRequestContentType>;
       readonly method: HttpRequestMethod;
-      readonly uriTemplate: ReturnType<typeof uriTemplate.parse>;
+      readonly parameterSources: ReadonlyMap<string, Request.ParameterSource>;
+      readonly uriTemplate: ReturnType<typeof uriTemplate.parse>["ast"];
+    }
+
+    export namespace Request {
+      export type ParameterSource = "body" | "path" | "query";
     }
 
     export interface Response {
