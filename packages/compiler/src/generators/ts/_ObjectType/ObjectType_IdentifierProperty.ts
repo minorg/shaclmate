@@ -4,7 +4,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
+import { AbstractType } from "../AbstractType.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { IriType } from "../IriType.js";
@@ -89,31 +89,19 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
-    let schema: Code;
-    if (this.type.in_.length > 0 && this.type.kind === "Iri") {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      schema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.type.in_.map((iri) => iri.value))})`;
-    } else {
-      schema = code`${this.reusables.imports.z}.string().min(1)`;
-    }
-
+  get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
     return Maybe.of({
-      key: "@id",
-      schema,
+      description: Maybe.empty(),
+      label: Maybe.empty(),
+      name: "@id",
+      recursive: this.recursive,
+      type:
+        this.type.in_.length > 0 && this.type.kind === "Iri"
+          ? this.jsonTypeFactory.string({
+              in_: this.type.in_.map((iri) => iri.value),
+            })
+          : this.jsonTypeFactory.string({ minLength: 1 }),
     });
-  }
-
-  @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    if (this.type.in_.length > 0) {
-      return Maybe.of(
-        code`readonly "@id": ${this.type.in_.map((iri) => `"${iri.value}"`).join(" | ")}`,
-      );
-    }
-
-    return Maybe.of(code`readonly "@id": string`);
   }
 
   override get schema(): Maybe<Code> {

@@ -387,30 +387,32 @@ export class ObjectType extends AbstractType {
     return variables.value;
   }
 
-  override jsonSchema({
-    context,
-  }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    return this.name
-      .map((name) => {
-        let expression = code`${name}.Json.schema()`;
-        if (
-          context === "property" &&
-          this.properties.some((property) => property.recursive)
-        ) {
-          expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${name}.Json> => ${expression})`;
-        }
-        return expression;
-      })
-      .orDefaultLazy(() => ObjectType_jsonSchemaExpression.call(this));
-  }
+  // override jsonSchema({
+  //   context,
+  // }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
+  //   return this.name
+  //     .map((name) => {
+  //       let expression = code`${name}.Json.schema()`;
+  //       if (
+  //         context === "property" &&
+  //         this.properties.some((property) => property.recursive)
+  //       ) {
+  //         expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${name}.Json> => ${expression})`;
+  //       }
+  //       return expression;
+  //     })
+  //     .orDefaultLazy(() => ObjectType_jsonSchemaExpression.call(this));
+  // }
 
   @Memoize()
   override jsonType(): AbstractType.JsonType {
-    return new AbstractType.JsonType(
-      this.name
-        .map((name) => code`${name}.Json`)
-        .orDefaultLazy(() => ObjectType_jsonTypeExpression.call(this)),
-    );
+    return this.jsonTypeFactory.object({
+      alias: this.name.map((name) => code`${name}.Json`),
+      members: (memberFactory) =>
+        this.properties.flatMap((property) =>
+          property.jsonObjectMember.map(memberFactory).toList(),
+        ),
+    });
   }
 
   override jsonUiSchemaElement({

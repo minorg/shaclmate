@@ -50,18 +50,16 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
+  get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
     return Maybe.of({
-      key: this.jsonName,
-      schema: code`${this.reusables.imports.z}.literal(${literalOf(this.value)})`,
+      description: Maybe.empty(),
+      label: Maybe.empty(),
+      name: this.jsonName,
+      recursive: this.recursive,
+      type: this.jsonTypeFactory.string({
+        in_: [this.value],
+      }),
     });
-  }
-
-  @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    return Maybe.of(
-      code`readonly "${this.jsonName}": ${literalOf(this.value)}`,
-    );
   }
 
   override get schema(): Maybe<Code> {

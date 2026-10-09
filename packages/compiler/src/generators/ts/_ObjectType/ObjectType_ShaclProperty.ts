@@ -123,36 +123,14 @@ export class ObjectType_ShaclProperty<
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
-    let schema = this.type.jsonSchema({
-      context: "property",
-    });
-
-    const meta: Record<string, string> = {
-      // id: `${this.namedObjectType.name}-${this.name}`, // id's must be unique
-    };
-    this.comment.alt(this.description).ifJust((description) => {
-      meta["description"] = description;
-    });
-    this.label.ifJust((label) => {
-      meta["title"] = label;
-    });
-    if (Object.keys(meta).length > 0) {
-      schema = code`${schema}.meta(${meta})`;
-    }
-
+  get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
     return Maybe.of({
-      key: this.name,
-      schema,
+      description: this.description.alt(this.comment),
+      label: this.label,
+      name: this.name,
+      recursive: this.recursive,
+      type: this.type.jsonType(),
     });
-  }
-
-  @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    const typeJsonType = this.type.jsonType();
-    return Maybe.of(
-      code`${!this.mutable ? "readonly " : ""}${this.name}${typeJsonType.optional ? "?" : ""}: ${typeJsonType.requiredExpression}`,
-    );
   }
 
   override get schema(): Maybe<Code> {

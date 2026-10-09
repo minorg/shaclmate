@@ -134,21 +134,11 @@ export class OptionType<
     return code`${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    return code`${this.itemType.jsonSchema(parameters)}.optional()`;
-  }
-
   @Memoize()
   override jsonType(
     parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
   ): AbstractContainerType.JsonType {
-    const itemTypeJsonType = this.itemType.jsonType(parameters);
-    invariant(!itemTypeJsonType.optional);
-    return new AbstractContainerType.JsonType(itemTypeJsonType.expression, {
-      optional: true,
-    });
+    return this.jsonTypeFactory.option(this.itemType.jsonType(parameters));
   }
 
   override jsonUiSchemaElement(

@@ -130,28 +130,15 @@ export class SetType<
     )})))`;
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
-    if (this.minCount > 0n) {
-      schema = code`${schema}.nonempty().min(${this.minCount})`;
-    } else {
-      schema = code`${schema}.optional()`;
-    }
-    if (!this._mutable) {
-      schema = code`${schema}.readonly()`;
-    }
-    return schema;
-  }
-
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
-    const name = code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().expression})[]`;
+    const itemJsonType = this.itemType.jsonType();
     if (this.minCount === 0n) {
-      return new AbstractCollectionType.JsonType(name, { optional: true });
+      return this.jsonTypeFactory.option(itemJsonType);
     }
-    return new AbstractCollectionType.JsonType(name);
+    return this.jsonTypeFactory.array(itemJsonType, {
+      minCount: this.minCount,
+    });
   }
 
   override toRdfResourceValuesExpression({
