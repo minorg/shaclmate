@@ -85,10 +85,6 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     return [];
   }
 
-  override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
   override sparqlConstructTriplesExpression({
     variables,
   }: Parameters<

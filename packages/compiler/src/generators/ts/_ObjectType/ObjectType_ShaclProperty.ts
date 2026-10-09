@@ -124,11 +124,24 @@ export class ObjectType_ShaclProperty<
 
   @Memoize()
   get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
+    let optional: boolean;
+    switch (this.type.kind) {
+      case "Option":
+        optional = true;
+        break;
+      case "Set":
+        optional = this.type.minCount === 0n;
+        break;
+      default:
+        optional = false;
+        break;
+    }
+
     return Maybe.of({
       description: this.description.alt(this.comment),
       label: this.label,
       name: this.name,
-      optional: this.type.kind === "Option",
+      optional: optional,
       recursive: this.recursive,
       type: this.type.jsonType(),
       uiSchemaElement: Maybe.of(({ variables }) => {

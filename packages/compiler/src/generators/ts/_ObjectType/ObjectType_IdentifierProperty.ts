@@ -94,13 +94,24 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       description: Maybe.empty(),
       label: Maybe.empty(),
       name: "@id",
+      optional: false,
       recursive: this.recursive,
       type:
         this.type.in_.length > 0 && this.type.kind === "Iri"
           ? this.jsonTypeFactory.string({
               in_: this.type.in_.map((iri) => iri.value),
+              minLength: Maybe.empty(),
+              name: Maybe.empty(),
             })
-          : this.jsonTypeFactory.string({ minLength: 1 }),
+          : this.jsonTypeFactory.string({
+              in_: [],
+              minLength: Maybe.of(1n),
+              name: Maybe.empty(),
+            }),
+      uiSchemaElement: Maybe.of(
+        ({ variables }) =>
+          code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
+      ),
     });
   }
 
@@ -222,16 +233,6 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return [
       code`if (${variables.object}.${this.name}) { ${variables.hasher}.update(${variables.object}.${this.name}().value); }`,
     ];
-  }
-
-  override jsonUiSchemaElement({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["jsonUiSchemaElement"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(
-      code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
-    );
   }
 
   override sparqlConstructTriplesExpression(): Maybe<Code> {
