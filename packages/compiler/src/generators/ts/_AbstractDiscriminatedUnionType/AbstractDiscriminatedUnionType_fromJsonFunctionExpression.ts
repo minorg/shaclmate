@@ -12,6 +12,7 @@ ${joinCode(
     ({ jsonType, jsonTypeCheck, type, unwrap, wrap }) =>
       code`if (${jsonTypeCheck(code`value`)}) { return ${type.fromJsonExpression(
         {
+          includeDiscriminantProperty: true,
           variables: {
             value: code`(${unwrap(code`value`)} as ${jsonType})`,
           },

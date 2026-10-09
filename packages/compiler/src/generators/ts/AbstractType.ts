@@ -273,6 +273,7 @@ ${joinCode(
    * An expression that converts this type's JSON type to an Either<Error, ThisType>.
    */
   abstract fromJsonExpression(parameters: {
+    includeDiscriminantProperty?: boolean;
     variables: {
       value: Code;
     };
