@@ -61,6 +61,5 @@ export namespace AbstractPrimitiveType {
   export type JsType = AbstractLiteralType.JsType;
   export const GraphqlType = AbstractLiteralType.GraphqlType;
   export type GraphqlType = AbstractLiteralType.GraphqlType;
-  export const JsonType = AbstractLiteralType.JsonType;
   export type JsonType = AbstractLiteralType.JsonType;
 }

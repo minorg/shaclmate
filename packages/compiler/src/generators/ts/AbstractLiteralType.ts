@@ -18,7 +18,6 @@ export namespace AbstractLiteralType {
   export const GraphqlType = AbstractTermType.GraphqlType;
   export type GraphqlType = AbstractTermType.GraphqlType;
   export type JsType = AbstractTermType.JsType;
-  export const JsonType = AbstractTermType.JsonType;
   export type JsonType = AbstractTermType.JsonType;
 }
 

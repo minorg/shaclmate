@@ -111,6 +111,5 @@ export namespace AbstractCollectionType {
   export type GraphqlType = AbstractContainerType.GraphqlType;
   export const isItemType = AbstractContainerType.isItemType;
   export type ItemType = AbstractContainerType.ItemType;
-  export const JsonType = AbstractContainerType.JsonType;
   export type JsonType = AbstractContainerType.JsonType;
 }
