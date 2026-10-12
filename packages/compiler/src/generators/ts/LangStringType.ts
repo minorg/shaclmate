@@ -1,7 +1,7 @@
 import type { Literal } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
-
+import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
@@ -71,25 +71,14 @@ export class LangStringType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<AbstractLiteralType["jsonSchema"]>[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.literal("Literal")`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string()${discriminantProperty}, "@value": ${this.reusables.imports.z}.string() })`;
-  }
-
-  override jsonType(
-    parameters?: Parameters<AbstractLiteralType["jsonType"]>[0],
-  ): AbstractLiteralType.JsonType {
-    const discriminantProperty = parameters?.includeDiscriminantProperty
-      ? `, readonly termType: "Literal"`
-      : "";
-    return new AbstractLiteralType.JsonType(
-      code`{ readonly "@language": string${discriminantProperty}, readonly "@value": string }`,
-    );
+  @Memoize()
+  override jsonType(): AbstractLiteralType.JsonType {
+    return this.jsonTypeFactory.createJsonObjectType({
+      "@language": {
+        type: this.jsonTypeFactory.createJsonStringType({ minLength: 1n }),
+      },
+      "@value": { type: this.jsonTypeFactory.createJsonStringType() },
+    });
   }
 
   override valueExpression(literal: Literal): Code {
@@ -97,10 +86,12 @@ export class LangStringType extends AbstractLiteralType {
   }
 
   override toJsonExpression({
-    includeDiscriminantProperty,
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
-    return code`{ "@language": ${variables.value}.language${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@value": ${variables.value}.value }`;
+    return code`${{
+      "@language": code`${variables.value}.language`,
+      "@value": code`${variables.value}.value`,
+    }}`;
   }
 
   override toLoggableExpression({

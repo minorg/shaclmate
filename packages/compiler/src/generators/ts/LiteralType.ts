@@ -2,7 +2,7 @@ import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
-
+import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import type { Typeof } from "./Typeof.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
@@ -82,38 +82,33 @@ export class LiteralType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<AbstractLiteralType["jsonSchema"]>[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.literal("Literal")`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string().optional()${discriminantProperty}, "@type": ${this.reusables.imports.z}.string().optional(), "@value": ${this.reusables.imports.z}.string() })`;
-  }
-
-  override jsonType(
-    parameters?: Parameters<AbstractLiteralType["jsonType"]>[0],
-  ): AbstractLiteralType.JsonType {
-    const discriminantProperty = parameters?.includeDiscriminantProperty
-      ? `, readonly termType: "Literal"`
-      : "";
-    return new AbstractLiteralType.JsonType(
-      code`{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
-    );
+  @Memoize()
+  override jsonType(): AbstractLiteralType.JsonType {
+    return this.jsonTypeFactory.createJsonObjectType({
+      "@language": {
+        optional: true,
+        type: this.jsonTypeFactory.createJsonStringType(),
+      },
+      "@type": {
+        optional: true,
+        type: this.jsonTypeFactory.createJsonStringType(),
+      },
+      "@value": {
+        type: this.jsonTypeFactory.createJsonStringType(),
+      },
+    });
   }
 
   override toJsonExpression({
-    includeDiscriminantProperty,
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
-    return code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
+    return code`${{ "@language": code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`, "@type": code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`, "@value": code`${variables.value}.value` }}`;
   }
 
   override toLoggableExpression({
     variables,
   }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
-    return this.toJsonExpression({ variables });
+    return this.toJsonExpression({ form: "expanded", variables });
   }
 
   override valueExpression(literal: Literal): Code {

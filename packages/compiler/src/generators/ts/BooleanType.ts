@@ -1,6 +1,7 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -15,8 +16,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBoolean}`;
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLBoolean}`,
     this.reusables,
@@ -28,6 +27,11 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
+
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`;
+  }
 
   override valueExpression(literal: boolean | Literal): Code {
     return code`${typeof literal === "boolean" ? literal : LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;

@@ -115,12 +115,14 @@ export class OptionType<
   }
 
   override fromJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
     const expression = code`${this.reusables.imports.Maybe}.fromNullable(${variables.value})`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
+      form,
       variables: { value: code`item` },
     });
     return code`${expression}.map(item => (${itemFromJsonExpression}).map(${this.reusables.imports.Maybe}.of)).orDefault(${this.reusables.imports.Either}.of(${this.reusables.imports.Maybe}.empty()))`;
@@ -136,17 +138,18 @@ export class OptionType<
 
   @Memoize()
   override jsonType(
-    parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
   ): AbstractContainerType.JsonType {
     return this.itemType.jsonType(parameters);
   }
 
   override toJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["toJsonExpression"]
   >[0]): Code {
-    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })})).extract()`;
+    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form, variables: { value: code`item` } })})).extract()`;
   }
 
   override toLoggableExpression({

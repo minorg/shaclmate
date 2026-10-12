@@ -134,7 +134,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }: Parameters<
     AbstractIdentifierType<NamedNode>["toCompactJsonExpression"]
   >[0]): Code {
-    return variables.value;
+    return code`${variables.value}.value`;
   }
 }
 

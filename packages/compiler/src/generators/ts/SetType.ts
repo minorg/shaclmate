@@ -115,28 +115,37 @@ export class SetType<
   }
 
   override fromJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
+    invariant(form === "compact");
     let expression = variables.value;
     if (this.minCount === 0n) {
       expression = code`(${expression} ?? [])`;
     }
     return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${expression}.map(item => (${this.itemType.fromJsonExpression(
       {
+        form,
         variables: { value: code`item` },
       },
     )})))`;
   }
 
-  @Memoize()
-  override jsonType(): AbstractCollectionType.JsonType {
-    return this.jsonTypeFactory.createJsonArrayType({
-      itemType: this.itemType.jsonType(),
-      minCount: this.minCount,
-      name: this.name.map((name) => [name, "Json"]),
-    });
+  override jsonType({
+    form,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["jsonType"]
+  >[0]): AbstractCollectionType.JsonType {
+    invariant(form === "compact");
+    return this.jsonTypeFactory.createJsonArrayType(
+      this.itemType.jsonType({ form }),
+      {
+        minCount: this.minCount,
+        name: this.name.map((name) => [name, "Json"]).extract(),
+      },
+    );
   }
 
   override toRdfResourceValuesExpression({

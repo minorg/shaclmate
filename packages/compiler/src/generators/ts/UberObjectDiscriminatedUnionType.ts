@@ -112,7 +112,7 @@ ${this.memberTypeSwitch({
 export function toJson(object: ${this.name}) {
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
-    code`return ${member.toJsonExpression({ variables: { value: code`object` } })};`,
+    code`return ${member.toJsonExpression({ form: "expanded", variables: { value: code`object` } })};`,
   variables: { value: code`object` },
 })}
 }`);

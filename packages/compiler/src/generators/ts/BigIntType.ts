@@ -2,6 +2,7 @@ import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
 
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -10,16 +11,12 @@ export class BigIntType extends AbstractNumericType<bigint> {
   private readonly decodedIn = this.in_.map((in_) =>
     LiteralDecoder.decodeBigIntLiteral(in_).unsafeCoerce(),
   );
+
   protected override readonly compactJsonType: AbstractNumericType.JsonType =
     this.jsonTypeFactory.createJsonStringType({
       in_: this.decodedIn.map((in_) => in_.toString()),
     });
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}>`;
-  override readonly graphqlType = new AbstractNumericType.GraphqlType(
-    code`${this.reusables.imports.GraphQLBigInt}`,
-    this.reusables,
-  );
+
   override readonly jsTypes = [{ typeof: "bigint" } as const];
   readonly conversionFunction: Maybe<AbstractNumericType.ConversionFunction> =
     this.in_.length > 0
@@ -41,7 +38,16 @@ export class BigIntType extends AbstractNumericType<bigint> {
             },
           ],
         });
+  override readonly graphqlType = new AbstractNumericType.GraphqlType(
+    code`${this.reusables.imports.GraphQLBigInt}`,
+    this.reusables,
+  );
   override readonly kind = "BigInt";
+
+  @Memoize()
+  override get fromRdfResourceValuesFunction(): Code {
+    return code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}>`;
+  }
 
   override valueExpression(literal: bigint | Literal): Code {
     return code`${typeof literal === "bigint" ? literal : LiteralDecoder.decodeBigIntLiteral(literal).unsafeCoerce()}n`;
