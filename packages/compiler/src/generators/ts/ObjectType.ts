@@ -406,7 +406,7 @@ export class ObjectType extends AbstractType {
 
   @Memoize()
   override jsonType(): AbstractType.JsonType {
-    return this.jsonTypeFactory.object({
+    return this.jsonTypeFactory.createJsonObjectType({
       members: this.properties.flatMap((property) =>
         property.jsonObjectMember.toList(),
       ),

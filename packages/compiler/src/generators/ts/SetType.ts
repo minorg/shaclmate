@@ -132,7 +132,7 @@ export class SetType<
 
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
-    return this.jsonTypeFactory.array({
+    return this.jsonTypeFactory.createJsonArrayType({
       itemType: this.itemType.jsonType(),
       minCount: this.minCount,
       name: this.name.map((name) => [name, "Json"]),

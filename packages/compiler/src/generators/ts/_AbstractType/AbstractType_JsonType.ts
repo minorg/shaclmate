@@ -290,41 +290,41 @@ class JsonTypeFactory {
     this.constructorParameters = constructorParameters;
   }
 
-  array({
-    itemType,
-    minCount,
-    name,
-  }: {
-    itemType: JsonType;
-    minCount?: bigint;
-    name?: AbstractJsonType.Name;
-  }): JsonArrayType {
+  createJsonArrayType(
+    itemType: JsonType,
+    options?: {
+      minCount?: bigint;
+      name?: AbstractJsonType.Name;
+    },
+  ): JsonArrayType {
     return new JsonArrayType({
       ...this.constructorParameters,
       itemType,
-      minCount: minCount ?? 0n,
-      name: Maybe.fromNullable(name),
+      minCount: options?.minCount ?? 0n,
+      name: Maybe.fromNullable(options?.name),
     });
   }
 
-  object({
-    members,
-    name,
-  }: {
-    members: readonly (Pick<JsonObjectType.Member, "name" | "type"> & {
-      description?: Maybe<string> | string;
-      label?: Maybe<string> | string;
-      optional?: boolean;
-      recursive?: boolean;
-      uiSchemaElement?: (parameters: {
-        variables: { scopePrefix: Code };
-      }) => Code;
-    })[];
-    name?: AbstractJsonType.Name;
-  }): JsonObjectType {
+  createJsonObjectType(
+    partialMembers:
+      | readonly JsonObjectType.PartialMember[]
+      | Record<string, Omit<JsonObjectType.PartialMember, "name">>,
+    options?: {
+      name?: AbstractJsonType.Name;
+    },
+  ): JsonObjectType {
+    let partialMembersArray: readonly JsonObjectType.PartialMember[];
+    if (Array.isArray(partialMembers)) {
+      partialMembersArray = partialMembers;
+    } else {
+      partialMembersArray = Object.entries(partialMembers).map(
+        ([name, partialMember]) => ({ ...partialMember, name }),
+      ) satisfies readonly JsonObjectType.PartialMember[];
+    }
+
     return new JsonObjectType({
       ...this.constructorParameters,
-      members: members.map((member) => ({
+      members: partialMembersArray.map((member) => ({
         description: Maybe.isMaybe(member.description)
           ? member.description
           : Maybe.fromNullable(member.description),
@@ -337,11 +337,11 @@ class JsonTypeFactory {
         type: member.type,
         uiSchemaElement: Maybe.fromNullable(member.uiSchemaElement),
       })),
-      name: Maybe.fromNullable(name),
+      name: Maybe.fromNullable(options?.name),
     });
   }
 
-  string(parameters?: {
+  createJsonStringType(parameters?: {
     in_?: readonly string[];
     minLength?: bigint;
     name?: AbstractJsonType.Name;
@@ -399,4 +399,14 @@ namespace JsonObjectType {
       (parameters: { variables: { scopePrefix: Code } }) => Code
     >;
   }
+
+  export type PartialMember = Pick<JsonObjectType.Member, "name" | "type"> & {
+    description?: Maybe<string> | string;
+    label?: Maybe<string> | string;
+    optional?: boolean;
+    recursive?: boolean;
+    uiSchemaElement?: (parameters: {
+      variables: { scopePrefix: Code };
+    }) => Code;
+  };
 }

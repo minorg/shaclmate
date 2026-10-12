@@ -98,10 +98,10 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
       recursive: this.recursive,
       type:
         this.type.in_.length > 0 && this.type.kind === "Iri"
-          ? this.jsonTypeFactory.string({
+          ? this.jsonTypeFactory.createJsonStringType({
               in_: this.type.in_.map((iri) => iri.value),
             })
-          : this.jsonTypeFactory.string({
+          : this.jsonTypeFactory.createJsonStringType({
               minLength: 1n,
             }),
       uiSchemaElement: ({ variables }) =>

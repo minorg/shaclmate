@@ -57,7 +57,7 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
       name: this.jsonName,
       optional: false,
       recursive: this.recursive,
-      type: this.jsonTypeFactory.string({
+      type: this.jsonTypeFactory.createJsonStringType({
         in_: [this.value],
       }),
       uiSchemaElement: ({ variables }) => {
