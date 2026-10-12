@@ -116,6 +116,5 @@ export namespace AbstractTermType {
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
   export type JsType = AbstractType.JsType;
-  export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
 }

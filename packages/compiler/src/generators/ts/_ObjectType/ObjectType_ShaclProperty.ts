@@ -143,11 +143,11 @@ export class ObjectType_ShaclProperty<
       name: this.name,
       optional: optional,
       recursive: this.recursive,
-      type: this.type.jsonType(),
+      type: this.type.jsonType({ form: "compact" }),
       uiSchemaElement: ({ variables }) => {
         const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
         return this.type
-          .jsonType()
+          .jsonType({ form: "compact" })
           .uiSchemaElement({ variables })
           .altLazy(() =>
             Maybe.of(
@@ -256,6 +256,7 @@ export class ObjectType_ShaclProperty<
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: ${this.type.fromJsonExpression({
+        form: "compact",
         variables: { value: code`${variables.jsonObject}["${this.name}"]` },
       })}`,
     );
@@ -338,7 +339,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["toJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.toJsonExpression({ variables: { value: code`${variables.object}.${this.name}` } })}`,
+      code`${this.name}: ${this.type.toJsonExpression({ form: "compact", variables: { value: code`${variables.object}.${this.name}` } })}`,
     );
   }
 
