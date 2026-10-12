@@ -140,7 +140,7 @@ export class DefaultValueType<
   }
 
   override jsonType(
-    parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
   ): AbstractType.JsonType {
     return this.itemType.jsonType(parameters);
   }
