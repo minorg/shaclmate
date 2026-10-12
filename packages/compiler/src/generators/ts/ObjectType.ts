@@ -17,10 +17,6 @@ import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graph
 import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
 import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
-import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
-import { ObjectType_jsonSchemaExpression } from "./_ObjectType/ObjectType_jsonSchemaExpression.js";
-import { ObjectType_jsonTypeExpression } from "./_ObjectType/ObjectType_jsonTypeExpression.js";
-import { ObjectType_jsonUiSchemaFunctionExpression } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionExpression.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import type { ObjectType_Property } from "./_ObjectType/ObjectType_Property.js";
 import { ObjectType_RdfTypeProperty } from "./_ObjectType/ObjectType_RdfTypeProperty.js";
@@ -406,12 +402,12 @@ export class ObjectType extends AbstractType {
 
   @Memoize()
   override jsonType(): AbstractType.JsonType {
-    return this.jsonTypeFactory.createJsonObjectType({
-      members: this.properties.flatMap((property) =>
-        property.jsonObjectMember.toList(),
-      ),
-      name: this.name.map((name) => [name, "Json"]).extract(),
-    });
+    return this.jsonTypeFactory.createJsonObjectType(
+      this.properties.flatMap((property) => property.jsonObjectMember.toList()),
+      {
+        name: this.name.map((name) => [name, "Json"]).extract(),
+      },
+    );
   }
 
   override toJsonExpression({
@@ -550,34 +546,11 @@ export class ObjectType extends AbstractType {
       },
     );
 
-    // type Json
+    // JSON type
     if (this.configuration.features.has("Object.JSON.type")) {
-      staticModuleDeclarations["JsonType"] =
-        code`export type Json = ${ObjectType_jsonTypeExpression.call(this)}`;
-    }
-
-    // namespace Json
-    {
-      const jsonModuleDeclarations: Code[] = [];
-      if (this.configuration.features.has("Object.JSON.parse")) {
-        jsonModuleDeclarations.push(
-          ObjectType_jsonParseFunctionDeclaration.call(this),
-        );
-      }
-      if (this.configuration.features.has("Object.JSON.schema")) {
-        jsonModuleDeclarations.push(
-          code`export function schema() { return ${ObjectType_jsonSchemaExpression.call(this)} satisfies ${this.reusables.imports.z}.ZodType<Json>; }`,
-        );
-      }
-      if (this.configuration.features.has("Object.JSON.uiSchema")) {
-        jsonModuleDeclarations.push(
-          code`export const uiSchema = ${ObjectType_jsonUiSchemaFunctionExpression.call(this)};`,
-        );
-      }
-      if (jsonModuleDeclarations.length > 0) {
-        staticModuleDeclarations["JsonNamespace"] =
-          code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`;
-      }
+      this.jsonType().declaration.ifJust((jsonTypeDeclaration) => {
+        staticModuleDeclarations["Json"] = jsonTypeDeclaration;
+      });
     }
 
     // schema / Schema

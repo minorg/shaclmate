@@ -1,5 +1,4 @@
 import type { NamedNode } from "@rdfjs/types";
-import { Primitive } from "@rdfx/literal";
 
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -62,10 +61,23 @@ abstract class AbstractJsonType {
       );
     }
 
+    if (this.configuration.features.has("Object.JSON.parse")) {
+      moduleDeclarations.push(code`\
+export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${unqualifiedName}> {
+  const jsonSafeParseResult = schema().safeParse(json);
+  if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
+  return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
+}`);
+    }
+
     if (moduleDeclarations.length > 0) {
       declarations.push(
         code`export namespace Json { ${joinCode(moduleDeclarations, { on: "\n\n" })} }`,
       );
+    }
+
+    if (declarations.length === 0) {
+      return Maybe.empty();
     }
 
     return Maybe.of(joinCode(declarations, { on: "\n\n" }));
