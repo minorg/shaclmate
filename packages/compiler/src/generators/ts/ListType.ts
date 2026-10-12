@@ -3,6 +3,7 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
@@ -93,31 +94,28 @@ export class ListType<
   }
 
   override fromJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
+    invariant(form === "compact");
     return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${variables.value}.map(item => (${this.itemType.fromJsonExpression(
       {
+        form,
         variables: { value: code`item` },
       },
     )})))`;
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractCollectionType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
-    if (!this._mutable) {
-      schema = code`${schema}.readonly()`;
-    }
-    return schema;
-  }
-
-  @Memoize()
-  override jsonType(): AbstractCollectionType.JsonType {
-    return new AbstractCollectionType.JsonType(
-      code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().expression})[]`,
+  override jsonType({
+    form,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["jsonType"]
+  >[0]): AbstractCollectionType.JsonType {
+    invariant(form === "compact");
+    return this.jsonTypeFactory.createJsonArrayType(
+      this.itemType.jsonType({ form }),
     );
   }
 

@@ -518,6 +518,7 @@ namespace JsonArrayType {
   export type ItemType =
     | JsonArrayType
     | JsonBooleanType
+    | JsonDiscriminatedUnionType
     | JsonObjectType
     | JsonNumberType
     | JsonStringType;
