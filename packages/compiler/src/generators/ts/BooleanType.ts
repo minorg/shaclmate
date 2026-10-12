@@ -1,16 +1,22 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
 import { Maybe } from "purify-ts";
-import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
+  private readonly decodedIn = this.in_.map((in_) =>
+    LiteralDecoder.decodeBooleanLiteral(in_).unsafeCoerce(),
+  );
+  override readonly compactJsonType: AbstractPrimitiveType.JsonType =
+    this.jsonTypeFactory.createJsonBooleanType({ in_: this.decodedIn });
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBoolean}`;
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
+  override readonly fromRdfResourceValuesFunction =
+    code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLBoolean}`,
     this.reusables,
@@ -18,18 +24,10 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
   override readonly jsTypes = [{ typeof: "boolean" }] as const;
   override readonly kind = "Boolean";
+  override readonly schemaType =
+    code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
-
-  @Memoize()
-  get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`;
-  }
-
-  @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
-  }
 
   override valueExpression(literal: boolean | Literal): Code {
     return code`${typeof literal === "boolean" ? literal : LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;

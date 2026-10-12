@@ -87,11 +87,12 @@ export abstract class AbstractCollectionType<
   }
 
   override toJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["toJsonExpression"]
   >[0]): Code {
-    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })}))`;
+    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form, variables: { value: code`item` } })}))`;
   }
 
   override toLoggableExpression({

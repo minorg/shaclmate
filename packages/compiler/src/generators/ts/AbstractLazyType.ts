@@ -120,9 +120,11 @@ export abstract class AbstractLazyType<
   }
 
   override toJsonExpression({
+    form,
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     return this.partialType.toJsonExpression({
+      form,
       variables: {
         value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
       },

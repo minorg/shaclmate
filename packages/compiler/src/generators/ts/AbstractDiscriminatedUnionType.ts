@@ -127,10 +127,7 @@ export abstract class AbstractDiscriminatedUnionType<
         return {
           discriminantValues,
           jsonType: member.type.jsonType({
-            includeDiscriminantProperty:
-              this.discriminant.kind === "Intrinsic" ||
-              (this.discriminant.kind === "Hybrid" &&
-                this.discriminant.memberValues[memberI].kind === "Intrinsic"),
+            form: "expanded",
           }).expression,
           jsonTypeCheck: typeCheck(true),
           primaryDiscriminantValue: discriminantValues[0],
@@ -138,10 +135,7 @@ export abstract class AbstractDiscriminatedUnionType<
           typeCheck: typeCheck(false),
           typeToJsonExpression: (valueVariable) =>
             member.type.toJsonExpression({
-              includeDiscriminantProperty:
-                this.discriminant.kind === "Intrinsic" ||
-                (this.discriminant.kind === "Hybrid" &&
-                  this.discriminant.memberValues[memberI].kind === "Intrinsic"),
+              form: "expanded",
               variables: { value: valueVariable },
             }),
           unwrap: (instance: Code): Code => {

@@ -2,13 +2,13 @@ import type { Literal } from "@rdfjs/types";
 
 import type { Decimal } from "decimal.js";
 import { Maybe } from "purify-ts";
-import { Memoize } from "typescript-memoize";
 
-import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
+  protected override readonly compactJsonType: AbstractTypedLiteralType.JsonType =
+    this.jsonTypeFactory.createJsonStringType();
   protected override readonly inlineExpression =
     code`${this.reusables.imports.BigDecimal}`;
 
@@ -19,7 +19,7 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
       typeof: "object",
     },
   ] as const;
-  override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
+  override readonly conversionFunction: Maybe<AbstractTypedLiteralType.ConversionFunction> =
     Maybe.of({
       code: code`${this.reusables.snippets.convertToBigDecimal}`,
       sourceTypes: [
@@ -43,6 +43,10 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
   override readonly fromRdfResourceValuesFunction =
     code`${this.reusables.snippets.bigDecimalFromRdfResourceValues}`;
+  override readonly graphqlType = new AbstractTypedLiteralType.GraphqlType(
+    code`${this.reusables.imports.GraphQLString}`,
+    this.reusables,
+  );
   override readonly hashFunction =
     code`${this.reusables.snippets.hashBigDecimal}`;
   override readonly kind = "BigDecimal";
@@ -51,42 +55,12 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.bigDecimalSparqlWherePatterns}`;
 
-  @Memoize()
-  override get graphqlType() {
-    return new AbstractLiteralType.GraphqlType(
-      code`${this.reusables.imports.GraphQLString}`,
-      this.reusables,
-    );
-  }
-
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.encase<Error, ${this.expression}>(() => new ${this.expression}(${variables.value}["@value"]))`;
-  }
-
   override graphqlResolveExpression({
     variables,
-  }: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0]): Code {
-    return code`${variables.value}.toFixed()`;
-  }
-
-  override jsonSchema(): Code {
-    return code`${this.reusables.imports.z}.object({ "@type": ${this.reusables.imports.z}.literal(${literalOf(this.datatype.value)}), "@value": ${this.reusables.imports.z}.string() })`;
-  }
-
-  override jsonType(): AbstractLiteralType.JsonType {
-    return new AbstractLiteralType.JsonType(
-      code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": string }`,
-    );
-  }
-
-  override toJsonExpression({
-    variables,
   }: Parameters<
-    AbstractTypedLiteralType<Decimal>["toJsonExpression"]
+    AbstractTypedLiteralType<Decimal>["graphqlResolveExpression"]
   >[0]): Code {
-    return code`{ "@type": ${literalOf(this.datatype.value)} as const, "@value": ${variables.value}.toFixed() }`;
+    return code`${variables.value}.toFixed()`;
   }
 
   override toLoggableExpression({
@@ -100,12 +74,28 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractLiteralType["toRdfResourceValuesExpression"]
+    AbstractTypedLiteralType<Decimal>["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.bigDecimalLiteral}(${variables.value})]`;
   }
 
   override valueExpression(literal: Literal): Code {
     return code`new ${this.reusables.imports.BigDecimal}(${literalOf(literal.value)})`;
+  }
+
+  protected override fromCompactJsonExpression({
+    variables,
+  }: Parameters<
+    AbstractTypedLiteralType<Decimal>["fromCompactJsonExpression"]
+  >[0]): Code {
+    return code`new ${this.expression}(${variables.value})`;
+  }
+
+  protected override toCompactJsonExpression({
+    variables,
+  }: Parameters<
+    AbstractTypedLiteralType<Decimal>["toCompactJsonExpression"]
+  >[0]): Code {
+    return code`${variables.value}.toFixed()`;
   }
 }

@@ -282,9 +282,14 @@ ${joinCode(
 
   /**
    * An expression that converts this type's JSON type to an Either<Error, ThisType>.
+   *
+   * Parameters:
+   *   form: form of the value. See jsonType() for the semantics of form.
+   *   variables:
+   *     value: instance of jsonType() with the given form.
    */
   abstract fromJsonExpression(parameters: {
-    discriminated?: boolean;
+    form: AbstractType.JsonForm;
     variables: {
       value: Code;
     };
@@ -301,17 +306,27 @@ ${joinCode(
   }): Code;
 
   /**
-   * JSON-compatible version of the type for use outside discriminated unions.
+   * JSON-compatible version of the type.
+   *
+   * Parameters:
+   *  - form: form of JSON to use, corresponding to JSON-LD forms (https://www.w3.org/TR/json-ld11/#forms-of-json-ld).
+   *
+   * When form is "expanded" this function must return a JSON object type.
    */
   abstract jsonType(parameters: {
-    discriminated?: boolean;
+    form: AbstractType.JsonForm;
   }): AbstractType.JsonType;
 
   /**
    * An expression that converts a value of this type to a JSON compatible value.
+   *
+   * Parameters:
+   *   form: form of the value. See jsonType() for the semantics of form.
+   *   variables:
+   *     value: instance of this type.
    */
   abstract toJsonExpression(parameters: {
-    discriminated?: boolean;
+    form: AbstractType.JsonForm;
     variables: {
       value: Code;
     };
@@ -376,6 +391,7 @@ export namespace AbstractType {
   export type GraphqlType = AbstractType_GraphqlType;
   export type JsType = AbstractType_JsType;
   export const JsType = AbstractType_JsType;
+  export type JsonForm = "compact" | "expanded";
   export type JsonType = AbstractType_JsonType;
   export type JsonTypeFactory = AbstractType_JsonTypeFactory;
 }
