@@ -202,9 +202,11 @@ export namespace Operation {
         }
         const parameterProperty = parameterProperties.get(parameterName);
         invariant(parameterProperty);
-        const parameterJsonSchema = parameterProperty.jsonSchema.unsafeCoerce();
+        const parameterJsonSchema = parameterProperty.type.jsonType({
+          form: "compact",
+        }).schema;
         targetSchemas_.push(
-          code`${parameterJsonSchema.key}: ${parameterJsonSchema.schema}`,
+          code`${parameterProperty.name}: ${parameterJsonSchema}`,
         );
       }
       for (const [target, properties] of targetSchemas.entries()) {
