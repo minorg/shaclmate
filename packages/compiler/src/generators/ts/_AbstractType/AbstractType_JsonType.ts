@@ -183,6 +183,34 @@ class JsonBooleanType extends AbstractJsonPrimitiveType<boolean> {
   protected override readonly typeof = "boolean";
 }
 
+class JsonDiscriminatedUnionType extends AbstractJsonType {
+  override readonly kind = "JsonDiscriminatedUnion";
+  readonly memberTypes: readonly JsonObjectType[];
+
+  constructor({
+    memberTypes,
+    ...superParameters
+  }: {
+    memberTypes: readonly JsonObjectType[];
+  } & ConstructorParameters<typeof AbstractJsonType>[0]) {
+    super(superParameters);
+    this.memberTypes = memberTypes;
+  }
+
+  @Memoize()
+  protected get inlineExpression(): Code {
+    return code`(${joinCode(
+      this.memberTypes.map((memberType) => memberType.expression),
+      { on: " | " },
+    )}`;
+  }
+
+  @Memoize()
+  protected get schemaExpression(): Code {
+    return code`${this.reusables.imports.z}.discriminatedUnion(${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}, [${joinCode(this.memberTypes.map((memberType) => memberType.schema))}])`;
+  }
+}
+
 class JsonNumberType extends AbstractJsonPrimitiveType<number> {
   override readonly kind = "JsonNumber";
   protected override readonly typeof = "number";
@@ -344,12 +372,12 @@ class JsonTypeFactory {
   }
 
   createJsonArrayType(
-    itemType: JsonType,
+    itemType: JsonArrayType.ItemType,
     options?: {
       minCount?: bigint;
       name?: AbstractJsonType.Name;
     },
-  ): JsonArrayType {
+  ): JsonType {
     return new JsonArrayType({
       ...this.constructorParameters,
       itemType,
@@ -362,7 +390,7 @@ class JsonTypeFactory {
     in_?: readonly boolean[];
     inReference?: Code;
     name?: AbstractJsonType.Name;
-  }) {
+  }): JsonType {
     return new JsonBooleanType({
       ...this.constructorParameters,
       in_: parameters?.in_ ?? [],
@@ -371,11 +399,24 @@ class JsonTypeFactory {
     });
   }
 
+  createJsonDiscriminatedUnionType(
+    memberTypes: readonly JsonObjectType[],
+    options?: {
+      name?: AbstractJsonType.Name;
+    },
+  ): JsonType {
+    return new JsonDiscriminatedUnionType({
+      ...this.constructorParameters,
+      memberTypes,
+      name: Maybe.fromNullable(options?.name),
+    });
+  }
+
   createJsonNumberType(parameters?: {
     in_?: readonly number[];
     inReference?: Code;
     name?: AbstractJsonType.Name;
-  }) {
+  }): JsonType {
     return new JsonNumberType({
       ...this.constructorParameters,
       in_: parameters?.in_ ?? [],
@@ -391,7 +432,7 @@ class JsonTypeFactory {
     options?: {
       name?: AbstractJsonType.Name;
     },
-  ): JsonObjectType {
+  ): JsonType {
     let partialMembersArray: readonly JsonObjectType.PartialMember[];
     if (Array.isArray(partialMembers)) {
       partialMembersArray = partialMembers;
@@ -426,7 +467,7 @@ class JsonTypeFactory {
     inReference?: Code;
     minLength?: bigint;
     name?: AbstractJsonType.Name;
-  }): JsonStringType {
+  }): JsonType {
     return new JsonStringType({
       ...this.constructorParameters,
       format: Maybe.fromNullable(parameters?.format),
@@ -457,6 +498,7 @@ class JsonTypeFactory {
 type JsonType =
   | JsonArrayType
   | JsonBooleanType
+  | JsonDiscriminatedUnionType
   | JsonNumberType
   | JsonObjectType
   | JsonStringType;
@@ -464,10 +506,6 @@ type JsonType =
 export type AbstractType_JsonType = JsonType;
 
 export type AbstractType_JsonTypeFactory = JsonTypeFactory;
-
-namespace JsonStringType {
-  export type Format = "date" | "datetime";
-}
 
 export namespace AbstractJsonType {
   export type Name = readonly string[];
@@ -512,4 +550,9 @@ namespace JsonObjectType {
       variables: { scopePrefix: Code };
     }) => Code;
   };
+}
+
+// biome-ignore lint/correctness/noUnusedVariables: used for types
+namespace JsonStringType {
+  export type Format = "date" | "datetime";
 }
