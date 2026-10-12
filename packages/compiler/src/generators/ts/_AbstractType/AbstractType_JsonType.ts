@@ -377,7 +377,7 @@ class JsonTypeFactory {
       minCount?: bigint;
       name?: AbstractJsonType.Name;
     },
-  ): JsonType {
+  ): JsonArrayType {
     return new JsonArrayType({
       ...this.constructorParameters,
       itemType,
@@ -390,7 +390,7 @@ class JsonTypeFactory {
     in_?: readonly boolean[];
     inReference?: Code;
     name?: AbstractJsonType.Name;
-  }): JsonType {
+  }): JsonBooleanType {
     return new JsonBooleanType({
       ...this.constructorParameters,
       in_: parameters?.in_ ?? [],
@@ -404,7 +404,7 @@ class JsonTypeFactory {
     options?: {
       name?: AbstractJsonType.Name;
     },
-  ): JsonType {
+  ): JsonDiscriminatedUnionType {
     return new JsonDiscriminatedUnionType({
       ...this.constructorParameters,
       memberTypes,
@@ -416,7 +416,7 @@ class JsonTypeFactory {
     in_?: readonly number[];
     inReference?: Code;
     name?: AbstractJsonType.Name;
-  }): JsonType {
+  }): JsonNumberType {
     return new JsonNumberType({
       ...this.constructorParameters,
       in_: parameters?.in_ ?? [],
@@ -432,7 +432,7 @@ class JsonTypeFactory {
     options?: {
       name?: AbstractJsonType.Name;
     },
-  ): JsonType {
+  ): JsonObjectType {
     let partialMembersArray: readonly JsonObjectType.PartialMember[];
     if (Array.isArray(partialMembers)) {
       partialMembersArray = partialMembers;
@@ -467,7 +467,7 @@ class JsonTypeFactory {
     inReference?: Code;
     minLength?: bigint;
     name?: AbstractJsonType.Name;
-  }): JsonType {
+  }): JsonStringType {
     return new JsonStringType({
       ...this.constructorParameters,
       format: Maybe.fromNullable(parameters?.format),
@@ -481,7 +481,7 @@ class JsonTypeFactory {
   createJsonValueObjectType(members: {
     "@type": NamedNode;
     "@value": JsonType;
-  }) {
+  }): JsonObjectType {
     return this.createJsonObjectType({
       "@type": {
         type: this.createJsonStringType({

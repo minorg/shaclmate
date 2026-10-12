@@ -1,12 +1,11 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
 import { xsd } from "@tpluscode/rdf-ns-builders";
-
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractTermType } from "./AbstractTermType.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TermType<
@@ -115,7 +114,7 @@ export class TermType<
         }
         return expression == null
           ? valueToNodeKind
-          : code`((${variables.value}.termType === "${NodeKind.toTermType(nodeKind)}") ? (${valueToNodeKind}) : (${expression}))`;
+          : code`((${variables.value}.${this.configuration.objectDiscriminantProperty.jsonName} === "${NodeKind.toTermType(nodeKind)}") ? (${valueToNodeKind}) : (${expression}))`;
       },
       null as Code | null,
     )!})`;
@@ -127,34 +126,45 @@ export class TermType<
     throw new Error("not implemented");
   }
 
-  override jsonSchema(
-    _parameters: Parameters<AbstractTermType["jsonSchema"]>[0],
-  ): Code {
-    return code`${this.reusables.imports.z}.discriminatedUnion("termType", [${joinCode(
+  @Memoize()
+  override jsonType(): AbstractTermType.JsonType {
+    return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
       [...this.nodeKinds].map((nodeKind) => {
+        const discriminantProperty = singleEntryRecord(
+          this.configuration.objectDiscriminantProperty.jsonName,
+          this.jsonTypeFactory.createJsonStringType({ in_: [nodeKind] }),
+        );
         switch (nodeKind) {
           case "BlankNode":
           case "IRI":
-            return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1), termType: ${this.reusables.imports.z}.literal("${NodeKind.toTermType(nodeKind)}") })`;
+            return this.jsonTypeFactory.createJsonObjectType({
+              ...discriminantProperty,
+              "@id": {
+                type: this.jsonTypeFactory.createJsonStringType({
+                  minLength: 1n,
+                }),
+              },
+            });
           case "Literal":
-            return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string().optional(), "@type": ${this.reusables.imports.z}.string().optional(), "@value": ${this.reusables.imports.z}.string(), termType: ${this.reusables.imports.z}.literal("Literal") })`;
+            return this.jsonTypeFactory.createJsonObjectType({
+              ...discriminantProperty,
+              "@language": {
+                optional: true,
+                type: this.jsonTypeFactory.createJsonStringType(),
+              },
+              "@type": {
+                optional: true,
+                type: this.jsonTypeFactory.createJsonStringType(),
+              },
+              "@value": {
+                type: this.jsonTypeFactory.createJsonStringType(),
+              },
+            });
           default:
+            nodeKind satisfies never;
             throw new RangeError(nodeKind);
         }
       }),
-      { on: "," },
-    )}])`;
-  }
-
-  @Memoize()
-  override jsonType(): AbstractTermType.JsonType {
-    return new AbstractTermType.JsonType(
-      code`{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
-        .filter((nodeKind) => nodeKind !== "Literal")
-        .map((nodeKind) => `"${NodeKind.toTermType(nodeKind)}"`)
-        .join(
-          " | ",
-        )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`,
     );
   }
 
@@ -166,20 +176,20 @@ export class TermType<
         let valueToNodeKind: Code;
         switch (nodeKind) {
           case "BlankNode":
-            valueToNodeKind = code`{ "@id": \`_:\${${variables.value}.value}\`, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
+            valueToNodeKind = code`"@id": \`_:\$$variables.value.value\`, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
             break;
           case "IRI":
-            valueToNodeKind = code`{ "@id": ${variables.value}.value, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
+            valueToNodeKind = code`"@id": $variables.value.value, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
             break;
           case "Literal":
-            valueToNodeKind = code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
+            valueToNodeKind = code`"@language": $variables.value.language.length > 0 ? $variables.value.language : undefined, "@type": $variables.value.datatype.value !== "${xsd.string.value}" ? $variables.value.datatype.value : undefined, "@value": $variables.value.value, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
             break;
           default:
             throw new RangeError(nodeKind);
         }
         return expression === null
           ? valueToNodeKind
-          : code`(${variables.value}.termType === "${NodeKind.toTermType(nodeKind)}") ? ${valueToNodeKind} : ${expression}`;
+          : code`(${variables.value}.${this.configuration.objectDiscriminantProperty.jsonName} === "${NodeKind.toTermType(nodeKind)}") ? ${valueToNodeKind} : ${expression}`;
       },
       null as Code | null,
     )!;
@@ -188,6 +198,6 @@ export class TermType<
   override toLoggableExpression(
     parameters: Parameters<AbstractTermType["toLoggableExpression"]>[0],
   ): Code {
-    return this.toJsonExpression(parameters);
+    return this.toJsonExpression({ form: "expanded", ...parameters });
   }
 }
