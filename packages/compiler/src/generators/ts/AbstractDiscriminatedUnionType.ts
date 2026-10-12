@@ -87,9 +87,11 @@ export abstract class AbstractDiscriminatedUnionType<
 
         invariant(discriminantValues.length > 0);
 
-        const typeCheck =
-          (json: boolean) =>
-          (instance: Code): Code => {
+        return {
+          discriminantValues,
+          primaryDiscriminantValue: discriminantValues[0],
+          type: member.type,
+          typeCheck: (instance: Code): Code => {
             const discriminant = this.discriminant; // To get type narrowing to work
 
             if (discriminant.kind === "Typeof") {
@@ -122,22 +124,7 @@ export abstract class AbstractDiscriminatedUnionType<
               ),
               { on: " || " },
             )})`;
-          };
-
-        return {
-          discriminantValues,
-          jsonType: member.type.jsonType({
-            form: "expanded",
-          }).expression,
-          jsonTypeCheck: typeCheck(true),
-          primaryDiscriminantValue: discriminantValues[0],
-          type: member.type,
-          typeCheck: typeCheck(false),
-          typeToJsonExpression: (valueVariable) =>
-            member.type.toJsonExpression({
-              form: "expanded",
-              variables: { value: valueVariable },
-            }),
+          },
           unwrap: (instance: Code): Code => {
             switch (this.discriminant.kind) {
               case "Extrinsic":
@@ -558,12 +545,9 @@ export namespace AbstractDiscriminatedUnionType {
 
   export interface Member<TypeT extends Type> {
     readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
-    readonly jsonType: Code;
-    readonly jsonTypeCheck: (instance: Code) => Code;
     readonly primaryDiscriminantValue: AbstractType.DiscriminantProperty.Value;
     readonly type: TypeT;
     readonly typeCheck: (instance: Code) => Code;
-    readonly typeToJsonExpression: (valueVariable: Code) => Code;
     readonly unwrap: (instance: Code) => Code;
     readonly wrap: (instance: Code) => Code;
   }
