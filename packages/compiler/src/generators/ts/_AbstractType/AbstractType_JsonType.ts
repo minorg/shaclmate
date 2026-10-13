@@ -37,22 +37,11 @@ abstract class AbstractJsonType {
     this.reusables = reusables;
   }
 
-  @Memoize()
-  get declaration(): Maybe<Code> {
-    if (this.name.isNothing()) {
-      return Maybe.empty();
-    }
-
-    const unqualifiedName = this.name.extract()!.at(-1)!;
-
-    const declarations: Code[] = [];
-
-    if (this.configuration.features.has("Object.JSON.type")) {
-      declarations.push(
-        code`export type ${unqualifiedName} = ${this.inlineExpression};`,
-      );
-    }
-
+  protected moduleDeclarations({
+    unqualifiedName,
+  }: {
+    unqualifiedName: string;
+  }): Code[] {
     const moduleDeclarations: Code[] = [];
 
     if (this.configuration.features.has("Object.JSON.schema")) {
@@ -70,6 +59,26 @@ export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${
 }`);
     }
 
+    return moduleDeclarations;
+  }
+
+  @Memoize()
+  get declaration(): Maybe<Code> {
+    if (this.name.isNothing()) {
+      return Maybe.empty();
+    }
+
+    const unqualifiedName = this.name.extract()!.at(-1)!;
+
+    const declarations: Code[] = [];
+
+    if (this.configuration.features.has("Object.JSON.type")) {
+      declarations.push(
+        code`export type ${unqualifiedName} = ${this.inlineExpression};`,
+      );
+    }
+
+    const moduleDeclarations = this.moduleDeclarations({ unqualifiedName });
     if (moduleDeclarations.length > 0) {
       declarations.push(
         code`export namespace Json { ${joinCode(moduleDeclarations, { on: "\n\n" })} }`,
@@ -285,6 +294,20 @@ class JsonObjectType extends AbstractJsonType {
   const scopePrefix = parameters?.scopePrefix ?? "#";
   return ${uiSchema};
 })`;
+  }
+
+  protected override moduleDeclarations(parameters: {
+    unqualifiedName: string;
+  }): Code[] {
+    const moduleDeclarations = super.moduleDeclarations(parameters);
+
+    if (this.configuration.features.has("Object.JSON.uiSchema")) {
+      moduleDeclarations.push(
+        code`export const uiSchema = ${this.uiSchemaFunctionExpression};`,
+      );
+    }
+
+    return moduleDeclarations;
   }
 
   override uiSchemaElement({
