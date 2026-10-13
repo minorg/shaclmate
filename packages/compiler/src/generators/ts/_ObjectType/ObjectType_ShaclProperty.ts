@@ -2,7 +2,6 @@ import type { PropertyPath } from "@rdfx/resource";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
@@ -143,7 +142,9 @@ export class ObjectType_ShaclProperty<
       name: this.name,
       optional: optional,
       recursive: this.recursive,
-      type: this.type.jsonType({ form: "compact" }),
+      type: this.recursive
+        ? this.jsonTypeFactory.createJsonNeverType()
+        : this.type.jsonType({ form: "compact" }),
       uiSchemaElement: Maybe.of(({ variables }) => {
         const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
         return this.type

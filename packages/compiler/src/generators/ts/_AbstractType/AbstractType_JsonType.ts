@@ -159,7 +159,7 @@ abstract class AbstractJsonPrimitiveType<
 }
 
 class JsonArrayType extends AbstractJsonType {
-  readonly itemType: JsonArrayType.ItemType;
+  readonly itemType: JsonType;
   override readonly kind = "JsonArray";
   readonly minCount: bigint;
 
@@ -168,7 +168,7 @@ class JsonArrayType extends AbstractJsonType {
     minCount,
     ...superParameters
   }: {
-    itemType: JsonArrayType.ItemType;
+    itemType: JsonType;
     minCount: bigint;
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
@@ -226,6 +226,21 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
   }
 }
 
+/**
+ * A special type used as a stand-in for recursive types.
+ */
+class JsonNeverType extends AbstractJsonType {
+  override readonly kind = "JsonNever";
+
+  protected override get inlineExpression(): Code {
+    throw new Error("JsonNeverType.inlineExpression: should never be invoked");
+  }
+
+  protected override get schemaExpression(): Code {
+    throw new Error("JsonNeverType.schemaExpression: should never be invoked");
+  }
+}
+
 class JsonNumberType extends AbstractJsonPrimitiveType<number> {
   override readonly kind = "JsonNumber";
   protected override readonly typeof = "number";
@@ -249,7 +264,14 @@ class JsonObjectType extends AbstractJsonType {
   protected get inlineExpression(): Code {
     return code`{ ${joinCode(
       this.members.map((member) => {
-        return code`"${member.name}"${member.optional ? "?" : ""}: ${member.type.expression}`;
+        let memberTypeExpression: Code;
+        if (member.recursive) {
+          memberTypeExpression = code`${this.name.unsafeCoerce().join(".")}`;
+        } else {
+          memberTypeExpression = member.type.expression;
+        }
+
+        return code`"${member.name}"${member.optional ? "?" : ""}: ${memberTypeExpression}`;
       }),
       { on: ", " },
     )} }`;
@@ -259,13 +281,17 @@ class JsonObjectType extends AbstractJsonType {
   protected get schemaExpression(): Code {
     return code`${this.reusables.imports.z}.object({ ${joinCode(
       this.members.map((member) => {
-        let schema = member.type.schema;
+        let schema: Code;
+        if (member.recursive) {
+          // Don't recurse into the member's type to avoid blowing out the stack
+          const name = this.name.unsafeCoerce().join(".");
+          schema = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${name}> => ${name}.schema())`;
+        } else {
+          schema = member.type.schema;
+        }
 
         if (member.optional) {
           schema = code`${schema}.optional()`;
-        }
-        if (member.recursive) {
-          schema = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${member.type.expression}> => ${schema})`;
         }
 
         const meta: Record<string, string> = {
@@ -408,7 +434,7 @@ class JsonTypeFactory {
   }
 
   createJsonArrayType(
-    itemType: JsonArrayType.ItemType,
+    itemType: JsonType,
     options?: {
       minCount?: bigint;
       name?: AbstractJsonType.Name;
@@ -445,6 +471,14 @@ class JsonTypeFactory {
       ...this.constructorParameters,
       memberTypes,
       name: Maybe.fromNullable(options?.name),
+    });
+  }
+
+  @Memoize()
+  createJsonNeverType(): JsonNeverType {
+    return new JsonNeverType({
+      ...this.constructorParameters,
+      name: Maybe.empty(),
     });
   }
 
@@ -537,6 +571,7 @@ type JsonType =
   | JsonArrayType
   | JsonBooleanType
   | JsonDiscriminatedUnionType
+  | JsonNeverType
   | JsonNumberType
   | JsonObjectType
   | JsonStringType;
@@ -550,17 +585,6 @@ export namespace AbstractJsonType {
 }
 
 export const AbstractType_JsonTypeFactory = JsonTypeFactory;
-
-// biome-ignore lint/correctness/noUnusedVariables: used for types
-namespace JsonArrayType {
-  export type ItemType =
-    | JsonArrayType
-    | JsonBooleanType
-    | JsonDiscriminatedUnionType
-    | JsonObjectType
-    | JsonNumberType
-    | JsonStringType;
-}
 
 // biome-ignore lint/correctness/noUnusedVariables: used for types
 namespace JsonObjectType {
