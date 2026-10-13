@@ -506,8 +506,8 @@ export namespace FormStruct {
                         : _object.$identifier().value,
                     requiredStringProperty: _object.requiredStringProperty,
                   } satisfies {
-                    readonly "@id": string;
-                    readonly requiredStringProperty: string;
+                    "@id": string;
+                    requiredStringProperty: string;
                   }),
                 ),
               $toString: (_object) =>
@@ -632,8 +632,8 @@ export namespace FormStruct {
                             : _object.$identifier().value,
                         requiredStringProperty: _object.requiredStringProperty,
                       } satisfies {
-                        readonly "@id": string;
-                        readonly requiredStringProperty: string;
+                        "@id": string;
+                        requiredStringProperty: string;
                       }),
                     ),
                   $toString: (_object) =>
@@ -671,24 +671,24 @@ export namespace FormStruct {
   export const isFormStruct = (object: $Object): object is FormStruct =>
     object.$type === "FormStruct";
 
-  export namespace Json {
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
+  export type Json = {
+    "@id": string;
+    emptyStringSetProperty?: string[];
+    nestedStructProperty: { "@id": string; requiredStringProperty: string };
+    nonEmptyStringSetProperty: string[];
+    optionalStringProperty?: string;
+    requiredIntProperty: number;
+    requiredStringProperty: string;
+  };
 
+  export namespace Json {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        $type: z.literal("FormStruct"),
         emptyStringSetProperty: z
-          .string()
-          .array()
+          .array(z.string())
           .optional()
-          .readonly()
+          .optional()
           .meta({ title: "Empty string set" }),
         nestedStructProperty: z
           .object({
@@ -699,14 +699,9 @@ export namespace FormStruct {
           })
           .meta({ title: "Nested object" }),
         nonEmptyStringSetProperty: z
-          .string()
-          .array()
-          .nonempty()
+          .array(z.string())
           .min(1)
-          .readonly()
-          .meta({
-            title: "Non-empty string set",
-          }),
+          .meta({ title: "Non-empty string set" }),
         optionalStringProperty: z
           .string()
           .optional()
@@ -716,6 +711,14 @@ export namespace FormStruct {
       }) satisfies z.ZodType<Json>;
     }
 
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -723,17 +726,6 @@ export namespace FormStruct {
           {
             label: "Identifier",
             scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "FormStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
             type: "Control",
           },
           {
@@ -758,7 +750,7 @@ export namespace FormStruct {
               ],
               type: "Group",
             };
-          })({ scopePrefix: `${scopePrefix}/properties/nestedStructProperty` }),
+          })({ scopePrefix: scopePrefix }),
           {
             label: "Non-empty string set",
             scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
@@ -785,20 +777,6 @@ export namespace FormStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "FormStruct";
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nestedStructProperty: {
-      readonly "@id": string;
-      readonly requiredStringProperty: string;
-    };
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty?: string;
-    readonly requiredIntProperty: number;
-    readonly requiredStringProperty: string;
-  };
 
   export const schema = {
     properties: {
@@ -880,7 +858,6 @@ export namespace FormStruct {
           _formStruct.$identifier().termType === "BlankNode"
             ? `_:${_formStruct.$identifier().value}`
             : _formStruct.$identifier().value,
-        $type: _formStruct.$type,
         emptyStringSetProperty: _formStruct.emptyStringSetProperty.map(
           (item) => item,
         ),
@@ -892,10 +869,7 @@ export namespace FormStruct {
                   ? `_:${_object.$identifier().value}`
                   : _object.$identifier().value,
               requiredStringProperty: _object.requiredStringProperty,
-            } satisfies {
-              readonly "@id": string;
-              readonly requiredStringProperty: string;
-            }),
+            } satisfies { "@id": string; requiredStringProperty: string }),
           ))(_formStruct.nestedStructProperty),
         nonEmptyStringSetProperty: _formStruct.nonEmptyStringSetProperty.map(
           (item) => item,
