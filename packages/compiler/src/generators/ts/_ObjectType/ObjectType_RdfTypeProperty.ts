@@ -173,12 +173,12 @@ type: "optional" as const
   @Memoize()
   override toJsonInitializer(): Maybe<Code> {
     return Maybe.of(
-      code`${{
-        "@type":
-          this.toRdfTypes.length === 1
-            ? code`${literalOf(this.toRdfTypes[0].value)}`
-            : code`${arrayOf(...this.toRdfTypes.map((toRdfType) => toRdfType.value))}`,
-      }}`,
+      code`"@type":
+          ${
+            this.toRdfTypes.length === 1
+              ? code`${literalOf(this.toRdfTypes[0].value)}`
+              : code`${arrayOf(...this.toRdfTypes.map((toRdfType) => toRdfType.value))}`
+          }`,
     );
   }
 

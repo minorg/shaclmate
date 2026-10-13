@@ -217,12 +217,12 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
     return code`(${joinCode(
       this.memberTypes.map((memberType) => memberType.expression),
       { on: " | " },
-    )}`;
+    )})`;
   }
 
   @Memoize()
   protected get schemaExpression(): Code {
-    return code`${this.reusables.imports.z}.discriminatedUnion(${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}, [${joinCode(this.memberTypes.map((memberType) => memberType.schema))}])`;
+    return code`${this.reusables.imports.z}.discriminatedUnion(${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}, [${joinCode(this.memberTypes.map((memberType) => memberType.schema), {on: ", "})}])`;
   }
 }
 
