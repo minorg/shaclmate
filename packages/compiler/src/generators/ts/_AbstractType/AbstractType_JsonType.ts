@@ -183,7 +183,13 @@ class JsonArrayType extends AbstractJsonType {
 
   @Memoize()
   protected get schemaExpression(): Code {
-    return code`${this.reusables.imports.z}.array(${this.itemType.schema})`;
+    let expression = code`${this.reusables.imports.z}.array(${this.itemType.schema})`;
+    if (this.minCount === 0n) {
+      expression = code`${expression}.optional()`;
+    } else {
+      expression = code`${expression}.min(${this.minCount})`;
+    }
+    return expression;
   }
 }
 
@@ -255,6 +261,13 @@ class JsonObjectType extends AbstractJsonType {
       this.members.map((member) => {
         let schema = member.type.schema;
 
+        if (member.optional) {
+          schema = code`${schema}.optional()`;
+        }
+        if (member.recursive) {
+          schema = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${member.type.expression}> => ${schema})`;
+        }
+
         const meta: Record<string, string> = {
           // id: `${this.namedObjectType.name}-${this.name}`, // id's must be unique
         };
@@ -286,7 +299,7 @@ class JsonObjectType extends AbstractJsonType {
       type: "Group",
     };
     this.name.ifJust((name) => {
-      uiSchema["label"] = code`${literalOf(name)}`;
+      uiSchema["label"] = code`${literalOf(name[0])}`;
     });
 
     return code`\
