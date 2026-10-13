@@ -8,14 +8,12 @@ export type AbstractDiscriminatedUnionType_Discriminant =
   | TypeofDiscriminant;
 
 type ExtrinsicDiscriminant = {
-  readonly jsonName: string;
   readonly kind: "Extrinsic";
   readonly memberValues: readonly AbstractType.DiscriminantProperty.Value[];
   readonly name: string;
 };
 
 type HybridDiscriminant = {
-  readonly jsonName: string;
   readonly kind: "Hybrid";
   readonly memberValues: readonly {
     readonly kind: "Extrinsic" | "Intrinsic";
@@ -25,7 +23,6 @@ type HybridDiscriminant = {
 };
 
 type IntrinsicDiscriminant = {
-  readonly jsonName: string;
   readonly kind: "Intrinsic";
   readonly memberValues: readonly AbstractType.DiscriminantProperty.Value[];
   readonly name: string;

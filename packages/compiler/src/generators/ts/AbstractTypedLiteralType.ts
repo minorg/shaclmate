@@ -55,6 +55,7 @@ export abstract class AbstractTypedLiteralType<
   }
 
   override jsonType({
+    discriminantProperty,
     form,
   }: Parameters<
     AbstractLiteralType["jsonType"]
@@ -64,6 +65,7 @@ export abstract class AbstractTypedLiteralType<
         return this.compactJsonType;
       case "expanded":
         return this.jsonTypeFactory.createJsonValueObjectType({
+          ...discriminantProperty,
           "@type": this.datatype,
           "@value": this.compactJsonType,
         });
@@ -71,6 +73,7 @@ export abstract class AbstractTypedLiteralType<
   }
 
   override toJsonExpression({
+    discriminantProperty,
     form,
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
@@ -79,6 +82,7 @@ export abstract class AbstractTypedLiteralType<
         return this.toCompactJsonExpression({ variables });
       case "expanded":
         return code`${{
+          ...discriminantProperty,
           "@type": this.rdfjsTermExpression(this.datatype),
           "@value": this.toCompactJsonExpression({ variables }),
         }}`;

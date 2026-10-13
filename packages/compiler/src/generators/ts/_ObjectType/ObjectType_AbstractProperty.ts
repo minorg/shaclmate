@@ -167,7 +167,6 @@ export abstract class ObjectType_AbstractProperty {
    * Initializer (name: value) from a JSON object.
    */
   abstract fromJsonInitializer(parameters: {
-    discriminated: boolean;
     variables: {
       jsonObject: Code;
     };
@@ -242,7 +241,6 @@ export abstract class ObjectType_AbstractProperty {
    * Initializer (name: value) to JSON.
    */
   abstract toJsonInitializer(parameters: {
-    discriminated: boolean;
     variables: { object: Code };
   }): Maybe<Code>;
 

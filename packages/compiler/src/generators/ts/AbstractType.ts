@@ -311,11 +311,19 @@ ${joinCode(
    * Parameters:
    *  - form: form of JSON to use, corresponding to JSON-LD forms (https://www.w3.org/TR/json-ld11/#forms-of-json-ld).
    *
-   * When form is "expanded" this function must return a JSON object type.
+   * When form is "expanded" this function must return a JSON object type including the given discriminant property.
    */
-  abstract jsonType(parameters: {
-    form: AbstractType.JsonForm;
-  }): AbstractType.JsonType;
+  abstract jsonType(
+    parameters:
+      | {
+          discriminantProperty?: undefined;
+          form: "compact";
+        }
+      | {
+          discriminantProperty?: Record<string, AbstractType.JsonType>;
+          form: "expanded";
+        },
+  ): AbstractType.JsonType;
 
   /**
    * An expression that converts a value of this type to a JSON compatible value.
@@ -325,12 +333,22 @@ ${joinCode(
    *   variables:
    *     value: instance of this type.
    */
-  abstract toJsonExpression(parameters: {
-    form: AbstractType.JsonForm;
-    variables: {
-      value: Code;
-    };
-  }): Code;
+  abstract toJsonExpression(
+    parameters: {
+      variables: {
+        value: Code;
+      };
+    } & (
+      | {
+          discriminantProperty?: undefined;
+          form: "compact";
+        }
+      | {
+          discriminantProperty?: Record<string, Code>;
+          form: "expanded";
+        }
+    ),
+  ): Code;
 
   /**
    * An expression that converts a value of this type to a value that can be logged.

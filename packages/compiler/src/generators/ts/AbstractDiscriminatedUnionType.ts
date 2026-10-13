@@ -11,8 +11,6 @@ import { AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression 
 import { AbstractDiscriminatedUnionType_hashFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_hashFunctionExpression.js";
 import { AbstractDiscriminatedUnionType_inferDiscriminant } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_inferDiscriminant.js";
 import { AbstractDiscriminatedUnionType_inlineExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_inlineExpression.js";
-import { AbstractDiscriminatedUnionType_jsonSchemaExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_jsonSchemaExpression.js";
-import { AbstractDiscriminatedUnionType_jsonTypeLiteral } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_jsonTypeLiteral.js";
 import { AbstractDiscriminatedUnionType_schemaTypeExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_schemaTypeExpression.js";
 import { AbstractDiscriminatedUnionType_toJsonFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toJsonFunctionExpression.js";
 import { AbstractDiscriminatedUnionType_toLoggableFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toLoggableFunctionExpression.js";
@@ -22,6 +20,7 @@ import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpre
 import { AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.js";
 import { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
@@ -113,9 +112,7 @@ export abstract class AbstractDiscriminatedUnionType<
             //   }
             // }
 
-            const discriminantName = json
-              ? discriminant.jsonName
-              : discriminant.name;
+            const discriminantName = discriminant.name;
 
             return code`(${joinCode(
               discriminantValues.map(
@@ -178,19 +175,16 @@ export abstract class AbstractDiscriminatedUnionType<
     switch (this.discriminant.kind) {
       case "Extrinsic":
         return Maybe.of({
-          jsonName: this.discriminant.jsonName,
           name: this.discriminant.name,
           values: this.discriminant.memberValues,
         });
       case "Hybrid":
         return Maybe.of({
-          jsonName: this.discriminant.jsonName,
           name: "termType",
           values: this.discriminant.memberValues.flatMap((_) => _.values),
         });
       case "Intrinsic":
         return Maybe.of({
-          jsonName: this.discriminant.jsonName,
           name: this.discriminant.name,
           values: this.discriminant.memberValues,
         });
@@ -275,30 +269,6 @@ export abstract class AbstractDiscriminatedUnionType<
       }
     }
     return jsTypes;
-  }
-
-  get jsonSchemaFunctionDeclaration(): Code {
-    let expression =
-      AbstractDiscriminatedUnionType_jsonSchemaExpression.call(this);
-
-    const meta: Record<string, string> = {
-      // id: this.name,
-    };
-    this.comment.ifJust((description) => {
-      meta["description"] = description;
-    });
-    this.label.ifJust((label) => {
-      meta["title"] = label;
-    });
-    if (Object.keys(meta).length > 0) {
-      expression = code`${expression}.meta(${meta})`;
-    }
-
-    return code`export const schema = () => ${expression};`;
-  }
-
-  get jsonTypeAliasDeclaration(): Code {
-    return code`export type Json = ${AbstractDiscriminatedUnionType_jsonTypeLiteral.call(this).expression}`;
   }
 
   @Memoize()
@@ -401,25 +371,29 @@ export abstract class AbstractDiscriminatedUnionType<
     return variables.value;
   }
 
-  override jsonSchema({
-    context,
-  }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    const expression = this.name
-      .map((name) => code`${name}.Json.schema()`)
-      .orDefault(
-        AbstractDiscriminatedUnionType_jsonSchemaExpression.call(this),
-      );
-    if (context === "property" && this.recursive) {
-      return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.jsonType().expression}> => ${expression})`;
-    }
-    return expression;
-  }
-
-  @Memoize()
   override jsonType(): AbstractType.JsonType {
-    return this.name
-      .map((name) => new AbstractType.JsonType(code`${name}.Json`))
-      .orDefault(AbstractDiscriminatedUnionType_jsonTypeLiteral.call(this));
+    return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
+      this.members.map((member) => {
+        const memberJsonType = member.type.jsonType({
+          discriminantProperty: singleEntryRecord(
+            this.configuration.objectDiscriminantProperty.jsonName,
+            typeof member.primaryDiscriminantValue === "number"
+              ? this.jsonTypeFactory.createJsonNumberType({
+                  in_: [member.primaryDiscriminantValue],
+                })
+              : this.jsonTypeFactory.createJsonStringType({
+                  in_: [member.primaryDiscriminantValue],
+                }),
+          ),
+          form: "expanded",
+        });
+        invariant(memberJsonType.kind === "JsonObject");
+        return memberJsonType;
+      }),
+      {
+        name: this.name.map((name) => [name, "Json"]).extract(),
+      },
+    );
   }
 
   override toJsonExpression({
@@ -477,21 +451,9 @@ export abstract class AbstractDiscriminatedUnionType<
     }
 
     if (this.configuration.features.has("Object.JSON.type")) {
-      staticModuleDeclarations["Json.type"] =
-        code`${this.jsonTypeAliasDeclaration}`;
-    }
-
-    if (this.configuration.features.has("Object.JSON.schema")) {
-      staticModuleDeclarations["Json.namespace"] = code`\
-export namespace Json {
-  ${this.jsonSchemaFunctionDeclaration}
-
-  export function parse(json: unknown): ${this.reusables.imports.Either}<Error, Json> {
-    const jsonSafeParseResult = schema().safeParse(json);
-    if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
-    return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
-  }
-}`;
+      this.jsonType().declaration.ifJust((jsonTypeDeclaration) => {
+        staticModuleDeclarations["JSON"] = jsonTypeDeclaration;
+      });
     }
 
     if (this.configuration.features.has("Object.fromJson")) {

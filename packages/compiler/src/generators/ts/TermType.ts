@@ -195,9 +195,9 @@ export class TermType<
     )!;
   }
 
-  override toLoggableExpression(
-    parameters: Parameters<AbstractTermType["toLoggableExpression"]>[0],
-  ): Code {
-    return this.toJsonExpression({ form: "expanded", ...parameters });
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractTermType["toLoggableExpression"]>[0]): Code {
+    return this.toJsonExpression({ form: "expanded", variables });
   }
 }

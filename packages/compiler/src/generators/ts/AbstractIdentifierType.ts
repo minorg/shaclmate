@@ -36,6 +36,7 @@ export abstract class AbstractIdentifierType<
   }
 
   override toJsonExpression({
+    discriminantProperty,
     form,
     variables,
   }: Parameters<
@@ -46,11 +47,12 @@ export abstract class AbstractIdentifierType<
       case "compact":
         return toCompactJsonExpression;
       case "expanded":
-        return code`${{ "@id": toCompactJsonExpression }}`;
+        return code`${{ ...discriminantProperty, "@id": toCompactJsonExpression }}`;
     }
   }
 
   override jsonType({
+    discriminantProperty,
     form,
   }: Parameters<
     AbstractTermType<NamedNode, IdentifierT>["jsonType"]
@@ -69,6 +71,7 @@ export abstract class AbstractIdentifierType<
         return compactJsonType;
       case "expanded":
         return this.jsonTypeFactory.createJsonObjectType({
+          ...discriminantProperty,
           "@id": { type: compactJsonType },
         });
     }

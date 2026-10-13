@@ -45,26 +45,8 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   }
 
   @Memoize()
-  get jsonName(): string {
-    return this.configuration.objectDiscriminantProperty.jsonName;
-  }
-
-  @Memoize()
   get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
-    return Maybe.of({
-      description: Maybe.empty(),
-      label: Maybe.empty(),
-      name: this.jsonName,
-      optional: false,
-      recursive: this.recursive,
-      type: this.jsonTypeFactory.createJsonStringType({
-        in_: [this.value],
-      }),
-      uiSchemaElement: ({ variables }) => {
-        const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
-        return code`{ rule: { condition: { schema: { const: ${this.constValue} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`;
-      },
-    });
+    return Maybe.empty();
   }
 
   override get schema(): Maybe<Code> {
@@ -78,10 +60,6 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   @Memoize()
   get values(): readonly string[] {
     return [this.value];
-  }
-
-  private get constValue(): Code {
-    return code`${literalOf(this.value)} as const`;
   }
 
   override constructorInitializer(): Maybe<Code> {
@@ -126,12 +104,8 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     return Maybe.empty();
   }
 
-  override toJsonInitializer({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["toJsonInitializer"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(code`"${this.jsonName}": ${variables.object}.${this.name}`);
+  override toJsonInitializer(): Maybe<Code> {
+    return Maybe.empty();
   }
 
   override toRdfRdfResourceValuesStatements(): readonly Code[] {

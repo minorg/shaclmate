@@ -42,10 +42,7 @@ ${tsNamedObjectType.jsonType().declaration.unsafeCoerce()}
             typeFactory.createDiscriminatedUnionType(astNamedType);
           declarations.push(code`\
 export namespace ${tsNamedDiscriminatedUnionType.name.unsafeCoerce()} {
-  ${tsNamedDiscriminatedUnionType.jsonTypeAliasDeclaration}
-  export namespace Json {
-    ${tsNamedDiscriminatedUnionType.jsonSchemaFunctionDeclaration}
-  }
+${tsNamedDiscriminatedUnionType.jsonType().declaration.unsafeCoerce()}
 }`);
           break;
         }
