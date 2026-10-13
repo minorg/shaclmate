@@ -102,7 +102,11 @@ export class LiteralType extends AbstractLiteralType {
   override toJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
-    return code`${{ "@language": code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`, "@type": code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`, "@value": code`${variables.value}.value` }}`;
+    return code`${{
+      "@language": code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`,
+      "@type": code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`,
+      "@value": code`${variables.value}.value`,
+    }}`;
   }
 
   override toLoggableExpression({

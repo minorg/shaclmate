@@ -103,7 +103,7 @@ export class ListType<
       valueVariable = code`${valueVariable}["@list"]`;
     }
 
-    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${valueVariable}}.map(item => (${this.itemType.fromJsonExpression(
+    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${valueVariable}.map(item => (${this.itemType.fromJsonExpression(
       {
         form: "compact",
         variables: { value: code`item` },

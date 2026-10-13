@@ -182,7 +182,7 @@ export class TermType<
         let toCompactJsonExpression: Code | undefined;
         switch (nodeKind) {
           case "BlankNode":
-            toCompactJsonExpression = code`\`_:\$${variables.value}.value\``;
+            toCompactJsonExpression = code`\`_:\${${variables.value}.value}\``;
             break;
           case "IRI":
             toCompactJsonExpression = code`${variables.value}.value`;
