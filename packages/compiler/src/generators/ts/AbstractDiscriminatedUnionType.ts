@@ -377,13 +377,16 @@ export abstract class AbstractDiscriminatedUnionType<
         const memberJsonType = member.type.jsonType({
           discriminantProperty: singleEntryRecord(
             this.configuration.objectDiscriminantProperty.jsonName,
-            typeof member.primaryDiscriminantValue === "number"
-              ? this.jsonTypeFactory.createJsonNumberType({
-                  in_: [member.primaryDiscriminantValue],
-                })
-              : this.jsonTypeFactory.createJsonStringType({
-                  in_: [member.primaryDiscriminantValue],
-                }),
+            {
+              type:
+                typeof member.primaryDiscriminantValue === "number"
+                  ? this.jsonTypeFactory.createJsonNumberType({
+                      in_: [member.primaryDiscriminantValue],
+                    })
+                  : this.jsonTypeFactory.createJsonStringType({
+                      in_: [member.primaryDiscriminantValue],
+                    }),
+            },
           ),
           form: "expanded",
         });

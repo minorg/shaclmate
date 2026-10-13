@@ -132,7 +132,11 @@ export class TermType<
       [...this.nodeKinds].map((nodeKind) => {
         const discriminantProperty = singleEntryRecord(
           this.configuration.objectDiscriminantProperty.jsonName,
-          this.jsonTypeFactory.createJsonStringType({ in_: [nodeKind] }),
+          {
+            type: this.jsonTypeFactory.createJsonStringType({
+              in_: [nodeKind],
+            }),
+          },
         );
         switch (nodeKind) {
           case "BlankNode":

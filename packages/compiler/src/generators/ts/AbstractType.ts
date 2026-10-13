@@ -320,7 +320,10 @@ ${joinCode(
           form: "compact";
         }
       | {
-          discriminantProperty?: Record<string, AbstractType.JsonType>;
+          discriminantProperty?: Record<
+            string,
+            { type: AbstractType.JsonType }
+          >;
           form: "expanded";
         },
   ): AbstractType.JsonType;
