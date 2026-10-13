@@ -148,6 +148,16 @@ export class SetType<
     );
   }
 
+  override toJsonExpression({
+    form,
+    variables,
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toJsonExpression"]
+  >[0]): Code {
+    invariant(form === "compact");
+    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form, variables: { value: code`item` } })}))`;
+  }
+
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<

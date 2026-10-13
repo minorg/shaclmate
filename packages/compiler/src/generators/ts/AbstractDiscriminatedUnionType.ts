@@ -390,7 +390,7 @@ export abstract class AbstractDiscriminatedUnionType<
           ),
           form: "expanded",
         });
-        invariant(memberJsonType.kind === "JsonObject");
+        invariant(memberJsonType.kind === "JsonObject", memberJsonType.kind);
         return memberJsonType;
       }),
       {

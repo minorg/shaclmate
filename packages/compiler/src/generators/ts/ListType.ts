@@ -3,7 +3,6 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
-import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
@@ -99,24 +98,52 @@ export class ListType<
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
-    invariant(form === "compact");
-    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${variables.value}.map(item => (${this.itemType.fromJsonExpression(
+    let valueVariable = variables.value;
+    if (form === "expanded") {
+      valueVariable = code`${valueVariable}["@list"]`;
+    }
+
+    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${valueVariable}}.map(item => (${this.itemType.fromJsonExpression(
       {
-        form,
+        form: "compact",
         variables: { value: code`item` },
       },
     )})))`;
   }
 
   override jsonType({
+    discriminantProperty,
     form,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["jsonType"]
   >[0]): AbstractCollectionType.JsonType {
-    invariant(form === "compact");
-    return this.jsonTypeFactory.createJsonArrayType(
-      this.itemType.jsonType({ form }),
+    const compactJsonType = this.jsonTypeFactory.createJsonArrayType(
+      this.itemType.jsonType({ form: "compact" }),
     );
+    switch (form) {
+      case "compact":
+        return compactJsonType;
+      case "expanded":
+        return this.jsonTypeFactory.createJsonObjectType({
+          ...discriminantProperty,
+          "@list": { type: compactJsonType },
+        });
+    }
+  }
+
+  override toJsonExpression({
+    form,
+    variables,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["toJsonExpression"]
+  >[0]): Code {
+    const toCompactJsonExpression = code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form: "compact", variables: { value: code`item` } })}))`;
+    switch (form) {
+      case "compact":
+        return toCompactJsonExpression;
+      case "expanded":
+        return code`${{ "@list": toCompactJsonExpression }}`;
+    }
   }
 
   override toRdfResourceValuesExpression({
