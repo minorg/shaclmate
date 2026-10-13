@@ -197,7 +197,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     return Maybe.of(
       code`${this.name}: ${this.type.fromJsonExpression({
         form: "compact",
-        variables: { value: variables.jsonObject },
+        variables: { value: code`${variables.jsonObject}["@id"]` },
       })}`,
     );
   }

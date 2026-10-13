@@ -259,7 +259,7 @@ class JsonObjectType extends AbstractJsonType {
           schema = code`${schema}.meta(${meta})`;
         }
 
-        return code`${member.name}: ${schema}`;
+        return code`${literalOf(member.name)}: ${schema}`;
       }),
       { on: ", " },
     )} })`;
