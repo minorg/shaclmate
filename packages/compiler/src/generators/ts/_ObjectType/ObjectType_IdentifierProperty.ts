@@ -97,8 +97,10 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
           : this.jsonTypeFactory.createJsonStringType({
               minLength: 1n,
             }),
-      uiSchemaElement: ({ variables }) =>
-        code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
+      uiSchemaElement: Maybe.of(
+        ({ variables }) =>
+          code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
+      ),
     });
   }
 

@@ -72,6 +72,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
           : this.jsonTypeFactory.createJsonArrayType(
               this.jsonTypeFactory.createJsonStringType(),
             ),
+      uiSchemaElement: Maybe.empty(),
     });
   }
 

@@ -455,7 +455,9 @@ class JsonTypeFactory {
         recursive: !!member.recursive,
         name: member.name,
         type: member.type,
-        uiSchemaElement: Maybe.fromNullable(member.uiSchemaElement),
+        uiSchemaElement: Maybe.isMaybe(member.uiSchemaElement)
+          ? member.uiSchemaElement
+          : Maybe.fromNullable(member.uiSchemaElement),
       })),
       name: Maybe.fromNullable(options?.name),
     });
@@ -526,6 +528,10 @@ namespace JsonArrayType {
 
 // biome-ignore lint/correctness/noUnusedVariables: used for types
 namespace JsonObjectType {
+  type MemberUiSchemaElementFunction = (parameters: {
+    variables: { scopePrefix: Code };
+  }) => Code;
+
   export interface Member {
     readonly description: Maybe<string>;
     readonly label: Maybe<string>;
@@ -537,9 +543,7 @@ namespace JsonObjectType {
     /**
      * Element object (usually a control https://jsonforms.io/docs/uischema/controls) for a JSON Forms UI schema.
      */
-    readonly uiSchemaElement: Maybe<
-      (parameters: { variables: { scopePrefix: Code } }) => Code
-    >;
+    readonly uiSchemaElement: Maybe<MemberUiSchemaElementFunction>;
   }
 
   export type PartialMember = Pick<JsonObjectType.Member, "name" | "type"> & {
@@ -547,9 +551,9 @@ namespace JsonObjectType {
     label?: Maybe<string> | string;
     optional?: boolean;
     recursive?: boolean;
-    uiSchemaElement?: (parameters: {
-      variables: { scopePrefix: Code };
-    }) => Code;
+    uiSchemaElement?:
+      | Maybe<MemberUiSchemaElementFunction>
+      | MemberUiSchemaElementFunction;
   };
 }
 
