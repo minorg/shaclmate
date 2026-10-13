@@ -97,24 +97,24 @@ export class TermType<
     return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${[
       ...this.nodeKinds,
     ].reduce(
-      (expression, nodeKind) => {
-        let valueToNodeKind: Code;
+      (combinedFromJsonExpression, nodeKind) => {
+        let fromJsonExpression: Code;
         switch (nodeKind) {
           case "BlankNode":
-            valueToNodeKind = code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
+            fromJsonExpression = code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
             break;
           case "IRI":
-            valueToNodeKind = code`${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])`;
+            fromJsonExpression = code`${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])`;
             break;
           case "Literal":
-            valueToNodeKind = code`${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined))`;
+            fromJsonExpression = code`${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined))`;
             break;
           default:
             throw new RangeError(nodeKind);
         }
-        return expression == null
-          ? valueToNodeKind
-          : code`((${variables.value}.${this.configuration.objectDiscriminantProperty.jsonName} === "${NodeKind.toTermType(nodeKind)}") ? (${valueToNodeKind}) : (${expression}))`;
+        return combinedFromJsonExpression == null
+          ? fromJsonExpression
+          : code`((${variables.value}.${this.configuration.objectDiscriminantProperty.jsonName} === "${NodeKind.toTermType(nodeKind)}") ? (${fromJsonExpression}) : (${combinedFromJsonExpression}))`;
       },
       null as Code | null,
     )!})`;
@@ -173,27 +173,50 @@ export class TermType<
   }
 
   override toJsonExpression({
+    discriminantProperty,
+    form,
     variables,
   }: Parameters<AbstractTermType["toJsonExpression"]>[0]): Code {
     return [...this.nodeKinds].reduce(
-      (expression, nodeKind) => {
-        let valueToNodeKind: Code;
+      (combinedToJsonExpression, nodeKind) => {
+        let toCompactJsonExpression: Code | undefined;
         switch (nodeKind) {
           case "BlankNode":
-            valueToNodeKind = code`"@id": \`_:\$$variables.value.value\`, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
+            toCompactJsonExpression = code`\`_:\$${variables.value}.value\``;
             break;
           case "IRI":
-            valueToNodeKind = code`"@id": $variables.value.value, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
+            toCompactJsonExpression = code`${variables.value}.value`;
             break;
-          case "Literal":
-            valueToNodeKind = code`"@language": $variables.value.language.length > 0 ? $variables.value.language : undefined, "@type": $variables.value.datatype.value !== "${xsd.string.value}" ? $variables.value.datatype.value : undefined, "@value": $variables.value.value, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
-            break;
-          default:
-            throw new RangeError(nodeKind);
         }
-        return expression === null
-          ? valueToNodeKind
-          : code`(${variables.value}.${this.configuration.objectDiscriminantProperty.jsonName} === "${NodeKind.toTermType(nodeKind)}") ? ${valueToNodeKind} : ${expression}`;
+
+        let toJsonExpression: Code;
+        if (form === "compact" && toCompactJsonExpression) {
+          toJsonExpression = toCompactJsonExpression;
+        } else {
+          invariant(form === "expanded" || nodeKind === "Literal");
+          const toExpandedJsonExpression: Record<string, Code> = {
+            ...discriminantProperty,
+          };
+          switch (nodeKind) {
+            case "BlankNode":
+            case "IRI":
+              toExpandedJsonExpression["@id"] = toCompactJsonExpression!;
+              break;
+            case "Literal":
+              toExpandedJsonExpression["@language"] =
+                code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`;
+              toExpandedJsonExpression["@type"] =
+                code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`;
+              toExpandedJsonExpression["@value"] =
+                code`${variables.value}.value`;
+              break;
+          }
+          toJsonExpression = code`${toExpandedJsonExpression}`;
+        }
+
+        return combinedToJsonExpression === null
+          ? toJsonExpression
+          : code`(${variables.value}.termType === "${NodeKind.toTermType(nodeKind)}") ? ${toJsonExpression} : ${combinedToJsonExpression}`;
       },
       null as Code | null,
     )!;
