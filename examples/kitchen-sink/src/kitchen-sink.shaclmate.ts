@@ -10124,6 +10124,11 @@ export type DatatypeDiscriminatedUnionsStruct = {
   readonly decimalOrString: BigDecimal | string;
 
   /**
+   * Integer or string. These don't need discriminant values because they're different types in TypeScript.
+   */
+  readonly integerOrString: bigint | string;
+
+  /**
    * JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript.
    */
   readonly jsPrimitive: boolean | number | bigint | string;
@@ -10700,6 +10705,125 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 readonly object: {
                   discriminantValues: readonly (number | string)[];
                   type: $NumericSchema<BigDecimal>;
+                };
+                readonly string: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $StringSchema<string>;
+                };
+              };
+            }
+          >,
+        }),
+        integerOrString: $shaclPropertyFromRdf<
+          bigint | string,
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly bigint: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<bigint>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString,
+          typeFromRdfResourceValues: ((inputValues, options) => {
+            const memberInputValues: Resource.Values[] = Array.from({
+              length: 2,
+            }).map(() =>
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              }),
+            );
+            for (const inputValue of inputValues) {
+              const inputValueAsValues = inputValue.toValues();
+              let memberOutputValuesEither: Either<Error, unknown> | undefined;
+              for (let memberI = 0; memberI < 2; memberI++) {
+                if (memberI === 0) {
+                  memberOutputValuesEither =
+                    $bigIntFromRdfResourceValues<bigint>(inputValueAsValues, {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["bigint"].type,
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                } else if (memberI === 1) {
+                  memberOutputValuesEither =
+                    $stringFromRdfResourceValues<string>(inputValueAsValues, {
+                      ...options,
+                      ignoreRdfType: false,
+                      schema: options.schema.members["string"].type,
+                    });
+                  if (memberOutputValuesEither.isRight()) {
+                    memberInputValues[memberI] =
+                      memberInputValues[memberI].concat(inputValue);
+                    break;
+                  }
+                }
+              }
+              if (memberOutputValuesEither!.isLeft()) {
+                return memberOutputValuesEither;
+              }
+            }
+
+            let collectedOutputValues: Resource.Values<bigint | string> =
+              Resource.Values.empty({
+                focusResource: inputValues.focusResource,
+                propertyPath: inputValues.propertyPath,
+              });
+            for (let memberI = 0; memberI < 2; memberI++) {
+              if (memberInputValues[memberI].length === 0) {
+                continue;
+              }
+              switch (memberI) {
+                case 0:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$bigIntFromRdfResourceValues<bigint>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["bigint"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+                case 1:
+                  collectedOutputValues = collectedOutputValues.concat(
+                    ...$stringFromRdfResourceValues<string>(
+                      memberInputValues[memberI],
+                      {
+                        ...options,
+                        ignoreRdfType: false,
+                        schema: options.schema.members["string"].type,
+                      },
+                    ).unsafeCoerce(),
+                  );
+                  break;
+              }
+            }
+            return Right(collectedOutputValues);
+          }) satisfies $FromRdfResourceValuesFunction<
+            bigint | string,
+            {
+              kind: "DiscriminatedUnion";
+              members: {
+                readonly bigint: {
+                  discriminantValues: readonly (number | string)[];
+                  type: $NumericSchema<bigint>;
                 };
                 readonly string: {
                   discriminantValues: readonly (number | string)[];
@@ -11492,6 +11616,30 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       parameters.graph,
     );
     parameters.resource.add(
+      DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString.path,
+      (
+        ((value, _options): Literal[] => {
+          if (typeof value === "bigint") {
+            return [$literalFactory.bigint(value, $xsd_integer)];
+          }
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
+
+          throw new Error("unable to serialize to RDF");
+        }) satisfies $ToRdfResourceValuesFunction<bigint | string>
+      )(parameters.object.integerOrString, {
+        ignoreRdfType: parameters.ignoreRdfType,
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString
+            .path,
+      }),
+      parameters.graph,
+    );
+    parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive.path,
       (
         ((value, _options): Literal[] => {
@@ -11662,6 +11810,9 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
         throw new Error("unable to serialize to loggable");
       })(_datatypeDiscriminatedUnionsStruct.decimalOrString),
+      integerOrString: ((value: bigint | string) => value)(
+        _datatypeDiscriminatedUnionsStruct.integerOrString,
+      ),
       jsPrimitive: ((value: boolean | number | bigint | string) => value)(
         _datatypeDiscriminatedUnionsStruct.jsPrimitive,
       ),
@@ -11729,6 +11880,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       | { $type: "dateTime"; value: Date }
       | { $type: "date"; value: Date };
     readonly decimalOrString: BigDecimal | string;
+    readonly integerOrString: bigint | string;
     readonly jsPrimitive: boolean | number | bigint | string;
     readonly langStringOrString: Literal | string;
     readonly stringOrDate: string | Date;
@@ -11748,6 +11900,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       dateTimeOrDate: Either.of(parameters.dateTimeOrDate),
       decimalOrString: $identityConversionFunction(
         parameters.decimalOrString,
+        parameters.$defaultNamespace,
+      ),
+      integerOrString: $identityConversionFunction(
+        parameters.integerOrString,
         parameters.$defaultNamespace,
       ),
       jsPrimitive: $identityConversionFunction(
@@ -11799,6 +11955,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       | { $type: "dateTime"; value: Date }
       | { $type: "date"; value: Date };
     readonly decimalOrString: BigDecimal | string;
+    readonly integerOrString: bigint | string;
     readonly jsPrimitive: boolean | number | bigint | string;
     readonly langStringOrString: Literal | string;
     readonly stringOrDate: string | Date;
@@ -11954,6 +12111,35 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           },
           [left, left.decimalOrString],
           [right, right.decimalOrString],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: (left: bigint | string, right: bigint | string) => {
+              if (typeof left === "bigint" && typeof right === "bigint") {
+                return $strictEquals(left as bigint, right as bigint);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left as string, right as string);
+              }
+
+              return Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
+                },
+                type: "property" as const,
+              });
+            },
+            name: "integerOrString",
+          },
+          [left, left.integerOrString],
+          [right, right.integerOrString],
         ),
       )
       .chain(() =>
@@ -12249,6 +12435,33 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       return false;
     }
     if (
+      filter.integerOrString !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly bigint?: $NumericFilter<bigint>;
+            readonly string?: $StringFilter;
+          };
+        },
+        value: bigint | string,
+      ) => {
+        if (filter.on?.["bigint"] !== undefined && typeof value === "bigint") {
+          if (!$filterNumeric<bigint>(filter.on["bigint"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.integerOrString, value.integerOrString)
+    ) {
+      return false;
+    }
+    if (
       filter.jsPrimitive !== undefined &&
       !((
         filter: {
@@ -12424,6 +12637,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly decimalOrString?: {
       readonly on?: {
         readonly object?: $NumericFilter<BigDecimal>;
+        readonly string?: $StringFilter;
+      };
+    };
+    readonly integerOrString?: {
+      readonly on?: {
+        readonly bigint?: $NumericFilter<bigint>;
         readonly string?: $StringFilter;
       };
     };
@@ -12708,6 +12927,64 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
                 type: $NumericSchema<BigDecimal>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.integerOrString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "integerOrString",
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["bigint"],
+              ignoreRdfType: false,
+              schema: schema.members["bigint"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly bigint?: $NumericFilter<bigint>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly bigint: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<bigint>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
@@ -13332,6 +13609,62 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.integerOrString,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "integerOrString",
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $numericSparqlWherePatterns<bigint>({
+              ...otherParameters,
+              filter: filter?.on?.["bigint"],
+              ignoreRdfType: false,
+              schema: schema.members["bigint"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly bigint?: $NumericFilter<bigint>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "DiscriminatedUnion";
+            members: {
+              readonly bigint: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<bigint>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema<string>;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.jsPrimitive,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -13758,6 +14091,28 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
         throw new Error("unable to deserialize JSON");
       })($json["decimalOrString"]),
+      integerOrString: ((
+        value:
+          | { $type: "bigint"; "@type": string; "@value": string }
+          | {
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            },
+      ): Either<Error, bigint | string> => {
+        if (value.$type === "bigint") {
+          return Either.encase<Error, bigint>(() =>
+            BigInt(value["@value"]),
+          ).map((value) => value);
+        }
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })($json["integerOrString"]),
       jsPrimitive: ((
         value:
           | { $type: "boolean"; "@type": string; "@value": boolean }
@@ -13961,6 +14316,18 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     })(hasher, _datatypeDiscriminatedUnionsStruct.decimalOrString);
     (<HasherT extends $Hasher>(
       hasher: HasherT,
+      value: bigint | string,
+    ): HasherT => {
+      if (typeof value === "bigint") {
+        return $hashNumeric(hasher, value);
+      }
+      if (typeof value === "string") {
+        return $hashString(hasher, value);
+      }
+      return hasher;
+    })(hasher, _datatypeDiscriminatedUnionsStruct.integerOrString);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
       value: boolean | number | bigint | string,
     ): HasherT => {
       if (typeof value === "boolean") {
@@ -14065,6 +14432,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         };
     decimalOrString:
       | { $type: "object"; "@type": string; "@value": string }
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        };
+    integerOrString:
+      | { $type: "bigint"; "@type": string; "@value": string }
       | {
           $type: "string";
           "@type": string;
@@ -14186,6 +14560,23 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           .meta({
             description:
               "Decimal or string. These don't need discriminant values because they're different types in TypeScript.",
+          }),
+        integerOrString: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("bigint"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+          ])
+          .meta({
+            description:
+              "Integer or string. These don't need discriminant values because they're different types in TypeScript.",
           }),
         jsPrimitive: z
           .discriminatedUnion("$type", [
@@ -14321,6 +14712,10 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             type: "Control",
           },
           {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/integerOrString`,
+            type: "Control",
+          },
+          {
             scope: `${_parameters?.scopePrefix ?? "#"}/properties/jsPrimitive`,
             type: "Control",
           },
@@ -14428,6 +14823,23 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             object: {
               discriminantValues: ["object"],
               type: { kind: "BigDecimal" as const },
+            },
+            string: {
+              discriminantValues: ["string"],
+              type: { kind: "String" as const },
+            },
+          },
+        },
+      },
+      integerOrString: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/integerOrString"),
+        type: {
+          kind: "DiscriminatedUnion" as const,
+          members: {
+            bigint: {
+              discriminantValues: ["bigint"],
+              type: { kind: "BigInt" as const },
             },
             string: {
               discriminantValues: ["string"],
@@ -14716,6 +15128,32 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeDiscriminatedUnionsStruct.decimalOrString),
+        integerOrString: ((
+          value: bigint | string,
+        ):
+          | { $type: "bigint"; "@type": string; "@value": string }
+          | {
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            } => {
+          if (typeof value === "bigint") {
+            return {
+              $type: "bigint",
+              "@type": $xsd_integer.value,
+              "@value": value.toString(),
+            };
+          }
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.integerOrString),
         jsPrimitive: ((
           value: boolean | number | bigint | string,
         ):
