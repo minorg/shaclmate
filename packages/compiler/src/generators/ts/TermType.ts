@@ -6,7 +6,13 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -173,49 +179,32 @@ export class TermType<
   }
 
   override toJsonExpression({
-    discriminantProperty,
-    form,
     variables,
   }: Parameters<AbstractTermType["toJsonExpression"]>[0]): Code {
     return [...this.nodeKinds].reduce(
       (combinedToJsonExpression, nodeKind) => {
-        let toCompactJsonExpression: Code | undefined;
+        const toJsonExpression: Record<string, Code> = {};
+        toJsonExpression[
+          this.configuration.objectDiscriminantProperty.jsonName
+        ] = code`${literalOf(nodeKind)}`;
         switch (nodeKind) {
           case "BlankNode":
-            toCompactJsonExpression = code`\`_:\${${variables.value}.value}\``;
+            toJsonExpression["@id"] = code`\`_:\${${variables.value}.value}\``;
             break;
           case "IRI":
-            toCompactJsonExpression = code`${variables.value}.value`;
+            toJsonExpression["@id"] = code`${variables.value}.value`;
             break;
-        }
-
-        let toJsonExpression: Code;
-        if (form === "compact" && toCompactJsonExpression) {
-          toJsonExpression = toCompactJsonExpression;
-        } else {
-          invariant(form === "expanded" || nodeKind === "Literal");
-          const toExpandedJsonExpression: Record<string, Code> = {
-            ...discriminantProperty,
-          };
-          switch (nodeKind) {
-            case "BlankNode":
-            case "IRI":
-              toExpandedJsonExpression["@id"] = toCompactJsonExpression!;
-              break;
-            case "Literal":
-              toExpandedJsonExpression["@language"] =
-                code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`;
-              toExpandedJsonExpression["@type"] =
-                code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`;
-              toExpandedJsonExpression["@value"] =
-                code`${variables.value}.value`;
-              break;
-          }
-          toJsonExpression = code`${toExpandedJsonExpression}`;
+          case "Literal":
+            toJsonExpression["@language"] =
+              code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`;
+            toJsonExpression["@type"] =
+              code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`;
+            toJsonExpression["@value"] = code`${variables.value}.value`;
+            break;
         }
 
         return combinedToJsonExpression === null
-          ? toJsonExpression
+          ? code`${toJsonExpression}`
           : code`(${variables.value}.termType === "${NodeKind.toTermType(nodeKind)}") ? ${toJsonExpression} : ${combinedToJsonExpression}`;
       },
       null as Code | null,

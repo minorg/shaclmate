@@ -371,6 +371,7 @@ export abstract class AbstractDiscriminatedUnionType<
     return variables.value;
   }
 
+  @Memoize()
   override jsonType(): AbstractType.JsonType {
     return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
       this.members.map((member) => {

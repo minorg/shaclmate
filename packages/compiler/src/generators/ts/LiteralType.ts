@@ -82,9 +82,13 @@ export class LiteralType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
-  @Memoize()
-  override jsonType(): AbstractLiteralType.JsonType {
+  override jsonType({
+    discriminantProperty,
+  }: Parameters<
+    AbstractLiteralType["jsonType"]
+  >[0]): AbstractLiteralType.JsonType {
     return this.jsonTypeFactory.createJsonObjectType({
+      ...discriminantProperty,
       "@language": {
         optional: true,
         type: this.jsonTypeFactory.createJsonStringType(),
@@ -100,9 +104,11 @@ export class LiteralType extends AbstractLiteralType {
   }
 
   override toJsonExpression({
+    discriminantProperty,
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
     return code`${{
+      ...discriminantProperty,
       "@language": code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`,
       "@type": code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`,
       "@value": code`${variables.value}.value`,
