@@ -182,9 +182,7 @@ class JsonArrayType extends AbstractJsonType {
   @Memoize()
   protected get schemaExpression(): Code {
     let expression = code`${this.reusables.imports.z}.array(${this.itemType.schema})`;
-    if (this.minCount === 0n) {
-      expression = code`${expression}.optional()`;
-    } else {
+    if (this.minCount > 0n) {
       expression = code`${expression}.min(${this.minCount})`;
     }
     return expression;

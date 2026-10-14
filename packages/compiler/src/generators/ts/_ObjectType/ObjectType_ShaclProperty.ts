@@ -131,7 +131,7 @@ export class ObjectType_ShaclProperty<
       description: this.description.alt(this.comment),
       label: this.label,
       name: this.name,
-      optional: this.minCount === 0n,
+      optional: this.minCount === 0n && this.type.kind !== "DefaultValue",
       recursive: this.recursive,
       type: this.recursive
         ? this.jsonTypeFactory.createJsonNeverType()
