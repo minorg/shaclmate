@@ -290,7 +290,7 @@ class JsonObjectType extends AbstractJsonType {
   }
 
   private get uiSchemaFunctionExpression() {
-    const variables = { scopePrefix: code`scopePrefix` };
+    const variables = { scopePrefix: code`(_parameters?.scopePrefix ?? "#")` };
 
     const uiSchema: Record<string, Code | string> = {
       elements: code`${arrayOf(
@@ -305,8 +305,7 @@ class JsonObjectType extends AbstractJsonType {
     });
 
     return code`\
-((parameters?: { scopePrefix?: string }): any => {
-  const scopePrefix = parameters?.scopePrefix ?? "#";
+((_parameters?: { scopePrefix?: string }): any => {
   return ${uiSchema};
 })`;
   }
