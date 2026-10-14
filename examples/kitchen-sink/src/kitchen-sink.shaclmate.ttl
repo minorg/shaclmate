@@ -251,7 +251,6 @@
             ]
         )
     ], [
-        shaclmate:ignore true ;
         rdfs:comment "String or integer. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;

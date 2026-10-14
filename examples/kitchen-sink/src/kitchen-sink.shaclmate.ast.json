@@ -1372,6 +1372,63 @@
         },
         {
           "kind": "Shacl",
+          "comment": "String or integer. These don't need discriminant values because they're different types in TypeScript.",
+          "name": "stringOrInteger",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/stringOrInteger)",
+          "shapeIdentifier": {
+            "termType": "BlankNode",
+            "value": "df_0_204"
+          },
+          "type": {
+            "comment": "String or integer. These don't need discriminant values because they're different types in TypeScript.",
+            "kind": "DiscriminatedUnion",
+            "shapeIdentifier": {
+              "termType": "BlankNode",
+              "value": "df_0_204"
+            },
+            "members": [
+              {
+                "type": {
+                  "kind": "Literal",
+                  "shapeIdentifier": {
+                    "termType": "BlankNode",
+                    "value": "df_0_206"
+                  },
+                  "nodeKinds": [
+                    "Literal"
+                  ],
+                  "datatype": {
+                    "prefix": "xsd",
+                    "reference": "string",
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  }
+                }
+              },
+              {
+                "type": {
+                  "kind": "Literal",
+                  "shapeIdentifier": {
+                    "termType": "BlankNode",
+                    "value": "df_0_208"
+                  },
+                  "nodeKinds": [
+                    "Literal"
+                  ],
+                  "datatype": {
+                    "prefix": "xsd",
+                    "reference": "integer",
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#integer"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Shacl",
           "comment": "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript.",
           "name": "stringOrLangString",
           "order": 0,
