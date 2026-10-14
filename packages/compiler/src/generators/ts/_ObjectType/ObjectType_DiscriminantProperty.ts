@@ -46,16 +46,20 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
 
   @Memoize()
   get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
+    const name = this.configuration.objectDiscriminantProperty.jsonName;
     return Maybe.of({
       description: Maybe.empty(),
       label: Maybe.empty(),
-      name: this.configuration.objectDiscriminantProperty.jsonName,
+      name,
       optional: false,
       recursive: false,
       type: this.jsonTypeFactory.createJsonStringType({
         in_: [this.value],
       }),
-      uiSchemaElement: Maybe.empty(),
+      uiSchemaElement: Maybe.of(({ variables }) => {
+        const scope = code`\`\${${variables.scopePrefix}}/properties/${name}\``;
+        return code`{ rule: { condition: { schema: { const: ${literalOf(this.value)} as const }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`;
+      }),
     });
   }
 
