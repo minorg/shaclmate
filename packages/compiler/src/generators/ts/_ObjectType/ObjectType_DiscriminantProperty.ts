@@ -46,18 +46,17 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
 
   @Memoize()
   get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
-    const name = this.configuration.objectDiscriminantProperty.jsonName;
     return Maybe.of({
       description: Maybe.empty(),
       label: Maybe.empty(),
-      name,
+      name: this.jsonName,
       optional: false,
       recursive: false,
       type: this.jsonTypeFactory.createJsonStringType({
         in_: [this.value],
       }),
       uiSchemaElement: Maybe.of(({ variables }) => {
-        const scope = code`\`\${${variables.scopePrefix}}/properties/${name}\``;
+        const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
         return code`{ rule: { condition: { schema: { const: ${literalOf(this.value)} as const }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`;
       }),
     });
@@ -74,6 +73,10 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   @Memoize()
   get values(): readonly string[] {
     return [this.value];
+  }
+
+  private get jsonName(): string {
+    return this.configuration.objectDiscriminantProperty.jsonName;
   }
 
   override constructorInitializer(): Maybe<Code> {
@@ -118,10 +121,18 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     return Maybe.empty();
   }
 
-  override toJsonInitializer(): Maybe<Code> {
+  override toJsonInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toJsonInitializer"]
+  >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${literalOf(this.value)} as const`,
+      code`${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${variables.object}.${this.jsonName}`,
     );
+  }
+
+  override toLoggableInitializer(): Maybe<Code> {
+    return Maybe.of(code`${literalOf(this.name)}: ${literalOf(this.value)}`);
   }
 
   override toRdfRdfResourceValuesStatements(): readonly Code[] {
@@ -130,9 +141,5 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
 
   override toStringInitializer(): Maybe<Code> {
     return Maybe.empty();
-  }
-
-  override toLoggableInitializer(): Maybe<Code> {
-    return Maybe.of(code`${literalOf(this.name)}: ${literalOf(this.value)}`);
   }
 }

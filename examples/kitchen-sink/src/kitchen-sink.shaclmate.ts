@@ -3879,6 +3879,10 @@ const $xsd_short = dataFactory.namedNode(
   "http://www.w3.org/2001/XMLSchema#short",
 );
 
+const $xsd_string = dataFactory.namedNode(
+  "http://www.w3.org/2001/XMLSchema#string",
+);
+
 const $xsd_unsignedByte = dataFactory.namedNode(
   "http://www.w3.org/2001/XMLSchema#unsignedByte",
 );
@@ -4075,6 +4079,8 @@ export namespace $DefaultPartial {
     object: $Object,
   ): object is $DefaultPartial => object.$type === "DefaultPartial";
 
+  export type Json = { "@id": string; $type: "DefaultPartial" };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -4091,24 +4097,23 @@ export namespace $DefaultPartial {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "DefaultPartial" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
         ],
@@ -4117,11 +4122,6 @@ export namespace $DefaultPartial {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "DefaultPartial";
-  };
 
   export const schema = {
     properties: {
@@ -4426,6 +4426,8 @@ export namespace $NamedDefaultPartial {
     object: $Object,
   ): object is $NamedDefaultPartial => object.$type === "NamedDefaultPartial";
 
+  export type Json = { "@id": string; $type: "NamedDefaultPartial" };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -4442,24 +4444,23 @@ export namespace $NamedDefaultPartial {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "NamedDefaultPartial" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
         ],
@@ -4468,11 +4469,6 @@ export namespace $NamedDefaultPartial {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "NamedDefaultPartial";
-  };
 
   export const schema = {
     properties: {
@@ -4743,8 +4739,8 @@ export namespace AnonymousTypesStruct {
                                 anonymousStructString:
                                   _object.anonymousStructString,
                               } satisfies {
-                                readonly "@id": string;
-                                readonly anonymousStructString: string;
+                                "@id": string;
+                                anonymousStructString: string;
                               }),
                             ),
                           $toString: (_object) =>
@@ -4889,8 +4885,8 @@ export namespace AnonymousTypesStruct {
                           : _object.$identifier().value,
                       anonymousStructString: _object.anonymousStructString,
                     } satisfies {
-                      readonly "@id": string;
-                      readonly anonymousStructString: string;
+                      "@id": string;
+                      anonymousStructString: string;
                     }),
                   ),
                 $toString: (_object) =>
@@ -5320,8 +5316,8 @@ export namespace AnonymousTypesStruct {
                               : _object.$identifier().value,
                           anonymousStructString: _object.anonymousStructString,
                         } satisfies {
-                          readonly "@id": string;
-                          readonly anonymousStructString: string;
+                          "@id": string;
+                          anonymousStructString: string;
                         }),
                       ),
                     $toString: (_object) =>
@@ -5396,6 +5392,13 @@ export namespace AnonymousTypesStruct {
     object: $Object,
   ): object is AnonymousTypesStruct => object.$type === "AnonymousTypesStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "AnonymousTypesStruct";
+    anonymousStruct?: { "@id": string; anonymousStructString: string };
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -5406,77 +5409,63 @@ export namespace AnonymousTypesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("AnonymousTypesStruct"),
-          anonymousStruct: z
-            .object({
-              "@id": z.string().min(1),
-              anonymousStructString: z.string(),
-            })
-            .optional()
-            .meta({
-              description: "Anonymous struct node shape",
-            }),
-        })
-        .meta({
-          description: "Struct node shape with anonymous property types.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("AnonymousTypesStruct"),
+        anonymousStruct: z
+          .object({
+            "@id": z.string().min(1),
+            anonymousStructString: z.string(),
+          })
+          .optional()
+          .meta({
+            description: "Anonymous struct node shape",
+          }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "AnonymousTypesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          ((parameters?: { scopePrefix?: string }): any => {
-            const scopePrefix = parameters?.scopePrefix ?? "#";
+          ((_parameters?: { scopePrefix?: string }): any => {
             return {
               elements: [
                 {
                   label: "Identifier",
-                  scope: `${scopePrefix}/properties/@id`,
+                  scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
                   type: "Control",
                 },
                 {
-                  scope: `${scopePrefix}/properties/anonymousStructString`,
+                  scope: `${_parameters?.scopePrefix ?? "#"}/properties/anonymousStructString`,
                   type: "Control",
                 },
               ],
               type: "Group",
             };
-          })({ scopePrefix: `${scopePrefix}/properties/anonymousStruct` }),
+          })({ scopePrefix: _parameters?.scopePrefix ?? "#" }),
         ],
         type: "Group",
         label: "AnonymousTypesStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "AnonymousTypesStruct";
-    readonly anonymousStruct?: {
-      readonly "@id": string;
-      readonly anonymousStructString: string;
-    };
-  };
 
   export const schema = {
     properties: {
@@ -5588,6 +5577,7 @@ export namespace AnonymousTypesStruct {
           _anonymousTypesStruct.$identifier().termType === "BlankNode"
             ? `_:${_anonymousTypesStruct.$identifier().value}`
             : _anonymousTypesStruct.$identifier().value,
+        "@type": "http://example.com/AnonymousTypesStruct",
         $type: _anonymousTypesStruct.$type,
         anonymousStruct: _anonymousTypesStruct.anonymousStruct
           .map((item) =>
@@ -5599,10 +5589,7 @@ export namespace AnonymousTypesStruct {
                       ? `_:${_object.$identifier().value}`
                       : _object.$identifier().value,
                   anonymousStructString: _object.anonymousStructString,
-                } satisfies {
-                  readonly "@id": string;
-                  readonly anonymousStructString: string;
-                }),
+                } satisfies { "@id": string; anonymousStructString: string }),
               ))(item),
           )
           .extract(),
@@ -5970,6 +5957,12 @@ export namespace BlankNodeIdentifierStruct {
   ): object is BlankNodeIdentifierStruct =>
     object.$type === "BlankNodeIdentifierStruct";
 
+  export type Json = {
+    "@type": string;
+    $type: "BlankNodeIdentifierStruct";
+    blankNodeIdentifierString?: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -5980,34 +5973,29 @@ export namespace BlankNodeIdentifierStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          $type: z.literal("BlankNodeIdentifierStruct"),
-          blankNodeIdentifierString: z.string().optional(),
-        })
-        .meta({
-          description:
-            "Struct node shape that can only have a blank node as an identifier. This generates code without an identifier property.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@type": z.string(),
+        $type: z.literal("BlankNodeIdentifierStruct"),
+        blankNodeIdentifierString: z.string().optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             rule: {
               condition: {
                 schema: { const: "BlankNodeIdentifierStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/blankNodeIdentifierString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/blankNodeIdentifierString`,
             type: "Control",
           },
         ],
@@ -6016,11 +6004,6 @@ export namespace BlankNodeIdentifierStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly $type: "BlankNodeIdentifierStruct";
-    readonly blankNodeIdentifierString?: string;
-  };
 
   export const schema = {
     properties: {
@@ -6114,6 +6097,7 @@ export namespace BlankNodeIdentifierStruct {
   ) => BlankNodeIdentifierStruct.Json = (_blankNodeIdentifierStruct) =>
     JSON.parse(
       JSON.stringify({
+        "@type": "http://example.com/BlankNodeIdentifierStruct",
         $type: _blankNodeIdentifierStruct.$type,
         blankNodeIdentifierString:
           _blankNodeIdentifierStruct.blankNodeIdentifierString
@@ -6556,6 +6540,13 @@ export namespace BlankNodeOrIriIdentifierStruct {
   ): object is BlankNodeOrIriIdentifierStruct =>
     object.$type === "BlankNodeOrIriIdentifierStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "BlankNodeOrIriIdentifierStruct";
+    blankNodeOrIriIdentifierString?: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -6566,40 +6557,35 @@ export namespace BlankNodeOrIriIdentifierStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("BlankNodeOrIriIdentifierStruct"),
-          blankNodeOrIriIdentifierString: z.string().optional(),
-        })
-        .meta({
-          description:
-            "Struct node shape that can have a blank node or IRI as an identifier",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("BlankNodeOrIriIdentifierStruct"),
+        blankNodeOrIriIdentifierString: z.string().optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "BlankNodeOrIriIdentifierStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/blankNodeOrIriIdentifierString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/blankNodeOrIriIdentifierString`,
             type: "Control",
           },
         ],
@@ -6608,12 +6594,6 @@ export namespace BlankNodeOrIriIdentifierStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "BlankNodeOrIriIdentifierStruct";
-    readonly blankNodeOrIriIdentifierString?: string;
-  };
 
   export const schema = {
     properties: {
@@ -6719,6 +6699,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
           _blankNodeOrIriIdentifierStruct.$identifier().termType === "BlankNode"
             ? `_:${_blankNodeOrIriIdentifierStruct.$identifier().value}`
             : _blankNodeOrIriIdentifierStruct.$identifier().value,
+        "@type": "http://example.com/BlankNodeOrIriIdentifierStruct",
         $type: _blankNodeOrIriIdentifierStruct.$type,
         blankNodeOrIriIdentifierString:
           _blankNodeOrIriIdentifierStruct.blankNodeOrIriIdentifierString
@@ -7472,7 +7453,7 @@ export namespace ClassConstraintsStruct {
       ),
       iriClass: Maybe.fromNullable($json["iriClass"])
         .map((item) =>
-          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item)).map(
             Maybe.of,
           ),
         )
@@ -7480,9 +7461,9 @@ export namespace ClassConstraintsStruct {
       multiClass: Maybe.fromNullable($json["multiClass"])
         .map((item) =>
           Either.of<Error, BlankNode | NamedNode>(
-            item["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item["@id"].substring(2))
-              : dataFactory.namedNode(item["@id"]),
+            item.startsWith("_:")
+              ? dataFactory.blankNode(item.substring(2))
+              : dataFactory.namedNode(item),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
@@ -7495,9 +7476,9 @@ export namespace ClassConstraintsStruct {
       singleClass: Maybe.fromNullable($json["singleClass"])
         .map((item) =>
           Either.of<Error, BlankNode | NamedNode>(
-            item["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item["@id"].substring(2))
-              : dataFactory.namedNode(item["@id"]),
+            item.startsWith("_:")
+              ? dataFactory.blankNode(item.substring(2))
+              : dataFactory.namedNode(item),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
@@ -7550,6 +7531,17 @@ export namespace ClassConstraintsStruct {
   ): object is ClassConstraintsStruct =>
     object.$type === "ClassConstraintsStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "ClassConstraintsStruct";
+    iriClass?: string;
+    multiClass?: string;
+    nodeClass1?: NonClassStruct.Json;
+    nodeClass2?: PartialStruct.Json;
+    singleClass?: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -7560,90 +7552,76 @@ export namespace ClassConstraintsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("ClassConstraintsStruct"),
-          iriClass: z
-            .object({ "@id": z.string().min(1) })
-            .optional()
-            .meta({
-              description:
-                "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
-            }),
-          multiClass: z
-            .object({ "@id": z.string().min(1) })
-            .optional()
-            .meta({
-              description:
-                "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-            }),
-          nodeClass1: NonClassStruct.Json.schema().optional().meta({
-            description:
-              "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
-          }),
-          nodeClass2: PartialStruct.Json.schema().optional().meta({
-            description:
-              "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
-          }),
-          singleClass: z
-            .object({ "@id": z.string().min(1) })
-            .optional()
-            .meta({
-              description:
-                "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-            }),
-        })
-        .meta({
-          description: "Struct node shape with sh:class properties",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("ClassConstraintsStruct"),
+        iriClass: z.string().min(1).optional().meta({
+          description:
+            "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
+        }),
+        multiClass: z.string().min(1).optional().meta({
+          description:
+            "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+        }),
+        nodeClass1: NonClassStruct.Json.schema().optional().meta({
+          description:
+            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
+        }),
+        nodeClass2: PartialStruct.Json.schema().optional().meta({
+          description:
+            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
+        }),
+        singleClass: z.string().min(1).optional().meta({
+          description:
+            "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+        }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "ClassConstraintsStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/iriClass`, type: "Control" },
-          { scope: `${scopePrefix}/properties/multiClass`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/iriClass`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/multiClass`,
+            type: "Control",
+          },
           NonClassStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/nodeClass1`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
           PartialStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/nodeClass2`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
-          { scope: `${scopePrefix}/properties/singleClass`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/singleClass`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "ClassConstraintsStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "ClassConstraintsStruct";
-    readonly iriClass?: { readonly "@id": string };
-    readonly multiClass?: { readonly "@id": string };
-    readonly nodeClass1?: NonClassStruct.Json;
-    readonly nodeClass2?: PartialStruct.Json;
-    readonly singleClass?: { readonly "@id": string };
-  };
 
   export const schema = {
     properties: {
@@ -7780,15 +7758,14 @@ export namespace ClassConstraintsStruct {
           _classConstraintsStruct.$identifier().termType === "BlankNode"
             ? `_:${_classConstraintsStruct.$identifier().value}`
             : _classConstraintsStruct.$identifier().value,
+        "@type": "http://example.com/ClassConstraintsStruct",
         $type: _classConstraintsStruct.$type,
         iriClass: _classConstraintsStruct.iriClass
-          .map((item) => ({ "@id": item.value }))
+          .map((item) => item.value)
           .extract(),
         multiClass: _classConstraintsStruct.multiClass
           .map((item) =>
-            item.termType === "BlankNode"
-              ? { "@id": `_:${item.value}` }
-              : { "@id": item.value },
+            item.termType === "BlankNode" ? `_:${item.value}` : item.value,
           )
           .extract(),
         nodeClass1: _classConstraintsStruct.nodeClass1
@@ -7799,9 +7776,7 @@ export namespace ClassConstraintsStruct {
           .extract(),
         singleClass: _classConstraintsStruct.singleClass
           .map((item) =>
-            item.termType === "BlankNode"
-              ? { "@id": `_:${item.value}` }
-              : { "@id": item.value },
+            item.termType === "BlankNode" ? `_:${item.value}` : item.value,
           )
           .extract(),
       } satisfies ClassConstraintsStruct.Json),
@@ -8208,6 +8183,7 @@ export namespace ConvertibleTypesStruct {
       convertibleTerm:
         _convertibleTypesStruct.convertibleTerm.termType === "Literal"
           ? {
+              $type: "Literal" as const,
               "@language":
                 _convertibleTypesStruct.convertibleTerm.language.length > 0
                   ? _convertibleTypesStruct.convertibleTerm.language
@@ -8218,21 +8194,21 @@ export namespace ConvertibleTypesStruct {
                   ? _convertibleTypesStruct.convertibleTerm.datatype.value
                   : undefined,
               "@value": _convertibleTypesStruct.convertibleTerm.value,
-              termType: "Literal" as const,
             }
           : _convertibleTypesStruct.convertibleTerm.termType === "NamedNode"
             ? {
+                $type: "NamedNode" as const,
                 "@id": _convertibleTypesStruct.convertibleTerm.value,
-                termType: "NamedNode" as const,
               }
             : {
+                $type: "BlankNode" as const,
                 "@id": `_:${_convertibleTypesStruct.convertibleTerm.value}`,
-                termType: "BlankNode" as const,
               },
       convertibleTermNonEmptySet:
         _convertibleTypesStruct.convertibleTermNonEmptySet.map((item) =>
           item.termType === "Literal"
             ? {
+                $type: "Literal" as const,
                 "@language":
                   item.language.length > 0 ? item.language : undefined,
                 "@type":
@@ -8241,16 +8217,16 @@ export namespace ConvertibleTypesStruct {
                     ? item.datatype.value
                     : undefined,
                 "@value": item.value,
-                termType: "Literal" as const,
               }
             : item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+              ? { $type: "NamedNode" as const, "@id": item.value }
+              : { $type: "BlankNode" as const, "@id": `_:${item.value}` },
         ),
       convertibleTermOption: _convertibleTypesStruct.convertibleTermOption
         .map((item) =>
           item.termType === "Literal"
             ? {
+                $type: "Literal" as const,
                 "@language":
                   item.language.length > 0 ? item.language : undefined,
                 "@type":
@@ -8259,17 +8235,17 @@ export namespace ConvertibleTypesStruct {
                     ? item.datatype.value
                     : undefined,
                 "@value": item.value,
-                termType: "Literal" as const,
               }
             : item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+              ? { $type: "NamedNode" as const, "@id": item.value }
+              : { $type: "BlankNode" as const, "@id": `_:${item.value}` },
         )
         .extract(),
       convertibleTermSet: _convertibleTypesStruct.convertibleTermSet.map(
         (item) =>
           item.termType === "Literal"
             ? {
+                $type: "Literal" as const,
                 "@language":
                   item.language.length > 0 ? item.language : undefined,
                 "@type":
@@ -8278,11 +8254,10 @@ export namespace ConvertibleTypesStruct {
                     ? item.datatype.value
                     : undefined,
                 "@value": item.value,
-                termType: "Literal" as const,
               }
             : item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+              ? { $type: "NamedNode" as const, "@id": item.value }
+              : { $type: "BlankNode" as const, "@id": `_:${item.value}` },
       ),
     });
 
@@ -9261,23 +9236,23 @@ export namespace ConvertibleTypesStruct {
           : dataFactory.namedNode($json["@id"]),
       ),
       convertibleIri: Either.of<Error, NamedNode>(
-        dataFactory.namedNode($json["convertibleIri"]["@id"]),
+        dataFactory.namedNode($json["convertibleIri"]),
       ),
       convertibleIriNonEmptySet: Either.sequence<Error, NamedNode>(
         $json["convertibleIriNonEmptySet"].map((item) =>
-          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item)),
         ),
       ),
       convertibleIriOption: Maybe.fromNullable($json["convertibleIriOption"])
         .map((item) =>
-          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item)).map(
             Maybe.of,
           ),
         )
         .orDefault(Either.of(Maybe.empty())),
       convertibleIriSet: Either.sequence<Error, NamedNode>(
         ($json["convertibleIriSet"] ?? []).map((item) =>
-          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item)),
         ),
       ),
       convertibleLiteral: Either.of<Error, Literal>(
@@ -9335,7 +9310,7 @@ export namespace ConvertibleTypesStruct {
         ),
       ),
       convertibleTerm: Either.of<Error, BlankNode | NamedNode | Literal>(
-        $json["convertibleTerm"].termType === "Literal"
+        $json["convertibleTerm"].$type === "Literal"
           ? dataFactory.literal(
               $json["convertibleTerm"]["@value"],
               $json["convertibleTerm"]["@language"] !== undefined
@@ -9344,7 +9319,7 @@ export namespace ConvertibleTypesStruct {
                   ? dataFactory.namedNode($json["convertibleTerm"]["@type"]!)
                   : undefined,
             )
-          : $json["convertibleTerm"].termType === "NamedNode"
+          : $json["convertibleTerm"].$type === "NamedNode"
             ? dataFactory.namedNode($json["convertibleTerm"]["@id"])
             : dataFactory.blankNode(
                 $json["convertibleTerm"]["@id"].substring(2),
@@ -9356,7 +9331,7 @@ export namespace ConvertibleTypesStruct {
       >(
         $json["convertibleTermNonEmptySet"].map((item) =>
           Either.of<Error, BlankNode | NamedNode | Literal>(
-            item.termType === "Literal"
+            item.$type === "Literal"
               ? dataFactory.literal(
                   item["@value"],
                   item["@language"] !== undefined
@@ -9365,7 +9340,7 @@ export namespace ConvertibleTypesStruct {
                       ? dataFactory.namedNode(item["@type"]!)
                       : undefined,
                 )
-              : item.termType === "NamedNode"
+              : item.$type === "NamedNode"
                 ? dataFactory.namedNode(item["@id"])
                 : dataFactory.blankNode(item["@id"].substring(2)),
           ),
@@ -9374,7 +9349,7 @@ export namespace ConvertibleTypesStruct {
       convertibleTermOption: Maybe.fromNullable($json["convertibleTermOption"])
         .map((item) =>
           Either.of<Error, BlankNode | NamedNode | Literal>(
-            item.termType === "Literal"
+            item.$type === "Literal"
               ? dataFactory.literal(
                   item["@value"],
                   item["@language"] !== undefined
@@ -9383,7 +9358,7 @@ export namespace ConvertibleTypesStruct {
                       ? dataFactory.namedNode(item["@type"]!)
                       : undefined,
                 )
-              : item.termType === "NamedNode"
+              : item.$type === "NamedNode"
                 ? dataFactory.namedNode(item["@id"])
                 : dataFactory.blankNode(item["@id"].substring(2)),
           ).map(Maybe.of),
@@ -9395,7 +9370,7 @@ export namespace ConvertibleTypesStruct {
       >(
         ($json["convertibleTermSet"] ?? []).map((item) =>
           Either.of<Error, BlankNode | NamedNode | Literal>(
-            item.termType === "Literal"
+            item.$type === "Literal"
               ? dataFactory.literal(
                   item["@value"],
                   item["@language"] !== undefined
@@ -9404,7 +9379,7 @@ export namespace ConvertibleTypesStruct {
                       ? dataFactory.namedNode(item["@type"]!)
                       : undefined,
                 )
-              : item.termType === "NamedNode"
+              : item.$type === "NamedNode"
                 ? dataFactory.namedNode(item["@id"])
                 : dataFactory.blankNode(item["@id"].substring(2)),
           ),
@@ -9484,6 +9459,74 @@ export namespace ConvertibleTypesStruct {
   ): object is ConvertibleTypesStruct =>
     object.$type === "ConvertibleTypesStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "ConvertibleTypesStruct";
+    convertibleIri: string;
+    convertibleIriNonEmptySet: string[];
+    convertibleIriOption?: string;
+    convertibleIriSet?: string[];
+    convertibleLiteral: {
+      "@language"?: string;
+      "@type"?: string;
+      "@value": string;
+    };
+    convertibleLiteralNonEmptySet: {
+      "@language"?: string;
+      "@type"?: string;
+      "@value": string;
+    }[];
+    convertibleLiteralOption?: {
+      "@language"?: string;
+      "@type"?: string;
+      "@value": string;
+    };
+    convertibleLiteralSet?: {
+      "@language"?: string;
+      "@type"?: string;
+      "@value": string;
+    }[];
+    convertibleTerm:
+      | { $type: "BlankNode"; "@id": string }
+      | { $type: "NamedNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        };
+    convertibleTermNonEmptySet: (
+      | { $type: "BlankNode"; "@id": string }
+      | { $type: "NamedNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        }
+    )[];
+    convertibleTermOption?:
+      | { $type: "BlankNode"; "@id": string }
+      | { $type: "NamedNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        };
+    convertibleTermSet?: (
+      | { $type: "BlankNode"; "@id": string }
+      | { $type: "NamedNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        }
+    )[];
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -9494,204 +9537,178 @@ export namespace ConvertibleTypesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("ConvertibleTypesStruct"),
-          convertibleIri: z.object({ "@id": z.string().min(1) }),
-          convertibleIriNonEmptySet: z
-            .object({ "@id": z.string().min(1) })
-            .array()
-            .nonempty()
-            .min(1)
-            .readonly(),
-          convertibleIriOption: z
-            .object({ "@id": z.string().min(1) })
-            .optional(),
-          convertibleIriSet: z
-            .object({ "@id": z.string().min(1) })
-            .array()
-            .optional()
-            .readonly(),
-          convertibleLiteral: z.object({
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("ConvertibleTypesStruct"),
+        convertibleIri: z.string().min(1),
+        convertibleIriNonEmptySet: z.array(z.string().min(1)).min(1),
+        convertibleIriOption: z.string().min(1).optional(),
+        convertibleIriSet: z.array(z.string().min(1)).optional(),
+        convertibleLiteral: z.object({
+          "@language": z.string().optional(),
+          "@type": z.string().optional(),
+          "@value": z.string(),
+        }),
+        convertibleLiteralNonEmptySet: z
+          .array(
+            z.object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          )
+          .min(1),
+        convertibleLiteralOption: z
+          .object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          })
+          .optional(),
+        convertibleLiteralSet: z
+          .array(
+            z.object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          )
+          .optional(),
+        convertibleTerm: z.discriminatedUnion("$type", [
+          z.object({ $type: z.literal("BlankNode"), "@id": z.string().min(1) }),
+          z.object({ $type: z.literal("NamedNode"), "@id": z.string().min(1) }),
+          z.object({
+            $type: z.literal("Literal"),
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
           }),
-          convertibleLiteralNonEmptySet: z
-            .object({
-              "@language": z.string().optional(),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-            })
-            .array()
-            .nonempty()
-            .min(1)
-            .readonly(),
-          convertibleLiteralOption: z
-            .object({
-              "@language": z.string().optional(),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-            })
-            .optional(),
-          convertibleLiteralSet: z
-            .object({
-              "@language": z.string().optional(),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-            })
-            .array()
-            .optional()
-            .readonly(),
-          convertibleTerm: z.discriminatedUnion("termType", [
+        ]),
+        convertibleTermNonEmptySet: z
+          .array(
+            z.discriminatedUnion("$type", [
+              z.object({
+                $type: z.literal("BlankNode"),
+                "@id": z.string().min(1),
+              }),
+              z.object({
+                $type: z.literal("NamedNode"),
+                "@id": z.string().min(1),
+              }),
+              z.object({
+                $type: z.literal("Literal"),
+                "@language": z.string().optional(),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+              }),
+            ]),
+          )
+          .min(1),
+        convertibleTermOption: z
+          .discriminatedUnion("$type", [
             z.object({
+              $type: z.literal("BlankNode"),
               "@id": z.string().min(1),
-              termType: z.literal("BlankNode"),
             }),
             z.object({
+              $type: z.literal("NamedNode"),
               "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
             }),
             z.object({
+              $type: z.literal("Literal"),
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
-              termType: z.literal("Literal"),
             }),
-          ]),
-          convertibleTermNonEmptySet: z
-            .discriminatedUnion("termType", [
+          ])
+          .optional(),
+        convertibleTermSet: z
+          .array(
+            z.discriminatedUnion("$type", [
               z.object({
+                $type: z.literal("BlankNode"),
                 "@id": z.string().min(1),
-                termType: z.literal("BlankNode"),
               }),
               z.object({
+                $type: z.literal("NamedNode"),
                 "@id": z.string().min(1),
-                termType: z.literal("NamedNode"),
               }),
               z.object({
+                $type: z.literal("Literal"),
                 "@language": z.string().optional(),
                 "@type": z.string().optional(),
                 "@value": z.string(),
-                termType: z.literal("Literal"),
               }),
-            ])
-            .array()
-            .nonempty()
-            .min(1)
-            .readonly(),
-          convertibleTermOption: z
-            .discriminatedUnion("termType", [
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("BlankNode"),
-              }),
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("NamedNode"),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-                termType: z.literal("Literal"),
-              }),
-            ])
-            .optional(),
-          convertibleTermSet: z
-            .discriminatedUnion("termType", [
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("BlankNode"),
-              }),
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("NamedNode"),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-                termType: z.literal("Literal"),
-              }),
-            ])
-            .array()
-            .optional()
-            .readonly(),
-        })
-        .meta({
-          description:
-            "Struct node shape with properties whose types are convertible from other types on construction e.g., string to IRI.",
-        }) satisfies z.ZodType<Json>;
+            ]),
+          )
+          .optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "ConvertibleTypesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/convertibleIri`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleIri`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/convertibleIriNonEmptySet`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleIriNonEmptySet`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/convertibleIriOption`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleIriOption`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/convertibleIriSet`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleIriSet`,
+            type: "Control",
+          },
+          ((_parameters?: { scopePrefix?: string }): any => {
+            return { elements: [], type: "Group" };
+          })({ scopePrefix: _parameters?.scopePrefix ?? "#" }),
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleLiteralNonEmptySet`,
+            type: "Control",
+          },
+          ((_parameters?: { scopePrefix?: string }): any => {
+            return { elements: [], type: "Group" };
+          })({ scopePrefix: _parameters?.scopePrefix ?? "#" }),
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleLiteralSet`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/convertibleLiteral`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleTerm`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/convertibleLiteralNonEmptySet`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleTermNonEmptySet`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/convertibleLiteralOption`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleTermOption`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/convertibleLiteralSet`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleTerm`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleTermNonEmptySet`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleTermOption`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleTermSet`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/convertibleTermSet`,
             type: "Control",
           },
         ],
@@ -9700,69 +9717,6 @@ export namespace ConvertibleTypesStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "ConvertibleTypesStruct";
-    readonly convertibleIri: { readonly "@id": string };
-    readonly convertibleIriNonEmptySet: readonly { readonly "@id": string }[];
-    readonly convertibleIriOption?: { readonly "@id": string };
-    readonly convertibleIriSet?: readonly { readonly "@id": string }[];
-    readonly convertibleLiteral: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly convertibleLiteralNonEmptySet: readonly {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    }[];
-    readonly convertibleLiteralOption?: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly convertibleLiteralSet?: readonly {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    }[];
-    readonly convertibleTerm:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly convertibleTermNonEmptySet: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
-    readonly convertibleTermOption?:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly convertibleTermSet?: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
-  };
 
   export const schema = {
     properties: {
@@ -9955,17 +9909,18 @@ export namespace ConvertibleTypesStruct {
           _convertibleTypesStruct.$identifier().termType === "BlankNode"
             ? `_:${_convertibleTypesStruct.$identifier().value}`
             : _convertibleTypesStruct.$identifier().value,
+        "@type": "http://example.com/ConvertibleTypesStruct",
         $type: _convertibleTypesStruct.$type,
-        convertibleIri: { "@id": _convertibleTypesStruct.convertibleIri.value },
+        convertibleIri: _convertibleTypesStruct.convertibleIri.value,
         convertibleIriNonEmptySet:
-          _convertibleTypesStruct.convertibleIriNonEmptySet.map((item) => ({
-            "@id": item.value,
-          })),
+          _convertibleTypesStruct.convertibleIriNonEmptySet.map(
+            (item) => item.value,
+          ),
         convertibleIriOption: _convertibleTypesStruct.convertibleIriOption
-          .map((item) => ({ "@id": item.value }))
+          .map((item) => item.value)
           .extract(),
         convertibleIriSet: _convertibleTypesStruct.convertibleIriSet.map(
-          (item) => ({ "@id": item.value }),
+          (item) => item.value,
         ),
         convertibleLiteral: {
           "@language":
@@ -10012,6 +9967,7 @@ export namespace ConvertibleTypesStruct {
         convertibleTerm:
           _convertibleTypesStruct.convertibleTerm.termType === "Literal"
             ? {
+                $type: "Literal" as const,
                 "@language":
                   _convertibleTypesStruct.convertibleTerm.language.length > 0
                     ? _convertibleTypesStruct.convertibleTerm.language
@@ -10022,21 +9978,21 @@ export namespace ConvertibleTypesStruct {
                     ? _convertibleTypesStruct.convertibleTerm.datatype.value
                     : undefined,
                 "@value": _convertibleTypesStruct.convertibleTerm.value,
-                termType: "Literal" as const,
               }
             : _convertibleTypesStruct.convertibleTerm.termType === "NamedNode"
               ? {
+                  $type: "NamedNode" as const,
                   "@id": _convertibleTypesStruct.convertibleTerm.value,
-                  termType: "NamedNode" as const,
                 }
               : {
+                  $type: "BlankNode" as const,
                   "@id": `_:${_convertibleTypesStruct.convertibleTerm.value}`,
-                  termType: "BlankNode" as const,
                 },
         convertibleTermNonEmptySet:
           _convertibleTypesStruct.convertibleTermNonEmptySet.map((item) =>
             item.termType === "Literal"
               ? {
+                  $type: "Literal" as const,
                   "@language":
                     item.language.length > 0 ? item.language : undefined,
                   "@type":
@@ -10045,16 +10001,16 @@ export namespace ConvertibleTypesStruct {
                       ? item.datatype.value
                       : undefined,
                   "@value": item.value,
-                  termType: "Literal" as const,
                 }
               : item.termType === "NamedNode"
-                ? { "@id": item.value, termType: "NamedNode" as const }
-                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+                ? { $type: "NamedNode" as const, "@id": item.value }
+                : { $type: "BlankNode" as const, "@id": `_:${item.value}` },
           ),
         convertibleTermOption: _convertibleTypesStruct.convertibleTermOption
           .map((item) =>
             item.termType === "Literal"
               ? {
+                  $type: "Literal" as const,
                   "@language":
                     item.language.length > 0 ? item.language : undefined,
                   "@type":
@@ -10063,17 +10019,17 @@ export namespace ConvertibleTypesStruct {
                       ? item.datatype.value
                       : undefined,
                   "@value": item.value,
-                  termType: "Literal" as const,
                 }
               : item.termType === "NamedNode"
-                ? { "@id": item.value, termType: "NamedNode" as const }
-                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+                ? { $type: "NamedNode" as const, "@id": item.value }
+                : { $type: "BlankNode" as const, "@id": `_:${item.value}` },
           )
           .extract(),
         convertibleTermSet: _convertibleTypesStruct.convertibleTermSet.map(
           (item) =>
             item.termType === "Literal"
               ? {
+                  $type: "Literal" as const,
                   "@language":
                     item.language.length > 0 ? item.language : undefined,
                   "@type":
@@ -10082,11 +10038,10 @@ export namespace ConvertibleTypesStruct {
                       ? item.datatype.value
                       : undefined,
                   "@value": item.value,
-                  termType: "Literal" as const,
                 }
               : item.termType === "NamedNode"
-                ? { "@id": item.value, termType: "NamedNode" as const }
-                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+                ? { $type: "NamedNode" as const, "@id": item.value }
+                : { $type: "BlankNode" as const, "@id": `_:${item.value}` },
         ),
       } satisfies ConvertibleTypesStruct.Json),
     );
@@ -13699,73 +13654,51 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       ),
       dateOrDateTime: ((
         value:
-          | {
-              $type: "date";
-              value: {
-                readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-                readonly "@value": string;
-              };
-            }
+          | { $type: "date"; "@type": string; "@value": string }
           | {
               $type: "dateTime";
-              value: {
-                readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-                readonly "@value": string;
-              };
+              "@type": string;
+              "@value": string;
             },
       ): Either<
         Error,
         { $type: "date"; value: Date } | { $type: "dateTime"; value: Date }
       > => {
-        if (value["$type"] === "date") {
-          return Either.of<Error, Date>(
-            new Date(
-              (
-                value.value as {
-                  readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-                  readonly "@value": string;
-                }
-              )["@value"],
-            ),
-          ).map((value) => ({ $type: "date" as const, value: value }));
+        if (value.$type === "date") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => ({
+            $type: "date" as const,
+            value: value,
+          }));
         }
-        if (value["$type"] === "dateTime") {
-          return Either.of<Error, Date>(
-            new Date(
-              (
-                value.value as {
-                  readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-                  readonly "@value": string;
-                }
-              )["@value"],
-            ),
-          ).map((value) => ({ $type: "dateTime" as const, value: value }));
+        if (value.$type === "dateTime") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => ({
+            $type: "dateTime" as const,
+            value: value,
+          }));
         }
 
         throw new Error("unable to deserialize JSON");
       })($json["dateOrDateTime"]),
       dateOrString: ((
         value:
+          | { $type: "object"; "@type": string; "@value": string }
           | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-              readonly "@value": string;
-            }
-          | string,
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            },
       ): Either<Error, Date | string> => {
-        if (typeof value === "object") {
-          return Either.of<Error, Date>(
-            new Date(
-              (
-                value as {
-                  readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-                  readonly "@value": string;
-                }
-              )["@value"],
-            ),
+        if (value.$type === "object") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
           ).map((value) => value);
         }
-        if (typeof value === "string") {
-          return Either.of<Error, string>(value as string).map(
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
             (value) => value,
           );
         }
@@ -13774,74 +13707,51 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       })($json["dateOrString"]),
       dateTimeOrDate: ((
         value:
-          | {
-              $type: "dateTime";
-              value: {
-                readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-                readonly "@value": string;
-              };
-            }
+          | { $type: "dateTime"; "@type": string; "@value": string }
           | {
               $type: "date";
-              value: {
-                readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-                readonly "@value": string;
-              };
+              "@type": string;
+              "@value": string;
             },
       ): Either<
         Error,
         { $type: "dateTime"; value: Date } | { $type: "date"; value: Date }
       > => {
-        if (value["$type"] === "dateTime") {
-          return Either.of<Error, Date>(
-            new Date(
-              (
-                value.value as {
-                  readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-                  readonly "@value": string;
-                }
-              )["@value"],
-            ),
-          ).map((value) => ({ $type: "dateTime" as const, value: value }));
+        if (value.$type === "dateTime") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => ({
+            $type: "dateTime" as const,
+            value: value,
+          }));
         }
-        if (value["$type"] === "date") {
-          return Either.of<Error, Date>(
-            new Date(
-              (
-                value.value as {
-                  readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-                  readonly "@value": string;
-                }
-              )["@value"],
-            ),
-          ).map((value) => ({ $type: "date" as const, value: value }));
+        if (value.$type === "date") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => ({
+            $type: "date" as const,
+            value: value,
+          }));
         }
 
         throw new Error("unable to deserialize JSON");
       })($json["dateTimeOrDate"]),
       decimalOrString: ((
         value:
+          | { $type: "object"; "@type": string; "@value": string }
           | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
-              readonly "@value": string;
-            }
-          | string,
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            },
       ): Either<Error, BigDecimal | string> => {
-        if (typeof value === "object") {
+        if (value.$type === "object") {
           return Either.encase<Error, BigDecimal>(
-            () =>
-              new BigDecimal(
-                (
-                  value as {
-                    readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
-                    readonly "@value": string;
-                  }
-                )["@value"],
-              ),
+            () => new BigDecimal(value["@value"]),
           ).map((value) => value);
         }
-        if (typeof value === "string") {
-          return Either.of<Error, string>(value as string).map(
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
             (value) => value,
           );
         }
@@ -13850,38 +13760,28 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       })($json["decimalOrString"]),
       jsPrimitive: ((
         value:
-          | boolean
-          | number
-          | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
-              readonly "@value": string;
-            }
-          | string,
+          | { $type: "boolean"; "@type": string; "@value": boolean }
+          | { $type: "number"; "@type": string; "@value": number }
+          | { $type: "bigint"; "@type": string; "@value": string }
+          | { $type: "string"; "@type": string; "@value": string },
       ): Either<Error, boolean | number | bigint | string> => {
-        if (typeof value === "boolean") {
-          return Either.of<Error, boolean>(value as boolean).map(
+        if (value.$type === "boolean") {
+          return Either.of<Error, boolean>(value["@value"]).map(
             (value) => value,
           );
         }
-        if (typeof value === "number") {
-          return Either.of<Error, number>(value as number).map(
+        if (value.$type === "number") {
+          return Either.of<Error, number>(value["@value"]).map(
             (value) => value,
           );
         }
-        if (typeof value === "bigint") {
+        if (value.$type === "bigint") {
           return Either.encase<Error, bigint>(() =>
-            BigInt(
-              (
-                value as {
-                  readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
-                  readonly "@value": string;
-                }
-              )["@value"],
-            ),
+            BigInt(value["@value"]),
           ).map((value) => value);
         }
-        if (typeof value === "string") {
-          return Either.of<Error, string>(value as string).map(
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
             (value) => value,
           );
         }
@@ -13890,29 +13790,20 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       })($json["jsPrimitive"]),
       langStringOrString: ((
         value:
-          | { readonly "@language": string; readonly "@value": string }
-          | string,
+          | { $type: "object"; "@language": string; "@value": string }
+          | {
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            },
       ): Either<Error, Literal | string> => {
-        if (typeof value === "object") {
+        if (value.$type === "object") {
           return Either.of<Error, Literal>(
-            dataFactory.literal(
-              (
-                value as {
-                  readonly "@language": string;
-                  readonly "@value": string;
-                }
-              )["@value"],
-              (
-                value as {
-                  readonly "@language": string;
-                  readonly "@value": string;
-                }
-              )["@language"],
-            ),
+            dataFactory.literal(value["@value"], value["@language"]),
           ).map((value) => value);
         }
-        if (typeof value === "string") {
-          return Either.of<Error, string>(value as string).map(
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
             (value) => value,
           );
         }
@@ -13921,27 +13812,21 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       })($json["langStringOrString"]),
       stringOrDate: ((
         value:
-          | string
+          | { $type: "string"; "@type": string; "@value": string }
           | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-              readonly "@value": string;
+              $type: "object";
+              "@type": string;
+              "@value": string;
             },
       ): Either<Error, string | Date> => {
-        if (typeof value === "string") {
-          return Either.of<Error, string>(value as string).map(
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
             (value) => value,
           );
         }
-        if (typeof value === "object") {
-          return Either.of<Error, Date>(
-            new Date(
-              (
-                value as {
-                  readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-                  readonly "@value": string;
-                }
-              )["@value"],
-            ),
+        if (value.$type === "object") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
           ).map((value) => value);
         }
 
@@ -13949,28 +13834,21 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       })($json["stringOrDate"]),
       stringOrDecimal: ((
         value:
-          | string
+          | { $type: "string"; "@type": string; "@value": string }
           | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
-              readonly "@value": string;
+              $type: "object";
+              "@type": string;
+              "@value": string;
             },
       ): Either<Error, string | BigDecimal> => {
-        if (typeof value === "string") {
-          return Either.of<Error, string>(value as string).map(
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
             (value) => value,
           );
         }
-        if (typeof value === "object") {
+        if (value.$type === "object") {
           return Either.encase<Error, BigDecimal>(
-            () =>
-              new BigDecimal(
-                (
-                  value as {
-                    readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
-                    readonly "@value": string;
-                  }
-                )["@value"],
-              ),
+            () => new BigDecimal(value["@value"]),
           ).map((value) => value);
         }
 
@@ -13978,30 +13856,21 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       })($json["stringOrDecimal"]),
       stringOrLangString: ((
         value:
-          | string
-          | { readonly "@language": string; readonly "@value": string },
+          | { $type: "string"; "@type": string; "@value": string }
+          | {
+              $type: "object";
+              "@language": string;
+              "@value": string;
+            },
       ): Either<Error, string | Literal> => {
-        if (typeof value === "string") {
-          return Either.of<Error, string>(value as string).map(
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
             (value) => value,
           );
         }
-        if (typeof value === "object") {
+        if (value.$type === "object") {
           return Either.of<Error, Literal>(
-            dataFactory.literal(
-              (
-                value as {
-                  readonly "@language": string;
-                  readonly "@value": string;
-                }
-              )["@value"],
-              (
-                value as {
-                  readonly "@language": string;
-                  readonly "@value": string;
-                }
-              )["@language"],
-            ),
+            dataFactory.literal(value["@value"], value["@language"]),
           ).map((value) => value);
         }
 
@@ -14169,6 +14038,73 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   ): object is DatatypeDiscriminatedUnionsStruct =>
     object.$type === "DatatypeDiscriminatedUnionsStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "DatatypeDiscriminatedUnionsStruct";
+    dateOrDateTime:
+      | { $type: "date"; "@type": string; "@value": string }
+      | {
+          $type: "dateTime";
+          "@type": string;
+          "@value": string;
+        };
+    dateOrString:
+      | { $type: "object"; "@type": string; "@value": string }
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        };
+    dateTimeOrDate:
+      | { $type: "dateTime"; "@type": string; "@value": string }
+      | {
+          $type: "date";
+          "@type": string;
+          "@value": string;
+        };
+    decimalOrString:
+      | { $type: "object"; "@type": string; "@value": string }
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        };
+    jsPrimitive:
+      | { $type: "boolean"; "@type": string; "@value": boolean }
+      | { $type: "number"; "@type": string; "@value": number }
+      | { $type: "bigint"; "@type": string; "@value": string }
+      | { $type: "string"; "@type": string; "@value": string };
+    langStringOrString:
+      | { $type: "object"; "@language": string; "@value": string }
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        };
+    stringOrDate:
+      | { $type: "string"; "@type": string; "@value": string }
+      | {
+          $type: "object";
+          "@type": string;
+          "@value": string;
+        };
+    stringOrDecimal:
+      | { $type: "string"; "@type": string; "@value": string }
+      | {
+          $type: "object";
+          "@type": string;
+          "@value": string;
+        };
+    stringOrLangString:
+      | { $type: "string"; "@type": string; "@value": string }
+      | {
+          $type: "object";
+          "@language": string;
+          "@value": string;
+        };
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -14179,197 +14115,229 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("DatatypeDiscriminatedUnionsStruct"),
-          dateOrDateTime: z
-            .discriminatedUnion("$type", [
-              z.object({
-                $type: z.literal("date"),
-                value: z.object({
-                  "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
-                  "@value": z.iso.date(),
-                }),
-              }),
-              z.object({
-                $type: z.literal("dateTime"),
-                value: z.object({
-                  "@type": z.literal(
-                    "http://www.w3.org/2001/XMLSchema#dateTime",
-                  ),
-                  "@value": z.iso.datetime(),
-                }),
-              }),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("DatatypeDiscriminatedUnionsStruct"),
+        dateOrDateTime: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("date"),
+              "@type": z.string(),
+              "@value": z.iso.date(),
             }),
-          dateOrString: z
-            .union([
-              z.object({
-                "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
-                "@value": z.iso.date(),
-              }),
-              z.string(),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "Date or string. These don't need discriminant values because they're different types in TypeScript.",
+            z.object({
+              $type: z.literal("dateTime"),
+              "@type": z.string(),
+              "@value": z.iso.datetime(),
             }),
-          dateTimeOrDate: z
-            .discriminatedUnion("$type", [
-              z.object({
-                $type: z.literal("dateTime"),
-                value: z.object({
-                  "@type": z.literal(
-                    "http://www.w3.org/2001/XMLSchema#dateTime",
-                  ),
-                  "@value": z.iso.datetime(),
-                }),
-              }),
-              z.object({
-                $type: z.literal("date"),
-                value: z.object({
-                  "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
-                  "@value": z.iso.date(),
-                }),
-              }),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
+          ])
+          .meta({
+            description:
+              "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
+          }),
+        dateOrString: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("object"),
+              "@type": z.string(),
+              "@value": z.iso.date(),
             }),
-          decimalOrString: z
-            .union([
-              z.object({
-                "@type": z.literal("http://www.w3.org/2001/XMLSchema#decimal"),
-                "@value": z.string(),
-              }),
-              z.string(),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "Decimal or string. These don't need discriminant values because they're different types in TypeScript.",
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
             }),
-          jsPrimitive: z
-            .union([
-              z.boolean(),
-              z.number(),
-              z.object({
-                "@type": z.literal("http://www.w3.org/2001/XMLSchema#integer"),
-                "@value": z.string(),
-              }),
-              z.string(),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript.",
+          ])
+          .meta({
+            description:
+              "Date or string. These don't need discriminant values because they're different types in TypeScript.",
+          }),
+        dateTimeOrDate: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("dateTime"),
+              "@type": z.string(),
+              "@value": z.iso.datetime(),
             }),
-          langStringOrString: z
-            .union([
-              z.object({ "@language": z.string(), "@value": z.string() }),
-              z.string(),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript.",
+            z.object({
+              $type: z.literal("date"),
+              "@type": z.string(),
+              "@value": z.iso.date(),
             }),
-          stringOrDate: z
-            .union([
-              z.string(),
-              z.object({
-                "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
-                "@value": z.iso.date(),
-              }),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "String or date. These don't need discriminant values because they're different types in TypeScript.",
+          ])
+          .meta({
+            description:
+              "Date or date time. These must have discriminant values because they're the same type in TypeScript.",
+          }),
+        decimalOrString: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("object"),
+              "@type": z.string(),
+              "@value": z.string(),
             }),
-          stringOrDecimal: z
-            .union([
-              z.string(),
-              z.object({
-                "@type": z.literal("http://www.w3.org/2001/XMLSchema#decimal"),
-                "@value": z.string(),
-              }),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "String or decimal. These don't need discriminant values because they're different types in TypeScript.",
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
             }),
-          stringOrLangString: z
-            .union([
-              z.string(),
-              z.object({ "@language": z.string(), "@value": z.string() }),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript.",
+          ])
+          .meta({
+            description:
+              "Decimal or string. These don't need discriminant values because they're different types in TypeScript.",
+          }),
+        jsPrimitive: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("boolean"),
+              "@type": z.string(),
+              "@value": z.boolean(),
             }),
-        })
-        .meta({
-          description:
-            "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models.",
-        }) satisfies z.ZodType<Json>;
+            z.object({
+              $type: z.literal("number"),
+              "@type": z.string(),
+              "@value": z.number(),
+            }),
+            z.object({
+              $type: z.literal("bigint"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+          ])
+          .meta({
+            description:
+              "JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript.",
+          }),
+        langStringOrString: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("object"),
+              "@language": z.string().min(1),
+              "@value": z.string(),
+            }),
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+          ])
+          .meta({
+            description:
+              "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript.",
+          }),
+        stringOrDate: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+            z.object({
+              $type: z.literal("object"),
+              "@type": z.string(),
+              "@value": z.iso.date(),
+            }),
+          ])
+          .meta({
+            description:
+              "String or date. These don't need discriminant values because they're different types in TypeScript.",
+          }),
+        stringOrDecimal: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+            z.object({
+              $type: z.literal("object"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+          ])
+          .meta({
+            description:
+              "String or decimal. These don't need discriminant values because they're different types in TypeScript.",
+          }),
+        stringOrLangString: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+            z.object({
+              $type: z.literal("object"),
+              "@language": z.string().min(1),
+              "@value": z.string(),
+            }),
+          ])
+          .meta({
+            description:
+              "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript.",
+          }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "DatatypeDiscriminatedUnionsStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/dateOrDateTime`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/dateOrString`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/dateTimeOrDate`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/dateOrDateTime`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/decimalOrString`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/jsPrimitive`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/langStringOrString`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/stringOrDate`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/stringOrDecimal`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/dateOrString`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/stringOrLangString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/dateTimeOrDate`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/decimalOrString`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/jsPrimitive`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/langStringOrString`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/stringOrDate`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/stringOrDecimal`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/stringOrLangString`,
             type: "Control",
           },
         ],
@@ -14378,79 +14346,6 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "DatatypeDiscriminatedUnionsStruct";
-    readonly dateOrDateTime:
-      | {
-          $type: "date";
-          value: {
-            readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-            readonly "@value": string;
-          };
-        }
-      | {
-          $type: "dateTime";
-          value: {
-            readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-            readonly "@value": string;
-          };
-        };
-    readonly dateOrString:
-      | {
-          readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-          readonly "@value": string;
-        }
-      | string;
-    readonly dateTimeOrDate:
-      | {
-          $type: "dateTime";
-          value: {
-            readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-            readonly "@value": string;
-          };
-        }
-      | {
-          $type: "date";
-          value: {
-            readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-            readonly "@value": string;
-          };
-        };
-    readonly decimalOrString:
-      | {
-          readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
-          readonly "@value": string;
-        }
-      | string;
-    readonly jsPrimitive:
-      | boolean
-      | number
-      | {
-          readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
-          readonly "@value": string;
-        }
-      | string;
-    readonly langStringOrString:
-      | { readonly "@language": string; readonly "@value": string }
-      | string;
-    readonly stringOrDate:
-      | string
-      | {
-          readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-          readonly "@value": string;
-        };
-    readonly stringOrDecimal:
-      | string
-      | {
-          readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
-          readonly "@value": string;
-        };
-    readonly stringOrLangString:
-      | string
-      | { readonly "@language": string; readonly "@value": string };
-  };
 
   export const schema = {
     properties: {
@@ -14711,42 +14606,31 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           "BlankNode"
             ? `_:${_datatypeDiscriminatedUnionsStruct.$identifier().value}`
             : _datatypeDiscriminatedUnionsStruct.$identifier().value,
+        "@type": "http://example.com/DatatypeDiscriminatedUnionsStruct",
         $type: _datatypeDiscriminatedUnionsStruct.$type,
         dateOrDateTime: ((
           value:
             | { $type: "date"; value: Date }
             | { $type: "dateTime"; value: Date },
         ):
-          | {
-              $type: "date";
-              value: {
-                readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-                readonly "@value": string;
-              };
-            }
+          | { $type: "date"; "@type": string; "@value": string }
           | {
               $type: "dateTime";
-              value: {
-                readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-                readonly "@value": string;
-              };
+              "@type": string;
+              "@value": string;
             } => {
           if (value["$type"] === "date") {
             return {
               $type: "date" as const,
-              value: {
-                "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
-                "@value": $toIsoDateString(value.value),
-              },
+              "@type": $xsd_date.value,
+              "@value": $toIsoDateString(value.value),
             };
           }
           if (value["$type"] === "dateTime") {
             return {
               $type: "dateTime" as const,
-              value: {
-                "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
-                "@value": value.value.toISOString(),
-              },
+              "@type": $xsd_dateTime.value,
+              "@value": value.value.toISOString(),
             };
           }
 
@@ -14755,19 +14639,25 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         dateOrString: ((
           value: Date | string,
         ):
+          | { $type: "object"; "@type": string; "@value": string }
           | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-              readonly "@value": string;
-            }
-          | string => {
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            } => {
           if (typeof value === "object") {
             return {
-              "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+              $type: "object" as const,
+              "@type": $xsd_date.value,
               "@value": $toIsoDateString(value),
             };
           }
           if (typeof value === "string") {
-            return value;
+            return {
+              $type: "string" as const,
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -14777,36 +14667,24 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             | { $type: "dateTime"; value: Date }
             | { $type: "date"; value: Date },
         ):
-          | {
-              $type: "dateTime";
-              value: {
-                readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-                readonly "@value": string;
-              };
-            }
+          | { $type: "dateTime"; "@type": string; "@value": string }
           | {
               $type: "date";
-              value: {
-                readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-                readonly "@value": string;
-              };
+              "@type": string;
+              "@value": string;
             } => {
           if (value["$type"] === "dateTime") {
             return {
               $type: "dateTime" as const,
-              value: {
-                "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
-                "@value": value.value.toISOString(),
-              },
+              "@type": $xsd_dateTime.value,
+              "@value": value.value.toISOString(),
             };
           }
           if (value["$type"] === "date") {
             return {
               $type: "date" as const,
-              value: {
-                "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
-                "@value": $toIsoDateString(value.value),
-              },
+              "@type": $xsd_date.value,
+              "@value": $toIsoDateString(value.value),
             };
           }
 
@@ -14815,19 +14693,25 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         decimalOrString: ((
           value: BigDecimal | string,
         ):
+          | { $type: "object"; "@type": string; "@value": string }
           | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
-              readonly "@value": string;
-            }
-          | string => {
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            } => {
           if (typeof value === "object") {
             return {
-              "@type": "http://www.w3.org/2001/XMLSchema#decimal" as const,
+              $type: "object" as const,
+              "@type": $xsd_decimal.value,
               "@value": value.toFixed(),
             };
           }
           if (typeof value === "string") {
-            return value;
+            return {
+              $type: "string" as const,
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -14835,27 +14719,37 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         jsPrimitive: ((
           value: boolean | number | bigint | string,
         ):
-          | boolean
-          | number
-          | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
-              readonly "@value": string;
-            }
-          | string => {
+          | { $type: "boolean"; "@type": string; "@value": boolean }
+          | { $type: "number"; "@type": string; "@value": number }
+          | { $type: "bigint"; "@type": string; "@value": string }
+          | { $type: "string"; "@type": string; "@value": string } => {
           if (typeof value === "boolean") {
-            return value;
+            return {
+              $type: "boolean" as const,
+              "@type": $xsd_boolean.value,
+              "@value": value,
+            };
           }
           if (typeof value === "number") {
-            return value;
+            return {
+              $type: "number" as const,
+              "@type": $xsd_double.value,
+              "@value": value,
+            };
           }
           if (typeof value === "bigint") {
             return {
-              "@type": "http://www.w3.org/2001/XMLSchema#integer" as const,
+              $type: "bigint" as const,
+              "@type": $xsd_integer.value,
               "@value": value.toString(),
             };
           }
           if (typeof value === "string") {
-            return value;
+            return {
+              $type: "string" as const,
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -14863,13 +14757,25 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         langStringOrString: ((
           value: Literal | string,
         ):
-          | { readonly "@language": string; readonly "@value": string }
-          | string => {
+          | { $type: "object"; "@language": string; "@value": string }
+          | {
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            } => {
           if (typeof value === "object") {
-            return { "@language": value.language, "@value": value.value };
+            return {
+              $type: "object" as const,
+              "@language": value.language,
+              "@value": value.value,
+            };
           }
           if (typeof value === "string") {
-            return value;
+            return {
+              $type: "string" as const,
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -14877,17 +14783,23 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         stringOrDate: ((
           value: string | Date,
         ):
-          | string
+          | { $type: "string"; "@type": string; "@value": string }
           | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-              readonly "@value": string;
+              $type: "object";
+              "@type": string;
+              "@value": string;
             } => {
           if (typeof value === "string") {
-            return value;
+            return {
+              $type: "string" as const,
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
           }
           if (typeof value === "object") {
             return {
-              "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
+              $type: "object" as const,
+              "@type": $xsd_date.value,
               "@value": $toIsoDateString(value),
             };
           }
@@ -14897,17 +14809,23 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         stringOrDecimal: ((
           value: string | BigDecimal,
         ):
-          | string
+          | { $type: "string"; "@type": string; "@value": string }
           | {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
-              readonly "@value": string;
+              $type: "object";
+              "@type": string;
+              "@value": string;
             } => {
           if (typeof value === "string") {
-            return value;
+            return {
+              $type: "string" as const,
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
           }
           if (typeof value === "object") {
             return {
-              "@type": "http://www.w3.org/2001/XMLSchema#decimal" as const,
+              $type: "object" as const,
+              "@type": $xsd_decimal.value,
               "@value": value.toFixed(),
             };
           }
@@ -14917,13 +14835,25 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         stringOrLangString: ((
           value: string | Literal,
         ):
-          | string
-          | { readonly "@language": string; readonly "@value": string } => {
+          | { $type: "string"; "@type": string; "@value": string }
+          | {
+              $type: "object";
+              "@language": string;
+              "@value": string;
+            } => {
           if (typeof value === "string") {
-            return value;
+            return {
+              $type: "string" as const,
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
           }
           if (typeof value === "object") {
-            return { "@language": value.language, "@value": value.value };
+            return {
+              $type: "object" as const,
+              "@language": value.language,
+              "@value": value.value,
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -15455,17 +15385,17 @@ export namespace DatesStruct {
       ),
       date: Maybe.fromNullable($json["date"])
         .map((item) =>
-          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+          Either.encase<Error, Date>(() => new Date(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       dateTime: Maybe.fromNullable($json["dateTime"])
         .map((item) =>
-          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+          Either.encase<Error, Date>(() => new Date(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       dateTimeStamp: Maybe.fromNullable($json["dateTimeStamp"])
         .map((item) =>
-          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+          Either.encase<Error, Date>(() => new Date(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
     }).chain(DatesStruct.create);
@@ -15510,6 +15440,15 @@ export namespace DatesStruct {
   export const isDatesStruct = (object: $Object): object is DatesStruct =>
     object.$type === "DatesStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "DatesStruct";
+    date?: string;
+    dateTime?: string;
+    dateTimeStamp?: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -15520,83 +15459,53 @@ export namespace DatesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("DatesStruct"),
-          date: z
-            .object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
-              "@value": z.iso.date(),
-            })
-            .optional(),
-          dateTime: z
-            .object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
-              "@value": z.iso.datetime(),
-            })
-            .optional(),
-          dateTimeStamp: z
-            .object({
-              "@type": z.literal(
-                "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-              ),
-              "@value": z.iso.datetime(),
-            })
-            .optional(),
-        })
-        .meta({
-          description:
-            "Struct node shape with properties that have date sh:datatype's",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("DatesStruct"),
+        date: z.iso.date().optional(),
+        dateTime: z.iso.datetime().optional(),
+        dateTimeStamp: z.iso.datetime().optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "DatesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/date`, type: "Control" },
-          { scope: `${scopePrefix}/properties/dateTime`, type: "Control" },
-          { scope: `${scopePrefix}/properties/dateTimeStamp`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/date`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/dateTime`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/dateTimeStamp`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "DatesStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "DatesStruct";
-    readonly date?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-      readonly "@value": string;
-    };
-    readonly dateTime?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-      readonly "@value": string;
-    };
-    readonly dateTimeStamp?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTimeStamp";
-      readonly "@value": string;
-    };
-  };
 
   export const schema = {
     properties: {
@@ -15701,24 +15610,14 @@ export namespace DatesStruct {
           _datesStruct.$identifier().termType === "BlankNode"
             ? `_:${_datesStruct.$identifier().value}`
             : _datesStruct.$identifier().value,
+        "@type": "http://example.com/DatesStruct",
         $type: _datesStruct.$type,
-        date: _datesStruct.date
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
-            "@value": $toIsoDateString(item),
-          }))
-          .extract(),
+        date: _datesStruct.date.map((item) => $toIsoDateString(item)).extract(),
         dateTime: _datesStruct.dateTime
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
-            "@value": item.toISOString(),
-          }))
+          .map((item) => item.toISOString())
           .extract(),
         dateTimeStamp: _datesStruct.dateTimeStamp
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#dateTimeStamp" as const,
-            "@value": item.toISOString(),
-          }))
+          .map((item) => item.toISOString())
           .extract(),
       } satisfies DatesStruct.Json),
     );
@@ -16464,11 +16363,11 @@ export namespace DefaultValuesStruct {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      dateDefaultValue: Either.of<Error, Date>(
-        new Date($json["dateDefaultValue"]["@value"]),
+      dateDefaultValue: Either.encase<Error, Date>(
+        () => new Date($json["dateDefaultValue"]),
       ),
-      dateTimeDefaultValue: Either.of<Error, Date>(
-        new Date($json["dateTimeDefaultValue"]["@value"]),
+      dateTimeDefaultValue: Either.encase<Error, Date>(
+        () => new Date($json["dateTimeDefaultValue"]),
       ),
       falseBooleanDefaultValue: Either.of<Error, boolean>(
         $json["falseBooleanDefaultValue"],
@@ -16524,6 +16423,18 @@ export namespace DefaultValuesStruct {
     object: $Object,
   ): object is DefaultValuesStruct => object.$type === "DefaultValuesStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "DefaultValuesStruct";
+    dateDefaultValue: string;
+    dateTimeDefaultValue: string;
+    falseBooleanDefaultValue: boolean;
+    numberDefaultValue: number;
+    stringDefaultValue: string;
+    trueBooleanDefaultValue: boolean;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -16534,70 +16445,60 @@ export namespace DefaultValuesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("DefaultValuesStruct"),
-          dateDefaultValue: z.object({
-            "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
-            "@value": z.iso.date(),
-          }),
-          dateTimeDefaultValue: z.object({
-            "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
-            "@value": z.iso.datetime(),
-          }),
-          falseBooleanDefaultValue: z.boolean(),
-          numberDefaultValue: z.number(),
-          stringDefaultValue: z.string(),
-          trueBooleanDefaultValue: z.boolean(),
-        })
-        .meta({
-          description: "Struct node shape with sh:defaultValue properties.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("DefaultValuesStruct"),
+        dateDefaultValue: z.iso.date(),
+        dateTimeDefaultValue: z.iso.datetime(),
+        falseBooleanDefaultValue: z.boolean(),
+        numberDefaultValue: z.number(),
+        stringDefaultValue: z.string(),
+        trueBooleanDefaultValue: z.boolean(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "DefaultValuesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/dateDefaultValue`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/dateDefaultValue`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/dateTimeDefaultValue`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/dateTimeDefaultValue`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/falseBooleanDefaultValue`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/falseBooleanDefaultValue`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/numberDefaultValue`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/numberDefaultValue`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/stringDefaultValue`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/stringDefaultValue`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/trueBooleanDefaultValue`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/trueBooleanDefaultValue`,
             type: "Control",
           },
         ],
@@ -16606,23 +16507,6 @@ export namespace DefaultValuesStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "DefaultValuesStruct";
-    readonly dateDefaultValue: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-      readonly "@value": string;
-    };
-    readonly dateTimeDefaultValue: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-      readonly "@value": string;
-    };
-    readonly falseBooleanDefaultValue: boolean;
-    readonly numberDefaultValue: number;
-    readonly stringDefaultValue: string;
-    readonly trueBooleanDefaultValue: boolean;
-  };
 
   export const schema = {
     properties: {
@@ -16771,15 +16655,13 @@ export namespace DefaultValuesStruct {
           _defaultValuesStruct.$identifier().termType === "BlankNode"
             ? `_:${_defaultValuesStruct.$identifier().value}`
             : _defaultValuesStruct.$identifier().value,
+        "@type": "http://example.com/DefaultValuesStruct",
         $type: _defaultValuesStruct.$type,
-        dateDefaultValue: {
-          "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
-          "@value": $toIsoDateString(_defaultValuesStruct.dateDefaultValue),
-        },
-        dateTimeDefaultValue: {
-          "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
-          "@value": _defaultValuesStruct.dateTimeDefaultValue.toISOString(),
-        },
+        dateDefaultValue: $toIsoDateString(
+          _defaultValuesStruct.dateDefaultValue,
+        ),
+        dateTimeDefaultValue:
+          _defaultValuesStruct.dateTimeDefaultValue.toISOString(),
         falseBooleanDefaultValue: _defaultValuesStruct.falseBooleanDefaultValue,
         numberDefaultValue: _defaultValuesStruct.numberDefaultValue,
         stringDefaultValue: _defaultValuesStruct.stringDefaultValue,
@@ -17177,6 +17059,13 @@ export namespace DirectRecursiveStruct {
   ): object is DirectRecursiveStruct =>
     object.$type === "DirectRecursiveStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "DirectRecursiveStruct";
+    directRecursive?: DirectRecursiveStruct.Json;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -17189,6 +17078,7 @@ export namespace DirectRecursiveStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("DirectRecursiveStruct"),
         directRecursive: z
           .lazy(
@@ -17199,28 +17089,27 @@ export namespace DirectRecursiveStruct {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "DirectRecursiveStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           DirectRecursiveStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/directRecursive`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
         ],
         type: "Group",
@@ -17228,12 +17117,6 @@ export namespace DirectRecursiveStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "DirectRecursiveStruct";
-    readonly directRecursive?: DirectRecursiveStruct.Json;
-  };
 
   export const schema = {
     properties: {
@@ -17335,6 +17218,7 @@ export namespace DirectRecursiveStruct {
           _directRecursiveStruct.$identifier().termType === "BlankNode"
             ? `_:${_directRecursiveStruct.$identifier().value}`
             : _directRecursiveStruct.$identifier().value,
+        "@type": "http://example.com/DirectRecursiveStruct",
         $type: _directRecursiveStruct.$type,
         directRecursive: _directRecursiveStruct.directRecursive
           .map((item) => DirectRecursiveStruct.toJson(item))
@@ -17834,6 +17718,14 @@ export namespace DiscriminatedUnionMember1 {
   ): object is DiscriminatedUnionMember1 =>
     object.$type === "DiscriminatedUnionMember1";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "DiscriminatedUnionMember1";
+    discriminatedUnionMember1Distinct: string;
+    discriminatedUnionMemberCommon: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -17846,38 +17738,38 @@ export namespace DiscriminatedUnionMember1 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("DiscriminatedUnionMember1"),
         discriminatedUnionMember1Distinct: z.string(),
         discriminatedUnionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "DiscriminatedUnionMember1" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/discriminatedUnionMember1Distinct`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/discriminatedUnionMember1Distinct`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/discriminatedUnionMemberCommon`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/discriminatedUnionMemberCommon`,
             type: "Control",
           },
         ],
@@ -17886,13 +17778,6 @@ export namespace DiscriminatedUnionMember1 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "DiscriminatedUnionMember1";
-    readonly discriminatedUnionMember1Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
-  };
 
   export const schema = {
     properties: {
@@ -17998,6 +17883,7 @@ export namespace DiscriminatedUnionMember1 {
           _discriminatedUnionMember1.$identifier().termType === "BlankNode"
             ? `_:${_discriminatedUnionMember1.$identifier().value}`
             : _discriminatedUnionMember1.$identifier().value,
+        "@type": "http://example.com/DiscriminatedUnionMember1",
         $type: _discriminatedUnionMember1.$type,
         discriminatedUnionMember1Distinct:
           _discriminatedUnionMember1.discriminatedUnionMember1Distinct,
@@ -18498,6 +18384,14 @@ export namespace DiscriminatedUnionMember2 {
   ): object is DiscriminatedUnionMember2 =>
     object.$type === "DiscriminatedUnionMember2";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "DiscriminatedUnionMember2";
+    discriminatedUnionMember2Distinct: string;
+    discriminatedUnionMemberCommon: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -18510,38 +18404,38 @@ export namespace DiscriminatedUnionMember2 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("DiscriminatedUnionMember2"),
         discriminatedUnionMember2Distinct: z.string(),
         discriminatedUnionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "DiscriminatedUnionMember2" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/discriminatedUnionMember2Distinct`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/discriminatedUnionMember2Distinct`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/discriminatedUnionMemberCommon`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/discriminatedUnionMemberCommon`,
             type: "Control",
           },
         ],
@@ -18550,13 +18444,6 @@ export namespace DiscriminatedUnionMember2 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "DiscriminatedUnionMember2";
-    readonly discriminatedUnionMember2Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
-  };
 
   export const schema = {
     properties: {
@@ -18662,6 +18549,7 @@ export namespace DiscriminatedUnionMember2 {
           _discriminatedUnionMember2.$identifier().termType === "BlankNode"
             ? `_:${_discriminatedUnionMember2.$identifier().value}`
             : _discriminatedUnionMember2.$identifier().value,
+        "@type": "http://example.com/DiscriminatedUnionMember2",
         $type: _discriminatedUnionMember2.$type,
         discriminatedUnionMember2Distinct:
           _discriminatedUnionMember2.discriminatedUnionMember2Distinct,
@@ -19177,6 +19065,15 @@ export namespace DisplayStruct {
   export const isDisplayStruct = (object: $Object): object is DisplayStruct =>
     object.$type === "DisplayStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "DisplayStruct";
+    explicitFalseDisplay: string;
+    explicitTrueDisplay: string;
+    implicitFalseDisplay: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -19187,56 +19084,51 @@ export namespace DisplayStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("DisplayStruct"),
-          explicitFalseDisplay: z
-            .string()
-            .meta({ description: "Explicity exclude from the display" }),
-          explicitTrueDisplay: z
-            .string()
-            .meta({ description: "Explicity include in the display" }),
-          implicitFalseDisplay: z
-            .string()
-            .meta({ description: "Implicitly exclude from the display" }),
-        })
-        .meta({
-          description:
-            "Demonstrates the use of shaclmate:display for excluding/including properties from toString()-type display representations",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("DisplayStruct"),
+        explicitFalseDisplay: z
+          .string()
+          .meta({ description: "Explicity exclude from the display" }),
+        explicitTrueDisplay: z
+          .string()
+          .meta({ description: "Explicity include in the display" }),
+        implicitFalseDisplay: z
+          .string()
+          .meta({ description: "Implicitly exclude from the display" }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "DisplayStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/explicitFalseDisplay`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/explicitFalseDisplay`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/explicitTrueDisplay`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/explicitTrueDisplay`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/implicitFalseDisplay`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/implicitFalseDisplay`,
             type: "Control",
           },
         ],
@@ -19245,14 +19137,6 @@ export namespace DisplayStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "DisplayStruct";
-    readonly explicitFalseDisplay: string;
-    readonly explicitTrueDisplay: string;
-    readonly implicitFalseDisplay: string;
-  };
 
   export const schema = {
     properties: {
@@ -19351,6 +19235,7 @@ export namespace DisplayStruct {
           _displayStruct.$identifier().termType === "BlankNode"
             ? `_:${_displayStruct.$identifier().value}`
             : _displayStruct.$identifier().value,
+        "@type": "http://example.com/DisplayStruct",
         $type: _displayStruct.$type,
         explicitFalseDisplay: _displayStruct.explicitFalseDisplay,
         explicitTrueDisplay: _displayStruct.explicitTrueDisplay,
@@ -19765,6 +19650,13 @@ export namespace ExplicitFromToRdfTypesStruct {
   ): object is ExplicitFromToRdfTypesStruct =>
     object.$type === "ExplicitFromToRdfTypesStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string[];
+    $type: "ExplicitFromToRdfTypesStruct";
+    explicitFromToRdfTypesString: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -19775,40 +19667,35 @@ export namespace ExplicitFromToRdfTypesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("ExplicitFromToRdfTypesStruct"),
-          explicitFromToRdfTypesString: z.string(),
-        })
-        .meta({
-          description:
-            "Struct node shape with custom rdf:type's.\n\nThe shaclmate:fromRdfType is expected on deserialization.\nshaclmate:toRdfType's are added an serialization.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.array(z.string()).min(1),
+        $type: z.literal("ExplicitFromToRdfTypesStruct"),
+        explicitFromToRdfTypesString: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "ExplicitFromToRdfTypesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/explicitFromToRdfTypesString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/explicitFromToRdfTypesString`,
             type: "Control",
           },
         ],
@@ -19817,12 +19704,6 @@ export namespace ExplicitFromToRdfTypesStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "ExplicitFromToRdfTypesStruct";
-    readonly explicitFromToRdfTypesString: string;
-  };
 
   export const schema = {
     properties: {
@@ -19920,6 +19801,10 @@ export namespace ExplicitFromToRdfTypesStruct {
           _explicitFromToRdfTypesStruct.$identifier().termType === "BlankNode"
             ? `_:${_explicitFromToRdfTypesStruct.$identifier().value}`
             : _explicitFromToRdfTypesStruct.$identifier().value,
+        "@type": [
+          "http://example.com/ToRdfType",
+          "http://example.com/FromRdfType",
+        ],
         $type: _explicitFromToRdfTypesStruct.$type,
         explicitFromToRdfTypesString:
           _explicitFromToRdfTypesStruct.explicitFromToRdfTypesString,
@@ -20313,6 +20198,13 @@ export namespace ExplicitRdfTypeStruct {
   ): object is ExplicitRdfTypeStruct =>
     object.$type === "ExplicitRdfTypeStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "ExplicitRdfTypeStruct";
+    explicitRdfTypeString: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -20323,40 +20215,35 @@ export namespace ExplicitRdfTypeStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("ExplicitRdfTypeStruct"),
-          explicitRdfTypeString: z.string(),
-        })
-        .meta({
-          description:
-            "Struct node shape with custom rdf:type's.\n\nThe shaclmate:rdfType is expected on deserialization and added on serialization.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("ExplicitRdfTypeStruct"),
+        explicitRdfTypeString: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "ExplicitRdfTypeStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/explicitRdfTypeString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/explicitRdfTypeString`,
             type: "Control",
           },
         ],
@@ -20365,12 +20252,6 @@ export namespace ExplicitRdfTypeStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "ExplicitRdfTypeStruct";
-    readonly explicitRdfTypeString: string;
-  };
 
   export const schema = {
     properties: {
@@ -20461,6 +20342,7 @@ export namespace ExplicitRdfTypeStruct {
           _explicitRdfTypeStruct.$identifier().termType === "BlankNode"
             ? `_:${_explicitRdfTypeStruct.$identifier().value}`
             : _explicitRdfTypeStruct.$identifier().value,
+        "@type": "http://example.com/RdfType",
         $type: _explicitRdfTypeStruct.$type,
         explicitRdfTypeString: _explicitRdfTypeStruct.explicitRdfTypeString,
       } satisfies ExplicitRdfTypeStruct.Json),
@@ -20879,6 +20761,13 @@ export namespace FlattenDiscriminatedUnionMember3 {
   ): object is FlattenDiscriminatedUnionMember3 =>
     object.$type === "FlattenDiscriminatedUnionMember3";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "FlattenDiscriminatedUnionMember3";
+    flattenDiscriminatedUnionMember3String: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -20891,33 +20780,33 @@ export namespace FlattenDiscriminatedUnionMember3 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("FlattenDiscriminatedUnionMember3"),
         flattenDiscriminatedUnionMember3String: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "FlattenDiscriminatedUnionMember3" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/flattenDiscriminatedUnionMember3String`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/flattenDiscriminatedUnionMember3String`,
             type: "Control",
           },
         ],
@@ -20926,12 +20815,6 @@ export namespace FlattenDiscriminatedUnionMember3 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "FlattenDiscriminatedUnionMember3";
-    readonly flattenDiscriminatedUnionMember3String: string;
-  };
 
   export const schema = {
     properties: {
@@ -21038,6 +20921,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
           "BlankNode"
             ? `_:${_flattenDiscriminatedUnionMember3.$identifier().value}`
             : _flattenDiscriminatedUnionMember3.$identifier().value,
+        "@type": "http://example.com/FlattenDiscriminatedUnionMember3",
         $type: _flattenDiscriminatedUnionMember3.$type,
         flattenDiscriminatedUnionMember3String:
           _flattenDiscriminatedUnionMember3.flattenDiscriminatedUnionMember3String,
@@ -21349,7 +21233,7 @@ export namespace HasValuesStruct {
           : dataFactory.namedNode($json["@id"]),
       ),
       hasIriValue: Either.of<Error, NamedNode>(
-        dataFactory.namedNode($json["hasIriValue"]["@id"]),
+        dataFactory.namedNode($json["hasIriValue"]),
       ),
       hasLiteralValue: Either.of<Error, string>($json["hasLiteralValue"]),
     }).chain(HasValuesStruct.create);
@@ -21394,6 +21278,13 @@ export namespace HasValuesStruct {
     object: $Object,
   ): object is HasValuesStruct => object.$type === "HasValuesStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "HasValuesStruct";
+    hasIriValue: string;
+    hasLiteralValue: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -21404,41 +21295,39 @@ export namespace HasValuesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("HasValuesStruct"),
-          hasIriValue: z.object({ "@id": z.string().min(1) }),
-          hasLiteralValue: z.string(),
-        })
-        .meta({
-          description: "Struct node shape with sh:hasValue properties.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("HasValuesStruct"),
+        hasIriValue: z.string().min(1),
+        hasLiteralValue: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "HasValuesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/hasIriValue`, type: "Control" },
           {
-            scope: `${scopePrefix}/properties/hasLiteralValue`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/hasIriValue`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/hasLiteralValue`,
             type: "Control",
           },
         ],
@@ -21447,13 +21336,6 @@ export namespace HasValuesStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "HasValuesStruct";
-    readonly hasIriValue: { readonly "@id": string };
-    readonly hasLiteralValue: string;
-  };
 
   export const schema = {
     properties: {
@@ -21551,7 +21433,7 @@ export namespace HasValuesStruct {
             ? `_:${_hasValuesStruct.$identifier().value}`
             : _hasValuesStruct.$identifier().value,
         $type: _hasValuesStruct.$type,
-        hasIriValue: { "@id": _hasValuesStruct.hasIriValue.value },
+        hasIriValue: _hasValuesStruct.hasIriValue.value,
         hasLiteralValue: _hasValuesStruct.hasLiteralValue,
       } satisfies HasValuesStruct.Json),
     );
@@ -22017,6 +21899,14 @@ export namespace IgnoredPropertiesStruct {
   ): object is IgnoredPropertiesStruct =>
     object.$type === "IgnoredPropertiesStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "IgnoredPropertiesStruct";
+    severityDefaultProperty: string;
+    severityViolationProperty: string;
+    shaclmateIgnoreFalseProperty: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -22027,59 +21917,53 @@ export namespace IgnoredPropertiesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("IgnoredPropertiesStruct"),
-          severityDefaultProperty: z.string().meta({
-            description:
-              "A property without an sh:severity defaults to sh:Violation severity and is not ignored",
-          }),
-          severityViolationProperty: z.string().meta({
-            description:
-              "A property with an explicit sh:severity sh:Violation is not ignored",
-          }),
-          shaclmateIgnoreFalseProperty: z.string().meta({
-            description:
-              "A property with shaclmate:ignore set to false (the default) is not ignored",
-          }),
-        })
-        .meta({
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IgnoredPropertiesStruct"),
+        severityDefaultProperty: z.string().meta({
           description:
-            "Struct node shape that uses different methods to make SHACLmate ignore properties.",
-        }) satisfies z.ZodType<Json>;
+            "A property without an sh:severity defaults to sh:Violation severity and is not ignored",
+        }),
+        severityViolationProperty: z.string().meta({
+          description:
+            "A property with an explicit sh:severity sh:Violation is not ignored",
+        }),
+        shaclmateIgnoreFalseProperty: z.string().meta({
+          description:
+            "A property with shaclmate:ignore set to false (the default) is not ignored",
+        }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "IgnoredPropertiesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/severityDefaultProperty`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/severityDefaultProperty`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/severityViolationProperty`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/severityViolationProperty`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/shaclmateIgnoreFalseProperty`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/shaclmateIgnoreFalseProperty`,
             type: "Control",
           },
         ],
@@ -22088,14 +21972,6 @@ export namespace IgnoredPropertiesStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "IgnoredPropertiesStruct";
-    readonly severityDefaultProperty: string;
-    readonly severityViolationProperty: string;
-    readonly shaclmateIgnoreFalseProperty: string;
-  };
 
   export const schema = {
     properties: {
@@ -22608,6 +22484,13 @@ export namespace IndirectRecursiveStruct {
   ): object is IndirectRecursiveStruct =>
     object.$type === "IndirectRecursiveStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "IndirectRecursiveStruct";
+    indirectRecursiveHelper?: IndirectRecursiveStructHelper.Json;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -22620,6 +22503,7 @@ export namespace IndirectRecursiveStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("IndirectRecursiveStruct"),
         indirectRecursiveHelper: z
           .lazy(
@@ -22630,28 +22514,27 @@ export namespace IndirectRecursiveStruct {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "IndirectRecursiveStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           IndirectRecursiveStructHelper.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/indirectRecursiveHelper`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
         ],
         type: "Group",
@@ -22659,12 +22542,6 @@ export namespace IndirectRecursiveStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "IndirectRecursiveStruct";
-    readonly indirectRecursiveHelper?: IndirectRecursiveStructHelper.Json;
-  };
 
   export const schema = {
     properties: {
@@ -22770,6 +22647,7 @@ export namespace IndirectRecursiveStruct {
           _indirectRecursiveStruct.$identifier().termType === "BlankNode"
             ? `_:${_indirectRecursiveStruct.$identifier().value}`
             : _indirectRecursiveStruct.$identifier().value,
+        "@type": "http://example.com/IndirectRecursiveStruct",
         $type: _indirectRecursiveStruct.$type,
         indirectRecursiveHelper:
           _indirectRecursiveStruct.indirectRecursiveHelper
@@ -23177,6 +23055,13 @@ export namespace IndirectRecursiveStructHelper {
   ): object is IndirectRecursiveStructHelper =>
     object.$type === "IndirectRecursiveStructHelper";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "IndirectRecursiveStructHelper";
+    indirectRecursive?: IndirectRecursiveStruct.Json;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -23189,6 +23074,7 @@ export namespace IndirectRecursiveStructHelper {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("IndirectRecursiveStructHelper"),
         indirectRecursive: z
           .lazy(
@@ -23199,28 +23085,27 @@ export namespace IndirectRecursiveStructHelper {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "IndirectRecursiveStructHelper" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           IndirectRecursiveStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/indirectRecursive`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
         ],
         type: "Group",
@@ -23228,12 +23113,6 @@ export namespace IndirectRecursiveStructHelper {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "IndirectRecursiveStructHelper";
-    readonly indirectRecursive?: IndirectRecursiveStruct.Json;
-  };
 
   export const schema = {
     properties: {
@@ -23339,6 +23218,7 @@ export namespace IndirectRecursiveStructHelper {
           _indirectRecursiveStructHelper.$identifier().termType === "BlankNode"
             ? `_:${_indirectRecursiveStructHelper.$identifier().value}`
             : _indirectRecursiveStructHelper.$identifier().value,
+        "@type": "http://example.com/IndirectRecursiveStructHelper",
         $type: _indirectRecursiveStructHelper.$type,
         indirectRecursive: _indirectRecursiveStructHelper.indirectRecursive
           .map((item) => IndirectRecursiveStruct.toJson(item))
@@ -23791,6 +23671,15 @@ export namespace InIdentifierStruct {
     object: $Object,
   ): object is InIdentifierStruct => object.$type === "InIdentifierStruct";
 
+  export type Json = {
+    "@id":
+      | "http://example.com/InIdentifierStructInstance1"
+      | "http://example.com/InIdentifierStructInstance2";
+    "@type": string;
+    $type: "InIdentifierStruct";
+    inIdentifierString?: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -23801,43 +23690,38 @@ export namespace InIdentifierStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.enum([
-            "http://example.com/InIdentifierStructInstance1",
-            "http://example.com/InIdentifierStructInstance2",
-          ]),
-          $type: z.literal("InIdentifierStruct"),
-          inIdentifierString: z.string().optional(),
-        })
-        .meta({
-          description:
-            "Struct node shape with sh:in constraining its identifier.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.enum([
+          "http://example.com/InIdentifierStructInstance1",
+          "http://example.com/InIdentifierStructInstance2",
+        ]),
+        "@type": z.string(),
+        $type: z.literal("InIdentifierStruct"),
+        inIdentifierString: z.string().optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "InIdentifierStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/inIdentifierString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inIdentifierString`,
             type: "Control",
           },
         ],
@@ -23846,14 +23730,6 @@ export namespace InIdentifierStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id":
-      | "http://example.com/InIdentifierStructInstance1"
-      | "http://example.com/InIdentifierStructInstance2";
-    readonly $type: "InIdentifierStruct";
-    readonly inIdentifierString?: string;
-  };
 
   export const schema = {
     properties: {
@@ -23956,6 +23832,7 @@ export namespace InIdentifierStruct {
     JSON.parse(
       JSON.stringify({
         "@id": _inIdentifierStruct.$identifier().value,
+        "@type": "http://example.com/InIdentifierStruct",
         $type: _inIdentifierStruct.$type,
         inIdentifierString: _inIdentifierStruct.inIdentifierString
           .map((item) => item)
@@ -24774,21 +24651,25 @@ export namespace InPropertiesStruct {
           : dataFactory.namedNode($json["@id"]),
       ),
       inBooleans: Maybe.fromNullable($json["inBooleans"])
-        .map((item) => Either.of<Error, true>(item).map(Maybe.of))
+        .map((item) =>
+          Either.encase<Error, true>(() => item as true).map(Maybe.of),
+        )
         .orDefault(Either.of(Maybe.empty())),
       inDateTimes: Maybe.fromNullable($json["inDateTimes"])
         .map((item) =>
-          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+          Either.encase<Error, Date>(() => new Date(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       inDoubles: Maybe.fromNullable($json["inDoubles"])
-        .map((item) => Either.of<Error, 1 | 2>(item).map(Maybe.of))
+        .map((item) =>
+          Either.encase<Error, 1 | 2>(() => item as 1 | 2).map(Maybe.of),
+        )
         .orDefault(Either.of(Maybe.empty())),
       inIntegers: Maybe.fromNullable($json["inIntegers"])
         .map((item) =>
-          Either.encase<Error, 1n | 2n>(
-            () => BigInt(item["@value"]) as 1n | 2n,
-          ).map(Maybe.of),
+          Either.encase<Error, 1n | 2n>(() => BigInt(item) as 1n | 2n).map(
+            Maybe.of,
+          ),
         )
         .orDefault(Either.of(Maybe.empty())),
       inIris: Maybe.fromNullable($json["inIris"])
@@ -24796,11 +24677,15 @@ export namespace InPropertiesStruct {
           Either.of<
             Error,
             NamedNode<"http://example.com/InIri1" | "http://example.com/InIri2">
-          >(dataFactory.namedNode(item["@id"])).map(Maybe.of),
+          >(dataFactory.namedNode(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       inStrings: Maybe.fromNullable($json["inStrings"])
-        .map((item) => Either.of<Error, "text" | "html">(item).map(Maybe.of))
+        .map((item) =>
+          Either.encase<Error, "text" | "html">(
+            () => item as "text" | "html",
+          ).map(Maybe.of),
+        )
         .orDefault(Either.of(Maybe.empty())),
     }).chain(InPropertiesStruct.create);
 
@@ -24848,6 +24733,18 @@ export namespace InPropertiesStruct {
     object: $Object,
   ): object is InPropertiesStruct => object.$type === "InPropertiesStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "InPropertiesStruct";
+    inBooleans?: true;
+    inDateTimes?: string;
+    inDoubles?: 1 | 2;
+    inIntegers?: "1" | "2";
+    inIris?: "http://example.com/InIri1" | "http://example.com/InIri2";
+    inStrings?: "text" | "html";
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -24858,90 +24755,70 @@ export namespace InPropertiesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("InPropertiesStruct"),
-          inBooleans: z.literal(true).optional(),
-          inDateTimes: z
-            .object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
-              "@value": z.iso.datetime(),
-            })
-            .optional(),
-          inDoubles: z.union([z.literal(1), z.literal(2)]).optional(),
-          inIntegers: z
-            .object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#integer"),
-              "@value": z.enum(["1", "2"]),
-            })
-            .optional(),
-          inIris: z
-            .object({
-              "@id": z.enum([
-                "http://example.com/InIri1",
-                "http://example.com/InIri2",
-              ]),
-            })
-            .optional(),
-          inStrings: z.enum(["text", "html"]).optional(),
-        })
-        .meta({
-          description: "Struct node shape with sh:in properties.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("InPropertiesStruct"),
+        inBooleans: z.literal(true).optional(),
+        inDateTimes: z.iso.datetime().optional(),
+        inDoubles: z.literal([1, 2]).optional(),
+        inIntegers: z.enum(["1", "2"]).optional(),
+        inIris: z
+          .enum(["http://example.com/InIri1", "http://example.com/InIri2"])
+          .optional(),
+        inStrings: z.enum(["text", "html"]).optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "InPropertiesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/inBooleans`, type: "Control" },
-          { scope: `${scopePrefix}/properties/inDateTimes`, type: "Control" },
-          { scope: `${scopePrefix}/properties/inDoubles`, type: "Control" },
-          { scope: `${scopePrefix}/properties/inIntegers`, type: "Control" },
-          { scope: `${scopePrefix}/properties/inIris`, type: "Control" },
-          { scope: `${scopePrefix}/properties/inStrings`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inBooleans`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inDateTimes`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inDoubles`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inIntegers`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inIris`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inStrings`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "InPropertiesStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "InPropertiesStruct";
-    readonly inBooleans?: true;
-    readonly inDateTimes?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-      readonly "@value": string;
-    };
-    readonly inDoubles?: 1 | 2;
-    readonly inIntegers?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
-      readonly "@value": "1" | "2";
-    };
-    readonly inIris?: {
-      readonly "@id": "http://example.com/InIri1" | "http://example.com/InIri2";
-    };
-    readonly inStrings?: "text" | "html";
-  };
 
   export const schema = {
     properties: {
@@ -25086,26 +24963,19 @@ export namespace InPropertiesStruct {
           _inPropertiesStruct.$identifier().termType === "BlankNode"
             ? `_:${_inPropertiesStruct.$identifier().value}`
             : _inPropertiesStruct.$identifier().value,
+        "@type": "http://example.com/InPropertiesStruct",
         $type: _inPropertiesStruct.$type,
         inBooleans: _inPropertiesStruct.inBooleans
           .map((item) => item)
           .extract(),
         inDateTimes: _inPropertiesStruct.inDateTimes
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
-            "@value": item.toISOString(),
-          }))
+          .map((item) => item.toISOString())
           .extract(),
         inDoubles: _inPropertiesStruct.inDoubles.map((item) => item).extract(),
         inIntegers: _inPropertiesStruct.inIntegers
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#integer" as const,
-            "@value": item.toString() as "1" | "2",
-          }))
+          .map((item) => item.toString() as "1" | "2")
           .extract(),
-        inIris: _inPropertiesStruct.inIris
-          .map((item) => ({ "@id": item.value }))
-          .extract(),
+        inIris: _inPropertiesStruct.inIris.map((item) => item.value).extract(),
         inStrings: _inPropertiesStruct.inStrings.map((item) => item).extract(),
       } satisfies InPropertiesStruct.Json),
     );
@@ -25515,6 +25385,13 @@ export namespace IriIdentifierStruct {
     object: $Object,
   ): object is IriIdentifierStruct => object.$type === "IriIdentifierStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "IriIdentifierStruct";
+    iriIdentifierString?: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -25525,39 +25402,35 @@ export namespace IriIdentifierStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("IriIdentifierStruct"),
-          iriIdentifierString: z.string().optional(),
-        })
-        .meta({
-          description: "A node shape that only allows IRI identifiers.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("IriIdentifierStruct"),
+        iriIdentifierString: z.string().optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "IriIdentifierStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/iriIdentifierString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/iriIdentifierString`,
             type: "Control",
           },
         ],
@@ -25566,12 +25439,6 @@ export namespace IriIdentifierStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "IriIdentifierStruct";
-    readonly iriIdentifierString?: string;
-  };
 
   export const schema = {
     properties: {
@@ -25661,6 +25528,7 @@ export namespace IriIdentifierStruct {
     JSON.parse(
       JSON.stringify({
         "@id": _iriIdentifierStruct.$identifier().value,
+        "@type": "http://example.com/IriIdentifierStruct",
         $type: _iriIdentifierStruct.$type,
         iriIdentifierString: _iriIdentifierStruct.iriIdentifierString
           .map((item) => item)
@@ -26873,29 +26741,20 @@ export namespace LangStringStruct {
         .map((item) =>
           ((
             value:
-              | { readonly "@language": string; readonly "@value": string }
-              | string,
+              | { $type: "object"; "@language": string; "@value": string }
+              | {
+                  $type: "string";
+                  "@type": string;
+                  "@value": string;
+                },
           ): Either<Error, Literal | string> => {
-            if (typeof value === "object") {
+            if (value.$type === "object") {
               return Either.of<Error, Literal>(
-                dataFactory.literal(
-                  (
-                    value as {
-                      readonly "@language": string;
-                      readonly "@value": string;
-                    }
-                  )["@value"],
-                  (
-                    value as {
-                      readonly "@language": string;
-                      readonly "@value": string;
-                    }
-                  )["@language"],
-                ),
+                dataFactory.literal(value["@value"], value["@language"]),
               ).map((value) => value);
             }
-            if (typeof value === "string") {
-              return Either.of<Error, string>(value as string).map(
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
                 (value) => value,
               );
             }
@@ -26908,30 +26767,21 @@ export namespace LangStringStruct {
         .map((item) =>
           ((
             value:
-              | string
-              | { readonly "@language": string; readonly "@value": string },
+              | { $type: "string"; "@type": string; "@value": string }
+              | {
+                  $type: "object";
+                  "@language": string;
+                  "@value": string;
+                },
           ): Either<Error, string | Literal> => {
-            if (typeof value === "string") {
-              return Either.of<Error, string>(value as string).map(
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
                 (value) => value,
               );
             }
-            if (typeof value === "object") {
+            if (value.$type === "object") {
               return Either.of<Error, Literal>(
-                dataFactory.literal(
-                  (
-                    value as {
-                      readonly "@language": string;
-                      readonly "@value": string;
-                    }
-                  )["@value"],
-                  (
-                    value as {
-                      readonly "@language": string;
-                      readonly "@value": string;
-                    }
-                  )["@language"],
-                ),
+                dataFactory.literal(value["@value"], value["@language"]),
               ).map((value) => value);
             }
 
@@ -27008,6 +26858,27 @@ export namespace LangStringStruct {
     object: $Object,
   ): object is LangStringStruct => object.$type === "LangStringStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "LangStringStruct";
+    langString?: { "@language": string; "@value": string };
+    langStringOrString?:
+      | { $type: "object"; "@language": string; "@value": string }
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        };
+    stringOrLangString?:
+      | { $type: "string"; "@type": string; "@value": string }
+      | {
+          $type: "object";
+          "@language": string;
+          "@value": string;
+        };
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -27018,60 +26889,72 @@ export namespace LangStringStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("LangStringStruct"),
-          langString: z
-            .object({ "@language": z.string(), "@value": z.string() })
-            .optional(),
-          langStringOrString: z
-            .union([
-              z.object({ "@language": z.string(), "@value": z.string() }),
-              z.string(),
-            ])
-            .readonly()
-            .optional(),
-          stringOrLangString: z
-            .union([
-              z.string(),
-              z.object({ "@language": z.string(), "@value": z.string() }),
-            ])
-            .readonly()
-            .optional(),
-        })
-        .meta({
-          description: "Struct node shape with rdf:langString properties",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("LangStringStruct"),
+        langString: z
+          .object({ "@language": z.string().min(1), "@value": z.string() })
+          .optional(),
+        langStringOrString: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("object"),
+              "@language": z.string().min(1),
+              "@value": z.string(),
+            }),
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+          ])
+          .optional(),
+        stringOrLangString: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+            z.object({
+              $type: z.literal("object"),
+              "@language": z.string().min(1),
+              "@value": z.string(),
+            }),
+          ])
+          .optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "LangStringStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/langString`, type: "Control" },
+          ((_parameters?: { scopePrefix?: string }): any => {
+            return { elements: [], type: "Group" };
+          })({ scopePrefix: _parameters?.scopePrefix ?? "#" }),
           {
-            scope: `${scopePrefix}/properties/langStringOrString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/langStringOrString`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/stringOrLangString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/stringOrLangString`,
             type: "Control",
           },
         ],
@@ -27080,21 +26963,6 @@ export namespace LangStringStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "LangStringStruct";
-    readonly langString?: {
-      readonly "@language": string;
-      readonly "@value": string;
-    };
-    readonly langStringOrString?:
-      | { readonly "@language": string; readonly "@value": string }
-      | string;
-    readonly stringOrLangString?:
-      | string
-      | { readonly "@language": string; readonly "@value": string };
-  };
 
   export const schema = {
     properties: {
@@ -27230,6 +27098,7 @@ export namespace LangStringStruct {
           _langStringStruct.$identifier().termType === "BlankNode"
             ? `_:${_langStringStruct.$identifier().value}`
             : _langStringStruct.$identifier().value,
+        "@type": "http://example.com/LangStringStruct",
         $type: _langStringStruct.$type,
         langString: _langStringStruct.langString
           .map((item) => ({ "@language": item.language, "@value": item.value }))
@@ -27239,13 +27108,25 @@ export namespace LangStringStruct {
             ((
               value: Literal | string,
             ):
-              | { readonly "@language": string; readonly "@value": string }
-              | string => {
+              | { $type: "object"; "@language": string; "@value": string }
+              | {
+                  $type: "string";
+                  "@type": string;
+                  "@value": string;
+                } => {
               if (typeof value === "object") {
-                return { "@language": value.language, "@value": value.value };
+                return {
+                  $type: "object" as const,
+                  "@language": value.language,
+                  "@value": value.value,
+                };
               }
               if (typeof value === "string") {
-                return value;
+                return {
+                  $type: "string" as const,
+                  "@type": $xsd_string.value,
+                  "@value": value,
+                };
               }
 
               throw new Error("unable to serialize to JSON");
@@ -27257,13 +27138,25 @@ export namespace LangStringStruct {
             ((
               value: string | Literal,
             ):
-              | string
-              | { readonly "@language": string; readonly "@value": string } => {
+              | { $type: "string"; "@type": string; "@value": string }
+              | {
+                  $type: "object";
+                  "@language": string;
+                  "@value": string;
+                } => {
               if (typeof value === "string") {
-                return value;
+                return {
+                  $type: "string" as const,
+                  "@type": $xsd_string.value,
+                  "@value": value,
+                };
               }
               if (typeof value === "object") {
-                return { "@language": value.language, "@value": value.value };
+                return {
+                  $type: "object" as const,
+                  "@language": value.language,
+                  "@value": value.value,
+                };
               }
 
               throw new Error("unable to serialize to JSON");
@@ -27593,6 +27486,12 @@ export namespace LanguageInStruct {
     object: $Object,
   ): object is LanguageInStruct => object.$type === "LanguageInStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "LanguageInStruct";
+    languageIn: { "@language": string; "@value": string }[];
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -27603,58 +27502,46 @@ export namespace LanguageInStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("LanguageInStruct"),
-          languageIn: z
-            .object({ "@language": z.string(), "@value": z.string() })
-            .array()
-            .nonempty()
-            .min(1)
-            .readonly(),
-        })
-        .meta({
-          description: "Struct node shape with sh:languageIn constraints",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LanguageInStruct"),
+        languageIn: z
+          .array(
+            z.object({ "@language": z.string().min(1), "@value": z.string() }),
+          )
+          .min(1),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "LanguageInStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/languageIn`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/languageIn`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "LanguageInStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "LanguageInStruct";
-    readonly languageIn: readonly {
-      readonly "@language": string;
-      readonly "@value": string;
-    }[];
-  };
 
   export const schema = {
     properties: {
@@ -28152,6 +28039,13 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   ): object is LazilyResolvedBlankNodeOrIriIdentifierStruct =>
     object.$type === "LazilyResolvedBlankNodeOrIriIdentifierStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "LazilyResolvedBlankNodeOrIriIdentifierStruct";
+    lazilyResolved: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -28162,24 +28056,20 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierStruct"),
-          lazilyResolved: z.string(),
-        })
-        .meta({
-          description: "Struct node shape resolved by LazyPropertiesStruct",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierStruct"),
+        lazilyResolved: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
@@ -28189,15 +28079,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
                   const:
                     "LazilyResolvedBlankNodeOrIriIdentifierStruct" as const,
                 },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolved`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/lazilyResolved`,
             type: "Control",
           },
         ],
@@ -28206,12 +28096,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierStruct";
-    readonly lazilyResolved: string;
-  };
 
   export const schema = {
     properties: {
@@ -28322,6 +28206,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
             .termType === "BlankNode"
             ? `_:${_lazilyResolvedBlankNodeOrIriIdentifierStruct.$identifier().value}`
             : _lazilyResolvedBlankNodeOrIriIdentifierStruct.$identifier().value,
+        "@type":
+          "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierStruct",
         $type: _lazilyResolvedBlankNodeOrIriIdentifierStruct.$type,
         lazilyResolved:
           _lazilyResolvedBlankNodeOrIriIdentifierStruct.lazilyResolved,
@@ -28731,6 +28617,13 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   ): object is LazilyResolvedDiscriminatedUnionMember1 =>
     object.$type === "LazilyResolvedDiscriminatedUnionMember1";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "LazilyResolvedDiscriminatedUnionMember1";
+    lazilyResolved: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -28743,18 +28636,18 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("LazilyResolvedDiscriminatedUnionMember1"),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
@@ -28763,15 +28656,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
                 schema: {
                   const: "LazilyResolvedDiscriminatedUnionMember1" as const,
                 },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolved`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/lazilyResolved`,
             type: "Control",
           },
         ],
@@ -28780,12 +28673,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedDiscriminatedUnionMember1";
-    readonly lazilyResolved: string;
-  };
 
   export const schema = {
     properties: {
@@ -28890,6 +28777,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
           "BlankNode"
             ? `_:${_lazilyResolvedDiscriminatedUnionMember1.$identifier().value}`
             : _lazilyResolvedDiscriminatedUnionMember1.$identifier().value,
+        "@type": "http://example.com/LazilyResolvedDiscriminatedUnionMember1",
         $type: _lazilyResolvedDiscriminatedUnionMember1.$type,
         lazilyResolved: _lazilyResolvedDiscriminatedUnionMember1.lazilyResolved,
       } satisfies LazilyResolvedDiscriminatedUnionMember1.Json),
@@ -29296,6 +29184,13 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   ): object is LazilyResolvedDiscriminatedUnionMember2 =>
     object.$type === "LazilyResolvedDiscriminatedUnionMember2";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "LazilyResolvedDiscriminatedUnionMember2";
+    lazilyResolved: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -29308,18 +29203,18 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("LazilyResolvedDiscriminatedUnionMember2"),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
@@ -29328,15 +29223,15 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
                 schema: {
                   const: "LazilyResolvedDiscriminatedUnionMember2" as const,
                 },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolved`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/lazilyResolved`,
             type: "Control",
           },
         ],
@@ -29345,12 +29240,6 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedDiscriminatedUnionMember2";
-    readonly lazilyResolved: string;
-  };
 
   export const schema = {
     properties: {
@@ -29455,6 +29344,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
           "BlankNode"
             ? `_:${_lazilyResolvedDiscriminatedUnionMember2.$identifier().value}`
             : _lazilyResolvedDiscriminatedUnionMember2.$identifier().value,
+        "@type": "http://example.com/LazilyResolvedDiscriminatedUnionMember2",
         $type: _lazilyResolvedDiscriminatedUnionMember2.$type,
         lazilyResolved: _lazilyResolvedDiscriminatedUnionMember2.lazilyResolved,
       } satisfies LazilyResolvedDiscriminatedUnionMember2.Json),
@@ -29760,6 +29650,12 @@ export namespace LazilyResolvedIriIdentifierStruct {
   ): object is LazilyResolvedIriIdentifierStruct =>
     object.$type === "LazilyResolvedIriIdentifierStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "LazilyResolvedIriIdentifierStruct";
+    lazilyResolved: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -29770,39 +29666,34 @@ export namespace LazilyResolvedIriIdentifierStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("LazilyResolvedIriIdentifierStruct"),
-          lazilyResolved: z.string(),
-        })
-        .meta({
-          description: "Struct node shape resolved by LazyPropertiesStruct",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedIriIdentifierStruct"),
+        lazilyResolved: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "LazilyResolvedIriIdentifierStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolved`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/lazilyResolved`,
             type: "Control",
           },
         ],
@@ -29811,12 +29702,6 @@ export namespace LazilyResolvedIriIdentifierStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedIriIdentifierStruct";
-    readonly lazilyResolved: string;
-  };
 
   export const schema = {
     properties: {
@@ -32049,6 +31934,21 @@ export namespace LazyPropertiesStruct {
     object: $Object,
   ): object is LazyPropertiesStruct => object.$type === "LazyPropertiesStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "LazyPropertiesStruct";
+    optionalLazyToResolvedBlankNodeOrIriIdentifier?: $DefaultPartial.Json;
+    optionalLazyToResolvedDiscriminatedUnion?: $DefaultPartial.Json;
+    optionalLazyToResolvedIriIdentifier?: $NamedDefaultPartial.Json;
+    optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?: PartialDiscriminatedUnion.Json;
+    optionalPartialToResolvedBlankNodeOrIriIdentifier?: PartialStruct.Json;
+    optionalPartialToResolvedDiscriminatedUnion?: PartialStruct.Json;
+    requiredLazyToResolvedBlankNodeOrIriIdentifier: $DefaultPartial.Json;
+    requiredPartialToResolvedBlankNodeOrIriIdentifier: PartialStruct.Json;
+    setLazyToResolvedBlankNodeOrIriIdentifier?: $DefaultPartial.Json[];
+    setPartialToResolvedBlankNodeOrIriIdentifier?: PartialStruct.Json[];
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -32059,108 +31959,94 @@ export namespace LazyPropertiesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("LazyPropertiesStruct"),
-          optionalLazyToResolvedBlankNodeOrIriIdentifier:
-            $DefaultPartial.Json.schema().optional(),
-          optionalLazyToResolvedDiscriminatedUnion:
-            $DefaultPartial.Json.schema().optional(),
-          optionalLazyToResolvedIriIdentifier:
-            $NamedDefaultPartial.Json.schema().optional(),
-          optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
-            PartialDiscriminatedUnion.Json.schema().optional(),
-          optionalPartialToResolvedBlankNodeOrIriIdentifier:
-            PartialStruct.Json.schema().optional(),
-          optionalPartialToResolvedDiscriminatedUnion:
-            PartialStruct.Json.schema().optional(),
-          requiredLazyToResolvedBlankNodeOrIriIdentifier:
-            $DefaultPartial.Json.schema(),
-          requiredPartialToResolvedBlankNodeOrIriIdentifier:
-            PartialStruct.Json.schema(),
-          setLazyToResolvedBlankNodeOrIriIdentifier:
-            $DefaultPartial.Json.schema().array().optional().readonly(),
-          setPartialToResolvedBlankNodeOrIriIdentifier:
-            PartialStruct.Json.schema().array().optional().readonly(),
-        })
-        .meta({
-          description: "Struct node shape that has lazy properties.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazyPropertiesStruct"),
+        optionalLazyToResolvedBlankNodeOrIriIdentifier:
+          $DefaultPartial.Json.schema().optional(),
+        optionalLazyToResolvedDiscriminatedUnion:
+          $DefaultPartial.Json.schema().optional(),
+        optionalLazyToResolvedIriIdentifier:
+          $NamedDefaultPartial.Json.schema().optional(),
+        optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
+          PartialDiscriminatedUnion.Json.schema().optional(),
+        optionalPartialToResolvedBlankNodeOrIriIdentifier:
+          PartialStruct.Json.schema().optional(),
+        optionalPartialToResolvedDiscriminatedUnion:
+          PartialStruct.Json.schema().optional(),
+        requiredLazyToResolvedBlankNodeOrIriIdentifier:
+          $DefaultPartial.Json.schema(),
+        requiredPartialToResolvedBlankNodeOrIriIdentifier:
+          PartialStruct.Json.schema(),
+        setLazyToResolvedBlankNodeOrIriIdentifier: z
+          .array($DefaultPartial.Json.schema())
+          .optional(),
+        setPartialToResolvedBlankNodeOrIriIdentifier: z
+          .array(PartialStruct.Json.schema())
+          .optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "LazyPropertiesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           $DefaultPartial.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedBlankNodeOrIriIdentifier`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
           $DefaultPartial.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedDiscriminatedUnion`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
           $NamedDefaultPartial.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriIdentifier`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
           {
-            scope: `${scopePrefix}/properties/optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion`,
+            scope: `${
+              _parameters?.scopePrefix ?? "#"
+            }/properties/optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion`,
             type: "Control",
           },
           PartialStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/optionalPartialToResolvedBlankNodeOrIriIdentifier`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
           PartialStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/optionalPartialToResolvedDiscriminatedUnion`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
           $DefaultPartial.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/requiredLazyToResolvedBlankNodeOrIriIdentifier`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
           PartialStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/requiredPartialToResolvedBlankNodeOrIriIdentifier`,
+            scopePrefix: _parameters?.scopePrefix ?? "#",
           }),
-          $DefaultPartial.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/setLazyToResolvedBlankNodeOrIriIdentifier`,
-          }),
-          PartialStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/setPartialToResolvedBlankNodeOrIriIdentifier`,
-          }),
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/setLazyToResolvedBlankNodeOrIriIdentifier`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/setPartialToResolvedBlankNodeOrIriIdentifier`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "LazyPropertiesStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "LazyPropertiesStruct";
-    readonly optionalLazyToResolvedBlankNodeOrIriIdentifier?: $DefaultPartial.Json;
-    readonly optionalLazyToResolvedDiscriminatedUnion?: $DefaultPartial.Json;
-    readonly optionalLazyToResolvedIriIdentifier?: $NamedDefaultPartial.Json;
-    readonly optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion?: PartialDiscriminatedUnion.Json;
-    readonly optionalPartialToResolvedBlankNodeOrIriIdentifier?: PartialStruct.Json;
-    readonly optionalPartialToResolvedDiscriminatedUnion?: PartialStruct.Json;
-    readonly requiredLazyToResolvedBlankNodeOrIriIdentifier: $DefaultPartial.Json;
-    readonly requiredPartialToResolvedBlankNodeOrIriIdentifier: PartialStruct.Json;
-    readonly setLazyToResolvedBlankNodeOrIriIdentifier?: readonly $DefaultPartial.Json[];
-    readonly setPartialToResolvedBlankNodeOrIriIdentifier?: readonly PartialStruct.Json[];
-  };
 
   export const schema = {
     properties: {
@@ -33619,17 +33505,21 @@ export namespace ListSetsStruct {
       >(
         ($json["listDiscriminatedUnionSet"] ?? []).map((item) =>
           ((
-            value: readonly string[] | string,
+            value:
+              | { $type: "object"; "@list": string[] }
+              | {
+                  $type: "string";
+                  "@type": string;
+                  "@value": string;
+                },
           ): Either<Error, readonly string[] | string> => {
-            if (typeof value === "object") {
+            if (value.$type === "object") {
               return Either.sequence<Error, string>(
-                (value as readonly string[]).map((item) =>
-                  Either.of<Error, string>(item),
-                ),
+                value["@list"].map((item) => Either.of<Error, string>(item)),
               ).map((value) => value);
             }
-            if (typeof value === "string") {
-              return Either.of<Error, string>(value as string).map(
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
                 (value) => value,
               );
             }
@@ -33714,6 +33604,18 @@ export namespace ListSetsStruct {
   export const isListSetsStruct = (object: $Object): object is ListSetsStruct =>
     object.$type === "ListSetsStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "ListSetsStruct";
+    listDiscriminatedUnionSet?: (
+      | { $type: "object"; "@list": string[] }
+      | { $type: "string"; "@type": string; "@value": string }
+    )[];
+    listListSet?: string[][][];
+    listSet?: string[][];
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -33726,80 +33628,74 @@ export namespace ListSetsStruct {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("ListSetsStruct"),
         listDiscriminatedUnionSet: z
-          .union([z.string().array().readonly(), z.string()])
-          .readonly()
-          .array()
+          .array(
+            z.discriminatedUnion("$type", [
+              z.object({
+                $type: z.literal("object"),
+                "@list": z.array(z.string()),
+              }),
+              z.object({
+                $type: z.literal("string"),
+                "@type": z.string(),
+                "@value": z.string(),
+              }),
+            ]),
+          )
           .optional()
-          .readonly()
           .meta({ description: "Set of typeof union that includes a list" }),
         listListSet: z
-          .string()
-          .array()
-          .readonly()
-          .array()
-          .readonly()
-          .array()
+          .array(z.array(z.array(z.string())))
           .optional()
-          .readonly()
           .meta({
             description: "Set of lists of lists",
           }),
         listSet: z
-          .string()
-          .array()
-          .readonly()
-          .array()
+          .array(z.array(z.string()))
           .optional()
-          .readonly()
           .meta({ description: "Set of lists" }),
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "ListSetsStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/listDiscriminatedUnionSet`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/listDiscriminatedUnionSet`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/listListSet`, type: "Control" },
-          { scope: `${scopePrefix}/properties/listSet`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/listListSet`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/listSet`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "ListSetsStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "ListSetsStruct";
-    readonly listDiscriminatedUnionSet?: readonly (
-      | readonly string[]
-      | string
-    )[];
-    readonly listListSet?: readonly (readonly (readonly string[])[])[];
-    readonly listSet?: readonly (readonly string[])[];
-  };
 
   export const schema = {
     properties: {
@@ -33935,17 +33831,31 @@ export namespace ListSetsStruct {
           _listSetsStruct.$identifier().termType === "BlankNode"
             ? `_:${_listSetsStruct.$identifier().value}`
             : _listSetsStruct.$identifier().value,
+        "@type": "http://example.com/ListSetsStruct",
         $type: _listSetsStruct.$type,
         listDiscriminatedUnionSet:
           _listSetsStruct.listDiscriminatedUnionSet.map((item) =>
             ((
               value: readonly string[] | string,
-            ): readonly string[] | string => {
+            ):
+              | { $type: "object"; "@list": string[] }
+              | {
+                  $type: "string";
+                  "@type": string;
+                  "@value": string;
+                } => {
               if (typeof value === "object") {
-                return value.map((item) => item);
+                return {
+                  $type: "object" as const,
+                  "@list": value.map((item) => item),
+                };
               }
               if (typeof value === "string") {
-                return value;
+                return {
+                  $type: "string" as const,
+                  "@type": $xsd_string.value,
+                  "@value": value,
+                };
               }
 
               throw new Error("unable to serialize to JSON");
@@ -34925,7 +34835,7 @@ export namespace ListsStruct {
         .map((item) =>
           Either.sequence<Error, NamedNode>(
             item.map((item) =>
-              Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
+              Either.of<Error, NamedNode>(dataFactory.namedNode(item)),
             ),
           ).map(Maybe.of),
         )
@@ -35004,6 +34914,16 @@ export namespace ListsStruct {
   export const isListsStruct = (object: $Object): object is ListsStruct =>
     object.$type === "ListsStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "ListsStruct";
+    iriList?: string[];
+    stringList?: string[];
+    stringListList?: string[][];
+    structList?: NonClassStruct.Json[];
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -35014,78 +34934,58 @@ export namespace ListsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("ListsStruct"),
-          iriList: z
-            .object({ "@id": z.string().min(1) })
-            .array()
-            .readonly()
-            .optional(),
-          stringList: z.string().array().readonly().optional(),
-          stringListList: z
-            .string()
-            .array()
-            .readonly()
-            .array()
-            .readonly()
-            .optional(),
-          structList: NonClassStruct.Json.schema()
-            .array()
-            .readonly()
-            .optional(),
-        })
-        .meta({
-          description:
-            "Struct node shape that uses the list shapes in properties.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("ListsStruct"),
+        iriList: z.array(z.string().min(1)).optional(),
+        stringList: z.array(z.string()).optional(),
+        stringListList: z.array(z.array(z.string())).optional(),
+        structList: z.array(NonClassStruct.Json.schema()).optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "ListsStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/iriList`, type: "Control" },
-          { scope: `${scopePrefix}/properties/stringList`, type: "Control" },
           {
-            scope: `${scopePrefix}/properties/stringListList`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/iriList`,
             type: "Control",
           },
-          NonClassStruct.Json.uiSchema({
-            scopePrefix: `${scopePrefix}/properties/structList`,
-          }),
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/stringList`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/stringListList`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/structList`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "ListsStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "ListsStruct";
-    readonly iriList?: readonly { readonly "@id": string }[];
-    readonly stringList?: readonly string[];
-    readonly stringListList?: readonly (readonly string[])[];
-    readonly structList?: readonly NonClassStruct.Json[];
-  };
 
   export const schema = {
     properties: {
@@ -35222,9 +35122,10 @@ export namespace ListsStruct {
           _listsStruct.$identifier().termType === "BlankNode"
             ? `_:${_listsStruct.$identifier().value}`
             : _listsStruct.$identifier().value,
+        "@type": "http://example.com/ListsStruct",
         $type: _listsStruct.$type,
         iriList: _listsStruct.iriList
-          .map((item) => item.map((item) => ({ "@id": item.value })))
+          .map((item) => item.map((item) => item.value))
           .extract(),
         stringList: _listsStruct.stringList
           .map((item) => item.map((item) => item))
@@ -35906,6 +35807,15 @@ export namespace MutablePropertiesStruct {
   ): object is MutablePropertiesStruct =>
     object.$type === "MutablePropertiesStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "MutablePropertiesStruct";
+    mutableList?: string[];
+    mutableSet?: string[];
+    mutableString?: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -35916,64 +35826,61 @@ export namespace MutablePropertiesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("MutablePropertiesStruct"),
-          mutableList: z.string().array().optional().meta({
-            description:
-              "List-valued property that can't be reassigned but whose value can be mutated",
-          }),
-          mutableSet: z.string().array().optional().meta({
-            description:
-              "Set-valued property that can't be reassigned but whose value can be mutated",
-          }),
-          mutableString: z.string().optional().meta({
-            description: "String-valued property that can be re-assigned",
-          }),
-        })
-        .meta({
-          description: "Struct node shape with shaclmate:mutable properties.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("MutablePropertiesStruct"),
+        mutableList: z.array(z.string()).optional().meta({
+          description:
+            "List-valued property that can't be reassigned but whose value can be mutated",
+        }),
+        mutableSet: z.array(z.string()).optional().meta({
+          description:
+            "Set-valued property that can't be reassigned but whose value can be mutated",
+        }),
+        mutableString: z.string().optional().meta({
+          description: "String-valued property that can be re-assigned",
+        }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "MutablePropertiesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/mutableList`, type: "Control" },
-          { scope: `${scopePrefix}/properties/mutableSet`, type: "Control" },
-          { scope: `${scopePrefix}/properties/mutableString`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/mutableList`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/mutableSet`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/mutableString`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "MutablePropertiesStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "MutablePropertiesStruct";
-    readonly mutableList?: string[];
-    mutableSet?: string[];
-    mutableString?: string;
-  };
 
   export const schema = {
     properties: {
@@ -36089,6 +35996,7 @@ export namespace MutablePropertiesStruct {
           _mutablePropertiesStruct.$identifier().termType === "BlankNode"
             ? `_:${_mutablePropertiesStruct.$identifier().value}`
             : _mutablePropertiesStruct.$identifier().value,
+        "@type": "http://example.com/MutablePropertiesStruct",
         $type: _mutablePropertiesStruct.$type,
         mutableList: _mutablePropertiesStruct.mutableList
           .map((item) => item.map((item) => item))
@@ -36764,9 +36672,11 @@ export namespace NamedTypesStruct {
         $json["namedDiscriminatedUnion2"],
       ),
       namedInIri: Either.of<Error, NamedInIri>(
-        dataFactory.namedNode($json["namedInIri"]["@id"]),
+        dataFactory.namedNode($json["namedInIri"]),
       ),
-      namedInLiteral: Either.of<Error, NamedInLiteral>($json["namedInLiteral"]),
+      namedInLiteral: Either.encase<Error, NamedInLiteral>(
+        () => $json["namedInLiteral"] as NamedInLiteral,
+      ),
     }).chain(NamedTypesStruct.create);
 
   export const fromRdfResource =
@@ -36818,6 +36728,19 @@ export namespace NamedTypesStruct {
     object: $Object,
   ): object is NamedTypesStruct => object.$type === "NamedTypesStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "NamedTypesStruct";
+    namedDatatype: string;
+    namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json;
+    namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json;
+    namedInIri:
+      | "http://example.com/NamedInIri1"
+      | "http://example.com/NamedInIri2";
+    namedInLiteral: "test1" | "test2";
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -36828,56 +36751,55 @@ export namespace NamedTypesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("NamedTypesStruct"),
-          namedDatatype: z.string(),
-          namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json.schema(),
-          namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json.schema(),
-          namedInIri: z.object({
-            "@id": z.enum(NamedInIri.schema.in.map((_) => _.value)),
-          }),
-          namedInLiteral: z.enum(NamedInLiteral.schema.in),
-        })
-        .meta({
-          description:
-            "Struct node shape that uses named types in properties with sh:node",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("NamedTypesStruct"),
+        namedDatatype: z.string(),
+        namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json.schema(),
+        namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json.schema(),
+        namedInIri: z.enum(NamedInIri.schema.in.map((_) => _.value)),
+        namedInLiteral: z.enum(NamedInLiteral.schema.in),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "NamedTypesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/namedDatatype`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/namedDiscriminatedUnion1`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/namedDiscriminatedUnion2`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedDatatype`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/namedInIri`, type: "Control" },
           {
-            scope: `${scopePrefix}/properties/namedInLiteral`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedDiscriminatedUnion1`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedDiscriminatedUnion2`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedInIri`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedInLiteral`,
             type: "Control",
           },
         ],
@@ -36886,16 +36808,6 @@ export namespace NamedTypesStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "NamedTypesStruct";
-    readonly namedDatatype: NamedDatatype;
-    readonly namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json;
-    readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json;
-    readonly namedInIri: { readonly "@id": NamedInIri["value"] };
-    readonly namedInLiteral: NamedInLiteral;
-  };
 
   export const schema = {
     properties: {
@@ -37022,6 +36934,7 @@ export namespace NamedTypesStruct {
           _namedTypesStruct.$identifier().termType === "BlankNode"
             ? `_:${_namedTypesStruct.$identifier().value}`
             : _namedTypesStruct.$identifier().value,
+        "@type": "http://example.com/NamedTypesStruct",
         $type: _namedTypesStruct.$type,
         namedDatatype: _namedTypesStruct.namedDatatype,
         namedDiscriminatedUnion1: NamedDiscriminatedUnion1.toJson(
@@ -37030,7 +36943,7 @@ export namespace NamedTypesStruct {
         namedDiscriminatedUnion2: NamedDiscriminatedUnion2.toJson(
           _namedTypesStruct.namedDiscriminatedUnion2,
         ),
-        namedInIri: { "@id": _namedTypesStruct.namedInIri.value },
+        namedInIri: _namedTypesStruct.namedInIri.value,
         namedInLiteral: _namedTypesStruct.namedInLiteral,
       } satisfies NamedTypesStruct.Json),
     );
@@ -37429,6 +37342,13 @@ export namespace NewName {
   export const isNewName = (object: $Object): object is NewName =>
     object.$type === "NewName";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "NewName";
+    newNameString?: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -37439,51 +37359,43 @@ export namespace NewName {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("NewName"),
-          newNameString: z.string().optional(),
-        })
-        .meta({
-          description:
-            "Struct node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("NewName"),
+        newNameString: z.string().optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "NewName" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/newNameString`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/newNameString`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "NewName",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "NewName";
-    readonly newNameString?: string;
-  };
 
   export const schema = {
     properties: {
@@ -37577,6 +37489,7 @@ export namespace NewName {
           _newName.$identifier().termType === "BlankNode"
             ? `_:${_newName.$identifier().value}`
             : _newName.$identifier().value,
+        "@type": "http://example.com/OverrideNameStruct",
         $type: _newName.$type,
         newNameString: _newName.newNameString.map((item) => item).extract(),
       } satisfies NewName.Json),
@@ -37784,6 +37697,7 @@ export namespace NodeKindsStruct {
       blankNodeOrLiteralNodeKind:
         _nodeKindsStruct.blankNodeOrLiteralNodeKind.termType === "Literal"
           ? {
+              $type: "Literal" as const,
               "@language":
                 _nodeKindsStruct.blankNodeOrLiteralNodeKind.language.length > 0
                   ? _nodeKindsStruct.blankNodeOrLiteralNodeKind.language
@@ -37794,16 +37708,16 @@ export namespace NodeKindsStruct {
                   ? _nodeKindsStruct.blankNodeOrLiteralNodeKind.datatype.value
                   : undefined,
               "@value": _nodeKindsStruct.blankNodeOrLiteralNodeKind.value,
-              termType: "Literal" as const,
             }
           : {
+              $type: "BlankNode" as const,
               "@id": `_:${_nodeKindsStruct.blankNodeOrLiteralNodeKind.value}`,
-              termType: "BlankNode" as const,
             },
       iriNodeKind: _nodeKindsStruct.iriNodeKind.value,
       iriOrLiteralNodeKind:
         _nodeKindsStruct.iriOrLiteralNodeKind.termType === "Literal"
           ? {
+              $type: "Literal" as const,
               "@language":
                 _nodeKindsStruct.iriOrLiteralNodeKind.language.length > 0
                   ? _nodeKindsStruct.iriOrLiteralNodeKind.language
@@ -37814,11 +37728,10 @@ export namespace NodeKindsStruct {
                   ? _nodeKindsStruct.iriOrLiteralNodeKind.datatype.value
                   : undefined,
               "@value": _nodeKindsStruct.iriOrLiteralNodeKind.value,
-              termType: "Literal" as const,
             }
           : {
+              $type: "NamedNode" as const,
               "@id": _nodeKindsStruct.iriOrLiteralNodeKind.value,
-              termType: "NamedNode" as const,
             },
       literalNodeKind: {
         "@language":
@@ -38294,17 +38207,15 @@ export namespace NodeKindsStruct {
           : dataFactory.namedNode($json["@id"]),
       ),
       blankNodeKind: Either.of<Error, BlankNode>(
-        dataFactory.blankNode($json["blankNodeKind"]["@id"].substring(2)),
+        dataFactory.blankNode($json["blankNodeKind"].substring(2)),
       ),
       blankNodeOrIriNodeKind: Either.of<Error, BlankNode | NamedNode>(
-        $json["blankNodeOrIriNodeKind"]["@id"].startsWith("_:")
-          ? dataFactory.blankNode(
-              $json["blankNodeOrIriNodeKind"]["@id"].substring(2),
-            )
-          : dataFactory.namedNode($json["blankNodeOrIriNodeKind"]["@id"]),
+        $json["blankNodeOrIriNodeKind"].startsWith("_:")
+          ? dataFactory.blankNode($json["blankNodeOrIriNodeKind"].substring(2))
+          : dataFactory.namedNode($json["blankNodeOrIriNodeKind"]),
       ),
       blankNodeOrLiteralNodeKind: Either.of<Error, BlankNode | Literal>(
-        $json["blankNodeOrLiteralNodeKind"].termType === "Literal"
+        $json["blankNodeOrLiteralNodeKind"].$type === "Literal"
           ? dataFactory.literal(
               $json["blankNodeOrLiteralNodeKind"]["@value"],
               $json["blankNodeOrLiteralNodeKind"]["@language"] !== undefined
@@ -38320,10 +38231,10 @@ export namespace NodeKindsStruct {
             ),
       ),
       iriNodeKind: Either.of<Error, NamedNode>(
-        dataFactory.namedNode($json["iriNodeKind"]["@id"]),
+        dataFactory.namedNode($json["iriNodeKind"]),
       ),
       iriOrLiteralNodeKind: Either.of<Error, NamedNode | Literal>(
-        $json["iriOrLiteralNodeKind"].termType === "Literal"
+        $json["iriOrLiteralNodeKind"].$type === "Literal"
           ? dataFactory.literal(
               $json["iriOrLiteralNodeKind"]["@value"],
               $json["iriOrLiteralNodeKind"]["@language"] !== undefined
@@ -38392,6 +38303,36 @@ export namespace NodeKindsStruct {
     object: $Object,
   ): object is NodeKindsStruct => object.$type === "NodeKindsStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "NodeKindsStruct";
+    blankNodeKind: string;
+    blankNodeOrIriNodeKind: string;
+    blankNodeOrLiteralNodeKind:
+      | { $type: "BlankNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        };
+    iriNodeKind: string;
+    iriOrLiteralNodeKind:
+      | { $type: "NamedNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        };
+    literalNodeKind: {
+      "@language"?: string;
+      "@type"?: string;
+      "@value": string;
+    };
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -38402,122 +38343,87 @@ export namespace NodeKindsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("NodeKindsStruct"),
-          blankNodeKind: z.object({ "@id": z.string().min(1) }),
-          blankNodeOrIriNodeKind: z.object({ "@id": z.string().min(1) }),
-          blankNodeOrLiteralNodeKind: z.discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("BlankNode"),
-            }),
-            z.object({
-              "@language": z.string().optional(),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-              termType: z.literal("Literal"),
-            }),
-          ]),
-          iriNodeKind: z.object({ "@id": z.string().min(1) }),
-          iriOrLiteralNodeKind: z.discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
-            }),
-            z.object({
-              "@language": z.string().optional(),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-              termType: z.literal("Literal"),
-            }),
-          ]),
-          literalNodeKind: z.object({
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("NodeKindsStruct"),
+        blankNodeKind: z.string().min(1),
+        blankNodeOrIriNodeKind: z.string().min(1),
+        blankNodeOrLiteralNodeKind: z.discriminatedUnion("$type", [
+          z.object({ $type: z.literal("BlankNode"), "@id": z.string().min(1) }),
+          z.object({
+            $type: z.literal("Literal"),
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
           }),
-        })
-        .meta({
-          description:
-            "Struct node shape that has properties with different sh:nodeKind combinations",
-        }) satisfies z.ZodType<Json>;
+        ]),
+        iriNodeKind: z.string().min(1),
+        iriOrLiteralNodeKind: z.discriminatedUnion("$type", [
+          z.object({ $type: z.literal("NamedNode"), "@id": z.string().min(1) }),
+          z.object({
+            $type: z.literal("Literal"),
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          }),
+        ]),
+        literalNodeKind: z.object({
+          "@language": z.string().optional(),
+          "@type": z.string().optional(),
+          "@value": z.string(),
+        }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "NodeKindsStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/blankNodeKind`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/blankNodeOrIriNodeKind`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/blankNodeOrLiteralNodeKind`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/iriNodeKind`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/iriOrLiteralNodeKind`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/blankNodeKind`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/literalNodeKind`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/blankNodeOrIriNodeKind`,
             type: "Control",
           },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/blankNodeOrLiteralNodeKind`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/iriNodeKind`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/iriOrLiteralNodeKind`,
+            type: "Control",
+          },
+          ((_parameters?: { scopePrefix?: string }): any => {
+            return { elements: [], type: "Group" };
+          })({ scopePrefix: _parameters?.scopePrefix ?? "#" }),
         ],
         type: "Group",
         label: "NodeKindsStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "NodeKindsStruct";
-    readonly blankNodeKind: { readonly "@id": string };
-    readonly blankNodeOrIriNodeKind: { readonly "@id": string };
-    readonly blankNodeOrLiteralNodeKind:
-      | { readonly "@id": string; readonly termType: "BlankNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly iriNodeKind: { readonly "@id": string };
-    readonly iriOrLiteralNodeKind:
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly literalNodeKind: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-  };
 
   export const schema = {
     properties: {
@@ -38639,15 +38545,17 @@ export namespace NodeKindsStruct {
           _nodeKindsStruct.$identifier().termType === "BlankNode"
             ? `_:${_nodeKindsStruct.$identifier().value}`
             : _nodeKindsStruct.$identifier().value,
+        "@type": "http://example.com/NodeKindsStruct",
         $type: _nodeKindsStruct.$type,
-        blankNodeKind: { "@id": `_:${_nodeKindsStruct.blankNodeKind.value}` },
+        blankNodeKind: `_:${_nodeKindsStruct.blankNodeKind.value}`,
         blankNodeOrIriNodeKind:
           _nodeKindsStruct.blankNodeOrIriNodeKind.termType === "BlankNode"
-            ? { "@id": `_:${_nodeKindsStruct.blankNodeOrIriNodeKind.value}` }
-            : { "@id": _nodeKindsStruct.blankNodeOrIriNodeKind.value },
+            ? `_:${_nodeKindsStruct.blankNodeOrIriNodeKind.value}`
+            : _nodeKindsStruct.blankNodeOrIriNodeKind.value,
         blankNodeOrLiteralNodeKind:
           _nodeKindsStruct.blankNodeOrLiteralNodeKind.termType === "Literal"
             ? {
+                $type: "Literal" as const,
                 "@language":
                   _nodeKindsStruct.blankNodeOrLiteralNodeKind.language.length >
                   0
@@ -38659,16 +38567,16 @@ export namespace NodeKindsStruct {
                     ? _nodeKindsStruct.blankNodeOrLiteralNodeKind.datatype.value
                     : undefined,
                 "@value": _nodeKindsStruct.blankNodeOrLiteralNodeKind.value,
-                termType: "Literal" as const,
               }
             : {
+                $type: "BlankNode" as const,
                 "@id": `_:${_nodeKindsStruct.blankNodeOrLiteralNodeKind.value}`,
-                termType: "BlankNode" as const,
               },
-        iriNodeKind: { "@id": _nodeKindsStruct.iriNodeKind.value },
+        iriNodeKind: _nodeKindsStruct.iriNodeKind.value,
         iriOrLiteralNodeKind:
           _nodeKindsStruct.iriOrLiteralNodeKind.termType === "Literal"
             ? {
+                $type: "Literal" as const,
                 "@language":
                   _nodeKindsStruct.iriOrLiteralNodeKind.language.length > 0
                     ? _nodeKindsStruct.iriOrLiteralNodeKind.language
@@ -38679,11 +38587,10 @@ export namespace NodeKindsStruct {
                     ? _nodeKindsStruct.iriOrLiteralNodeKind.datatype.value
                     : undefined,
                 "@value": _nodeKindsStruct.iriOrLiteralNodeKind.value,
-                termType: "Literal" as const,
               }
             : {
+                $type: "NamedNode" as const,
                 "@id": _nodeKindsStruct.iriOrLiteralNodeKind.value,
-                termType: "NamedNode" as const,
               },
         literalNodeKind: {
           "@language":
@@ -38984,6 +38891,12 @@ export namespace NonClassStruct {
   export const isNonClassStruct = (object: $Object): object is NonClassStruct =>
     object.$type === "NonClassStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "NonClassStruct";
+    nonClassString: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -38994,39 +38907,34 @@ export namespace NonClassStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("NonClassStruct"),
-          nonClassString: z.string(),
-        })
-        .meta({
-          description: "Struct node shape that isn't an rdfs:Class.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NonClassStruct"),
+        nonClassString: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "NonClassStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/nonClassString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/nonClassString`,
             type: "Control",
           },
         ],
@@ -39035,12 +38943,6 @@ export namespace NonClassStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "NonClassStruct";
-    readonly nonClassString: string;
-  };
 
   export const schema = {
     properties: {
@@ -39451,6 +39353,12 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   ): object is NoRdfTypeDiscriminatedUnionMember1 =>
     object.$type === "NoRdfTypeDiscriminatedUnionMember1";
 
+  export type Json = {
+    "@id": string;
+    $type: "NoRdfTypeDiscriminatedUnionMember1";
+    noRdfTypeDiscriminatedUnionMember1String: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -39468,13 +39376,12 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
@@ -39483,15 +39390,15 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
                 schema: {
                   const: "NoRdfTypeDiscriminatedUnionMember1" as const,
                 },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/noRdfTypeDiscriminatedUnionMember1String`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/noRdfTypeDiscriminatedUnionMember1String`,
             type: "Control",
           },
         ],
@@ -39500,12 +39407,6 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "NoRdfTypeDiscriminatedUnionMember1";
-    readonly noRdfTypeDiscriminatedUnionMember1String: string;
-  };
 
   export const schema = {
     properties: {
@@ -39931,6 +39832,12 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   ): object is NoRdfTypeDiscriminatedUnionMember2 =>
     object.$type === "NoRdfTypeDiscriminatedUnionMember2";
 
+  export type Json = {
+    "@id": string;
+    $type: "NoRdfTypeDiscriminatedUnionMember2";
+    noRdfTypeDiscriminatedUnionMember2String: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -39948,13 +39855,12 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
@@ -39963,15 +39869,15 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
                 schema: {
                   const: "NoRdfTypeDiscriminatedUnionMember2" as const,
                 },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/noRdfTypeDiscriminatedUnionMember2String`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/noRdfTypeDiscriminatedUnionMember2String`,
             type: "Control",
           },
         ],
@@ -39980,12 +39886,6 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "NoRdfTypeDiscriminatedUnionMember2";
-    readonly noRdfTypeDiscriminatedUnionMember2String: string;
-  };
 
   export const schema = {
     properties: {
@@ -41768,9 +41668,9 @@ export namespace NumericsStruct {
         .orDefault(Either.of(Maybe.empty())),
       decimalNumeric: Maybe.fromNullable($json["decimalNumeric"])
         .map((item) =>
-          Either.encase<Error, BigDecimal>(
-            () => new BigDecimal(item["@value"]),
-          ).map(Maybe.of),
+          Either.encase<Error, BigDecimal>(() => new BigDecimal(item)).map(
+            Maybe.of,
+          ),
         )
         .orDefault(Either.of(Maybe.empty())),
       doubleNumeric: Maybe.fromNullable($json["doubleNumeric"])
@@ -41781,9 +41681,7 @@ export namespace NumericsStruct {
         .orDefault(Either.of(Maybe.empty())),
       integerNumeric: Maybe.fromNullable($json["integerNumeric"])
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
-            Maybe.of,
-          ),
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       intNumeric: Maybe.fromNullable($json["intNumeric"])
@@ -41791,45 +41689,35 @@ export namespace NumericsStruct {
         .orDefault(Either.of(Maybe.empty())),
       longNumeric: Maybe.fromNullable($json["longNumeric"])
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
-            Maybe.of,
-          ),
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       negativeIntegerNumeric: Maybe.fromNullable(
         $json["negativeIntegerNumeric"],
       )
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
-            Maybe.of,
-          ),
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       nonNegativeIntegerNumeric: Maybe.fromNullable(
         $json["nonNegativeIntegerNumeric"],
       )
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
-            Maybe.of,
-          ),
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       nonPositiveIntegerNumeric: Maybe.fromNullable(
         $json["nonPositiveIntegerNumeric"],
       )
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
-            Maybe.of,
-          ),
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       positiveIntegerNumeric: Maybe.fromNullable(
         $json["positiveIntegerNumeric"],
       )
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
-            Maybe.of,
-          ),
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       shortNumeric: Maybe.fromNullable($json["shortNumeric"])
@@ -41843,9 +41731,7 @@ export namespace NumericsStruct {
         .orDefault(Either.of(Maybe.empty())),
       unsignedLongNumeric: Maybe.fromNullable($json["unsignedLongNumeric"])
         .map((item) =>
-          Either.encase<Error, bigint>(() => BigInt(item["@value"])).map(
-            Maybe.of,
-          ),
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       unsignedShortNumeric: Maybe.fromNullable($json["unsignedShortNumeric"])
@@ -41906,6 +41792,28 @@ export namespace NumericsStruct {
   export const isNumericsStruct = (object: $Object): object is NumericsStruct =>
     object.$type === "NumericsStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "NumericsStruct";
+    byteNumeric?: number;
+    decimalNumeric?: string;
+    doubleNumeric?: number;
+    floatNumeric?: number;
+    integerNumeric?: string;
+    intNumeric?: number;
+    longNumeric?: string;
+    negativeIntegerNumeric?: string;
+    nonNegativeIntegerNumeric?: string;
+    nonPositiveIntegerNumeric?: string;
+    positiveIntegerNumeric?: string;
+    shortNumeric?: number;
+    unsignedByteNumeric?: number;
+    unsignedIntNumeric?: number;
+    unsignedLongNumeric?: string;
+    unsignedShortNumeric?: number;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -41916,147 +41824,110 @@ export namespace NumericsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("NumericsStruct"),
-          byteNumeric: z.number().optional(),
-          decimalNumeric: z
-            .object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#decimal"),
-              "@value": z.string(),
-            })
-            .optional(),
-          doubleNumeric: z.number().optional(),
-          floatNumeric: z.number().optional(),
-          integerNumeric: z
-            .object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#integer"),
-              "@value": z.string(),
-            })
-            .optional(),
-          intNumeric: z.number().optional(),
-          longNumeric: z
-            .object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#long"),
-              "@value": z.string(),
-            })
-            .optional(),
-          negativeIntegerNumeric: z
-            .object({
-              "@type": z.literal(
-                "http://www.w3.org/2001/XMLSchema#negativeInteger",
-              ),
-              "@value": z.string(),
-            })
-            .optional(),
-          nonNegativeIntegerNumeric: z
-            .object({
-              "@type": z.literal(
-                "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-              ),
-              "@value": z.string(),
-            })
-            .optional(),
-          nonPositiveIntegerNumeric: z
-            .object({
-              "@type": z.literal(
-                "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-              ),
-              "@value": z.string(),
-            })
-            .optional(),
-          positiveIntegerNumeric: z
-            .object({
-              "@type": z.literal(
-                "http://www.w3.org/2001/XMLSchema#positiveInteger",
-              ),
-              "@value": z.string(),
-            })
-            .optional(),
-          shortNumeric: z.number().optional(),
-          unsignedByteNumeric: z.number().optional(),
-          unsignedIntNumeric: z.number().optional(),
-          unsignedLongNumeric: z
-            .object({
-              "@type": z.literal(
-                "http://www.w3.org/2001/XMLSchema#unsignedLong",
-              ),
-              "@value": z.string(),
-            })
-            .optional(),
-          unsignedShortNumeric: z.number().optional(),
-        })
-        .meta({
-          description:
-            "Struct node shape with properties that have numeric sh:datatype's",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("NumericsStruct"),
+        byteNumeric: z.number().optional(),
+        decimalNumeric: z.string().optional(),
+        doubleNumeric: z.number().optional(),
+        floatNumeric: z.number().optional(),
+        integerNumeric: z.string().optional(),
+        intNumeric: z.number().optional(),
+        longNumeric: z.string().optional(),
+        negativeIntegerNumeric: z.string().optional(),
+        nonNegativeIntegerNumeric: z.string().optional(),
+        nonPositiveIntegerNumeric: z.string().optional(),
+        positiveIntegerNumeric: z.string().optional(),
+        shortNumeric: z.number().optional(),
+        unsignedByteNumeric: z.number().optional(),
+        unsignedIntNumeric: z.number().optional(),
+        unsignedLongNumeric: z.string().optional(),
+        unsignedShortNumeric: z.number().optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "NumericsStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/byteNumeric`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/decimalNumeric`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/doubleNumeric`, type: "Control" },
-          { scope: `${scopePrefix}/properties/floatNumeric`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/integerNumeric`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/intNumeric`, type: "Control" },
-          { scope: `${scopePrefix}/properties/longNumeric`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/negativeIntegerNumeric`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/nonNegativeIntegerNumeric`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/byteNumeric`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/nonPositiveIntegerNumeric`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/decimalNumeric`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/positiveIntegerNumeric`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/shortNumeric`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/unsignedByteNumeric`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/doubleNumeric`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/unsignedIntNumeric`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/floatNumeric`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/unsignedLongNumeric`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/integerNumeric`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/unsignedShortNumeric`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/intNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/longNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/negativeIntegerNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/nonNegativeIntegerNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/nonPositiveIntegerNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/positiveIntegerNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/shortNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/unsignedByteNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/unsignedIntNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/unsignedLongNumeric`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/unsignedShortNumeric`,
             type: "Control",
           },
         ],
@@ -42065,51 +41936,6 @@ export namespace NumericsStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "NumericsStruct";
-    readonly byteNumeric?: number;
-    readonly decimalNumeric?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#decimal";
-      readonly "@value": string;
-    };
-    readonly doubleNumeric?: number;
-    readonly floatNumeric?: number;
-    readonly integerNumeric?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#integer";
-      readonly "@value": string;
-    };
-    readonly intNumeric?: number;
-    readonly longNumeric?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#long";
-      readonly "@value": string;
-    };
-    readonly negativeIntegerNumeric?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#negativeInteger";
-      readonly "@value": string;
-    };
-    readonly nonNegativeIntegerNumeric?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger";
-      readonly "@value": string;
-    };
-    readonly nonPositiveIntegerNumeric?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#nonPositiveInteger";
-      readonly "@value": string;
-    };
-    readonly positiveIntegerNumeric?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#positiveInteger";
-      readonly "@value": string;
-    };
-    readonly shortNumeric?: number;
-    readonly unsignedByteNumeric?: number;
-    readonly unsignedIntNumeric?: number;
-    readonly unsignedLongNumeric?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#unsignedLong";
-      readonly "@value": string;
-    };
-    readonly unsignedShortNumeric?: number;
-  };
 
   export const schema = {
     properties: {
@@ -42307,13 +42133,11 @@ export namespace NumericsStruct {
           _numericsStruct.$identifier().termType === "BlankNode"
             ? `_:${_numericsStruct.$identifier().value}`
             : _numericsStruct.$identifier().value,
+        "@type": "http://example.com/NumericsStruct",
         $type: _numericsStruct.$type,
         byteNumeric: _numericsStruct.byteNumeric.map((item) => item).extract(),
         decimalNumeric: _numericsStruct.decimalNumeric
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#decimal" as const,
-            "@value": item.toFixed(),
-          }))
+          .map((item) => item.toFixed())
           .extract(),
         doubleNumeric: _numericsStruct.doubleNumeric
           .map((item) => item)
@@ -42322,45 +42146,23 @@ export namespace NumericsStruct {
           .map((item) => item)
           .extract(),
         integerNumeric: _numericsStruct.integerNumeric
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#integer" as const,
-            "@value": item.toString(),
-          }))
+          .map((item) => item.toString())
           .extract(),
         intNumeric: _numericsStruct.intNumeric.map((item) => item).extract(),
         longNumeric: _numericsStruct.longNumeric
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#long" as const,
-            "@value": item.toString(),
-          }))
+          .map((item) => item.toString())
           .extract(),
         negativeIntegerNumeric: _numericsStruct.negativeIntegerNumeric
-          .map((item) => ({
-            "@type":
-              "http://www.w3.org/2001/XMLSchema#negativeInteger" as const,
-            "@value": item.toString(),
-          }))
+          .map((item) => item.toString())
           .extract(),
         nonNegativeIntegerNumeric: _numericsStruct.nonNegativeIntegerNumeric
-          .map((item) => ({
-            "@type":
-              "http://www.w3.org/2001/XMLSchema#nonNegativeInteger" as const,
-            "@value": item.toString(),
-          }))
+          .map((item) => item.toString())
           .extract(),
         nonPositiveIntegerNumeric: _numericsStruct.nonPositiveIntegerNumeric
-          .map((item) => ({
-            "@type":
-              "http://www.w3.org/2001/XMLSchema#nonPositiveInteger" as const,
-            "@value": item.toString(),
-          }))
+          .map((item) => item.toString())
           .extract(),
         positiveIntegerNumeric: _numericsStruct.positiveIntegerNumeric
-          .map((item) => ({
-            "@type":
-              "http://www.w3.org/2001/XMLSchema#positiveInteger" as const,
-            "@value": item.toString(),
-          }))
+          .map((item) => item.toString())
           .extract(),
         shortNumeric: _numericsStruct.shortNumeric
           .map((item) => item)
@@ -42372,10 +42174,7 @@ export namespace NumericsStruct {
           .map((item) => item)
           .extract(),
         unsignedLongNumeric: _numericsStruct.unsignedLongNumeric
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#unsignedLong" as const,
-            "@value": item.toString(),
-          }))
+          .map((item) => item.toString())
           .extract(),
         unsignedShortNumeric: _numericsStruct.unsignedShortNumeric
           .map((item) => item)
@@ -42779,6 +42578,14 @@ export namespace OrderedStruct {
   export const isOrderedStruct = (object: $Object): object is OrderedStruct =>
     object.$type === "OrderedStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "OrderedStruct";
+    orderedC: string;
+    orderedB: string;
+    orderedA: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -42789,57 +42596,52 @@ export namespace OrderedStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("OrderedStruct"),
-          orderedC: z.string(),
-          orderedB: z.string(),
-          orderedA: z.string(),
-        })
-        .meta({
-          description:
-            "Struct node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("OrderedStruct"),
+        orderedC: z.string(),
+        orderedB: z.string(),
+        orderedA: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "OrderedStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/orderedC`, type: "Control" },
-          { scope: `${scopePrefix}/properties/orderedB`, type: "Control" },
-          { scope: `${scopePrefix}/properties/orderedA`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/orderedC`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/orderedB`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/orderedA`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "OrderedStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "OrderedStruct";
-    readonly orderedC: string;
-    readonly orderedB: string;
-    readonly orderedA: string;
-  };
 
   export const schema = {
     properties: {
@@ -43326,6 +43128,13 @@ export namespace PartialDiscriminatedUnionMember1 {
   ): object is PartialDiscriminatedUnionMember1 =>
     object.$type === "PartialDiscriminatedUnionMember1";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "PartialDiscriminatedUnionMember1";
+    lazilyResolved: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -43338,33 +43147,33 @@ export namespace PartialDiscriminatedUnionMember1 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("PartialDiscriminatedUnionMember1"),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "PartialDiscriminatedUnionMember1" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolved`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/lazilyResolved`,
             type: "Control",
           },
         ],
@@ -43373,12 +43182,6 @@ export namespace PartialDiscriminatedUnionMember1 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "PartialDiscriminatedUnionMember1";
-    readonly lazilyResolved: string;
-  };
 
   export const schema = {
     properties: {
@@ -43481,6 +43284,7 @@ export namespace PartialDiscriminatedUnionMember1 {
           "BlankNode"
             ? `_:${_partialDiscriminatedUnionMember1.$identifier().value}`
             : _partialDiscriminatedUnionMember1.$identifier().value,
+        "@type": "http://example.com/DiscriminatedUnionMember1",
         $type: _partialDiscriminatedUnionMember1.$type,
         lazilyResolved: _partialDiscriminatedUnionMember1.lazilyResolved,
       } satisfies PartialDiscriminatedUnionMember1.Json),
@@ -43874,6 +43678,13 @@ export namespace PartialDiscriminatedUnionMember2 {
   ): object is PartialDiscriminatedUnionMember2 =>
     object.$type === "PartialDiscriminatedUnionMember2";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "PartialDiscriminatedUnionMember2";
+    lazilyResolved: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -43886,33 +43697,33 @@ export namespace PartialDiscriminatedUnionMember2 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("PartialDiscriminatedUnionMember2"),
         lazilyResolved: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "PartialDiscriminatedUnionMember2" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolved`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/lazilyResolved`,
             type: "Control",
           },
         ],
@@ -43921,12 +43732,6 @@ export namespace PartialDiscriminatedUnionMember2 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "PartialDiscriminatedUnionMember2";
-    readonly lazilyResolved: string;
-  };
 
   export const schema = {
     properties: {
@@ -44029,6 +43834,7 @@ export namespace PartialDiscriminatedUnionMember2 {
           "BlankNode"
             ? `_:${_partialDiscriminatedUnionMember2.$identifier().value}`
             : _partialDiscriminatedUnionMember2.$identifier().value,
+        "@type": "http://example.com/DiscriminatedUnionMember2",
         $type: _partialDiscriminatedUnionMember2.$type,
         lazilyResolved: _partialDiscriminatedUnionMember2.lazilyResolved,
       } satisfies PartialDiscriminatedUnionMember2.Json),
@@ -44317,6 +44123,12 @@ export namespace PartialStruct {
   export const isPartialStruct = (object: $Object): object is PartialStruct =>
     object.$type === "PartialStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "PartialStruct";
+    lazilyResolved: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -44327,40 +44139,34 @@ export namespace PartialStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("PartialStruct"),
-          lazilyResolved: z.string(),
-        })
-        .meta({
-          description:
-            "Struct node shape used as a partial by LazyPropertiesStruct",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialStruct"),
+        lazilyResolved: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "PartialStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/lazilyResolved`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/lazilyResolved`,
             type: "Control",
           },
         ],
@@ -44369,12 +44175,6 @@ export namespace PartialStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "PartialStruct";
-    readonly lazilyResolved: string;
-  };
 
   export const schema = {
     properties: {
@@ -45038,6 +44838,15 @@ export namespace PropertyCardinalitiesStruct {
   ): object is PropertyCardinalitiesStruct =>
     object.$type === "PropertyCardinalitiesStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "PropertyCardinalitiesStruct";
+    emptySet?: string[];
+    nonEmptySet: string[];
+    optional?: string;
+    required: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -45048,69 +44857,68 @@ export namespace PropertyCardinalitiesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("PropertyCardinalitiesStruct"),
-          emptySet: z.string().array().optional().readonly().meta({
-            description: "Set: minCount implicitly=0, no maxCount",
-          }),
-          nonEmptySet: z.string().array().nonempty().min(1).readonly().meta({
-            description: "Set: minCount=1, no maxCount",
-          }),
-          optional: z
-            .string()
-            .optional()
-            .meta({ description: "Option: maxCount=1, minCount=0" }),
-          required: z
-            .string()
-            .meta({ description: "Required: maxCount=minCount=1" }),
-        })
-        .meta({
-          description:
-            "Struct node shape that has properties with different cardinalities",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PropertyCardinalitiesStruct"),
+        emptySet: z
+          .array(z.string())
+          .optional()
+          .meta({ description: "Set: minCount implicitly=0, no maxCount" }),
+        nonEmptySet: z
+          .array(z.string())
+          .min(1)
+          .meta({ description: "Set: minCount=1, no maxCount" }),
+        optional: z
+          .string()
+          .optional()
+          .meta({ description: "Option: maxCount=1, minCount=0" }),
+        required: z
+          .string()
+          .meta({ description: "Required: maxCount=minCount=1" }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "PropertyCardinalitiesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/emptySet`, type: "Control" },
-          { scope: `${scopePrefix}/properties/nonEmptySet`, type: "Control" },
-          { scope: `${scopePrefix}/properties/optional`, type: "Control" },
-          { scope: `${scopePrefix}/properties/required`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/emptySet`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/nonEmptySet`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/optional`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/required`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "PropertyCardinalitiesStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyCardinalitiesStruct";
-    readonly emptySet?: readonly string[];
-    readonly nonEmptySet: readonly string[];
-    readonly optional?: string;
-    readonly required: string;
-  };
 
   export const schema = {
     properties: {
@@ -45849,6 +45657,17 @@ export namespace PropertyNamesStruct {
     object: $Object,
   ): object is PropertyNamesStruct => object.$type === "PropertyNamesStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "PropertyNamesStruct";
+    actualName1: string;
+    actualName2: string;
+    actualName3: string;
+    actualName4: string;
+    actualName5: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -45859,85 +45678,79 @@ export namespace PropertyNamesStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("PropertyNamesStruct"),
-          actualName1: z.string().meta({
-            description: "sh:path: overrides property shape identifier",
-          }),
-          actualName2: z.string().meta({
-            description: "sh:name: overrides sh:path and rdfs:label",
-            title: "ignoreName2",
-          }),
-          actualName3: z.string().meta({
-            description:
-              "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
-          }),
-          actualName4: z.string().meta({
-            description: "rdfs:label: overrides sh:path",
-            title: "actualName4",
-          }),
-          actualName5: z.string().meta({
-            description:
-              "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
-          }),
-        })
-        .meta({
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("PropertyNamesStruct"),
+        actualName1: z.string().meta({
+          description: "sh:path: overrides property shape identifier",
+        }),
+        actualName2: z.string().meta({
+          description: "sh:name: overrides sh:path and rdfs:label",
+          title: "ignoreName2",
+        }),
+        actualName3: z.string().meta({
           description:
-            "Struct node shape that uses different methods to name properties",
-        }) satisfies z.ZodType<Json>;
+            "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
+        }),
+        actualName4: z.string().meta({
+          description: "rdfs:label: overrides sh:path",
+          title: "actualName4",
+        }),
+        actualName5: z.string().meta({
+          description:
+            "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
+        }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "PropertyNamesStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/actualName1`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/actualName1`,
+            type: "Control",
+          },
           {
             label: "ignoreName2",
-            scope: `${scopePrefix}/properties/actualName2`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/actualName2`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/actualName3`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/actualName3`,
+            type: "Control",
+          },
           {
             label: "actualName4",
-            scope: `${scopePrefix}/properties/actualName4`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/actualName4`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/actualName5`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/actualName5`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "PropertyNamesStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyNamesStruct";
-    readonly actualName1: string;
-    readonly actualName2: string;
-    readonly actualName3: string;
-    readonly actualName4: string;
-    readonly actualName5: string;
-  };
 
   export const schema = {
     properties: {
@@ -46050,6 +45863,7 @@ export namespace PropertyNamesStruct {
           _propertyNamesStruct.$identifier().termType === "BlankNode"
             ? `_:${_propertyNamesStruct.$identifier().value}`
             : _propertyNamesStruct.$identifier().value,
+        "@type": "http://example.com/PropertyNamesStruct",
         $type: _propertyNamesStruct.$type,
         actualName1: _propertyNamesStruct.actualName1,
         actualName2: _propertyNamesStruct.actualName2,
@@ -46514,7 +46328,7 @@ export namespace PropertyPathsStruct {
       ),
       inversePath: Maybe.fromNullable($json["inversePath"])
         .map((item) =>
-          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item)).map(
             Maybe.of,
           ),
         )
@@ -46564,6 +46378,14 @@ export namespace PropertyPathsStruct {
     object: $Object,
   ): object is PropertyPathsStruct => object.$type === "PropertyPathsStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "PropertyPathsStruct";
+    inversePath?: string;
+    predicatePath?: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -46574,54 +46396,48 @@ export namespace PropertyPathsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("PropertyPathsStruct"),
-          inversePath: z.object({ "@id": z.string().min(1) }).optional(),
-          predicatePath: z.string().optional(),
-        })
-        .meta({
-          description:
-            "Struct node shape that uses different property path types in its properties",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("PropertyPathsStruct"),
+        inversePath: z.string().min(1).optional(),
+        predicatePath: z.string().optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "PropertyPathsStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/inversePath`, type: "Control" },
-          { scope: `${scopePrefix}/properties/predicatePath`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inversePath`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/predicatePath`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "PropertyPathsStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyPathsStruct";
-    readonly inversePath?: { readonly "@id": string };
-    readonly predicatePath?: string;
-  };
 
   export const schema = {
     properties: {
@@ -46725,9 +46541,10 @@ export namespace PropertyPathsStruct {
           _propertyPathsStruct.$identifier().termType === "BlankNode"
             ? `_:${_propertyPathsStruct.$identifier().value}`
             : _propertyPathsStruct.$identifier().value,
+        "@type": "http://example.com/PropertyPathsStruct",
         $type: _propertyPathsStruct.$type,
         inversePath: _propertyPathsStruct.inversePath
-          .map((item) => ({ "@id": item.value }))
+          .map((item) => item.value)
           .extract(),
         predicatePath: _propertyPathsStruct.predicatePath
           .map((item) => item)
@@ -47155,6 +46972,13 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   ): object is RecursiveDiscriminatedUnionMember1 =>
     object.$type === "RecursiveDiscriminatedUnionMember1";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "RecursiveDiscriminatedUnionMember1";
+    recursiveDiscriminatedUnionMember1Property?: RecursiveDiscriminatedUnion.Json;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -47167,6 +46991,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("RecursiveDiscriminatedUnionMember1"),
         recursiveDiscriminatedUnionMember1Property: z
           .lazy(
@@ -47177,13 +47002,12 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
@@ -47192,15 +47016,15 @@ export namespace RecursiveDiscriminatedUnionMember1 {
                 schema: {
                   const: "RecursiveDiscriminatedUnionMember1" as const,
                 },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/recursiveDiscriminatedUnionMember1Property`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/recursiveDiscriminatedUnionMember1Property`,
             type: "Control",
           },
         ],
@@ -47209,12 +47033,6 @@ export namespace RecursiveDiscriminatedUnionMember1 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "RecursiveDiscriminatedUnionMember1";
-    readonly recursiveDiscriminatedUnionMember1Property?: RecursiveDiscriminatedUnion.Json;
-  };
 
   export const schema = {
     properties: {
@@ -47328,6 +47146,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
           "BlankNode"
             ? `_:${_recursiveDiscriminatedUnionMember1.$identifier().value}`
             : _recursiveDiscriminatedUnionMember1.$identifier().value,
+        "@type": "http://example.com/RecursiveDiscriminatedUnionMember1",
         $type: _recursiveDiscriminatedUnionMember1.$type,
         recursiveDiscriminatedUnionMember1Property:
           _recursiveDiscriminatedUnionMember1.recursiveDiscriminatedUnionMember1Property
@@ -47756,6 +47575,13 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   ): object is RecursiveDiscriminatedUnionMember2 =>
     object.$type === "RecursiveDiscriminatedUnionMember2";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "RecursiveDiscriminatedUnionMember2";
+    recursiveDiscriminatedUnionMember2Property?: RecursiveDiscriminatedUnion.Json;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -47768,6 +47594,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
+        "@type": z.string(),
         $type: z.literal("RecursiveDiscriminatedUnionMember2"),
         recursiveDiscriminatedUnionMember2Property: z
           .lazy(
@@ -47778,13 +47605,12 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
@@ -47793,15 +47619,15 @@ export namespace RecursiveDiscriminatedUnionMember2 {
                 schema: {
                   const: "RecursiveDiscriminatedUnionMember2" as const,
                 },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/recursiveDiscriminatedUnionMember2Property`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/recursiveDiscriminatedUnionMember2Property`,
             type: "Control",
           },
         ],
@@ -47810,12 +47636,6 @@ export namespace RecursiveDiscriminatedUnionMember2 {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "RecursiveDiscriminatedUnionMember2";
-    readonly recursiveDiscriminatedUnionMember2Property?: RecursiveDiscriminatedUnion.Json;
-  };
 
   export const schema = {
     properties: {
@@ -47929,6 +47749,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
           "BlankNode"
             ? `_:${_recursiveDiscriminatedUnionMember2.$identifier().value}`
             : _recursiveDiscriminatedUnionMember2.$identifier().value,
+        "@type": "http://example.com/RecursiveDiscriminatedUnionMember2",
         $type: _recursiveDiscriminatedUnionMember2.$type,
         recursiveDiscriminatedUnionMember2Property:
           _recursiveDiscriminatedUnionMember2.recursiveDiscriminatedUnionMember2Property
@@ -48314,6 +48135,13 @@ export namespace TargetClassStruct {
     object: $Object,
   ): object is TargetClassStruct => object.$type === "TargetClassStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "TargetClassStruct";
+    targetClassString: string;
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -48324,40 +48152,35 @@ export namespace TargetClassStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("TargetClassStruct"),
-          targetClassString: z.string(),
-        })
-        .meta({
-          description:
-            "Struct node shape with sh:targetClass.\n    \nThe sh:targetClass is expected on deserialization and added on serialization.",
-        }) satisfies z.ZodType<Json>;
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("TargetClassStruct"),
+        targetClassString: z.string(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "TargetClassStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/targetClassString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/targetClassString`,
             type: "Control",
           },
         ],
@@ -48366,12 +48189,6 @@ export namespace TargetClassStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "TargetClassStruct";
-    readonly targetClassString: string;
-  };
 
   export const schema = {
     properties: {
@@ -48460,6 +48277,7 @@ export namespace TargetClassStruct {
           _targetClassStruct.$identifier().termType === "BlankNode"
             ? `_:${_targetClassStruct.$identifier().value}`
             : _targetClassStruct.$identifier().value,
+        "@type": "http://example.com/RdfType",
         $type: _targetClassStruct.$type,
         targetClassString: _targetClassStruct.targetClassString,
       } satisfies TargetClassStruct.Json),
@@ -48827,6 +48645,7 @@ export namespace TermsStruct {
         .map((item) =>
           item.termType === "Literal"
             ? {
+                $type: "Literal" as const,
                 "@language":
                   item.language.length > 0 ? item.language : undefined,
                 "@type":
@@ -48835,11 +48654,10 @@ export namespace TermsStruct {
                     ? item.datatype.value
                     : undefined,
                 "@value": item.value,
-                termType: "Literal" as const,
               }
             : item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+              ? { $type: "NamedNode" as const, "@id": item.value }
+              : { $type: "BlankNode" as const, "@id": `_:${item.value}` },
         )
         .extract(),
     });
@@ -49720,7 +49538,7 @@ export namespace TermsStruct {
       blankNodeTerm: Maybe.fromNullable($json["blankNodeTerm"])
         .map((item) =>
           Either.of<Error, BlankNode>(
-            dataFactory.blankNode(item["@id"].substring(2)),
+            dataFactory.blankNode(item.substring(2)),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
@@ -49729,12 +49547,12 @@ export namespace TermsStruct {
         .orDefault(Either.of(Maybe.empty())),
       dateTerm: Maybe.fromNullable($json["dateTerm"])
         .map((item) =>
-          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+          Either.encase<Error, Date>(() => new Date(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       dateTimeTerm: Maybe.fromNullable($json["dateTimeTerm"])
         .map((item) =>
-          Either.of<Error, Date>(new Date(item["@value"])).map(Maybe.of),
+          Either.encase<Error, Date>(() => new Date(item)).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       doubleTerm: Maybe.fromNullable($json["doubleTerm"])
@@ -49743,15 +49561,15 @@ export namespace TermsStruct {
       identifierTerm: Maybe.fromNullable($json["identifierTerm"])
         .map((item) =>
           Either.of<Error, BlankNode | NamedNode>(
-            item["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item["@id"].substring(2))
-              : dataFactory.namedNode(item["@id"]),
+            item.startsWith("_:")
+              ? dataFactory.blankNode(item.substring(2))
+              : dataFactory.namedNode(item),
           ).map(Maybe.of),
         )
         .orDefault(Either.of(Maybe.empty())),
       iriTerm: Maybe.fromNullable($json["iriTerm"])
         .map((item) =>
-          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item)).map(
             Maybe.of,
           ),
         )
@@ -49783,7 +49601,7 @@ export namespace TermsStruct {
       term: Maybe.fromNullable($json["term"])
         .map((item) =>
           Either.of<Error, BlankNode | NamedNode | Literal>(
-            item.termType === "Literal"
+            item.$type === "Literal"
               ? dataFactory.literal(
                   item["@value"],
                   item["@language"] !== undefined
@@ -49792,7 +49610,7 @@ export namespace TermsStruct {
                       ? dataFactory.namedNode(item["@type"]!)
                       : undefined,
                 )
-              : item.termType === "NamedNode"
+              : item.$type === "NamedNode"
                 ? dataFactory.namedNode(item["@id"])
                 : dataFactory.blankNode(item["@id"].substring(2)),
           ).map(Maybe.of),
@@ -49848,6 +49666,31 @@ export namespace TermsStruct {
   export const isTermsStruct = (object: $Object): object is TermsStruct =>
     object.$type === "TermsStruct";
 
+  export type Json = {
+    "@id": string;
+    "@type": string;
+    $type: "TermsStruct";
+    blankNodeTerm?: string;
+    booleanTerm?: boolean;
+    dateTerm?: string;
+    dateTimeTerm?: string;
+    doubleTerm?: number;
+    identifierTerm?: string;
+    iriTerm?: string;
+    langStringTerm?: { "@language": string; "@value": string };
+    literalTerm?: { "@language"?: string; "@type"?: string; "@value": string };
+    stringTerm?: string;
+    term?:
+      | { $type: "BlankNode"; "@id": string }
+      | { $type: "NamedNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        };
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -49858,142 +49701,116 @@ export namespace TermsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("TermsStruct"),
-          blankNodeTerm: z.object({ "@id": z.string().min(1) }).optional(),
-          booleanTerm: z.boolean().optional(),
-          dateTerm: z
-            .object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
-              "@value": z.iso.date(),
-            })
-            .optional(),
-          dateTimeTerm: z
-            .object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
-              "@value": z.iso.datetime(),
-            })
-            .optional(),
-          doubleTerm: z.number().optional(),
-          identifierTerm: z.object({ "@id": z.string().min(1) }).optional(),
-          iriTerm: z.object({ "@id": z.string().min(1) }).optional(),
-          langStringTerm: z
-            .object({ "@language": z.string(), "@value": z.string() })
-            .optional(),
-          literalTerm: z
-            .object({
+      return z.object({
+        "@id": z.string().min(1),
+        "@type": z.string(),
+        $type: z.literal("TermsStruct"),
+        blankNodeTerm: z.string().min(1).optional(),
+        booleanTerm: z.boolean().optional(),
+        dateTerm: z.iso.date().optional(),
+        dateTimeTerm: z.iso.datetime().optional(),
+        doubleTerm: z.number().optional(),
+        identifierTerm: z.string().min(1).optional(),
+        iriTerm: z.string().min(1).optional(),
+        langStringTerm: z
+          .object({ "@language": z.string().min(1), "@value": z.string() })
+          .optional(),
+        literalTerm: z
+          .object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          })
+          .optional(),
+        stringTerm: z.string().optional(),
+        term: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("BlankNode"),
+              "@id": z.string().min(1),
+            }),
+            z.object({
+              $type: z.literal("NamedNode"),
+              "@id": z.string().min(1),
+            }),
+            z.object({
+              $type: z.literal("Literal"),
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
-            })
-            .optional(),
-          stringTerm: z.string().optional(),
-          term: z
-            .discriminatedUnion("termType", [
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("BlankNode"),
-              }),
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.literal("NamedNode"),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-                termType: z.literal("Literal"),
-              }),
-            ])
-            .optional(),
-        })
-        .meta({
-          description:
-            "Struct node shape with properties that are not nested objects",
-        }) satisfies z.ZodType<Json>;
+            }),
+          ])
+          .optional(),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "TermsStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/blankNodeTerm`, type: "Control" },
-          { scope: `${scopePrefix}/properties/booleanTerm`, type: "Control" },
-          { scope: `${scopePrefix}/properties/dateTerm`, type: "Control" },
-          { scope: `${scopePrefix}/properties/dateTimeTerm`, type: "Control" },
-          { scope: `${scopePrefix}/properties/doubleTerm`, type: "Control" },
           {
-            scope: `${scopePrefix}/properties/identifierTerm`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/blankNodeTerm`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/iriTerm`, type: "Control" },
           {
-            scope: `${scopePrefix}/properties/langStringTerm`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/booleanTerm`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/literalTerm`, type: "Control" },
-          { scope: `${scopePrefix}/properties/stringTerm`, type: "Control" },
-          { scope: `${scopePrefix}/properties/term`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/dateTerm`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/dateTimeTerm`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/doubleTerm`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/identifierTerm`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/iriTerm`,
+            type: "Control",
+          },
+          ((_parameters?: { scopePrefix?: string }): any => {
+            return { elements: [], type: "Group" };
+          })({ scopePrefix: _parameters?.scopePrefix ?? "#" }),
+          ((_parameters?: { scopePrefix?: string }): any => {
+            return { elements: [], type: "Group" };
+          })({ scopePrefix: _parameters?.scopePrefix ?? "#" }),
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/stringTerm`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/term`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "TermsStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "TermsStruct";
-    readonly blankNodeTerm?: { readonly "@id": string };
-    readonly booleanTerm?: boolean;
-    readonly dateTerm?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-      readonly "@value": string;
-    };
-    readonly dateTimeTerm?: {
-      readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-      readonly "@value": string;
-    };
-    readonly doubleTerm?: number;
-    readonly identifierTerm?: { readonly "@id": string };
-    readonly iriTerm?: { readonly "@id": string };
-    readonly langStringTerm?: {
-      readonly "@language": string;
-      readonly "@value": string;
-    };
-    readonly literalTerm?: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly stringTerm?: string;
-    readonly term?:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-  };
 
   export const schema = {
     properties: {
@@ -50159,34 +49976,25 @@ export namespace TermsStruct {
           _termsStruct.$identifier().termType === "BlankNode"
             ? `_:${_termsStruct.$identifier().value}`
             : _termsStruct.$identifier().value,
+        "@type": "http://example.com/TermsStruct",
         $type: _termsStruct.$type,
         blankNodeTerm: _termsStruct.blankNodeTerm
-          .map((item) => ({ "@id": `_:${item.value}` }))
+          .map((item) => `_:${item.value}`)
           .extract(),
         booleanTerm: _termsStruct.booleanTerm.map((item) => item).extract(),
         dateTerm: _termsStruct.dateTerm
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
-            "@value": $toIsoDateString(item),
-          }))
+          .map((item) => $toIsoDateString(item))
           .extract(),
         dateTimeTerm: _termsStruct.dateTimeTerm
-          .map((item) => ({
-            "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
-            "@value": item.toISOString(),
-          }))
+          .map((item) => item.toISOString())
           .extract(),
         doubleTerm: _termsStruct.doubleTerm.map((item) => item).extract(),
         identifierTerm: _termsStruct.identifierTerm
           .map((item) =>
-            item.termType === "BlankNode"
-              ? { "@id": `_:${item.value}` }
-              : { "@id": item.value },
+            item.termType === "BlankNode" ? `_:${item.value}` : item.value,
           )
           .extract(),
-        iriTerm: _termsStruct.iriTerm
-          .map((item) => ({ "@id": item.value }))
-          .extract(),
+        iriTerm: _termsStruct.iriTerm.map((item) => item.value).extract(),
         langStringTerm: _termsStruct.langStringTerm
           .map((item) => ({
             "@language": item.language,
@@ -50208,6 +50016,7 @@ export namespace TermsStruct {
           .map((item) =>
             item.termType === "Literal"
               ? {
+                  $type: "Literal" as const,
                   "@language":
                     item.language.length > 0 ? item.language : undefined,
                   "@type":
@@ -50216,11 +50025,10 @@ export namespace TermsStruct {
                       ? item.datatype.value
                       : undefined,
                   "@value": item.value,
-                  termType: "Literal" as const,
                 }
               : item.termType === "NamedNode"
-                ? { "@id": item.value, termType: "NamedNode" as const }
-                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+                ? { $type: "NamedNode" as const, "@id": item.value }
+                : { $type: "BlankNode" as const, "@id": `_:${item.value}` },
           )
           .extract(),
       } satisfies TermsStruct.Json),
@@ -56645,17 +56453,17 @@ export namespace UnionDiscriminantsStruct {
       optionalIriOrString: Maybe.fromNullable($json["optionalIriOrString"])
         .map((item) =>
           ((
-            value: { readonly "@id": string } | string,
+            value:
+              | { $type: "object"; "@id": string }
+              | { $type: "string"; "@type": string; "@value": string },
           ): Either<Error, NamedNode | string> => {
-            if (typeof value === "object") {
+            if (value.$type === "object") {
               return Either.of<Error, NamedNode>(
-                dataFactory.namedNode(
-                  (value as { readonly "@id": string })["@id"],
-                ),
+                dataFactory.namedNode(value["@id"]),
               ).map((value) => value);
             }
-            if (typeof value === "string") {
-              return Either.of<Error, string>(value as string).map(
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
                 (value) => value,
               );
             }
@@ -56668,15 +56476,12 @@ export namespace UnionDiscriminantsStruct {
         .map((item) =>
           ((
             value:
+              | DiscriminatedUnionMember1.Json
               | {
-                  termType: "DiscriminatedUnionMember1";
-                  value: DiscriminatedUnionMember1.Json;
-                }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
+                  $type: "Literal";
+                  "@language"?: string;
+                  "@type"?: string;
+                  "@value": string;
                 },
           ): Either<
             Error,
@@ -56686,59 +56491,20 @@ export namespace UnionDiscriminantsStruct {
               }
             | Literal
           > => {
-            if (value["termType"] === "DiscriminatedUnionMember1") {
-              return DiscriminatedUnionMember1.fromJson(
-                value.value as DiscriminatedUnionMember1.Json,
-              ).map((value) => ({
+            if (value.$type === "DiscriminatedUnionMember1") {
+              return DiscriminatedUnionMember1.fromJson(value).map((value) => ({
                 termType: "DiscriminatedUnionMember1" as const,
                 value: value,
               }));
             }
-            if (value["termType"] === "Literal") {
+            if (value.$type === "Literal") {
               return Either.of<Error, Literal>(
                 dataFactory.literal(
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@value"],
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@language"] !== undefined
-                    ? (
-                        value as {
-                          readonly "@language"?: string;
-                          readonly termType: "Literal";
-                          readonly "@type"?: string;
-                          readonly "@value": string;
-                        }
-                      )["@language"]
-                    : (
-                          value as {
-                            readonly "@language"?: string;
-                            readonly termType: "Literal";
-                            readonly "@type"?: string;
-                            readonly "@value": string;
-                          }
-                        )["@type"] !== undefined
-                      ? dataFactory.namedNode(
-                          (
-                            value as {
-                              readonly "@language"?: string;
-                              readonly termType: "Literal";
-                              readonly "@type"?: string;
-                              readonly "@value": string;
-                            }
-                          )["@type"]!,
-                        )
+                  value["@value"],
+                  value["@language"] !== undefined
+                    ? value["@language"]
+                    : value["@type"] !== undefined
+                      ? dataFactory.namedNode(value["@type"]!)
                       : undefined,
                 ),
               ).map((value) => value);
@@ -56754,15 +56520,13 @@ export namespace UnionDiscriminantsStruct {
         .map((item) =>
           ((
             value:
+              | DiscriminatedUnionMember1.Json
+              | DiscriminatedUnionMember2.Json
               | {
-                  $type: "DiscriminatedUnionMember1";
-                  value: DiscriminatedUnionMember1.Json;
-                }
-              | {
-                  $type: "DiscriminatedUnionMember2";
-                  value: DiscriminatedUnionMember2.Json;
-                }
-              | { $type: "string"; value: string },
+                  $type: "string";
+                  "@type": string;
+                  "@value": string;
+                },
           ): Either<
             Error,
             | {
@@ -56775,29 +56539,23 @@ export namespace UnionDiscriminantsStruct {
               }
             | { $type: "string"; value: string }
           > => {
-            if (value["$type"] === "DiscriminatedUnionMember1") {
-              return DiscriminatedUnionMember1.fromJson(
-                value.value as DiscriminatedUnionMember1.Json,
-              ).map((value) => ({
+            if (value.$type === "DiscriminatedUnionMember1") {
+              return DiscriminatedUnionMember1.fromJson(value).map((value) => ({
                 $type: "DiscriminatedUnionMember1" as const,
                 value: value,
               }));
             }
-            if (value["$type"] === "DiscriminatedUnionMember2") {
-              return DiscriminatedUnionMember2.fromJson(
-                value.value as DiscriminatedUnionMember2.Json,
-              ).map((value) => ({
+            if (value.$type === "DiscriminatedUnionMember2") {
+              return DiscriminatedUnionMember2.fromJson(value).map((value) => ({
                 $type: "DiscriminatedUnionMember2" as const,
                 value: value,
               }));
             }
-            if (value["$type"] === "string") {
-              return Either.of<Error, string>(value.value as string).map(
-                (value) => ({
-                  $type: "string" as const,
-                  value: value,
-                }),
-              );
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map((value) => ({
+                $type: "string" as const,
+                value: value,
+              }));
             }
 
             throw new Error("unable to deserialize JSON");
@@ -56808,91 +56566,29 @@ export namespace UnionDiscriminantsStruct {
         .map((item) =>
           ((
             value:
+              | { $type: "BlankNode"; "@id": string }
               | {
-                  readonly "@id": string;
-                  readonly termType: "BlankNode" | "NamedNode";
-                }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
+                  $type: "Literal";
+                  "@language"?: string;
+                  "@type"?: string;
+                  "@value": string;
                 },
           ): Either<Error, (BlankNode | NamedNode) | Literal> => {
-            if (
-              value["termType"] === "BlankNode" ||
-              value["termType"] === "NamedNode"
-            ) {
+            if (value.$type === "BlankNode") {
               return Either.of<Error, BlankNode | NamedNode>(
-                (
-                  value as {
-                    readonly "@id": string;
-                    readonly termType: "BlankNode" | "NamedNode";
-                  }
-                )["@id"].startsWith("_:")
-                  ? dataFactory.blankNode(
-                      (
-                        value as {
-                          readonly "@id": string;
-                          readonly termType: "BlankNode" | "NamedNode";
-                        }
-                      )["@id"].substring(2),
-                    )
-                  : dataFactory.namedNode(
-                      (
-                        value as {
-                          readonly "@id": string;
-                          readonly termType: "BlankNode" | "NamedNode";
-                        }
-                      )["@id"],
-                    ),
+                value["@id"].startsWith("_:")
+                  ? dataFactory.blankNode(value["@id"].substring(2))
+                  : dataFactory.namedNode(value["@id"]),
               ).map((value) => value);
             }
-            if (value["termType"] === "Literal") {
+            if (value.$type === "Literal") {
               return Either.of<Error, Literal>(
                 dataFactory.literal(
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@value"],
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@language"] !== undefined
-                    ? (
-                        value as {
-                          readonly "@language"?: string;
-                          readonly termType: "Literal";
-                          readonly "@type"?: string;
-                          readonly "@value": string;
-                        }
-                      )["@language"]
-                    : (
-                          value as {
-                            readonly "@language"?: string;
-                            readonly termType: "Literal";
-                            readonly "@type"?: string;
-                            readonly "@value": string;
-                          }
-                        )["@type"] !== undefined
-                      ? dataFactory.namedNode(
-                          (
-                            value as {
-                              readonly "@language"?: string;
-                              readonly termType: "Literal";
-                              readonly "@type"?: string;
-                              readonly "@value": string;
-                            }
-                          )["@type"]!,
-                        )
+                  value["@value"],
+                  value["@language"] !== undefined
+                    ? value["@language"]
+                    : value["@type"] !== undefined
+                      ? dataFactory.namedNode(value["@type"]!)
                       : undefined,
                 ),
               ).map((value) => value);
@@ -56903,15 +56599,17 @@ export namespace UnionDiscriminantsStruct {
         )
         .orDefault(Either.of(Maybe.empty())),
       requiredIriOrString: ((
-        value: { readonly "@id": string } | string,
+        value:
+          | { $type: "object"; "@id": string }
+          | { $type: "string"; "@type": string; "@value": string },
       ): Either<Error, NamedNode | string> => {
-        if (typeof value === "object") {
+        if (value.$type === "object") {
           return Either.of<Error, NamedNode>(
-            dataFactory.namedNode((value as { readonly "@id": string })["@id"]),
+            dataFactory.namedNode(value["@id"]),
           ).map((value) => value);
         }
-        if (typeof value === "string") {
-          return Either.of<Error, string>(value as string).map(
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
             (value) => value,
           );
         }
@@ -56920,15 +56618,12 @@ export namespace UnionDiscriminantsStruct {
       })($json["requiredIriOrString"]),
       requiredNodeOrLiteral: ((
         value:
+          | DiscriminatedUnionMember1.Json
           | {
-              termType: "DiscriminatedUnionMember1";
-              value: DiscriminatedUnionMember1.Json;
-            }
-          | {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
+              $type: "Literal";
+              "@language"?: string;
+              "@type"?: string;
+              "@value": string;
             },
       ): Either<
         Error,
@@ -56938,59 +56633,20 @@ export namespace UnionDiscriminantsStruct {
           }
         | Literal
       > => {
-        if (value["termType"] === "DiscriminatedUnionMember1") {
-          return DiscriminatedUnionMember1.fromJson(
-            value.value as DiscriminatedUnionMember1.Json,
-          ).map((value) => ({
+        if (value.$type === "DiscriminatedUnionMember1") {
+          return DiscriminatedUnionMember1.fromJson(value).map((value) => ({
             termType: "DiscriminatedUnionMember1" as const,
             value: value,
           }));
         }
-        if (value["termType"] === "Literal") {
+        if (value.$type === "Literal") {
           return Either.of<Error, Literal>(
             dataFactory.literal(
-              (
-                value as {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                }
-              )["@value"],
-              (
-                value as {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                }
-              )["@language"] !== undefined
-                ? (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@language"]
-                : (
-                      value as {
-                        readonly "@language"?: string;
-                        readonly termType: "Literal";
-                        readonly "@type"?: string;
-                        readonly "@value": string;
-                      }
-                    )["@type"] !== undefined
-                  ? dataFactory.namedNode(
-                      (
-                        value as {
-                          readonly "@language"?: string;
-                          readonly termType: "Literal";
-                          readonly "@type"?: string;
-                          readonly "@value": string;
-                        }
-                      )["@type"]!,
-                    )
+              value["@value"],
+              value["@language"] !== undefined
+                ? value["@language"]
+                : value["@type"] !== undefined
+                  ? dataFactory.namedNode(value["@type"]!)
                   : undefined,
             ),
           ).map((value) => value);
@@ -57000,15 +56656,13 @@ export namespace UnionDiscriminantsStruct {
       })($json["requiredNodeOrLiteral"]),
       requiredNodeOrNodeOrString: ((
         value:
+          | DiscriminatedUnionMember1.Json
+          | DiscriminatedUnionMember2.Json
           | {
-              $type: "DiscriminatedUnionMember1";
-              value: DiscriminatedUnionMember1.Json;
-            }
-          | {
-              $type: "DiscriminatedUnionMember2";
-              value: DiscriminatedUnionMember2.Json;
-            }
-          | { $type: "string"; value: string },
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            },
       ): Either<
         Error,
         | {
@@ -57021,120 +56675,52 @@ export namespace UnionDiscriminantsStruct {
           }
         | { $type: "string"; value: string }
       > => {
-        if (value["$type"] === "DiscriminatedUnionMember1") {
-          return DiscriminatedUnionMember1.fromJson(
-            value.value as DiscriminatedUnionMember1.Json,
-          ).map((value) => ({
+        if (value.$type === "DiscriminatedUnionMember1") {
+          return DiscriminatedUnionMember1.fromJson(value).map((value) => ({
             $type: "DiscriminatedUnionMember1" as const,
             value: value,
           }));
         }
-        if (value["$type"] === "DiscriminatedUnionMember2") {
-          return DiscriminatedUnionMember2.fromJson(
-            value.value as DiscriminatedUnionMember2.Json,
-          ).map((value) => ({
+        if (value.$type === "DiscriminatedUnionMember2") {
+          return DiscriminatedUnionMember2.fromJson(value).map((value) => ({
             $type: "DiscriminatedUnionMember2" as const,
             value: value,
           }));
         }
-        if (value["$type"] === "string") {
-          return Either.of<Error, string>(value.value as string).map(
-            (value) => ({
-              $type: "string" as const,
-              value: value,
-            }),
-          );
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map((value) => ({
+            $type: "string" as const,
+            value: value,
+          }));
         }
 
         throw new Error("unable to deserialize JSON");
       })($json["requiredNodeOrNodeOrString"]),
       requiredTerm: ((
         value:
+          | { $type: "BlankNode"; "@id": string }
           | {
-              readonly "@id": string;
-              readonly termType: "BlankNode" | "NamedNode";
-            }
-          | {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
+              $type: "Literal";
+              "@language"?: string;
+              "@type"?: string;
+              "@value": string;
             },
       ): Either<Error, (BlankNode | NamedNode) | Literal> => {
-        if (
-          value["termType"] === "BlankNode" ||
-          value["termType"] === "NamedNode"
-        ) {
+        if (value.$type === "BlankNode") {
           return Either.of<Error, BlankNode | NamedNode>(
-            (
-              value as {
-                readonly "@id": string;
-                readonly termType: "BlankNode" | "NamedNode";
-              }
-            )["@id"].startsWith("_:")
-              ? dataFactory.blankNode(
-                  (
-                    value as {
-                      readonly "@id": string;
-                      readonly termType: "BlankNode" | "NamedNode";
-                    }
-                  )["@id"].substring(2),
-                )
-              : dataFactory.namedNode(
-                  (
-                    value as {
-                      readonly "@id": string;
-                      readonly termType: "BlankNode" | "NamedNode";
-                    }
-                  )["@id"],
-                ),
+            value["@id"].startsWith("_:")
+              ? dataFactory.blankNode(value["@id"].substring(2))
+              : dataFactory.namedNode(value["@id"]),
           ).map((value) => value);
         }
-        if (value["termType"] === "Literal") {
+        if (value.$type === "Literal") {
           return Either.of<Error, Literal>(
             dataFactory.literal(
-              (
-                value as {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                }
-              )["@value"],
-              (
-                value as {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                }
-              )["@language"] !== undefined
-                ? (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@language"]
-                : (
-                      value as {
-                        readonly "@language"?: string;
-                        readonly termType: "Literal";
-                        readonly "@type"?: string;
-                        readonly "@value": string;
-                      }
-                    )["@type"] !== undefined
-                  ? dataFactory.namedNode(
-                      (
-                        value as {
-                          readonly "@language"?: string;
-                          readonly termType: "Literal";
-                          readonly "@type"?: string;
-                          readonly "@value": string;
-                        }
-                      )["@type"]!,
-                    )
+              value["@value"],
+              value["@language"] !== undefined
+                ? value["@language"]
+                : value["@type"] !== undefined
+                  ? dataFactory.namedNode(value["@type"]!)
                   : undefined,
             ),
           ).map((value) => value);
@@ -57145,17 +56731,17 @@ export namespace UnionDiscriminantsStruct {
       setIriOrString: Either.sequence<Error, NamedNode | string>(
         ($json["setIriOrString"] ?? []).map((item) =>
           ((
-            value: { readonly "@id": string } | string,
+            value:
+              | { $type: "object"; "@id": string }
+              | { $type: "string"; "@type": string; "@value": string },
           ): Either<Error, NamedNode | string> => {
-            if (typeof value === "object") {
+            if (value.$type === "object") {
               return Either.of<Error, NamedNode>(
-                dataFactory.namedNode(
-                  (value as { readonly "@id": string })["@id"],
-                ),
+                dataFactory.namedNode(value["@id"]),
               ).map((value) => value);
             }
-            if (typeof value === "string") {
-              return Either.of<Error, string>(value as string).map(
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
                 (value) => value,
               );
             }
@@ -57175,15 +56761,12 @@ export namespace UnionDiscriminantsStruct {
         ($json["setNodeOrLiteral"] ?? []).map((item) =>
           ((
             value:
+              | DiscriminatedUnionMember1.Json
               | {
-                  termType: "DiscriminatedUnionMember1";
-                  value: DiscriminatedUnionMember1.Json;
-                }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
+                  $type: "Literal";
+                  "@language"?: string;
+                  "@type"?: string;
+                  "@value": string;
                 },
           ): Either<
             Error,
@@ -57193,59 +56776,20 @@ export namespace UnionDiscriminantsStruct {
               }
             | Literal
           > => {
-            if (value["termType"] === "DiscriminatedUnionMember1") {
-              return DiscriminatedUnionMember1.fromJson(
-                value.value as DiscriminatedUnionMember1.Json,
-              ).map((value) => ({
+            if (value.$type === "DiscriminatedUnionMember1") {
+              return DiscriminatedUnionMember1.fromJson(value).map((value) => ({
                 termType: "DiscriminatedUnionMember1" as const,
                 value: value,
               }));
             }
-            if (value["termType"] === "Literal") {
+            if (value.$type === "Literal") {
               return Either.of<Error, Literal>(
                 dataFactory.literal(
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@value"],
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@language"] !== undefined
-                    ? (
-                        value as {
-                          readonly "@language"?: string;
-                          readonly termType: "Literal";
-                          readonly "@type"?: string;
-                          readonly "@value": string;
-                        }
-                      )["@language"]
-                    : (
-                          value as {
-                            readonly "@language"?: string;
-                            readonly termType: "Literal";
-                            readonly "@type"?: string;
-                            readonly "@value": string;
-                          }
-                        )["@type"] !== undefined
-                      ? dataFactory.namedNode(
-                          (
-                            value as {
-                              readonly "@language"?: string;
-                              readonly termType: "Literal";
-                              readonly "@type"?: string;
-                              readonly "@value": string;
-                            }
-                          )["@type"]!,
-                        )
+                  value["@value"],
+                  value["@language"] !== undefined
+                    ? value["@language"]
+                    : value["@type"] !== undefined
+                      ? dataFactory.namedNode(value["@type"]!)
                       : undefined,
                 ),
               ).map((value) => value);
@@ -57270,15 +56814,13 @@ export namespace UnionDiscriminantsStruct {
         ($json["setNodeOrNodeOrString"] ?? []).map((item) =>
           ((
             value:
+              | DiscriminatedUnionMember1.Json
+              | DiscriminatedUnionMember2.Json
               | {
-                  $type: "DiscriminatedUnionMember1";
-                  value: DiscriminatedUnionMember1.Json;
-                }
-              | {
-                  $type: "DiscriminatedUnionMember2";
-                  value: DiscriminatedUnionMember2.Json;
-                }
-              | { $type: "string"; value: string },
+                  $type: "string";
+                  "@type": string;
+                  "@value": string;
+                },
           ): Either<
             Error,
             | {
@@ -57291,29 +56833,23 @@ export namespace UnionDiscriminantsStruct {
               }
             | { $type: "string"; value: string }
           > => {
-            if (value["$type"] === "DiscriminatedUnionMember1") {
-              return DiscriminatedUnionMember1.fromJson(
-                value.value as DiscriminatedUnionMember1.Json,
-              ).map((value) => ({
+            if (value.$type === "DiscriminatedUnionMember1") {
+              return DiscriminatedUnionMember1.fromJson(value).map((value) => ({
                 $type: "DiscriminatedUnionMember1" as const,
                 value: value,
               }));
             }
-            if (value["$type"] === "DiscriminatedUnionMember2") {
-              return DiscriminatedUnionMember2.fromJson(
-                value.value as DiscriminatedUnionMember2.Json,
-              ).map((value) => ({
+            if (value.$type === "DiscriminatedUnionMember2") {
+              return DiscriminatedUnionMember2.fromJson(value).map((value) => ({
                 $type: "DiscriminatedUnionMember2" as const,
                 value: value,
               }));
             }
-            if (value["$type"] === "string") {
-              return Either.of<Error, string>(value.value as string).map(
-                (value) => ({
-                  $type: "string" as const,
-                  value: value,
-                }),
-              );
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map((value) => ({
+                $type: "string" as const,
+                value: value,
+              }));
             }
 
             throw new Error("unable to deserialize JSON");
@@ -57324,91 +56860,29 @@ export namespace UnionDiscriminantsStruct {
         ($json["setTerm"] ?? []).map((item) =>
           ((
             value:
+              | { $type: "BlankNode"; "@id": string }
               | {
-                  readonly "@id": string;
-                  readonly termType: "BlankNode" | "NamedNode";
-                }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
+                  $type: "Literal";
+                  "@language"?: string;
+                  "@type"?: string;
+                  "@value": string;
                 },
           ): Either<Error, (BlankNode | NamedNode) | Literal> => {
-            if (
-              value["termType"] === "BlankNode" ||
-              value["termType"] === "NamedNode"
-            ) {
+            if (value.$type === "BlankNode") {
               return Either.of<Error, BlankNode | NamedNode>(
-                (
-                  value as {
-                    readonly "@id": string;
-                    readonly termType: "BlankNode" | "NamedNode";
-                  }
-                )["@id"].startsWith("_:")
-                  ? dataFactory.blankNode(
-                      (
-                        value as {
-                          readonly "@id": string;
-                          readonly termType: "BlankNode" | "NamedNode";
-                        }
-                      )["@id"].substring(2),
-                    )
-                  : dataFactory.namedNode(
-                      (
-                        value as {
-                          readonly "@id": string;
-                          readonly termType: "BlankNode" | "NamedNode";
-                        }
-                      )["@id"],
-                    ),
+                value["@id"].startsWith("_:")
+                  ? dataFactory.blankNode(value["@id"].substring(2))
+                  : dataFactory.namedNode(value["@id"]),
               ).map((value) => value);
             }
-            if (value["termType"] === "Literal") {
+            if (value.$type === "Literal") {
               return Either.of<Error, Literal>(
                 dataFactory.literal(
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@value"],
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@language"] !== undefined
-                    ? (
-                        value as {
-                          readonly "@language"?: string;
-                          readonly termType: "Literal";
-                          readonly "@type"?: string;
-                          readonly "@value": string;
-                        }
-                      )["@language"]
-                    : (
-                          value as {
-                            readonly "@language"?: string;
-                            readonly termType: "Literal";
-                            readonly "@type"?: string;
-                            readonly "@value": string;
-                          }
-                        )["@type"] !== undefined
-                      ? dataFactory.namedNode(
-                          (
-                            value as {
-                              readonly "@language"?: string;
-                              readonly termType: "Literal";
-                              readonly "@type"?: string;
-                              readonly "@value": string;
-                            }
-                          )["@type"]!,
-                        )
+                  value["@value"],
+                  value["@language"] !== undefined
+                    ? value["@language"]
+                    : value["@type"] !== undefined
+                      ? dataFactory.namedNode(value["@type"]!)
                       : undefined,
                 ),
               ).map((value) => value);
@@ -57682,6 +57156,104 @@ export namespace UnionDiscriminantsStruct {
   ): object is UnionDiscriminantsStruct =>
     object.$type === "UnionDiscriminantsStruct";
 
+  export type Json = {
+    "@id": string;
+    $type: "UnionDiscriminantsStruct";
+    optionalIriOrString?:
+      | { $type: "object"; "@id": string }
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        };
+    optionalNodeOrLiteral?:
+      | DiscriminatedUnionMember1.Json
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        };
+    optionalNodeOrNodeOrString?:
+      | DiscriminatedUnionMember1.Json
+      | DiscriminatedUnionMember2.Json
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        };
+    optionalTerm?:
+      | { $type: "BlankNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        };
+    requiredIriOrString:
+      | { $type: "object"; "@id": string }
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        };
+    requiredNodeOrLiteral:
+      | DiscriminatedUnionMember1.Json
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        };
+    requiredNodeOrNodeOrString:
+      | DiscriminatedUnionMember1.Json
+      | DiscriminatedUnionMember2.Json
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        };
+    requiredTerm:
+      | { $type: "BlankNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        };
+    setIriOrString?: (
+      | { $type: "object"; "@id": string }
+      | { $type: "string"; "@type": string; "@value": string }
+    )[];
+    setNodeOrLiteral?: (
+      | DiscriminatedUnionMember1.Json
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        }
+    )[];
+    setNodeOrNodeOrString?: (
+      | DiscriminatedUnionMember1.Json
+      | DiscriminatedUnionMember2.Json
+      | {
+          $type: "string";
+          "@type": string;
+          "@value": string;
+        }
+    )[];
+    setTerm?: (
+      | { $type: "BlankNode"; "@id": string }
+      | {
+          $type: "Literal";
+          "@language"?: string;
+          "@type"?: string;
+          "@value": string;
+        }
+    )[];
+  };
+
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -57692,376 +57264,278 @@ export namespace UnionDiscriminantsStruct {
     }
 
     export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("UnionDiscriminantsStruct"),
-          optionalIriOrString: z
-            .union([z.object({ "@id": z.string().min(1) }), z.string()])
-            .readonly()
-            .optional()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by typeof.",
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("UnionDiscriminantsStruct"),
+        optionalIriOrString: z
+          .discriminatedUnion("$type", [
+            z.object({ $type: z.literal("object"), "@id": z.string().min(1) }),
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
             }),
-          optionalNodeOrLiteral: z
-            .discriminatedUnion("termType", [
-              z.object({
-                termType: z.literal("DiscriminatedUnionMember1"),
-                value: DiscriminatedUnionMember1.Json.schema(),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                termType: z.literal("Literal"),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-              }),
-            ])
-            .readonly()
-            .optional()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+          ])
+          .optional()
+          .meta({
+            description:
+              "Discriminated union that can be discriminated by typeof.",
+          }),
+        optionalNodeOrLiteral: z
+          .discriminatedUnion("$type", [
+            DiscriminatedUnionMember1.Json.schema(),
+            z.object({
+              $type: z.literal("Literal"),
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
             }),
-          optionalNodeOrNodeOrString: z
-            .discriminatedUnion("$type", [
-              z.object({
-                $type: z.literal("DiscriminatedUnionMember1"),
-                value: DiscriminatedUnionMember1.Json.schema(),
-              }),
-              z.object({
-                $type: z.literal("DiscriminatedUnionMember2"),
-                value: DiscriminatedUnionMember2.Json.schema(),
-              }),
-              z.object({ $type: z.literal("string"), value: z.string() }),
-            ])
-            .readonly()
-            .optional()
-            .meta({
-              description:
-                "Discriminated union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
+          ])
+          .optional()
+          .meta({
+            description:
+              "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+          }),
+        optionalNodeOrNodeOrString: z
+          .discriminatedUnion("$type", [
+            DiscriminatedUnionMember1.Json.schema(),
+            DiscriminatedUnionMember2.Json.schema(),
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
             }),
-          optionalTerm: z
-            .discriminatedUnion("termType", [
+          ])
+          .optional()
+          .meta({
+            description:
+              "Discriminated union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
+          }),
+        optionalTerm: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("BlankNode"),
+              "@id": z.string().min(1),
+            }),
+            z.object({
+              $type: z.literal("Literal"),
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          ])
+          .optional()
+          .meta({
+            description:
+              "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
+          }),
+        requiredIriOrString: z
+          .discriminatedUnion("$type", [
+            z.object({ $type: z.literal("object"), "@id": z.string().min(1) }),
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+          ])
+          .meta({
+            description:
+              "Discriminated union that can be discriminated by typeof.",
+          }),
+        requiredNodeOrLiteral: z
+          .discriminatedUnion("$type", [
+            DiscriminatedUnionMember1.Json.schema(),
+            z.object({
+              $type: z.literal("Literal"),
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          ])
+          .meta({
+            description:
+              "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+          }),
+        requiredNodeOrNodeOrString: z
+          .discriminatedUnion("$type", [
+            DiscriminatedUnionMember1.Json.schema(),
+            DiscriminatedUnionMember2.Json.schema(),
+            z.object({
+              $type: z.literal("string"),
+              "@type": z.string(),
+              "@value": z.string(),
+            }),
+          ])
+          .meta({
+            description:
+              "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
+          }),
+        requiredTerm: z
+          .discriminatedUnion("$type", [
+            z.object({
+              $type: z.literal("BlankNode"),
+              "@id": z.string().min(1),
+            }),
+            z.object({
+              $type: z.literal("Literal"),
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          ])
+          .meta({
+            description:
+              "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
+          }),
+        setIriOrString: z
+          .array(
+            z.discriminatedUnion("$type", [
               z.object({
+                $type: z.literal("object"),
                 "@id": z.string().min(1),
-                termType: z.enum(["BlankNode", "NamedNode"]),
               }),
               z.object({
+                $type: z.literal("string"),
+                "@type": z.string(),
+                "@value": z.string(),
+              }),
+            ]),
+          )
+          .optional()
+          .meta({
+            description:
+              "Discriminated union that can be discriminated by typeof.",
+          }),
+        setNodeOrLiteral: z
+          .array(
+            z.discriminatedUnion("$type", [
+              DiscriminatedUnionMember1.Json.schema(),
+              z.object({
+                $type: z.literal("Literal"),
                 "@language": z.string().optional(),
-                termType: z.literal("Literal"),
                 "@type": z.string().optional(),
                 "@value": z.string(),
               }),
-            ])
-            .readonly()
-            .optional()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
-            }),
-          requiredIriOrString: z
-            .union([z.object({ "@id": z.string().min(1) }), z.string()])
-            .readonly()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by typeof.",
-            }),
-          requiredNodeOrLiteral: z
-            .discriminatedUnion("termType", [
+            ]),
+          )
+          .optional()
+          .meta({
+            description:
+              "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+          }),
+        setNodeOrNodeOrString: z
+          .array(
+            z.discriminatedUnion("$type", [
+              DiscriminatedUnionMember1.Json.schema(),
+              DiscriminatedUnionMember2.Json.schema(),
               z.object({
-                termType: z.literal("DiscriminatedUnionMember1"),
-                value: DiscriminatedUnionMember1.Json.schema(),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                termType: z.literal("Literal"),
-                "@type": z.string().optional(),
+                $type: z.literal("string"),
+                "@type": z.string(),
                 "@value": z.string(),
               }),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
-            }),
-          requiredNodeOrNodeOrString: z
-            .discriminatedUnion("$type", [
+            ]),
+          )
+          .optional()
+          .meta({
+            description:
+              "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
+          }),
+        setTerm: z
+          .array(
+            z.discriminatedUnion("$type", [
               z.object({
-                $type: z.literal("DiscriminatedUnionMember1"),
-                value: DiscriminatedUnionMember1.Json.schema(),
-              }),
-              z.object({
-                $type: z.literal("DiscriminatedUnionMember2"),
-                value: DiscriminatedUnionMember2.Json.schema(),
-              }),
-              z.object({ $type: z.literal("string"), value: z.string() }),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
-            }),
-          requiredTerm: z
-            .discriminatedUnion("termType", [
-              z.object({
+                $type: z.literal("BlankNode"),
                 "@id": z.string().min(1),
-                termType: z.enum(["BlankNode", "NamedNode"]),
               }),
               z.object({
+                $type: z.literal("Literal"),
                 "@language": z.string().optional(),
-                termType: z.literal("Literal"),
                 "@type": z.string().optional(),
                 "@value": z.string(),
               }),
-            ])
-            .readonly()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
-            }),
-          setIriOrString: z
-            .union([z.object({ "@id": z.string().min(1) }), z.string()])
-            .readonly()
-            .array()
-            .optional()
-            .readonly()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by typeof.",
-            }),
-          setNodeOrLiteral: z
-            .discriminatedUnion("termType", [
-              z.object({
-                termType: z.literal("DiscriminatedUnionMember1"),
-                value: DiscriminatedUnionMember1.Json.schema(),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                termType: z.literal("Literal"),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-              }),
-            ])
-            .readonly()
-            .array()
-            .optional()
-            .readonly()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
-            }),
-          setNodeOrNodeOrString: z
-            .discriminatedUnion("$type", [
-              z.object({
-                $type: z.literal("DiscriminatedUnionMember1"),
-                value: DiscriminatedUnionMember1.Json.schema(),
-              }),
-              z.object({
-                $type: z.literal("DiscriminatedUnionMember2"),
-                value: DiscriminatedUnionMember2.Json.schema(),
-              }),
-              z.object({ $type: z.literal("string"), value: z.string() }),
-            ])
-            .readonly()
-            .array()
-            .optional()
-            .readonly()
-            .meta({
-              description:
-                "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
-            }),
-          setTerm: z
-            .discriminatedUnion("termType", [
-              z.object({
-                "@id": z.string().min(1),
-                termType: z.enum(["BlankNode", "NamedNode"]),
-              }),
-              z.object({
-                "@language": z.string().optional(),
-                termType: z.literal("Literal"),
-                "@type": z.string().optional(),
-                "@value": z.string(),
-              }),
-            ])
-            .readonly()
-            .array()
-            .optional()
-            .readonly()
-            .meta({
-              description:
-                "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
-            }),
-        })
-        .meta({
-          description:
-            "Struct node shape shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.",
-        }) satisfies z.ZodType<Json>;
+            ]),
+          )
+          .optional()
+          .meta({
+            description:
+              "Discriminated union that can be discriminated by an intrinsic discriminant property (termType).",
+          }),
+      }) satisfies z.ZodType<Json>;
     }
 
-    export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
+    export const uiSchema = (_parameters?: { scopePrefix?: string }): any => {
       return {
         elements: [
           {
             label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/@id`,
             type: "Control",
           },
           {
             rule: {
               condition: {
                 schema: { const: "UnionDiscriminantsStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
+                scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
               },
               effect: "HIDE",
             },
-            scope: `${scopePrefix}/properties/$type`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/optionalIriOrString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/optionalIriOrString`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/optionalNodeOrLiteral`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/optionalNodeOrLiteral`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/optionalNodeOrNodeOrString`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/optionalTerm`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/requiredIriOrString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/optionalNodeOrNodeOrString`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/requiredNodeOrLiteral`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/optionalTerm`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/requiredNodeOrNodeOrString`,
-            type: "Control",
-          },
-          { scope: `${scopePrefix}/properties/requiredTerm`, type: "Control" },
-          {
-            scope: `${scopePrefix}/properties/setIriOrString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/requiredIriOrString`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/setNodeOrLiteral`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/requiredNodeOrLiteral`,
             type: "Control",
           },
           {
-            scope: `${scopePrefix}/properties/setNodeOrNodeOrString`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/requiredNodeOrNodeOrString`,
             type: "Control",
           },
-          { scope: `${scopePrefix}/properties/setTerm`, type: "Control" },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/requiredTerm`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/setIriOrString`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/setNodeOrLiteral`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/setNodeOrNodeOrString`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/setTerm`,
+            type: "Control",
+          },
         ],
         type: "Group",
         label: "UnionDiscriminantsStruct",
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "UnionDiscriminantsStruct";
-    readonly optionalIriOrString?: { readonly "@id": string } | string;
-    readonly optionalNodeOrLiteral?:
-      | {
-          termType: "DiscriminatedUnionMember1";
-          value: DiscriminatedUnionMember1.Json;
-        }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        };
-    readonly optionalNodeOrNodeOrString?:
-      | {
-          $type: "DiscriminatedUnionMember1";
-          value: DiscriminatedUnionMember1.Json;
-        }
-      | {
-          $type: "DiscriminatedUnionMember2";
-          value: DiscriminatedUnionMember2.Json;
-        }
-      | { $type: "string"; value: string };
-    readonly optionalTerm?:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        };
-    readonly requiredIriOrString: { readonly "@id": string } | string;
-    readonly requiredNodeOrLiteral:
-      | {
-          termType: "DiscriminatedUnionMember1";
-          value: DiscriminatedUnionMember1.Json;
-        }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        };
-    readonly requiredNodeOrNodeOrString:
-      | {
-          $type: "DiscriminatedUnionMember1";
-          value: DiscriminatedUnionMember1.Json;
-        }
-      | {
-          $type: "DiscriminatedUnionMember2";
-          value: DiscriminatedUnionMember2.Json;
-        }
-      | { $type: "string"; value: string };
-    readonly requiredTerm:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        };
-    readonly setIriOrString?: readonly ({ readonly "@id": string } | string)[];
-    readonly setNodeOrLiteral?: readonly (
-      | {
-          termType: "DiscriminatedUnionMember1";
-          value: DiscriminatedUnionMember1.Json;
-        }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        }
-    )[];
-    readonly setNodeOrNodeOrString?: readonly (
-      | {
-          $type: "DiscriminatedUnionMember1";
-          value: DiscriminatedUnionMember1.Json;
-        }
-      | {
-          $type: "DiscriminatedUnionMember2";
-          value: DiscriminatedUnionMember2.Json;
-        }
-      | { $type: "string"; value: string }
-    )[];
-    readonly setTerm?: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        }
-    )[];
-  };
 
   export const schema = {
     properties: {
@@ -58413,12 +57887,18 @@ export namespace UnionDiscriminantsStruct {
           .map((item) =>
             ((
               value: NamedNode | string,
-            ): { readonly "@id": string } | string => {
+            ):
+              | { $type: "object"; "@id": string }
+              | { $type: "string"; "@type": string; "@value": string } => {
               if (typeof value === "object") {
-                return { "@id": value.value };
+                return { $type: "object" as const, "@id": value.value };
               }
               if (typeof value === "string") {
-                return value;
+                return {
+                  $type: "string" as const,
+                  "@type": $xsd_string.value,
+                  "@value": value,
+                };
               }
 
               throw new Error("unable to serialize to JSON");
@@ -58435,27 +57915,21 @@ export namespace UnionDiscriminantsStruct {
                   }
                 | Literal,
             ):
+              | DiscriminatedUnionMember1.Json
               | {
-                  termType: "DiscriminatedUnionMember1";
-                  value: DiscriminatedUnionMember1.Json;
-                }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
+                  $type: "Literal";
+                  "@language"?: string;
+                  "@type"?: string;
+                  "@value": string;
                 } => {
               if (value["termType"] === "DiscriminatedUnionMember1") {
-                return {
-                  termType: "DiscriminatedUnionMember1" as const,
-                  value: DiscriminatedUnionMember1.toJson(value.value),
-                };
+                return DiscriminatedUnionMember1.toJson(value.value);
               }
               if (value["termType"] === "Literal") {
                 return {
+                  $type: "Literal" as const,
                   "@language":
                     value.language.length > 0 ? value.language : undefined,
-                  termType: "Literal" as const,
                   "@type":
                     value.datatype.value !==
                     "http://www.w3.org/2001/XMLSchema#string"
@@ -58484,29 +57958,25 @@ export namespace UnionDiscriminantsStruct {
                     }
                   | { $type: "string"; value: string },
               ):
+                | DiscriminatedUnionMember1.Json
+                | DiscriminatedUnionMember2.Json
                 | {
-                    $type: "DiscriminatedUnionMember1";
-                    value: DiscriminatedUnionMember1.Json;
-                  }
-                | {
-                    $type: "DiscriminatedUnionMember2";
-                    value: DiscriminatedUnionMember2.Json;
-                  }
-                | { $type: "string"; value: string } => {
+                    $type: "string";
+                    "@type": string;
+                    "@value": string;
+                  } => {
                 if (value["$type"] === "DiscriminatedUnionMember1") {
-                  return {
-                    $type: "DiscriminatedUnionMember1" as const,
-                    value: DiscriminatedUnionMember1.toJson(value.value),
-                  };
+                  return DiscriminatedUnionMember1.toJson(value.value);
                 }
                 if (value["$type"] === "DiscriminatedUnionMember2") {
-                  return {
-                    $type: "DiscriminatedUnionMember2" as const,
-                    value: DiscriminatedUnionMember2.toJson(value.value),
-                  };
+                  return DiscriminatedUnionMember2.toJson(value.value);
                 }
                 if (value["$type"] === "string") {
-                  return { $type: "string" as const, value: value.value };
+                  return {
+                    $type: "string" as const,
+                    "@type": $xsd_string.value,
+                    "@value": value.value,
+                  };
                 }
 
                 throw new Error("unable to serialize to JSON");
@@ -58518,35 +57988,30 @@ export namespace UnionDiscriminantsStruct {
             ((
               value: (BlankNode | NamedNode) | Literal,
             ):
+              | { $type: "BlankNode"; "@id": string }
               | {
-                  readonly "@id": string;
-                  readonly termType: "BlankNode" | "NamedNode";
-                }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
+                  $type: "Literal";
+                  "@language"?: string;
+                  "@type"?: string;
+                  "@value": string;
                 } => {
               if (
                 value["termType"] === "BlankNode" ||
                 value["termType"] === "NamedNode"
               ) {
-                return value.termType === "BlankNode"
-                  ? {
-                      "@id": `_:${value.value}`,
-                      termType: value.termType as "BlankNode" | "NamedNode",
-                    }
-                  : {
-                      "@id": value.value,
-                      termType: value.termType as "BlankNode" | "NamedNode",
-                    };
+                return {
+                  $type: "BlankNode" as const,
+                  "@id":
+                    value.termType === "BlankNode"
+                      ? `_:${value.value}`
+                      : value.value,
+                };
               }
               if (value["termType"] === "Literal") {
                 return {
+                  $type: "Literal" as const,
                   "@language":
                     value.language.length > 0 ? value.language : undefined,
-                  termType: "Literal" as const,
                   "@type":
                     value.datatype.value !==
                     "http://www.w3.org/2001/XMLSchema#string"
@@ -58562,12 +58027,18 @@ export namespace UnionDiscriminantsStruct {
           .extract(),
         requiredIriOrString: ((
           value: NamedNode | string,
-        ): { readonly "@id": string } | string => {
+        ):
+          | { $type: "object"; "@id": string }
+          | { $type: "string"; "@type": string; "@value": string } => {
           if (typeof value === "object") {
-            return { "@id": value.value };
+            return { $type: "object" as const, "@id": value.value };
           }
           if (typeof value === "string") {
-            return value;
+            return {
+              $type: "string" as const,
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -58580,27 +58051,21 @@ export namespace UnionDiscriminantsStruct {
               }
             | Literal,
         ):
+          | DiscriminatedUnionMember1.Json
           | {
-              termType: "DiscriminatedUnionMember1";
-              value: DiscriminatedUnionMember1.Json;
-            }
-          | {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
+              $type: "Literal";
+              "@language"?: string;
+              "@type"?: string;
+              "@value": string;
             } => {
           if (value["termType"] === "DiscriminatedUnionMember1") {
-            return {
-              termType: "DiscriminatedUnionMember1" as const,
-              value: DiscriminatedUnionMember1.toJson(value.value),
-            };
+            return DiscriminatedUnionMember1.toJson(value.value);
           }
           if (value["termType"] === "Literal") {
             return {
+              $type: "Literal" as const,
               "@language":
                 value.language.length > 0 ? value.language : undefined,
-              termType: "Literal" as const,
               "@type":
                 value.datatype.value !==
                 "http://www.w3.org/2001/XMLSchema#string"
@@ -58624,29 +58089,25 @@ export namespace UnionDiscriminantsStruct {
               }
             | { $type: "string"; value: string },
         ):
+          | DiscriminatedUnionMember1.Json
+          | DiscriminatedUnionMember2.Json
           | {
-              $type: "DiscriminatedUnionMember1";
-              value: DiscriminatedUnionMember1.Json;
-            }
-          | {
-              $type: "DiscriminatedUnionMember2";
-              value: DiscriminatedUnionMember2.Json;
-            }
-          | { $type: "string"; value: string } => {
+              $type: "string";
+              "@type": string;
+              "@value": string;
+            } => {
           if (value["$type"] === "DiscriminatedUnionMember1") {
-            return {
-              $type: "DiscriminatedUnionMember1" as const,
-              value: DiscriminatedUnionMember1.toJson(value.value),
-            };
+            return DiscriminatedUnionMember1.toJson(value.value);
           }
           if (value["$type"] === "DiscriminatedUnionMember2") {
-            return {
-              $type: "DiscriminatedUnionMember2" as const,
-              value: DiscriminatedUnionMember2.toJson(value.value),
-            };
+            return DiscriminatedUnionMember2.toJson(value.value);
           }
           if (value["$type"] === "string") {
-            return { $type: "string" as const, value: value.value };
+            return {
+              $type: "string" as const,
+              "@type": $xsd_string.value,
+              "@value": value.value,
+            };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -58654,35 +58115,30 @@ export namespace UnionDiscriminantsStruct {
         requiredTerm: ((
           value: (BlankNode | NamedNode) | Literal,
         ):
+          | { $type: "BlankNode"; "@id": string }
           | {
-              readonly "@id": string;
-              readonly termType: "BlankNode" | "NamedNode";
-            }
-          | {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
+              $type: "Literal";
+              "@language"?: string;
+              "@type"?: string;
+              "@value": string;
             } => {
           if (
             value["termType"] === "BlankNode" ||
             value["termType"] === "NamedNode"
           ) {
-            return value.termType === "BlankNode"
-              ? {
-                  "@id": `_:${value.value}`,
-                  termType: value.termType as "BlankNode" | "NamedNode",
-                }
-              : {
-                  "@id": value.value,
-                  termType: value.termType as "BlankNode" | "NamedNode",
-                };
+            return {
+              $type: "BlankNode" as const,
+              "@id":
+                value.termType === "BlankNode"
+                  ? `_:${value.value}`
+                  : value.value,
+            };
           }
           if (value["termType"] === "Literal") {
             return {
+              $type: "Literal" as const,
               "@language":
                 value.language.length > 0 ? value.language : undefined,
-              termType: "Literal" as const,
               "@type":
                 value.datatype.value !==
                 "http://www.w3.org/2001/XMLSchema#string"
@@ -58695,12 +58151,20 @@ export namespace UnionDiscriminantsStruct {
           throw new Error("unable to serialize to JSON");
         })(_unionDiscriminantsStruct.requiredTerm),
         setIriOrString: _unionDiscriminantsStruct.setIriOrString.map((item) =>
-          ((value: NamedNode | string): { readonly "@id": string } | string => {
+          ((
+            value: NamedNode | string,
+          ):
+            | { $type: "object"; "@id": string }
+            | { $type: "string"; "@type": string; "@value": string } => {
             if (typeof value === "object") {
-              return { "@id": value.value };
+              return { $type: "object" as const, "@id": value.value };
             }
             if (typeof value === "string") {
-              return value;
+              return {
+                $type: "string" as const,
+                "@type": $xsd_string.value,
+                "@value": value,
+              };
             }
 
             throw new Error("unable to serialize to JSON");
@@ -58716,27 +58180,21 @@ export namespace UnionDiscriminantsStruct {
                   }
                 | Literal,
             ):
+              | DiscriminatedUnionMember1.Json
               | {
-                  termType: "DiscriminatedUnionMember1";
-                  value: DiscriminatedUnionMember1.Json;
-                }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
+                  $type: "Literal";
+                  "@language"?: string;
+                  "@type"?: string;
+                  "@value": string;
                 } => {
               if (value["termType"] === "DiscriminatedUnionMember1") {
-                return {
-                  termType: "DiscriminatedUnionMember1" as const,
-                  value: DiscriminatedUnionMember1.toJson(value.value),
-                };
+                return DiscriminatedUnionMember1.toJson(value.value);
               }
               if (value["termType"] === "Literal") {
                 return {
+                  $type: "Literal" as const,
                   "@language":
                     value.language.length > 0 ? value.language : undefined,
-                  termType: "Literal" as const,
                   "@type":
                     value.datatype.value !==
                     "http://www.w3.org/2001/XMLSchema#string"
@@ -58763,29 +58221,25 @@ export namespace UnionDiscriminantsStruct {
                   }
                 | { $type: "string"; value: string },
             ):
+              | DiscriminatedUnionMember1.Json
+              | DiscriminatedUnionMember2.Json
               | {
-                  $type: "DiscriminatedUnionMember1";
-                  value: DiscriminatedUnionMember1.Json;
-                }
-              | {
-                  $type: "DiscriminatedUnionMember2";
-                  value: DiscriminatedUnionMember2.Json;
-                }
-              | { $type: "string"; value: string } => {
+                  $type: "string";
+                  "@type": string;
+                  "@value": string;
+                } => {
               if (value["$type"] === "DiscriminatedUnionMember1") {
-                return {
-                  $type: "DiscriminatedUnionMember1" as const,
-                  value: DiscriminatedUnionMember1.toJson(value.value),
-                };
+                return DiscriminatedUnionMember1.toJson(value.value);
               }
               if (value["$type"] === "DiscriminatedUnionMember2") {
-                return {
-                  $type: "DiscriminatedUnionMember2" as const,
-                  value: DiscriminatedUnionMember2.toJson(value.value),
-                };
+                return DiscriminatedUnionMember2.toJson(value.value);
               }
               if (value["$type"] === "string") {
-                return { $type: "string" as const, value: value.value };
+                return {
+                  $type: "string" as const,
+                  "@type": $xsd_string.value,
+                  "@value": value.value,
+                };
               }
 
               throw new Error("unable to serialize to JSON");
@@ -58795,35 +58249,30 @@ export namespace UnionDiscriminantsStruct {
           ((
             value: (BlankNode | NamedNode) | Literal,
           ):
+            | { $type: "BlankNode"; "@id": string }
             | {
-                readonly "@id": string;
-                readonly termType: "BlankNode" | "NamedNode";
-              }
-            | {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
+                $type: "Literal";
+                "@language"?: string;
+                "@type"?: string;
+                "@value": string;
               } => {
             if (
               value["termType"] === "BlankNode" ||
               value["termType"] === "NamedNode"
             ) {
-              return value.termType === "BlankNode"
-                ? {
-                    "@id": `_:${value.value}`,
-                    termType: value.termType as "BlankNode" | "NamedNode",
-                  }
-                : {
-                    "@id": value.value,
-                    termType: value.termType as "BlankNode" | "NamedNode",
-                  };
+              return {
+                $type: "BlankNode" as const,
+                "@id":
+                  value.termType === "BlankNode"
+                    ? `_:${value.value}`
+                    : value.value,
+              };
             }
             if (value["termType"] === "Literal") {
               return {
+                $type: "Literal" as const,
                 "@language":
                   value.language.length > 0 ? value.language : undefined,
-                termType: "Literal" as const,
                 "@type":
                   value.datatype.value !==
                   "http://www.w3.org/2001/XMLSchema#string"
@@ -59081,15 +58530,11 @@ export namespace DiscriminatedUnion {
   export const fromJson = (
     value: DiscriminatedUnion.Json,
   ): Either<Error, DiscriminatedUnion> => {
-    if (value["$type"] === "DiscriminatedUnionMember1") {
-      return DiscriminatedUnionMember1.fromJson(
-        value as DiscriminatedUnionMember1.Json,
-      ).map((value) => value);
+    if (value.$type === "DiscriminatedUnionMember1") {
+      return DiscriminatedUnionMember1.fromJson(value).map((value) => value);
     }
-    if (value["$type"] === "DiscriminatedUnionMember2") {
-      return DiscriminatedUnionMember2.fromJson(
-        value as DiscriminatedUnionMember2.Json,
-      ).map((value) => value);
+    if (value.$type === "DiscriminatedUnionMember2") {
+      return DiscriminatedUnionMember2.fromJson(value).map((value) => value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -59237,19 +58682,11 @@ export namespace DiscriminatedUnion {
     );
   }
 
-  export namespace Json {
-    export const schema = () =>
-      z
-        .discriminatedUnion("$type", [
-          DiscriminatedUnionMember1.Json.schema(),
-          DiscriminatedUnionMember2.Json.schema(),
-        ])
-        .readonly()
-        .meta({
-          description:
-            "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-        });
+  export type Json =
+    | DiscriminatedUnionMember1.Json
+    | DiscriminatedUnionMember2.Json;
 
+  export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
@@ -59257,11 +58694,14 @@ export namespace DiscriminatedUnion {
       }
       return Right(jsonSafeParseResult.data);
     }
-  }
 
-  export type Json =
-    | DiscriminatedUnionMember1.Json
-    | DiscriminatedUnionMember2.Json;
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        DiscriminatedUnionMember1.Json.schema(),
+        DiscriminatedUnionMember2.Json.schema(),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
 
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
@@ -59696,20 +59136,16 @@ export namespace FlattenDiscriminatedUnion {
   export const fromJson = (
     value: FlattenDiscriminatedUnion.Json,
   ): Either<Error, FlattenDiscriminatedUnion> => {
-    if (value["$type"] === "DiscriminatedUnionMember1") {
-      return DiscriminatedUnionMember1.fromJson(
-        value as DiscriminatedUnionMember1.Json,
-      ).map((value) => value);
+    if (value.$type === "DiscriminatedUnionMember1") {
+      return DiscriminatedUnionMember1.fromJson(value).map((value) => value);
     }
-    if (value["$type"] === "DiscriminatedUnionMember2") {
-      return DiscriminatedUnionMember2.fromJson(
-        value as DiscriminatedUnionMember2.Json,
-      ).map((value) => value);
+    if (value.$type === "DiscriminatedUnionMember2") {
+      return DiscriminatedUnionMember2.fromJson(value).map((value) => value);
     }
-    if (value["$type"] === "FlattenDiscriminatedUnionMember3") {
-      return FlattenDiscriminatedUnionMember3.fromJson(
-        value as FlattenDiscriminatedUnionMember3.Json,
-      ).map((value) => value);
+    if (value.$type === "FlattenDiscriminatedUnionMember3") {
+      return FlattenDiscriminatedUnionMember3.fromJson(value).map(
+        (value) => value,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -59901,20 +59337,12 @@ export namespace FlattenDiscriminatedUnion {
     );
   }
 
-  export namespace Json {
-    export const schema = () =>
-      z
-        .discriminatedUnion("$type", [
-          DiscriminatedUnionMember1.Json.schema(),
-          DiscriminatedUnionMember2.Json.schema(),
-          FlattenDiscriminatedUnionMember3.Json.schema(),
-        ])
-        .readonly()
-        .meta({
-          description:
-            "Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.",
-        });
+  export type Json =
+    | DiscriminatedUnionMember1.Json
+    | DiscriminatedUnionMember2.Json
+    | FlattenDiscriminatedUnionMember3.Json;
 
+  export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
@@ -59922,12 +59350,15 @@ export namespace FlattenDiscriminatedUnion {
       }
       return Right(jsonSafeParseResult.data);
     }
-  }
 
-  export type Json =
-    | DiscriminatedUnionMember1.Json
-    | DiscriminatedUnionMember2.Json
-    | FlattenDiscriminatedUnionMember3.Json;
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        DiscriminatedUnionMember1.Json.schema(),
+        DiscriminatedUnionMember2.Json.schema(),
+        FlattenDiscriminatedUnionMember3.Json.schema(),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
 
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
@@ -60354,15 +59785,15 @@ export namespace LazilyResolvedDiscriminatedUnion {
   export const fromJson = (
     value: LazilyResolvedDiscriminatedUnion.Json,
   ): Either<Error, LazilyResolvedDiscriminatedUnion> => {
-    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember1") {
-      return LazilyResolvedDiscriminatedUnionMember1.fromJson(
-        value as LazilyResolvedDiscriminatedUnionMember1.Json,
-      ).map((value) => value);
+    if (value.$type === "LazilyResolvedDiscriminatedUnionMember1") {
+      return LazilyResolvedDiscriminatedUnionMember1.fromJson(value).map(
+        (value) => value,
+      );
     }
-    if (value["$type"] === "LazilyResolvedDiscriminatedUnionMember2") {
-      return LazilyResolvedDiscriminatedUnionMember2.fromJson(
-        value as LazilyResolvedDiscriminatedUnionMember2.Json,
-      ).map((value) => value);
+    if (value.$type === "LazilyResolvedDiscriminatedUnionMember2") {
+      return LazilyResolvedDiscriminatedUnionMember2.fromJson(value).map(
+        (value) => value,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -60521,19 +59952,11 @@ export namespace LazilyResolvedDiscriminatedUnion {
     );
   }
 
-  export namespace Json {
-    export const schema = () =>
-      z
-        .discriminatedUnion("$type", [
-          LazilyResolvedDiscriminatedUnionMember1.Json.schema(),
-          LazilyResolvedDiscriminatedUnionMember2.Json.schema(),
-        ])
-        .readonly()
-        .meta({
-          description:
-            "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-        });
+  export type Json =
+    | LazilyResolvedDiscriminatedUnionMember1.Json
+    | LazilyResolvedDiscriminatedUnionMember2.Json;
 
+  export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
@@ -60541,11 +59964,14 @@ export namespace LazilyResolvedDiscriminatedUnion {
       }
       return Right(jsonSafeParseResult.data);
     }
-  }
 
-  export type Json =
-    | LazilyResolvedDiscriminatedUnionMember1.Json
-    | LazilyResolvedDiscriminatedUnionMember2.Json;
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        LazilyResolvedDiscriminatedUnionMember1.Json.schema(),
+        LazilyResolvedDiscriminatedUnionMember2.Json.schema(),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
 
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
@@ -60838,13 +60264,13 @@ export namespace NamedDiscriminatedUnion1 {
   export const fromJson = (
     value: NamedDiscriminatedUnion1.Json,
   ): Either<Error, NamedDiscriminatedUnion1> => {
-    if (typeof value === "object") {
+    if (value.$type === "object") {
       return Either.of<Error, NamedNode>(
-        dataFactory.namedNode((value as { readonly "@id": string })["@id"]),
+        dataFactory.namedNode(value["@id"]),
       ).map((value) => value);
     }
-    if (typeof value === "string") {
-      return Either.of<Error, string>(value as string).map((value) => value);
+    if (value.$type === "string") {
+      return Either.of<Error, string>(value["@value"]).map((value) => value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -60952,15 +60378,11 @@ export namespace NamedDiscriminatedUnion1 {
     return hasher;
   };
 
-  export namespace Json {
-    export const schema = () =>
-      z
-        .union([z.object({ "@id": z.string().min(1) }), z.string()])
-        .readonly()
-        .meta({
-          description: "Named discriminated union of IRI and string",
-        });
+  export type Json =
+    | { $type: "object"; "@id": string }
+    | { $type: "string"; "@type": string; "@value": string };
 
+  export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
@@ -60968,9 +60390,18 @@ export namespace NamedDiscriminatedUnion1 {
       }
       return Right(jsonSafeParseResult.data);
     }
-  }
 
-  export type Json = { readonly "@id": string } | string;
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        z.object({ $type: z.literal("object"), "@id": z.string().min(1) }),
+        z.object({
+          $type: z.literal("string"),
+          "@type": z.string(),
+          "@value": z.string(),
+        }),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
 
   export const schema = {
     kind: "DiscriminatedUnion" as const,
@@ -60990,10 +60421,14 @@ export namespace NamedDiscriminatedUnion1 {
     value: NamedDiscriminatedUnion1,
   ): NamedDiscriminatedUnion1.Json => {
     if (typeof value === "object") {
-      return { "@id": value.value };
+      return { $type: "object" as const, "@id": value.value };
     }
     if (typeof value === "string") {
-      return value;
+      return {
+        $type: "string" as const,
+        "@type": $xsd_string.value,
+        "@value": value,
+      };
     }
 
     throw new Error("unable to serialize to JSON");
@@ -61151,29 +60586,21 @@ export namespace NamedDiscriminatedUnion2 {
   export const fromJson = (
     value: NamedDiscriminatedUnion2.Json,
   ): Either<Error, NamedDiscriminatedUnion2> => {
-    if (value["$type"] === "date") {
-      return Either.of<Error, Date>(
-        new Date(
-          (
-            value.value as {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-              readonly "@value": string;
-            }
-          )["@value"],
-        ),
-      ).map((value) => ({ $type: "date" as const, value: value }));
+    if (value.$type === "date") {
+      return Either.encase<Error, Date>(() => new Date(value["@value"])).map(
+        (value) => ({
+          $type: "date" as const,
+          value: value,
+        }),
+      );
     }
-    if (value["$type"] === "dateTime") {
-      return Either.of<Error, Date>(
-        new Date(
-          (
-            value.value as {
-              readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-              readonly "@value": string;
-            }
-          )["@value"],
-        ),
-      ).map((value) => ({ $type: "dateTime" as const, value: value }));
+    if (value.$type === "dateTime") {
+      return Either.encase<Error, Date>(() => new Date(value["@value"])).map(
+        (value) => ({
+          $type: "dateTime" as const,
+          value: value,
+        }),
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -61298,30 +60725,15 @@ export namespace NamedDiscriminatedUnion2 {
     return hasher;
   };
 
-  export namespace Json {
-    export const schema = () =>
-      z
-        .discriminatedUnion("$type", [
-          z.object({
-            $type: z.literal("date"),
-            value: z.object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#date"),
-              "@value": z.iso.date(),
-            }),
-          }),
-          z.object({
-            $type: z.literal("dateTime"),
-            value: z.object({
-              "@type": z.literal("http://www.w3.org/2001/XMLSchema#dateTime"),
-              "@value": z.iso.datetime(),
-            }),
-          }),
-        ])
-        .readonly()
-        .meta({
-          description: "Named discriminated union of date and date-time",
-        });
+  export type Json =
+    | { $type: "date"; "@type": string; "@value": string }
+    | {
+        $type: "dateTime";
+        "@type": string;
+        "@value": string;
+      };
 
+  export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
@@ -61329,23 +60741,22 @@ export namespace NamedDiscriminatedUnion2 {
       }
       return Right(jsonSafeParseResult.data);
     }
-  }
 
-  export type Json =
-    | {
-        $type: "date";
-        value: {
-          readonly "@type": "http://www.w3.org/2001/XMLSchema#date";
-          readonly "@value": string;
-        };
-      }
-    | {
-        $type: "dateTime";
-        value: {
-          readonly "@type": "http://www.w3.org/2001/XMLSchema#dateTime";
-          readonly "@value": string;
-        };
-      };
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        z.object({
+          $type: z.literal("date"),
+          "@type": z.string(),
+          "@value": z.iso.date(),
+        }),
+        z.object({
+          $type: z.literal("dateTime"),
+          "@type": z.string(),
+          "@value": z.iso.datetime(),
+        }),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
 
   export const schema = {
     kind: "DiscriminatedUnion" as const,
@@ -61364,19 +60775,15 @@ export namespace NamedDiscriminatedUnion2 {
     if (value["$type"] === "date") {
       return {
         $type: "date" as const,
-        value: {
-          "@type": "http://www.w3.org/2001/XMLSchema#date" as const,
-          "@value": $toIsoDateString(value.value),
-        },
+        "@type": $xsd_date.value,
+        "@value": $toIsoDateString(value.value),
       };
     }
     if (value["$type"] === "dateTime") {
       return {
         $type: "dateTime" as const,
-        value: {
-          "@type": "http://www.w3.org/2001/XMLSchema#dateTime" as const,
-          "@value": value.value.toISOString(),
-        },
+        "@type": $xsd_dateTime.value,
+        "@value": value.value.toISOString(),
       };
     }
 
@@ -61656,15 +61063,15 @@ export namespace NoRdfTypeDiscriminatedUnion {
   export const fromJson = (
     value: NoRdfTypeDiscriminatedUnion.Json,
   ): Either<Error, NoRdfTypeDiscriminatedUnion> => {
-    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember1") {
-      return NoRdfTypeDiscriminatedUnionMember1.fromJson(
-        value as NoRdfTypeDiscriminatedUnionMember1.Json,
-      ).map((value) => value);
+    if (value.$type === "NoRdfTypeDiscriminatedUnionMember1") {
+      return NoRdfTypeDiscriminatedUnionMember1.fromJson(value).map(
+        (value) => value,
+      );
     }
-    if (value["$type"] === "NoRdfTypeDiscriminatedUnionMember2") {
-      return NoRdfTypeDiscriminatedUnionMember2.fromJson(
-        value as NoRdfTypeDiscriminatedUnionMember2.Json,
-      ).map((value) => value);
+    if (value.$type === "NoRdfTypeDiscriminatedUnionMember2") {
+      return NoRdfTypeDiscriminatedUnionMember2.fromJson(value).map(
+        (value) => value,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -61819,19 +61226,11 @@ export namespace NoRdfTypeDiscriminatedUnion {
     );
   }
 
-  export namespace Json {
-    export const schema = () =>
-      z
-        .discriminatedUnion("$type", [
-          NoRdfTypeDiscriminatedUnionMember1.Json.schema(),
-          NoRdfTypeDiscriminatedUnionMember2.Json.schema(),
-        ])
-        .readonly()
-        .meta({
-          description:
-            "Node shape that sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's",
-        });
+  export type Json =
+    | NoRdfTypeDiscriminatedUnionMember1.Json
+    | NoRdfTypeDiscriminatedUnionMember2.Json;
 
+  export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
@@ -61839,11 +61238,14 @@ export namespace NoRdfTypeDiscriminatedUnion {
       }
       return Right(jsonSafeParseResult.data);
     }
-  }
 
-  export type Json =
-    | NoRdfTypeDiscriminatedUnionMember1.Json
-    | NoRdfTypeDiscriminatedUnionMember2.Json;
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        NoRdfTypeDiscriminatedUnionMember1.Json.schema(),
+        NoRdfTypeDiscriminatedUnionMember2.Json.schema(),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
 
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
@@ -62235,15 +61637,15 @@ export namespace PartialDiscriminatedUnion {
   export const fromJson = (
     value: PartialDiscriminatedUnion.Json,
   ): Either<Error, PartialDiscriminatedUnion> => {
-    if (value["$type"] === "PartialDiscriminatedUnionMember1") {
-      return PartialDiscriminatedUnionMember1.fromJson(
-        value as PartialDiscriminatedUnionMember1.Json,
-      ).map((value) => value);
+    if (value.$type === "PartialDiscriminatedUnionMember1") {
+      return PartialDiscriminatedUnionMember1.fromJson(value).map(
+        (value) => value,
+      );
     }
-    if (value["$type"] === "PartialDiscriminatedUnionMember2") {
-      return PartialDiscriminatedUnionMember2.fromJson(
-        value as PartialDiscriminatedUnionMember2.Json,
-      ).map((value) => value);
+    if (value.$type === "PartialDiscriminatedUnionMember2") {
+      return PartialDiscriminatedUnionMember2.fromJson(value).map(
+        (value) => value,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -62398,19 +61800,11 @@ export namespace PartialDiscriminatedUnion {
     );
   }
 
-  export namespace Json {
-    export const schema = () =>
-      z
-        .discriminatedUnion("$type", [
-          PartialDiscriminatedUnionMember1.Json.schema(),
-          PartialDiscriminatedUnionMember2.Json.schema(),
-        ])
-        .readonly()
-        .meta({
-          description:
-            "Counterpart of DiscriminatedUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
-        });
+  export type Json =
+    | PartialDiscriminatedUnionMember1.Json
+    | PartialDiscriminatedUnionMember2.Json;
 
+  export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
@@ -62418,11 +61812,14 @@ export namespace PartialDiscriminatedUnion {
       }
       return Right(jsonSafeParseResult.data);
     }
-  }
 
-  export type Json =
-    | PartialDiscriminatedUnionMember1.Json
-    | PartialDiscriminatedUnionMember2.Json;
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        PartialDiscriminatedUnionMember1.Json.schema(),
+        PartialDiscriminatedUnionMember2.Json.schema(),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
 
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
@@ -62824,15 +62221,15 @@ export namespace RecursiveDiscriminatedUnion {
   export const fromJson = (
     value: RecursiveDiscriminatedUnion.Json,
   ): Either<Error, RecursiveDiscriminatedUnion> => {
-    if (value["$type"] === "RecursiveDiscriminatedUnionMember1") {
-      return RecursiveDiscriminatedUnionMember1.fromJson(
-        value as RecursiveDiscriminatedUnionMember1.Json,
-      ).map((value) => value);
+    if (value.$type === "RecursiveDiscriminatedUnionMember1") {
+      return RecursiveDiscriminatedUnionMember1.fromJson(value).map(
+        (value) => value,
+      );
     }
-    if (value["$type"] === "RecursiveDiscriminatedUnionMember2") {
-      return RecursiveDiscriminatedUnionMember2.fromJson(
-        value as RecursiveDiscriminatedUnionMember2.Json,
-      ).map((value) => value);
+    if (value.$type === "RecursiveDiscriminatedUnionMember2") {
+      return RecursiveDiscriminatedUnionMember2.fromJson(value).map(
+        (value) => value,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -62987,19 +62384,11 @@ export namespace RecursiveDiscriminatedUnion {
     );
   }
 
-  export namespace Json {
-    export const schema = () =>
-      z
-        .discriminatedUnion("$type", [
-          RecursiveDiscriminatedUnionMember1.Json.schema(),
-          RecursiveDiscriminatedUnionMember2.Json.schema(),
-        ])
-        .readonly()
-        .meta({
-          description:
-            "Node shape that sh:xone's node shapes that have properties with the union's type",
-        });
+  export type Json =
+    | RecursiveDiscriminatedUnionMember1.Json
+    | RecursiveDiscriminatedUnionMember2.Json;
 
+  export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
@@ -63007,11 +62396,14 @@ export namespace RecursiveDiscriminatedUnion {
       }
       return Right(jsonSafeParseResult.data);
     }
-  }
 
-  export type Json =
-    | RecursiveDiscriminatedUnionMember1.Json
-    | RecursiveDiscriminatedUnionMember2.Json;
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        RecursiveDiscriminatedUnionMember1.Json.schema(),
+        RecursiveDiscriminatedUnionMember2.Json.schema(),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
 
   export const schema = {
     kind: "ObjectDiscriminatedUnion" as const,
