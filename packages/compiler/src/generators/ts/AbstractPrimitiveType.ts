@@ -12,6 +12,8 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractPrimitiveType<
   ValueT extends Primitive,
 > extends AbstractTypedLiteralType<ValueT> {
+  protected abstract readonly decodedIn: readonly ValueT[];
+
   override readonly equalsFunction =
     code`${this.reusables.snippets.strictEquals}`;
 
@@ -32,12 +34,22 @@ export abstract class AbstractPrimitiveType<
     return code`${this.jsTypes[0].typeof}`;
   }
 
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
+    return variables.value;
+  }
+
   protected override fromCompactJsonExpression({
     variables,
   }: Parameters<
     AbstractTypedLiteralType<Date>["fromJsonExpression"]
   >[0]): Code {
-    return variables.value;
+    let fromCompactJsonExpression = variables.value;
+    if (this.in_.length > 0) {
+      fromCompactJsonExpression = code`(${fromCompactJsonExpression} as ${this.expression})`;
+    }
+    return fromCompactJsonExpression;
   }
 
   protected override toCompactJsonExpression({
@@ -45,12 +57,6 @@ export abstract class AbstractPrimitiveType<
   }: Parameters<
     AbstractTypedLiteralType<Date>["toCompactJsonExpression"]
   >[0]): Code {
-    return variables.value;
-  }
-
-  override toLoggableExpression({
-    variables,
-  }: Parameters<AbstractLiteralType["toLoggableExpression"]>[0]): Code {
     return variables.value;
   }
 }

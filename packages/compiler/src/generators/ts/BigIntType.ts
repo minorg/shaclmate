@@ -5,13 +5,12 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
-  private readonly decodedIn = this.in_.map((in_) =>
+  protected override readonly decodedIn = this.in_.map((in_) =>
     LiteralDecoder.decodeBigIntLiteral(in_).unsafeCoerce(),
   );
-
   protected override readonly compactJsonType: AbstractNumericType.JsonType =
     this.jsonTypeFactory.createJsonStringType({
       in_: this.decodedIn.map((in_) => in_.toString()),
@@ -56,7 +55,11 @@ export class BigIntType extends AbstractNumericType<bigint> {
   protected override fromCompactJsonExpression({
     variables,
   }: Parameters<AbstractNumericType<bigint>["fromJsonExpression"]>[0]): Code {
-    return code`BigInt(${variables.value})`;
+    let fromCompactJsonExpression = code`BigInt(${variables.value})`;
+    if (this.in_.length > 0) {
+      fromCompactJsonExpression = code`(${fromCompactJsonExpression} as ${this.expression})`;
+    }
+    return fromCompactJsonExpression;
   }
 
   protected override toCompactJsonExpression({
@@ -64,6 +67,13 @@ export class BigIntType extends AbstractNumericType<bigint> {
   }: Parameters<
     AbstractNumericType<bigint>["toCompactJsonExpression"]
   >[0]): Code {
-    return code`${variables.value}.toString()`;
+    let toCompactJsonExpression = code`${variables.value}.toString()`;
+    if (this.in_.length > 0) {
+      toCompactJsonExpression = code`(${toCompactJsonExpression} as ${joinCode(
+        this.decodedIn.map((in_) => code`${literalOf(in_.toString())}`),
+        { on: " | " },
+      )})`;
+    }
+    return toCompactJsonExpression;
   }
 }

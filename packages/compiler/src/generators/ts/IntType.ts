@@ -8,7 +8,7 @@ import { AbstractNumericType } from "./AbstractNumericType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class IntType extends AbstractNumericType<number> {
-  private readonly decodedIn = this.in_.map((in_) =>
+  protected override readonly decodedIn = this.in_.map((in_) =>
     LiteralDecoder.decodeFloatLiteral(in_).unsafeCoerce(),
   );
   override readonly compactJsonType: AbstractNumericType.JsonType =

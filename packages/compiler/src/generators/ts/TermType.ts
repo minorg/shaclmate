@@ -140,7 +140,7 @@ export class TermType<
           this.configuration.objectDiscriminantProperty.jsonName,
           {
             type: this.jsonTypeFactory.createJsonStringType({
-              in_: [nodeKind],
+              in_: [NodeKind.toTermType(nodeKind)],
             }),
           },
         );
@@ -186,7 +186,7 @@ export class TermType<
         const toJsonExpression: Record<string, Code> = {};
         toJsonExpression[
           this.configuration.objectDiscriminantProperty.jsonName
-        ] = code`${literalOf(nodeKind)} as const`;
+        ] = code`${literalOf(NodeKind.toTermType(nodeKind))} as const`;
         switch (nodeKind) {
           case "BlankNode":
             toJsonExpression["@id"] = code`\`_:\${${variables.value}.value}\``;

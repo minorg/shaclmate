@@ -1,7 +1,6 @@
 import type { Literal } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
-import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 

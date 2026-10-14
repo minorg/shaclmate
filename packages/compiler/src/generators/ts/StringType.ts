@@ -50,16 +50,6 @@ export class StringType extends AbstractPrimitiveType<string> {
     return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    let initializers = super.schemaInitializers;
-    if (this.languageIn.length > 0) {
-      initializers = initializers.concat(
-        code`languageIn: ${arrayOf(...this.languageIn)}`,
-      );
-    }
-    return initializers;
-  }
-
   @Memoize()
   protected override get compactJsonType(): AbstractPrimitiveType.JsonType {
     return this.jsonTypeFactory.createJsonStringType({
@@ -72,10 +62,20 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  private get decodedIn(): readonly string[] {
+  protected override get decodedIn(): readonly string[] {
     return this.in_.map((in_) =>
       LiteralDecoder.decodeStringLiteral(in_).unsafeCoerce(),
     );
+  }
+
+  protected override get schemaInitializers(): readonly Code[] {
+    let initializers = super.schemaInitializers;
+    if (this.languageIn.length > 0) {
+      initializers = initializers.concat(
+        code`languageIn: ${arrayOf(...this.languageIn)}`,
+      );
+    }
+    return initializers;
   }
 
   override toRdfResourceValuesExpression({

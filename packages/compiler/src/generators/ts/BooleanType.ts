@@ -1,12 +1,14 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
-  private readonly decodedIn = this.in_.map((in_) =>
+  protected override readonly decodedIn = this.in_.map((in_) =>
     LiteralDecoder.decodeBooleanLiteral(in_).unsafeCoerce(),
   );
   override readonly compactJsonType: AbstractPrimitiveType.JsonType =
@@ -33,15 +35,15 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`;
   }
 
-  override valueExpression(literal: boolean | Literal): Code {
-    return code`${typeof literal === "boolean" ? literal : LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;
-  }
-
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<
     AbstractPrimitiveType<boolean>["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.boolean(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
+  }
+
+  override valueExpression(literal: boolean | Literal): Code {
+    return code`${typeof literal === "boolean" ? literal : LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;
   }
 }

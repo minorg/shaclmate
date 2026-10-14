@@ -1,5 +1,3 @@
-import type { NamedNode } from "@rdfjs/types";
-
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";

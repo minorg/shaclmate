@@ -10,17 +10,15 @@ export function AbstractDiscriminatedUnionType_toJsonFunctionExpression<
 ((value: ${this.expression}): ${this.jsonType().expression} => {
 ${joinCode(
   this.members.map(
-    ({ primaryDiscriminantValue, type, typeCheck, unwrap, wrap }) =>
-      code`if (${typeCheck(code`value`)}) { return ${wrap(
-        type.toJsonExpression({
-          discriminantProperty: singleEntryRecord(
-            this.configuration.objectDiscriminantProperty.jsonName,
-            code`${literalOf(primaryDiscriminantValue)} as const`,
-          ),
-          form: "expanded",
-          variables: { value: unwrap(code`value`) },
-        }),
-      )}; }`,
+    ({ primaryDiscriminantValue, type, typeCheck, unwrap }) =>
+      code`if (${typeCheck(code`value`)}) { return ${type.toJsonExpression({
+        discriminantProperty: singleEntryRecord(
+          this.configuration.objectDiscriminantProperty.jsonName,
+          code`${literalOf(primaryDiscriminantValue)} as const`,
+        ),
+        form: "expanded",
+        variables: { value: unwrap(code`value`) },
+      })}; }`,
   ),
 )}
 
