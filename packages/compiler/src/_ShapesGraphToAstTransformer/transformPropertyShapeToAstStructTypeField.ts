@@ -70,6 +70,26 @@ function fieldName(
   throw new Error(`${propertyShape}: unable to infer name`);
 }
 
+function propertyCardinality(propertyShape: input.PropertyShape): {
+  maxCount: bigint;
+  minCount: bigint;
+} {
+  let maxCount = propertyShape.maxCount.orDefault(
+    BigInt(Number.MAX_SAFE_INTEGER),
+  );
+  let minCount = propertyShape.minCount.orDefault(0n);
+  if (minCount < 0n) {
+    minCount = 0n;
+  }
+  if (propertyShape.hasValues.length > minCount) {
+    minCount = BigInt(propertyShape.hasValues.length);
+  }
+  if (maxCount < minCount) {
+    maxCount = minCount;
+  }
+  return { maxCount, minCount };
+}
+
 function synthesizePartialAstStructType(
   this: ShapesGraphToAstTransformer,
   {
@@ -137,19 +157,7 @@ function transformPropertyShapeToAstType(
   return transformShapeToAstType
     .call(this, propertyShape, shapeStack)
     .chain((propertyShapeAstType) => {
-      let maxCount = propertyShape.maxCount.orDefault(
-        BigInt(Number.MAX_SAFE_INTEGER),
-      );
-      let minCount = propertyShape.minCount.orDefault(0n);
-      if (minCount < 0n) {
-        minCount = 0n;
-      }
-      if (propertyShape.hasValues.length > minCount) {
-        minCount = BigInt(propertyShape.hasValues.length);
-      }
-      if (maxCount < minCount) {
-        maxCount = minCount;
-      }
+      const { maxCount, minCount } = propertyCardinality(propertyShape);
 
       if (propertyShapeAstType.kind === "DefaultValue") {
         if (minCount > 0n) {
@@ -435,6 +443,7 @@ export function transformPropertyShapeToAstStructTypeField(
           description: propertyShape.description,
           display: propertyShape.display,
           label: propertyShape.label,
+          minCount: propertyCardinality(propertyShape).minCount,
           mutable: propertyShape.mutable.orDefault(false),
           name: fieldName.call(this, propertyShape, structType),
           order: propertyShape.order.orDefault(0),

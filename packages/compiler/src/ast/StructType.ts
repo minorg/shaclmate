@@ -235,6 +235,11 @@ export namespace StructType {
     readonly label: Maybe<string>;
 
     /**
+     * Minimum cardinality of this field, derived from sh:minCount.
+     */
+    readonly minCount: bigint;
+
+    /**
      * The field should be mutable in generated code i.e., it should be re-assignable. The field value may or may
      * not be mutable.
      */
@@ -270,6 +275,7 @@ export namespace StructType {
       description,
       display,
       label,
+      minCount,
       mutable,
       name,
       order,
@@ -282,6 +288,7 @@ export namespace StructType {
       description: Maybe<string>;
       display: boolean;
       label: Maybe<string>;
+      minCount: bigint;
       mutable: boolean;
       name: string;
       order: number;
@@ -294,6 +301,7 @@ export namespace StructType {
       this.description = description;
       this.display = display;
       this.label = label;
+      this.minCount = minCount;
       this.mutable = mutable;
       this.name = name;
       this.order = order;

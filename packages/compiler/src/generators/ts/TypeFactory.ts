@@ -550,6 +550,7 @@ export class TypeFactory {
       description: astStructField.description,
       display: astStructField.display,
       label: astStructField.label,
+      minCount: astStructField.minCount,
       mutable: astStructField.mutable,
       name: this.tsName(astStructField.name),
       objectType,

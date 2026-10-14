@@ -13,8 +13,8 @@ export abstract class AbstractLazyType<
   PartialTypeT extends AbstractLazyType.PartialTypeConstraint,
   ResolveTypeT extends AbstractLazyType.ResolveTypeConstraint,
 > extends AbstractType {
-  protected readonly partialType: PartialTypeT;
-  protected readonly resolveType: ResolveTypeT;
+  readonly partialType: PartialTypeT;
+  readonly resolveType: ResolveTypeT;
   protected abstract readonly runtimeClass: {
     readonly name: Code;
     readonly partialPropertyName: string;

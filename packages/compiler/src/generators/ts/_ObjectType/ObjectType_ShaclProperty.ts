@@ -14,6 +14,7 @@ export class ObjectType_ShaclProperty<
   private readonly description: Maybe<string>;
   private readonly display: boolean;
   private readonly label: Maybe<string>;
+  private readonly minCount: bigint;
 
   override readonly kind = "Shacl";
   override readonly mutable: boolean;
@@ -26,6 +27,7 @@ export class ObjectType_ShaclProperty<
     description,
     display,
     label,
+    minCount,
     mutable,
     path,
     recursive,
@@ -36,6 +38,7 @@ export class ObjectType_ShaclProperty<
     description: Maybe<string>;
     display: boolean;
     label: Maybe<string>;
+    minCount: bigint;
     mutable: boolean;
     path: PropertyPath;
     recursive: boolean;
@@ -46,6 +49,7 @@ export class ObjectType_ShaclProperty<
     this.description = description;
     this.display = display;
     this.label = label;
+    this.minCount = minCount;
     this.mutable = mutable;
     this.path = path;
     this.recursive = recursive;
@@ -123,24 +127,11 @@ export class ObjectType_ShaclProperty<
 
   @Memoize()
   get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
-    let optional: boolean;
-    switch (this.type.kind) {
-      case "Option":
-        optional = true;
-        break;
-      case "Set":
-        optional = this.type.minCount === 0n;
-        break;
-      default:
-        optional = false;
-        break;
-    }
-
     return Maybe.of({
       description: this.description.alt(this.comment),
       label: this.label,
       name: this.name,
-      optional: optional,
+      optional: this.minCount === 0n,
       recursive: this.recursive,
       type: this.recursive
         ? this.jsonTypeFactory.createJsonNeverType()
