@@ -14621,14 +14621,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             } => {
           if (value["$type"] === "date") {
             return {
-              $type: "date" as const,
+              $type: "date",
               "@type": $xsd_date.value,
               "@value": $toIsoDateString(value.value),
             };
           }
           if (value["$type"] === "dateTime") {
             return {
-              $type: "dateTime" as const,
+              $type: "dateTime",
               "@type": $xsd_dateTime.value,
               "@value": value.value.toISOString(),
             };
@@ -14647,14 +14647,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             } => {
           if (typeof value === "object") {
             return {
-              $type: "object" as const,
+              $type: "object",
               "@type": $xsd_date.value,
               "@value": $toIsoDateString(value),
             };
           }
           if (typeof value === "string") {
             return {
-              $type: "string" as const,
+              $type: "string",
               "@type": $xsd_string.value,
               "@value": value,
             };
@@ -14675,14 +14675,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             } => {
           if (value["$type"] === "dateTime") {
             return {
-              $type: "dateTime" as const,
+              $type: "dateTime",
               "@type": $xsd_dateTime.value,
               "@value": value.value.toISOString(),
             };
           }
           if (value["$type"] === "date") {
             return {
-              $type: "date" as const,
+              $type: "date",
               "@type": $xsd_date.value,
               "@value": $toIsoDateString(value.value),
             };
@@ -14701,14 +14701,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             } => {
           if (typeof value === "object") {
             return {
-              $type: "object" as const,
+              $type: "object",
               "@type": $xsd_decimal.value,
               "@value": value.toFixed(),
             };
           }
           if (typeof value === "string") {
             return {
-              $type: "string" as const,
+              $type: "string",
               "@type": $xsd_string.value,
               "@value": value,
             };
@@ -14725,28 +14725,28 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           | { $type: "string"; "@type": string; "@value": string } => {
           if (typeof value === "boolean") {
             return {
-              $type: "boolean" as const,
+              $type: "boolean",
               "@type": $xsd_boolean.value,
               "@value": value,
             };
           }
           if (typeof value === "number") {
             return {
-              $type: "number" as const,
+              $type: "number",
               "@type": $xsd_double.value,
               "@value": value,
             };
           }
           if (typeof value === "bigint") {
             return {
-              $type: "bigint" as const,
+              $type: "bigint",
               "@type": $xsd_integer.value,
               "@value": value.toString(),
             };
           }
           if (typeof value === "string") {
             return {
-              $type: "string" as const,
+              $type: "string",
               "@type": $xsd_string.value,
               "@value": value,
             };
@@ -14765,14 +14765,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             } => {
           if (typeof value === "object") {
             return {
-              $type: "object" as const,
+              $type: "object",
               "@language": value.language,
               "@value": value.value,
             };
           }
           if (typeof value === "string") {
             return {
-              $type: "string" as const,
+              $type: "string",
               "@type": $xsd_string.value,
               "@value": value,
             };
@@ -14791,14 +14791,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             } => {
           if (typeof value === "string") {
             return {
-              $type: "string" as const,
+              $type: "string",
               "@type": $xsd_string.value,
               "@value": value,
             };
           }
           if (typeof value === "object") {
             return {
-              $type: "object" as const,
+              $type: "object",
               "@type": $xsd_date.value,
               "@value": $toIsoDateString(value),
             };
@@ -14817,14 +14817,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             } => {
           if (typeof value === "string") {
             return {
-              $type: "string" as const,
+              $type: "string",
               "@type": $xsd_string.value,
               "@value": value,
             };
           }
           if (typeof value === "object") {
             return {
-              $type: "object" as const,
+              $type: "object",
               "@type": $xsd_decimal.value,
               "@value": value.toFixed(),
             };
@@ -14843,14 +14843,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             } => {
           if (typeof value === "string") {
             return {
-              $type: "string" as const,
+              $type: "string",
               "@type": $xsd_string.value,
               "@value": value,
             };
           }
           if (typeof value === "object") {
             return {
-              $type: "object" as const,
+              $type: "object",
               "@language": value.language,
               "@value": value.value,
             };
@@ -27116,14 +27116,14 @@ export namespace LangStringStruct {
                 } => {
               if (typeof value === "object") {
                 return {
-                  $type: "object" as const,
+                  $type: "object",
                   "@language": value.language,
                   "@value": value.value,
                 };
               }
               if (typeof value === "string") {
                 return {
-                  $type: "string" as const,
+                  $type: "string",
                   "@type": $xsd_string.value,
                   "@value": value,
                 };
@@ -27146,14 +27146,14 @@ export namespace LangStringStruct {
                 } => {
               if (typeof value === "string") {
                 return {
-                  $type: "string" as const,
+                  $type: "string",
                   "@type": $xsd_string.value,
                   "@value": value,
                 };
               }
               if (typeof value === "object") {
                 return {
-                  $type: "object" as const,
+                  $type: "object",
                   "@language": value.language,
                   "@value": value.value,
                 };
@@ -33845,14 +33845,11 @@ export namespace ListSetsStruct {
                   "@value": string;
                 } => {
               if (typeof value === "object") {
-                return {
-                  $type: "object" as const,
-                  "@list": value.map((item) => item),
-                };
+                return { $type: "object", "@list": value.map((item) => item) };
               }
               if (typeof value === "string") {
                 return {
-                  $type: "string" as const,
+                  $type: "string",
                   "@type": $xsd_string.value,
                   "@value": value,
                 };
@@ -57891,11 +57888,11 @@ export namespace UnionDiscriminantsStruct {
               | { $type: "object"; "@id": string }
               | { $type: "string"; "@type": string; "@value": string } => {
               if (typeof value === "object") {
-                return { $type: "object" as const, "@id": value.value };
+                return { $type: "object", "@id": value.value };
               }
               if (typeof value === "string") {
                 return {
-                  $type: "string" as const,
+                  $type: "string",
                   "@type": $xsd_string.value,
                   "@value": value,
                 };
@@ -57927,7 +57924,7 @@ export namespace UnionDiscriminantsStruct {
               }
               if (value["termType"] === "Literal") {
                 return {
-                  $type: "Literal" as const,
+                  $type: "Literal",
                   "@language":
                     value.language.length > 0 ? value.language : undefined,
                   "@type":
@@ -57973,7 +57970,7 @@ export namespace UnionDiscriminantsStruct {
                 }
                 if (value["$type"] === "string") {
                   return {
-                    $type: "string" as const,
+                    $type: "string",
                     "@type": $xsd_string.value,
                     "@value": value.value,
                   };
@@ -58000,7 +57997,7 @@ export namespace UnionDiscriminantsStruct {
                 value["termType"] === "NamedNode"
               ) {
                 return {
-                  $type: "BlankNode" as const,
+                  $type: "BlankNode",
                   "@id":
                     value.termType === "BlankNode"
                       ? `_:${value.value}`
@@ -58009,7 +58006,7 @@ export namespace UnionDiscriminantsStruct {
               }
               if (value["termType"] === "Literal") {
                 return {
-                  $type: "Literal" as const,
+                  $type: "Literal",
                   "@language":
                     value.language.length > 0 ? value.language : undefined,
                   "@type":
@@ -58031,11 +58028,11 @@ export namespace UnionDiscriminantsStruct {
           | { $type: "object"; "@id": string }
           | { $type: "string"; "@type": string; "@value": string } => {
           if (typeof value === "object") {
-            return { $type: "object" as const, "@id": value.value };
+            return { $type: "object", "@id": value.value };
           }
           if (typeof value === "string") {
             return {
-              $type: "string" as const,
+              $type: "string",
               "@type": $xsd_string.value,
               "@value": value,
             };
@@ -58063,7 +58060,7 @@ export namespace UnionDiscriminantsStruct {
           }
           if (value["termType"] === "Literal") {
             return {
-              $type: "Literal" as const,
+              $type: "Literal",
               "@language":
                 value.language.length > 0 ? value.language : undefined,
               "@type":
@@ -58104,7 +58101,7 @@ export namespace UnionDiscriminantsStruct {
           }
           if (value["$type"] === "string") {
             return {
-              $type: "string" as const,
+              $type: "string",
               "@type": $xsd_string.value,
               "@value": value.value,
             };
@@ -58127,7 +58124,7 @@ export namespace UnionDiscriminantsStruct {
             value["termType"] === "NamedNode"
           ) {
             return {
-              $type: "BlankNode" as const,
+              $type: "BlankNode",
               "@id":
                 value.termType === "BlankNode"
                   ? `_:${value.value}`
@@ -58136,7 +58133,7 @@ export namespace UnionDiscriminantsStruct {
           }
           if (value["termType"] === "Literal") {
             return {
-              $type: "Literal" as const,
+              $type: "Literal",
               "@language":
                 value.language.length > 0 ? value.language : undefined,
               "@type":
@@ -58157,11 +58154,11 @@ export namespace UnionDiscriminantsStruct {
             | { $type: "object"; "@id": string }
             | { $type: "string"; "@type": string; "@value": string } => {
             if (typeof value === "object") {
-              return { $type: "object" as const, "@id": value.value };
+              return { $type: "object", "@id": value.value };
             }
             if (typeof value === "string") {
               return {
-                $type: "string" as const,
+                $type: "string",
                 "@type": $xsd_string.value,
                 "@value": value,
               };
@@ -58192,7 +58189,7 @@ export namespace UnionDiscriminantsStruct {
               }
               if (value["termType"] === "Literal") {
                 return {
-                  $type: "Literal" as const,
+                  $type: "Literal",
                   "@language":
                     value.language.length > 0 ? value.language : undefined,
                   "@type":
@@ -58236,7 +58233,7 @@ export namespace UnionDiscriminantsStruct {
               }
               if (value["$type"] === "string") {
                 return {
-                  $type: "string" as const,
+                  $type: "string",
                   "@type": $xsd_string.value,
                   "@value": value.value,
                 };
@@ -58261,7 +58258,7 @@ export namespace UnionDiscriminantsStruct {
               value["termType"] === "NamedNode"
             ) {
               return {
-                $type: "BlankNode" as const,
+                $type: "BlankNode",
                 "@id":
                   value.termType === "BlankNode"
                     ? `_:${value.value}`
@@ -58270,7 +58267,7 @@ export namespace UnionDiscriminantsStruct {
             }
             if (value["termType"] === "Literal") {
               return {
-                $type: "Literal" as const,
+                $type: "Literal",
                 "@language":
                   value.language.length > 0 ? value.language : undefined,
                 "@type":
@@ -60421,14 +60418,10 @@ export namespace NamedDiscriminatedUnion1 {
     value: NamedDiscriminatedUnion1,
   ): NamedDiscriminatedUnion1.Json => {
     if (typeof value === "object") {
-      return { $type: "object" as const, "@id": value.value };
+      return { $type: "object", "@id": value.value };
     }
     if (typeof value === "string") {
-      return {
-        $type: "string" as const,
-        "@type": $xsd_string.value,
-        "@value": value,
-      };
+      return { $type: "string", "@type": $xsd_string.value, "@value": value };
     }
 
     throw new Error("unable to serialize to JSON");
@@ -60774,14 +60767,14 @@ export namespace NamedDiscriminatedUnion2 {
   ): NamedDiscriminatedUnion2.Json => {
     if (value["$type"] === "date") {
       return {
-        $type: "date" as const,
+        $type: "date",
         "@type": $xsd_date.value,
         "@value": $toIsoDateString(value.value),
       };
     }
     if (value["$type"] === "dateTime") {
       return {
-        $type: "dateTime" as const,
+        $type: "dateTime",
         "@type": $xsd_dateTime.value,
         "@value": value.value.toISOString(),
       };

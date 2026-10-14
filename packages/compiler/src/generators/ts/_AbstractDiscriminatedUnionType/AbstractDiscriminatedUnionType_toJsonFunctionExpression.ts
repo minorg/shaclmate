@@ -14,7 +14,7 @@ ${joinCode(
       code`if (${typeCheck(code`value`)}) { return ${type.toJsonExpression({
         discriminantProperty: singleEntryRecord(
           this.configuration.objectDiscriminantProperty.jsonName,
-          code`${literalOf(primaryDiscriminantValue)} as const`,
+          code`${literalOf(primaryDiscriminantValue)}`,
         ),
         form: "expanded",
         variables: { value: unwrap(code`value`) },

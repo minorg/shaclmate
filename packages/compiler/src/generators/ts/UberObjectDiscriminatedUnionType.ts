@@ -122,7 +122,7 @@ ${this.memberTypeSwitch({
     code`return ${member.toJsonExpression({
       discriminantProperty: singleEntryRecord(
         this.configuration.objectDiscriminantProperty.jsonName,
-        code`${literalOf(member.discriminantProperty.unsafeCoerce().value)} as const`,
+        code`${literalOf(member.discriminantProperty.unsafeCoerce().value)}`,
       ),
       form: "expanded",
       variables: { value: code`object` },
