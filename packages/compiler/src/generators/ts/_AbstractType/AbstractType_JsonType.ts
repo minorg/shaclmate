@@ -265,7 +265,7 @@ class JsonObjectType extends AbstractJsonType {
       this.members.map((member) => {
         let memberTypeExpression: Code;
         if (member.recursive) {
-          memberTypeExpression = code`${this.name.unsafeCoerce().join(".")}`;
+          memberTypeExpression = code`${member.type.name.unsafeCoerce().join(".")}`;
         } else {
           memberTypeExpression = member.type.expression;
         }
@@ -283,7 +283,7 @@ class JsonObjectType extends AbstractJsonType {
         let schema: Code;
         if (member.recursive) {
           // Don't recurse into the member's type to avoid blowing out the stack
-          const name = this.name.unsafeCoerce().join(".");
+          const name = member.type.name.unsafeCoerce().join(".");
           schema = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${name}> => ${name}.schema())`;
         } else {
           schema = member.type.schema;
