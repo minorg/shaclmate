@@ -134,7 +134,7 @@ export class ObjectType_ShaclProperty<
       optional: this.minCount === 0n && this.type.kind !== "DefaultValue",
       recursive: this.recursive,
       type: this.recursive
-        ? this.jsonTypeFactory.createJsonNeverType()
+        ? () => this.type.jsonType({ form: "compact" })
         : this.type.jsonType({ form: "compact" }),
       uiSchemaElement: Maybe.of(({ variables }) => {
         const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;

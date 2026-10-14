@@ -396,6 +396,7 @@ export abstract class AbstractDiscriminatedUnionType<
       }),
       {
         name: this.name.map((name) => [name, "Json"]).extract(),
+        recursive: this.recursive,
       },
     );
   }

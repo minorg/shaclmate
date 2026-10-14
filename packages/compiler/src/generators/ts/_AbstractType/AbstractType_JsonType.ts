@@ -203,6 +203,7 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
     ...superParameters
   }: {
     memberTypes: readonly JsonObjectType[];
+    recursive: boolean;
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
     this.memberTypes = memberTypes;
@@ -225,21 +226,6 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
   }
 }
 
-/**
- * A special type used as a stand-in for recursive types.
- */
-class JsonNeverType extends AbstractJsonType {
-  override readonly kind = "JsonNever";
-
-  protected override get inlineExpression(): Code {
-    throw new Error("JsonNeverType.inlineExpression: should never be invoked");
-  }
-
-  protected override get schemaExpression(): Code {
-    throw new Error("JsonNeverType.schemaExpression: should never be invoked");
-  }
-}
-
 class JsonNumberType extends AbstractJsonPrimitiveType<number> {
   override readonly kind = "JsonNumber";
   protected override readonly typeof = "number";
@@ -248,6 +234,7 @@ class JsonNumberType extends AbstractJsonPrimitiveType<number> {
 class JsonObjectType extends AbstractJsonType {
   override readonly kind = "JsonObject";
   readonly members: readonly JsonObjectType.Member[];
+  private readonly memberTypes: (JsonType | null)[];
 
   constructor({
     members,
@@ -257,20 +244,14 @@ class JsonObjectType extends AbstractJsonType {
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
     this.members = members;
+    this.memberTypes = Array.from({ length: members.length }).map(() => null);
   }
 
   @Memoize()
   protected get inlineExpression(): Code {
     return code`{ ${joinCode(
-      this.members.map((member) => {
-        let memberTypeExpression: Code;
-        if (member.recursive) {
-          memberTypeExpression = code`${member.type.name.unsafeCoerce().join(".")}`;
-        } else {
-          memberTypeExpression = member.type.expression;
-        }
-
-        return code`"${member.name}"${member.optional ? "?" : ""}: ${memberTypeExpression}`;
+      this.members.map((member, memberI) => {
+        return code`"${member.name}"${member.optional ? "?" : ""}: ${this.memberType(memberI).expression}`;
       }),
       { on: ", " },
     )} }`;
@@ -279,16 +260,12 @@ class JsonObjectType extends AbstractJsonType {
   @Memoize()
   protected get schemaExpression(): Code {
     return code`${this.reusables.imports.z}.object({ ${joinCode(
-      this.members.map((member) => {
-        let schema: Code;
+      this.members.map((member, memberI) => {
+        const memberType = this.memberType(memberI);
+        let schema: Code = memberType.schema;
         if (member.recursive) {
-          // Don't recurse into the member's type to avoid blowing out the stack
-          const name = member.type.name.unsafeCoerce().join(".");
-          schema = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${name}> => ${name}.schema())`;
-        } else {
-          schema = member.type.schema;
+          schema = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${memberType.expression}> => ${schema})`;
         }
-
         if (member.optional) {
           schema = code`${schema}.optional()`;
         }
@@ -332,6 +309,16 @@ class JsonObjectType extends AbstractJsonType {
   const scopePrefix = parameters?.scopePrefix ?? "#";
   return ${uiSchema};
 })`;
+  }
+
+  private memberType(memberI: number): JsonType {
+    if (this.memberTypes[memberI] === null) {
+      this.memberTypes[memberI] =
+        typeof this.members[memberI].type === "function"
+          ? this.members[memberI].type()
+          : this.members[memberI].type;
+    }
+    return this.memberTypes[memberI];
   }
 
   protected override moduleDeclarations(parameters: {
@@ -464,20 +451,14 @@ class JsonTypeFactory {
     memberTypes: readonly JsonObjectType[],
     options?: {
       name?: AbstractJsonType.Name;
+      recursive?: boolean;
     },
   ): JsonDiscriminatedUnionType {
     return new JsonDiscriminatedUnionType({
       ...this.constructorParameters,
       memberTypes,
       name: Maybe.fromNullable(options?.name),
-    });
-  }
-
-  @Memoize()
-  createJsonNeverType(): JsonNeverType {
-    return new JsonNeverType({
-      ...this.constructorParameters,
-      name: Maybe.empty(),
+      recursive: !!options?.recursive,
     });
   }
 
@@ -554,7 +535,6 @@ type JsonType =
   | JsonArrayType
   | JsonBooleanType
   | JsonDiscriminatedUnionType
-  | JsonNeverType
   | JsonNumberType
   | JsonObjectType
   | JsonStringType;
@@ -581,7 +561,7 @@ namespace JsonObjectType {
     readonly name: string;
     readonly optional: boolean;
     readonly recursive: boolean;
-    readonly type: AbstractType_JsonType;
+    readonly type: JsonType | (() => JsonType);
 
     /**
      * Element object (usually a control https://jsonforms.io/docs/uischema/controls) for a JSON Forms UI schema.
