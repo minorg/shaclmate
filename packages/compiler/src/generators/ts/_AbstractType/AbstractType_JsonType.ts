@@ -153,7 +153,7 @@ abstract class AbstractJsonPrimitiveType<
       case 1:
         return code`${this.reusables.imports.z}.literal(${literalOf(this.in_[0])})`;
       default:
-        return code`${this.reusables.imports.z}.enum(${this.inReference.orDefault(code`${arrayOf(this.in_)}`)})`;
+        return code`${this.reusables.imports.z}.literal(${this.inReference.orDefault(code`${arrayOf(...this.in_)}`)})`;
     }
   }
 }
@@ -222,7 +222,10 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
 
   @Memoize()
   protected get schemaExpression(): Code {
-    return code`${this.reusables.imports.z}.discriminatedUnion(${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}, [${joinCode(this.memberTypes.map((memberType) => memberType.schema), {on: ", "})}])`;
+    return code`${this.reusables.imports.z}.discriminatedUnion(${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}, [${joinCode(
+      this.memberTypes.map((memberType) => memberType.schema),
+      { on: ", " },
+    )}])`;
   }
 }
 
@@ -415,7 +418,7 @@ class JsonStringType extends AbstractJsonPrimitiveType<string> {
         return code`${this.reusables.imports.z}.literal(${literalOf(this.in_[0])})`;
       default:
         invariant(this.format.isNothing());
-        return code`${this.reusables.imports.z}.enum(${this.inReference.orDefault(code`${arrayOf(this.in_)}`)})`;
+        return code`${this.reusables.imports.z}.enum(${this.inReference.orDefault(code`${arrayOf(...this.in_)}`)})`;
     }
   }
 }
@@ -547,22 +550,6 @@ class JsonTypeFactory {
       inReference: Maybe.fromNullable(parameters?.inReference),
       minLength: Maybe.fromNullable(parameters?.minLength),
       name: Maybe.fromNullable(parameters?.name),
-    });
-  }
-
-  createJsonValueObjectType(members: {
-    "@type": NamedNode;
-    "@value": JsonType;
-  }): JsonObjectType {
-    return this.createJsonObjectType({
-      "@type": {
-        type: this.createJsonStringType({
-          in_: [members["@type"].value],
-        }),
-      },
-      "@value": {
-        type: members["@value"],
-      },
     });
   }
 }

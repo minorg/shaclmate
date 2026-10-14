@@ -46,7 +46,17 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
 
   @Memoize()
   get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
-    return Maybe.empty();
+    return Maybe.of({
+      description: Maybe.empty(),
+      label: Maybe.empty(),
+      name: this.configuration.objectDiscriminantProperty.jsonName,
+      optional: false,
+      recursive: false,
+      type: this.jsonTypeFactory.createJsonStringType({
+        in_: [this.value],
+      }),
+      uiSchemaElement: Maybe.empty(),
+    });
   }
 
   override get schema(): Maybe<Code> {
@@ -105,7 +115,9 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
   }
 
   override toJsonInitializer(): Maybe<Code> {
-    return Maybe.empty();
+    return Maybe.of(
+      code`${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}: ${literalOf(this.value)} as const`,
+    );
   }
 
   override toRdfRdfResourceValuesStatements(): readonly Code[] {

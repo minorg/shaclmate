@@ -186,7 +186,7 @@ export class TermType<
         const toJsonExpression: Record<string, Code> = {};
         toJsonExpression[
           this.configuration.objectDiscriminantProperty.jsonName
-        ] = code`${literalOf(nodeKind)}`;
+        ] = code`${literalOf(nodeKind)} as const`;
         switch (nodeKind) {
           case "BlankNode":
             toJsonExpression["@id"] = code`\`_:\${${variables.value}.value}\``;

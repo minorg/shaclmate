@@ -64,10 +64,14 @@ export abstract class AbstractTypedLiteralType<
       case "compact":
         return this.compactJsonType;
       case "expanded":
-        return this.jsonTypeFactory.createJsonValueObjectType({
+        return this.jsonTypeFactory.createJsonObjectType({
           ...discriminantProperty,
-          "@type": this.datatype,
-          "@value": this.compactJsonType,
+          "@type": {
+            type: this.jsonTypeFactory.createJsonStringType(),
+          },
+          "@value": {
+            type: this.compactJsonType,
+          },
         });
     }
   }
@@ -83,7 +87,7 @@ export abstract class AbstractTypedLiteralType<
       case "expanded":
         return code`${{
           ...discriminantProperty,
-          "@type": this.rdfjsTermExpression(this.datatype),
+          "@type": code`${this.rdfjsTermExpression(this.datatype)}.value`,
           "@value": this.toCompactJsonExpression({ variables }),
         }}`;
     }

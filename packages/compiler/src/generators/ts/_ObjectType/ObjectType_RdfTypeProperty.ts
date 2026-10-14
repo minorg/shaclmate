@@ -71,6 +71,9 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
           ? this.jsonTypeFactory.createJsonStringType()
           : this.jsonTypeFactory.createJsonArrayType(
               this.jsonTypeFactory.createJsonStringType(),
+              {
+                minCount: 1n,
+              },
             ),
       uiSchemaElement: Maybe.empty(),
     });
