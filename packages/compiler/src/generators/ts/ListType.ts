@@ -132,6 +132,7 @@ export class ListType<
   }
 
   override toJsonExpression({
+    discriminantProperty,
     form,
     variables,
   }: Parameters<
@@ -142,7 +143,7 @@ export class ListType<
       case "compact":
         return toCompactJsonExpression;
       case "expanded":
-        return code`${{ "@list": toCompactJsonExpression }}`;
+        return code`${{ ...discriminantProperty, "@list": toCompactJsonExpression }}`;
     }
   }
 
