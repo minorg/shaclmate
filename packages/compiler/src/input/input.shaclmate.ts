@@ -3472,9 +3472,11 @@ export type OperationHttpBinding = {
 
   readonly $type: "OperationHttpBinding";
 
+  readonly errorResponses: readonly OperationHttpErrorResponseBinding[];
+
   readonly request: OperationHttpRequestBinding;
 
-  readonly responses: readonly OperationHttpResponseBinding[];
+  readonly resultResponse: Maybe<OperationHttpResultResponseBinding>;
 };
 
 export namespace OperationHttpBinding {
@@ -3501,6 +3503,19 @@ export namespace OperationHttpBinding {
             schema: OperationHttpBinding.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
+        errorResponses: $shaclPropertyFromRdf<
+          readonly OperationHttpErrorResponseBinding[],
+          $CollectionSchema<OperationHttpErrorResponseBinding.Schema>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: OperationHttpBinding.schema.properties.errorResponses,
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
+            OperationHttpErrorResponseBinding,
+            OperationHttpErrorResponseBinding.Schema
+          >(OperationHttpErrorResponseBinding.fromRdfResourceValues),
+        }),
         request: $shaclPropertyFromRdf<
           OperationHttpRequestBinding,
           OperationHttpRequestBinding.Schema
@@ -3512,18 +3527,18 @@ export namespace OperationHttpBinding {
           typeFromRdfResourceValues:
             OperationHttpRequestBinding.fromRdfResourceValues,
         }),
-        responses: $shaclPropertyFromRdf<
-          readonly OperationHttpResponseBinding[],
-          $CollectionSchema<OperationHttpResponseBinding.Schema>
+        resultResponse: $shaclPropertyFromRdf<
+          Maybe<OperationHttpResultResponseBinding>,
+          $MaybeSchema<OperationHttpResultResponseBinding.Schema>
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: OperationHttpBinding.schema.properties.responses,
-          typeFromRdfResourceValues: $setFromRdfResourceValues<
-            OperationHttpResponseBinding,
-            OperationHttpResponseBinding.Schema
-          >(OperationHttpResponseBinding.fromRdfResourceValues),
+          propertySchema: OperationHttpBinding.schema.properties.resultResponse,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            OperationHttpResultResponseBinding,
+            OperationHttpResultResponseBinding.Schema
+          >(OperationHttpResultResponseBinding.fromRdfResourceValues),
         }),
       }).chain((properties) => OperationHttpBinding.create(properties)),
     );
@@ -3542,23 +3557,35 @@ export namespace OperationHttpBinding {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly errorResponses?:
+      | OperationHttpErrorResponseBinding
+      | readonly OperationHttpErrorResponseBinding[];
     readonly request: OperationHttpRequestBinding;
-    readonly responses?:
-      | OperationHttpResponseBinding
-      | readonly OperationHttpResponseBinding[];
+    readonly resultResponse?:
+      | OperationHttpResultResponseBinding
+      | Maybe<OperationHttpResultResponseBinding>;
   }): Either<Error, OperationHttpBinding> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
-      request: Either.of(parameters.request),
-      responses: $convertToScalarSet($identityConversionFunction)(
-        parameters.responses,
+      errorResponses: $convertToScalarSet($identityConversionFunction)(
+        parameters.errorResponses,
         parameters.$defaultNamespace,
       ).chain((value) =>
         $validateArray($identityValidationFunction)(
-          OperationHttpBinding.schema.properties.responses.type,
+          OperationHttpBinding.schema.properties.errorResponses.type,
+          value,
+        ),
+      ),
+      request: Either.of(parameters.request),
+      resultResponse: $convertToMaybe($identityConversionFunction)(
+        parameters.resultResponse,
+        parameters.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          OperationHttpBinding.schema.properties.resultResponse.type,
           value,
         ),
       ),
@@ -3582,10 +3609,13 @@ export namespace OperationHttpBinding {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly errorResponses?:
+      | OperationHttpErrorResponseBinding
+      | readonly OperationHttpErrorResponseBinding[];
     readonly request: OperationHttpRequestBinding;
-    readonly responses?:
-      | OperationHttpResponseBinding
-      | readonly OperationHttpResponseBinding[];
+    readonly resultResponse?:
+      | OperationHttpResultResponseBinding
+      | Maybe<OperationHttpResultResponseBinding>;
   }): OperationHttpBinding {
     return create(parameters).unsafeCoerce();
   }
@@ -3630,6 +3660,20 @@ export namespace OperationHttpBinding {
         ],
       },
       $type: { kind: "Discriminant", value: "OperationHttpBinding" },
+      errorResponses: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#errorResponse",
+        ),
+        get type() {
+          return {
+            kind: "Set" as const,
+            get itemType() {
+              return OperationHttpErrorResponseBinding.schema;
+            },
+          };
+        },
+      },
       request: {
         kind: "Shacl",
         path: dataFactory.namedNode(
@@ -3639,16 +3683,16 @@ export namespace OperationHttpBinding {
           return OperationHttpRequestBinding.schema;
         },
       },
-      responses: {
+      resultResponse: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#response",
+          "http://purl.org/shaclmate/ontology#resultResponse",
         ),
         get type() {
           return {
-            kind: "Set" as const,
+            kind: "Option" as const,
             get itemType() {
-              return OperationHttpResponseBinding.schema;
+              return OperationHttpResultResponseBinding.schema;
             },
           };
         },
@@ -3663,6 +3707,166 @@ export namespace OperationHttpBinding {
   ) => Record<string, string> = (_operationHttpBinding) =>
     $compactRecord({
       $identifier: _operationHttpBinding.$identifier().toString(),
+    });
+}
+
+export type OperationHttpErrorResponseBinding = {
+  readonly $identifier: () => OperationHttpErrorResponseBinding.Identifier;
+
+  readonly $type: "OperationHttpErrorResponseBinding";
+
+  readonly error: NamedNode;
+
+  readonly httpStatusCode: HttpResponseStatusCode;
+};
+
+export namespace OperationHttpErrorResponseBinding {
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    OperationHttpErrorResponseBinding
+  > = (resource, options) =>
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
+          ...options,
+          focusResource: resource,
+          propertyPath: $rdf_subject,
+          schema:
+            OperationHttpErrorResponseBinding.schema.properties.$identifier
+              .type,
+        },
+      ).chain((values) => values.head()),
+      error: $shaclPropertyFromRdf<NamedNode, $IriSchema<string>>({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          OperationHttpErrorResponseBinding.schema.properties.error,
+        typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
+      }),
+      httpStatusCode: $shaclPropertyFromRdf<
+        HttpResponseStatusCode,
+        $NumericSchema<HttpResponseStatusCode>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          OperationHttpErrorResponseBinding.schema.properties.httpStatusCode,
+        typeFromRdfResourceValues:
+          $intFromRdfResourceValues<HttpResponseStatusCode>,
+      }),
+    }).chain((properties) =>
+      OperationHttpErrorResponseBinding.create(properties),
+    );
+
+  export const $toString: (
+    _operationHttpErrorResponseBinding: OperationHttpErrorResponseBinding,
+  ) => string = (_operationHttpErrorResponseBinding) =>
+    `OperationHttpErrorResponseBinding(${JSON.stringify(toStringRecord(_operationHttpErrorResponseBinding))})`;
+
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => OperationHttpErrorResponseBinding.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly error: (keyof $DefaultNamespaceT & string) | NamedNode;
+    readonly httpStatusCode: HttpResponseStatusCode;
+  }): Either<Error, OperationHttpErrorResponseBinding> =>
+    $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(
+        parameters.$identifier,
+        parameters.$defaultNamespace,
+      ),
+      error: $convertToIri(parameters.error, parameters.$defaultNamespace),
+      httpStatusCode: Either.of(parameters.httpStatusCode),
+    })
+      .map((properties) => ({
+        ...properties,
+        $type: "OperationHttpErrorResponseBinding" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          $toString: OperationHttpErrorResponseBinding.$toString,
+        }),
+      );
+
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => OperationHttpErrorResponseBinding.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly error: (keyof $DefaultNamespaceT & string) | NamedNode;
+    readonly httpStatusCode: HttpResponseStatusCode;
+  }): OperationHttpErrorResponseBinding {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    OperationHttpErrorResponseBinding,
+    OperationHttpErrorResponseBinding.Schema
+  > = (values, options) =>
+    values.chainMap((value) =>
+      value
+        .toResource()
+        .chain((resource) => fromRdfResource(resource, options)),
+    );
+
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
+  export const isOperationHttpErrorResponseBinding = (
+    object: $Object,
+  ): object is OperationHttpErrorResponseBinding =>
+    object.$type === "OperationHttpErrorResponseBinding";
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier",
+        type: { kind: "Identifier" as const },
+      },
+      $type: {
+        kind: "Discriminant",
+        value: "OperationHttpErrorResponseBinding",
+      },
+      error: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://schema.org/error"),
+        type: { kind: "Iri" as const },
+      },
+      httpStatusCode: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#httpStatusCode",
+        ),
+        get type() {
+          return HttpResponseStatusCode.schema;
+        },
+      },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toStringRecord: (
+    _operationHttpErrorResponseBinding: OperationHttpErrorResponseBinding,
+  ) => Record<string, string> = (_operationHttpErrorResponseBinding) =>
+    $compactRecord({
+      $identifier: _operationHttpErrorResponseBinding.$identifier().toString(),
     });
 }
 
@@ -3875,175 +4079,121 @@ export namespace OperationHttpRequestBinding {
     });
 }
 
-export type OperationHttpResponseBinding = {
-  readonly $identifier: () => OperationHttpResponseBinding.Identifier;
+export type OperationHttpResultResponseBinding = {
+  readonly $identifier: () => OperationHttpResultResponseBinding.Identifier;
 
-  readonly $type: "OperationHttpResponseBinding";
+  readonly $type: "OperationHttpResultResponseBinding";
 
   readonly contentType: Maybe<HttpResponseContentType>;
 
-  readonly error: Maybe<NamedNode>;
-
-  readonly statusCode: Maybe<HttpResponseStatusCode>;
+  readonly httpStatusCode: HttpResponseStatusCode;
 };
 
-export namespace OperationHttpResponseBinding {
+export namespace OperationHttpResultResponseBinding {
   export const _fromRdfResource: $_FromRdfResourceFunction<
-    OperationHttpResponseBinding
+    OperationHttpResultResponseBinding
   > = (resource, options) =>
-    (!options.ignoreRdfType
-      ? $ensureRdfResourceType(
-          resource,
-          [OperationHttpResponseBinding.schema.properties.$rdfType.fromRdfType],
-          {
-            graph: options.graph,
-          },
-        )
-      : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      $sequenceRecord({
-        $identifier: $identifierFromRdfResourceValues(
-          $rdfResourceIdentifierValues(resource),
-          {
-            ...options,
-            focusResource: resource,
-            propertyPath: $rdf_subject,
-            schema:
-              OperationHttpResponseBinding.schema.properties.$identifier.type,
-          },
-        ).chain((values) => values.head()),
-        contentType: $shaclPropertyFromRdf<
-          Maybe<HttpResponseContentType>,
-          $MaybeSchema<$StringSchema<HttpResponseContentType>>
-        >({
+    $sequenceRecord({
+      $identifier: $identifierFromRdfResourceValues(
+        $rdfResourceIdentifierValues(resource),
+        {
           ...options,
           focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            OperationHttpResponseBinding.schema.properties.contentType,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            HttpResponseContentType,
-            $StringSchema<HttpResponseContentType>
-          >($stringFromRdfResourceValues<HttpResponseContentType>),
-        }),
-        error: $shaclPropertyFromRdf<
-          Maybe<NamedNode>,
-          $MaybeSchema<$IriSchema<string>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: OperationHttpResponseBinding.schema.properties.error,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            NamedNode,
-            $IriSchema<string>
-          >($iriFromRdfResourceValues<string>),
-        }),
-        statusCode: $shaclPropertyFromRdf<
-          Maybe<HttpResponseStatusCode>,
-          $MaybeSchema<$NumericSchema<HttpResponseStatusCode>>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            OperationHttpResponseBinding.schema.properties.statusCode,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-            HttpResponseStatusCode,
-            $NumericSchema<HttpResponseStatusCode>
-          >($intFromRdfResourceValues<HttpResponseStatusCode>),
-        }),
-      }).chain((properties) => OperationHttpResponseBinding.create(properties)),
+          propertyPath: $rdf_subject,
+          schema:
+            OperationHttpResultResponseBinding.schema.properties.$identifier
+              .type,
+        },
+      ).chain((values) => values.head()),
+      contentType: $shaclPropertyFromRdf<
+        Maybe<HttpResponseContentType>,
+        $MaybeSchema<$StringSchema<HttpResponseContentType>>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          OperationHttpResultResponseBinding.schema.properties.contentType,
+        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          HttpResponseContentType,
+          $StringSchema<HttpResponseContentType>
+        >($stringFromRdfResourceValues<HttpResponseContentType>),
+      }),
+      httpStatusCode: $shaclPropertyFromRdf<
+        HttpResponseStatusCode,
+        $NumericSchema<HttpResponseStatusCode>
+      >({
+        ...options,
+        focusResource: resource,
+        ignoreRdfType: true,
+        propertySchema:
+          OperationHttpErrorResponseBinding.schema.properties.httpStatusCode,
+        typeFromRdfResourceValues:
+          $intFromRdfResourceValues<HttpResponseStatusCode>,
+      }),
+    }).chain((properties) =>
+      OperationHttpResultResponseBinding.create(properties),
     );
 
   export const $toString: (
-    _operationHttpResponseBinding: OperationHttpResponseBinding,
-  ) => string = (_operationHttpResponseBinding) =>
-    `OperationHttpResponseBinding(${JSON.stringify(toStringRecord(_operationHttpResponseBinding))})`;
+    _operationHttpResultResponseBinding: OperationHttpResultResponseBinding,
+  ) => string = (_operationHttpResultResponseBinding) =>
+    `OperationHttpResultResponseBinding(${JSON.stringify(toStringRecord(_operationHttpResultResponseBinding))})`;
 
   export const create = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
+  >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
-      | (() => OperationHttpResponseBinding.Identifier)
+      | (() => OperationHttpResultResponseBinding.Identifier)
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly contentType?:
       | HttpResponseContentType
       | Maybe<HttpResponseContentType>;
-    readonly error?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly statusCode?:
-      | HttpResponseStatusCode
-      | Maybe<HttpResponseStatusCode>;
-  }): Either<Error, OperationHttpResponseBinding> =>
+    readonly httpStatusCode: HttpResponseStatusCode;
+  }): Either<Error, OperationHttpResultResponseBinding> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters?.$identifier,
-        parameters?.$defaultNamespace,
+        parameters.$identifier,
+        parameters.$defaultNamespace,
       ),
       contentType: $convertToMaybe($identityConversionFunction)(
-        parameters?.contentType,
-        parameters?.$defaultNamespace,
+        parameters.contentType,
+        parameters.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
-          OperationHttpResponseBinding.schema.properties.contentType.type,
+          OperationHttpResultResponseBinding.schema.properties.contentType.type,
           value,
         ),
       ),
-      error: $convertToMaybe($convertToIri)(
-        parameters?.error,
-        parameters?.$defaultNamespace,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          OperationHttpResponseBinding.schema.properties.error.type,
-          value,
-        ),
-      ),
-      statusCode: $convertToMaybe($identityConversionFunction)(
-        parameters?.statusCode,
-        parameters?.$defaultNamespace,
-      ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          OperationHttpResponseBinding.schema.properties.statusCode.type,
-          value,
-        ),
-      ),
+      httpStatusCode: Either.of(parameters.httpStatusCode),
     })
       .map((properties) => ({
         ...properties,
-        $type: "OperationHttpResponseBinding" as const,
+        $type: "OperationHttpResultResponseBinding" as const,
       }))
       .map((object) =>
         $monkeyPatchObject(object, {
-          $toString: OperationHttpResponseBinding.$toString,
+          $toString: OperationHttpResultResponseBinding.$toString,
         }),
       );
 
   export function createUnsafe<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters?: {
+  >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
-      | (() => OperationHttpResponseBinding.Identifier)
+      | (() => OperationHttpResultResponseBinding.Identifier)
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly contentType?:
       | HttpResponseContentType
       | Maybe<HttpResponseContentType>;
-    readonly error?:
-      | (keyof $DefaultNamespaceT & string)
-      | NamedNode
-      | Maybe<NamedNode>;
-    readonly statusCode?:
-      | HttpResponseStatusCode
-      | Maybe<HttpResponseStatusCode>;
-  }): OperationHttpResponseBinding {
+    readonly httpStatusCode: HttpResponseStatusCode;
+  }): OperationHttpResultResponseBinding {
     return create(parameters).unsafeCoerce();
   }
 
@@ -4051,8 +4201,8 @@ export namespace OperationHttpResponseBinding {
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    OperationHttpResponseBinding,
-    OperationHttpResponseBinding.Schema
+    OperationHttpResultResponseBinding,
+    OperationHttpResultResponseBinding.Schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
@@ -4065,10 +4215,10 @@ export namespace OperationHttpResponseBinding {
     export const parse = $parseIdentifier;
   }
 
-  export const isOperationHttpResponseBinding = (
+  export const isOperationHttpResultResponseBinding = (
     object: $Object,
-  ): object is OperationHttpResponseBinding =>
-    object.$type === "OperationHttpResponseBinding";
+  ): object is OperationHttpResultResponseBinding =>
+    object.$type === "OperationHttpResultResponseBinding";
 
   export const schema = {
     properties: {
@@ -4076,18 +4226,10 @@ export namespace OperationHttpResponseBinding {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $rdfType: {
-        fromRdfType: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#OperationHttpResponseBinding",
-        ),
-        kind: "RdfType",
-        toRdfTypes: [
-          dataFactory.namedNode(
-            "http://purl.org/shaclmate/ontology#OperationHttpResponseBinding",
-          ),
-        ],
+      $type: {
+        kind: "Discriminant",
+        value: "OperationHttpResultResponseBinding",
       },
-      $type: { kind: "Discriminant", value: "OperationHttpResponseBinding" },
       contentType: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://schema.org/contentType"),
@@ -4100,23 +4242,13 @@ export namespace OperationHttpResponseBinding {
           };
         },
       },
-      error: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://schema.org/error"),
-        type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
-      },
-      statusCode: {
+      httpStatusCode: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#httpStatusCode",
         ),
         get type() {
-          return {
-            kind: "Option" as const,
-            get itemType() {
-              return HttpResponseStatusCode.schema;
-            },
-          };
+          return HttpResponseStatusCode.schema;
         },
       },
     },
@@ -4125,10 +4257,10 @@ export namespace OperationHttpResponseBinding {
   export type Schema = typeof schema;
 
   export const toStringRecord: (
-    _operationHttpResponseBinding: OperationHttpResponseBinding,
-  ) => Record<string, string> = (_operationHttpResponseBinding) =>
+    _operationHttpResultResponseBinding: OperationHttpResultResponseBinding,
+  ) => Record<string, string> = (_operationHttpResultResponseBinding) =>
     $compactRecord({
-      $identifier: _operationHttpResponseBinding.$identifier().toString(),
+      $identifier: _operationHttpResultResponseBinding.$identifier().toString(),
     });
 }
 
@@ -7891,8 +8023,9 @@ export type $Object =
   | Ontology
   | Operation
   | OperationHttpBinding
+  | OperationHttpErrorResponseBinding
   | OperationHttpRequestBinding
-  | OperationHttpResponseBinding
+  | OperationHttpResultResponseBinding
   | PropertyGroup
   | PropertyShape
   | Service
@@ -7910,10 +8043,12 @@ export namespace $Object {
         return Operation.$toString(object);
       case "OperationHttpBinding":
         return OperationHttpBinding.$toString(object);
+      case "OperationHttpErrorResponseBinding":
+        return OperationHttpErrorResponseBinding.$toString(object);
       case "OperationHttpRequestBinding":
         return OperationHttpRequestBinding.$toString(object);
-      case "OperationHttpResponseBinding":
-        return OperationHttpResponseBinding.$toString(object);
+      case "OperationHttpResultResponseBinding":
+        return OperationHttpResultResponseBinding.$toString(object);
       case "PropertyGroup":
         return PropertyGroup.$toString(object);
       case "PropertyShape":

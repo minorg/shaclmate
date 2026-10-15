@@ -104,7 +104,12 @@ shaclmate:Operation-result
 
 shaclmate:OperationHttpBinding
     a rdfs:Class, sh:NodeShape ;
-    sh:property shaclmate:OperationHttpBinding-request, shaclmate:OperationHttpBinding-responses .
+    sh:property shaclmate:OperationHttpBinding-errorResponses, shaclmate:OperationHttpBinding-request, shaclmate:OperationHttpBinding-resultResponse .
+
+shaclmate:OperationHttpBinding-errorResponses
+    a sh:PropertyShape ;
+    sh:node shaclmate:OperationHttpErrorResponseBinding ;
+    sh:path shaclmate:errorResponse .
 
 shaclmate:OperationHttpBinding-request
     a sh:PropertyShape ;
@@ -113,10 +118,22 @@ shaclmate:OperationHttpBinding-request
     sh:node shaclmate:OperationHttpRequestBinding ;
     sh:path shaclmate:request .
 
-shaclmate:OperationHttpBinding-responses
+shaclmate:OperationHttpBinding-resultResponse
     a sh:PropertyShape ;
-    sh:node shaclmate:OperationHttpResponseBinding ;
-    sh:path shaclmate:response .
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationHttpResultResponseBinding ;
+    sh:path shaclmate:resultResponse .
+
+shaclmate:OperationHttpErrorResponseBinding
+    a sh:NodeShape ;
+    sh:property shaclmate:OperationHttpErrorResponseBinding-error, shaclmate:OperationHttpResponseBinding-statusCode .
+
+shaclmate:OperationHttpErrorResponseBinding-error
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:nodeKind sh:IRI ;
+    sh:path schema:error .
 
 shaclmate:OperationHttpRequestBinding
     a sh:NodeShape ;
@@ -141,27 +158,22 @@ shaclmate:OperationHttpRequestBinding-urlTemplate
     sh:minCount 1 ;
     sh:path schema:urlTemplate .
 
-shaclmate:OperationHttpResponseBinding
-    a rdfs:Class, sh:NodeShape ;
-    sh:property shaclmate:OperationHttpResponseBinding-contentType, shaclmate:OperationHttpResponseBinding-error, shaclmate:OperationHttpResponseBinding-statusCode .
+shaclmate:OperationHttpResponseBinding-statusCode
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:node shaclmate:HttpResponseStatusCode ;
+    sh:path shaclmate:httpStatusCode .
 
-shaclmate:OperationHttpResponseBinding-contentType
+shaclmate:OperationHttpResultResponseBinding
+    a sh:NodeShape ;
+    sh:property shaclmate:OperationHttpResponseBinding-statusCode, shaclmate:OperationHttpResultResponseBinding-contentType .
+
+shaclmate:OperationHttpResultResponseBinding-contentType
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:node shaclmate:HttpResponseContentType ;
     sh:path schema:contentType .
-
-shaclmate:OperationHttpResponseBinding-error
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:nodeKind sh:IRI ;
-    sh:path schema:error .
-
-shaclmate:OperationHttpResponseBinding-statusCode
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:HttpResponseStatusCode ;
-    sh:path shaclmate:httpStatusCode .
 
 shaclmate:PropertyShape
     sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
