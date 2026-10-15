@@ -140,7 +140,9 @@ export namespace Operation {
       this.reusables = reusables;
     }
 
-    httpApiRouteRegistration(_parameters: {
+    httpApiRouteRegistration({
+      variables,
+    }: {
       variables: { service: Code };
     }): Code {
       const httpApiRouteRegistrationParameters: Code[] = [];
@@ -214,6 +216,30 @@ export namespace Operation {
           code`${this.reusables.snippets.zValidator}(${literalOf(target === "path" ? "param" : target)}, ${this.reusables.imports.z}.object({ ${joinCode(properties, { on: ", " })} }))`,
         );
       }
+      httpApiRouteRegistrationParameters.push(code`\
+async (c) =>
+  (await ${variables.service}.${this.operation.name}(${
+    this.request.parameterSources.size > 0
+      ? code`${this.reusables.snippets.sequenceRecord}(${[
+          ...this.request.parameterSources.entries(),
+        ].reduce(
+          (acc, [parameterName, parameterSource]) => {
+            const parameterProperty = parameterProperties.get(parameterName)!;
+            acc[parameterName] =
+              code`${parameterProperty.type.fromJsonExpression({
+                form: "compact",
+                variables: {
+                  value: code`c.req.valid("${parameterSource === "path" ? "param" : parameterSource}").${parameterName}`,
+                },
+              })}`;
+            return acc;
+          },
+          {} as Record<string, Code>,
+        )}).unsafeCoerce()`
+      : ""
+  }))
+  
+  `);
 
       return code`${this.request.method.toLowerCase()}(${joinCode(httpApiRouteRegistrationParameters, { on: ", " })})`;
     }
