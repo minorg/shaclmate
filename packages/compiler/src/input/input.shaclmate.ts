@@ -3474,7 +3474,7 @@ export type OperationHttpBinding = {
 
   readonly request: OperationHttpRequestBinding;
 
-  readonly response: Maybe<OperationHttpResponseBinding>;
+  readonly responses: readonly OperationHttpResponseBinding[];
 };
 
 export namespace OperationHttpBinding {
@@ -3512,15 +3512,15 @@ export namespace OperationHttpBinding {
           typeFromRdfResourceValues:
             OperationHttpRequestBinding.fromRdfResourceValues,
         }),
-        response: $shaclPropertyFromRdf<
-          Maybe<OperationHttpResponseBinding>,
-          $MaybeSchema<OperationHttpResponseBinding.Schema>
+        responses: $shaclPropertyFromRdf<
+          readonly OperationHttpResponseBinding[],
+          $CollectionSchema<OperationHttpResponseBinding.Schema>
         >({
           ...options,
           focusResource: resource,
           ignoreRdfType: true,
-          propertySchema: OperationHttpBinding.schema.properties.response,
-          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+          propertySchema: OperationHttpBinding.schema.properties.responses,
+          typeFromRdfResourceValues: $setFromRdfResourceValues<
             OperationHttpResponseBinding,
             OperationHttpResponseBinding.Schema
           >(OperationHttpResponseBinding.fromRdfResourceValues),
@@ -3543,9 +3543,9 @@ export namespace OperationHttpBinding {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly request: OperationHttpRequestBinding;
-    readonly response?:
+    readonly responses?:
       | OperationHttpResponseBinding
-      | Maybe<OperationHttpResponseBinding>;
+      | readonly OperationHttpResponseBinding[];
   }): Either<Error, OperationHttpBinding> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
@@ -3553,12 +3553,12 @@ export namespace OperationHttpBinding {
         parameters.$defaultNamespace,
       ),
       request: Either.of(parameters.request),
-      response: $convertToMaybe($identityConversionFunction)(
-        parameters.response,
+      responses: $convertToScalarSet($identityConversionFunction)(
+        parameters.responses,
         parameters.$defaultNamespace,
       ).chain((value) =>
-        $validateMaybe($identityValidationFunction)(
-          OperationHttpBinding.schema.properties.response.type,
+        $validateArray($identityValidationFunction)(
+          OperationHttpBinding.schema.properties.responses.type,
           value,
         ),
       ),
@@ -3583,9 +3583,9 @@ export namespace OperationHttpBinding {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly request: OperationHttpRequestBinding;
-    readonly response?:
+    readonly responses?:
       | OperationHttpResponseBinding
-      | Maybe<OperationHttpResponseBinding>;
+      | readonly OperationHttpResponseBinding[];
   }): OperationHttpBinding {
     return create(parameters).unsafeCoerce();
   }
@@ -3639,14 +3639,14 @@ export namespace OperationHttpBinding {
           return OperationHttpRequestBinding.schema;
         },
       },
-      response: {
+      responses: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#response",
         ),
         get type() {
           return {
-            kind: "Option" as const,
+            kind: "Set" as const,
             get itemType() {
               return OperationHttpResponseBinding.schema;
             },
@@ -3882,6 +3882,8 @@ export type OperationHttpResponseBinding = {
 
   readonly contentType: Maybe<HttpResponseContentType>;
 
+  readonly error: Maybe<NamedNode>;
+
   readonly statusCode: Maybe<HttpResponseStatusCode>;
 };
 
@@ -3924,6 +3926,19 @@ export namespace OperationHttpResponseBinding {
             $StringSchema<HttpResponseContentType>
           >($stringFromRdfResourceValues<HttpResponseContentType>),
         }),
+        error: $shaclPropertyFromRdf<
+          Maybe<NamedNode>,
+          $MaybeSchema<$IriSchema<string>>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: OperationHttpResponseBinding.schema.properties.error,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            NamedNode,
+            $IriSchema<string>
+          >($iriFromRdfResourceValues<string>),
+        }),
         statusCode: $shaclPropertyFromRdf<
           Maybe<HttpResponseStatusCode>,
           $MaybeSchema<$NumericSchema<HttpResponseStatusCode>>
@@ -3958,6 +3973,10 @@ export namespace OperationHttpResponseBinding {
     readonly contentType?:
       | HttpResponseContentType
       | Maybe<HttpResponseContentType>;
+    readonly error?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly statusCode?:
       | HttpResponseStatusCode
       | Maybe<HttpResponseStatusCode>;
@@ -3973,6 +3992,15 @@ export namespace OperationHttpResponseBinding {
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           OperationHttpResponseBinding.schema.properties.contentType.type,
+          value,
+        ),
+      ),
+      error: $convertToMaybe($convertToIri)(
+        parameters?.error,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          OperationHttpResponseBinding.schema.properties.error.type,
           value,
         ),
       ),
@@ -4008,6 +4036,10 @@ export namespace OperationHttpResponseBinding {
     readonly contentType?:
       | HttpResponseContentType
       | Maybe<HttpResponseContentType>;
+    readonly error?:
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode
+      | Maybe<NamedNode>;
     readonly statusCode?:
       | HttpResponseStatusCode
       | Maybe<HttpResponseStatusCode>;
@@ -4067,6 +4099,11 @@ export namespace OperationHttpResponseBinding {
             },
           };
         },
+      },
+      error: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://schema.org/error"),
+        type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
       },
       statusCode: {
         kind: "Shacl",
