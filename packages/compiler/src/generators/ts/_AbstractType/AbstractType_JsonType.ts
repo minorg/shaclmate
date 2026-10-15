@@ -114,8 +114,8 @@ export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${
 abstract class AbstractJsonPrimitiveType<
   PrimitiveT extends boolean | number | string,
 > extends AbstractJsonType {
-  protected readonly inReference: Maybe<Code>;
-  protected readonly in_: readonly PrimitiveT[];
+  readonly inReference: Maybe<Code>;
+  readonly in_: readonly PrimitiveT[];
   protected abstract readonly typeof: "boolean" | "number" | "string";
 
   constructor({

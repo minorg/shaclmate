@@ -33,7 +33,7 @@ export class ZodGenerator implements Generator {
           const tsNamedObjectType = typeFactory.createObjectType(astNamedType);
           declarations.push(code`\
 export namespace ${tsNamedObjectType.name.unsafeCoerce()} {
-${tsNamedObjectType.jsonType().declaration.unsafeCoerce()}
+${tsNamedObjectType.jsonType({ form: "expanded" }).declaration.unsafeCoerce()}
 }`);
           break;
         }

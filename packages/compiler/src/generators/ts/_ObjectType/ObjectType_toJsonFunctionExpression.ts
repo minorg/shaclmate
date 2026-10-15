@@ -14,5 +14,5 @@ export function ObjectType_toJsonFunctionExpression(this: ObjectType): Code {
         .toList(),
     ),
     { on: "," },
-  )} } satisfies ${this.jsonType().expression})))`;
+  )} } satisfies ${this.jsonType({ form: "expanded" }).expression})))`;
 }

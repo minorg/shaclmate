@@ -1,5 +1,4 @@
 import { NodeKind } from "@shaclmate/shacl-ast";
-
 import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -34,10 +33,17 @@ import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_Obj
 import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import { codeEquals } from "./codeEquals.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class ObjectType extends AbstractType {
   private readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
@@ -383,19 +389,81 @@ export class ObjectType extends AbstractType {
     return variables.value;
   }
 
-  @Memoize()
-  override jsonType(): AbstractType.JsonType {
-    return this.jsonTypeFactory.createJsonObjectType(
-      this.properties.flatMap((property) => property.jsonObjectMember.toList()),
-      {
-        name: this.name.map((name) => [name, "Json"]).extract(),
-      },
+  override jsonType({
+    discriminantProperty,
+  }: Parameters<AbstractType["jsonType"]>[0]): AbstractType.JsonType {
+    const jsonObjectTypeMembers = this.properties.flatMap((property) =>
+      property.jsonObjectMember.toList(),
     );
+
+    if (discriminantProperty) {
+      const discriminantPropertyName = Object.keys(discriminantProperty)[0];
+      invariant(discriminantPropertyName);
+      const discriminantPropertyType =
+        discriminantProperty[discriminantPropertyName].type;
+      invariant(discriminantPropertyType);
+
+      invariant(
+        discriminantPropertyType.kind === "JsonNumber" ||
+          discriminantPropertyType.kind === "JsonString",
+      );
+      const discriminantPropertyValue = discriminantPropertyType.in_[0];
+      invariant(typeof discriminantPropertyValue !== "undefined");
+
+      const thisDiscriminantProperty = this.discriminantProperty.extract();
+      if (thisDiscriminantProperty) {
+        if (
+          discriminantPropertyName !== thisDiscriminantProperty.name ||
+          discriminantPropertyValue !== thisDiscriminantProperty.value
+        ) {
+          throw new Error(
+            `${this.shapeIdentifier}: overriding the discriminant property is unsupported`,
+          );
+        }
+      } else {
+        jsonObjectTypeMembers.unshift({
+          description: Maybe.empty(),
+          label: Maybe.empty(),
+          name: discriminantPropertyName,
+          optional: false,
+          recursive: false,
+          type: discriminantPropertyType,
+          uiSchemaElement: Maybe.empty(),
+        });
+      }
+    }
+
+    return this.jsonTypeFactory.createJsonObjectType(jsonObjectTypeMembers, {
+      name: this.name.map((name) => [name, "Json"]).extract(),
+    });
   }
 
   override toJsonExpression({
+    discriminantProperty,
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
+    if (discriminantProperty) {
+      const discriminantPropertyName = Object.keys(discriminantProperty)[0];
+      invariant(discriminantPropertyName);
+      const thisDiscriminantProperty = this.discriminantProperty.extract();
+      const discriminantPropertyValue =
+        discriminantProperty[discriminantPropertyName];
+      invariant(discriminantPropertyValue);
+      if (thisDiscriminantProperty) {
+        if (
+          discriminantPropertyName !== thisDiscriminantProperty.name ||
+          !codeEquals(
+            discriminantPropertyValue,
+            code`${literalOf(thisDiscriminantProperty.value)}`,
+          )
+        ) {
+          throw new Error(
+            `${this.shapeIdentifier}: overriding the discriminant property is unsupported`,
+          );
+        }
+      }
+    }
+
     const toJsonFunction = this.name
       .map((name) => code`${name}.toJson`)
       .orDefaultLazy(() => ObjectType_toJsonFunctionExpression.call(this));
@@ -491,7 +559,7 @@ export class ObjectType extends AbstractType {
     // fromJson
     if (this.configuration.features.has("Object.fromJson")) {
       staticModuleDeclarations["fromJson"] =
-        code`export const fromJson: (json: ${this.jsonType().expression}) => ${this.reusables.imports.Either}<Error, ${this.expression}> = ${ObjectType_fromJsonFunctionExpression.call(this)};`;
+        code`export const fromJson: (json: ${this.jsonType({ form: "expanded" }).expression}) => ${this.reusables.imports.Either}<Error, ${this.expression}> = ${ObjectType_fromJsonFunctionExpression.call(this)};`;
     }
 
     // fromRdfResource / fromRdfResourceValues
@@ -531,9 +599,11 @@ export class ObjectType extends AbstractType {
 
     // JSON type
     if (this.configuration.features.has("Object.JSON.type")) {
-      this.jsonType().declaration.ifJust((jsonTypeDeclaration) => {
-        staticModuleDeclarations["Json"] = jsonTypeDeclaration;
-      });
+      this.jsonType({ form: "expanded" }).declaration.ifJust(
+        (jsonTypeDeclaration) => {
+          staticModuleDeclarations["Json"] = jsonTypeDeclaration;
+        },
+      );
     }
 
     // schema / Schema
@@ -566,7 +636,7 @@ export class ObjectType extends AbstractType {
     // toJson
     if (this.configuration.features.has("Object.toJson")) {
       staticModuleDeclarations["toJson"] =
-        code`export const toJson: (${this.thisVariable}: ${this.expression}) => ${this.jsonType().expression} = ${ObjectType_toJsonFunctionExpression.call(this)};`;
+        code`export const toJson: (${this.thisVariable}: ${this.expression}) => ${this.jsonType({ form: "expanded" }).expression} = ${ObjectType_toJsonFunctionExpression.call(this)};`;
     }
 
     if (this.configuration.features.has("Object.toLoggable")) {
