@@ -75,11 +75,57 @@ function transformOperation(
       .map(Maybe.of);
   }
 
-  function transformHttpBinding(
-    inputHttpBinding: OperationHttpBinding,
-    astParameter: Maybe<ast.Operation.Parameter>,
-    astResult: Maybe<ast.Operation.Result>,
-  ): Either<Error, ast.Operation.HttpBinding> {
+  function transformHttpBinding({
+    astError,
+    astParameter,
+    astResult,
+    inputHttpBinding,
+  }: {
+    astError: Maybe<ast.StructType | ast.StructDiscriminatedUnionType>;
+    astParameter: Maybe<ast.Operation.Parameter>;
+    astResult: Maybe<ast.Operation.Result>;
+    inputHttpBinding: OperationHttpBinding;
+  }): Either<Error, ast.Operation.HttpBinding> {
+    function transformErrorResponses(): Either<
+      Error,
+      readonly ast.Operation.HttpBinding.ErrorResponse[]
+    > {
+      const astErrorStructTypes: readonly ast.StructType[] = astError
+        .toList()
+        .flatMap((astError) => {
+          switch (astError.kind) {
+            case "DiscriminatedUnion":
+              return astError.members.map(
+                (member) => member.type as ast.StructType,
+              );
+            case "Struct":
+              return [astError];
+            default:
+              astError satisfies never;
+              throw new Error("should never reach this point");
+          }
+        });
+
+      return Either.encase(() =>
+        inputHttpBinding.errorResponses.map((inputErrorResponse) => {
+          const error = astErrorStructTypes.find((astErrorStructType) =>
+            astErrorStructType.shapeIdentifier.equals(inputErrorResponse.error),
+          );
+          if (!error) {
+            throw new Error(
+              `${inputOperation.$identifier()} HTTP binding error response ${inputErrorResponse.$identifier()} references error ${inputErrorResponse.error} that is not associated with the operation`,
+            );
+          }
+
+          return {
+            contentType: "application/problem+json",
+            error,
+            statusCode: inputErrorResponse.statusCode,
+          } satisfies ast.Operation.HttpBinding.ErrorResponse;
+        }),
+      );
+    }
+
     function transformRequest(): Either<
       Error,
       ast.Operation.HttpBinding.Request
@@ -163,37 +209,56 @@ function transformOperation(
       });
     }
 
-    function transformResponse(
-      _astRequest: ast.Operation.HttpBinding.Request,
-    ): Either<Error, ast.Operation.HttpBinding.Response> {
-      const inputResponse = inputHttpBinding.response.extract();
+    function transformResultResponse(): Either<
+      Error,
+      ast.Operation.HttpBinding.ResultResponse
+    > {
+      const inputResultResponse = inputHttpBinding.resultResponse.extract();
 
-      let contentType = inputResponse?.contentType.extract();
-      const astResult_ = astResult.extract();
-      if (astResult_) {
-        contentType = "application/json";
-      }
+      if (astResult.isJust()) {
+        if (inputResultResponse) {
+          let contentType = inputResultResponse.contentType.extract();
+          const astResult_ = astResult.extract();
+          if (astResult_) {
+            contentType = "application/json";
+          }
 
-      let statusCode = inputResponse?.statusCode.extract();
-      if (!statusCode) {
-        if (contentType) {
-          statusCode = 200;
+          return Either.of({
+            contentType: Maybe.fromNullable(contentType),
+            statusCode: inputResultResponse.statusCode,
+          });
         } else {
-          statusCode = 204;
+          return Either.of({
+            contentType: Maybe.of("application/json"),
+            statusCode: 200,
+          });
         }
-      }
+      } else {
+        if (inputResultResponse) {
+          return Left(
+            new Error(
+              `${inputOperation.$identifier()} has HTTP result response binding but no result specified`,
+            ),
+          );
+        }
 
-      return Either.of({
-        contentType: Maybe.fromNullable(contentType),
-        statusCode,
-      });
+        return Either.of({
+          contentType: Maybe.empty(),
+          statusCode: 204,
+        });
+      }
     }
 
-    return transformRequest().chain((request) =>
-      transformResponse(request).map((response) => ({
+    return Eithers.chain3(
+      transformErrorResponses(),
+      transformRequest(),
+      transformResultResponse(),
+    ).chain(([errorResponses, request, resultResponse]) =>
+      Either.of({
+        errorResponses,
         request,
-        response,
-      })),
+        resultResponse,
+      }),
     );
   }
 
@@ -276,29 +341,35 @@ function transformOperation(
       .map(Maybe.of);
   }
 
-  return Eithers.chain2(transformParameter(), transformResult()).chain(
-    ([parameter, result]) => {
-      return Eithers.chain3(
-        Eithers.chainMap(inputOperation.bindings, (binding) =>
-          transformHttpBinding(binding, parameter, result),
-        ),
-        transformError(),
-        astConstructName(inputOperation),
-      ).chain(([bindings, error, name]) => {
-        return Either.of(
-          new ast.Operation({
-            bindings,
-            comment: inputOperation.comment,
-            label: inputOperation.label,
-            error,
-            name,
-            parameter,
-            result,
-          }),
-        );
-      });
-    },
-  );
+  return Eithers.chain3(
+    transformError(),
+    transformParameter(),
+    transformResult(),
+  ).chain(([error, parameter, result]) => {
+    return Eithers.chain2(
+      Eithers.chainMap(inputOperation.bindings, (binding) =>
+        transformHttpBinding({
+          astError: error,
+          astParameter: parameter,
+          astResult: result,
+          inputHttpBinding: binding,
+        }),
+      ),
+      astConstructName(inputOperation),
+    ).chain(([bindings, name]) => {
+      return Either.of(
+        new ast.Operation({
+          bindings,
+          comment: inputOperation.comment,
+          label: inputOperation.label,
+          error,
+          name,
+          parameter,
+          result,
+        }),
+      );
+    });
+  });
 }
 
 export function transformService(

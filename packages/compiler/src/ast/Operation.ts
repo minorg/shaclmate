@@ -87,7 +87,7 @@ export namespace Operation {
     }
 
     export interface ResultResponse {
-      readonly contentType: HttpResultResponseContentType;
+      readonly contentType: Maybe<HttpResultResponseContentType>;
       readonly statusCode: number;
     }
   }

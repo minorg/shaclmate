@@ -3717,7 +3717,7 @@ export type OperationHttpErrorResponseBinding = {
 
   readonly error: NamedNode;
 
-  readonly httpStatusCode: HttpResponseStatusCode;
+  readonly statusCode: HttpResponseStatusCode;
 };
 
 export namespace OperationHttpErrorResponseBinding {
@@ -3744,7 +3744,7 @@ export namespace OperationHttpErrorResponseBinding {
           OperationHttpErrorResponseBinding.schema.properties.error,
         typeFromRdfResourceValues: $iriFromRdfResourceValues<string>,
       }),
-      httpStatusCode: $shaclPropertyFromRdf<
+      statusCode: $shaclPropertyFromRdf<
         HttpResponseStatusCode,
         $NumericSchema<HttpResponseStatusCode>
       >({
@@ -3752,7 +3752,7 @@ export namespace OperationHttpErrorResponseBinding {
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema:
-          OperationHttpErrorResponseBinding.schema.properties.httpStatusCode,
+          OperationHttpErrorResponseBinding.schema.properties.statusCode,
         typeFromRdfResourceValues:
           $intFromRdfResourceValues<HttpResponseStatusCode>,
       }),
@@ -3775,7 +3775,7 @@ export namespace OperationHttpErrorResponseBinding {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly error: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly httpStatusCode: HttpResponseStatusCode;
+    readonly statusCode: HttpResponseStatusCode;
   }): Either<Error, OperationHttpErrorResponseBinding> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
@@ -3783,7 +3783,7 @@ export namespace OperationHttpErrorResponseBinding {
         parameters.$defaultNamespace,
       ),
       error: $convertToIri(parameters.error, parameters.$defaultNamespace),
-      httpStatusCode: Either.of(parameters.httpStatusCode),
+      statusCode: Either.of(parameters.statusCode),
     })
       .map((properties) => ({
         ...properties,
@@ -3805,7 +3805,7 @@ export namespace OperationHttpErrorResponseBinding {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly error: (keyof $DefaultNamespaceT & string) | NamedNode;
-    readonly httpStatusCode: HttpResponseStatusCode;
+    readonly statusCode: HttpResponseStatusCode;
   }): OperationHttpErrorResponseBinding {
     return create(parameters).unsafeCoerce();
   }
@@ -3848,7 +3848,7 @@ export namespace OperationHttpErrorResponseBinding {
         path: dataFactory.namedNode("http://schema.org/error"),
         type: { kind: "Iri" as const },
       },
-      httpStatusCode: {
+      statusCode: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#httpStatusCode",
@@ -4086,7 +4086,7 @@ export type OperationHttpResultResponseBinding = {
 
   readonly contentType: Maybe<HttpResultResponseContentType>;
 
-  readonly httpStatusCode: HttpResponseStatusCode;
+  readonly statusCode: HttpResponseStatusCode;
 };
 
 export namespace OperationHttpResultResponseBinding {
@@ -4119,7 +4119,7 @@ export namespace OperationHttpResultResponseBinding {
           $StringSchema<HttpResultResponseContentType>
         >($stringFromRdfResourceValues<HttpResultResponseContentType>),
       }),
-      httpStatusCode: $shaclPropertyFromRdf<
+      statusCode: $shaclPropertyFromRdf<
         HttpResponseStatusCode,
         $NumericSchema<HttpResponseStatusCode>
       >({
@@ -4127,7 +4127,7 @@ export namespace OperationHttpResultResponseBinding {
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema:
-          OperationHttpErrorResponseBinding.schema.properties.httpStatusCode,
+          OperationHttpErrorResponseBinding.schema.properties.statusCode,
         typeFromRdfResourceValues:
           $intFromRdfResourceValues<HttpResponseStatusCode>,
       }),
@@ -4152,7 +4152,7 @@ export namespace OperationHttpResultResponseBinding {
     readonly contentType?:
       | HttpResultResponseContentType
       | Maybe<HttpResultResponseContentType>;
-    readonly httpStatusCode: HttpResponseStatusCode;
+    readonly statusCode: HttpResponseStatusCode;
   }): Either<Error, OperationHttpResultResponseBinding> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
@@ -4168,7 +4168,7 @@ export namespace OperationHttpResultResponseBinding {
           value,
         ),
       ),
-      httpStatusCode: Either.of(parameters.httpStatusCode),
+      statusCode: Either.of(parameters.statusCode),
     })
       .map((properties) => ({
         ...properties,
@@ -4192,7 +4192,7 @@ export namespace OperationHttpResultResponseBinding {
     readonly contentType?:
       | HttpResultResponseContentType
       | Maybe<HttpResultResponseContentType>;
-    readonly httpStatusCode: HttpResponseStatusCode;
+    readonly statusCode: HttpResponseStatusCode;
   }): OperationHttpResultResponseBinding {
     return create(parameters).unsafeCoerce();
   }
@@ -4242,7 +4242,7 @@ export namespace OperationHttpResultResponseBinding {
           };
         },
       },
-      httpStatusCode: {
+      statusCode: {
         kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#httpStatusCode",

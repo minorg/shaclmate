@@ -162,6 +162,7 @@ shaclmate:OperationHttpResponseBinding-statusCode
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
+    sh:name "statusCode" ;
     sh:node shaclmate:HttpResponseStatusCode ;
     sh:path shaclmate:httpStatusCode .
 

@@ -153,9 +153,10 @@ export class TsGenerator implements Generator {
                     astOperation.bindings.map(
                       (astBinding) =>
                         new Operation.HttpBinding({
+                          errorResponses: astBinding.errorResponses,
                           operation,
                           request: astBinding.request,
-                          response: astBinding.response,
+                          resultResponse: astBinding.resultResponse,
                           reusables,
                         }),
                     ),

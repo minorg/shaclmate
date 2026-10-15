@@ -119,24 +119,29 @@ async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
 
 export namespace Operation {
   export class HttpBinding {
+    // private readonly errorResponses: readonly ast.Operation.HttpBinding.ErrorResponse[];
     private readonly operation: Operation;
     private readonly request: ast.Operation.HttpBinding.Request;
-    // private readonly response: ast.Operation.HttpBinding.Response;
+    // private readonly resultResponse: ast.Operation.HttpBinding.ResultResponse;
     private readonly reusables: Reusables;
 
     constructor({
+      // errorResponses,
       operation,
       request,
+      // resultResponse,
       reusables,
     }: {
+      errorResponses: readonly ast.Operation.HttpBinding.ErrorResponse[];
       operation: Operation;
       request: ast.Operation.HttpBinding.Request;
-      response: ast.Operation.HttpBinding.Response;
+      resultResponse: ast.Operation.HttpBinding.ResultResponse;
       reusables: Reusables;
     }) {
+      // this.errorResponses = errorResponses;
       this.operation = operation;
       this.request = request;
-      // this.response = response;
+      // this.resultResponse = resultResponse;
       this.reusables = reusables;
     }
 
