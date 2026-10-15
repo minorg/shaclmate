@@ -27,7 +27,6 @@ shaclmate:HttpResponseContentType
 shaclmate:HttpResponseStatusCode
     a sh:NodeShape ;
     sh:datatype xsd:int ;
-    sh:maxCount 1 ;
     sh:maxInclusive 599 ;
     sh:minInclusive 100 .
 
@@ -128,8 +127,6 @@ shaclmate:OperationHttpBinding-response
 
 shaclmate:OperationHttpRequestBinding
     a sh:NodeShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
     sh:property shaclmate:OperationHttpRequestBinding-contentType, shaclmate:OperationHttpRequestBinding-method, shaclmate:OperationHttpRequestBinding-urlTemplate .
 
 shaclmate:OperationHttpRequestBinding-contentType
@@ -153,7 +150,6 @@ shaclmate:OperationHttpRequestBinding-urlTemplate
 
 shaclmate:OperationHttpResponseBinding
     a rdfs:Class, sh:NodeShape ;
-    sh:maxCount 1 ;
     sh:property shaclmate:OperationHttpResponseBinding-contentType, shaclmate:OperationHttpResponseBinding-statusCode .
 
 shaclmate:OperationHttpResponseBinding-contentType
