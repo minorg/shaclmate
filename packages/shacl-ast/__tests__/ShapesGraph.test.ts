@@ -21,13 +21,13 @@ describe("ShapesGraph", () => {
 
         it("nodeShapes", ({ expect }) => {
           if (id === "kitchenSinkExample") {
-            expect(shapesGraph.nodeShapes).toHaveLength(138);
+            expect(shapesGraph.nodeShapes).toHaveLength(142);
           }
         });
 
         it("propertyShapes", ({ expect }) => {
           if (id === "kitchenSinkExample") {
-            expect(shapesGraph.propertyShapes).toHaveLength(182);
+            expect(shapesGraph.propertyShapes).toHaveLength(184);
           } else {
             expect(shapesGraph.propertyShape).not.toHaveLength(0);
           }
