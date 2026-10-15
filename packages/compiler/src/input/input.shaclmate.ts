@@ -909,20 +909,20 @@ export namespace HttpRequestMethod {
   };
 }
 
-export type HttpResponseContentType =
-  (typeof HttpResponseContentType.schema)["in"][number];
-
-export namespace HttpResponseContentType {
-  export const schema = {
-    kind: "String" as const,
-    in: ["application/json"] as const,
-  };
-}
-
 export type HttpResponseStatusCode = number;
 
 export namespace HttpResponseStatusCode {
   export const schema = { kind: "Int" as const };
+}
+
+export type HttpResultResponseContentType =
+  (typeof HttpResultResponseContentType.schema)["in"][number];
+
+export namespace HttpResultResponseContentType {
+  export const schema = {
+    kind: "String" as const,
+    in: ["application/json"] as const,
+  };
 }
 
 export type NodeShape = {
@@ -4084,7 +4084,7 @@ export type OperationHttpResultResponseBinding = {
 
   readonly $type: "OperationHttpResultResponseBinding";
 
-  readonly contentType: Maybe<HttpResponseContentType>;
+  readonly contentType: Maybe<HttpResultResponseContentType>;
 
   readonly httpStatusCode: HttpResponseStatusCode;
 };
@@ -4106,8 +4106,8 @@ export namespace OperationHttpResultResponseBinding {
         },
       ).chain((values) => values.head()),
       contentType: $shaclPropertyFromRdf<
-        Maybe<HttpResponseContentType>,
-        $MaybeSchema<$StringSchema<HttpResponseContentType>>
+        Maybe<HttpResultResponseContentType>,
+        $MaybeSchema<$StringSchema<HttpResultResponseContentType>>
       >({
         ...options,
         focusResource: resource,
@@ -4115,9 +4115,9 @@ export namespace OperationHttpResultResponseBinding {
         propertySchema:
           OperationHttpResultResponseBinding.schema.properties.contentType,
         typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          HttpResponseContentType,
-          $StringSchema<HttpResponseContentType>
-        >($stringFromRdfResourceValues<HttpResponseContentType>),
+          HttpResultResponseContentType,
+          $StringSchema<HttpResultResponseContentType>
+        >($stringFromRdfResourceValues<HttpResultResponseContentType>),
       }),
       httpStatusCode: $shaclPropertyFromRdf<
         HttpResponseStatusCode,
@@ -4150,8 +4150,8 @@ export namespace OperationHttpResultResponseBinding {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly contentType?:
-      | HttpResponseContentType
-      | Maybe<HttpResponseContentType>;
+      | HttpResultResponseContentType
+      | Maybe<HttpResultResponseContentType>;
     readonly httpStatusCode: HttpResponseStatusCode;
   }): Either<Error, OperationHttpResultResponseBinding> =>
     $sequenceRecord({
@@ -4190,8 +4190,8 @@ export namespace OperationHttpResultResponseBinding {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly contentType?:
-      | HttpResponseContentType
-      | Maybe<HttpResponseContentType>;
+      | HttpResultResponseContentType
+      | Maybe<HttpResultResponseContentType>;
     readonly httpStatusCode: HttpResponseStatusCode;
   }): OperationHttpResultResponseBinding {
     return create(parameters).unsafeCoerce();
@@ -4237,7 +4237,7 @@ export namespace OperationHttpResultResponseBinding {
           return {
             kind: "Option" as const,
             get itemType() {
-              return HttpResponseContentType.schema;
+              return HttpResultResponseContentType.schema;
             },
           };
         },

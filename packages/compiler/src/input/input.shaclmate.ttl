@@ -19,16 +19,16 @@ shaclmate:HttpRequestMethod
         "PUT"
     ) .
 
-shaclmate:HttpResponseContentType
-    a sh:NodeShape ;
-    sh:in ("application/json"
-    ) .
-
 shaclmate:HttpResponseStatusCode
     a sh:NodeShape ;
     sh:datatype xsd:int ;
     sh:maxInclusive 599 ;
     sh:minInclusive 100 .
+
+shaclmate:HttpResultResponseContentType
+    a sh:NodeShape ;
+    sh:in ("application/json"
+    ) .
 
 shaclmate:NodeShape
     sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:Shape-ignore, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
@@ -172,7 +172,7 @@ shaclmate:OperationHttpResultResponseBinding
 shaclmate:OperationHttpResultResponseBinding-contentType
     a sh:PropertyShape ;
     sh:maxCount 1 ;
-    sh:node shaclmate:HttpResponseContentType ;
+    sh:node shaclmate:HttpResultResponseContentType ;
     sh:path schema:contentType .
 
 shaclmate:PropertyShape

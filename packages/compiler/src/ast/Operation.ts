@@ -3,7 +3,7 @@ import type * as uriTemplate from "uri-template";
 import type {
   HttpRequestContentType,
   HttpRequestMethod,
-  HttpResponseContentType,
+  HttpResultResponseContentType,
 } from "../input/input.shaclmate.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { OptionType } from "./OptionType.js";
@@ -64,7 +64,8 @@ export namespace Operation {
 
   export interface HttpBinding {
     readonly request: HttpBinding.Request;
-    readonly response: HttpBinding.Response;
+    readonly errorResponses: readonly HttpBinding.ErrorResponse[];
+    readonly resultResponse: HttpBinding.ResultResponse;
   }
 
   export namespace HttpBinding {
@@ -79,8 +80,14 @@ export namespace Operation {
       export type ParameterSource = "body" | "path" | "query";
     }
 
-    export interface Response {
-      readonly contentType: Maybe<HttpResponseContentType>;
+    export interface ErrorResponse {
+      readonly contentType: "application/problem+json";
+      readonly error: StructType;
+      readonly statusCode: number;
+    }
+
+    export interface ResultResponse {
+      readonly contentType: HttpResultResponseContentType;
       readonly statusCode: number;
     }
   }
