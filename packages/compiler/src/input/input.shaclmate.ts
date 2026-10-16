@@ -3911,7 +3911,7 @@ export namespace OperationHttpErrorResponseBinding {
       },
       error: {
         kind: "Shacl",
-        path: dataFactory.namedNode("http://schema.org/error"),
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#error"),
         type: { kind: "Iri" as const },
       },
       statusCode: {

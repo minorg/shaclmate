@@ -214,7 +214,7 @@ shaclmate:OperationHttpErrorResponseBinding-error
     sh:maxCount 1 ;
     sh:minCount 1 ;
     sh:nodeKind sh:IRI ;
-    sh:path schema:error .
+    sh:path shaclmate:error .
 
 shaclmate:OperationHttpErrorResponseBinding-statusCode
     a sh:PropertyShape ;
