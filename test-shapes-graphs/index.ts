@@ -179,6 +179,21 @@ export const testShapesGraphs = {
     kind: "stress",
   },
 
+  restExample: {
+    description: "REST example",
+    filePaths: [
+      path.join(
+        thisDirectoryPath,
+        "..",
+        "examples",
+        "rest",
+        "src",
+        "rest.shaclmate.ttl",
+      ),
+    ],
+    kind: "example",
+  },
+
   shaclShacl: {
     description: "SHACL-SHACL",
     filePaths: [
