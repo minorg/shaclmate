@@ -8,6 +8,7 @@
 
 shaclmate:HttpRequestMethod
     a sh:NodeShape ;
+    rdfs:comment "Enumeration of common HTTP request methods" ;
     sh:in ("DELETE"
         "GET"
         "POST"
@@ -62,6 +63,7 @@ shaclmate:HttpResponseErrorStatusCode
 
 shaclmate:HttpResponseSuccessfulStatusCode
     a sh:NodeShape ;
+    rdfs:comment "Enumeration of HTTP successful (2xx) status codes" ;
     sh:datatype xsd:int ;
     sh:in (200
         201
@@ -80,6 +82,28 @@ shaclmate:NodeShape
 
 shaclmate:NodeShape-discriminantValue
     a sh:PropertyShape ;
+    rdfs:comment """The type discriminant value to use when a type in a discriminated union needs to be wrapped in a discriminant envelope.
+
+Example:
+
+    sh:xone ([
+            shaclmate:discriminantValue \"date\" ;
+            sh:datatype xsd:date
+        ]
+        [
+            shaclmate:discriminantValue \"dateTime\" ;
+            sh:datatype xsd:dateTime
+        ]
+    )
+
+Because xsd:date and xsd:dateTime are both Date in JavaScript, the generated discriminated union needs to be wrapped in an envelope like:
+
+{ $type: 'type1'; value: Date } | { $type: 'type2'; value: Date }
+
+in order to discriminate values at runtime. With shaclmate:discriminantValue from the example above, the generated type would be:
+
+{ $type: 'date'; value: Date } | { $type: 'dateTime'; value: Date }
+""" ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:path shaclmate:discriminantValue .
@@ -115,21 +139,25 @@ shaclmate:NodeShape-tsImports
 
 shaclmate:Operation
     a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Abstract service operation" ;
     sh:property shaclmate:Operation-bindings, shaclmate:Operation-error, shaclmate:Operation-name, shaclmate:Operation-parameter, shaclmate:Operation-result, shaclmate:comment, shaclmate:label .
 
 shaclmate:Operation-bindings
     a sh:PropertyShape ;
+    rdfs:comment "Transport bindings for the operation. Loosely modeled after WSDL." ;
     sh:node shaclmate:OperationHttpBinding ;
     sh:path shaclmate:binding .
 
 shaclmate:Operation-error
     a sh:PropertyShape ;
+    rdfs:comment "Optional error type. This must be a node shape with properties (a 'struct') or a discriminated union of the same." ;
     sh:maxCount 1 ;
     sh:node shaclmate:NodeShape ;
     sh:path shaclmate:error .
 
 shaclmate:Operation-name
     shaclmate:display true ;
+    rdfs:comment "Identifier-safe name of the operation, incorporated into generated code." ;
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
@@ -137,6 +165,7 @@ shaclmate:Operation-name
 
 shaclmate:Operation-parameter
     a sh:PropertyShape ;
+    rdfs:comment "Optional parameter type. This must be a node shape with properties (a 'struct')." ;
     sh:maxCount 1 ;
     sh:node shaclmate:NodeShape ;
     sh:path shaclmate:parameter .
