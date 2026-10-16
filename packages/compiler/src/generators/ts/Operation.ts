@@ -161,13 +161,13 @@ export namespace Operation {
       if (this.errorResponses.length > 0) {
         mapErrorBranches.push(code`\
 if (${literalOf(errorDiscriminantPropertyName)} in error) {
-  switch (error.${errorDiscriminantPropertyName})
+  switch (error.${errorDiscriminantPropertyName}) {
 ${joinCode(
   this.errorResponses.map((errorResponse) => {
     const errorName = errorResponse.error.name.unsafeCoerce();
     const errorType = errorResponse.error.shapeIdentifier;
     invariant(errorType.termType === "NamedNode");
-    return code`case ${literalOf(errorName)}: problemDetailsJson = { status: ${literalOf(errorResponse.statusCode)}, title: ${literalOf(errorName)};, type: ${literalOf(errorType.value)} }`;
+    return code`case ${literalOf(errorName)}: problemDetailsJson = { status: ${literalOf(errorResponse.statusCode)}, title: ${literalOf(errorName)}, type: ${literalOf(errorType.value)} }; break;`;
   }),
   { on: "\n" },
 )}
@@ -274,7 +274,7 @@ async (c) =>
   .mapLeft(error => {
     ${mapErrorBranches.length > 1 ? code`let problemDetailsJson: ${this.reusables.snippets.ProblemDetailsJson};` : code`const `}${joinCode(mapErrorBranches, { on: " else " })}
 
-    ${variables.logger}.error({ status: problemDetailsJson.status, type: problemDetailsJson.type }, error.message);
+    ${variables.logger}.error({ status: problemDetailsJson.status, type: problemDetailsJson.type }, problemDetailsJson.detail ?? "(no message)");
 
     return c.json(problemDetailsJson, problemDetailsJson.status ?? 500, { "Content-Type": "application/problem+json" });
   })

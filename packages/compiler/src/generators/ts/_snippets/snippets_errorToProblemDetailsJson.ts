@@ -21,13 +21,15 @@ export function ${syntheticNamePrefix}errorToProblemDetailsJson(error: unknown):
     case "function":
     case "symbol":
     case "undefined":
-      break;
+        break;
     case "object": {
       if (error instanceof Error) {
         return { detail: error.message, status: 500, title: error.constructor?.name };
       }
-      return { status: 500 };
+      break;
     }
   }
+
+  return { status: 500 };
 }`,
   );

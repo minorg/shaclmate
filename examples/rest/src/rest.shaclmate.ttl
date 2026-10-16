@@ -7,24 +7,29 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-:ExampleError
-    a sh:NodeShape ;
-    sh:nodeKind sh:BlankNode ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :message
-    ] .
-
 :ExampleService
     shaclmate:operation [
         shaclmate:binding [
+            shaclmate:errorResponse [
+                shaclmate:error :PaymentRequiredError ;
+                shaclmate:httpStatusCode 402
+            ], [
+                shaclmate:error :ForbiddenError ;
+                shaclmate:httpStatusCode 403
+            ] ;
             shaclmate:request [
                 schema:urlTemplate "/{identifier}"
             ]
         ] ;
-        shaclmate:error :ExampleError ;
+        shaclmate:error [
+            sh:xone ([
+                    sh:node :ForbiddenError
+                ]
+                [
+                    sh:node :PaymentRequiredError
+                ]
+            )
+        ] ;
         shaclmate:name "get" ;
         shaclmate:parameter [
             sh:property [
@@ -49,4 +54,24 @@
         ]
     ] ;
     a shaclmate:Service .
+
+:ForbiddenError
+    a sh:NodeShape ;
+    sh:nodeKind sh:BlankNode ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :message
+    ] .
+
+:PaymentRequiredError
+    a sh:NodeShape ;
+    sh:nodeKind sh:BlankNode ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :message
+    ] .
 

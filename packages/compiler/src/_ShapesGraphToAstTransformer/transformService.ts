@@ -230,7 +230,7 @@ function transformOperation(
 
           return Either.of({
             contentType: Maybe.fromNullable(contentType),
-            statusCode: inputResultResponse.statusCode,
+            statusCode: inputResultResponse.statusCode.orDefault(200),
           });
         } else {
           return Either.of({
