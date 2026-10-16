@@ -119,17 +119,17 @@ async ${this.name}(${this.parameterDeclaration}): ${this.returnTypeAnnotation} {
 
 export namespace Operation {
   export class HttpBinding {
-    // private readonly errorResponses: readonly ast.Operation.HttpBinding.ErrorResponse[];
+    private readonly errorResponses: readonly ast.Operation.HttpBinding.ErrorResponse[];
     private readonly operation: Operation;
     private readonly request: ast.Operation.HttpBinding.Request;
-    // private readonly resultResponse: ast.Operation.HttpBinding.ResultResponse;
+    private readonly resultResponse: ast.Operation.HttpBinding.ResultResponse;
     private readonly reusables: Reusables;
 
     constructor({
-      // errorResponses,
+      errorResponses,
       operation,
       request,
-      // resultResponse,
+      resultResponse,
       reusables,
     }: {
       errorResponses: readonly ast.Operation.HttpBinding.ErrorResponse[];
@@ -138,18 +138,41 @@ export namespace Operation {
       resultResponse: ast.Operation.HttpBinding.ResultResponse;
       reusables: Reusables;
     }) {
-      // this.errorResponses = errorResponses;
+      this.errorResponses = errorResponses;
       this.operation = operation;
       this.request = request;
-      // this.resultResponse = resultResponse;
+      this.resultResponse = resultResponse;
       this.reusables = reusables;
     }
 
     httpApiRouteRegistration({
       variables,
     }: {
-      variables: { service: Code };
+      variables: { logger: Code; service: Code };
     }): Code {
+      const errorDiscriminantPropertyName = this.operation.error
+        .chain((error) => error.discriminantProperty)
+        .map((discriminantProperty) => discriminantProperty.name)
+        .extract();
+      invariant(
+        this.errorResponses.length === 0 || errorDiscriminantPropertyName,
+      );
+      const mapErrorBranches: Code[] = [];
+      if (this.errorResponses.length > 0) {
+        mapErrorBranches.push(code`\
+if (${literalOf(errorDiscriminantPropertyName)} in error) {
+  switch (error.${errorDiscriminantPropertyName})
+${this.errorResponses.map((errorResponse) => {
+  const errorName = errorResponse.error.name.unsafeCoerce();
+  const errorType = errorResponse.error.shapeIdentifier;
+  invariant(errorType.termType === "NamedNode");
+  return code`case ${literalOf(errorName)}: { status = ${literalOf(errorResponse.statusCode)}; title = ${literalOf(errorName)}; type = ${literalOf(errorType.value)}`;
+})}
+}`);
+      }
+      mapErrorBranches.push(code`\
+`);
+
       const httpApiRouteRegistrationParameters: Code[] = [];
 
       httpApiRouteRegistrationParameters.push(
@@ -243,8 +266,28 @@ async (c) =>
         )}).unsafeCoerce()`
       : ""
   }))
-  
-  `);
+  .mapLeft(error => {
+    let problemDetailsJson: ${this.reusables.snippets.ProblemDetailsJson};
+
+    ${variables.logger}.error({ status, type }, error.message);
+
+${joinCode(mapErrorBranches, { on: " else " })}
+
+    return c.json(problemDetailsJson, problemDetailsJson.status ?? 500, { "Content-Type": "application/problem+json" });
+  })
+  .map((${this.operation.result.map(() => `result`).orDefault("")}) => c.body(${this.resultResponse.contentType.map(
+    (contentType): Code => {
+      const result = this.operation.result.unsafeCoerce();
+      switch (contentType) {
+        case "application/json":
+          return code`${result.toJsonExpression({ form: "compact", variables: { value: code`result` } })}`;
+        default:
+          contentType satisfies never;
+          throw new RangeError(contentType);
+      }
+    },
+  )}, ${this.resultResponse.statusCode}))
+`);
 
       return code`${this.request.method.toLowerCase()}(${joinCode(httpApiRouteRegistrationParameters, { on: ", " })})`;
     }

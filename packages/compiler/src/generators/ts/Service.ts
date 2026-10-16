@@ -23,9 +23,10 @@ export class Service extends AbstractConstruct {
 
   @Memoize()
   get httpApiFactoryFunction(): Code {
-    const variables = { service: code`service` };
+    const variables = { logger: code`logger`, service: code`service` };
     return code`\
-export function create${this.name}HttpApi<EnvT extends ${this.reusables.imports.HonoEnv}>(service: ${this.name}) {
+export function create${this.name}HttpApi<EnvT extends ${this.reusables.imports.HonoEnv}>(service: ${this.name}, options?: { logger?: ${this.reusables.imports.Logger}) {
+  const logger: ${this.reusables.imports.Logger} = options?.logger ?? ${this.reusables.imports.nopLogger};
   return new ${this.reusables.imports.Hono}<EnvT>()${joinCode(this.operations.flatMap((operation) => operation.bindings.map((binding) => code`.${binding.httpApiRouteRegistration({ variables })}`)))};
 }`;
   }

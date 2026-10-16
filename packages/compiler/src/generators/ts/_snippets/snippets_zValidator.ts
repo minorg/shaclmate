@@ -3,6 +3,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_zValidator: SnippetFactory = ({
   imports,
+  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
@@ -17,7 +18,7 @@ const ${syntheticNamePrefix}zValidator = <
 ) =>
   ${imports.honoZodValidator}(target, schema, (result, c) => {
     if (!result.success) {
-      return c.json({ detail: result.error.message, status: 400, title: "Request validation error" }, 400, { "Content-Type": "application/problem+json" });
+      return c.json({ ...${snippets.errorToProblemDetailsJson}(result.error), status: 400, title: "Request validation error" }), 400, { "Content-Type": "application/problem+json" });
     }
     return undefined;
   });`,

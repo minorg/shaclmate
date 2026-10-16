@@ -1,9 +1,9 @@
 import type { Maybe } from "purify-ts";
 import type * as uriTemplate from "uri-template";
 import type {
-  HttpRequestContentType,
   HttpRequestMethod,
-  HttpResultResponseContentType,
+  OperationHttpRequestBindingContentType,
+  OperationHttpResultResponseBindingContentType,
 } from "../input/input.shaclmate.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
 import type { OptionType } from "./OptionType.js";
@@ -70,7 +70,7 @@ export namespace Operation {
 
   export namespace HttpBinding {
     export interface Request {
-      readonly contentType: Maybe<HttpRequestContentType>;
+      readonly contentType: Maybe<OperationHttpRequestBindingContentType>;
       readonly method: HttpRequestMethod;
       readonly parameterSources: ReadonlyMap<string, Request.ParameterSource>;
       readonly uriTemplate: ReturnType<typeof uriTemplate.parse>["ast"];
@@ -87,7 +87,7 @@ export namespace Operation {
     }
 
     export interface ResultResponse {
-      readonly contentType: Maybe<HttpResultResponseContentType>;
+      readonly contentType: Maybe<OperationHttpResultResponseBindingContentType>;
       readonly statusCode: number;
     }
   }

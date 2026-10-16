@@ -63,6 +63,7 @@ import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_d
 import { snippets_EqualsFunction } from "./_snippets/snippets_EqualsFunction.js";
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
 import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
+import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorToProblemDetailsJson.js";
 import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
 import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
 import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
@@ -133,6 +134,7 @@ import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
+import { snippets_ProblemDetailsJson } from "./_snippets/snippets_ProblemDetailsJson.js";
 import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
 import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js";
 import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
@@ -382,6 +384,11 @@ export class Snippets {
   @Memoize()
   get NumericSchema(): Snippet {
     return this.snippet(snippets_NumericSchema);
+  }
+
+  @Memoize()
+  get ProblemDetailsJson(): Snippet {
+    return this.snippet(snippets_ProblemDetailsJson);
   }
 
   @Memoize()
@@ -682,6 +689,11 @@ export class Snippets {
   @Memoize()
   get ensureRdfResourceType(): Snippet {
     return this.snippet(snippets_ensureRdfResourceType);
+  }
+
+  @Memoize()
+  get errorToProblemDetailsJson(): Snippet {
+    return this.snippet(snippets_errorToProblemDetailsJson);
   }
 
   @Memoize()
