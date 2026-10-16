@@ -116,6 +116,11 @@ function transformOperation(
               `${inputOperation.$identifier()} HTTP binding error response ${inputErrorResponse.$identifier()} references error ${inputErrorResponse.error} that is not associated with the operation`,
             );
           }
+          if (error.name.isNothing()) {
+            throw new Error(
+              `${inputOperation.$identifier()} HTTP binding error response ${inputErrorResponse.$identifier()} references unnamed error ${inputErrorResponse.error}`,
+            );
+          }
 
           return {
             contentType: "application/problem+json",
