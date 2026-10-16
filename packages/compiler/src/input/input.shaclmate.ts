@@ -940,6 +940,29 @@ export type NodeShape = {
 
   readonly deactivated: Maybe<boolean>;
 
+  /**
+   * The type discriminant value to use when a type in a discriminated union needs to be wrapped in a discriminant envelope.
+   *
+   * Example:
+   *
+   *     sh:xone ([
+   *             shaclmate:discriminantValue "date" ;
+   *             sh:datatype xsd:date
+   *         ]
+   *         [
+   *             shaclmate:discriminantValue "dateTime" ;
+   *             sh:datatype xsd:dateTime
+   *         ]
+   *     )
+   *
+   * Because xsd:date and xsd:dateTime are both Date in JavaScript, the generated discriminated union needs to be wrapped in an envelope like:
+   *
+   * { $type: 'type1'; value: Date } | { $type: 'type2'; value: Date }
+   *
+   * in order to discriminate values at runtime. With shaclmate:discriminantValue from the example above, the generated type would be:
+   *
+   * { $type: 'date'; value: Date } | { $type: 'dateTime'; value: Date }
+   */
   readonly discriminantValue: Maybe<string>;
 
   readonly extern: Maybe<boolean>;
@@ -979,6 +1002,9 @@ export type NodeShape = {
 
   readonly minLength: Maybe<bigint>;
 
+  /**
+   * Whether the code generated from the shape should be mutable e.g., a mutable property, a mutable array, etc.
+   */
   readonly mutable: Maybe<boolean>;
 
   readonly node: Maybe<BlankNode | NamedNode>;
@@ -1006,6 +1032,9 @@ export type NodeShape = {
 
   readonly severity: Maybe<Severity>;
 
+  /**
+   * Name to use in generated code. Used on node shapes (which don't permit sh:name) and to override sh:name in property shapes.
+   */
   readonly shaclmateName: Maybe<string>;
 
   readonly subClassOf: readonly NamedNode[];
@@ -3084,23 +3113,41 @@ export namespace Ontology {
       });
 }
 
+/**
+ * Service operation
+ */
 export type Operation = {
   readonly $identifier: () => Operation.Identifier;
 
   readonly $type: "Operation";
 
+  /**
+   * Transport bindings for the operation, loosely modeled after WSDL. If no bindings are specified the operation will be excluded from transport client and server generation.
+   */
   readonly bindings: readonly OperationHttpBinding[];
 
   readonly comment: Maybe<string>;
 
+  /**
+   * Optional error type(s) associated with the operation. This must be a node shape with properties (a 'struct') or a discriminated union of the same.
+   */
   readonly error: Maybe<NodeShape>;
 
   readonly label: Maybe<string>;
 
+  /**
+   * Identifier-safe name of the operation, incorporated into generated code.
+   */
   readonly name: Maybe<string>;
 
+  /**
+   * Optional parameter type. This must be a node shape with properties (a 'struct').
+   */
   readonly parameter: Maybe<NodeShape>;
 
+  /**
+   * Optional result type. The type is a property shape in order to incorporate cardinality.
+   */
   readonly result: Maybe<PropertyShape>;
 };
 
@@ -3465,15 +3512,27 @@ export namespace Operation {
     });
 }
 
+/**
+ * HTTP binding for an operation
+ */
 export type OperationHttpBinding = {
   readonly $identifier: () => OperationHttpBinding.Identifier;
 
   readonly $type: "OperationHttpBinding";
 
+  /**
+   * Zero or more HTTP bindings for the errors of an operation. Should be 1:1 with error (structs), although this isn't enforced. Unbound and undeclared errors are mapped to status code 500.
+   */
   readonly errorResponses: readonly OperationHttpErrorResponseBinding[];
 
+  /**
+   * HTTP binding for the parameter of an operation. Must be specified in order to specify the URI template.
+   */
   readonly request: OperationHttpRequestBinding;
 
+  /**
+   * Optional HTTP binding for the result of an operation. If not specified, the result content type is inferred and the status code is 200.
+   */
   readonly resultResponse: Maybe<OperationHttpResultResponseBinding>;
 };
 
@@ -3708,13 +3767,22 @@ export namespace OperationHttpBinding {
     });
 }
 
+/**
+ * HTTP binding for an error associated with an operation
+ */
 export type OperationHttpErrorResponseBinding = {
   readonly $identifier: () => OperationHttpErrorResponseBinding.Identifier;
 
   readonly $type: "OperationHttpErrorResponseBinding";
 
+  /**
+   * Pointer (IRI) to the error being bound. The error must be associated with the operation with shaclmate:error.
+   */
   readonly error: NamedNode;
 
+  /**
+   * HTTP client/server error code for the bound error.
+   */
   readonly statusCode: HttpResponseErrorStatusCode;
 };
 
@@ -3868,15 +3936,27 @@ export namespace OperationHttpErrorResponseBinding {
     });
 }
 
+/**
+ * HTTP binding for the request (parameter) associated with an operation
+ */
 export type OperationHttpRequestBinding = {
   readonly $identifier: () => OperationHttpRequestBinding.Identifier;
 
   readonly $type: "OperationHttpRequestBinding";
 
+  /**
+   * HTTP request body content type. This should be specified if the operation has parameters that are not bound to its request URI template. If it's not specified it defaults to JSON.
+   */
   readonly contentType: Maybe<OperationHttpRequestBindingContentType>;
 
+  /**
+   * HTTP request body method. If this is not specified, it's inferred from the existence of path, query, and/or body parameters
+   */
   readonly method: Maybe<HttpRequestMethod>;
 
+  /**
+   * RFC 6570 URI template for the HTTP request. Variables in the template must correspond to properties of the parameter. Any other properties of the parameter are serialized into the HTTP requets body following the given/inferred content type.
+   */
   readonly urlTemplate: string;
 };
 
@@ -4087,64 +4167,89 @@ export namespace OperationHttpRequestBindingContentType {
   };
 }
 
+/**
+ * HTTP binding for the result of an operation.
+ */
 export type OperationHttpResultResponseBinding = {
   readonly $identifier: () => OperationHttpResultResponseBinding.Identifier;
 
   readonly $type: "OperationHttpResultResponseBinding";
 
+  /**
+   * HTTP result response body content type. If not specified, it's inferred from the request method and content type.
+   */
   readonly contentType: Maybe<OperationHttpResultResponseBindingContentType>;
 
-  readonly statusCode: HttpResponseSuccessfulStatusCode;
+  /**
+   * HTTP result response status code. If not specified, it defaults to 200.
+   */
+  readonly statusCode: Maybe<HttpResponseSuccessfulStatusCode>;
 };
 
 export namespace OperationHttpResultResponseBinding {
   export const _fromRdfResource: $_FromRdfResourceFunction<
     OperationHttpResultResponseBinding
   > = (resource, options) =>
-    $sequenceRecord({
-      $identifier: $identifierFromRdfResourceValues(
-        $rdfResourceIdentifierValues(resource),
-        {
+    (!options.ignoreRdfType
+      ? $ensureRdfResourceType(
+          resource,
+          [
+            OperationHttpResultResponseBinding.schema.properties.$rdfType
+              .fromRdfType,
+          ],
+          {
+            graph: options.graph,
+          },
+        )
+      : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      $sequenceRecord({
+        $identifier: $identifierFromRdfResourceValues(
+          $rdfResourceIdentifierValues(resource),
+          {
+            ...options,
+            focusResource: resource,
+            propertyPath: $rdf_subject,
+            schema:
+              OperationHttpResultResponseBinding.schema.properties.$identifier
+                .type,
+          },
+        ).chain((values) => values.head()),
+        contentType: $shaclPropertyFromRdf<
+          Maybe<OperationHttpResultResponseBindingContentType>,
+          $MaybeSchema<
+            $StringSchema<OperationHttpResultResponseBindingContentType>
+          >
+        >({
           ...options,
           focusResource: resource,
-          propertyPath: $rdf_subject,
-          schema:
-            OperationHttpResultResponseBinding.schema.properties.$identifier
-              .type,
-        },
-      ).chain((values) => values.head()),
-      contentType: $shaclPropertyFromRdf<
-        Maybe<OperationHttpResultResponseBindingContentType>,
-        $MaybeSchema<
-          $StringSchema<OperationHttpResultResponseBindingContentType>
-        >
-      >({
-        ...options,
-        focusResource: resource,
-        ignoreRdfType: true,
-        propertySchema:
-          OperationHttpResultResponseBinding.schema.properties.contentType,
-        typeFromRdfResourceValues: $maybeFromRdfResourceValues<
-          OperationHttpResultResponseBindingContentType,
-          $StringSchema<OperationHttpResultResponseBindingContentType>
-        >(
-          $stringFromRdfResourceValues<OperationHttpResultResponseBindingContentType>,
-        ),
-      }),
-      statusCode: $shaclPropertyFromRdf<
-        HttpResponseSuccessfulStatusCode,
-        $NumericSchema<HttpResponseSuccessfulStatusCode>
-      >({
-        ...options,
-        focusResource: resource,
-        ignoreRdfType: true,
-        propertySchema:
-          OperationHttpResultResponseBinding.schema.properties.statusCode,
-        typeFromRdfResourceValues:
-          $intFromRdfResourceValues<HttpResponseSuccessfulStatusCode>,
-      }),
-    }).chain((properties) =>
-      OperationHttpResultResponseBinding.create(properties),
+          ignoreRdfType: true,
+          propertySchema:
+            OperationHttpResultResponseBinding.schema.properties.contentType,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            OperationHttpResultResponseBindingContentType,
+            $StringSchema<OperationHttpResultResponseBindingContentType>
+          >(
+            $stringFromRdfResourceValues<OperationHttpResultResponseBindingContentType>,
+          ),
+        }),
+        statusCode: $shaclPropertyFromRdf<
+          Maybe<HttpResponseSuccessfulStatusCode>,
+          $MaybeSchema<$NumericSchema<HttpResponseSuccessfulStatusCode>>
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            OperationHttpResultResponseBinding.schema.properties.statusCode,
+          typeFromRdfResourceValues: $maybeFromRdfResourceValues<
+            HttpResponseSuccessfulStatusCode,
+            $NumericSchema<HttpResponseSuccessfulStatusCode>
+          >($intFromRdfResourceValues<HttpResponseSuccessfulStatusCode>),
+        }),
+      }).chain((properties) =>
+        OperationHttpResultResponseBinding.create(properties),
+      ),
     );
 
   export const $toString: (
@@ -4154,7 +4259,7 @@ export namespace OperationHttpResultResponseBinding {
 
   export const create = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
+  >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => OperationHttpResultResponseBinding.Identifier)
@@ -4164,23 +4269,33 @@ export namespace OperationHttpResultResponseBinding {
     readonly contentType?:
       | OperationHttpResultResponseBindingContentType
       | Maybe<OperationHttpResultResponseBindingContentType>;
-    readonly statusCode: HttpResponseSuccessfulStatusCode;
+    readonly statusCode?:
+      | HttpResponseSuccessfulStatusCode
+      | Maybe<HttpResponseSuccessfulStatusCode>;
   }): Either<Error, OperationHttpResultResponseBinding> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
-        parameters.$identifier,
-        parameters.$defaultNamespace,
+        parameters?.$identifier,
+        parameters?.$defaultNamespace,
       ),
       contentType: $convertToMaybe($identityConversionFunction)(
-        parameters.contentType,
-        parameters.$defaultNamespace,
+        parameters?.contentType,
+        parameters?.$defaultNamespace,
       ).chain((value) =>
         $validateMaybe($identityValidationFunction)(
           OperationHttpResultResponseBinding.schema.properties.contentType.type,
           value,
         ),
       ),
-      statusCode: Either.of(parameters.statusCode),
+      statusCode: $convertToMaybe($identityConversionFunction)(
+        parameters?.statusCode,
+        parameters?.$defaultNamespace,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          OperationHttpResultResponseBinding.schema.properties.statusCode.type,
+          value,
+        ),
+      ),
     })
       .map((properties) => ({
         ...properties,
@@ -4194,7 +4309,7 @@ export namespace OperationHttpResultResponseBinding {
 
   export function createUnsafe<
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
-  >(parameters: {
+  >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly $identifier?:
       | (() => OperationHttpResultResponseBinding.Identifier)
@@ -4204,7 +4319,9 @@ export namespace OperationHttpResultResponseBinding {
     readonly contentType?:
       | OperationHttpResultResponseBindingContentType
       | Maybe<OperationHttpResultResponseBindingContentType>;
-    readonly statusCode: HttpResponseSuccessfulStatusCode;
+    readonly statusCode?:
+      | HttpResponseSuccessfulStatusCode
+      | Maybe<HttpResponseSuccessfulStatusCode>;
   }): OperationHttpResultResponseBinding {
     return create(parameters).unsafeCoerce();
   }
@@ -4238,6 +4355,17 @@ export namespace OperationHttpResultResponseBinding {
         kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
+      $rdfType: {
+        fromRdfType: dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#OperationHttpResultResponseBinding",
+        ),
+        kind: "RdfType",
+        toRdfTypes: [
+          dataFactory.namedNode(
+            "http://purl.org/shaclmate/ontology#OperationHttpResultResponseBinding",
+          ),
+        ],
+      },
       $type: {
         kind: "Discriminant",
         value: "OperationHttpResultResponseBinding",
@@ -4260,7 +4388,12 @@ export namespace OperationHttpResultResponseBinding {
           "http://purl.org/shaclmate/ontology#httpStatusCode",
         ),
         get type() {
-          return HttpResponseSuccessfulStatusCode.schema;
+          return {
+            kind: "Option" as const,
+            get itemType() {
+              return HttpResponseSuccessfulStatusCode.schema;
+            },
+          };
         },
       },
     },
@@ -4546,6 +4679,9 @@ export type PropertyShape = {
 
   readonly minLength: Maybe<bigint>;
 
+  /**
+   * Whether the code generated from the shape should be mutable e.g., a mutable property, a mutable array, etc.
+   */
   readonly mutable: Maybe<boolean>;
 
   readonly name: Maybe<string>;
@@ -4585,6 +4721,9 @@ export type PropertyShape = {
 
   readonly severity: Maybe<Severity>;
 
+  /**
+   * Name to use in generated code. Used on node shapes (which don't permit sh:name) and to override sh:name in property shapes.
+   */
   readonly shaclmateName: Maybe<string>;
 
   readonly targetClasses: readonly NamedNode[];
@@ -6717,6 +6856,9 @@ export namespace PropertyShape {
     });
 }
 
+/**
+ * Service with operations
+ */
 export type Service = {
   readonly $identifier: () => Service.Identifier;
 
@@ -6726,8 +6868,14 @@ export type Service = {
 
   readonly label: Maybe<string>;
 
+  /**
+   * Identifier-safe name of the service
+   */
   readonly name: Maybe<string>;
 
+  /**
+   * Set of operations associated with the service
+   */
   readonly operations: readonly Operation[];
 };
 
