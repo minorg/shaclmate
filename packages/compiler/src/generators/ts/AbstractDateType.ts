@@ -1,10 +1,12 @@
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   protected override readonly inlineExpression = code`Date`;
+  protected abstract readonly jsonStringFormat: "date" | "datetime";
 
   /**
    * Date has no conversion function to avoid source type overlap with other types (e.g., string).
@@ -26,18 +28,19 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.dateSparqlWherePatterns}`;
 
-  override fromJsonExpression({
-    variables,
-  }: Parameters<
-    AbstractTypedLiteralType<Date>["fromJsonExpression"]
-  >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, Date>(new Date(${variables.value}["@value"]))`;
+  @Memoize()
+  protected override get compactJsonType(): AbstractTypedLiteralType.JsonType {
+    return this.jsonTypeFactory.createJsonStringType({
+      format: this.jsonStringFormat,
+    });
   }
 
-  override jsonType(): AbstractTypedLiteralType.JsonType {
-    return new AbstractTypedLiteralType.JsonType(
-      code`{ readonly "@type": ${literalOf(this.datatype.value)}, readonly "@value": string }`,
-    );
+  override toLoggableExpression({
+    variables,
+  }: Parameters<
+    AbstractTypedLiteralType<Date>["toLoggableExpression"]
+  >[0]): Code {
+    return code`${variables.value}.toISOString()`;
   }
 
   override toRdfResourceValuesExpression({
@@ -46,6 +49,24 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
     AbstractTypedLiteralType<Date>["toRdfResourceValuesExpression"]
   >[0]): Code {
     return code`[${this.reusables.snippets.literalFactory}.date(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
+  }
+
+  protected override fromCompactJsonExpression({
+    variables,
+  }: Parameters<
+    AbstractTypedLiteralType<Date>["fromJsonExpression"]
+  >[0]): Code {
+    return code`new Date(${variables.value})`;
+  }
+
+  protected override toCompactJsonExpression({
+    variables,
+  }: Parameters<
+    AbstractTypedLiteralType<Date>["toCompactJsonExpression"]
+  >[0]): Code {
+    return this.jsonStringFormat === "datetime"
+      ? code`${variables.value}.toISOString()`
+      : code`${this.reusables.snippets.toIsoDateString}(${variables.value})`;
   }
 }
 

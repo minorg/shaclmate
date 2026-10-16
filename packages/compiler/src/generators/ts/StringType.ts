@@ -1,4 +1,5 @@
 import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
@@ -49,6 +50,24 @@ export class StringType extends AbstractPrimitiveType<string> {
     return code`${this.reusables.snippets.StringSchema}<${this.expression}>`;
   }
 
+  @Memoize()
+  protected override get compactJsonType(): AbstractPrimitiveType.JsonType {
+    return this.jsonTypeFactory.createJsonStringType({
+      in_: this.decodedIn,
+      inReference:
+        this.name.isJust() && this.configuration.features.has("Object.schema")
+          ? code`${this.name.extract()!}.schema.in`
+          : undefined,
+    });
+  }
+
+  @Memoize()
+  protected override get decodedIn(): readonly string[] {
+    return this.in_.map((in_) =>
+      LiteralDecoder.decodeStringLiteral(in_).unsafeCoerce(),
+    );
+  }
+
   protected override get schemaInitializers(): readonly Code[] {
     let initializers = super.schemaInitializers;
     if (this.languageIn.length > 0) {
@@ -57,21 +76,6 @@ export class StringType extends AbstractPrimitiveType<string> {
       );
     }
     return initializers;
-  }
-
-  override jsonSchema(
-    parameters: Parameters<AbstractPrimitiveType<string>["jsonSchema"]>[0],
-  ): Code {
-    if (this.in_.length > 1) {
-      const name = this.name.extract();
-      if (name && this.configuration.features.has("Object.schema")) {
-        // Reuse the type from schema to cut down code
-        return code`${this.reusables.imports.z}.enum(${name}.schema.in)`;
-      } else {
-        return code`${this.reusables.imports.z}.enum(${arrayOf(...this.in_.map((value) => this.valueExpression(value)))})`;
-      }
-    }
-    return super.jsonSchema(parameters);
   }
 
   override toRdfResourceValuesExpression({

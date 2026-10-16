@@ -1,7 +1,6 @@
 import type { BlankNode } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
-import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -52,47 +51,20 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     });
   }
 
-  override fromJsonExpression({
+  protected override fromCompactJsonExpression({
     variables,
   }: Parameters<
-    AbstractIdentifierType<BlankNode>["fromJsonExpression"]
+    AbstractIdentifierType<BlankNode>["fromCompactJsonExpression"]
   >[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)))`;
+    return code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}.substring(2))`;
   }
 
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<AbstractIdentifierType<BlankNode>["jsonSchema"]>[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.literal("BlankNode")`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1)${discriminantProperty} })`;
-  }
-
-  @Memoize()
-  override jsonType(
-    parameters?: Parameters<AbstractIdentifierType<BlankNode>["jsonType"]>[0],
-  ): AbstractIdentifierType.JsonType {
-    const discriminantProperty = parameters?.includeDiscriminantProperty
-      ? `, readonly termType: "BlankNode"`
-      : "";
-
-    return new AbstractIdentifierType.JsonType(
-      code`{ readonly "@id": string${discriminantProperty} }`,
-    );
-  }
-
-  override toJsonExpression({
-    includeDiscriminantProperty,
+  protected override toCompactJsonExpression({
     variables,
   }: Parameters<
-    AbstractIdentifierType<BlankNode>["toJsonExpression"]
+    AbstractIdentifierType<BlankNode>["toCompactJsonExpression"]
   >[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${variables.value}.termType`
-      : "";
-    return code`{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
+    return code`\`_:\${${variables.value}.value}\``;
   }
 }
 

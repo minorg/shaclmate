@@ -86,20 +86,12 @@ export abstract class AbstractCollectionType<
     return variables.value;
   }
 
-  override jsonUiSchemaElement(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.jsonUiSchemaElement(parameters);
-  }
-
-  override toJsonExpression({
+  override toLoggableExpression({
     variables,
   }: Parameters<
-    AbstractContainerType<ItemTypeT>["toJsonExpression"]
+    AbstractContainerType<ItemTypeT>["toLoggableExpression"]
   >[0]): Code {
-    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })}))`;
+    return code`${variables.value}.map(item => (${this.itemType.toLoggableExpression({ variables: { value: code`item` } })}))`;
   }
 }
 
@@ -110,6 +102,5 @@ export namespace AbstractCollectionType {
   export type GraphqlType = AbstractContainerType.GraphqlType;
   export const isItemType = AbstractContainerType.isItemType;
   export type ItemType = AbstractContainerType.ItemType;
-  export const JsonType = AbstractContainerType.JsonType;
   export type JsonType = AbstractContainerType.JsonType;
 }

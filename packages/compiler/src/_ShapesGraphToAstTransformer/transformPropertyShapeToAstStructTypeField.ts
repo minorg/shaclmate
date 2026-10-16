@@ -70,18 +70,36 @@ function fieldName(
   throw new Error(`${propertyShape}: unable to infer name`);
 }
 
+function propertyCardinality(propertyShape: input.PropertyShape): {
+  maxCount: bigint;
+  minCount: bigint;
+} {
+  let maxCount = propertyShape.maxCount.orDefault(
+    BigInt(Number.MAX_SAFE_INTEGER),
+  );
+  let minCount = propertyShape.minCount.orDefault(0n);
+  if (minCount < 0n) {
+    minCount = 0n;
+  }
+  if (propertyShape.hasValues.length > minCount) {
+    minCount = BigInt(propertyShape.hasValues.length);
+  }
+  if (maxCount < minCount) {
+    maxCount = minCount;
+  }
+  return { maxCount, minCount };
+}
+
 function synthesizePartialAstStructType(
   this: ShapesGraphToAstTransformer,
   {
     identifierType,
   }: {
-    identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
+    identifierType: ast.IdentifierType | ast.IriType;
   },
 ): ast.StructType {
   let syntheticName: string;
   switch (identifierType.kind) {
-    case "BlankNode":
-      throw new Error("should never happen");
     case "Identifier":
       syntheticName = "DefaultPartial";
       break;
@@ -113,6 +131,12 @@ function synthesizePartialAstStructType(
     toRdfTypes: [],
     tsImports: [],
   });
+  partialAstStructType.addField(
+    new ast.StructType.IdentifierField({
+      structType: partialAstStructType,
+      type: identifierType,
+    }),
+  );
 
   this.syntheticAstStructTypes.push(partialAstStructType);
 
@@ -133,19 +157,7 @@ function transformPropertyShapeToAstType(
   return transformShapeToAstType
     .call(this, propertyShape, shapeStack)
     .chain((propertyShapeAstType) => {
-      let maxCount = propertyShape.maxCount.orDefault(
-        BigInt(Number.MAX_SAFE_INTEGER),
-      );
-      let minCount = propertyShape.minCount.orDefault(0n);
-      if (minCount < 0n) {
-        minCount = 0n;
-      }
-      if (propertyShape.hasValues.length > minCount) {
-        minCount = BigInt(propertyShape.hasValues.length);
-      }
-      if (maxCount < minCount) {
-        maxCount = minCount;
-      }
+      const { maxCount, minCount } = propertyCardinality(propertyShape);
 
       if (propertyShapeAstType.kind === "DefaultValue") {
         if (minCount > 0n) {
@@ -221,7 +233,7 @@ export function transformPropertyShapeToAstStructTypeField(
     propertyShape: input.PropertyShape;
     structType: ast.StructType;
   },
-): Either<Error, Maybe<ast.StructType.Field>> {
+): Either<Error, Maybe<ast.StructType.ShaclField>> {
   if (propertyShape.ignore) {
     return Either.of(Maybe.empty());
   }
@@ -309,7 +321,6 @@ export function transformPropertyShapeToAstStructTypeField(
 
       let astPartialItemType: ast.StructType | ast.StructDiscriminatedUnionType;
       switch (astItemType.kind) {
-        case "BlankNode":
         case "Identifier":
         case "Iri":
           astPartialItemType = synthesizePartialAstStructType.call(this, {
@@ -335,6 +346,33 @@ export function transformPropertyShapeToAstStructTypeField(
               `${propertyShape} has a resolve with an incompatible partial type ${astItemType.kind}`,
             ),
           );
+      }
+
+      const astPartialItemIdentifierType =
+        astPartialItemType.kind === "Struct"
+          ? astPartialItemType.identifierType
+          : ast.StructCompoundType.identifierType(astPartialItemType);
+      const astResolveItemIdentifierType =
+        astResolveItemType.kind === "Struct"
+          ? astResolveItemType.identifierType
+          : ast.StructCompoundType.identifierType(astResolveItemType);
+
+      if (
+        astPartialItemIdentifierType.kind !== astResolveItemIdentifierType.kind
+      ) {
+        return Left(
+          new Error(
+            `${propertyShape} has a resolve with a different identifier type (${astResolveItemIdentifierType.kind}) than the partial's identifier type (${astPartialItemIdentifierType.kind})`,
+          ),
+        );
+      }
+
+      if (astPartialItemIdentifierType.kind === "BlankNode") {
+        return Left(
+          new Error(
+            `${propertyShape} has a ${astPartialItemIdentifierType.kind} identifier type, which is incompatible with shaclmate:resolve`,
+          ),
+        );
       }
 
       const astAbstractTypeProperties = {
@@ -400,11 +438,12 @@ export function transformPropertyShapeToAstStructTypeField(
 
     return Either.of(
       Maybe.of(
-        new ast.StructType.Field({
+        new ast.StructType.ShaclField({
           comment: propertyShape.comment,
           description: propertyShape.description,
           display: propertyShape.display,
           label: propertyShape.label,
+          minCount: propertyCardinality(propertyShape).minCount,
           mutable: propertyShape.mutable.orDefault(false),
           name: fieldName.call(this, propertyShape, structType),
           order: propertyShape.order.orDefault(0),

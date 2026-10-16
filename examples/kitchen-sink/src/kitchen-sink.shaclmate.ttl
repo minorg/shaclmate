@@ -25,7 +25,7 @@
 
 :BlankNodeIdentifierStruct
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Struct node shape that can only have a blank node as an identifier" ;
+    rdfs:comment "Struct node shape that can only have a blank node as an identifier. This generates code without an identifier property." ;
     sh:nodeKind sh:BlankNode ;
     sh:property [
         sh:datatype xsd:string ;
@@ -128,18 +128,6 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
-        rdfs:comment "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringOrLangString ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype rdf:langString
-            ]
-        )
-    ], [
         rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -192,6 +180,41 @@
             ]
         )
     ], [
+        rdfs:comment "Integer or string. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :integerOrString ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :jsPrimitive ;
+        sh:xone (
+            [
+                rdfs:comment "JavaScript boolean" ;
+                sh:datatype xsd:boolean
+            ]
+            [
+                rdfs:comment "JavaScript number" ;
+                sh:datatype xsd:double
+            ]
+            [
+                rdfs:comment "JavaScript bigint" ;
+                sh:datatype xsd:integer
+            ]
+            [
+                rdfs:comment "JavaScript string" ;
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
         rdfs:comment "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -228,26 +251,27 @@
             ]
         )
     ], [
-        rdfs:comment "JavaScript primitive (https://developer.mozilla.org/en-US/docs/Glossary/Primitive). These don't need discriminant values because they're different typeofs in JavaScript." ;
+        rdfs:comment "String or integer. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :jsPrimitive ;
-        sh:xone (
-            [
-                rdfs:comment "JavaScript boolean" ;
-                sh:datatype xsd:boolean
+        sh:path :stringOrInteger ;
+        sh:xone ([
+                sh:datatype xsd:string
             ]
             [
-                rdfs:comment "JavaScript number" ;
-                sh:datatype xsd:double
-            ]
-            [
-                rdfs:comment "JavaScript bigint" ;
                 sh:datatype xsd:integer
             ]
-            [
-                rdfs:comment "JavaScript string" ;
+        )
+    ], [
+        rdfs:comment "String or rdf:langString. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringOrLangString ;
+        sh:xone ([
                 sh:datatype xsd:string
+            ]
+            [
+                sh:datatype rdf:langString
             ]
         )
     ] .

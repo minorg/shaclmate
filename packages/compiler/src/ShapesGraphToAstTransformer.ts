@@ -3,6 +3,7 @@ import { TermMap } from "@rdfx/collection";
 import type { Logger } from "@rdfx/logger";
 import { Either } from "purify-ts";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
+import { transformService } from "./_ShapesGraphToAstTransformer/transformService.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
 import type * as input from "./input/index.js";
@@ -58,6 +59,15 @@ export class ShapesGraphToAstTransformer {
       });
     }
 
+    const astServices: ast.Service[] = [];
+    for (const inputService of this.shapesGraph.services) {
+      const astServiceEither = transformService.call(this, inputService);
+      if (astServiceEither.isLeft()) {
+        return astServiceEither;
+      }
+      astServices.push(astServiceEither.extract() as ast.Service);
+    }
+
     return Either.of({
       lazyTypesCount: [...this.cachedAstTypesByShapeIdentifier.values()].reduce(
         (acc, astType) => {
@@ -73,6 +83,7 @@ export class ShapesGraphToAstTransformer {
         0,
       ),
       namedTypes: astNamedTypes.concat(this.syntheticAstStructTypes),
+      services: astServices,
     });
   }
 }

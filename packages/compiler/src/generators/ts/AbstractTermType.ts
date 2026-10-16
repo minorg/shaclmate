@@ -50,7 +50,7 @@ export abstract class AbstractTermType<
     return Maybe.of({
       jsonName: "termType",
       name: "termType",
-      values: [...this.nodeKinds].map(NodeKind.toTermType),
+      values: [...this.termTypes],
     });
   }
 
@@ -65,7 +65,7 @@ export abstract class AbstractTermType<
 
   @Memoize()
   override get toRdfResourceValueTypes() {
-    return new Set([...this.nodeKinds].map(NodeKind.toTermType));
+    return this.termTypes;
   }
 
   @Memoize()
@@ -86,10 +86,6 @@ export abstract class AbstractTermType<
       );
     }
     return initializers;
-  }
-
-  override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
   }
 
   override toRdfResourceValuesExpression({
@@ -120,6 +116,5 @@ export namespace AbstractTermType {
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
   export type JsType = AbstractType.JsType;
-  export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
 }

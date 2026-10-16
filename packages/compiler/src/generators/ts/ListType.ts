@@ -93,32 +93,58 @@ export class ListType<
   }
 
   override fromJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
-    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${variables.value}.map(item => (${this.itemType.fromJsonExpression(
+    let valueVariable = variables.value;
+    if (form === "expanded") {
+      valueVariable = code`${valueVariable}["@list"]`;
+    }
+
+    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${valueVariable}.map(item => (${this.itemType.fromJsonExpression(
       {
+        form: "compact",
         variables: { value: code`item` },
       },
     )})))`;
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractCollectionType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
-    if (!this._mutable) {
-      schema = code`${schema}.readonly()`;
+  override jsonType({
+    discriminantProperty,
+    form,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["jsonType"]
+  >[0]): AbstractCollectionType.JsonType {
+    const compactJsonType = this.jsonTypeFactory.createJsonArrayType(
+      this.itemType.jsonType({ form: "compact" }),
+    );
+    switch (form) {
+      case "compact":
+        return compactJsonType;
+      case "expanded":
+        return this.jsonTypeFactory.createJsonObjectType({
+          ...discriminantProperty,
+          "@list": { type: compactJsonType },
+        });
     }
-    return schema;
   }
 
-  @Memoize()
-  override jsonType(): AbstractCollectionType.JsonType {
-    return new AbstractCollectionType.JsonType(
-      code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().expression})[]`,
-    );
+  override toJsonExpression({
+    discriminantProperty,
+    form,
+    variables,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["toJsonExpression"]
+  >[0]): Code {
+    const toCompactJsonExpression = code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form: "compact", variables: { value: code`item` } })}))`;
+    switch (form) {
+      case "compact":
+        return toCompactJsonExpression;
+      case "expanded":
+        return code`${{ ...discriminantProperty, "@list": toCompactJsonExpression }}`;
+    }
   }
 
   override toRdfResourceValuesExpression({

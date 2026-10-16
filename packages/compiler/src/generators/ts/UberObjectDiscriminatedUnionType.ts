@@ -5,8 +5,15 @@ import { Memoize } from "typescript-memoize";
 
 import type { ObjectType } from "./ObjectType.js";
 import type { Reusables } from "./Reusables.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { TsGenerator } from "./TsGenerator.js";
-import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
+import {
+  type Code,
+  code,
+  def,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 /**
  * The $Object discriminated union used in type guard functions (isSomeObjectType(object: $Object)) and some convenience methods.
@@ -112,7 +119,14 @@ ${this.memberTypeSwitch({
 export function toJson(object: ${this.name}) {
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
-    code`return ${member.toJsonExpression({ variables: { value: code`object` } })};`,
+    code`return ${member.toJsonExpression({
+      discriminantProperty: singleEntryRecord(
+        this.configuration.objectDiscriminantProperty.jsonName,
+        code`${literalOf(member.discriminantProperty.unsafeCoerce().value)}`,
+      ),
+      form: "expanded",
+      variables: { value: code`object` },
+    })};`,
   variables: { value: code`object` },
 })}
 }`);

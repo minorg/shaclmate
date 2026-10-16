@@ -5,7 +5,7 @@ import type { $EqualsResult } from "../src/index.js";
 
 export class Harness<
   T extends {
-    readonly $identifier: () => Resource.Identifier;
+    readonly $identifier?: () => Resource.Identifier;
     readonly $type: string;
   },
 > {

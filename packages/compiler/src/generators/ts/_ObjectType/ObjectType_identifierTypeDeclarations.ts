@@ -12,7 +12,6 @@ export function ObjectType_identifierTypeDeclarations(
 export type Identifier = ${this.identifierType.expression};
 export namespace Identifier {
   export const parse = ${this.identifierType.parseFunction};
-  export const stringify = ${this.identifierType.stringifyFunction};
 }`,
   );
 }

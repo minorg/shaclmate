@@ -3,13 +3,13 @@ import { datasetFactory } from "@rdfx/collection";
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import { type Resource, ResourceSet } from "@rdfx/resource";
-import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
+import { NTriplesIdentifier } from "@rdfx/string";
 import { Either, Left, Maybe, Right } from "purify-ts";
 import { z } from "zod";
 
 export type $_ToRdfResourceFunction<
   IdentifierT extends Resource.Identifier,
-  ObjectT extends { $identifier: () => IdentifierT },
+  ObjectT extends object,
 > = (parameters: {
   graph: Exclude<Quad_Graph, Variable> | undefined;
   ignoreRdfType: boolean;
@@ -205,79 +205,6 @@ export type $NamespaceBuilder<TermNames extends string = any> = Record<
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
-namespace $RdfVocabularies {
-  export const rdf = {
-    first: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    ),
-    langString: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
-    ),
-    nil: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    ),
-    rest: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    ),
-    subject: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    ),
-    type: dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    ),
-  };
-
-  export const rdfs = {
-    subClassOf: dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    ),
-  };
-
-  export const xsd = {
-    boolean: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-    byte: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#byte"),
-    date: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
-    dateTime: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTime",
-    ),
-    dateTimeStamp: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-    ),
-    decimal: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal"),
-    double: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double"),
-    float: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#float"),
-    int: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int"),
-    integer: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
-    long: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#long"),
-    negativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#negativeInteger",
-    ),
-    nonNegativeInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-    ),
-    nonPositiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-    ),
-    positiveInteger: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#positiveInteger",
-    ),
-    short: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#short"),
-    string: dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#string"),
-    unsignedByte: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedByte",
-    ),
-    unsignedInt: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedInt",
-    ),
-    unsignedLong: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedLong",
-    ),
-    unsignedShort: dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#unsignedShort",
-    ),
-  };
-}
-
 function $sequenceRecord<T extends Record<string, unknown>>(
   record: { [K in keyof T]: Either<Error, T[K]> },
 ): Either<Error, T> {
@@ -295,7 +222,7 @@ function $sequenceRecord<T extends Record<string, unknown>>(
 }
 
 export type $ToRdfResourceFunction<
-  ObjectT,
+  ObjectT extends object,
   IdentifierT extends Resource.Identifier = Resource.Identifier,
 > = (
   object: ObjectT,
@@ -348,6 +275,18 @@ function $wrap_ToRdfResourceFunction<
   ObjectT extends { $identifier: () => IdentifierT },
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
+): $ToRdfResourceFunction<ObjectT, IdentifierT>;
+function $wrap_ToRdfResourceFunction<
+  _IdentifierT extends BlankNode,
+  ObjectT extends object,
+>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<BlankNode, ObjectT>,
+): $ToRdfResourceFunction<ObjectT, BlankNode>;
+function $wrap_ToRdfResourceFunction<
+  IdentifierT extends Resource.Identifier,
+  ObjectT extends object & { $identifier?: () => IdentifierT },
+>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
 ): $ToRdfResourceFunction<ObjectT, IdentifierT> {
   return (object, options) => {
     let { graph, ignoreRdfType = false, resourceSet } = options ?? {};
@@ -357,7 +296,11 @@ function $wrap_ToRdfResourceFunction<
         dataset: datasetFactory.dataset(),
       });
     }
-    const resource = resourceSet.resource(object.$identifier());
+    const resource = (
+      object.$identifier
+        ? resourceSet.resource(object.$identifier())
+        : resourceSet.resource(dataFactory.blankNode())
+    ) as Resource<IdentifierT>;
     _toRdfResourceFunction({
       graph,
       ignoreRdfType,
@@ -368,6 +311,9 @@ function $wrap_ToRdfResourceFunction<
     return resource;
   };
 }
+
+const $xsd_int = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#int");
+
 export type FormStruct = {
   readonly $identifier: () => FormStruct.Identifier;
 
@@ -466,12 +412,7 @@ export namespace FormStruct {
     );
     parameters.resource.add(
       FormStruct.schema.properties.requiredIntProperty.path,
-      [
-        $literalFactory.number(
-          parameters.object.requiredIntProperty,
-          $RdfVocabularies.xsd.int,
-        ),
-      ],
+      [$literalFactory.number(parameters.object.requiredIntProperty, $xsd_int)],
       parameters.graph,
     );
     parameters.resource.add(
@@ -565,8 +506,8 @@ export namespace FormStruct {
                         : _object.$identifier().value,
                     requiredStringProperty: _object.requiredStringProperty,
                   } satisfies {
-                    readonly "@id": string;
-                    readonly requiredStringProperty: string;
+                    "@id": string;
+                    requiredStringProperty: string;
                   }),
                 ),
               $toString: (_object) =>
@@ -691,8 +632,8 @@ export namespace FormStruct {
                             : _object.$identifier().value,
                         requiredStringProperty: _object.requiredStringProperty,
                       } satisfies {
-                        readonly "@id": string;
-                        readonly requiredStringProperty: string;
+                        "@id": string;
+                        requiredStringProperty: string;
                       }),
                     ),
                   $toString: (_object) =>
@@ -725,30 +666,29 @@ export namespace FormStruct {
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
   }
 
   export const isFormStruct = (object: $Object): object is FormStruct =>
     object.$type === "FormStruct";
 
-  export namespace Json {
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
+  export type Json = {
+    "@id": string;
+    emptyStringSetProperty?: string[];
+    nestedStructProperty: { "@id": string; requiredStringProperty: string };
+    nonEmptyStringSetProperty: string[];
+    optionalStringProperty?: string;
+    requiredIntProperty: number;
+    requiredStringProperty: string;
+  };
 
+  export namespace Json {
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
-        $type: z.literal("FormStruct"),
         emptyStringSetProperty: z
-          .string()
-          .array()
+          .array(z.string())
           .optional()
-          .readonly()
+          .optional()
           .meta({ title: "Empty string set" }),
         nestedStructProperty: z
           .object({
@@ -759,14 +699,9 @@ export namespace FormStruct {
           })
           .meta({ title: "Nested object" }),
         nonEmptyStringSetProperty: z
-          .string()
-          .array()
-          .nonempty()
+          .array(z.string())
           .min(1)
-          .readonly()
-          .meta({
-            title: "Non-empty string set",
-          }),
+          .meta({ title: "Non-empty string set" }),
         optionalStringProperty: z
           .string()
           .optional()
@@ -776,6 +711,14 @@ export namespace FormStruct {
       }) satisfies z.ZodType<Json>;
     }
 
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
     export const uiSchema = (parameters?: { scopePrefix?: string }): any => {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -783,17 +726,6 @@ export namespace FormStruct {
           {
             label: "Identifier",
             scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "FormStruct" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
             type: "Control",
           },
           {
@@ -818,7 +750,7 @@ export namespace FormStruct {
               ],
               type: "Group",
             };
-          })({ scopePrefix: `${scopePrefix}/properties/nestedStructProperty` }),
+          })({ scopePrefix: scopePrefix }),
           {
             label: "Non-empty string set",
             scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
@@ -845,20 +777,6 @@ export namespace FormStruct {
       };
     };
   }
-
-  export type Json = {
-    readonly "@id": string;
-    readonly $type: "FormStruct";
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nestedStructProperty: {
-      readonly "@id": string;
-      readonly requiredStringProperty: string;
-    };
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty?: string;
-    readonly requiredIntProperty: number;
-    readonly requiredStringProperty: string;
-  };
 
   export const schema = {
     properties: {
@@ -940,7 +858,6 @@ export namespace FormStruct {
           _formStruct.$identifier().termType === "BlankNode"
             ? `_:${_formStruct.$identifier().value}`
             : _formStruct.$identifier().value,
-        $type: _formStruct.$type,
         emptyStringSetProperty: _formStruct.emptyStringSetProperty.map(
           (item) => item,
         ),
@@ -952,10 +869,7 @@ export namespace FormStruct {
                   ? `_:${_object.$identifier().value}`
                   : _object.$identifier().value,
               requiredStringProperty: _object.requiredStringProperty,
-            } satisfies {
-              readonly "@id": string;
-              readonly requiredStringProperty: string;
-            }),
+            } satisfies { "@id": string; requiredStringProperty: string }),
           ))(_formStruct.nestedStructProperty),
         nonEmptyStringSetProperty: _formStruct.nonEmptyStringSetProperty.map(
           (item) => item,
@@ -968,13 +882,17 @@ export namespace FormStruct {
       } satisfies FormStruct.Json),
     );
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+  export const toRdfResource = $wrap_ToRdfResourceFunction<
+    BlankNode | NamedNode,
+    FormStruct
+  >(_toRdfResource);
 
   export const toStringRecord: (
     _formStruct: FormStruct,
   ) => Record<string, string> = (_formStruct) =>
     $compactRecord({ $identifier: _formStruct.$identifier().toString() });
 }
+
 export type $Object = FormStruct;
 
 export namespace $Object {

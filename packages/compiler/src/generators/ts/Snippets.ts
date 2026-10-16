@@ -1,5 +1,9 @@
+import type { NamedNode } from "@rdfjs/types";
+import { TermMap } from "@rdfx/collection";
 import type { Logger } from "@rdfx/logger";
+import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
 
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
@@ -59,6 +63,7 @@ import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_d
 import { snippets_EqualsFunction } from "./_snippets/snippets_EqualsFunction.js";
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
 import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
+import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorToProblemDetailsJson.js";
 import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
 import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
 import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
@@ -129,12 +134,12 @@ import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
+import { snippets_ProblemDetailsJson } from "./_snippets/snippets_ProblemDetailsJson.js";
 import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
 import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js";
 import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
 import { snippets_parseIri } from "./_snippets/snippets_parseIri.js";
 import { snippets_propertyEquals } from "./_snippets/snippets_propertyEquals.js";
-import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
 import { snippets_rdfResourceIdentifierValues } from "./_snippets/snippets_rdfResourceIdentifierValues.js";
 import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
 import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
@@ -175,17 +180,27 @@ import { snippets_validateMaybe } from "./_snippets/snippets_validateMaybe.js";
 import { snippets_validateMutableArray } from "./_snippets/snippets_validateMutableArray.js";
 import { snippets_wrap_FromRdfResourceFunction } from "./_snippets/snippets_wrap_FromRdfResourceFunction.js";
 import { snippets_wrap_ToRdfResourceFunction } from "./_snippets/snippets_wrap_ToRdfResourceFunction.js";
+import { snippets_zValidator } from "./_snippets/snippets_zValidator.js";
 import type { Imports } from "./Imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Snippet } from "./Snippet.js";
 import type { SnippetFactory } from "./SnippetFactory.js";
 import type { TsGenerator } from "./TsGenerator.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import {
+  type Code,
+  code,
+  conditionalOutput,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class Snippets {
   private readonly configuration: TsGenerator.Configuration;
   private readonly imports: Imports;
   private readonly logger: Logger;
+  private readonly rdfjsNamedNodeSnippets = new TermMap<
+    NamedNode,
+    Maybe<Snippet>
+  >();
 
   constructor({
     configuration,
@@ -372,13 +387,13 @@ export class Snippets {
   }
 
   @Memoize()
-  get PropertyPath(): Snippet {
-    return this.snippet(snippets_PropertyPath);
+  get ProblemDetailsJson(): Snippet {
+    return this.snippet(snippets_ProblemDetailsJson);
   }
 
   @Memoize()
-  get RdfVocabularies(): Snippet {
-    return this.snippet(snippets_RdfVocabularies);
+  get PropertyPath(): Snippet {
+    return this.snippet(snippets_PropertyPath);
   }
 
   @Memoize()
@@ -677,6 +692,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get errorToProblemDetailsJson(): Snippet {
+    return this.snippet(snippets_errorToProblemDetailsJson);
+  }
+
+  @Memoize()
   get filterArray(): Snippet {
     return this.snippet(snippets_filterArray);
   }
@@ -807,23 +827,30 @@ export class Snippets {
   }
 
   get ifUsed(): Code[] {
-    return Object.entries(
+    const snippets: Snippet[] = [];
+
+    for (const [key, descriptor] of Object.entries(
       Object.getOwnPropertyDescriptors(Object.getPrototypeOf(this)),
-    )
-      .flatMap(([key, descriptor]) => {
-        if (typeof descriptor.get !== "function") {
-          return [];
-        }
-        switch (key) {
-          case "ifUsed":
-          case "snippets":
-            return [];
-        }
-        const value = (this as any)[key];
-        invariant(value, key);
-        invariant((value as any).usageSiteName, key);
-        return [value];
-      })
+    )) {
+      if (typeof descriptor.get !== "function") {
+        continue;
+      }
+      switch (key) {
+        case "ifUsed":
+        case "snippets":
+          continue;
+      }
+      const snippet = (this as any)[key];
+      invariant(snippet, key);
+      invariant((snippet as any).usageSiteName, key);
+      snippets.push(snippet);
+    }
+
+    for (const snippetMaybe of this.rdfjsNamedNodeSnippets.values()) {
+      snippetMaybe.ifJust((snippet) => snippets.push(snippet));
+    }
+
+    return snippets
       .sort((left, right) =>
         left.usageSiteName.localeCompare(right.usageSiteName),
       )
@@ -1090,8 +1117,42 @@ export class Snippets {
     return this.snippet(snippets_wrap_ToRdfResourceFunction);
   }
 
+  @Memoize()
+  get zValidator(): Snippet {
+    return this.snippet(snippets_zValidator);
+  }
+
   protected get snippets(): Snippets {
     return this;
+  }
+
+  rdfjsNamedNode(namedNode: NamedNode): Maybe<Snippet> {
+    {
+      const snippet = this.rdfjsNamedNodeSnippets.get(namedNode);
+      if (snippet !== undefined) {
+        return snippet;
+      }
+    }
+
+    for (const [prefix, namespace] of Object.entries({
+      rdf,
+      rdfs,
+      xsd,
+    } as const)) {
+      if (namedNode.value.startsWith(namespace[""].value)) {
+        const variable = `${this.configuration.syntheticNamePrefix}${prefix}_${namedNode.value.substring(namespace[""].value.length)}`;
+        const snippet = Maybe.of(
+          conditionalOutput(
+            variable,
+            code`const ${variable} = ${this.imports.dataFactory}.namedNode(${literalOf(namedNode.value)})`,
+          ),
+        );
+        this.rdfjsNamedNodeSnippets.set(namedNode, snippet);
+        return snippet;
+      }
+    }
+    this.rdfjsNamedNodeSnippets.set(namedNode, Maybe.empty());
+    return Maybe.empty();
   }
 
   private snippet(snippetFactory: SnippetFactory): Snippet {

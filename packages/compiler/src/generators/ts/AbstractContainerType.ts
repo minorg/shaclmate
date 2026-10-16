@@ -143,6 +143,5 @@ export namespace AbstractContainerType {
     }
   }
 
-  export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
 }
