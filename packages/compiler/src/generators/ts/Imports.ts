@@ -36,6 +36,7 @@ export class Imports {
   readonly Maybe = imp("Maybe@purify-ts");
   readonly NamedNode = imp("t:NamedNode@@rdfjs/types");
   readonly NonEmptyList = imp("NonEmptyList@purify-ts");
+  readonly nopLogger = imp("nopLogger@@rdfx/logger");
   readonly NTriplesIdentifier = imp("NTriplesIdentifier@@rdfx/string");
   readonly NTriplesTerm = imp("NTriplesTerm@@rdfx/string");
   readonly Quad = imp("t:Quad@@rdfjs/types");
