@@ -299,6 +299,7 @@ const workspaces = {
           "@rdfjs/types",
           "@rdfx/collection",
           "@rdfx/data-factory",
+          "@rdfx/logger",
           "@rdfx/resource",
           "hono",
           "purify-ts",

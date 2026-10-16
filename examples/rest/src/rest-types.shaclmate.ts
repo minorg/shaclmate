@@ -84,29 +84,29 @@ function $sequenceRecord<T extends Record<string, unknown>>(
   return Right(result as T);
 }
 
-export type ExampleError = {
-  readonly $type: "ExampleError";
+export type ForbiddenError = {
+  readonly $type: "ForbiddenError";
   readonly message: string;
 };
 
-export namespace ExampleError {
-  export const $toString: (_exampleError: ExampleError) => string = (
-    _exampleError,
-  ) => `ExampleError(${JSON.stringify(toStringRecord(_exampleError))})`;
+export namespace ForbiddenError {
+  export const $toString: (_forbiddenError: ForbiddenError) => string = (
+    _forbiddenError,
+  ) => `ForbiddenError(${JSON.stringify(toStringRecord(_forbiddenError))})`;
 
   export const create = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly message: string;
-  }): Either<Error, ExampleError> =>
+  }): Either<Error, ForbiddenError> =>
     $sequenceRecord({ message: Either.of(parameters.message) })
       .map((properties) => ({
         ...properties,
-        $type: "ExampleError" as const,
+        $type: "ForbiddenError" as const,
       }))
       .map((object) =>
-        $monkeyPatchObject(object, { $toString: ExampleError.$toString }),
+        $monkeyPatchObject(object, { $toString: ForbiddenError.$toString }),
       );
 
   export function createUnsafe<
@@ -114,7 +114,7 @@ export namespace ExampleError {
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly message: string;
-  }): ExampleError {
+  }): ForbiddenError {
     return create(parameters).unsafeCoerce();
   }
 
@@ -123,12 +123,12 @@ export namespace ExampleError {
     export const parse = $parseBlankNode;
   }
 
-  export const isExampleError = (object: $Object): object is ExampleError =>
-    object.$type === "ExampleError";
+  export const isForbiddenError = (object: $Object): object is ForbiddenError =>
+    object.$type === "ForbiddenError";
 
   export const schema = {
     properties: {
-      $type: { kind: "Discriminant", value: "ExampleError" },
+      $type: { kind: "Discriminant", value: "ForbiddenError" },
       message: { kind: "Shacl", type: { kind: "String" as const } },
     },
   } as const;
@@ -136,18 +136,94 @@ export namespace ExampleError {
   export type Schema = typeof schema;
 
   export const toStringRecord: (
-    _exampleError: ExampleError,
-  ) => Record<string, string> = (_exampleError) => $compactRecord({});
+    _forbiddenError: ForbiddenError,
+  ) => Record<string, string> = (_forbiddenError) => $compactRecord({});
 }
 
-export type $Object = ExampleError;
+export type PaymentRequiredError = {
+  readonly $type: "PaymentRequiredError";
+  readonly message: string;
+};
+
+export namespace PaymentRequiredError {
+  export const $toString: (
+    _paymentRequiredError: PaymentRequiredError,
+  ) => string = (_paymentRequiredError) =>
+    `PaymentRequiredError(${JSON.stringify(toStringRecord(_paymentRequiredError))})`;
+
+  export const create = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly message: string;
+  }): Either<Error, PaymentRequiredError> =>
+    $sequenceRecord({ message: Either.of(parameters.message) })
+      .map((properties) => ({
+        ...properties,
+        $type: "PaymentRequiredError" as const,
+      }))
+      .map((object) =>
+        $monkeyPatchObject(object, {
+          $toString: PaymentRequiredError.$toString,
+        }),
+      );
+
+  export function createUnsafe<
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly message: string;
+  }): PaymentRequiredError {
+    return create(parameters).unsafeCoerce();
+  }
+
+  export type Identifier = BlankNode;
+  export namespace Identifier {
+    export const parse = $parseBlankNode;
+  }
+
+  export const isPaymentRequiredError = (
+    object: $Object,
+  ): object is PaymentRequiredError => object.$type === "PaymentRequiredError";
+
+  export const schema = {
+    properties: {
+      $type: { kind: "Discriminant", value: "PaymentRequiredError" },
+      message: { kind: "Shacl", type: { kind: "String" as const } },
+    },
+  } as const;
+
+  export type Schema = typeof schema;
+
+  export const toStringRecord: (
+    _paymentRequiredError: PaymentRequiredError,
+  ) => Record<string, string> = (_paymentRequiredError) => $compactRecord({});
+}
+
+export type $Object = ForbiddenError | PaymentRequiredError;
 
 export namespace $Object {
-  export const $toString = ExampleError.$toString;
+  export function $toString(object: $Object) {
+    switch (object.$type) {
+      case "ForbiddenError":
+        return ForbiddenError.$toString(object);
+      case "PaymentRequiredError":
+        return PaymentRequiredError.$toString(object);
+      default:
+        object satisfies never;
+        throw new Error("should never reach this point");
+    }
+  }
 }
 
 export interface ExampleService {
-  get(parameters: {
-    readonly identifier: NamedNode;
-  }): Promise<Either<ExampleError, string>>;
+  get(parameters: { readonly identifier: NamedNode }): Promise<
+    Either<
+      ForbiddenError | PaymentRequiredError,
+      {
+        readonly $identifier: () => BlankNode | NamedNode;
+        readonly result: string;
+      }
+    >
+  >;
 }

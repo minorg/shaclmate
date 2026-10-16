@@ -31,30 +31,61 @@ export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
-export type ExampleError = {
-  readonly $type: "ExampleError";
+export type ForbiddenError = {
+  readonly $type: "ForbiddenError";
   readonly message: string;
 };
 
-export namespace ExampleError {
-  export const $toLoggable = (_exampleError: ExampleError) =>
-    $compactRecord({ $type: "ExampleError", message: _exampleError.message });
+export namespace ForbiddenError {
+  export const $toLoggable = (_forbiddenError: ForbiddenError) =>
+    $compactRecord({
+      $type: "ForbiddenError",
+      message: _forbiddenError.message,
+    });
 
   export type Identifier = BlankNode;
   export namespace Identifier {
     export const parse = $parseBlankNode;
   }
 
-  export const isExampleError = (object: $Object): object is ExampleError =>
-    object.$type === "ExampleError";
+  export const isForbiddenError = (object: $Object): object is ForbiddenError =>
+    object.$type === "ForbiddenError";
 }
 
-export type $Object = ExampleError;
+export type PaymentRequiredError = {
+  readonly $type: "PaymentRequiredError";
+  readonly message: string;
+};
+
+export namespace PaymentRequiredError {
+  export const $toLoggable = (_paymentRequiredError: PaymentRequiredError) =>
+    $compactRecord({
+      $type: "PaymentRequiredError",
+      message: _paymentRequiredError.message,
+    });
+
+  export type Identifier = BlankNode;
+  export namespace Identifier {
+    export const parse = $parseBlankNode;
+  }
+
+  export const isPaymentRequiredError = (
+    object: $Object,
+  ): object is PaymentRequiredError => object.$type === "PaymentRequiredError";
+}
+
+export type $Object = ForbiddenError | PaymentRequiredError;
 
 export interface ExampleService {
-  get(parameters: {
-    readonly identifier: NamedNode;
-  }): Promise<Either<ExampleError, string>>;
+  get(parameters: { readonly identifier: NamedNode }): Promise<
+    Either<
+      ForbiddenError | PaymentRequiredError,
+      {
+        readonly $identifier: () => BlankNode | NamedNode;
+        readonly result: string;
+      }
+    >
+  >;
 }
 
 export class LoggingExampleService implements ExampleService {
@@ -69,9 +100,15 @@ export class LoggingExampleService implements ExampleService {
     this.logger = logger;
   }
 
-  async get(parameters: {
-    readonly identifier: NamedNode;
-  }): Promise<Either<ExampleError, string>> {
+  async get(parameters: { readonly identifier: NamedNode }): Promise<
+    Either<
+      ForbiddenError | PaymentRequiredError,
+      {
+        readonly $identifier: () => BlankNode | NamedNode;
+        readonly result: string;
+      }
+    >
+  > {
     const logContext: Record<string, unknown> = {
       service: "ExampleService",
       operation: "get",
@@ -83,7 +120,16 @@ export class LoggingExampleService implements ExampleService {
         this.logger.error({ ...logContext, error }, "error");
       })
       .ifRight((result) => {
-        this.logger.debug({ ...logContext, result: result }, "success");
+        this.logger.debug(
+          {
+            ...logContext,
+            result: $compactRecord({
+              $identifier: result.$identifier().value,
+              result: result.result,
+            }),
+          },
+          "success",
+        );
       });
   }
 }
