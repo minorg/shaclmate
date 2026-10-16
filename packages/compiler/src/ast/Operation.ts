@@ -2,6 +2,8 @@ import type { Maybe } from "purify-ts";
 import type * as uriTemplate from "uri-template";
 import type {
   HttpRequestMethod,
+  HttpResponseErrorStatusCode,
+  HttpResponseSuccessfulStatusCode,
   OperationHttpRequestBindingContentType,
   OperationHttpResultResponseBindingContentType,
 } from "../input/input.shaclmate.js";
@@ -83,12 +85,12 @@ export namespace Operation {
     export interface ErrorResponse {
       readonly contentType: "application/problem+json";
       readonly error: StructType;
-      readonly statusCode: number;
+      readonly statusCode: HttpResponseErrorStatusCode;
     }
 
     export interface ResultResponse {
       readonly contentType: Maybe<OperationHttpResultResponseBindingContentType>;
-      readonly statusCode: number;
+      readonly statusCode: HttpResponseSuccessfulStatusCode;
     }
   }
 

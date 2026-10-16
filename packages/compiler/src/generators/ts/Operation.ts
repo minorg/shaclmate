@@ -161,17 +161,23 @@ export namespace Operation {
       if (this.errorResponses.length > 0) {
         mapErrorBranches.push(code`\
 if (${literalOf(errorDiscriminantPropertyName)} in error) {
+  problemDetailsJson = {};
   switch (error.${errorDiscriminantPropertyName})
-${this.errorResponses.map((errorResponse) => {
-  const errorName = errorResponse.error.name.unsafeCoerce();
-  const errorType = errorResponse.error.shapeIdentifier;
-  invariant(errorType.termType === "NamedNode");
-  return code`case ${literalOf(errorName)}: { status = ${literalOf(errorResponse.statusCode)}; title = ${literalOf(errorName)}; type = ${literalOf(errorType.value)}`;
-})}
+${joinCode(
+  this.errorResponses.map((errorResponse) => {
+    const errorName = errorResponse.error.name.unsafeCoerce();
+    const errorType = errorResponse.error.shapeIdentifier;
+    invariant(errorType.termType === "NamedNode");
+    return code`case ${literalOf(errorName)}: { problemDetailsJson.status = ${literalOf(errorResponse.statusCode)}; problemDetailsJson.title = ${literalOf(errorName)}; problemDetailsJson.type = ${literalOf(errorType.value)}`;
+  }),
+  { on: "\n" },
+)}
+  }
 }`);
       }
-      mapErrorBranches.push(code`\
-`);
+      mapErrorBranches.push(
+        code`problemDetailsJson = ${this.reusables.snippets.errorToProblemDetailsJson}(error);`,
+      );
 
       const httpApiRouteRegistrationParameters: Code[] = [];
 
@@ -267,16 +273,16 @@ async (c) =>
       : ""
   }))
   .mapLeft(error => {
+
     let problemDetailsJson: ${this.reusables.snippets.ProblemDetailsJson};
-
-    ${variables.logger}.error({ status, type }, error.message);
-
 ${joinCode(mapErrorBranches, { on: " else " })}
+
+    ${variables.logger}.error({ status: problemDetailsJson.status, type: problemDetailsJson.type }, error.message);
 
     return c.json(problemDetailsJson, problemDetailsJson.status ?? 500, { "Content-Type": "application/problem+json" });
   })
-  .map((${this.operation.result.map(() => `result`).orDefault("")}) => c.body(${this.resultResponse.contentType.map(
-    (contentType): Code => {
+  .map((${this.operation.result.map(() => "result").orDefault("")}) => c.body(${this.resultResponse.contentType
+    .map((contentType): Code => {
       const result = this.operation.result.unsafeCoerce();
       switch (contentType) {
         case "application/json":
@@ -285,8 +291,8 @@ ${joinCode(mapErrorBranches, { on: " else " })}
           contentType satisfies never;
           throw new RangeError(contentType);
       }
-    },
-  )}, ${this.resultResponse.statusCode}))
+    })
+    .orDefault(code`null`)}, ${this.resultResponse.statusCode}))
 `);
 
       return code`${this.request.method.toLowerCase()}(${joinCode(httpApiRouteRegistrationParameters, { on: ", " })})`;
