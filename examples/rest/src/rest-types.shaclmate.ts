@@ -217,13 +217,9 @@ export namespace $Object {
 }
 
 export interface ExampleService {
-  get(parameters: { readonly identifier: NamedNode }): Promise<
-    Either<
-      ForbiddenError | PaymentRequiredError,
-      {
-        readonly $identifier: () => BlankNode | NamedNode;
-        readonly result: string;
-      }
-    >
+  get(parameters: {
+    readonly identifier: NamedNode;
+  }): Promise<
+    Either<ForbiddenError | PaymentRequiredError, { readonly result: string }>
   >;
 }

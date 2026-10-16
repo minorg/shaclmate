@@ -43,6 +43,7 @@
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:node [
+                sh:nodeKind sh:BlankNode ;
                 sh:property [
                     sh:datatype xsd:string ;
                     sh:maxCount 1 ;

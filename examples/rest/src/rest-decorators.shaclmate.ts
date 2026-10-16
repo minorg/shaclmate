@@ -77,14 +77,10 @@ export namespace PaymentRequiredError {
 export type $Object = ForbiddenError | PaymentRequiredError;
 
 export interface ExampleService {
-  get(parameters: { readonly identifier: NamedNode }): Promise<
-    Either<
-      ForbiddenError | PaymentRequiredError,
-      {
-        readonly $identifier: () => BlankNode | NamedNode;
-        readonly result: string;
-      }
-    >
+  get(parameters: {
+    readonly identifier: NamedNode;
+  }): Promise<
+    Either<ForbiddenError | PaymentRequiredError, { readonly result: string }>
   >;
 }
 
@@ -100,14 +96,10 @@ export class LoggingExampleService implements ExampleService {
     this.logger = logger;
   }
 
-  async get(parameters: { readonly identifier: NamedNode }): Promise<
-    Either<
-      ForbiddenError | PaymentRequiredError,
-      {
-        readonly $identifier: () => BlankNode | NamedNode;
-        readonly result: string;
-      }
-    >
+  async get(parameters: {
+    readonly identifier: NamedNode;
+  }): Promise<
+    Either<ForbiddenError | PaymentRequiredError, { readonly result: string }>
   > {
     const logContext: Record<string, unknown> = {
       service: "ExampleService",
@@ -121,13 +113,7 @@ export class LoggingExampleService implements ExampleService {
       })
       .ifRight((result) => {
         this.logger.debug(
-          {
-            ...logContext,
-            result: $compactRecord({
-              $identifier: result.$identifier().value,
-              result: result.result,
-            }),
-          },
+          { ...logContext, result: $compactRecord({ result: result.result }) },
           "success",
         );
       });

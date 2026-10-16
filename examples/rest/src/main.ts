@@ -1,18 +1,35 @@
-import dataFactory from "@rdfx/data-factory";
 import { ConsoleLogger } from "@rdfx/logger";
-import { Either } from "purify-ts";
+import { EitherAsync } from "purify-ts";
 import { LoggingExampleService } from "./rest-decorators.shaclmate.js";
 import { createExampleServiceHttpApi } from "./rest-http-api.shaclmate.js";
-import type { ExampleService } from "./rest-types.shaclmate.js";
+import {
+  type ExampleService,
+  ForbiddenError,
+  PaymentRequiredError,
+} from "./rest-types.shaclmate.js";
 
 const logger = new ConsoleLogger("info");
 
 const service: ExampleService = new LoggingExampleService({
   delegate: {
-    async get(parameters) {
-      return Either.of({
-        $identifier: () => dataFactory.blankNode(),
-        result: parameters.identifier.value,
+    async get({ identifier }) {
+      return EitherAsync(async ({ throwE }) => {
+        switch (identifier.value) {
+          case "http://example.com/ForbiddenError":
+            throwE(ForbiddenError.createUnsafe({ message: "forbidden" }));
+            break;
+          case "http://example.com/PaymentRequiredError":
+            throwE(
+              PaymentRequiredError.createUnsafe({
+                message: "payment required",
+              }),
+            );
+            break;
+        }
+
+        return {
+          result: identifier.value,
+        };
       });
     },
   },

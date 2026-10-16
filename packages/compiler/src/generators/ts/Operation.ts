@@ -278,18 +278,18 @@ async (c) =>
 
     return c.json(problemDetailsJson, problemDetailsJson.status ?? 500, { "Content-Type": "application/problem+json" });
   })
-  .map((${this.operation.result.map(() => "result").orDefault("")}) => c.body(${this.resultResponse.contentType
+  .map((${this.operation.result.map(() => "result").orDefault("")}) => ${this.resultResponse.contentType
     .map((contentType): Code => {
       const result = this.operation.result.unsafeCoerce();
       switch (contentType) {
         case "application/json":
-          return code`${result.toJsonExpression({ form: "compact", variables: { value: code`result` } })}`;
+          return code`c.json(${result.toJsonExpression({ form: "compact", variables: { value: code`result` } })}`;
         default:
           contentType satisfies never;
           throw new RangeError(contentType);
       }
     })
-    .orDefault(code`null`)}, ${this.resultResponse.statusCode}))
+    .orDefault(code`c.body(null`)}, ${this.resultResponse.statusCode}))
   .extract()
 `);
 

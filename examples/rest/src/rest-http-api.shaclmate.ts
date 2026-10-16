@@ -198,14 +198,10 @@ export namespace PaymentRequiredError {
 export type $Object = ForbiddenError | PaymentRequiredError;
 
 export interface ExampleService {
-  get(parameters: { readonly identifier: NamedNode }): Promise<
-    Either<
-      ForbiddenError | PaymentRequiredError,
-      {
-        readonly $identifier: () => BlankNode | NamedNode;
-        readonly result: string;
-      }
-    >
+  get(parameters: {
+    readonly identifier: NamedNode;
+  }): Promise<
+    Either<ForbiddenError | PaymentRequiredError, { readonly result: string }>
   >;
 }
 
@@ -263,16 +259,12 @@ export function createExampleServiceHttpApi<EnvT extends Env>(
           });
         })
         .map((result) =>
-          c.body(
+          c.json(
             ((_object) =>
               JSON.parse(
-                JSON.stringify({
-                  "@id":
-                    _object.$identifier().termType === "BlankNode"
-                      ? `_:${_object.$identifier().value}`
-                      : _object.$identifier().value,
-                  result: _object.result,
-                } satisfies { "@id": string; result: string }),
+                JSON.stringify({ result: _object.result } satisfies {
+                  result: string;
+                }),
               ))(result),
             200,
           ),
