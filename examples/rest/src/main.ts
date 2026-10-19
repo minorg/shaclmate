@@ -1,12 +1,12 @@
 import { ConsoleLogger } from "@rdfx/logger";
 import { EitherAsync } from "purify-ts";
-import { LoggingExampleService } from "./rest-decorators.shaclmate.js";
-import { createExampleServiceHttpApi } from "./rest-http-api.shaclmate.js";
 import {
+  createExampleServiceHttpApi,
   type ExampleService,
   ForbiddenError,
+  LoggingExampleService,
   PaymentRequiredError,
-} from "./rest-types.shaclmate.js";
+} from "./rest.shaclmate.js";
 
 const logger = new ConsoleLogger("info");
 
