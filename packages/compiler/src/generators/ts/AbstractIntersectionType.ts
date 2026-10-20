@@ -147,7 +147,7 @@ export abstract class AbstractIntersectionType<
       code`members: [${joinCode(
         this.members.map(({ type }) => type.schema),
         { on: "," },
-      )}]`,
+      )}] as const`,
     );
   }
 
@@ -183,7 +183,7 @@ ${joinCode(
       this.members.map(
         (member, memberI) => code`
 ${member.type.fromJsonExpression({
-  form: "expanded",
+  form: "compact",
   variables: {
     value: code`value`,
   },
@@ -192,7 +192,7 @@ ${member.type.fromJsonExpression({
     )} ({ ${joinCode(
       this.members.map((_, memberI) => code`...member${memberI}`),
       { on: "," },
-    )} }) ${")".repeat(this.members.length - 1)}
+    )} }) ${")".repeat(this.members.length)}
 )`;
   }
 
@@ -203,12 +203,12 @@ ${member.type.fromJsonExpression({
     ${joinCode(
       this.members.map(
         (member, memberI) => code`\
-      ${member.type.fromRdfResourceValuesFunction}(inputValues, { ...options, ignoreRdfType: true, schema: options.schema.members[${literalOf(memberI)}].type }).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
+      ${member.type.fromRdfResourceValuesFunction}(inputValues, { ...options, ignoreRdfType: true, schema: options.schema.members[${literalOf(memberI)}] }).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
       ),
     )} ({ ${joinCode(
       this.members.map((_, memberI) => code`...member${memberI}`),
       { on: "," },
-    )} }) ${")".repeat(this.members.length - 1)}
+    )} }) ${")".repeat(this.members.length)}
 ) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>)`;
   }
 
@@ -269,7 +269,7 @@ ${joinCode(
       return code`((value: ${this.expression})${returnTypeAnnotation} => ${memberToLoggableExpressions[0]})`;
     }
 
-    return code`((value: ${this.expression})${returnTypeAnnotation} => [${joinCode(memberToLoggableExpressions, { on: "," })}]))`;
+    return code`((value: ${this.expression})${returnTypeAnnotation} => [${joinCode(memberToLoggableExpressions, { on: "," })}])`;
   }
 
   private get toRdfResourceValuesFunctionExpression(): Code {
@@ -316,16 +316,33 @@ ${joinCode(
   }
 
   private get toStringFunctionExpression(): Code {
+    const memberToStringExpressions = this.members.map(({ type }) =>
+      type.toStringExpression({
+        variables: { value: code`value` },
+      }),
+    );
+
+    // If every toString expression is the same, use that expression and don't bother discriminating the member type.
+    if (
+      memberToStringExpressions.every(
+        (memberToStringExpression, memberI) =>
+          memberI === 0 ||
+          codeEquals(memberToStringExpression, memberToStringExpressions[0]),
+      )
+    ) {
+      return code`((value: ${this.expression}): string => ${memberToStringExpressions[0]})`;
+    }
+
     return code`\
 ((value: ${this.expression}): string =>
-[${joinCode(
+JSON.stringify([${joinCode(
       this.members.map(({ type }) =>
         type.toStringExpression({
           variables: { value: code`value` },
         }),
       ),
       { on: ", " },
-    )}])`;
+    )}]))`;
   }
 
   private get valueSparqlConstructTriplesFunctionExpression(): Code {
@@ -336,7 +353,7 @@ ${joinCode(
   ${joinCode(
     this.members.map(
       ({ type }, memberI) => code`\
-triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}].type }));`,
+triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}] }));`,
     ),
   )}
   
@@ -353,7 +370,7 @@ triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherP
     ${joinCode(
       this.members.map(
         ({ type }, memberI) => code`\
-intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatternsFunction}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}].type });`,
+intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatternsFunction}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}] });`,
       ),
     )}
     
