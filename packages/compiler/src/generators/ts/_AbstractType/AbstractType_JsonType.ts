@@ -226,6 +226,38 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
   }
 }
 
+class JsonIntersectionType extends AbstractJsonType {
+  override readonly kind = "JsonIntersection";
+  readonly memberTypes: readonly JsonType[];
+
+  constructor({
+    memberTypes,
+    ...superParameters
+  }: {
+    memberTypes: readonly JsonType[];
+    recursive: boolean;
+  } & ConstructorParameters<typeof AbstractJsonType>[0]) {
+    super(superParameters);
+    this.memberTypes = memberTypes;
+  }
+
+  @Memoize()
+  protected get inlineExpression(): Code {
+    return code`(${joinCode(
+      this.memberTypes.map((memberType) => memberType.expression),
+      { on: " & " },
+    )})`;
+  }
+
+  @Memoize()
+  protected get schemaExpression(): Code {
+    return code`${this.reusables.imports.z}.intersection(${joinCode(
+      this.memberTypes.map((memberType) => memberType.schema),
+      { on: ", " },
+    )})`;
+  }
+}
+
 class JsonNumberType extends AbstractJsonPrimitiveType<number> {
   override readonly kind = "JsonNumber";
   protected override readonly typeof = "number";
@@ -461,6 +493,21 @@ class JsonTypeFactory {
     });
   }
 
+  createJsonIntersectionType(
+    memberTypes: readonly JsonType[],
+    options?: {
+      name?: AbstractJsonType.Name;
+      recursive?: boolean;
+    },
+  ): JsonIntersectionType {
+    return new JsonIntersectionType({
+      ...this.constructorParameters,
+      memberTypes,
+      name: Maybe.fromNullable(options?.name),
+      recursive: !!options?.recursive,
+    });
+  }
+
   createJsonNumberType(parameters?: {
     in_?: readonly number[];
     inReference?: Code;
@@ -534,6 +581,7 @@ type JsonType =
   | JsonArrayType
   | JsonBooleanType
   | JsonDiscriminatedUnionType
+  | JsonIntersectionType
   | JsonNumberType
   | JsonObjectType
   | JsonStringType;

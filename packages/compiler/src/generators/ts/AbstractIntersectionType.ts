@@ -1,15 +1,19 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractIntersectionType<
   MemberTypeT extends Type,
 > extends AbstractType {
+  override readonly conversionFunction: AbstractType["conversionFunction"] =
+    Maybe.empty();
+  override readonly discriminantProperty: AbstractType["discriminantProperty"] =
+    Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierProperty: Maybe<ObjectType.IdentifierProperty>;
   abstract override readonly kind: "ObjectIntersection" | "Intersection";
@@ -36,95 +40,43 @@ export abstract class AbstractIntersectionType<
   }
 
   @Memoize()
-  override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
-    if (this.conversionFunctionExpression.isNothing()) {
-      return this.conversionFunctionExpression;
-    }
-
-    return this.name
-      .map((name) =>
-        Maybe.of({
-          code: code`${name}.convert`,
-          sourceTypes: this.conversionFunctionExpression.extract()!.sourceTypes,
-        }),
-      )
-      .orDefault(this.conversionFunctionExpression);
-  }
-
-  @Memoize()
-  override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
-    switch (this.discriminant.kind) {
-      case "Extrinsic":
-        return Maybe.of({
-          name: this.discriminant.name,
-          values: this.discriminant.memberValues,
-        });
-      case "Hybrid":
-        return Maybe.of({
-          name: "termType",
-          values: this.discriminant.memberValues.flatMap((_) => _.values),
-        });
-      case "Intrinsic":
-        return Maybe.of({
-          name: this.discriminant.name,
-          values: this.discriminant.memberValues,
-        });
-      case "Typeof":
-        return Maybe.empty();
-      default:
-        throw this.discriminant satisfies never;
-    }
-  }
-
-  @Memoize()
   override get equalsFunction(): Code {
     return this.name
       .map((name) => code`${name}.equals`)
-      .orDefault(AbstractIntersectionType_equalsFunctionExpression.call(this));
+      .orDefault(this.equalsFunctionExpression);
   }
 
   @Memoize()
   override get filterFunction(): Code {
     return this.name
       .map((name) => code`${name}.filter`)
-      .orDefault(AbstractIntersectionType_filterFunctionExpression.call(this));
+      .orDefault(this.filterFunctionExpression);
   }
 
   @Memoize()
   get filterType(): Code {
     return this.name
       .map((name) => code`${name}.Filter`)
-      .orDefault(AbstractIntersectionType_filterTypeExpression.call(this));
+      .orDefault(this.filterTypeExpression);
   }
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Code {
     return this.name
       .map((name) => code`${name}.fromRdfResourceValues`)
-      .orDefault(
-        AbstractIntersectionType_fromRdfResourceValuesFunctionExpression.call(
-          this,
-        ),
-      );
+      .orDefault(this.fromRdfResourceValuesFunctionExpression);
   }
 
   @Memoize()
   override get graphqlType(): AbstractType.GraphqlType {
-    const name = this.name.extract();
-    if (
-      !name ||
-      !this.members.every((member) => member.type.kind === "Object")
-    ) {
-      throw new Error("not implemented");
-    }
-    return new AbstractType.GraphqlType(code`${name}.GraphQL`, this.reusables);
+    throw new Error("not implemented");
   }
 
   @Memoize()
   override get hashFunction(): Code {
     return this.name
       .map((name) => code`${name}.hash`)
-      .orDefault(AbstractIntersectionType_hashFunctionExpression.call(this));
+      .orDefault(this.hashFunctionExpression);
   }
 
   @Memoize()
@@ -160,7 +112,7 @@ export abstract class AbstractIntersectionType<
   override get schemaType(): Code {
     return this.name
       .map(() => code`typeof ${this.schema}`)
-      .orDefault(AbstractIntersectionType_schemaTypeExpression.call(this));
+      .orDefault(this.schemaTypeExpression);
   }
 
   @Memoize()
@@ -178,55 +130,124 @@ export abstract class AbstractIntersectionType<
   override get valueSparqlConstructTriplesFunction(): Code {
     return this.name
       .map((name) => code`${name}.valueSparqlConstructTriples`)
-      .orDefault(
-        AbstractIntersectionType_valueSparqlConstructTriplesFunctionExpression.call(
-          this,
-        ),
-      );
+      .orDefault(this.valueSparqlConstructTriplesFunctionExpression);
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
     return this.name
       .map((name) => code`${name}.valueSparqlWherePatterns`)
-      .orDefault(
-        AbstractIntersectionType_valueSparqlWherePatternsFunctionExpression.call(
-          this,
-        ),
-      );
-  }
-
-  @Memoize()
-  protected override get inlineExpression(): Code {
-    return AbstractIntersectionType_inlineExpression.call(this);
+      .orDefault(this.valueSparqlWherePatternsFunctionExpression);
   }
 
   protected override get schemaInitializers(): readonly Code[] {
     return super.schemaInitializers.concat(
-      code`members: { ${joinCode(
-        this.members.map(
-          ({ discriminantValues, type, primaryDiscriminantValue }) =>
-            code`${literalOf(primaryDiscriminantValue)}: ${{
-              discriminantValues: discriminantValues,
-              type: type.schema,
-            }}`,
-        ),
+      code`members: [${joinCode(
+        this.members.map(({ type }) => type.schema),
         { on: "," },
-      )} }`,
+      )}]`,
     );
   }
 
-  @Memoize()
-  private get conversionFunctionExpression(): Maybe<AbstractType.ConversionFunction> {
-    return AbstractIntersectionType_conversionFunctionExpression.call(this);
+  private get equalsFunctionExpression(): Code {
+    return code`\
+((left: ${this.expression}, right: ${this.expression}) =>
+${joinCode(
+  this.members.map(({ type }) => code`${type.equalsFunction}(left, right)`),
+  { on: " && " },
+)})`;
   }
 
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(AbstractIntersectionType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
+  private get filterFunctionExpression(): Code {
+    return code`\
+((filter: ${this.filterType}, value: ${this.expression}) =>
+  ${joinCode(
+    this.members.map(({ type }) => code`${type.filterFunction}(filter, value)`),
+    { on: " && " },
+  )})`;
   }
 
+  private get filterTypeExpression(): Code {
+    return joinCode(
+      this.members.map(({ type }) => type.filterType),
+      { on: " & " },
+    );
+  }
+
+  private get fromRdfResourceValuesFunctionExpression(): Code {
+    return code`\
+((
+  (inputValues, options) =>
+    ${joinCode(
+      this.members.map(
+        (member, memberI) => code`\
+      ${member.type.fromRdfResourceValuesFunction}(inputValues, { ...options, ignoreRdfType: true, schema: options.schema.members[${literalOf(memberI)}].type }).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
+      ),
+    )} ({ ${joinCode(
+      this.members.map((_, memberI) => code`...member${memberI}`),
+      { on: "," },
+    )} }) ${")".repeat(this.members.length - 1)}
+) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>)`;
+  }
+
+  private get hashFunctionExpression(): Code {
+    return code`\
+(<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.expression}): HasherT => {
+${joinCode(
+  this.members.map(({ type }) => code`${type.hashFunction}(hasher, value);`),
+)}
+  return hasher;
+})`;
+  }
+
+  private get schemaTypeExpression(): Code {
+    return code`${{
+      kind: this.kind,
+      members: code`[${joinCode(
+        this.members.map(({ type }) => type.schemaType),
+        { on: ", " },
+      )}]`,
+    }}`;
+  }
+
+  private get valueSparqlConstructTriplesFunctionExpression(): Code {
+    return code`\
+((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+  let triples: ${this.reusables.imports.sparqljs}.Triple[] = [];
+
+  ${joinCode(
+    this.members.map(
+      ({ type }, memberI) => code`\
+triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}].type }));`,
+    ),
+  )}
+  
+  return triples;
+}) satisfies ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>)`;
+  }
+
+  private get valueSparqlWherePatternsFunctionExpression(): Code {
+    return code`\
+((
+  ({ filter, schema, ...otherParameters }) => {
+    let intersectionPatterns: ${this.reusables.snippets.SparqlPattern}[] = [];
+
+    ${joinCode(
+      this.members.map(
+        ({ type }, memberI) => code`\
+intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatternsFunction}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}].type });`,
+      ),
+    )}
+    
+    return intersectionPatterns;
+}) satisfies ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>)`;
+  }
+
+  // override fromJsonExpression({
+  //   variables,
+  // }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
+  //   return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(AbstractIntersectionType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
+  // }
   override graphqlResolveExpression({
     variables,
   }: {
@@ -238,134 +259,12 @@ export abstract class AbstractIntersectionType<
   @Memoize()
   override jsonType(): AbstractType.JsonType {
     return this.jsonTypeFactory.createJsonIntersectionType(
-      this.members.map((member) => {
-        const memberJsonType = member.type.jsonType({
-          discriminantProperty: singleEntryRecord(
-            this.configuration.objectDiscriminantProperty.jsonName,
-            {
-              type:
-                typeof member.primaryDiscriminantValue === "number"
-                  ? this.jsonTypeFactory.createJsonNumberType({
-                      in_: [member.primaryDiscriminantValue],
-                    })
-                  : this.jsonTypeFactory.createJsonStringType({
-                      in_: [member.primaryDiscriminantValue],
-                    }),
-            },
-          ),
-          form: "expanded",
-        });
-        invariant(memberJsonType.kind === "JsonObject", memberJsonType.kind);
-        return memberJsonType;
-      }),
+      this.members.map((member) => member.type.jsonType({ form: "compact" })),
       {
         name: this.name.map((name) => [name, "Json"]).extract(),
         recursive: this.recursive,
       },
     );
-  }
-
-  override toJsonExpression({
-    variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.toJson`).orDefault(AbstractIntersectionType_toJsonFunctionExpression.call(this))}(${variables.value})`;
-  }
-
-  override toRdfResourceValuesExpression({
-    variables,
-  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    const { value: valueVariable, ...otherVariables } = variables;
-    return code`${this.name.map((name) => code`${name}.toRdfResourceValues`).orDefault(AbstractIntersectionType_toRdfResourceValuesFunctionExpression.call(this))}(${valueVariable}, ${otherVariables})`;
-  }
-
-  override toLoggableExpression({
-    variables,
-  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toLoggable`).orDefault(AbstractIntersectionType_toLoggableFunctionExpression.call(this))}(${variables.value})`;
-  }
-
-  override toStringExpression({
-    variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(AbstractIntersectionType_toStringFunctionExpression.call(this))}(${variables.value})`;
-  }
-
-  protected override staticModuleDeclarations(
-    name: string,
-  ): Record<string, Code> {
-    const staticModuleDeclarations: Record<string, Code> = {
-      ...super.staticModuleDeclarations(name),
-    };
-
-    this.conversionFunctionExpression.ifJust((conversionFunction) => {
-      staticModuleDeclarations["convert"] =
-        code`export const convert = ${conversionFunction.code};`;
-    });
-
-    if (this.configuration.features.has("Object.equals")) {
-      staticModuleDeclarations["equals"] =
-        code`export const equals = ${AbstractIntersectionType_equalsFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.filter")) {
-      staticModuleDeclarations["Filter"] =
-        code`export type Filter = ${AbstractIntersectionType_filterTypeExpression.call(this)};`;
-      staticModuleDeclarations["filter"] =
-        code`export const filter = ${AbstractIntersectionType_filterFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.hash")) {
-      staticModuleDeclarations["hash"] =
-        code`export const hash = ${AbstractIntersectionType_hashFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.JSON.type")) {
-      this.jsonType().declaration.ifJust((jsonTypeDeclaration) => {
-        staticModuleDeclarations["JSON"] = jsonTypeDeclaration;
-      });
-    }
-
-    if (this.configuration.features.has("Object.fromJson")) {
-      staticModuleDeclarations["fromJson"] =
-        code`export const fromJson = ${AbstractIntersectionType_fromJsonFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.fromRdf")) {
-      staticModuleDeclarations["fromRdfResourceValues"] =
-        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}, ${this.schemaType}> = ${AbstractIntersectionType_fromRdfResourceValuesFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.toJson")) {
-      staticModuleDeclarations["toJson"] =
-        code`export const toJson = ${AbstractIntersectionType_toJsonFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.toRdf")) {
-      staticModuleDeclarations["toRdfResourceValues"] =
-        code`export const toRdfResourceValues = ${AbstractIntersectionType_toRdfResourceValuesFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations["valueSparqlConstructTriples"] =
-        code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${AbstractIntersectionType_valueSparqlConstructTriplesFunctionExpression.call(this)};`;
-
-      staticModuleDeclarations["valueSparqlWherePatterns"] =
-        code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${AbstractIntersectionType_valueSparqlWherePatternsFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.toLoggable")) {
-      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-      staticModuleDeclarations[`${syntheticNamePrefix}toLoggable`] =
-        code`export const ${syntheticNamePrefix}toLoggable = ${AbstractIntersectionType_toLoggableFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.toString")) {
-      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
-        code`export const ${syntheticNamePrefix}toString = ${AbstractIntersectionType_toStringFunctionExpression.call(this)};`;
-    }
-
-    return staticModuleDeclarations;
   }
 }
 
