@@ -313,72 +313,6 @@
         sh:path :directRecursive
     ] .
 
-:Intersection
-    a sh:NodeShape ;
-    rdfs:comment "Node shape that sh:and's other node shapes. This will be generated as an intersection type or flattened into a single type." ;
-    sh:and (:IntersectionMember1
-        :IntersectionMember2
-    ) .
-
-:IntersectionMember-common
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:name "intersectionMemberCommon" ;
-    sh:path :intersectionMemberCommon .
-
-:IntersectionMember1
-    a owl:Class, sh:NodeShape ;
-    sh:property :IntersectionMember-common, [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :intersectionMember1Distinct
-    ] .
-
-:IntersectionMember2
-    a owl:Class, sh:NodeShape ;
-    sh:property :IntersectionMember-common, [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :intersectionMember2Distinct
-    ] .
-
-:DiscriminatedUnion
-    a sh:NodeShape ;
-    rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
-    sh:xone (:DiscriminatedUnionMember1
-        :DiscriminatedUnionMember2
-    ) .
-
-:DiscriminatedUnionMember-common
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:name "discriminatedUnionMemberCommon" ;
-    sh:path :discriminatedUnionMemberCommon .
-
-:DiscriminatedUnionMember1
-    a owl:Class, sh:NodeShape ;
-    sh:property :DiscriminatedUnionMember-common, [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :discriminatedUnionMember1Distinct
-    ] .
-
-:DiscriminatedUnionMember2
-    a owl:Class, sh:NodeShape ;
-    sh:property :DiscriminatedUnionMember-common, [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :discriminatedUnionMember2Distinct
-    ] .
-
 :DisplayStruct
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Demonstrates the use of shaclmate:display for excluding/including properties from toString()-type display representations" ;
@@ -435,7 +369,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 :FlattenDiscriminatedUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these." ;
-    sh:xone (:DiscriminatedUnion
+    sh:xone (:StructDiscriminatedUnion
         :FlattenDiscriminatedUnionMember3
     ) .
 
@@ -582,6 +516,19 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:node :IndirectRecursiveStruct ;
         sh:path :indirectRecursive
     ] .
+
+:InIntersection
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that sh:and's two sh:in node shapes to get the intersection of them." ;
+    sh:and ( :InIntersectionMember1 :InIntersectionMember2 ) .
+
+:InIntersectionMember1
+    a sh:NodeShape ;
+    sh:in ("test1" "test2" "test3" "test4") .
+
+:InIntersectionMember2
+    a sh:NodeShape ;
+    sh:in ("test3" "test4" "test5" "test6") .
 
 :IriIdentifierStruct
     a owl:Class, sh:NodeShape ;
@@ -1114,7 +1061,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :PartialDiscriminatedUnionMember1
-    shaclmate:rdfType :DiscriminatedUnionMember1 ;
+    shaclmate:rdfType :StructDiscriminatedUnionMember1 ;
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
@@ -1124,7 +1071,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :PartialDiscriminatedUnionMember2
-    shaclmate:rdfType :DiscriminatedUnionMember2 ;
+    shaclmate:rdfType :StructDiscriminatedUnionMember2 ;
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
@@ -1292,6 +1239,72 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
+:StructIntersection
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type." ;
+    sh:and (:StructIntersectionMember1
+        :StructIntersectionMember2
+    ) .
+
+:StructIntersectionMember-common
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "intersectionMemberCommon" ;
+    sh:path :intersectionMemberCommon .
+
+:StructIntersectionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property :StructIntersectionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :intersectionMember1Distinct
+    ] .
+
+:StructIntersectionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property :StructIntersectionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :intersectionMember2Distinct
+    ] .
+
+:StructDiscriminatedUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:StructDiscriminatedUnionMember1
+        :StructDiscriminatedUnionMember2
+    ) .
+
+:StructDiscriminatedUnionMember-common
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "discriminatedUnionMemberCommon" ;
+    sh:path :discriminatedUnionMemberCommon .
+
+:StructDiscriminatedUnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property :StructDiscriminatedUnionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :discriminatedUnionMember1Distinct
+    ] .
+
+:StructDiscriminatedUnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property :StructDiscriminatedUnionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :discriminatedUnionMember2Distinct
+    ] .
+
 :StructList
     a sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property." ;
@@ -1382,10 +1395,10 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         sh:maxCount 1 ;
         sh:path :optionalNodeOrNodeOrString ;
         sh:xone ([
-                sh:node :DiscriminatedUnionMember1
+                sh:node :StructDiscriminatedUnionMember1
             ]
             [
-                sh:node :DiscriminatedUnionMember2
+                sh:node :StructDiscriminatedUnionMember2
             ]
             [
                 sh:datatype xsd:string
@@ -1408,7 +1421,7 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         sh:maxCount 1 ;
         sh:path :optionalNodeOrLiteral ;
         sh:xone ([
-                sh:node :DiscriminatedUnionMember1
+                sh:node :StructDiscriminatedUnionMember1
             ]
             [
                 sh:nodeKind sh:Literal
@@ -1431,7 +1444,7 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         sh:minCount 1 ;
         sh:path :requiredNodeOrLiteral ;
         sh:xone ([
-                sh:node :DiscriminatedUnionMember1
+                sh:node :StructDiscriminatedUnionMember1
             ]
             [
                 sh:nodeKind sh:Literal
@@ -1443,10 +1456,10 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         sh:minCount 1 ;
         sh:path :requiredNodeOrNodeOrString ;
         sh:xone ([
-                sh:node :DiscriminatedUnionMember1
+                sh:node :StructDiscriminatedUnionMember1
             ]
             [
-                sh:node :DiscriminatedUnionMember2
+                sh:node :StructDiscriminatedUnionMember2
             ]
             [
                 sh:datatype xsd:string
@@ -1456,7 +1469,7 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
         sh:path :setNodeOrLiteral ;
         sh:xone ([
-                sh:node :DiscriminatedUnionMember1
+                sh:node :StructDiscriminatedUnionMember1
             ]
             [
                 sh:nodeKind sh:Literal
@@ -1490,10 +1503,10 @@ The sh:targetClass is expected on deserialization and added on serialization."""
         rdfs:comment "Discriminated union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
         sh:path :setNodeOrNodeOrString ;
         sh:xone ([
-                sh:node :DiscriminatedUnionMember1
+                sh:node :StructDiscriminatedUnionMember1
             ]
             [
-                sh:node :DiscriminatedUnionMember2
+                sh:node :StructDiscriminatedUnionMember2
             ]
             [
                 sh:datatype xsd:string
