@@ -15,11 +15,13 @@ import type { DateType } from "./DateType.js";
 import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import type { IntersectionType } from "./IntersectionType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import type { LangStringType } from "./LangStringType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
@@ -218,11 +220,13 @@ export namespace ListType {
     | FloatType
     | IdentifierType
     | IntType
+    | IntersectionType
     | IriType
     | LangStringType
     | ListType<ListType.ItemType>
     | LiteralType
     | ObjectDiscriminatedUnionType
+    | ObjectIntersectionType
     | ObjectType
     | StringType
     | TermType;
@@ -238,12 +242,14 @@ export namespace ListType {
       case "DiscriminatedUnion":
       case "Float":
       case "Identifier":
-      case "Iri":
       case "Int":
+      case "Intersection":
+      case "Iri":
       case "LangString":
       case "List":
       case "Literal":
       case "ObjectDiscriminatedUnion":
+      case "ObjectIntersection":
       case "Object":
       case "String":
       case "Term":

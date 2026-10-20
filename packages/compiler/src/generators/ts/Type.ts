@@ -8,6 +8,7 @@ import type { DefaultValueType } from "./DefaultValueType.js";
 import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import type { IntersectionType } from "./IntersectionType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import type { LangStringType } from "./LangStringType.js";
@@ -17,6 +18,7 @@ import type { LazyType } from "./LazyType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
@@ -35,6 +37,7 @@ export type Type =
   | FloatType
   | IdentifierType
   | IntType
+  | IntersectionType
   | IriType
   | LangStringType
   | LazyOptionType
@@ -43,6 +46,7 @@ export type Type =
   | ListType<ListType.ItemType>
   | LiteralType
   | ObjectDiscriminatedUnionType
+  | ObjectIntersectionType
   | ObjectType
   | OptionType<OptionType.ItemType>
   | SetType<SetType.ItemType>

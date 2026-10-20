@@ -4,9 +4,11 @@ import { literalDatatypeDefinitions } from "@rdfx/literal";
 import type { Logger } from "@rdfx/logger";
 import base62 from "@sindresorhus/base62";
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
+
 import * as ast from "../../ast/index.js";
 import { AbstractType_JsonTypeFactory } from "./_AbstractType/AbstractType_JsonType.js";
 import type { AbstractType } from "./AbstractType.js";
@@ -20,6 +22,7 @@ import { DefaultValueType } from "./DefaultValueType.js";
 import { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
+import { IntersectionType } from "./IntersectionType.js";
 import { IntType } from "./IntType.js";
 import { IriType } from "./IriType.js";
 import { LangStringType } from "./LangStringType.js";
@@ -29,6 +32,7 @@ import { LazyType } from "./LazyType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
 import { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import { ObjectType } from "./ObjectType.js";
 import { OptionType } from "./OptionType.js";
 import type { Reusables } from "./Reusables.js";
@@ -49,18 +53,12 @@ export class TypeFactory {
   private readonly jsonTypeFactory: AbstractType.JsonTypeFactory;
   private readonly logger: Logger;
 
-  private cachedObjectDiscriminatedUnionTypesByShapeIdentifier: TermMap<
-    BlankNode | NamedNode,
-    ObjectDiscriminatedUnionType
-  > = new TermMap();
   private cachedObjectTypeShaclPropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType.ShaclProperty<Type>
   > = new TermMap();
-  private cachedObjectTypesByShapeIdentifier: TermMap<
-    BlankNode | NamedNode,
-    ObjectType
-  > = new TermMap();
+  private cachedTypesByShapeIdentifier: TermMap<BlankNode | NamedNode, Type> =
+    new TermMap();
 
   constructor({
     configuration,
@@ -85,13 +83,201 @@ export class TypeFactory {
     };
   }
 
-  createObjectType(astType: ast.StructType): ObjectType {
+  createDiscriminatedUnionType(
+    astType: ast.DiscriminatedUnionType,
+  ): DiscriminatedUnionType | ObjectDiscriminatedUnionType {
+    if (astType.isStructDiscriminatedUnionType()) {
+      return this.createObjectDiscriminatedUnionType(astType);
+    }
+
+    return new DiscriminatedUnionType({
+      ...this.constructorParameters,
+      comment: astType.comment,
+      identifierProperty: Maybe.empty(),
+      label: astType.label,
+      members: astType.members.map((member) => ({
+        discriminantValue: member.discriminantValue,
+        type: this.createType(member.type),
+      })),
+      name: astType.name.map((name) => this.tsName(name)),
+      recursive: astType.recursive,
+      shapeIdentifier: astType.shapeIdentifier,
+      synthetic: astType.synthetic,
+    });
+  }
+
+  createIntersectionType(
+    astType: ast.IntersectionType,
+  ): IntersectionType | ObjectIntersectionType {
+    if (astType.isStructIntersectionType()) {
+      return this.createObjectIntersectionType(astType);
+    }
+
+    return new IntersectionType({
+      ...this.constructorParameters,
+      comment: astType.comment,
+      identifierProperty: Maybe.empty(),
+      label: astType.label,
+      members: astType.members.map((member) => ({
+        type: this.createType(member.type),
+      })),
+      name: astType.name.map((name) => this.tsName(name)),
+      recursive: astType.recursive,
+      shapeIdentifier: astType.shapeIdentifier,
+      synthetic: astType.synthetic,
+    });
+  }
+
+  createObjectDiscriminatedUnionType(
+    astType: ast.StructDiscriminatedUnionType,
+  ): ObjectDiscriminatedUnionType {
     {
-      const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
+      const cachedType = this.cachedTypesByShapeIdentifier.get(
         astType.shapeIdentifier,
       );
-      if (cachedObjectType) {
-        return cachedObjectType;
+      if (cachedType) {
+        invariant(
+          cachedType.kind === "ObjectDiscriminatedUnion",
+          cachedType.kind,
+        );
+        return cachedType;
+      }
+    }
+
+    const objectDiscriminatedUnionIdentifierType = this.createIdentifierType(
+      ast.StructCompoundType.identifierType(astType),
+    );
+
+    const objectDiscriminatedUnionTypeName = astType.name.map((name) =>
+      this.tsName(name),
+    );
+
+    const objectDiscriminatedUnionType = new ObjectDiscriminatedUnionType({
+      ...this.constructorParameters,
+      comment: astType.comment,
+      identifierProperty:
+        astType.isStructDiscriminatedUnionType() &&
+        astType.members.every((member) => {
+          switch (member.type.kind) {
+            case "DiscriminatedUnion":
+              return member.type.members.every((member) =>
+                member.type.identifierField.isJust(),
+              );
+            case "Struct":
+              return member.type.identifierField.isJust();
+            default:
+              member.type satisfies never;
+              throw new Error("should never reach this point");
+          }
+        })
+          ? Maybe.of(
+              new ObjectType.IdentifierProperty({
+                ...this.constructorParameters,
+                name: `${this.configuration.syntheticNamePrefix}identifier`,
+                objectType: { name: objectDiscriminatedUnionTypeName },
+                type: objectDiscriminatedUnionIdentifierType,
+              }),
+            )
+          : Maybe.empty(),
+      identifierType: objectDiscriminatedUnionIdentifierType,
+      label: astType.label,
+      members: ast.StructCompoundType.memberStructTypes(astType).map(
+        (astStructType) => ({
+          discriminantValue: Maybe.empty(),
+          type: this.createObjectType(astStructType),
+        }),
+      ),
+      name: objectDiscriminatedUnionTypeName,
+      recursive: astType.recursive,
+      shapeIdentifier: astType.shapeIdentifier,
+      synthetic: astType.synthetic,
+    });
+
+    this.cachedTypesByShapeIdentifier.set(
+      astType.shapeIdentifier,
+      objectDiscriminatedUnionType,
+    );
+
+    return objectDiscriminatedUnionType;
+  }
+
+  createObjectIntersectionType(
+    astType: ast.StructIntersectionType,
+  ): ObjectIntersectionType {
+    {
+      const cachedType = this.cachedTypesByShapeIdentifier.get(
+        astType.shapeIdentifier,
+      );
+      if (cachedType) {
+        invariant(cachedType.kind === "ObjectIntersection", cachedType.kind);
+        return cachedType;
+      }
+    }
+
+    const objectIntersectionIdentifierType = this.createIdentifierType(
+      ast.StructCompoundType.identifierType(astType),
+    );
+
+    const objectIntersectionTypeName = astType.name.map((name) =>
+      this.tsName(name),
+    );
+
+    const objectIntersectionType = new ObjectIntersectionType({
+      ...this.constructorParameters,
+      comment: astType.comment,
+      identifierProperty:
+        astType.isStructIntersectionType() &&
+        astType.members.every((member) => {
+          switch (member.type.kind) {
+            case "Intersection":
+              return member.type.members.every((member) =>
+                member.type.identifierField.isJust(),
+              );
+            case "Struct":
+              return member.type.identifierField.isJust();
+            default:
+              member.type satisfies never;
+              throw new Error("should never reach this point");
+          }
+        })
+          ? Maybe.of(
+              new ObjectType.IdentifierProperty({
+                ...this.constructorParameters,
+                name: `${this.configuration.syntheticNamePrefix}identifier`,
+                objectType: { name: objectIntersectionTypeName },
+                type: objectIntersectionIdentifierType,
+              }),
+            )
+          : Maybe.empty(),
+      identifierType: objectIntersectionIdentifierType,
+      label: astType.label,
+      members: ast.StructCompoundType.memberStructTypes(astType).map(
+        (astStructType) => ({
+          type: this.createObjectType(astStructType),
+        }),
+      ),
+      name: objectIntersectionTypeName,
+      recursive: astType.recursive,
+      shapeIdentifier: astType.shapeIdentifier,
+      synthetic: astType.synthetic,
+    });
+
+    this.cachedTypesByShapeIdentifier.set(
+      astType.shapeIdentifier,
+      objectIntersectionType,
+    );
+
+    return objectIntersectionType;
+  }
+
+  createObjectType(astType: ast.StructType): ObjectType {
+    {
+      const cachedType = this.cachedTypesByShapeIdentifier.get(
+        astType.shapeIdentifier,
+      );
+      if (cachedType) {
+        invariant(cachedType.kind === "Object", cachedType.kind);
+        return cachedType;
       }
     }
 
@@ -178,81 +364,8 @@ export class TypeFactory {
       shapeIdentifier: astType.shapeIdentifier,
       synthetic: astType.synthetic,
     });
-    this.cachedObjectTypesByShapeIdentifier.set(
-      astType.shapeIdentifier,
-      objectType,
-    );
+    this.cachedTypesByShapeIdentifier.set(astType.shapeIdentifier, objectType);
     return objectType;
-  }
-
-  createObjectDiscriminatedUnionType(
-    astType: ast.StructDiscriminatedUnionType,
-  ): ObjectDiscriminatedUnionType {
-    {
-      const cachedObjectDiscriminatedUnionType =
-        this.cachedObjectDiscriminatedUnionTypesByShapeIdentifier.get(
-          astType.shapeIdentifier,
-        );
-      if (cachedObjectDiscriminatedUnionType) {
-        return cachedObjectDiscriminatedUnionType;
-      }
-    }
-
-    const objectDiscriminatedUnionIdentifierType = this.createIdentifierType(
-      ast.StructCompoundType.identifierType(astType),
-    );
-
-    const objectDiscriminatedUnionTypeName = astType.name.map((name) =>
-      this.tsName(name),
-    );
-
-    const objectDiscriminatedUnionType = new ObjectDiscriminatedUnionType({
-      ...this.constructorParameters,
-      comment: astType.comment,
-      identifierProperty:
-        astType.isStructDiscriminatedUnionType() &&
-        astType.members.every((member) => {
-          switch (member.type.kind) {
-            case "DiscriminatedUnion":
-              return member.type.members.every((member) =>
-                member.type.identifierField.isJust(),
-              );
-            case "Struct":
-              return member.type.identifierField.isJust();
-            default:
-              member.type satisfies never;
-              throw new Error("should never reach this point");
-          }
-        })
-          ? Maybe.of(
-              new ObjectType.IdentifierProperty({
-                ...this.constructorParameters,
-                name: `${this.configuration.syntheticNamePrefix}identifier`,
-                objectType: { name: objectDiscriminatedUnionTypeName },
-                type: objectDiscriminatedUnionIdentifierType,
-              }),
-            )
-          : Maybe.empty(),
-      identifierType: objectDiscriminatedUnionIdentifierType,
-      label: astType.label,
-      members: ast.StructCompoundType.memberStructTypes(astType).map(
-        (astStructType) => ({
-          discriminantValue: Maybe.empty(),
-          type: this.createObjectType(astStructType),
-        }),
-      ),
-      name: objectDiscriminatedUnionTypeName,
-      recursive: astType.recursive,
-      shapeIdentifier: astType.shapeIdentifier,
-      synthetic: astType.synthetic,
-    });
-
-    this.cachedObjectDiscriminatedUnionTypesByShapeIdentifier.set(
-      astType.shapeIdentifier,
-      objectDiscriminatedUnionType,
-    );
-
-    return objectDiscriminatedUnionType;
   }
 
   createType(
@@ -264,10 +377,12 @@ export class TypeFactory {
         return this.createBlankNodeType(astType);
       case "DefaultValue":
         return this.createDefaultValueType(astType);
+      case "DiscriminatedUnion":
+        return this.createDiscriminatedUnionType(astType);
       case "Identifier":
         return this.createIdentifierType(astType);
       case "Intersection":
-        throw new Error("not implemented");
+        return this.createIntersectionType(astType);
       case "Iri":
         return this.createIriType(astType);
       case "Lazy":
@@ -288,32 +403,7 @@ export class TypeFactory {
         return this.createObjectType(astType);
       case "Term":
         return this.createTermType(astType);
-      case "DiscriminatedUnion":
-        return this.createDiscriminatedUnionType(astType);
     }
-  }
-
-  createDiscriminatedUnionType(
-    astType: ast.DiscriminatedUnionType,
-  ): DiscriminatedUnionType | ObjectDiscriminatedUnionType {
-    if (astType.isStructDiscriminatedUnionType()) {
-      return this.createObjectDiscriminatedUnionType(astType);
-    }
-
-    return new DiscriminatedUnionType({
-      ...this.constructorParameters,
-      comment: astType.comment,
-      identifierProperty: Maybe.empty(),
-      label: astType.label,
-      members: astType.members.map((member) => ({
-        discriminantValue: member.discriminantValue,
-        type: this.createType(member.type),
-      })),
-      name: astType.name.map((name) => this.tsName(name)),
-      recursive: astType.recursive,
-      shapeIdentifier: astType.shapeIdentifier,
-      synthetic: astType.synthetic,
-    });
   }
 
   private createBlankNodeType(astType: ast.BlankNodeType): BlankNodeType {
