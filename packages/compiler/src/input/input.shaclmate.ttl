@@ -79,8 +79,7 @@ shaclmate:Operation-bindings
 
 shaclmate:Operation-error
     a sh:PropertyShape ;
-    rdfs:comment "Optional error type(s) associated with the operation. This must be a node shape with properties (a 'struct') or a discriminated union of the same." ;
-    sh:maxCount 1 ;
+    rdfs:comment "Error types associated with the operation" ;
     sh:node shaclmate:OperationError ;
     sh:path shaclmate:error .
 
@@ -105,6 +104,28 @@ shaclmate:Operation-result
     sh:maxCount 1 ;
     sh:node shaclmate:OperationResult ;
     sh:path shaclmate:result .
+
+shaclmate:OperationError
+    a sh:NodeShape ;
+    rdfs:comment "Error type associated with an operation. Must be a struct type (i.e., have at least one sh:property)." ;
+    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:NodeShape-types, shaclmate:OperationError-properties, shaclmate:Shape-classes, shaclmate:Shape-deactivated, shaclmate:Shape-isDefinedBy, shaclmate:Shape-message, shaclmate:Shape-nodeKind, shaclmate:Shape-severity, shaclmate:Shape-shaclmateName, shaclmate:comment, shaclmate:label .
+
+shaclmate:OperationError-bindings
+    a sh:PropertyShape ;
+    rdfs:comment "Transport bindings for the operation error." ;
+    sh:node shaclmate:OperationErrorHttpBinding ;
+    sh:path shaclmate:binding .
+
+shaclmate:OperationError-properties
+    a sh:PropertyShape ;
+    sh:minCount 1 ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:path sh:property .
+
+shaclmate:OperationErrorHttpBinding
+    a sh:NodeShape ;
+    rdfs:comment "HTTP binding for an operation error" ;
+    sh:property shaclmate:OperationErrorHttpBinding-statusCode .
 
 shaclmate:OperationErrorHttpBinding-statusCode
     a sh:PropertyShape ;
