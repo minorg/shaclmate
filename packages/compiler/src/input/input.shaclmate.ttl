@@ -194,6 +194,14 @@ shaclmate:OperationHttpBinding-method
     sh:node shaclmate:OperationHttpBindingMethod ;
     sh:path schema:httpMethod .
 
+shaclmate:OperationHttpBinding-statusCode
+    a sh:PropertyShape ;
+    rdfs:comment "HTTP result response status code. If not specified, it defaults to 200 if there is a result, 204 if not." ;
+    sh:maxCount 1 ;
+    sh:name "statusCode" ;
+    sh:node shaclmate:OperationHttpBindingStatusCode ;
+    sh:path shaclmate:httpStatusCode .
+
 shaclmate:OperationHttpBinding-urlTemplate
     a sh:PropertyShape ;
     rdfs:comment "RFC 6570 URI template for the HTTP request. Variables in the template must correspond to properties of the parameter. Any other properties of the parameter are serialized into the HTTP requets body following the given/inferred content type." ;
@@ -211,39 +219,7 @@ shaclmate:OperationHttpBindingMethod
         "PUT"
     ) .
 
-shaclmate:OperationHttpResultResponseBinding-statusCode
-    a sh:PropertyShape ;
-    rdfs:comment "HTTP result response status code. If not specified, it defaults to 200." ;
-    sh:maxCount 1 ;
-    sh:name "statusCode" ;
-    sh:node shaclmate:OperationResultHttpBindingStatusCode ;
-    sh:path shaclmate:httpStatusCode .
-
-shaclmate:OperationParameterHttpBinding-contentType
-    a sh:PropertyShape ;
-    rdfs:comment "HTTP request body content type. This should be specified if the operation has parameters that are not bound to its request URI template. If it's not specified it defaults to JSON." ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:OperationParameterHttpBindingContentType ;
-    sh:path schema:encodingType .
-
-shaclmate:OperationParameterHttpBindingContentType
-    a sh:NodeShape ;
-    sh:in ("application/json"
-    ) .
-
-shaclmate:OperationResultHttpBinding-contentType
-    a sh:PropertyShape ;
-    rdfs:comment "HTTP result response body content type. If not specified, it's inferred from the request method and content type." ;
-    sh:maxCount 1 ;
-    sh:node shaclmate:OperationResultHttpBindingContentType ;
-    sh:path schema:contentType .
-
-shaclmate:OperationResultHttpBindingContentType
-    a sh:NodeShape ;
-    sh:in ("application/json"
-    ) .
-
-shaclmate:OperationResultHttpBindingStatusCode
+shaclmate:OperationHttpBindingStatusCode
     a sh:NodeShape ;
     rdfs:comment "Enumeration of HTTP successful (2xx) status codes" ;
     sh:datatype xsd:int ;
@@ -257,6 +233,38 @@ shaclmate:OperationResultHttpBindingStatusCode
         207
         208
         226
+    ) .
+
+shaclmate:OperationParameter
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Parameter associated with an operation. Can be any node shape." .
+
+shaclmate:OperationParameterHttpBinding-contentType
+    a sh:PropertyShape ;
+    rdfs:comment "HTTP request body content type. This should be specified if the operation has parameters that are not bound to its request URI template. If it's not specified it defaults to JSON." ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationParameterHttpBindingContentType ;
+    sh:path schema:encodingType .
+
+shaclmate:OperationParameterHttpBindingContentType
+    a sh:NodeShape ;
+    sh:in ("application/json"
+    ) .
+
+shaclmate:OperationResult
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Result associated with an operation. Can be any node shape." .
+
+shaclmate:OperationResultHttpBinding-contentType
+    a sh:PropertyShape ;
+    rdfs:comment "HTTP result response body content type. If not specified, it's inferred from the request method and content type." ;
+    sh:maxCount 1 ;
+    sh:node shaclmate:OperationResultHttpBindingContentType ;
+    sh:path schema:contentType .
+
+shaclmate:OperationResultHttpBindingContentType
+    a sh:NodeShape ;
+    sh:in ("application/json"
     ) .
 
 shaclmate:PropertyShape
