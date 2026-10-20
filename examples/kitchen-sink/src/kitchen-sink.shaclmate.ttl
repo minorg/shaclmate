@@ -313,6 +313,39 @@
         sh:path :directRecursive
     ] .
 
+:Intersection
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that sh:and's other node shapes. This will be generated as an intersection type or flattened into a single type." ;
+    sh:and (:IntersectionMember1
+        :IntersectionMember2
+    ) .
+
+:IntersectionMember-common
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "intersectionMemberCommon" ;
+    sh:path :intersectionMemberCommon .
+
+:IntersectionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property :IntersectionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :intersectionMember1Distinct
+    ] .
+
+:IntersectionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property :IntersectionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :intersectionMember2Distinct
+    ] .
+
 :DiscriminatedUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
