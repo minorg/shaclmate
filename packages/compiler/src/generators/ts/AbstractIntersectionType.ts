@@ -3,6 +3,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import { codeEquals } from "./codeEquals.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
@@ -93,6 +94,7 @@ export abstract class AbstractIntersectionType<
         }
       }
     }
+    invariant(jsTypes.length === 1);
     return jsTypes;
   }
 
@@ -174,6 +176,26 @@ ${joinCode(
     );
   }
 
+  private get fromJsonFunctionExpression(): Code {
+    return code`\
+((value: ${this.jsonType().expression}): ${this.reusables.imports.Either}<Error, ${this.expression}> =>
+    ${joinCode(
+      this.members.map(
+        (member, memberI) => code`
+${member.type.fromJsonExpression({
+  form: "expanded",
+  variables: {
+    value: code`value`,
+  },
+})}.${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
+      ),
+    )} ({ ${joinCode(
+      this.members.map((_, memberI) => code`...member${memberI}`),
+      { on: "," },
+    )} }) ${")".repeat(this.members.length - 1)}
+)`;
+  }
+
   private get fromRdfResourceValuesFunctionExpression(): Code {
     return code`\
 ((
@@ -210,6 +232,102 @@ ${joinCode(
     }}`;
   }
 
+  private get toJsonFunctionExpression(): Code {
+    return code`\
+((value: ${this.expression}): ${this.jsonType().expression} => ({
+${joinCode(
+  this.members.map(
+    ({ type }) =>
+      code`...${type.toJsonExpression({
+        form: "compact",
+        variables: { value: code`value` },
+      })} }`,
+  ),
+)}})`;
+  }
+
+  private get toLoggableFunctionExpression(): Code {
+    const memberToLoggableExpressions = this.members.map(({ type }) =>
+      type.toLoggableExpression({
+        variables: { value: code`value` },
+      }),
+    );
+
+    const returnTypeAnnotation = this.recursive ? code`: any` : code``;
+
+    // If every toLoggable expression is the same, use that expression and don't bother discriminating the member type.
+    if (
+      memberToLoggableExpressions.every(
+        (memberToLoggableExpression, memberI) =>
+          memberI === 0 ||
+          codeEquals(
+            memberToLoggableExpression,
+            memberToLoggableExpressions[0],
+          ),
+      )
+    ) {
+      return code`((value: ${this.expression})${returnTypeAnnotation} => ${memberToLoggableExpressions[0]})`;
+    }
+
+    return code`((value: ${this.expression})${returnTypeAnnotation} => [${joinCode(memberToLoggableExpressions, { on: "," })}]))`;
+  }
+
+  private get toRdfResourceValuesFunctionExpression(): Code {
+    const returnType = code`(${joinCode(
+      [...this.toRdfResourceValueTypes].map((toRdfResourceValueType) => {
+        switch (toRdfResourceValueType) {
+          case "BlankNode":
+            return code`${this.reusables.imports.BlankNode}`;
+          case "Literal":
+            return code`${this.reusables.imports.Literal}`;
+          case "NamedNode":
+            return code`${this.reusables.imports.NamedNode}`;
+          default:
+            toRdfResourceValueType satisfies never;
+            throw new Error();
+        }
+      }),
+      { on: " | " },
+    )})[]`;
+
+    return code`\
+((
+  (value, _options): ${returnType} => {
+    let rdfResourceValues: ${returnType} = [];
+${joinCode(
+  this.members.map(
+    ({ type }) =>
+      code`rdfResourceValues = rdfResourceValues.concat(${type.toRdfResourceValuesExpression(
+        {
+          variables: {
+            graph: code`_options.graph`,
+            propertyPath: code`_options.propertyPath`,
+            resource: code`_options.resource`,
+            resourceSet: code`_options.resourceSet`,
+            value: code`value`,
+          },
+        },
+      )});`,
+  ),
+)}
+    return rdfResourceValues;
+  }
+) satisfies ${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}>)`;
+  }
+
+  private get toStringFunctionExpression(): Code {
+    return code`\
+((value: ${this.expression}): string =>
+[${joinCode(
+      this.members.map(({ type }) =>
+        type.toStringExpression({
+          variables: { value: code`value` },
+        }),
+      ),
+      { on: ", " },
+    )}])`;
+  }
+
   private get valueSparqlConstructTriplesFunctionExpression(): Code {
     return code`\
 ((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
@@ -243,11 +361,12 @@ intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatter
 }) satisfies ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>)`;
   }
 
-  // override fromJsonExpression({
-  //   variables,
-  // }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-  //   return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(AbstractIntersectionType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
-  // }
+  override fromJsonExpression({
+    variables,
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
+    return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(this.fromJsonFunctionExpression)}(${variables.value})`;
+  }
+
   override graphqlResolveExpression({
     variables,
   }: {
@@ -265,6 +384,31 @@ intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatter
         recursive: this.recursive,
       },
     );
+  }
+
+  override toJsonExpression({
+    variables,
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
+    return code`${this.name.map((name) => code`${name}.toJson`).orDefault(this.toJsonFunctionExpression)}(${variables.value})`;
+  }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
+    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toLoggable`).orDefault(this.toLoggableFunctionExpression)}(${variables.value})`;
+  }
+
+  override toRdfResourceValuesExpression({
+    variables,
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+    const { value: valueVariable, ...otherVariables } = variables;
+    return code`${this.name.map((name) => code`${name}.toRdfResourceValues`).orDefault(this.toRdfResourceValuesFunctionExpression)}(${valueVariable}, ${otherVariables})`;
+  }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(this.toStringFunctionExpression)}(${variables.value})`;
   }
 }
 
