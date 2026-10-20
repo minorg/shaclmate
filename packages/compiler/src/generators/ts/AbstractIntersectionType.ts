@@ -410,6 +410,79 @@ intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatter
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
     return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(this.toStringFunctionExpression)}(${variables.value})`;
   }
+
+  protected override staticModuleDeclarations(
+    name: string,
+  ): Record<string, Code> {
+    const staticModuleDeclarations: Record<string, Code> = {
+      ...super.staticModuleDeclarations(name),
+    };
+
+    if (this.configuration.features.has("Object.equals")) {
+      staticModuleDeclarations["equals"] =
+        code`export const equals = ${this.equalsFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.filter")) {
+      staticModuleDeclarations["Filter"] =
+        code`export type Filter = ${this.filterTypeExpression};`;
+      staticModuleDeclarations["filter"] =
+        code`export const filter = ${this.filterFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.hash")) {
+      staticModuleDeclarations["hash"] =
+        code`export const hash = ${this.hashFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.JSON.type")) {
+      this.jsonType().declaration.ifJust((jsonTypeDeclaration) => {
+        staticModuleDeclarations["JSON"] = jsonTypeDeclaration;
+      });
+    }
+
+    if (this.configuration.features.has("Object.fromJson")) {
+      staticModuleDeclarations["fromJson"] =
+        code`export const fromJson = ${this.fromJsonFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.fromRdf")) {
+      staticModuleDeclarations["fromRdfResourceValues"] =
+        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}, ${this.schemaType}> = ${this.fromRdfResourceValuesFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.toJson")) {
+      staticModuleDeclarations["toJson"] =
+        code`export const toJson = ${this.toJsonFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.toRdf")) {
+      staticModuleDeclarations["toRdfResourceValues"] =
+        code`export const toRdfResourceValues = ${this.toRdfResourceValuesFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.SPARQL")) {
+      staticModuleDeclarations["valueSparqlConstructTriples"] =
+        code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.valueSparqlConstructTriplesFunctionExpression};`;
+
+      staticModuleDeclarations["valueSparqlWherePatterns"] =
+        code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.valueSparqlWherePatternsFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.toLoggable")) {
+      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+      staticModuleDeclarations[`${syntheticNamePrefix}toLoggable`] =
+        code`export const ${syntheticNamePrefix}toLoggable = ${this.toLoggableFunctionExpression};`;
+    }
+
+    if (this.configuration.features.has("Object.toString")) {
+      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
+        code`export const ${syntheticNamePrefix}toString = ${this.toStringFunctionExpression};`;
+    }
+
+    return staticModuleDeclarations;
+  }
 }
 
 export namespace AbstractIntersectionType {
