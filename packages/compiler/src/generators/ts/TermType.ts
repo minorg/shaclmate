@@ -5,6 +5,8 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
+import type { FunctionLike } from "./FunctionLike.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import {
   arrayOf,
@@ -23,15 +25,17 @@ export class TermType<
 > extends AbstractTermType {
   override readonly conversionFunction: Maybe<AbstractTermType.ConversionFunction> =
     Maybe.empty();
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterTerm}`;
+  override readonly filterFunction = new FunctionReference(
+    this.reusables.snippets.filterTerm,
+  );
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
   override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.termSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+    this.reusables.snippets.termSparqlWherePatterns,
+  );
 
   constructor({
     nodeKinds,
@@ -56,8 +60,10 @@ export class TermType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.termFromRdfResourceValues}<${this.expression}>`;
+  override get fromRdfResourceValuesFunction(): FunctionLike {
+    return new FunctionReference(
+      code`${this.reusables.snippets.termFromRdfResourceValues}<${this.expression}>`,
+    );
   }
 
   override get graphqlType(): AbstractTermType.GraphqlType {

@@ -5,6 +5,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
+import type { FunctionLike } from "./FunctionLike.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class IntType extends AbstractNumericType<number> {
@@ -19,8 +21,10 @@ export class IntType extends AbstractNumericType<number> {
   override readonly kind = "Int";
 
   @Memoize()
-  get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.intFromRdfResourceValues}<${this.expression}>`;
+  get fromRdfResourceValuesFunction(): FunctionLike {
+    return new FunctionReference(
+      code`${this.reusables.snippets.intFromRdfResourceValues}<${this.expression}>`,
+    );
   }
 
   @Memoize()

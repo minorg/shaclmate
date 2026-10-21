@@ -3,6 +3,7 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import { FunctionReference } from "./FunctionReference.js";
 import type { Typeof } from "./Typeof.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
@@ -32,18 +33,21 @@ export class LiteralType extends AbstractLiteralType {
         },
       ],
     });
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterLiteral}`;
+  override readonly filterFunction = new FunctionReference(
+    this.reusables.snippets.filterLiteral,
+  );
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.literalFromRdfResourceValues}`;
+  override readonly fromRdfResourceValuesFunction = new FunctionReference(
+    this.reusables.snippets.literalFromRdfResourceValues,
+  );
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
   override readonly kind = "Literal";
   override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.literalSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+    this.reusables.snippets.literalSparqlWherePatterns,
+  );
 
   constructor({
     languageIn,

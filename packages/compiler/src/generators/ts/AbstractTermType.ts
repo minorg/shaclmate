@@ -5,6 +5,9 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
+import type { FunctionLike } from "./FunctionLike.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -22,15 +25,20 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  readonly equalsFunction = code`${this.reusables.snippets.booleanEquals}`;
+  readonly equalsFunction = new FunctionReference(
+    this.reusables.snippets.booleanEquals,
+  );
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
-  override readonly hashFunction = code`${this.reusables.snippets.hashTerm}`;
+  override readonly hashFunction = new FunctionReference(
+    this.reusables.snippets.hashTerm,
+  );
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
-  override readonly validationFunction: Maybe<Code> = Maybe.empty();
+  override readonly validationFunction: AbstractType["validationFunction"] =
+    Maybe.empty();
 
   constructor({
     hasValues,
@@ -69,8 +77,8 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`((_: object) => [])`;
+  override get valueSparqlConstructTriplesFunction(): FunctionLike {
+    return new AnonymousFunction(code`((_: object) => [])`);
   }
 
   protected override get schemaInitializers() {

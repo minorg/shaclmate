@@ -11,6 +11,7 @@ import type {
 } from "./_AbstractType/AbstractType_JsonType.js";
 import { AbstractType_JsType } from "./_AbstractType/AbstractType_JsType.js";
 import { AbstractConstruct } from "./AbstractConstruct.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import {
   type Code,
   code,
@@ -54,13 +55,13 @@ export abstract class AbstractType extends AbstractConstruct {
    * A function (reference or literal) that compares two property values of this type, returning a
    * $EqualsResult.
    */
-  abstract readonly equalsFunction: Code;
+  abstract readonly equalsFunction: FunctionLike;
 
   /**
    * A function (reference or literal) that takes a filter of filterType (below) and a value of this type
    * and returns true if the value passes the filter.
    */
-  abstract readonly filterFunction: Code;
+  abstract readonly filterFunction: FunctionLike;
 
   /**
    * Composite type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.
@@ -87,7 +88,7 @@ export abstract class AbstractType extends AbstractConstruct {
    *   preferredLanguages: the preferred languages array (e.g., ["en"]) passed to Object.fromRdf
    *   propertyPath: the PropertyPath of the object's property
    */
-  abstract readonly fromRdfResourceValuesFunction: Code;
+  abstract readonly fromRdfResourceValuesFunction: FunctionLike;
 
   /**
    * Declarations for GraphQL arguments to pass to this the graphqlResolveExpression.
@@ -109,7 +110,7 @@ export abstract class AbstractType extends AbstractConstruct {
   /**
    * A function (reference or literal) that takes a  Hasher and a value of this type, calls hasher.update on the value, and returns the Hasher.
    */
-  abstract readonly hashFunction: Code;
+  abstract readonly hashFunction: FunctionLike;
 
   /**
    * JavaScript type(s) the type.
@@ -169,7 +170,7 @@ export abstract class AbstractType extends AbstractConstruct {
    *
    * If unspecified, uses an identity function (i.e., function identity(schema: unknown, value: ThisType): Either<Error, ThisType>).
    */
-  abstract readonly validationFunction: Maybe<Code>;
+  abstract readonly validationFunction: Maybe<FunctionLike>;
 
   /**
    * A ValueSparqlConstructTriplesFunction (reference or literal) that returns an array of sparqljs.Triple's for a property value of this type.
@@ -181,7 +182,7 @@ export abstract class AbstractType extends AbstractConstruct {
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: string prefix to use for new variables
    */
-  abstract readonly valueSparqlConstructTriplesFunction: Code;
+  abstract readonly valueSparqlConstructTriplesFunction: FunctionLike;
 
   /**
    * A ValueSparqlWherePatternsFunction (reference or literal) that returns an array of SparqlPattern's for a property value of this type.
@@ -194,7 +195,7 @@ export abstract class AbstractType extends AbstractConstruct {
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: string prefix to use for new variables
    */
-  abstract readonly valueSparqlWherePatternsFunction: Code;
+  abstract readonly valueSparqlWherePatternsFunction: FunctionLike;
 
   constructor({
     jsonTypeFactory,

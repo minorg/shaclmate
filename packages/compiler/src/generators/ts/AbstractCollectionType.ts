@@ -2,6 +2,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -28,13 +30,22 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get equalsFunction(): Code {
-    return code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction}))`;
+  override get equalsFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction}))`,
+      {
+        type: {
+          expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
+        },
+      },
+    );
   }
 
   @Memoize()
-  get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+  get filterFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`,
+    );
   }
 
   @Memoize()
@@ -51,8 +62,10 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  get hashFunction(): Code {
-    return code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction})`;
+  get hashFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction})`,
+    );
   }
 
   override get mutable(): boolean {
@@ -65,11 +78,13 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get validationFunction(): Maybe<Code> {
+  override get validationFunction(): Maybe<FunctionLike> {
     return Maybe.of(
-      code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction.orDefault(
-        this.itemValidationFunctionDefault,
-      )})`,
+      new AnonymousFunction(
+        code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction.orDefault(
+          this.itemValidationFunctionDefault.usage,
+        )})`,
+      ),
     );
   }
 

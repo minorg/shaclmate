@@ -6,6 +6,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -14,6 +15,7 @@ import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
 import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { IntType } from "./IntType.js";
@@ -75,8 +77,10 @@ export class ListType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get fromRdfResourceValuesFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`,
+    );
   }
 
   @Memoize()
@@ -85,13 +89,17 @@ export class ListType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`,
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`,
+    );
   }
 
   override fromJsonExpression({

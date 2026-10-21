@@ -4,6 +4,8 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AbstractContainerType } from "./AbstractContainerType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import type { Snippet } from "./Snippet.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -86,8 +88,10 @@ export class SetType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get fromRdfResourceValuesFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`,
+    );
   }
 
   override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
@@ -95,13 +99,17 @@ export class SetType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`,
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`,
+    );
   }
 
   protected override get schemaInitializers() {

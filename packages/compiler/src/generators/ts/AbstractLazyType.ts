@@ -3,6 +3,8 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
@@ -24,7 +26,8 @@ export abstract class AbstractLazyType<
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
-  override readonly validationFunction: Maybe<Code> = Maybe.empty();
+  override readonly validationFunction: AbstractType["validationFunction"] =
+    Maybe.empty();
 
   constructor({
     partialType,
@@ -40,12 +43,12 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  override get equalsFunction(): Code {
+  override get equalsFunction(): FunctionLike {
     return code`((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
   }
 
   @Memoize()
-  get filterFunction(): Code {
+  get filterFunction(): FunctionLike {
     return code`((filter: ${this.filterType}, value: ${this.expression}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
   }
 
@@ -58,7 +61,7 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  override get hashFunction(): Code {
+  override get hashFunction(): FunctionLike {
     return code`((hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName}))`;
   }
 
@@ -98,13 +101,27 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partialType }))`;
+  override get valueSparqlConstructTriplesFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partialType }))`,
+      {
+        type: {
+          expression: code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`,
+        },
+      },
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partialType }))`;
+  override get valueSparqlWherePatternsFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partialType }))`,
+      {
+        type: {
+          expression: code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`,
+        },
+      },
+    );
   }
 
   protected override get schemaInitializers(): readonly Code[] {

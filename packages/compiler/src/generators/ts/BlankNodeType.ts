@@ -3,6 +3,7 @@ import type { BlankNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
@@ -23,20 +24,24 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
         },
       ],
     });
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterBlankNode}`;
+  override readonly filterFunction = new FunctionReference(
+    this.reusables.snippets.filterBlankNode,
+  );
   override readonly filterType =
     code`${this.reusables.snippets.BlankNodeFilter}`;
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.blankNodeFromRdfResourceValues}`;
+  override readonly fromRdfResourceValuesFunction = new FunctionReference(
+    this.reusables.snippets.blankNodeFromRdfResourceValues,
+  );
   override readonly kind = "BlankNode";
   override readonly nodeKinds = nodeKinds;
-  override readonly parseFunction =
-    code`${this.reusables.snippets.parseBlankNode};`;
+  override readonly parseFunction = new FunctionReference(
+    this.reusables.snippets.parseBlankNode,
+  );
   override readonly schemaType =
     code`${this.reusables.snippets.BlankNodeSchema}`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.blankNodeSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+    this.reusables.snippets.blankNodeSparqlWherePatterns,
+  );
 
   constructor(
     superParameters: Omit<

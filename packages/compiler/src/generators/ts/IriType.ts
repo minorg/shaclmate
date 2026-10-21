@@ -5,6 +5,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
+import type { FunctionLike } from "./FunctionLike.js";
+import { FunctionReference } from "./FunctionReference.js";
 import {
   arrayOf,
   type Code,
@@ -14,14 +17,17 @@ import {
 } from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
-  override readonly filterFunction = code`${this.reusables.snippets.filterIri}`;
+  override readonly filterFunction = new FunctionReference(
+    this.reusables.snippets.filterIri,
+  );
   override readonly filterType = code`${this.reusables.snippets.IriFilter}`;
   override readonly kind = "Iri";
   override readonly nodeKinds = nodeKinds;
   override readonly schemaType =
     code`${this.reusables.snippets.IriSchema}<${this.valueTypeExpression}>`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.iriSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+    this.reusables.snippets.iriSparqlWherePatterns,
+  );
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractIdentifierType.ConversionFunction> {
@@ -48,16 +54,20 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }
 
   @Memoize()
-  get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.iriFromRdfResourceValues}<${this.valueTypeExpression}>`;
+  get fromRdfResourceValuesFunction(): FunctionLike {
+    return new FunctionReference(
+      code`${this.reusables.snippets.iriFromRdfResourceValues}<${this.valueTypeExpression}>`,
+    );
   }
 
   @Memoize()
-  get parseFunction(): Code {
+  get parseFunction(): FunctionLike {
     if (this.in_.length > 0) {
-      return code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.expression});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
+      return new AnonymousFunction(
+        code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.expression});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`,
+      );
     }
-    return code`${this.reusables.snippets.parseIri}`;
+    return new FunctionReference(this.reusables.snippets.parseIri);
   }
 
   @Memoize()

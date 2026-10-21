@@ -6,7 +6,9 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import type { Type } from "./Type.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -19,7 +21,7 @@ export class DefaultValueType<
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly jsTypes = this.itemType.jsTypes;
   override readonly kind = "DefaultValue";
-  override readonly validationFunction: Maybe<Code> =
+  override readonly validationFunction: AbstractType["validationFunction"] =
     this.itemType.validationFunction;
 
   constructor({
@@ -48,11 +50,11 @@ export class DefaultValueType<
     });
   }
 
-  override get equalsFunction(): Code {
+  override get equalsFunction(): FunctionLike {
     return this.itemType.equalsFunction;
   }
 
-  override get filterFunction(): Code {
+  override get filterFunction(): FunctionLike {
     return this.itemType.filterFunction;
   }
 
@@ -61,15 +63,17 @@ export class DefaultValueType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get fromRdfResourceValuesFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`,
+    );
   }
 
   override get graphqlType(): AbstractContainerType.GraphqlType {
     return this.itemType.graphqlType;
   }
 
-  override get hashFunction(): Code {
+  override get hashFunction(): FunctionLike {
     return this.itemType.hashFunction;
   }
 
@@ -87,13 +91,15 @@ export class DefaultValueType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
+  override get valueSparqlConstructTriplesFunction(): FunctionLike {
     return this.itemType.valueSparqlConstructTriplesFunction;
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`,
+    );
   }
 
   protected override get inlineExpression(): Code {

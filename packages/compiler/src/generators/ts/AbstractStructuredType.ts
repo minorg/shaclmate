@@ -1,6 +1,9 @@
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractType } from "./AbstractType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
+import { DeclaredFunction } from "./DeclaredFunction.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -8,23 +11,41 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
  */
 export abstract class AbstractStructuredType extends AbstractType {
   @Memoize()
-  override get equalsFunction(): Code {
+  override get equalsFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
+    };
+    const unannotatedExpression = this.equalsFunctionExpression();
+
     return this.name
-      .map((name) => code`${name}.equals`)
-      .orDefaultLazy(
-        () =>
-          code`((${this.equalsFunctionExpression()}) satisfies ${this.equalsFunctionTypeExpression})`,
-      );
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "equals"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get filterFunction(): Code {
+  override get filterFunction(): FunctionLike {
+    const type = {
+      expression: code`((filter: ${this.filterType}, value: ${this.expression}) => boolean)`,
+    };
+    const unannotatedExpression = this.filterFunctionExpression();
+
     return this.name
-      .map((name) => code`${name}.filter`)
-      .orDefaultLazy(
-        () =>
-          code`((${this.filterFunctionExpression()}) satisfies ${this.filterFunctionTypeExpression})`,
-      );
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "filter"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
@@ -35,33 +56,61 @@ export abstract class AbstractStructuredType extends AbstractType {
   }
 
   @Memoize()
-  get fromJsonFunction(): Code {
+  get fromJsonFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`,
+    };
+    const unannotatedExpression = this.fromJsonFunctionExpression();
+
     return this.name
-      .map((name) => code`${name}.fromJson`)
-      .orDefaultLazy(
-        () =>
-          code`((${this.fromJsonFunctionExpression()}) satisfies ${this.fromJsonFunctionTypeExpression})`,
-      );
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "fromJson"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
+  override get fromRdfResourceValuesFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
+    };
+    const unannotatedExpression =
+      this.fromRdfResourceValuesFunctionExpression();
+
     return this.name
-      .map((name) => code`${name}.fromRdfResourceValues`)
-      .orDefaultLazy(
-        () =>
-          code`((${this.fromRdfResourceValuesFunctionExpression()}) satisfies ${this.fromRdfResourceValuesFunctionTypeExpression})`,
-      );
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "fromRdfResourceValues"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get hashFunction(): Code {
+  override get hashFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.HashFunction}<${this.expression}>`,
+    };
+    const unannotatedExpression = this.hashFunctionExpression();
+
     return this.name
-      .map((name) => code`${name}.hash`)
-      .orDefaultLazy(
-        () =>
-          code`((${this.hashFunctionExpression()}) satisfies ${this.hashFunctionTypeExpression})`,
-      );
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "hash"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
@@ -72,104 +121,122 @@ export abstract class AbstractStructuredType extends AbstractType {
   }
 
   @Memoize()
-  get toJsonFunction() {
-    return this.name
-      .map((name) => code`${name}.toJson`)
-      .orDefaultLazy(
-        () =>
-          code`((${this.toJsonFunctionExpression()}) satisfies ${this.toJsonFunctionTypeExpression})`,
-      );
-  }
+  get toJsonFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`,
+    };
+    const unannotatedExpression = this.toJsonFunctionExpression();
 
-  @Memoize()
-  get toLoggableFunction(): Code {
     return this.name
-      .map(
+      .map<FunctionLike>(
         (name) =>
-          code`${name}.${this.configuration.syntheticNamePrefix}toLoggable`,
+          new DeclaredFunction({
+            qualifiedName: [name, "toJson"],
+            type,
+            unannotatedExpression,
+          }),
       )
-      .orDefaultLazy(
-        () =>
-          code`(${this.toLoggableFunctionExpression()}) satisfies ${this.toLoggableFunctionTypeExpression})`,
-      );
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  get toRdfResourceValuesFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.toRdfResourceValues`)
-      .orDefaultLazy(
-        () =>
-          code`((${this.toRdfResourceValuesFunctionExpression()}) satisfies ${this.toRdfResourceValuesFunctionTypeExpression})`,
-      );
-  }
+  get toLoggableFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.ToLoggableFunction}<${this.expression}>`,
+    };
+    const unannotatedExpression = this.toLoggableFunctionExpression();
 
-  @Memoize()
-  get toStringFunction(): Code {
     return this.name
-      .map(
+      .map<FunctionLike>(
         (name) =>
-          code`${name}.${this.configuration.syntheticNamePrefix}toString`,
+          new DeclaredFunction({
+            qualifiedName: [name, "toLoggable"],
+            type,
+            unannotatedExpression,
+          }),
       )
-      .orDefaultLazy(
-        () =>
-          code`((${this.toStringFunctionExpression()}) satisfies ${this.toStringFunctionTypeExpression})`,
-      );
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
+  get toRdfResourceValuesFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}, ${this.toRdfResourceValueTypesExpression}>`,
+    };
+    const unannotatedExpression = this.toRdfResourceValuesFunctionExpression();
+
     return this.name
-      .map((name) => code`${name}.valueSparqlConstructTriples`)
-      .orDefaultLazy(
-        () =>
-          code`((${this.valueSparqlConstructTriplesFunctionExpression()}) satisfies ${this.valueSparqlConstructTriplesFunctionTypeExpression})`,
-      );
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "toRdfResourceValues"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
+  get toStringFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.ToStringFunction}<${this.expression}>`,
+    };
+    const unannotatedExpression = this.toStringFunctionExpression();
+
     return this.name
-      .map((name) => code`${name}.valueSparqlWherePatterns`)
-      .orDefaultLazy(
-        () =>
-          code`((${this.valueSparqlWherePatternsFunctionExpression()}) satisfies ${this.valueSparqlWherePatternsFunctionTypeExpression})`,
-      );
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [
+              name,
+              `${this.configuration.syntheticNamePrefix}toString`,
+            ],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  protected get equalsFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`;
+  override get valueSparqlConstructTriplesFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`,
+    };
+    const unannotatedExpression =
+      this.valueSparqlConstructTriplesFunctionExpression();
+
+    return this.name
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "valueSparqlConstructTriples"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  protected get filterFunctionTypeExpression(): Code {
-    return code`((filter: ${this.filterType}, value: ${this.expression}) => boolean)`;
-  }
+  override get valueSparqlWherePatternsFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`,
+    };
+    const unannotatedExpression =
+      this.valueSparqlWherePatternsFunctionExpression();
 
-  @Memoize()
-  protected get fromJsonFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
-  }
-
-  @Memoize()
-  protected get fromRdfResourceValuesFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`;
-  }
-
-  @Memoize()
-  protected get hashFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.HashFunction}<${this.expression}>`;
-  }
-
-  @Memoize()
-  protected get toJsonFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
-  }
-
-  @Memoize()
-  protected get toLoggableFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.ToLoggableFunction}<${this.expression}>`;
+    return this.name
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "valueSparqlWherePatterns"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
   @Memoize()
@@ -190,26 +257,6 @@ export abstract class AbstractStructuredType extends AbstractType {
       }),
       { on: " | " },
     );
-  }
-
-  @Memoize()
-  protected get toRdfResourceValuesFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}, ${this.toRdfResourceValueTypesExpression}>`;
-  }
-
-  @Memoize()
-  protected get toStringFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.ToStringFunction}<${this.expression}>`;
-  }
-
-  @Memoize()
-  protected get valueSparqlConstructTriplesFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`;
-  }
-
-  @Memoize()
-  protected get valueSparqlWherePatternsFunctionTypeExpression(): Code {
-    return code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`;
   }
 
   override fromJsonExpression({
@@ -242,7 +289,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     const { value: valueVariable, ...otherVariables } = variables;
-    return code`${this.toRdfResourceValuesFunction}(${valueVariable}, ${otherVariables})`;
+    return code`${this.toRdfResourceValuesFunction.usage}(${valueVariable}, ${otherVariables})`;
   }
 
   override toStringExpression({
@@ -272,22 +319,25 @@ export abstract class AbstractStructuredType extends AbstractType {
       ...super.staticModuleDeclarations(name),
     };
 
+    function addFunctionDeclaration(function_: FunctionLike) {
+      invariant(function_ instanceof DeclaredFunction);
+      staticModuleDeclarations[function_.unqualifiedName] =
+        function_.declaration;
+    }
+
     if (this.configuration.features.has("Object.equals")) {
-      staticModuleDeclarations["equals"] =
-        code`export const equals: ${this.equalsFunctionTypeExpression} = ${this.equalsFunctionExpression()};`;
+      addFunctionDeclaration(this.equalsFunction);
     }
 
     if (this.configuration.features.has("Object.filter")) {
       staticModuleDeclarations["Filter"] =
         code`export type Filter = ${this.filterTypeExpression()};`;
-      staticModuleDeclarations["filter"] =
-        code`export const filter: ${this.filterFunctionTypeExpression} = ${this.filterFunctionExpression()};`;
+      addFunctionDeclaration(this.filterFunction);
     }
 
     if (this.configuration.features.has("Object.hash")) {
       // Hash functions take a generic parameter and const declaration like this can't have type parameters.
-      staticModuleDeclarations["hash"] =
-        code`export const hash: ${this.hashFunctionTypeExpression} = ${this.hashFunctionExpression()};`;
+      addFunctionDeclaration(this.hashFunction);
     }
 
     if (this.configuration.features.has("Object.JSON.type")) {
@@ -299,43 +349,32 @@ export abstract class AbstractStructuredType extends AbstractType {
     }
 
     if (this.configuration.features.has("Object.fromJson")) {
-      staticModuleDeclarations["fromJson"] =
-        code`export const fromJson: ${this.fromJsonFunctionTypeExpression} = ${this.fromJsonFunctionExpression()};`;
+      addFunctionDeclaration(this.fromJsonFunction);
     }
 
     if (this.configuration.features.has("Object.fromRdf")) {
-      staticModuleDeclarations["fromRdfResourceValues"] =
-        code`export const fromRdfResourceValues: ${this.fromRdfResourceValuesFunctionTypeExpression} = ${this.fromRdfResourceValuesFunctionExpression()};`;
+      addFunctionDeclaration(this.fromRdfResourceValuesFunction);
     }
 
     if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations["valueSparqlConstructTriples"] =
-        code`export const valueSparqlConstructTriples: ${this.valueSparqlConstructTriplesFunctionTypeExpression} = ${this.valueSparqlConstructTriplesFunctionExpression()};`;
-
-      staticModuleDeclarations["valueSparqlWherePatterns"] =
-        code`export const valueSparqlWherePatterns: ${this.valueSparqlWherePatternsFunctionTypeExpression} = ${this.valueSparqlWherePatternsFunctionExpression()};`;
+      addFunctionDeclaration(this.valueSparqlConstructTriplesFunction);
+      addFunctionDeclaration(this.valueSparqlWherePatternsFunction);
     }
 
     if (this.configuration.features.has("Object.toJson")) {
-      staticModuleDeclarations["toJson"] =
-        code`export const toJson: ${this.toJsonFunctionTypeExpression} = ${this.toJsonFunctionExpression()};`;
+      addFunctionDeclaration(this.toJsonFunction);
     }
 
     if (this.configuration.features.has("Object.toLoggable")) {
-      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-      staticModuleDeclarations[`${syntheticNamePrefix}toLoggable`] =
-        code`export const ${syntheticNamePrefix}toLoggable: ${this.toLoggableFunctionTypeExpression} = ${this.toLoggableFunctionExpression()};`;
+      addFunctionDeclaration(this.toLoggableFunction);
     }
 
     if (this.configuration.features.has("Object.toRdf")) {
-      staticModuleDeclarations["toRdfResourceValues"] =
-        code`export const toRdfResourceValues: ${this.toRdfResourceValuesFunctionTypeExpression} = ${this.toRdfResourceValuesFunctionExpression()};`;
+      addFunctionDeclaration(this.toRdfResourceValuesFunction);
     }
 
     if (this.configuration.features.has("Object.toString")) {
-      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
-        code`export const ${syntheticNamePrefix}toString: ${this.toStringFunctionTypeExpression} = ${this.toStringFunctionExpression()};`;
+      addFunctionDeclaration(this.toStringFunction);
     }
 
     return staticModuleDeclarations;

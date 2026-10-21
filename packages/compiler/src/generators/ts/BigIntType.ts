@@ -44,7 +44,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override readonly kind = "BigInt";
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
+  override get fromRdfResourceValuesFunction(): FunctionLike {
     return code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}>`;
   }
 

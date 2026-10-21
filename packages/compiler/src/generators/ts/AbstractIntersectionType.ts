@@ -23,7 +23,8 @@ export abstract class AbstractIntersectionType<
   abstract override readonly kind: "ObjectIntersection" | "Intersection";
   readonly members: readonly AbstractIntersectionType.Member<MemberTypeT>[];
   override readonly recursive: boolean;
-  override readonly validationFunction: Maybe<Code> = Maybe.empty();
+  override readonly validationFunction: AbstractType["validationFunction"] =
+    Maybe.empty();
 
   constructor({
     identifierProperty,

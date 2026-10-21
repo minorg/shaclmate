@@ -3,16 +3,20 @@ import { LiteralDecoder } from "@rdfx/literal";
 
 import { AbstractDateType } from "./AbstractDateType.js";
 import { DateTimeType } from "./DateTimeType.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateType extends AbstractDateType {
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.dateFromRdfResourceValues}`;
+  override readonly fromRdfResourceValuesFunction = new FunctionReference(
+    this.reusables.snippets.dateFromRdfResourceValues,
+  );
   override readonly graphqlType = new DateTimeType.GraphqlType(
     code`${this.reusables.imports.GraphQLDate}`,
     this.reusables,
   );
-  override readonly hashFunction = code`${this.reusables.snippets.hashDate}`;
+  override readonly hashFunction = new FunctionReference(
+    this.reusables.snippets.hashDate,
+  );
   override readonly kind = "Date";
   protected override readonly jsonStringFormat = "date";
 

@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -14,8 +15,9 @@ export abstract class AbstractPrimitiveType<
 > extends AbstractTypedLiteralType<ValueT> {
   protected abstract readonly decodedIn: readonly ValueT[];
 
-  override readonly equalsFunction =
-    code`${this.reusables.snippets.strictEquals}`;
+  override readonly equalsFunction = new FunctionReference(
+    this.reusables.snippets.strictEquals,
+  );
 
   @Memoize()
   protected override get inlineExpression(): Code {

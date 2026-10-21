@@ -2,6 +2,8 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractLazyType } from "./AbstractLazyType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import type { OptionType } from "./OptionType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -79,15 +81,18 @@ ${this.reusables.snippets.convertToLazyOption}<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`\
-(
-    (
-      (values, { objectSet, schema, ...otherOptions }) =>
-        ${this.partialType.fromRdfResourceValuesFunction}(values, { ...otherOptions, objectSet, schema: schema.partialType })
-          .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => objectSet.${this.resolveType.itemType.objectSetMethodNames.object}(partial.${this.partialType.itemType.identifierProperty.unsafeCoerce().name}(), options) })))
-    ) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>
-)`;
+  override get fromRdfResourceValuesFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`\
+(values, { objectSet, schema, ...otherOptions }) =>
+  ${this.partialType.fromRdfResourceValuesFunction}(values, { ...otherOptions, objectSet, schema: schema.partialType })
+    .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => objectSet.${this.resolveType.itemType.objectSetMethodNames.object}(partial.${this.partialType.itemType.identifierProperty.unsafeCoerce().name}(), options) })))`,
+      {
+        type: {
+          expression: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
+        },
+      },
+    );
   }
 
   override graphqlResolveExpression({

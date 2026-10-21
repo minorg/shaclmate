@@ -6,6 +6,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { FunctionLike } from "./FunctionLike.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
@@ -13,22 +15,26 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterString}`;
+  override readonly filterFunction = new FunctionReference(
+    this.reusables.snippets.filterString,
+  );
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLString}`,
     this.reusables,
   );
-  override readonly hashFunction = code`${this.reusables.snippets.hashString}`;
+  override readonly hashFunction = new FunctionReference(
+    this.reusables.snippets.hashString,
+  );
   override readonly jsTypes = [
     {
       typeof: "string",
     },
   ] as const;
   override readonly kind = "String";
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.stringSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+    this.reusables.snippets.stringSparqlWherePatterns,
+  );
 
   constructor({
     languageIn,
@@ -41,8 +47,10 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}>`;
+  get fromRdfResourceValuesFunction(): FunctionLike {
+    return new FunctionReference(
+      code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}>`,
+    );
   }
 
   @Memoize()

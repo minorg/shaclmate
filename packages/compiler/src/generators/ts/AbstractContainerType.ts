@@ -9,6 +9,8 @@ import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
 import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
+import type { FunctionLike } from "./FunctionLike.js";
+import { FunctionReference } from "./FunctionReference.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { IntType } from "./IntType.js";
@@ -71,8 +73,10 @@ export abstract class AbstractContainerType<
   }
 
   @Memoize()
-  protected get itemValidationFunctionDefault(): Code {
-    return code`${this.reusables.snippets.identityValidationFunction}`;
+  protected get itemValidationFunctionDefault(): FunctionLike {
+    return new FunctionReference(
+      this.reusables.snippets.identityValidationFunction,
+    );
   }
 
   protected override get schemaInitializers(): readonly Code[] {

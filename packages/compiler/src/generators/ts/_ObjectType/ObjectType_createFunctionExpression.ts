@@ -22,11 +22,11 @@ export function ObjectType_createFunctionExpression(this: ObjectType): Code {
 
   const monkeyPatchMethods: Record<string, Code> = {};
   if (this.configuration.features.has("Object.toJson")) {
-    monkeyPatchMethods["toJson"] = this.toJsonFunction;
+    monkeyPatchMethods["toJson"] = this.toJsonFunction.usage;
   }
   if (this.configuration.features.has("Object.toString")) {
     monkeyPatchMethods[`${this.configuration.syntheticNamePrefix}toString`] =
-      this.toStringFunction;
+      this.toStringFunction.usage;
   }
   if (Object.keys(monkeyPatchMethods).length > 0) {
     returnExpression = code`${returnExpression}.map(object => ${this.reusables.snippets.monkeyPatchObject}(object, ${monkeyPatchMethods}))`;

@@ -20,6 +20,7 @@ import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpre
 import { AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.js";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import { AbstractType } from "./AbstractType.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
@@ -66,7 +67,8 @@ export abstract class AbstractDiscriminatedUnionType<
     | "ObjectDiscriminatedUnion"
     | "DiscriminatedUnion";
   override readonly recursive: boolean;
-  override readonly validationFunction: Maybe<Code> = Maybe.empty();
+  override readonly validationFunction: AbstractType["validationFunction"] =
+    Maybe.empty();
 
   constructor({
     identifierProperty,
@@ -227,7 +229,7 @@ export abstract class AbstractDiscriminatedUnionType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
+  override get fromRdfResourceValuesFunction(): FunctionLike {
     return this.name
       .map((name) => code`${name}.fromRdfResourceValues`)
       .orDefault(

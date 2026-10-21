@@ -3,7 +3,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import { AnonymousFunction } from "./AnonymousFunction.js";
 import { codeEquals } from "./codeEquals.js";
+import type { FunctionLike } from "./FunctionLike.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class OptionType<
@@ -41,13 +43,17 @@ export class OptionType<
   }
 
   @Memoize()
-  override get equalsFunction(): Code {
-    return code`((left, right) => ${this.reusables.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction}))`;
+  override get equalsFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`((left, right) => ${this.reusables.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction}))`,
+    );
   }
 
   @Memoize()
-  get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+  get filterFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`,
+    );
   }
 
   @Memoize()
@@ -56,8 +62,10 @@ export class OptionType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get fromRdfResourceValuesFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`,
+    );
   }
 
   @Memoize()
@@ -73,8 +81,10 @@ export class OptionType<
   }
 
   @Memoize()
-  get hashFunction(): Code {
-    return code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction})`;
+  get hashFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction})`,
+    );
   }
 
   override get mutable(): boolean {
@@ -91,22 +101,28 @@ export class OptionType<
   }
 
   @Memoize()
-  override get validationFunction(): Maybe<Code> {
+  override get validationFunction(): Maybe<FunctionLike> {
     return Maybe.of(
-      code`${this.reusables.snippets.validateMaybe}(${this.itemType.validationFunction.orDefault(
-        this.itemValidationFunctionDefault,
-      )})`,
+      new AnonymousFunction(
+        code`${this.reusables.snippets.validateMaybe}(${this.itemType.validationFunction
+          .map((_) => _.usage)
+          .orDefault(this.itemValidationFunctionDefault.usage)})`,
+      ),
     );
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`,
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): FunctionLike {
+    return new AnonymousFunction(
+      code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`,
+    );
   }
 
   @Memoize()

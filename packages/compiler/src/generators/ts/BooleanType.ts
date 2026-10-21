@@ -5,6 +5,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { FunctionLike } from "./FunctionLike.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
@@ -15,24 +17,30 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     this.jsonTypeFactory.createJsonBooleanType({ in_: this.decodedIn });
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterBoolean}`;
+  override readonly filterFunction = new FunctionReference(
+    this.reusables.snippets.filterBoolean,
+  );
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLBoolean}`,
     this.reusables,
   );
-  override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
+  override readonly hashFunction = new FunctionReference(
+    this.reusables.snippets.hashBoolean,
+  );
   override readonly jsTypes = [{ typeof: "boolean" }] as const;
   override readonly kind = "Boolean";
   override readonly schemaType =
     code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+    this.reusables.snippets.booleanSparqlWherePatterns,
+  );
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`;
+  override get fromRdfResourceValuesFunction(): FunctionLike {
+    return new FunctionReference(
+      code`${this.reusables.snippets.booleanFromRdfResourceValues}<${this.expression}>`,
+    );
   }
 
   override toRdfResourceValuesExpression({
