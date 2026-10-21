@@ -18,6 +18,7 @@ import { AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression } 
 import { AbstractDiscriminatedUnionType_toStringFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_toStringFunctionExpression.js";
 import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression.js";
 import { AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.js";
+import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -26,8 +27,38 @@ import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDiscriminatedUnionType<
   MemberTypeT extends Type,
-> extends AbstractType {
+> extends AbstractCompoundType<
+  AbstractDiscriminatedUnionType.Member<MemberTypeT>,
+  MemberTypeT
+> {
   protected readonly discriminant: AbstractDiscriminatedUnionType.Discriminant;
+
+  protected override equalsFunctionExpression =
+    AbstractDiscriminatedUnionType_equalsFunctionExpression;
+  protected override filterFunctionExpression =
+    AbstractDiscriminatedUnionType_filterFunctionExpression;
+  protected override filterTypeExpression =
+    AbstractDiscriminatedUnionType_filterTypeExpression;
+  protected override fromJsonFunctionExpression =
+    AbstractDiscriminatedUnionType_fromJsonFunctionExpression;
+  protected override fromRdfResourceValuesFunctionExpression =
+    AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression;
+  protected override hashFunctionExpression =
+    AbstractDiscriminatedUnionType_hashFunctionExpression;
+  protected override schemaTypeExpression =
+    AbstractDiscriminatedUnionType_schemaTypeExpression;
+  protected override toJsonFunctionExpression =
+    AbstractDiscriminatedUnionType_toJsonFunctionExpression;
+  protected override toLoggableFunctionExpression =
+    AbstractDiscriminatedUnionType_toLoggableFunctionExpression;
+  protected override toRdfResourceValuesFunctionExpression =
+    AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression;
+  protected override toStringFunctionExpression =
+    AbstractDiscriminatedUnionType_toStringFunctionExpression;
+  protected override valueSparqlConstructTriplesFunctionExpression =
+    AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression;
+  protected override valueSparqlWherePatternsFunctionExpression =
+    AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierProperty: Maybe<ObjectType.IdentifierProperty>;
@@ -196,33 +227,6 @@ export abstract class AbstractDiscriminatedUnionType<
   }
 
   @Memoize()
-  override get equalsFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.equals`)
-      .orDefault(
-        AbstractDiscriminatedUnionType_equalsFunctionExpression.call(this),
-      );
-  }
-
-  @Memoize()
-  override get filterFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.filter`)
-      .orDefault(
-        AbstractDiscriminatedUnionType_filterFunctionExpression.call(this),
-      );
-  }
-
-  @Memoize()
-  get filterType(): Code {
-    return this.name
-      .map((name) => code`${name}.Filter`)
-      .orDefault(
-        AbstractDiscriminatedUnionType_filterTypeExpression.call(this),
-      );
-  }
-
-  @Memoize()
   override get fromRdfResourceValuesFunction(): Code {
     return this.name
       .map((name) => code`${name}.fromRdfResourceValues`)
@@ -246,15 +250,6 @@ export abstract class AbstractDiscriminatedUnionType<
   }
 
   @Memoize()
-  override get hashFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.hash`)
-      .orDefault(
-        AbstractDiscriminatedUnionType_hashFunctionExpression.call(this),
-      );
-  }
-
-  @Memoize()
   override get jsTypes(): AbstractType["jsTypes"] {
     const jsTypes: AbstractType.JsType[] = [];
     for (const member of this.members) {
@@ -274,60 +269,6 @@ export abstract class AbstractDiscriminatedUnionType<
   @Memoize()
   get members(): readonly AbstractDiscriminatedUnionType.Member<MemberTypeT>[] {
     return this.lazyMembers();
-  }
-
-  @Memoize()
-  override get mutable(): boolean {
-    return this.members.some((member) => member.type.mutable);
-  }
-
-  get referencesNamedType(): boolean {
-    return (
-      this.name.isJust() ||
-      this.members.some((member) => member.type.referencesNamedType)
-    );
-  }
-
-  @Memoize()
-  override get schemaType(): Code {
-    return this.name
-      .map(() => code`typeof ${this.schema}`)
-      .orDefault(
-        AbstractDiscriminatedUnionType_schemaTypeExpression.call(this),
-      );
-  }
-
-  @Memoize()
-  get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
-    const set = new Set<"BlankNode" | "Literal" | "NamedNode">();
-    for (const member of this.members) {
-      for (const value of member.type.toRdfResourceValueTypes) {
-        set.add(value);
-      }
-    }
-    return set;
-  }
-
-  @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.valueSparqlConstructTriples`)
-      .orDefault(
-        AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression.call(
-          this,
-        ),
-      );
-  }
-
-  @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.valueSparqlWherePatterns`)
-      .orDefault(
-        AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.call(
-          this,
-        ),
-      );
   }
 
   @Memoize()
@@ -355,20 +296,6 @@ export abstract class AbstractDiscriminatedUnionType<
     return AbstractDiscriminatedUnionType_conversionFunctionExpression.call(
       this,
     );
-  }
-
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.fromJson`).orDefault(AbstractDiscriminatedUnionType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
-  }
-
-  override graphqlResolveExpression({
-    variables,
-  }: {
-    variables: { value: Code };
-  }): Code {
-    return variables.value;
   }
 
   @Memoize()
@@ -401,31 +328,6 @@ export abstract class AbstractDiscriminatedUnionType<
     );
   }
 
-  override toJsonExpression({
-    variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.toJson`).orDefault(AbstractDiscriminatedUnionType_toJsonFunctionExpression.call(this))}(${variables.value})`;
-  }
-
-  override toRdfResourceValuesExpression({
-    variables,
-  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    const { value: valueVariable, ...otherVariables } = variables;
-    return code`${this.name.map((name) => code`${name}.toRdfResourceValues`).orDefault(AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression.call(this))}(${valueVariable}, ${otherVariables})`;
-  }
-
-  override toLoggableExpression({
-    variables,
-  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toLoggable`).orDefault(AbstractDiscriminatedUnionType_toLoggableFunctionExpression.call(this))}(${variables.value})`;
-  }
-
-  override toStringExpression({
-    variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.name.map((name) => code`${name}.${this.configuration.syntheticNamePrefix}toString`).orDefault(AbstractDiscriminatedUnionType_toStringFunctionExpression.call(this))}(${variables.value})`;
-  }
-
   protected override staticModuleDeclarations(
     name: string,
   ): Record<string, Code> {
@@ -437,69 +339,6 @@ export abstract class AbstractDiscriminatedUnionType<
       staticModuleDeclarations["convert"] =
         code`export const convert = ${conversionFunction.code};`;
     });
-
-    if (this.configuration.features.has("Object.equals")) {
-      staticModuleDeclarations["equals"] =
-        code`export const equals = ${AbstractDiscriminatedUnionType_equalsFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.filter")) {
-      staticModuleDeclarations["Filter"] =
-        code`export type Filter = ${AbstractDiscriminatedUnionType_filterTypeExpression.call(this)};`;
-      staticModuleDeclarations["filter"] =
-        code`export const filter = ${AbstractDiscriminatedUnionType_filterFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.hash")) {
-      staticModuleDeclarations["hash"] =
-        code`export const hash = ${AbstractDiscriminatedUnionType_hashFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.JSON.type")) {
-      this.jsonType().declaration.ifJust((jsonTypeDeclaration) => {
-        staticModuleDeclarations["JSON"] = jsonTypeDeclaration;
-      });
-    }
-
-    if (this.configuration.features.has("Object.fromJson")) {
-      staticModuleDeclarations["fromJson"] =
-        code`export const fromJson = ${AbstractDiscriminatedUnionType_fromJsonFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.fromRdf")) {
-      staticModuleDeclarations["fromRdfResourceValues"] =
-        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${name}, ${this.schemaType}> = ${AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.toJson")) {
-      staticModuleDeclarations["toJson"] =
-        code`export const toJson = ${AbstractDiscriminatedUnionType_toJsonFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.toRdf")) {
-      staticModuleDeclarations["toRdfResourceValues"] =
-        code`export const toRdfResourceValues = ${AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations["valueSparqlConstructTriples"] =
-        code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression.call(this)};`;
-
-      staticModuleDeclarations["valueSparqlWherePatterns"] =
-        code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.toLoggable")) {
-      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-      staticModuleDeclarations[`${syntheticNamePrefix}toLoggable`] =
-        code`export const ${syntheticNamePrefix}toLoggable = ${AbstractDiscriminatedUnionType_toLoggableFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.toString")) {
-      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
-        code`export const ${syntheticNamePrefix}toString = ${AbstractDiscriminatedUnionType_toStringFunctionExpression.call(this)};`;
-    }
 
     return staticModuleDeclarations;
   }

@@ -1,4 +1,5 @@
 import { NodeKind } from "@shaclmate/shacl-ast";
+
 import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -25,12 +26,14 @@ import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schema
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunctionExpression.js";
+import { ObjectType_toLoggableFunctionExpression } from "./_ObjectType/ObjectType_toLoggableFunctionExpression.js";
 import { ObjectType_toRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceFunctionExpression.js";
 import { ObjectType_toStringFunctionExpression } from "./_ObjectType/ObjectType_toStringFunctionExpression.js";
 import { ObjectType_toStringRecordFunctionExpression } from "./_ObjectType/ObjectType_toStringRecordFunctionExpression.js";
 import { ObjectType_typeGuardFunctionExpression } from "./_ObjectType/ObjectType_typeGuardFunctionExpression.js";
 import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.js";
 import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.js";
+import { AbstractStructuredType } from "./AbstractStructuredType.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { codeEquals } from "./codeEquals.js";
@@ -45,7 +48,27 @@ import {
   literalOf,
 } from "./ts-poet-wrapper.js";
 
-export class ObjectType extends AbstractType {
+export class ObjectType extends AbstractStructuredType {
+  protected override equalsFunctionExpression =
+    ObjectType_equalsFunctionExpression;
+  protected override filterFunctionExpression =
+    ObjectType_filterFunctionExpression;
+  protected override filterTypeExpression = ObjectType_filterTypeExpression;
+  protected override fromJsonFunctionExpression =
+    ObjectType_fromJsonFunctionExpression;
+  protected override hashFunctionExpression = ObjectType_hashFunctionExpression;
+  protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
+  protected override toJsonFunctionExpression =
+    ObjectType_toJsonFunctionExpression;
+  protected override toLoggableFunctionExpression =
+    ObjectType_toLoggableFunctionExpression;
+  protected override toStringFunctionExpression =
+    ObjectType_toStringFunctionExpression;
+  protected override valueSparqlConstructTriplesFunctionExpression =
+    ObjectType_valueSparqlConstructTriplesFunctionExpression;
+  protected override valueSparqlWherePatternsFunctionExpression =
+    ObjectType_valueSparqlWherePatternsFunctionExpression;
+
   private readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
 
   override readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
@@ -130,37 +153,6 @@ export class ObjectType extends AbstractType {
   }
 
   @Memoize()
-  override get equalsFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.equals`)
-      .orDefaultLazy(() => ObjectType_equalsFunctionExpression.call(this));
-  }
-
-  @Memoize()
-  get filterFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.filter`)
-      .orDefaultLazy(() => ObjectType_filterFunctionExpression.call(this));
-  }
-
-  @Memoize()
-  get filterType(): Code {
-    return this.name
-      .map((name) => code`${name}.Filter`)
-      .orDefaultLazy(() => ObjectType_filterTypeExpression.call(this));
-  }
-
-  @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.fromRdfResourceValues`)
-      .orDefaultLazy(
-        () =>
-          code`((values, options) => values.chainMap(value => value.toResource().chain(resource => ${ObjectType_fromRdfResourceFunctionExpression.call(this)}(resource, options))))`,
-      );
-  }
-
-  @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
     return this.rdfTypeProperty.map((rdfTypeProperty) =>
       this.name
@@ -182,13 +174,6 @@ export class ObjectType extends AbstractType {
         .orDefaultLazy(() => ObjectType_graphqlTypeExpression.call(this)),
       this.reusables,
     );
-  }
-
-  @Memoize()
-  override get hashFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.hash`)
-      .orDefaultLazy(() => ObjectType_hashFunctionExpression.call(this));
   }
 
   @Memoize()
@@ -241,13 +226,6 @@ export class ObjectType extends AbstractType {
   }
 
   @Memoize()
-  override get schemaType(): Code {
-    return this.name
-      .map((name) => code`${name}.Schema`)
-      .orDefaultLazy(() => ObjectType_schemaTypeExpression.call(this));
-  }
-
-  @Memoize()
   get schemaVariable(): Maybe<Code> {
     return this.name.map((name) => code`${name}.schema`);
   }
@@ -267,24 +245,6 @@ export class ObjectType extends AbstractType {
     return ObjectType_typeGuardFunctionExpression.call(this).map((expression) =>
       this.name.map((name) => code`${name}.is${name}`).orDefault(expression),
     );
-  }
-
-  @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.valueSparqlConstructTriples`)
-      .orDefaultLazy(() =>
-        ObjectType_valueSparqlConstructTriplesFunctionExpression.call(this),
-      );
-  }
-
-  @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.valueSparqlWherePatterns`)
-      .orDefaultLazy(() =>
-        ObjectType_valueSparqlWherePatternsFunctionExpression.call(this),
-      );
   }
 
   @Memoize()
@@ -336,17 +296,19 @@ export class ObjectType extends AbstractType {
   }
 
   @Memoize()
+  get toStringRecordFunction(): Code {
+    return this.name
+      .map((name) => code`${name}.toStringRecord`)
+      .orDefaultLazy(() =>
+        ObjectType_toStringRecordFunctionExpression.call(this),
+      );
+  }
+
+  @Memoize()
   protected get thisVariable(): Code {
     return this.name
       .map((name) => code`_${camelCase(name)}`)
       .orDefault(code`_object`);
-  }
-
-  @Memoize()
-  protected get toJsonFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.toJson`)
-      .orDefaultLazy(() => ObjectType_toJsonFunctionExpression.call(this));
   }
 
   @Memoize()
@@ -362,23 +324,6 @@ export class ObjectType extends AbstractType {
             code`${arrayOf(...rdfTypeProperty.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
         ),
     );
-  }
-
-  @Memoize()
-  protected get toStringFunction(): Code {
-    return this.name
-      .map(
-        (name) =>
-          code`${name}.${this.configuration.syntheticNamePrefix}toString`,
-      )
-      .orDefaultLazy(() => ObjectType_toStringFunctionExpression.call(this));
-  }
-
-  override fromJsonExpression({
-    variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    // Assumes the JSON object has been recursively validated already.
-    return code`${this.name.map((name) => code`${name}.fromJson`).orDefaultLazy(() => ObjectType_fromJsonFunctionExpression.call(this))}(${variables.value})`;
   }
 
   override graphqlResolveExpression({
@@ -470,41 +415,13 @@ export class ObjectType extends AbstractType {
     return code`${toJsonFunction}(${variables.value})`;
   }
 
-  override toRdfResourceValuesExpression({
-    variables,
-  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    const toRdfResourceFunction = this.name
-      .map((name) => code`${name}.toRdfResource`)
-      .orDefaultLazy(
-        () =>
-          code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${ObjectType_toRdfResourceFunctionExpression.call(this)})`,
-      );
-    return code`[${toRdfResourceFunction}(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+  protected override fromRdfResourceValuesFunctionExpression(): Code {
+    return code`((values, options) => values.chainMap(value => value.toResource().chain(resource => ${ObjectType_fromRdfResourceFunctionExpression.call(this)}(resource, options))))`;
   }
 
-  override toLoggableExpression({
-    variables,
-  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
-    return this.name
-      .map(
-        (name) =>
-          code`${name}.${this.configuration.syntheticNamePrefix}toLoggable(${variables.value})`,
-      )
-      .orDefaultLazy(() => this.toLoggableRecordExpression({ variables }));
-  }
-
-  override toStringExpression({
-    variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return this.name
-      .map(
-        (name) =>
-          code`${name}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`,
-      )
-      .orDefaultLazy(
-        () =>
-          code`JSON.stringify(${this.toStringRecordExpression({ variables })})`,
-      );
+  protected override toRdfResourceValuesFunctionExpression(): Code {
+    return code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${ObjectType_toRdfResourceFunctionExpression.call(this)})`;
+    // return code`[${toRdfResourceFunction}(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
 
   protected override staticModuleDeclarations(
@@ -526,21 +443,6 @@ export class ObjectType extends AbstractType {
 }`;
     }
 
-    // equals
-    if (this.configuration.features.has("Object.equals")) {
-      staticModuleDeclarations["equals"] =
-        code`export const equals: (left: ${this.expression}, right: ${this.expression}) => ${this.reusables.snippets.EqualsResult} = ${ObjectType_equalsFunctionExpression.call(this)};`;
-    }
-
-    // Filter / filter
-    if (this.configuration.features.has("Object.filter")) {
-      staticModuleDeclarations["Filter"] =
-        code`export type Filter = ${ObjectType_filterTypeExpression.call(this)};`;
-
-      staticModuleDeclarations["filter"] =
-        code`export const filter: (filter: ${this.filterType}, value: ${this.expression}) => boolean = ${ObjectType_filterFunctionExpression.call(this)};`;
-    }
-
     // GraphQL
     if (this.configuration.features.has("GraphQL") && !this.synthetic) {
       staticModuleDeclarations["GraphQL"] =
@@ -556,12 +458,6 @@ export class ObjectType extends AbstractType {
         code`export const focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = ${ObjectType_focusSparqlWherePatternsFunctionExpression.call(this)};`;
     }
 
-    // fromJson
-    if (this.configuration.features.has("Object.fromJson")) {
-      staticModuleDeclarations["fromJson"] =
-        code`export const fromJson: (json: ${this.jsonType({ form: "expanded" }).expression}) => ${this.reusables.imports.Either}<Error, ${this.expression}> = ${ObjectType_fromJsonFunctionExpression.call(this)};`;
-    }
-
     // fromRdfResource / fromRdfResourceValues
     if (this.configuration.features.has("Object.fromRdf")) {
       staticModuleDeclarations["_fromRdfResource"] =
@@ -573,12 +469,6 @@ export class ObjectType extends AbstractType {
       staticModuleDeclarations["fromRdfResourceValues"] =
         code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}> = 
   (values, options) => values.chainMap(value => value.toResource().chain(resource => fromRdfResource(resource, options)));`;
-    }
-
-    // hash
-    if (this.configuration.features.has("Object.hash")) {
-      staticModuleDeclarations["hash"] =
-        code`export const hash = ${ObjectType_hashFunctionExpression.call(this)};`;
     }
 
     // Identifier
@@ -596,15 +486,6 @@ export class ObjectType extends AbstractType {
           code`export const is${name} = ${typeGuardFunctionExpression};`;
       },
     );
-
-    // JSON type
-    if (this.configuration.features.has("Object.JSON.type")) {
-      this.jsonType({ form: "expanded" }).declaration.ifJust(
-        (jsonTypeDeclaration) => {
-          staticModuleDeclarations["Json"] = jsonTypeDeclaration;
-        },
-      );
-    }
 
     // schema / Schema
     if (this.configuration.features.has("Object.schema")) {
@@ -633,17 +514,6 @@ export class ObjectType extends AbstractType {
         });
     }
 
-    // toJson
-    if (this.configuration.features.has("Object.toJson")) {
-      staticModuleDeclarations["toJson"] =
-        code`export const toJson: (${this.thisVariable}: ${this.expression}) => ${this.jsonType({ form: "expanded" }).expression} = ${ObjectType_toJsonFunctionExpression.call(this)};`;
-    }
-
-    if (this.configuration.features.has("Object.toLoggable")) {
-      staticModuleDeclarations[`${syntheticNamePrefix}toLoggable`] =
-        code`export const ${syntheticNamePrefix}toLoggable = (${this.thisVariable}: ${this.expression})${this.recursive ? code`: any` : code``} => ${this.toLoggableRecordExpression({ variables: { value: this.thisVariable } })};`;
-    }
-
     // toRdfResource
     if (this.configuration.features.has("Object.toRdf")) {
       staticModuleDeclarations["_toRdfResource"] =
@@ -653,58 +523,13 @@ export class ObjectType extends AbstractType {
         code`export const toRdfResource = ${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(_toRdfResource);`;
     }
 
-    // toString / toStringRecord
+    // toStringRecord
     if (this.configuration.features.has("Object.toString")) {
-      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
-        code`export const ${syntheticNamePrefix}toString: (${this.thisVariable}: ${this.expression}) => string = ${ObjectType_toStringFunctionExpression.call(this)};`;
-
       staticModuleDeclarations["toStringRecord"] =
-        code`export const toStringRecord: (${this.thisVariable}: ${this.expression}) => Record<string, string> = ${ObjectType_toStringRecordFunctionExpression.call(this)};`;
-    }
-
-    // valueSparqlConstructTriples / valueSparqlWherePatterns
-    if (this.configuration.features.has("Object.SPARQL")) {
-      staticModuleDeclarations["valueSparqlConstructTriples"] =
-        code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${ObjectType_valueSparqlConstructTriplesFunctionExpression.call(this)};`;
-      staticModuleDeclarations["valueSparqlWherePatterns"] =
-        code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${ObjectType_valueSparqlWherePatternsFunctionExpression.call(this)};`;
+        code`export const toStringRecord = ${ObjectType_toStringRecordFunctionExpression.call(this)};`;
     }
 
     return staticModuleDeclarations;
-  }
-
-  protected toLoggableRecordExpression({
-    variables,
-  }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
-    return code`${this.reusables.snippets.compactRecord}({${joinCode(
-      this.properties.flatMap((property) =>
-        property
-          .toLoggableInitializer({
-            variables: {
-              object: variables.value,
-            },
-          })
-          .toList(),
-      ),
-      { on: "," },
-    )}})`;
-  }
-
-  protected toStringRecordExpression({
-    variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.reusables.snippets.compactRecord}({${joinCode(
-      this.properties.flatMap((property) =>
-        property
-          .toStringInitializer({
-            variables: {
-              object: variables.value,
-            },
-          })
-          .toList(),
-      ),
-      { on: "," },
-    )}})`;
   }
 
   private readonly lazyProperties: (
