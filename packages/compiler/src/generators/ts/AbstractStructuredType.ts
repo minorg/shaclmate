@@ -201,7 +201,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     if (this.configuration.features.has("Object.hash")) {
       // Hash functions take a generic parameter and const declaration like this can't have type parameters.
       staticModuleDeclarations["hash"] =
-        code`export const hash = ${this.hashFunctionExpression()};`;
+        code`export const hash: ${this.reusables.snippets.HashFunction}<${this.expression}> = ${this.hashFunctionExpression()};`;
     }
 
     if (this.configuration.features.has("Object.JSON.type")) {

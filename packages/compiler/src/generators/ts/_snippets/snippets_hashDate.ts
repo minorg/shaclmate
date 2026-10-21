@@ -8,8 +8,7 @@ export const snippets_hashDate: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}hashDate`,
     code`\
-function ${syntheticNamePrefix}hashDate<HasherT extends ${snippets.Hasher}>(hasher: HasherT, value: Date): HasherT {
+const ${syntheticNamePrefix}hashDate: ${snippets.HashFunction}<Date> = (hasher, value) => {
   hasher.update(${snippets.toIsoDateString}(value));
-  return hasher;
 }`,
   );

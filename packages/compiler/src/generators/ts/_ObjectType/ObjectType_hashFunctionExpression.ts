@@ -30,7 +30,6 @@ export function ObjectType_hashFunctionExpression(this: ObjectType): Code {
         code`${hashFunctionParameter}`;
     }
   }
-  statements.push(code`return ${hasherVariable};`);
 
   let thisTypeExpression = this.expression;
   if (Object.keys(replacePropertyDeclarations).length > 0) {
@@ -42,5 +41,5 @@ export function ObjectType_hashFunctionExpression(this: ObjectType): Code {
     )}> & { ${joinCode(Object.values(replacePropertyDeclarations))} }`;
   }
 
-  return code`<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${thisTypeExpression}): HasherT => { ${joinCode(statements)} }`;
+  return code`(${hasherVariable}, ${this.thisVariable}) { ${joinCode(statements)} }`;
 }

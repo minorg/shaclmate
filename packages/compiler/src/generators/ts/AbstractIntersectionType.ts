@@ -135,11 +135,10 @@ ${member.type.fromJsonExpression({
 
   protected hashFunctionExpression(): Code {
     return code`\
-(<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.expression}): HasherT => {
+(hasher, value) => {
 ${joinCode(
   this.members.map(({ type }) => code`${type.hashFunction}(hasher, value);`),
 )}
-  return hasher;
 })`;
   }
 

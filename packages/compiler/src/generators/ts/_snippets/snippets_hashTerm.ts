@@ -9,13 +9,12 @@ export const snippets_hashTerm: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}hashTerm`,
     code`\
-function ${syntheticNamePrefix}hashTerm<HasherT extends ${snippets.Hasher}>(hasher: HasherT, value: ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}): HasherT {
+const ${syntheticNamePrefix}hashTerm: ${snippets.HashFunction}<${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}> = (hasher, value) => {
   hasher.update(value.termType);
   hasher.update(value.value);
   if (value.termType === "Literal") {
     hasher.update(value.datatype.value);
     hasher.update(value.language);
   }
-  return hasher;
 }`,
   );
