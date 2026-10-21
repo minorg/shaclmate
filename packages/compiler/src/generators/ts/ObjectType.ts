@@ -145,7 +145,7 @@ export class ObjectType extends AbstractStructuredType {
     const sourceTypeExpression = code`{ ${joinCode(sourceTypePropertySignatures)} }`;
     const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return Maybe.of({
-      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
+      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction.usage}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
       sourceTypes: [
         {
           expression: sourceTypeExpression,
@@ -385,10 +385,13 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   protected get toRdfResourceFunction(): FunctionLike {
+    const identifierTypeExpression = this.name
+      .map(() => this.identifierTypeAlias)
+      .orDefault(this.identifierType.expression);
     const type = {
-      expression: code`${this.reusables.snippets.ToRdfResourceFunction}<${this.expression}, ${this.identifierTypeAlias}>`,
+      expression: code`${this.reusables.snippets.ToRdfResourceFunction}<${this.expression}, ${identifierTypeExpression}>`,
     };
-    const unannotatedExpression = code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${this._toRdfResourceFunction.usage})`;
+    const unannotatedExpression = code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>(${this._toRdfResourceFunction.usage})`;
 
     return this.name
       .map<FunctionLike>(
@@ -439,8 +442,11 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   private get _toRdfResourceFunction(): FunctionLike {
+    const identifierTypeExpression = this.name
+      .map(() => this.identifierTypeAlias)
+      .orDefault(this.identifierType.expression);
     const type = {
-      expression: code`${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}>`,
+      expression: code`${this.reusables.snippets._ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>`,
     };
     const unannotatedExpression =
       ObjectType_toRdfResourceFunctionExpression.call(this);
@@ -585,7 +591,7 @@ export class ObjectType extends AbstractStructuredType {
     function addFunctionDeclaration(function_: FunctionLike) {
       invariant(function_ instanceof DeclaredFunction);
       staticModuleDeclarations[function_.unqualifiedName] =
-        function_.declaration;
+        code`export ${function_.declaration}`;
     }
 
     // create

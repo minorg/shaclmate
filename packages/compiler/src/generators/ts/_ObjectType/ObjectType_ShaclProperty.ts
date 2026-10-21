@@ -204,7 +204,7 @@ export class ObjectType_ShaclProperty<
     const defaultNamespaceVariable = code`${variables.parameters}.${this.configuration.syntheticNamePrefix}defaultNamespace`;
 
     const conversionFunction = this.type.conversionFunction.extract()?.code;
-    const validationFunction = this.type.validationFunction.extract();
+    const validationFunction = this.type.validationFunction.extract()?.usage;
     let rhs: Code;
     if (conversionFunction && validationFunction) {
       rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable}).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;

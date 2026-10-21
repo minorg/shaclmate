@@ -322,7 +322,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     function addFunctionDeclaration(function_: FunctionLike) {
       invariant(function_ instanceof DeclaredFunction);
       staticModuleDeclarations[function_.unqualifiedName] =
-        function_.declaration;
+        code`export ${function_.declaration}`;
     }
 
     if (this.configuration.features.has("Object.equals")) {
