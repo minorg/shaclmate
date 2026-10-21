@@ -13,6 +13,7 @@ import { ObjectType_focusSparqlConstructTriplesFunctionExpression } from "./_Obj
 import { ObjectType_focusSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionExpression.js";
 import { ObjectType_fromJsonFunctionExpression } from "./_ObjectType/ObjectType_fromJsonFunctionExpression.js";
 import { ObjectType_fromRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceFunctionExpression.js";
+import { ObjectType_fromRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionExpression.js";
 import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
 import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
 import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
@@ -28,6 +29,7 @@ import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_Obj
 import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunctionExpression.js";
 import { ObjectType_toLoggableFunctionExpression } from "./_ObjectType/ObjectType_toLoggableFunctionExpression.js";
 import { ObjectType_toRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceFunctionExpression.js";
+import { ObjectType_toRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceValuesFunctionExpression.js";
 import { ObjectType_toStringFunctionExpression } from "./_ObjectType/ObjectType_toStringFunctionExpression.js";
 import { ObjectType_toStringRecordFunctionExpression } from "./_ObjectType/ObjectType_toStringRecordFunctionExpression.js";
 import { ObjectType_typeGuardFunctionExpression } from "./_ObjectType/ObjectType_typeGuardFunctionExpression.js";
@@ -49,6 +51,8 @@ import {
 } from "./ts-poet-wrapper.js";
 
 export class ObjectType extends AbstractStructuredType {
+  private readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
+
   protected override equalsFunctionExpression =
     ObjectType_equalsFunctionExpression;
   protected override filterFunctionExpression =
@@ -62,14 +66,14 @@ export class ObjectType extends AbstractStructuredType {
     ObjectType_toJsonFunctionExpression;
   protected override toLoggableFunctionExpression =
     ObjectType_toLoggableFunctionExpression;
+  protected override toRdfResourceValuesFunctionExpression =
+    ObjectType_toRdfResourceValuesFunctionExpression;
   protected override toStringFunctionExpression =
     ObjectType_toStringFunctionExpression;
   protected override valueSparqlConstructTriplesFunctionExpression =
     ObjectType_valueSparqlConstructTriplesFunctionExpression;
   protected override valueSparqlWherePatternsFunctionExpression =
     ObjectType_valueSparqlWherePatternsFunctionExpression;
-
-  private readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
 
   override readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
   readonly extern: boolean;
@@ -241,6 +245,15 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
+  get toStringRecordFunction(): Code {
+    return this.name
+      .map((name) => code`${name}.toStringRecord`)
+      .orDefaultLazy(() =>
+        ObjectType_toStringRecordFunctionExpression.call(this),
+      );
+  }
+
+  @Memoize()
   get typeGuardFunction(): Maybe<Code> {
     return ObjectType_typeGuardFunctionExpression.call(this).map((expression) =>
       this.name.map((name) => code`${name}.is${name}`).orDefault(expression),
@@ -296,19 +309,24 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  get toStringRecordFunction(): Code {
-    return this.name
-      .map((name) => code`${name}.toStringRecord`)
-      .orDefaultLazy(() =>
-        ObjectType_toStringRecordFunctionExpression.call(this),
-      );
-  }
-
-  @Memoize()
   protected get thisVariable(): Code {
     return this.name
       .map((name) => code`_${camelCase(name)}`)
       .orDefault(code`_object`);
+  }
+
+  protected get fromRdfResourceFunction(): Code {
+    return this.name.map(name => code`${name}.fromRdfResource`).orDefaultLazy(() => )
+  }
+
+  @Memoize()
+  protected get toRdfResourceFunction(): Code {
+    return this.name
+      .map((name) => code`${name}.toRdfResource`)
+      .orDefaultLazy(
+        () =>
+          code`((${this.toRdfResourceFunctionExpression}) satisfies ${this.toRdfResourceFunctionTypeExpression})`,
+      );
   }
 
   @Memoize()
@@ -324,6 +342,29 @@ export class ObjectType extends AbstractStructuredType {
             code`${arrayOf(...rdfTypeProperty.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
         ),
     );
+  }
+
+  @Memoize()
+  private get _toRdfResourceFunction(): Code {
+    return this.name
+      .map((name) => code`${name}._toRdfResource`)
+      .orDefaultLazy(
+        () => code`${ObjectType_toRdfResourceFunctionExpression.call(this)}`,
+      );
+  }
+
+  @Memoize()
+  private get _toRdfResourceFunctionTypeExpression(): Code {
+    return code`${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}>`;
+  }
+
+  @Memoize()
+  private get toRdfResourceFunctionExpression(): Code {
+    return code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${this._toRdfResourceFunction})`;
+  }
+
+  private get toRdfResourceFunctionTypeExpression(): Code {
+    return code`${this.reusables.snippets.ToRdfResourceFunction}<${this.expression}, ${this.identifierTypeAlias}>`;
   }
 
   override jsonType({
@@ -407,15 +448,6 @@ export class ObjectType extends AbstractStructuredType {
     return code`${toJsonFunction}(${variables.value})`;
   }
 
-  protected override fromRdfResourceValuesFunctionExpression(): Code {
-    return code`((values, options) => values.chainMap(value => value.toResource().chain(resource => ${ObjectType_fromRdfResourceFunctionExpression.call(this)}(resource, options))))`;
-  }
-
-  protected override toRdfResourceValuesFunctionExpression(): Code {
-    return code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${ObjectType_toRdfResourceFunctionExpression.call(this)})`;
-    // return code`[${toRdfResourceFunction}(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
-  }
-
   protected override staticModuleDeclarations(
     name: string,
   ): Record<string, Code> {
@@ -459,8 +491,7 @@ export class ObjectType extends AbstractStructuredType {
         code`export const fromRdfResource = ${this.reusables.snippets.wrap_FromRdfResourceFunction}(_fromRdfResource);`;
 
       staticModuleDeclarations["fromRdfResourceValues"] =
-        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}> = 
-  (values, options) => values.chainMap(value => value.toResource().chain(resource => fromRdfResource(resource, options)));`;
+        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}> = ${ObjectType_fromRdfResourceValuesFunctionExpression.call(this)};`;
     }
 
     // Identifier
@@ -509,10 +540,10 @@ export class ObjectType extends AbstractStructuredType {
     // toRdfResource
     if (this.configuration.features.has("Object.toRdf")) {
       staticModuleDeclarations["_toRdfResource"] =
-        code`export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}> = ${ObjectType_toRdfResourceFunctionExpression.call(this)};`;
+        code`export const _toRdfResource: ${this._toRdfResourceFunctionTypeExpression} = ${ObjectType_toRdfResourceFunctionExpression.call(this)};`;
 
       staticModuleDeclarations["toRdfResource"] =
-        code`export const toRdfResource = ${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(_toRdfResource);`;
+        code`export const toRdfResource: ${this.toRdfResourceFunctionTypeExpression} = ${this.toRdfResourceFunctionExpression};`;
     }
 
     // toStringRecord
