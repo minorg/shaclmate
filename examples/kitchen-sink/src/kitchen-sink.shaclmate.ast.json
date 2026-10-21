@@ -6676,9 +6676,9 @@
         },
         {
           "kind": "Shacl",
-          "name": "discriminatedUnionMemberCommon",
+          "name": "structDiscriminatedUnionMemberCommon",
           "order": 0,
-          "path": "PredicatePath(http://example.com/discriminatedUnionMemberCommon)",
+          "path": "PredicatePath(http://example.com/structDiscriminatedUnionMemberCommon)",
           "shapeIdentifier": {
             "prefix": "",
             "reference": "StructDiscriminatedUnionMember-common",
@@ -6706,9 +6706,9 @@
         },
         {
           "kind": "Shacl",
-          "name": "discriminatedUnionMember1Distinct",
+          "name": "structDiscriminatedUnionMember1Distinct",
           "order": 0,
-          "path": "PredicatePath(http://example.com/discriminatedUnionMember1Distinct)",
+          "path": "PredicatePath(http://example.com/structDiscriminatedUnionMember1Distinct)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_421"
@@ -6816,9 +6816,9 @@
         },
         {
           "kind": "Shacl",
-          "name": "discriminatedUnionMemberCommon",
+          "name": "structDiscriminatedUnionMemberCommon",
           "order": 0,
-          "path": "PredicatePath(http://example.com/discriminatedUnionMemberCommon)",
+          "path": "PredicatePath(http://example.com/structDiscriminatedUnionMemberCommon)",
           "shapeIdentifier": {
             "prefix": "",
             "reference": "StructDiscriminatedUnionMember-common",
@@ -6846,9 +6846,9 @@
         },
         {
           "kind": "Shacl",
-          "name": "discriminatedUnionMember2Distinct",
+          "name": "structDiscriminatedUnionMember2Distinct",
           "order": 0,
-          "path": "PredicatePath(http://example.com/discriminatedUnionMember2Distinct)",
+          "path": "PredicatePath(http://example.com/structDiscriminatedUnionMember2Distinct)",
           "shapeIdentifier": {
             "termType": "BlankNode",
             "value": "df_0_422"

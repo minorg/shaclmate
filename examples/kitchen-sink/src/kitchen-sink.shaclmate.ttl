@@ -1286,8 +1286,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:name "discriminatedUnionMemberCommon" ;
-    sh:path :discriminatedUnionMemberCommon .
+    sh:name "structDiscriminatedUnionMemberCommon" ;
+    sh:path :structDiscriminatedUnionMemberCommon .
 
 :StructDiscriminatedUnionMember1
     a owl:Class, sh:NodeShape ;
@@ -1295,7 +1295,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :discriminatedUnionMember1Distinct
+        sh:path :structDiscriminatedUnionMember1Distinct
     ] .
 
 :StructDiscriminatedUnionMember2
@@ -1304,7 +1304,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :discriminatedUnionMember2Distinct
+        sh:path :structDiscriminatedUnionMember2Distinct
     ] .
 
 :StructList

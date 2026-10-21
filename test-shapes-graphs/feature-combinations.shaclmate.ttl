@@ -9,11 +9,11 @@
 :DiscriminatedUnion
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:xone (:DiscriminatedUnionMember1
-        :DiscriminatedUnionMember2
+    sh:xone (:StructDiscriminatedUnionMember1
+        :StructDiscriminatedUnionMember2
     ) .
 
-:DiscriminatedUnionMember1
+:StructDiscriminatedUnionMember1
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
@@ -22,7 +22,7 @@
         sh:path :discriminatedUnionMember1Property
     ] .
 
-:DiscriminatedUnionMember2
+:StructDiscriminatedUnionMember2
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [

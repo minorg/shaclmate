@@ -1,7 +1,14 @@
-import type { NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
-import type { Resource, ResourceSet } from "@rdfx/resource";
-import type { Either } from "purify-ts";
-import type { $EqualsResult } from "../src/index.js";
+import type { NamedNode, Variable } from "@rdfjs/types";
+import type { Resource } from "@rdfx/resource";
+import type {
+  $EqualsFunction,
+  $FromJsonFunction,
+  $FromRdfResourceFunction,
+  $HashFunction,
+  $ToJsonFunction,
+  $ToRdfResourceFunction,
+  $ToStringFunction,
+} from "../src/index.js";
 
 export class Harness<
   T extends {
@@ -14,36 +21,16 @@ export class Harness<
   constructor(
     readonly instance: T,
     readonly staticSide: Readonly<{
-      equals: (left: T, right: T) => $EqualsResult;
-      fromJson: (json: any) => Either<Error, T>;
-      fromRdfResource: (
-        resource: Resource,
-        parameters: {
-          [_index: string]: any;
-        },
-      ) => Either<Error, T>;
-      hash: <
-        HasherT extends {
-          update: (
-            message: string | number[] | ArrayBuffer | Uint8Array,
-          ) => void;
-        },
-      >(
-        hasher: HasherT,
-        value: T,
-      ) => HasherT;
+      equals: $EqualsFunction<T>;
+      fromJson: $FromJsonFunction<T, any>;
+      fromRdfResource: $FromRdfResourceFunction<T>;
+      hash: $HashFunction<T>;
       sparqlConstructQueryString: (parameters: {
         subject: NamedNode | Variable;
       }) => string;
-      toJson: (instance: T) => any;
-      toRdfResource: (
-        instance: T,
-        options?: {
-          graph?: Exclude<Quad_Graph, Variable>;
-          resourceSet?: ResourceSet;
-        },
-      ) => Resource;
-      $toString: (instance: T) => string;
+      toJson: $ToJsonFunction<T, any>;
+      toRdfResource: $ToRdfResourceFunction<T>;
+      $toString: $ToStringFunction<T>;
     }>,
     shapeName?: string,
   ) {

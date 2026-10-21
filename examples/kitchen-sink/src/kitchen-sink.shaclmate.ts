@@ -3665,7 +3665,7 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 
-type $ToStringFunction<T> = (value: T) => string;
+export type $ToStringFunction<T> = (value: T) => string;
 
 function $validateArray<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
@@ -4050,10 +4050,12 @@ export namespace $DefaultPartial {
         ),
     );
 
-  export const hash: $HashFunction<$DefaultPartial> = (
-    hasher,
-    _defaultPartial,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<$DefaultPartial, "$identifier" | "$type"> & {
+      readonly $identifier?: () => $DefaultPartial.Identifier;
+      readonly $type?: "DefaultPartial";
+    }
+  > = (hasher, _defaultPartial) => {
     if (_defaultPartial.$identifier) {
       hasher.update(_defaultPartial.$identifier().value);
     }
@@ -4419,10 +4421,12 @@ export namespace $NamedDefaultPartial {
         ),
     );
 
-  export const hash: $HashFunction<$NamedDefaultPartial> = (
-    hasher,
-    _namedDefaultPartial,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<$NamedDefaultPartial, "$identifier" | "$type"> & {
+      readonly $identifier?: () => $NamedDefaultPartial.Identifier;
+      readonly $type?: "NamedDefaultPartial";
+    }
+  > = (hasher, _namedDefaultPartial) => {
     if (_namedDefaultPartial.$identifier) {
       hasher.update(_namedDefaultPartial.$identifier().value);
     }
@@ -5636,10 +5640,12 @@ export namespace AnonymousTypesStruct {
         ),
     );
 
-  export const hash: $HashFunction<AnonymousTypesStruct> = (
-    hasher,
-    _anonymousTypesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<AnonymousTypesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => AnonymousTypesStruct.Identifier;
+      readonly $type?: "AnonymousTypesStruct";
+    }
+  > = (hasher, _anonymousTypesStruct) => {
     if (_anonymousTypesStruct.$identifier) {
       hasher.update(_anonymousTypesStruct.$identifier().value);
     }
@@ -5651,10 +5657,15 @@ export namespace AnonymousTypesStruct {
         hasher.update(_object.$identifier().value);
       }
       $hashString(hasher, _object.anonymousStructString);
-    }) satisfies $HashFunction<{
-      readonly $identifier: () => BlankNode | NamedNode;
-      readonly anonymousStructString: string;
-    }>)(hasher, _anonymousTypesStruct.anonymousStruct);
+    }) satisfies $HashFunction<
+      Omit<
+        {
+          readonly $identifier: () => BlankNode | NamedNode;
+          readonly anonymousStructString: string;
+        },
+        "$identifier"
+      > & { readonly $identifier?: () => BlankNode | NamedNode }
+    >)(hasher, _anonymousTypesStruct.anonymousStruct);
   };
 
   export type Identifier = BlankNode | NamedNode;
@@ -6251,10 +6262,11 @@ export namespace BlankNodeIdentifierStruct {
         ),
     );
 
-  export const hash: $HashFunction<BlankNodeIdentifierStruct> = (
-    hasher,
-    _blankNodeIdentifierStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<BlankNodeIdentifierStruct, "$type"> & {
+      readonly $type?: "BlankNodeIdentifierStruct";
+    }
+  > = (hasher, _blankNodeIdentifierStruct) => {
     if (_blankNodeIdentifierStruct.$type) {
       hasher.update(_blankNodeIdentifierStruct.$type);
     }
@@ -6862,10 +6874,12 @@ export namespace BlankNodeOrIriIdentifierStruct {
         ),
     );
 
-  export const hash: $HashFunction<BlankNodeOrIriIdentifierStruct> = (
-    hasher,
-    _blankNodeOrIriIdentifierStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<BlankNodeOrIriIdentifierStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => BlankNodeOrIriIdentifierStruct.Identifier;
+      readonly $type?: "BlankNodeOrIriIdentifierStruct";
+    }
+  > = (hasher, _blankNodeOrIriIdentifierStruct) => {
     if (_blankNodeOrIriIdentifierStruct.$identifier) {
       hasher.update(_blankNodeOrIriIdentifierStruct.$identifier().value);
     }
@@ -7909,10 +7923,12 @@ export namespace ClassConstraintsStruct {
         ),
     );
 
-  export const hash: $HashFunction<ClassConstraintsStruct> = (
-    hasher,
-    _classConstraintsStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<ClassConstraintsStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => ClassConstraintsStruct.Identifier;
+      readonly $type?: "ClassConstraintsStruct";
+    }
+  > = (hasher, _classConstraintsStruct) => {
     if (_classConstraintsStruct.$identifier) {
       hasher.update(_classConstraintsStruct.$identifier().value);
     }
@@ -9858,10 +9874,12 @@ export namespace ConvertibleTypesStruct {
         ),
     );
 
-  export const hash: $HashFunction<ConvertibleTypesStruct> = (
-    hasher,
-    _convertibleTypesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<ConvertibleTypesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => ConvertibleTypesStruct.Identifier;
+      readonly $type?: "ConvertibleTypesStruct";
+    }
+  > = (hasher, _convertibleTypesStruct) => {
     if (_convertibleTypesStruct.$identifier) {
       hasher.update(_convertibleTypesStruct.$identifier().value);
     }
@@ -15236,10 +15254,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         ),
     );
 
-  export const hash: $HashFunction<DatatypeDiscriminatedUnionsStruct> = (
-    hasher,
-    _datatypeDiscriminatedUnionsStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<DatatypeDiscriminatedUnionsStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => DatatypeDiscriminatedUnionsStruct.Identifier;
+      readonly $type?: "DatatypeDiscriminatedUnionsStruct";
+    }
+  > = (hasher, _datatypeDiscriminatedUnionsStruct) => {
     if (_datatypeDiscriminatedUnionsStruct.$identifier) {
       hasher.update(_datatypeDiscriminatedUnionsStruct.$identifier().value);
     }
@@ -17061,7 +17081,12 @@ export namespace DatesStruct {
         .chain((resource) => DatesStruct.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<DatesStruct> = (hasher, _datesStruct) => {
+  export const hash: $HashFunction<
+    Omit<DatesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => DatesStruct.Identifier;
+      readonly $type?: "DatesStruct";
+    }
+  > = (hasher, _datesStruct) => {
     if (_datesStruct.$identifier) {
       hasher.update(_datesStruct.$identifier().value);
     }
@@ -18073,10 +18098,12 @@ export namespace DefaultValuesStruct {
         ),
     );
 
-  export const hash: $HashFunction<DefaultValuesStruct> = (
-    hasher,
-    _defaultValuesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<DefaultValuesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => DefaultValuesStruct.Identifier;
+      readonly $type?: "DefaultValuesStruct";
+    }
+  > = (hasher, _defaultValuesStruct) => {
     if (_defaultValuesStruct.$identifier) {
       hasher.update(_defaultValuesStruct.$identifier().value);
     }
@@ -18749,10 +18776,12 @@ export namespace DirectRecursiveStruct {
         ),
     );
 
-  export const hash: $HashFunction<DirectRecursiveStruct> = (
-    hasher,
-    _directRecursiveStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<DirectRecursiveStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => DirectRecursiveStruct.Identifier;
+      readonly $type?: "DirectRecursiveStruct";
+    }
+  > = (hasher, _directRecursiveStruct) => {
     if (_directRecursiveStruct.$identifier) {
       hasher.update(_directRecursiveStruct.$identifier().value);
     }
@@ -19457,10 +19486,12 @@ export namespace DisplayStruct {
         .chain((resource) => DisplayStruct.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<DisplayStruct> = (
-    hasher,
-    _displayStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<DisplayStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => DisplayStruct.Identifier;
+      readonly $type?: "DisplayStruct";
+    }
+  > = (hasher, _displayStruct) => {
     if (_displayStruct.$identifier) {
       hasher.update(_displayStruct.$identifier().value);
     }
@@ -20068,10 +20099,12 @@ export namespace ExplicitFromToRdfTypesStruct {
         ),
     );
 
-  export const hash: $HashFunction<ExplicitFromToRdfTypesStruct> = (
-    hasher,
-    _explicitFromToRdfTypesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<ExplicitFromToRdfTypesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => ExplicitFromToRdfTypesStruct.Identifier;
+      readonly $type?: "ExplicitFromToRdfTypesStruct";
+    }
+  > = (hasher, _explicitFromToRdfTypesStruct) => {
     if (_explicitFromToRdfTypesStruct.$identifier) {
       hasher.update(_explicitFromToRdfTypesStruct.$identifier().value);
     }
@@ -20647,10 +20680,12 @@ export namespace ExplicitRdfTypeStruct {
         ),
     );
 
-  export const hash: $HashFunction<ExplicitRdfTypeStruct> = (
-    hasher,
-    _explicitRdfTypeStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<ExplicitRdfTypeStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => ExplicitRdfTypeStruct.Identifier;
+      readonly $type?: "ExplicitRdfTypeStruct";
+    }
+  > = (hasher, _explicitRdfTypeStruct) => {
     if (_explicitRdfTypeStruct.$identifier) {
       hasher.update(_explicitRdfTypeStruct.$identifier().value);
     }
@@ -21236,10 +21271,12 @@ export namespace FlattenDiscriminatedUnionMember3 {
         ),
     );
 
-  export const hash: $HashFunction<FlattenDiscriminatedUnionMember3> = (
-    hasher,
-    _flattenDiscriminatedUnionMember3,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<FlattenDiscriminatedUnionMember3, "$identifier" | "$type"> & {
+      readonly $identifier?: () => FlattenDiscriminatedUnionMember3.Identifier;
+      readonly $type?: "FlattenDiscriminatedUnionMember3";
+    }
+  > = (hasher, _flattenDiscriminatedUnionMember3) => {
     if (_flattenDiscriminatedUnionMember3.$identifier) {
       hasher.update(_flattenDiscriminatedUnionMember3.$identifier().value);
     }
@@ -21786,10 +21823,12 @@ export namespace HasValuesStruct {
         ),
     );
 
-  export const hash: $HashFunction<HasValuesStruct> = (
-    hasher,
-    _hasValuesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<HasValuesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => HasValuesStruct.Identifier;
+      readonly $type?: "HasValuesStruct";
+    }
+  > = (hasher, _hasValuesStruct) => {
     if (_hasValuesStruct.$identifier) {
       hasher.update(_hasValuesStruct.$identifier().value);
     }
@@ -22433,10 +22472,12 @@ export namespace IgnoredPropertiesStruct {
         ),
     );
 
-  export const hash: $HashFunction<IgnoredPropertiesStruct> = (
-    hasher,
-    _ignoredPropertiesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<IgnoredPropertiesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => IgnoredPropertiesStruct.Identifier;
+      readonly $type?: "IgnoredPropertiesStruct";
+    }
+  > = (hasher, _ignoredPropertiesStruct) => {
     if (_ignoredPropertiesStruct.$identifier) {
       hasher.update(_ignoredPropertiesStruct.$identifier().value);
     }
@@ -23058,10 +23099,12 @@ export namespace IndirectRecursiveStruct {
         ),
     );
 
-  export const hash: $HashFunction<IndirectRecursiveStruct> = (
-    hasher,
-    _indirectRecursiveStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<IndirectRecursiveStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => IndirectRecursiveStruct.Identifier;
+      readonly $type?: "IndirectRecursiveStruct";
+    }
+  > = (hasher, _indirectRecursiveStruct) => {
     if (_indirectRecursiveStruct.$identifier) {
       hasher.update(_indirectRecursiveStruct.$identifier().value);
     }
@@ -23670,10 +23713,12 @@ export namespace IndirectRecursiveStructHelper {
         ),
     );
 
-  export const hash: $HashFunction<IndirectRecursiveStructHelper> = (
-    hasher,
-    _indirectRecursiveStructHelper,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<IndirectRecursiveStructHelper, "$identifier" | "$type"> & {
+      readonly $identifier?: () => IndirectRecursiveStructHelper.Identifier;
+      readonly $type?: "IndirectRecursiveStructHelper";
+    }
+  > = (hasher, _indirectRecursiveStructHelper) => {
     if (_indirectRecursiveStructHelper.$identifier) {
       hasher.update(_indirectRecursiveStructHelper.$identifier().value);
     }
@@ -24306,10 +24351,12 @@ export namespace InIdentifierStruct {
         ),
     );
 
-  export const hash: $HashFunction<InIdentifierStruct> = (
-    hasher,
-    _inIdentifierStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<InIdentifierStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => InIdentifierStruct.Identifier;
+      readonly $type?: "InIdentifierStruct";
+    }
+  > = (hasher, _inIdentifierStruct) => {
     if (_inIdentifierStruct.$identifier) {
       hasher.update(_inIdentifierStruct.$identifier().value);
     }
@@ -25459,10 +25506,12 @@ export namespace InPropertiesStruct {
         ),
     );
 
-  export const hash: $HashFunction<InPropertiesStruct> = (
-    hasher,
-    _inPropertiesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<InPropertiesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => InPropertiesStruct.Identifier;
+      readonly $type?: "InPropertiesStruct";
+    }
+  > = (hasher, _inPropertiesStruct) => {
     if (_inPropertiesStruct.$identifier) {
       hasher.update(_inPropertiesStruct.$identifier().value);
     }
@@ -26151,10 +26200,12 @@ export namespace IriIdentifierStruct {
         ),
     );
 
-  export const hash: $HashFunction<IriIdentifierStruct> = (
-    hasher,
-    _iriIdentifierStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<IriIdentifierStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => IriIdentifierStruct.Identifier;
+      readonly $type?: "IriIdentifierStruct";
+    }
+  > = (hasher, _iriIdentifierStruct) => {
     if (_iriIdentifierStruct.$identifier) {
       hasher.update(_iriIdentifierStruct.$identifier().value);
     }
@@ -27582,10 +27633,12 @@ export namespace LangStringStruct {
         ),
     );
 
-  export const hash: $HashFunction<LangStringStruct> = (
-    hasher,
-    _langStringStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<LangStringStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => LangStringStruct.Identifier;
+      readonly $type?: "LangStringStruct";
+    }
+  > = (hasher, _langStringStruct) => {
     if (_langStringStruct.$identifier) {
       hasher.update(_langStringStruct.$identifier().value);
     }
@@ -28306,10 +28359,12 @@ export namespace LanguageInStruct {
         ),
     );
 
-  export const hash: $HashFunction<LanguageInStruct> = (
-    hasher,
-    _languageInStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<LanguageInStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => LanguageInStruct.Identifier;
+      readonly $type?: "LanguageInStruct";
+    }
+  > = (hasher, _languageInStruct) => {
     if (_languageInStruct.$identifier) {
       hasher.update(_languageInStruct.$identifier().value);
     }
@@ -28887,7 +28942,13 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     );
 
   export const hash: $HashFunction<
-    LazilyResolvedBlankNodeOrIriIdentifierStruct
+    Omit<
+      LazilyResolvedBlankNodeOrIriIdentifierStruct,
+      "$identifier" | "$type"
+    > & {
+      readonly $identifier?: () => LazilyResolvedBlankNodeOrIriIdentifierStruct.Identifier;
+      readonly $type?: "LazilyResolvedBlankNodeOrIriIdentifierStruct";
+    }
   > = (hasher, _lazilyResolvedBlankNodeOrIriIdentifierStruct) => {
     if (_lazilyResolvedBlankNodeOrIriIdentifierStruct.$identifier) {
       hasher.update(
@@ -29496,10 +29557,12 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
         ),
     );
 
-  export const hash: $HashFunction<LazilyResolvedDiscriminatedUnionMember1> = (
-    hasher,
-    _lazilyResolvedDiscriminatedUnionMember1,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<LazilyResolvedDiscriminatedUnionMember1, "$identifier" | "$type"> & {
+      readonly $identifier?: () => LazilyResolvedDiscriminatedUnionMember1.Identifier;
+      readonly $type?: "LazilyResolvedDiscriminatedUnionMember1";
+    }
+  > = (hasher, _lazilyResolvedDiscriminatedUnionMember1) => {
     if (_lazilyResolvedDiscriminatedUnionMember1.$identifier) {
       hasher.update(
         _lazilyResolvedDiscriminatedUnionMember1.$identifier().value,
@@ -30094,10 +30157,12 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
         ),
     );
 
-  export const hash: $HashFunction<LazilyResolvedDiscriminatedUnionMember2> = (
-    hasher,
-    _lazilyResolvedDiscriminatedUnionMember2,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<LazilyResolvedDiscriminatedUnionMember2, "$identifier" | "$type"> & {
+      readonly $identifier?: () => LazilyResolvedDiscriminatedUnionMember2.Identifier;
+      readonly $type?: "LazilyResolvedDiscriminatedUnionMember2";
+    }
+  > = (hasher, _lazilyResolvedDiscriminatedUnionMember2) => {
     if (_lazilyResolvedDiscriminatedUnionMember2.$identifier) {
       hasher.update(
         _lazilyResolvedDiscriminatedUnionMember2.$identifier().value,
@@ -30591,10 +30656,12 @@ export namespace LazilyResolvedIriIdentifierStruct {
         ),
     );
 
-  export const hash: $HashFunction<LazilyResolvedIriIdentifierStruct> = (
-    hasher,
-    _lazilyResolvedIriIdentifierStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<LazilyResolvedIriIdentifierStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => LazilyResolvedIriIdentifierStruct.Identifier;
+      readonly $type?: "LazilyResolvedIriIdentifierStruct";
+    }
+  > = (hasher, _lazilyResolvedIriIdentifierStruct) => {
     if (_lazilyResolvedIriIdentifierStruct.$identifier) {
       hasher.update(_lazilyResolvedIriIdentifierStruct.$identifier().value);
     }
@@ -33176,10 +33243,12 @@ export namespace LazyPropertiesStruct {
         ),
     );
 
-  export const hash: $HashFunction<LazyPropertiesStruct> = (
-    hasher,
-    _lazyPropertiesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<LazyPropertiesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => LazyPropertiesStruct.Identifier;
+      readonly $type?: "LazyPropertiesStruct";
+    }
+  > = (hasher, _lazyPropertiesStruct) => {
     if (_lazyPropertiesStruct.$identifier) {
       hasher.update(_lazyPropertiesStruct.$identifier().value);
     }
@@ -34942,10 +35011,12 @@ export namespace ListSetsStruct {
         .chain((resource) => ListSetsStruct.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<ListSetsStruct> = (
-    hasher,
-    _listSetsStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<ListSetsStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => ListSetsStruct.Identifier;
+      readonly $type?: "ListSetsStruct";
+    }
+  > = (hasher, _listSetsStruct) => {
     if (_listSetsStruct.$identifier) {
       hasher.update(_listSetsStruct.$identifier().value);
     }
@@ -36321,7 +36392,12 @@ export namespace ListsStruct {
         .chain((resource) => ListsStruct.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<ListsStruct> = (hasher, _listsStruct) => {
+  export const hash: $HashFunction<
+    Omit<ListsStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => ListsStruct.Identifier;
+      readonly $type?: "ListsStruct";
+    }
+  > = (hasher, _listsStruct) => {
     if (_listsStruct.$identifier) {
       hasher.update(_listsStruct.$identifier().value);
     }
@@ -37255,10 +37331,12 @@ export namespace MutablePropertiesStruct {
         ),
     );
 
-  export const hash: $HashFunction<MutablePropertiesStruct> = (
-    hasher,
-    _mutablePropertiesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<MutablePropertiesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => MutablePropertiesStruct.Identifier;
+      readonly $type?: "MutablePropertiesStruct";
+    }
+  > = (hasher, _mutablePropertiesStruct) => {
     if (_mutablePropertiesStruct.$identifier) {
       hasher.update(_mutablePropertiesStruct.$identifier().value);
     }
@@ -38208,10 +38286,12 @@ export namespace NamedTypesStruct {
         ),
     );
 
-  export const hash: $HashFunction<NamedTypesStruct> = (
-    hasher,
-    _namedTypesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<NamedTypesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => NamedTypesStruct.Identifier;
+      readonly $type?: "NamedTypesStruct";
+    }
+  > = (hasher, _namedTypesStruct) => {
     if (_namedTypesStruct.$identifier) {
       hasher.update(_namedTypesStruct.$identifier().value);
     }
@@ -38868,7 +38948,12 @@ export namespace NewName {
         .chain((resource) => NewName.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<NewName> = (hasher, _newName) => {
+  export const hash: $HashFunction<
+    Omit<NewName, "$identifier" | "$type"> & {
+      readonly $identifier?: () => NewName.Identifier;
+      readonly $type?: "NewName";
+    }
+  > = (hasher, _newName) => {
     if (_newName.$identifier) {
       hasher.update(_newName.$identifier().value);
     }
@@ -39822,10 +39907,12 @@ export namespace NodeKindsStruct {
         ),
     );
 
-  export const hash: $HashFunction<NodeKindsStruct> = (
-    hasher,
-    _nodeKindsStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<NodeKindsStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => NodeKindsStruct.Identifier;
+      readonly $type?: "NodeKindsStruct";
+    }
+  > = (hasher, _nodeKindsStruct) => {
     if (_nodeKindsStruct.$identifier) {
       hasher.update(_nodeKindsStruct.$identifier().value);
     }
@@ -40495,10 +40582,12 @@ export namespace NonClassStruct {
         .chain((resource) => NonClassStruct.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<NonClassStruct> = (
-    hasher,
-    _nonClassStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<NonClassStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => NonClassStruct.Identifier;
+      readonly $type?: "NonClassStruct";
+    }
+  > = (hasher, _nonClassStruct) => {
     if (_nonClassStruct.$identifier) {
       hasher.update(_nonClassStruct.$identifier().value);
     }
@@ -40979,10 +41068,12 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
         ),
     );
 
-  export const hash: $HashFunction<NoRdfTypeDiscriminatedUnionMember1> = (
-    hasher,
-    _noRdfTypeDiscriminatedUnionMember1,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<NoRdfTypeDiscriminatedUnionMember1, "$identifier" | "$type"> & {
+      readonly $identifier?: () => NoRdfTypeDiscriminatedUnionMember1.Identifier;
+      readonly $type?: "NoRdfTypeDiscriminatedUnionMember1";
+    }
+  > = (hasher, _noRdfTypeDiscriminatedUnionMember1) => {
     if (_noRdfTypeDiscriminatedUnionMember1.$identifier) {
       hasher.update(_noRdfTypeDiscriminatedUnionMember1.$identifier().value);
     }
@@ -41486,10 +41577,12 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
         ),
     );
 
-  export const hash: $HashFunction<NoRdfTypeDiscriminatedUnionMember2> = (
-    hasher,
-    _noRdfTypeDiscriminatedUnionMember2,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<NoRdfTypeDiscriminatedUnionMember2, "$identifier" | "$type"> & {
+      readonly $identifier?: () => NoRdfTypeDiscriminatedUnionMember2.Identifier;
+      readonly $type?: "NoRdfTypeDiscriminatedUnionMember2";
+    }
+  > = (hasher, _noRdfTypeDiscriminatedUnionMember2) => {
     if (_noRdfTypeDiscriminatedUnionMember2.$identifier) {
       hasher.update(_noRdfTypeDiscriminatedUnionMember2.$identifier().value);
     }
@@ -43502,10 +43595,12 @@ export namespace NumericsStruct {
         .chain((resource) => NumericsStruct.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<NumericsStruct> = (
-    hasher,
-    _numericsStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<NumericsStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => NumericsStruct.Identifier;
+      readonly $type?: "NumericsStruct";
+    }
+  > = (hasher, _numericsStruct) => {
     if (_numericsStruct.$identifier) {
       hasher.update(_numericsStruct.$identifier().value);
     }
@@ -44365,10 +44460,12 @@ export namespace OrderedStruct {
         .chain((resource) => OrderedStruct.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<OrderedStruct> = (
-    hasher,
-    _orderedStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<OrderedStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => OrderedStruct.Identifier;
+      readonly $type?: "OrderedStruct";
+    }
+  > = (hasher, _orderedStruct) => {
     if (_orderedStruct.$identifier) {
       hasher.update(_orderedStruct.$identifier().value);
     }
@@ -44945,10 +45042,12 @@ export namespace PartialDiscriminatedUnionMember1 {
         ),
     );
 
-  export const hash: $HashFunction<PartialDiscriminatedUnionMember1> = (
-    hasher,
-    _partialDiscriminatedUnionMember1,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<PartialDiscriminatedUnionMember1, "$identifier" | "$type"> & {
+      readonly $identifier?: () => PartialDiscriminatedUnionMember1.Identifier;
+      readonly $type?: "PartialDiscriminatedUnionMember1";
+    }
+  > = (hasher, _partialDiscriminatedUnionMember1) => {
     if (_partialDiscriminatedUnionMember1.$identifier) {
       hasher.update(_partialDiscriminatedUnionMember1.$identifier().value);
     }
@@ -45525,10 +45624,12 @@ export namespace PartialDiscriminatedUnionMember2 {
         ),
     );
 
-  export const hash: $HashFunction<PartialDiscriminatedUnionMember2> = (
-    hasher,
-    _partialDiscriminatedUnionMember2,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<PartialDiscriminatedUnionMember2, "$identifier" | "$type"> & {
+      readonly $identifier?: () => PartialDiscriminatedUnionMember2.Identifier;
+      readonly $type?: "PartialDiscriminatedUnionMember2";
+    }
+  > = (hasher, _partialDiscriminatedUnionMember2) => {
     if (_partialDiscriminatedUnionMember2.$identifier) {
       hasher.update(_partialDiscriminatedUnionMember2.$identifier().value);
     }
@@ -45999,10 +46100,12 @@ export namespace PartialStruct {
         .chain((resource) => PartialStruct.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<PartialStruct> = (
-    hasher,
-    _partialStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<PartialStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => PartialStruct.Identifier;
+      readonly $type?: "PartialStruct";
+    }
+  > = (hasher, _partialStruct) => {
     if (_partialStruct.$identifier) {
       hasher.update(_partialStruct.$identifier().value);
     }
@@ -46746,10 +46849,12 @@ export namespace PropertyCardinalitiesStruct {
         ),
     );
 
-  export const hash: $HashFunction<PropertyCardinalitiesStruct> = (
-    hasher,
-    _propertyCardinalitiesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<PropertyCardinalitiesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => PropertyCardinalitiesStruct.Identifier;
+      readonly $type?: "PropertyCardinalitiesStruct";
+    }
+  > = (hasher, _propertyCardinalitiesStruct) => {
     if (_propertyCardinalitiesStruct.$identifier) {
       hasher.update(_propertyCardinalitiesStruct.$identifier().value);
     }
@@ -47604,10 +47709,12 @@ export namespace PropertyNamesStruct {
         ),
     );
 
-  export const hash: $HashFunction<PropertyNamesStruct> = (
-    hasher,
-    _propertyNamesStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<PropertyNamesStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => PropertyNamesStruct.Identifier;
+      readonly $type?: "PropertyNamesStruct";
+    }
+  > = (hasher, _propertyNamesStruct) => {
     if (_propertyNamesStruct.$identifier) {
       hasher.update(_propertyNamesStruct.$identifier().value);
     }
@@ -48367,10 +48474,12 @@ export namespace PropertyPathsStruct {
         ),
     );
 
-  export const hash: $HashFunction<PropertyPathsStruct> = (
-    hasher,
-    _propertyPathsStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<PropertyPathsStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => PropertyPathsStruct.Identifier;
+      readonly $type?: "PropertyPathsStruct";
+    }
+  > = (hasher, _propertyPathsStruct) => {
     if (_propertyPathsStruct.$identifier) {
       hasher.update(_propertyPathsStruct.$identifier().value);
     }
@@ -48998,10 +49107,12 @@ export namespace RecursiveDiscriminatedUnionMember1 {
         ),
     );
 
-  export const hash: $HashFunction<RecursiveDiscriminatedUnionMember1> = (
-    hasher,
-    _recursiveDiscriminatedUnionMember1,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<RecursiveDiscriminatedUnionMember1, "$identifier" | "$type"> & {
+      readonly $identifier?: () => RecursiveDiscriminatedUnionMember1.Identifier;
+      readonly $type?: "RecursiveDiscriminatedUnionMember1";
+    }
+  > = (hasher, _recursiveDiscriminatedUnionMember1) => {
     if (_recursiveDiscriminatedUnionMember1.$identifier) {
       hasher.update(_recursiveDiscriminatedUnionMember1.$identifier().value);
     }
@@ -49637,10 +49748,12 @@ export namespace RecursiveDiscriminatedUnionMember2 {
         ),
     );
 
-  export const hash: $HashFunction<RecursiveDiscriminatedUnionMember2> = (
-    hasher,
-    _recursiveDiscriminatedUnionMember2,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<RecursiveDiscriminatedUnionMember2, "$identifier" | "$type"> & {
+      readonly $identifier?: () => RecursiveDiscriminatedUnionMember2.Identifier;
+      readonly $type?: "RecursiveDiscriminatedUnionMember2";
+    }
+  > = (hasher, _recursiveDiscriminatedUnionMember2) => {
     if (_recursiveDiscriminatedUnionMember2.$identifier) {
       hasher.update(_recursiveDiscriminatedUnionMember2.$identifier().value);
     }
@@ -49920,9 +50033,9 @@ export type StructDiscriminatedUnionMember1 = {
 
   readonly $type: "StructDiscriminatedUnionMember1";
 
-  readonly discriminatedUnionMember1Distinct: string;
+  readonly structDiscriminatedUnionMember1Distinct: string;
 
-  readonly discriminatedUnionMemberCommon: string;
+  readonly structDiscriminatedUnionMemberCommon: string;
 };
 
 export namespace StructDiscriminatedUnionMember1 {
@@ -49954,7 +50067,7 @@ export namespace StructDiscriminatedUnionMember1 {
                 .type,
           },
         ).chain((values) => values.head()),
-        discriminatedUnionMember1Distinct: $shaclPropertyFromRdf<
+        structDiscriminatedUnionMember1Distinct: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
@@ -49963,10 +50076,10 @@ export namespace StructDiscriminatedUnionMember1 {
           ignoreRdfType: true,
           propertySchema:
             StructDiscriminatedUnionMember1.schema.properties
-              .discriminatedUnionMember1Distinct,
+              .structDiscriminatedUnionMember1Distinct,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         }),
-        discriminatedUnionMemberCommon: $shaclPropertyFromRdf<
+        structDiscriminatedUnionMemberCommon: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
@@ -49975,7 +50088,7 @@ export namespace StructDiscriminatedUnionMember1 {
           ignoreRdfType: true,
           propertySchema:
             StructDiscriminatedUnionMember1.schema.properties
-              .discriminatedUnionMemberCommon,
+              .structDiscriminatedUnionMemberCommon,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         }),
       }).chain((properties) =>
@@ -49996,20 +50109,20 @@ export namespace StructDiscriminatedUnionMember1 {
     }
     parameters.resource.add(
       StructDiscriminatedUnionMember1.schema.properties
-        .discriminatedUnionMember1Distinct.path,
+        .structDiscriminatedUnionMember1Distinct.path,
       [
         $literalFactory.string(
-          parameters.object.discriminatedUnionMember1Distinct,
+          parameters.object.structDiscriminatedUnionMember1Distinct,
         ),
       ],
       parameters.graph,
     );
     parameters.resource.add(
       StructDiscriminatedUnionMember1.schema.properties
-        .discriminatedUnionMemberCommon.path,
+        .structDiscriminatedUnionMemberCommon.path,
       [
         $literalFactory.string(
-          parameters.object.discriminatedUnionMemberCommon,
+          parameters.object.structDiscriminatedUnionMemberCommon,
         ),
       ],
       parameters.graph,
@@ -50031,8 +50144,8 @@ export namespace StructDiscriminatedUnionMember1 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly discriminatedUnionMember1Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
+    readonly structDiscriminatedUnionMember1Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
   }) => Either<Error, StructDiscriminatedUnionMember1> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -50042,19 +50155,19 @@ export namespace StructDiscriminatedUnionMember1 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly discriminatedUnionMember1Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
+    readonly structDiscriminatedUnionMember1Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
   }): Either<Error, StructDiscriminatedUnionMember1> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
-      discriminatedUnionMember1Distinct: Either.of(
-        parameters.discriminatedUnionMember1Distinct,
+      structDiscriminatedUnionMember1Distinct: Either.of(
+        parameters.structDiscriminatedUnionMember1Distinct,
       ),
-      discriminatedUnionMemberCommon: Either.of(
-        parameters.discriminatedUnionMemberCommon,
+      structDiscriminatedUnionMemberCommon: Either.of(
+        parameters.structDiscriminatedUnionMemberCommon,
       ),
     })
       .map((properties) => ({
@@ -50077,8 +50190,8 @@ export namespace StructDiscriminatedUnionMember1 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly discriminatedUnionMember1Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
+    readonly structDiscriminatedUnionMember1Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
   }) => StructDiscriminatedUnionMember1 = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -50088,8 +50201,8 @@ export namespace StructDiscriminatedUnionMember1 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly discriminatedUnionMember1Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
+    readonly structDiscriminatedUnionMember1Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
   }): StructDiscriminatedUnionMember1 => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<StructDiscriminatedUnionMember1> = (
@@ -50105,20 +50218,20 @@ export namespace StructDiscriminatedUnionMember1 {
         $propertyEquals(
           {
             equalsFunction: $strictEquals,
-            name: "discriminatedUnionMember1Distinct",
+            name: "structDiscriminatedUnionMember1Distinct",
           },
-          [left, left.discriminatedUnionMember1Distinct],
-          [right, right.discriminatedUnionMember1Distinct],
+          [left, left.structDiscriminatedUnionMember1Distinct],
+          [right, right.structDiscriminatedUnionMember1Distinct],
         ),
       )
       .chain(() =>
         $propertyEquals(
           {
             equalsFunction: $strictEquals,
-            name: "discriminatedUnionMemberCommon",
+            name: "structDiscriminatedUnionMemberCommon",
           },
-          [left, left.discriminatedUnionMemberCommon],
-          [right, right.discriminatedUnionMemberCommon],
+          [left, left.structDiscriminatedUnionMemberCommon],
+          [right, right.structDiscriminatedUnionMemberCommon],
         ),
       );
 
@@ -50133,19 +50246,19 @@ export namespace StructDiscriminatedUnionMember1 {
       return false;
     }
     if (
-      filter.discriminatedUnionMember1Distinct !== undefined &&
+      filter.structDiscriminatedUnionMember1Distinct !== undefined &&
       !$filterString(
-        filter.discriminatedUnionMember1Distinct,
-        value.discriminatedUnionMember1Distinct,
+        filter.structDiscriminatedUnionMember1Distinct,
+        value.structDiscriminatedUnionMember1Distinct,
       )
     ) {
       return false;
     }
     if (
-      filter.discriminatedUnionMemberCommon !== undefined &&
+      filter.structDiscriminatedUnionMemberCommon !== undefined &&
       !$filterString(
-        filter.discriminatedUnionMemberCommon,
-        value.discriminatedUnionMemberCommon,
+        filter.structDiscriminatedUnionMemberCommon,
+        value.structDiscriminatedUnionMemberCommon,
       )
     ) {
       return false;
@@ -50155,8 +50268,8 @@ export namespace StructDiscriminatedUnionMember1 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly discriminatedUnionMember1Distinct?: $StringFilter;
-    readonly discriminatedUnionMemberCommon?: $StringFilter;
+    readonly structDiscriminatedUnionMember1Distinct?: $StringFilter;
+    readonly structDiscriminatedUnionMemberCommon?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -50187,26 +50300,26 @@ export namespace StructDiscriminatedUnionMember1 {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.discriminatedUnionMember1Distinct,
+        filter: parameters.filter?.structDiscriminatedUnionMember1Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "discriminatedUnionMember1Distinct",
+        propertyName: "structDiscriminatedUnionMember1Distinct",
         propertySchema:
           StructDiscriminatedUnionMember1.schema.properties
-            .discriminatedUnionMember1Distinct,
+            .structDiscriminatedUnionMember1Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.discriminatedUnionMemberCommon,
+        filter: parameters.filter?.structDiscriminatedUnionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "discriminatedUnionMemberCommon",
+        propertyName: "structDiscriminatedUnionMemberCommon",
         propertySchema:
           StructDiscriminatedUnionMember1.schema.properties
-            .discriminatedUnionMemberCommon,
+            .structDiscriminatedUnionMemberCommon,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -50281,28 +50394,28 @@ export namespace StructDiscriminatedUnionMember1 {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.discriminatedUnionMember1Distinct,
+        filter: parameters.filter?.structDiscriminatedUnionMember1Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "discriminatedUnionMember1Distinct",
+        propertyName: "structDiscriminatedUnionMember1Distinct",
         propertySchema:
           StructDiscriminatedUnionMember1.schema.properties
-            .discriminatedUnionMember1Distinct,
+            .structDiscriminatedUnionMember1Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.discriminatedUnionMemberCommon,
+        filter: parameters.filter?.structDiscriminatedUnionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "discriminatedUnionMemberCommon",
+        propertyName: "structDiscriminatedUnionMemberCommon",
         propertySchema:
           StructDiscriminatedUnionMember1.schema.properties
-            .discriminatedUnionMemberCommon,
+            .structDiscriminatedUnionMemberCommon,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -50320,11 +50433,11 @@ export namespace StructDiscriminatedUnionMember1 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      discriminatedUnionMember1Distinct: Either.of<Error, string>(
-        $json["discriminatedUnionMember1Distinct"],
+      structDiscriminatedUnionMember1Distinct: Either.of<Error, string>(
+        $json["structDiscriminatedUnionMember1Distinct"],
       ),
-      discriminatedUnionMemberCommon: Either.of<Error, string>(
-        $json["discriminatedUnionMemberCommon"],
+      structDiscriminatedUnionMemberCommon: Either.of<Error, string>(
+        $json["structDiscriminatedUnionMemberCommon"],
       ),
     }).chain(StructDiscriminatedUnionMember1.create);
 
@@ -50345,10 +50458,12 @@ export namespace StructDiscriminatedUnionMember1 {
         ),
     );
 
-  export const hash: $HashFunction<StructDiscriminatedUnionMember1> = (
-    hasher,
-    _structDiscriminatedUnionMember1,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<StructDiscriminatedUnionMember1, "$identifier" | "$type"> & {
+      readonly $identifier?: () => StructDiscriminatedUnionMember1.Identifier;
+      readonly $type?: "StructDiscriminatedUnionMember1";
+    }
+  > = (hasher, _structDiscriminatedUnionMember1) => {
     if (_structDiscriminatedUnionMember1.$identifier) {
       hasher.update(_structDiscriminatedUnionMember1.$identifier().value);
     }
@@ -50357,11 +50472,11 @@ export namespace StructDiscriminatedUnionMember1 {
     }
     $hashString(
       hasher,
-      _structDiscriminatedUnionMember1.discriminatedUnionMember1Distinct,
+      _structDiscriminatedUnionMember1.structDiscriminatedUnionMember1Distinct,
     );
     $hashString(
       hasher,
-      _structDiscriminatedUnionMember1.discriminatedUnionMemberCommon,
+      _structDiscriminatedUnionMember1.structDiscriminatedUnionMemberCommon,
     );
   };
 
@@ -50379,8 +50494,8 @@ export namespace StructDiscriminatedUnionMember1 {
     "@id": string;
     "@type": string;
     $type: "StructDiscriminatedUnionMember1";
-    discriminatedUnionMember1Distinct: string;
-    discriminatedUnionMemberCommon: string;
+    structDiscriminatedUnionMember1Distinct: string;
+    structDiscriminatedUnionMemberCommon: string;
   };
 
   export namespace Json {
@@ -50397,8 +50512,8 @@ export namespace StructDiscriminatedUnionMember1 {
         "@id": z.string().min(1),
         "@type": z.string(),
         $type: z.literal("StructDiscriminatedUnionMember1"),
-        discriminatedUnionMember1Distinct: z.string(),
-        discriminatedUnionMemberCommon: z.string(),
+        structDiscriminatedUnionMember1Distinct: z.string(),
+        structDiscriminatedUnionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -50422,11 +50537,11 @@ export namespace StructDiscriminatedUnionMember1 {
             type: "Control",
           },
           {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/discriminatedUnionMember1Distinct`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/structDiscriminatedUnionMember1Distinct`,
             type: "Control",
           },
           {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/discriminatedUnionMemberCommon`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/structDiscriminatedUnionMemberCommon`,
             type: "Control",
           },
         ],
@@ -50454,17 +50569,17 @@ export namespace StructDiscriminatedUnionMember1 {
         ],
       },
       $type: { kind: "Discriminant", value: "StructDiscriminatedUnionMember1" },
-      discriminatedUnionMember1Distinct: {
+      structDiscriminatedUnionMember1Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/discriminatedUnionMember1Distinct",
+          "http://example.com/structDiscriminatedUnionMember1Distinct",
         ),
         type: { kind: "String" as const },
       },
-      discriminatedUnionMemberCommon: {
+      structDiscriminatedUnionMemberCommon: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/discriminatedUnionMemberCommon",
+          "http://example.com/structDiscriminatedUnionMemberCommon",
         ),
         type: { kind: "String" as const },
       },
@@ -50546,10 +50661,10 @@ export namespace StructDiscriminatedUnionMember1 {
             : _structDiscriminatedUnionMember1.$identifier().value,
         "@type": "http://example.com/StructDiscriminatedUnionMember1",
         $type: _structDiscriminatedUnionMember1.$type,
-        discriminatedUnionMember1Distinct:
-          _structDiscriminatedUnionMember1.discriminatedUnionMember1Distinct,
-        discriminatedUnionMemberCommon:
-          _structDiscriminatedUnionMember1.discriminatedUnionMemberCommon,
+        structDiscriminatedUnionMember1Distinct:
+          _structDiscriminatedUnionMember1.structDiscriminatedUnionMember1Distinct,
+        structDiscriminatedUnionMemberCommon:
+          _structDiscriminatedUnionMember1.structDiscriminatedUnionMemberCommon,
       }),
     );
 
@@ -50559,10 +50674,10 @@ export namespace StructDiscriminatedUnionMember1 {
     $compactRecord({
       $identifier: _structDiscriminatedUnionMember1.$identifier().value,
       $type: "StructDiscriminatedUnionMember1",
-      discriminatedUnionMember1Distinct:
-        _structDiscriminatedUnionMember1.discriminatedUnionMember1Distinct,
-      discriminatedUnionMemberCommon:
-        _structDiscriminatedUnionMember1.discriminatedUnionMemberCommon,
+      structDiscriminatedUnionMember1Distinct:
+        _structDiscriminatedUnionMember1.structDiscriminatedUnionMember1Distinct,
+      structDiscriminatedUnionMemberCommon:
+        _structDiscriminatedUnionMember1.structDiscriminatedUnionMemberCommon,
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
@@ -50628,9 +50743,9 @@ export type StructDiscriminatedUnionMember2 = {
 
   readonly $type: "StructDiscriminatedUnionMember2";
 
-  readonly discriminatedUnionMember2Distinct: string;
+  readonly structDiscriminatedUnionMember2Distinct: string;
 
-  readonly discriminatedUnionMemberCommon: string;
+  readonly structDiscriminatedUnionMemberCommon: string;
 };
 
 export namespace StructDiscriminatedUnionMember2 {
@@ -50662,7 +50777,7 @@ export namespace StructDiscriminatedUnionMember2 {
                 .type,
           },
         ).chain((values) => values.head()),
-        discriminatedUnionMember2Distinct: $shaclPropertyFromRdf<
+        structDiscriminatedUnionMember2Distinct: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
@@ -50671,10 +50786,10 @@ export namespace StructDiscriminatedUnionMember2 {
           ignoreRdfType: true,
           propertySchema:
             StructDiscriminatedUnionMember2.schema.properties
-              .discriminatedUnionMember2Distinct,
+              .structDiscriminatedUnionMember2Distinct,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         }),
-        discriminatedUnionMemberCommon: $shaclPropertyFromRdf<
+        structDiscriminatedUnionMemberCommon: $shaclPropertyFromRdf<
           string,
           $StringSchema<string>
         >({
@@ -50683,7 +50798,7 @@ export namespace StructDiscriminatedUnionMember2 {
           ignoreRdfType: true,
           propertySchema:
             StructDiscriminatedUnionMember1.schema.properties
-              .discriminatedUnionMemberCommon,
+              .structDiscriminatedUnionMemberCommon,
           typeFromRdfResourceValues: $stringFromRdfResourceValues<string>,
         }),
       }).chain((properties) =>
@@ -50704,20 +50819,20 @@ export namespace StructDiscriminatedUnionMember2 {
     }
     parameters.resource.add(
       StructDiscriminatedUnionMember2.schema.properties
-        .discriminatedUnionMember2Distinct.path,
+        .structDiscriminatedUnionMember2Distinct.path,
       [
         $literalFactory.string(
-          parameters.object.discriminatedUnionMember2Distinct,
+          parameters.object.structDiscriminatedUnionMember2Distinct,
         ),
       ],
       parameters.graph,
     );
     parameters.resource.add(
       StructDiscriminatedUnionMember1.schema.properties
-        .discriminatedUnionMemberCommon.path,
+        .structDiscriminatedUnionMemberCommon.path,
       [
         $literalFactory.string(
-          parameters.object.discriminatedUnionMemberCommon,
+          parameters.object.structDiscriminatedUnionMemberCommon,
         ),
       ],
       parameters.graph,
@@ -50739,8 +50854,8 @@ export namespace StructDiscriminatedUnionMember2 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly discriminatedUnionMember2Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
+    readonly structDiscriminatedUnionMember2Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
   }) => Either<Error, StructDiscriminatedUnionMember2> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -50750,19 +50865,19 @@ export namespace StructDiscriminatedUnionMember2 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly discriminatedUnionMember2Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
+    readonly structDiscriminatedUnionMember2Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
   }): Either<Error, StructDiscriminatedUnionMember2> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
-      discriminatedUnionMember2Distinct: Either.of(
-        parameters.discriminatedUnionMember2Distinct,
+      structDiscriminatedUnionMember2Distinct: Either.of(
+        parameters.structDiscriminatedUnionMember2Distinct,
       ),
-      discriminatedUnionMemberCommon: Either.of(
-        parameters.discriminatedUnionMemberCommon,
+      structDiscriminatedUnionMemberCommon: Either.of(
+        parameters.structDiscriminatedUnionMemberCommon,
       ),
     })
       .map((properties) => ({
@@ -50785,8 +50900,8 @@ export namespace StructDiscriminatedUnionMember2 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly discriminatedUnionMember2Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
+    readonly structDiscriminatedUnionMember2Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
   }) => StructDiscriminatedUnionMember2 = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -50796,8 +50911,8 @@ export namespace StructDiscriminatedUnionMember2 {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly discriminatedUnionMember2Distinct: string;
-    readonly discriminatedUnionMemberCommon: string;
+    readonly structDiscriminatedUnionMember2Distinct: string;
+    readonly structDiscriminatedUnionMemberCommon: string;
   }): StructDiscriminatedUnionMember2 => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<StructDiscriminatedUnionMember2> = (
@@ -50813,20 +50928,20 @@ export namespace StructDiscriminatedUnionMember2 {
         $propertyEquals(
           {
             equalsFunction: $strictEquals,
-            name: "discriminatedUnionMember2Distinct",
+            name: "structDiscriminatedUnionMember2Distinct",
           },
-          [left, left.discriminatedUnionMember2Distinct],
-          [right, right.discriminatedUnionMember2Distinct],
+          [left, left.structDiscriminatedUnionMember2Distinct],
+          [right, right.structDiscriminatedUnionMember2Distinct],
         ),
       )
       .chain(() =>
         $propertyEquals(
           {
             equalsFunction: $strictEquals,
-            name: "discriminatedUnionMemberCommon",
+            name: "structDiscriminatedUnionMemberCommon",
           },
-          [left, left.discriminatedUnionMemberCommon],
-          [right, right.discriminatedUnionMemberCommon],
+          [left, left.structDiscriminatedUnionMemberCommon],
+          [right, right.structDiscriminatedUnionMemberCommon],
         ),
       );
 
@@ -50841,19 +50956,19 @@ export namespace StructDiscriminatedUnionMember2 {
       return false;
     }
     if (
-      filter.discriminatedUnionMember2Distinct !== undefined &&
+      filter.structDiscriminatedUnionMember2Distinct !== undefined &&
       !$filterString(
-        filter.discriminatedUnionMember2Distinct,
-        value.discriminatedUnionMember2Distinct,
+        filter.structDiscriminatedUnionMember2Distinct,
+        value.structDiscriminatedUnionMember2Distinct,
       )
     ) {
       return false;
     }
     if (
-      filter.discriminatedUnionMemberCommon !== undefined &&
+      filter.structDiscriminatedUnionMemberCommon !== undefined &&
       !$filterString(
-        filter.discriminatedUnionMemberCommon,
-        value.discriminatedUnionMemberCommon,
+        filter.structDiscriminatedUnionMemberCommon,
+        value.structDiscriminatedUnionMemberCommon,
       )
     ) {
       return false;
@@ -50863,8 +50978,8 @@ export namespace StructDiscriminatedUnionMember2 {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly discriminatedUnionMember2Distinct?: $StringFilter;
-    readonly discriminatedUnionMemberCommon?: $StringFilter;
+    readonly structDiscriminatedUnionMember2Distinct?: $StringFilter;
+    readonly structDiscriminatedUnionMemberCommon?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -50895,26 +51010,26 @@ export namespace StructDiscriminatedUnionMember2 {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.discriminatedUnionMember2Distinct,
+        filter: parameters.filter?.structDiscriminatedUnionMember2Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "discriminatedUnionMember2Distinct",
+        propertyName: "structDiscriminatedUnionMember2Distinct",
         propertySchema:
           StructDiscriminatedUnionMember2.schema.properties
-            .discriminatedUnionMember2Distinct,
+            .structDiscriminatedUnionMember2Distinct,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.discriminatedUnionMemberCommon,
+        filter: parameters.filter?.structDiscriminatedUnionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
-        propertyName: "discriminatedUnionMemberCommon",
+        propertyName: "structDiscriminatedUnionMemberCommon",
         propertySchema:
           StructDiscriminatedUnionMember1.schema.properties
-            .discriminatedUnionMemberCommon,
+            .structDiscriminatedUnionMemberCommon,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -50989,28 +51104,28 @@ export namespace StructDiscriminatedUnionMember2 {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.discriminatedUnionMember2Distinct,
+        filter: parameters.filter?.structDiscriminatedUnionMember2Distinct,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "discriminatedUnionMember2Distinct",
+        propertyName: "structDiscriminatedUnionMember2Distinct",
         propertySchema:
           StructDiscriminatedUnionMember2.schema.properties
-            .discriminatedUnionMember2Distinct,
+            .structDiscriminatedUnionMember2Distinct,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.discriminatedUnionMemberCommon,
+        filter: parameters.filter?.structDiscriminatedUnionMemberCommon,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "discriminatedUnionMemberCommon",
+        propertyName: "structDiscriminatedUnionMemberCommon",
         propertySchema:
           StructDiscriminatedUnionMember1.schema.properties
-            .discriminatedUnionMemberCommon,
+            .structDiscriminatedUnionMemberCommon,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -51028,11 +51143,11 @@ export namespace StructDiscriminatedUnionMember2 {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      discriminatedUnionMember2Distinct: Either.of<Error, string>(
-        $json["discriminatedUnionMember2Distinct"],
+      structDiscriminatedUnionMember2Distinct: Either.of<Error, string>(
+        $json["structDiscriminatedUnionMember2Distinct"],
       ),
-      discriminatedUnionMemberCommon: Either.of<Error, string>(
-        $json["discriminatedUnionMemberCommon"],
+      structDiscriminatedUnionMemberCommon: Either.of<Error, string>(
+        $json["structDiscriminatedUnionMemberCommon"],
       ),
     }).chain(StructDiscriminatedUnionMember2.create);
 
@@ -51053,10 +51168,12 @@ export namespace StructDiscriminatedUnionMember2 {
         ),
     );
 
-  export const hash: $HashFunction<StructDiscriminatedUnionMember2> = (
-    hasher,
-    _structDiscriminatedUnionMember2,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<StructDiscriminatedUnionMember2, "$identifier" | "$type"> & {
+      readonly $identifier?: () => StructDiscriminatedUnionMember2.Identifier;
+      readonly $type?: "StructDiscriminatedUnionMember2";
+    }
+  > = (hasher, _structDiscriminatedUnionMember2) => {
     if (_structDiscriminatedUnionMember2.$identifier) {
       hasher.update(_structDiscriminatedUnionMember2.$identifier().value);
     }
@@ -51065,11 +51182,11 @@ export namespace StructDiscriminatedUnionMember2 {
     }
     $hashString(
       hasher,
-      _structDiscriminatedUnionMember2.discriminatedUnionMember2Distinct,
+      _structDiscriminatedUnionMember2.structDiscriminatedUnionMember2Distinct,
     );
     $hashString(
       hasher,
-      _structDiscriminatedUnionMember2.discriminatedUnionMemberCommon,
+      _structDiscriminatedUnionMember2.structDiscriminatedUnionMemberCommon,
     );
   };
 
@@ -51087,8 +51204,8 @@ export namespace StructDiscriminatedUnionMember2 {
     "@id": string;
     "@type": string;
     $type: "StructDiscriminatedUnionMember2";
-    discriminatedUnionMember2Distinct: string;
-    discriminatedUnionMemberCommon: string;
+    structDiscriminatedUnionMember2Distinct: string;
+    structDiscriminatedUnionMemberCommon: string;
   };
 
   export namespace Json {
@@ -51105,8 +51222,8 @@ export namespace StructDiscriminatedUnionMember2 {
         "@id": z.string().min(1),
         "@type": z.string(),
         $type: z.literal("StructDiscriminatedUnionMember2"),
-        discriminatedUnionMember2Distinct: z.string(),
-        discriminatedUnionMemberCommon: z.string(),
+        structDiscriminatedUnionMember2Distinct: z.string(),
+        structDiscriminatedUnionMemberCommon: z.string(),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -51130,11 +51247,11 @@ export namespace StructDiscriminatedUnionMember2 {
             type: "Control",
           },
           {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/discriminatedUnionMember2Distinct`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/structDiscriminatedUnionMember2Distinct`,
             type: "Control",
           },
           {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/discriminatedUnionMemberCommon`,
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/structDiscriminatedUnionMemberCommon`,
             type: "Control",
           },
         ],
@@ -51162,17 +51279,17 @@ export namespace StructDiscriminatedUnionMember2 {
         ],
       },
       $type: { kind: "Discriminant", value: "StructDiscriminatedUnionMember2" },
-      discriminatedUnionMember2Distinct: {
+      structDiscriminatedUnionMember2Distinct: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/discriminatedUnionMember2Distinct",
+          "http://example.com/structDiscriminatedUnionMember2Distinct",
         ),
         type: { kind: "String" as const },
       },
-      discriminatedUnionMemberCommon: {
+      structDiscriminatedUnionMemberCommon: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/discriminatedUnionMemberCommon",
+          "http://example.com/structDiscriminatedUnionMemberCommon",
         ),
         type: { kind: "String" as const },
       },
@@ -51254,10 +51371,10 @@ export namespace StructDiscriminatedUnionMember2 {
             : _structDiscriminatedUnionMember2.$identifier().value,
         "@type": "http://example.com/StructDiscriminatedUnionMember2",
         $type: _structDiscriminatedUnionMember2.$type,
-        discriminatedUnionMember2Distinct:
-          _structDiscriminatedUnionMember2.discriminatedUnionMember2Distinct,
-        discriminatedUnionMemberCommon:
-          _structDiscriminatedUnionMember2.discriminatedUnionMemberCommon,
+        structDiscriminatedUnionMember2Distinct:
+          _structDiscriminatedUnionMember2.structDiscriminatedUnionMember2Distinct,
+        structDiscriminatedUnionMemberCommon:
+          _structDiscriminatedUnionMember2.structDiscriminatedUnionMemberCommon,
       }),
     );
 
@@ -51267,10 +51384,10 @@ export namespace StructDiscriminatedUnionMember2 {
     $compactRecord({
       $identifier: _structDiscriminatedUnionMember2.$identifier().value,
       $type: "StructDiscriminatedUnionMember2",
-      discriminatedUnionMember2Distinct:
-        _structDiscriminatedUnionMember2.discriminatedUnionMember2Distinct,
-      discriminatedUnionMemberCommon:
-        _structDiscriminatedUnionMember2.discriminatedUnionMemberCommon,
+      structDiscriminatedUnionMember2Distinct:
+        _structDiscriminatedUnionMember2.structDiscriminatedUnionMember2Distinct,
+      structDiscriminatedUnionMemberCommon:
+        _structDiscriminatedUnionMember2.structDiscriminatedUnionMemberCommon,
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
@@ -51736,10 +51853,12 @@ export namespace StructIntersectionMember1 {
         ),
     );
 
-  export const hash: $HashFunction<StructIntersectionMember1> = (
-    hasher,
-    _structIntersectionMember1,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<StructIntersectionMember1, "$identifier" | "$type"> & {
+      readonly $identifier?: () => StructIntersectionMember1.Identifier;
+      readonly $type?: "StructIntersectionMember1";
+    }
+  > = (hasher, _structIntersectionMember1) => {
     if (_structIntersectionMember1.$identifier) {
       hasher.update(_structIntersectionMember1.$identifier().value);
     }
@@ -52410,10 +52529,12 @@ export namespace StructIntersectionMember2 {
         ),
     );
 
-  export const hash: $HashFunction<StructIntersectionMember2> = (
-    hasher,
-    _structIntersectionMember2,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<StructIntersectionMember2, "$identifier" | "$type"> & {
+      readonly $identifier?: () => StructIntersectionMember2.Identifier;
+      readonly $type?: "StructIntersectionMember2";
+    }
+  > = (hasher, _structIntersectionMember2) => {
     if (_structIntersectionMember2.$identifier) {
       hasher.update(_structIntersectionMember2.$identifier().value);
     }
@@ -52996,10 +53117,12 @@ export namespace TargetClassStruct {
         ),
     );
 
-  export const hash: $HashFunction<TargetClassStruct> = (
-    hasher,
-    _targetClassStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<TargetClassStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => TargetClassStruct.Identifier;
+      readonly $type?: "TargetClassStruct";
+    }
+  > = (hasher, _targetClassStruct) => {
     if (_targetClassStruct.$identifier) {
       hasher.update(_targetClassStruct.$identifier().value);
     }
@@ -54559,7 +54682,12 @@ export namespace TermsStruct {
         .chain((resource) => TermsStruct.fromRdfResource(resource, options)),
     );
 
-  export const hash: $HashFunction<TermsStruct> = (hasher, _termsStruct) => {
+  export const hash: $HashFunction<
+    Omit<TermsStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => TermsStruct.Identifier;
+      readonly $type?: "TermsStruct";
+    }
+  > = (hasher, _termsStruct) => {
     if (_termsStruct.$identifier) {
       hasher.update(_termsStruct.$identifier().value);
     }
@@ -61855,10 +61983,12 @@ export namespace UnionDiscriminantsStruct {
         ),
     );
 
-  export const hash: $HashFunction<UnionDiscriminantsStruct> = (
-    hasher,
-    _unionDiscriminantsStruct,
-  ) => {
+  export const hash: $HashFunction<
+    Omit<UnionDiscriminantsStruct, "$identifier" | "$type"> & {
+      readonly $identifier?: () => UnionDiscriminantsStruct.Identifier;
+      readonly $type?: "UnionDiscriminantsStruct";
+    }
+  > = (hasher, _unionDiscriminantsStruct) => {
     if (_unionDiscriminantsStruct.$identifier) {
       hasher.update(_unionDiscriminantsStruct.$identifier().value);
     }
@@ -67689,10 +67819,10 @@ export namespace StructDiscriminatedUnion {
       },
     },
     properties: {
-      discriminatedUnionMemberCommon: {
+      structDiscriminatedUnionMemberCommon: {
         kind: "Shacl",
         path: dataFactory.namedNode(
-          "http://example.com/discriminatedUnionMemberCommon",
+          "http://example.com/structDiscriminatedUnionMemberCommon",
         ),
         type: { kind: "String" as const },
       },

@@ -6,5 +6,5 @@ export const snippets_ToStringFunction: SnippetFactory = ({
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}ToStringFunction`,
-    code`type ${syntheticNamePrefix}ToStringFunction<T> = (value: T) => string;`,
+    code`export type ${syntheticNamePrefix}ToStringFunction<T> = (value: T) => string;`,
   );

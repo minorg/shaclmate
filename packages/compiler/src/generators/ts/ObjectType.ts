@@ -434,6 +434,48 @@ export class ObjectType extends AbstractStructuredType {
       .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
+  override get hashFunction(): FunctionLike {
+    const replacePropertyDeclarations: Record<string, Code> = {};
+    for (const property of this.properties) {
+      const declaration = property.declaration.extract();
+      const hashFunctionParameter = property.hashFunctionParameter.extract();
+      if (
+        declaration &&
+        hashFunctionParameter &&
+        !codeEquals(hashFunctionParameter, declaration)
+      ) {
+        replacePropertyDeclarations[property.name] =
+          code`${hashFunctionParameter}`;
+      }
+    }
+
+    let thisTypeExpression = this.expression;
+    if (Object.keys(replacePropertyDeclarations).length > 0) {
+      thisTypeExpression = code`Omit<${thisTypeExpression}, ${joinCode(
+        Object.keys(replacePropertyDeclarations).map(
+          (propertyName) => code`${literalOf(propertyName)}`,
+        ),
+        { on: " | " },
+      )}> & { ${joinCode(Object.values(replacePropertyDeclarations))} }`;
+    }
+
+    const type = {
+      expression: code`${this.reusables.snippets.HashFunction}<${thisTypeExpression}>`,
+    };
+    const unannotatedExpression = () => this.hashFunctionExpression();
+
+    return this.name
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "hash"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+  }
+
   @Memoize()
   protected get fromRdfResourceFunction(): FunctionLike {
     const type = {
