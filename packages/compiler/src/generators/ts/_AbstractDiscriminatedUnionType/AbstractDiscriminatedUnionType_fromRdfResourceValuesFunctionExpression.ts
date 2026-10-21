@@ -9,7 +9,7 @@ export function AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpr
   // 1. Apportion input values to different union members. For each value, let each member try to map the value until one succeeds (Right). If none succeed, return Left.
   // 2. Pass all of a member's successfully-mapped input values back into the member's mapper so it can potentially reorder them (by e.g., preferred language)
   return code`\
-(((inputValues, options) => {
+(inputValues, options) => {
   const memberInputValues: ${this.reusables.imports.Resource}.Values[] = Array.from({ length: ${this.members.length} }).map(() => ${this.reusables.imports.Resource}.Values.empty({
     focusResource: inputValues.focusResource,
     propertyPath: inputValues.propertyPath
@@ -67,5 +67,5 @@ ${joinCode(
     }
   }
   return ${this.reusables.imports.Right}(collectedOutputValues);
-}) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>)`;
+}`;
 }

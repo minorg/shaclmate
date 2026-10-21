@@ -13,12 +13,11 @@ export function ObjectType_equalsFunctionExpression(this: ObjectType): Code {
   }
 
   return code`\
-((left, right) =>
+(left, right) =>
   ${joinCode(
     chain.map((chainPart, chainPartI) =>
       chainPartI === 0 ? chainPart : code`chain(() => ${chainPart})`,
     ),
     { on: "." },
-  )}
-)`;
+  )}`;
 }

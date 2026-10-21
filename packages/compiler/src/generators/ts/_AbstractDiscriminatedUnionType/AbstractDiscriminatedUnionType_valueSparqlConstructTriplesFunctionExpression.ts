@@ -6,7 +6,7 @@ export function AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFuncti
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+({ ignoreRdfType, filter, schema, ...otherParameters }) => {
   let triples: ${this.reusables.imports.sparqljs}.Triple[] = [];
 
   ${joinCode(
@@ -17,5 +17,5 @@ triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherP
   )}
   
   return triples;
-}) satisfies ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>)`;
+}`;
 }

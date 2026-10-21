@@ -24,9 +24,9 @@ export function ObjectType_toRdfResourceFunctionExpression(
   statements.push(code`return ${variables.resource};`);
 
   return code`\
-((parameters) => {
+(parameters) => {
   ${joinCode(statements)}
-})`;
+}`;
 }
 
 const variables = {

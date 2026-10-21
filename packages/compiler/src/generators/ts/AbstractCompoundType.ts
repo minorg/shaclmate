@@ -1,21 +1,12 @@
 import { Memoize } from "typescript-memoize";
 import { AbstractStructuredType } from "./AbstractStructuredType.js";
 import type { Type } from "./Type.js";
-import type { Code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractCompoundType<
   MemberT extends { type: MemberTypeT },
   MemberTypeT extends Type,
 > extends AbstractStructuredType {
   abstract readonly members: readonly MemberT[];
-
-  override graphqlResolveExpression({
-    variables,
-  }: {
-    variables: { value: Code };
-  }): Code {
-    return variables.value;
-  }
 
   @Memoize()
   override get mutable(): boolean {

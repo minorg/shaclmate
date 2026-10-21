@@ -43,11 +43,11 @@ export function ObjectType_fromRdfResourceFunctionExpression(
   });
 
   return code`\
-((${variables.resource}, ${optionsVariable}) => ${chains
+(${variables.resource}, ${optionsVariable}) => ${chains
     .reverse()
     .reduce(
       (acc, { expression, variable }) =>
         code`(${expression}).chain(${variable} => ${acc})`,
       code`(${this.createFunction}(properties))`,
-    )})`;
+    )}`;
 }

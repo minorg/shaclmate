@@ -6,7 +6,7 @@ export function AbstractDiscriminatedUnionType_equalsFunctionExpression<
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-((left: ${this.expression}, right: ${this.expression}) => {
+(left, right) => {
 ${joinCode(
   this.members.map(
     ({ type, typeCheck, unwrap }) =>
@@ -17,5 +17,5 @@ ${joinCode(
 )}
 
   return ${this.reusables.imports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "boolean" as const }, type: "property" as const });
-})`;
+}`;
 }

@@ -6,22 +6,7 @@ export function AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpres
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-  (((value, _options): (${joinCode(
-    [...this.toRdfResourceValueTypes].map((toRdfResourceValueType) => {
-      switch (toRdfResourceValueType) {
-        case "BlankNode":
-          return code`${this.reusables.imports.BlankNode}`;
-        case "Literal":
-          return code`${this.reusables.imports.Literal}`;
-        case "NamedNode":
-          return code`${this.reusables.imports.NamedNode}`;
-        default:
-          toRdfResourceValueType satisfies never;
-          throw new Error();
-      }
-    }),
-    { on: " | " },
-  )})[] => {
+(value, _options) => {
   ${joinCode(
     this.members.map(
       ({ type, unwrap, typeCheck }) =>
@@ -38,7 +23,7 @@ export function AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpres
         )}; }`,
     ),
   )}
-  
-    throw new Error("unable to serialize to RDF");
-  }) satisfies ${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}>)`;
+
+  throw new Error("unable to serialize to RDF");
+}`;
 }

@@ -6,7 +6,7 @@ export function AbstractDiscriminatedUnionType_filterFunctionExpression<
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-((filter: ${this.filterType}, value: ${this.expression}) => {
+(filter, value) => {
 ${joinCode([
   ...this.identifierProperty
     .map(
@@ -27,5 +27,5 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
 ])}
 
   return true;
-})`;
+}`;
 }

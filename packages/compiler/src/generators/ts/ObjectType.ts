@@ -326,14 +326,6 @@ export class ObjectType extends AbstractStructuredType {
     );
   }
 
-  override graphqlResolveExpression({
-    variables,
-  }: {
-    variables: { value: Code };
-  }): Code {
-    return variables.value;
-  }
-
   override jsonType({
     discriminantProperty,
   }: Parameters<AbstractType["jsonType"]>[0]): AbstractType.JsonType {
@@ -526,7 +518,7 @@ export class ObjectType extends AbstractStructuredType {
     // toStringRecord
     if (this.configuration.features.has("Object.toString")) {
       staticModuleDeclarations["toStringRecord"] =
-        code`export const toStringRecord = ${ObjectType_toStringRecordFunctionExpression.call(this)};`;
+        code`export const toStringRecord: (${this.thisVariable}: ${this.expression}) => Record<string, string> = ${ObjectType_toStringRecordFunctionExpression.call(this)};`;
     }
 
     return staticModuleDeclarations;

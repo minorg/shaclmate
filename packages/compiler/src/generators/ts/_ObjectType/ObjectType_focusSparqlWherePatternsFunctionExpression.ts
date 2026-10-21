@@ -35,7 +35,7 @@ export function ObjectType_focusSparqlWherePatternsFunctionExpression(
   }
 
   return code`\
-((${statements.length === 0 ? "_" : ""}parameters) => {
+(${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([
@@ -45,5 +45,5 @@ ${
       ])
     : "return [];"
 }
-})`;
+}`;
 }

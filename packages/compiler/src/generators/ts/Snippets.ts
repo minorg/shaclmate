@@ -163,8 +163,11 @@ import { snippets_stringFromRdfResourceValues } from "./_snippets/snippets_strin
 import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringSparqlWherePatterns.js";
 import { snippets_TermFilter } from "./_snippets/snippets_TermFilter.js";
 import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
+import { snippets_ToJsonFunction } from "./_snippets/snippets_ToJsonFunction.js";
+import { snippets_ToLoggableFunction } from "./_snippets/snippets_ToLoggableFunction.js";
 import { snippets_ToRdfResourceFunction } from "./_snippets/snippets_ToRdfResourceFunction.js";
 import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdfResourceValuesFunction.js";
+import { snippets_ToStringFunction } from "./_snippets/snippets_ToStringFunction.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
 import { snippets_termFromRdfResourceValues } from "./_snippets/snippets_termFromRdfResourceValues.js";
 import { snippets_termLikeFromRdfResourceValues } from "./_snippets/snippets_termLikeFromRdfResourceValues.js";
@@ -437,6 +440,16 @@ export class Snippets {
   }
 
   @Memoize()
+  get ToJsonFunction(): Snippet {
+    return this.snippet(snippets_ToJsonFunction);
+  }
+
+  @Memoize()
+  get ToLoggableFunction(): Snippet {
+    return this.snippet(snippets_ToLoggableFunction);
+  }
+
+  @Memoize()
   get ToRdfResourceFunction(): Snippet {
     return this.snippet(snippets_ToRdfResourceFunction);
   }
@@ -444,6 +457,11 @@ export class Snippets {
   @Memoize()
   get ToRdfResourceValuesFunction(): Snippet {
     return this.snippet(snippets_ToRdfResourceValuesFunction);
+  }
+
+  @Memoize()
+  get ToStringFunction(): Snippet {
+    return this.snippet(snippets_ToStringFunction);
   }
 
   @Memoize()

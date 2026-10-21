@@ -77,20 +77,20 @@ export abstract class AbstractIntersectionType<
 
   protected equalsFunctionExpression(): Code {
     return code`\
-((left: ${this.expression}, right: ${this.expression}) =>
+(left, right) =>
 ${joinCode(
   this.members.map(({ type }) => code`${type.equalsFunction}(left, right)`),
   { on: " && " },
-)})`;
+)}`;
   }
 
   protected filterFunctionExpression(): Code {
     return code`\
-((filter: ${this.filterType}, value: ${this.expression}) =>
+(filter, value) =>
   ${joinCode(
     this.members.map(({ type }) => code`${type.filterFunction}(filter, value)`),
     { on: " && " },
-  )})`;
+  )}`;
   }
 
   protected filterTypeExpression(): Code {
@@ -102,7 +102,7 @@ ${joinCode(
 
   protected fromJsonFunctionExpression(): Code {
     return code`\
-((value: ${this.jsonType().expression}): ${this.reusables.imports.Either}<Error, ${this.expression}> =>
+(value) =>
     ${joinCode(
       this.members.map(
         (member, memberI) => code`
@@ -116,14 +116,12 @@ ${member.type.fromJsonExpression({
     )} ({ ${joinCode(
       this.members.map((_, memberI) => code`...member${memberI}`),
       { on: "," },
-    )} }) ${")".repeat(this.members.length)}
-)`;
+    )} }) ${")".repeat(this.members.length)}`;
   }
 
   protected fromRdfResourceValuesFunctionExpression(): Code {
     return code`\
-((
-  (inputValues, options) =>
+(inputValues, options) =>
     ${joinCode(
       this.members.map(
         (member, memberI) => code`\
@@ -132,8 +130,7 @@ ${member.type.fromJsonExpression({
     )} ({ ${joinCode(
       this.members.map((_, memberI) => code`...member${memberI}`),
       { on: "," },
-    )} }) ${")".repeat(this.members.length)}
-) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>)`;
+    )} }) ${")".repeat(this.members.length)}`;
   }
 
   protected hashFunctionExpression(): Code {
@@ -158,7 +155,7 @@ ${joinCode(
 
   protected toJsonFunctionExpression(): Code {
     return code`\
-((value: ${this.expression}): ${this.jsonType().expression} => ({
+(value) => ({
 ${joinCode(
   this.members.map(
     ({ type }) =>
@@ -190,34 +187,16 @@ ${joinCode(
           ),
       )
     ) {
-      return code`((value: ${this.expression})${returnTypeAnnotation} => ${memberToLoggableExpressions[0]})`;
+      return code`(value: ${this.expression})${returnTypeAnnotation} => ${memberToLoggableExpressions[0]}`;
     }
 
-    return code`((value: ${this.expression})${returnTypeAnnotation} => [${joinCode(memberToLoggableExpressions, { on: "," })}])`;
+    return code`(value: ${this.expression})${returnTypeAnnotation} => [${joinCode(memberToLoggableExpressions, { on: "," })}]`;
   }
 
   protected toRdfResourceValuesFunctionExpression(): Code {
-    const returnType = code`(${joinCode(
-      [...this.toRdfResourceValueTypes].map((toRdfResourceValueType) => {
-        switch (toRdfResourceValueType) {
-          case "BlankNode":
-            return code`${this.reusables.imports.BlankNode}`;
-          case "Literal":
-            return code`${this.reusables.imports.Literal}`;
-          case "NamedNode":
-            return code`${this.reusables.imports.NamedNode}`;
-          default:
-            toRdfResourceValueType satisfies never;
-            throw new Error();
-        }
-      }),
-      { on: " | " },
-    )})[]`;
-
     return code`\
-((
-  (value, _options): ${returnType} => {
-    let rdfResourceValues: ${returnType} = [];
+(value, _options) => {
+  let rdfResourceValues: ${this.toRdfResourceValueTypesExpression} = [];
 ${joinCode(
   this.members.map(
     ({ type }) =>
@@ -234,9 +213,8 @@ ${joinCode(
       )});`,
   ),
 )}
-    return rdfResourceValues;
-  }
-) satisfies ${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}>)`;
+  return rdfResourceValues;
+}`;
   }
 
   protected toStringFunctionExpression(): Code {
@@ -254,24 +232,23 @@ ${joinCode(
           codeEquals(memberToStringExpression, memberToStringExpressions[0]),
       )
     ) {
-      return code`((value: ${this.expression}): string => ${memberToStringExpressions[0]})`;
+      return code`(value) => ${memberToStringExpressions[0]}`;
     }
 
     return code`\
-((value: ${this.expression}): string =>
-JSON.stringify([${joinCode(
+(value) => JSON.stringify([${joinCode(
       this.members.map(({ type }) =>
         type.toStringExpression({
           variables: { value: code`value` },
         }),
       ),
       { on: ", " },
-    )}]))`;
+    )}])`;
   }
 
   protected valueSparqlConstructTriplesFunctionExpression(): Code {
     return code`\
-((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+({ ignoreRdfType, filter, schema, ...otherParameters }) => {
   let triples: ${this.reusables.imports.sparqljs}.Triple[] = [];
 
   ${joinCode(
@@ -282,24 +259,23 @@ triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherP
   )}
   
   return triples;
-}) satisfies ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>)`;
+}`;
   }
 
   protected valueSparqlWherePatternsFunctionExpression(): Code {
     return code`\
-((
-  ({ filter, schema, ...otherParameters }) => {
-    let intersectionPatterns: ${this.reusables.snippets.SparqlPattern}[] = [];
+({ filter, schema, ...otherParameters }) => {
+  let intersectionPatterns: ${this.reusables.snippets.SparqlPattern}[] = [];
 
-    ${joinCode(
-      this.members.map(
-        ({ type }, memberI) => code`\
+  ${joinCode(
+    this.members.map(
+      ({ type }, memberI) => code`\
 intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatternsFunction}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}] });`,
-      ),
-    )}
-    
-    return intersectionPatterns;
-}) satisfies ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>)`;
+    ),
+  )}
+  
+  return intersectionPatterns;
+}`;
   }
 
   @Memoize()

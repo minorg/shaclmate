@@ -6,7 +6,7 @@ export function AbstractDiscriminatedUnionType_fromJsonFunctionExpression<
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-((value: ${this.jsonType().expression}): ${this.reusables.imports.Either}<Error, ${this.expression}> => {
+(value) => {
 ${joinCode(
   this.members.map(
     ({ primaryDiscriminantValue, type, wrap }) =>
@@ -22,5 +22,5 @@ ${joinCode(
 )}
 
   throw new Error("unable to deserialize JSON");
-})`;
+}`;
 }

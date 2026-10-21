@@ -8,6 +8,6 @@ export function ObjectType_toStringFunctionExpression(this: ObjectType): Code {
         code`((${this.thisVariable}) => \`${name}(\${JSON.stringify(toStringRecord(${this.thisVariable}))})\`)`,
     )
     .orDefault(
-      code`((${this.thisVariable}) => JSON.stringify(${this.toStringRecordFunction}(${this.thisVariable})))`,
+      code`(${this.thisVariable}) => JSON.stringify(${this.toStringRecordFunction}(${this.thisVariable}))`,
     );
 }

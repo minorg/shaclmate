@@ -6,7 +6,7 @@ export function AbstractDiscriminatedUnionType_hashFunctionExpression<
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-(<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.expression}): HasherT => {
+<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.expression}): HasherT => {
 ${joinCode(
   this.members.map(
     ({ type, typeCheck, unwrap }) =>
@@ -14,5 +14,5 @@ ${joinCode(
   ),
 )}
   return hasher;
-})`;
+}`;
 }

@@ -6,7 +6,7 @@ export function AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionE
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-((({ filter, schema, ...otherParameters }) => {
+({ filter, schema, ...otherParameters }) => {
   const unionPatterns: ${this.reusables.imports.sparqljs}.GroupPattern[] = [];
 
   ${joinCode(
@@ -17,5 +17,5 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
   )}
   
   return [{ patterns: unionPatterns, type: "union" }];
-}) satisfies ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>)`;
+}`;
 }

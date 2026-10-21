@@ -6,6 +6,6 @@ export function ObjectType_valueSparqlConstructTriplesFunctionExpression(
   this: ObjectType,
 ): Code {
   return code`\
-(({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-  ${this.name.map((name) => code`${name}.focusSparqlConstructTriples`).orDefaultLazy(() => ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this))}({ filter, focusIdentifier: valueVariable, ignoreRdfType, variablePrefix }))`;
+({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+  ${this.name.map((name) => code`${name}.focusSparqlConstructTriples`).orDefaultLazy(() => ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this))}({ filter, focusIdentifier: valueVariable, ignoreRdfType, variablePrefix })`;
 }

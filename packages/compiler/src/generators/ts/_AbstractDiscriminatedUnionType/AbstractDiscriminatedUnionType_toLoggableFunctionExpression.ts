@@ -12,8 +12,6 @@ export function AbstractDiscriminatedUnionType_toLoggableFunctionExpression<
     }),
   );
 
-  const returnTypeAnnotation = this.recursive ? code`: any` : code``;
-
   // If every toLoggable expression is the same, use that expression and don't bother discriminating the member type.
   if (
     memberToLoggableExpressions.every(
@@ -22,12 +20,12 @@ export function AbstractDiscriminatedUnionType_toLoggableFunctionExpression<
         codeEquals(memberToLoggableExpression, memberToLoggableExpressions[0]),
     )
   ) {
-    return code`((value: ${this.expression})${returnTypeAnnotation} => ${memberToLoggableExpressions[0]})`;
+    return code`(value) => ${memberToLoggableExpressions[0]}`;
   }
 
   // Otherwise have to discriminate the member type.
   return code`\
-((value: ${this.expression})${returnTypeAnnotation} => {
+(value) => {
 ${joinCode(
   this.members.map(
     ({ typeCheck }, memberI) =>
@@ -36,5 +34,5 @@ ${joinCode(
 )}
 
   throw new Error("unable to serialize to loggable");
-})`;
+}`;
 }

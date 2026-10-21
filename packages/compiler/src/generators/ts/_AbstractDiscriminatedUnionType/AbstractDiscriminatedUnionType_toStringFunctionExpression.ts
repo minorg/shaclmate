@@ -6,7 +6,7 @@ export function AbstractDiscriminatedUnionType_toStringFunctionExpression<
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-((value: ${this.expression}): string => {
+(value) => {
 ${joinCode(
   this.members.map(
     ({ type, typeCheck, unwrap }) =>
@@ -17,5 +17,5 @@ ${joinCode(
 )}
 
   throw new Error("unable to serialize to string");
-})`;
+}`;
 }
