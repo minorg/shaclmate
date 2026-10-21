@@ -440,7 +440,7 @@ export class ObjectType extends AbstractStructuredType {
       expression: code`${this.reusables.snippets.FromRdfResourceFunction}<${this.expression}>`,
     };
     const unannotatedExpression = () =>
-      code`${this.reusables.snippets.wrap_FromRdfResourceFunction}(${this._fromRdfResourceFunction.usage});`;
+      code`${this.reusables.snippets.wrap_FromRdfResourceFunction}(${this._fromRdfResourceFunction.usage})`;
 
     return this.name
       .map<FunctionLike>(
@@ -598,10 +598,10 @@ export class ObjectType extends AbstractStructuredType {
     }
 
     // create
-    // if (this.configuration.features.has("Object.create")) {
-    //   addFunctionDeclaration(this.createFunction);
-    //   addFunctionDeclaration(this.createUnsafeFunction);
-    // }
+    if (this.configuration.features.has("Object.create")) {
+      addFunctionDeclaration(this.createFunction);
+      addFunctionDeclaration(this.createUnsafeFunction);
+    }
 
     // GraphQL
     if (this.configuration.features.has("GraphQL") && !this.synthetic) {

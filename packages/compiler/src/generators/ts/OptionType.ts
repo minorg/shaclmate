@@ -141,7 +141,7 @@ export class OptionType<
       form,
       variables: { value: code`item` },
     });
-    return code`${expression}.map(item => (${itemFromJsonExpression}).map(${this.reusables.imports.Maybe}.of)).orDefault(${this.reusables.imports.Either}.of(${this.reusables.imports.Maybe}.empty()))`;
+    return code`${expression}.map(item => (${itemFromJsonExpression}).map(item => ${this.reusables.imports.Maybe}.of(item))).orDefault(${this.reusables.imports.Either}.of(${this.reusables.imports.Maybe}.empty()))`;
   }
 
   override graphqlResolveExpression(

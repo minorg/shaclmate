@@ -6,7 +6,7 @@ export function AbstractDiscriminatedUnionType_toRdfResourceValuesFunctionExpres
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-(value, _options) => {
+(value, _options): (${this.toRdfResourceValueTypesExpression})[] => {
   ${joinCode(
     this.members.map(
       ({ type, unwrap, typeCheck }) =>

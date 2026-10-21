@@ -2909,17 +2909,6 @@
       ]
     },
     {
-      "comment": "Node shape that sh:and's two sh:in node shapes to get the intersection of them.",
-      "kind": "Intersection",
-      "name": "InIntersection",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "InIntersection",
-        "termType": "NamedNode",
-        "value": "http://example.com/InIntersection"
-      }
-    },
-    {
       "kind": "Literal",
       "name": "InIntersectionMember1",
       "shapeIdentifier": {
@@ -7430,17 +7419,6 @@
           }
         }
       ]
-    },
-    {
-      "comment": "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type.",
-      "kind": "Intersection",
-      "name": "StructIntersection",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "StructIntersection",
-        "termType": "NamedNode",
-        "value": "http://example.com/StructIntersection"
-      }
     },
     {
       "kind": "Struct",
