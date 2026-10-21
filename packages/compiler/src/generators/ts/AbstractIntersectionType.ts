@@ -80,7 +80,9 @@ export abstract class AbstractIntersectionType<
     return code`\
 (left, right) =>
 ${joinCode(
-  this.members.map(({ type }) => code`${type.equalsFunction}(left, right)`),
+  this.members.map(
+    ({ type }) => code`${type.equalsFunction.usage}(left, right)`,
+  ),
   { on: " && " },
 )}`;
   }
@@ -89,7 +91,9 @@ ${joinCode(
     return code`\
 (filter, value) =>
   ${joinCode(
-    this.members.map(({ type }) => code`${type.filterFunction}(filter, value)`),
+    this.members.map(
+      ({ type }) => code`${type.filterFunction.usage}(filter, value)`,
+    ),
     { on: " && " },
   )}`;
   }
@@ -126,7 +130,7 @@ ${member.type.fromJsonExpression({
     ${joinCode(
       this.members.map(
         (member, memberI) => code`\
-      ${member.type.fromRdfResourceValuesFunction}(inputValues, { ...options, ignoreRdfType: true, schema: options.schema.members[${literalOf(memberI)}] }).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
+      ${member.type.fromRdfResourceValuesFunction.usage}(inputValues, { ...options, ignoreRdfType: true, schema: options.schema.members[${literalOf(memberI)}] }).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
       ),
     )} ({ ${joinCode(
       this.members.map((_, memberI) => code`...member${memberI}`),
@@ -138,7 +142,9 @@ ${member.type.fromJsonExpression({
     return code`\
 (hasher, value) => {
 ${joinCode(
-  this.members.map(({ type }) => code`${type.hashFunction}(hasher, value);`),
+  this.members.map(
+    ({ type }) => code`${type.hashFunction.usage}(hasher, value);`,
+  ),
 )}
 })`;
   }
@@ -254,7 +260,7 @@ ${joinCode(
   ${joinCode(
     this.members.map(
       ({ type }, memberI) => code`\
-triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}] }));`,
+triples = triples.concat(${type.valueSparqlConstructTriplesFunction.usage}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}] }));`,
     ),
   )}
   
@@ -270,7 +276,7 @@ triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherP
   ${joinCode(
     this.members.map(
       ({ type }, memberI) => code`\
-intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatternsFunction}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}] });`,
+intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatternsFunction.usage}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}] });`,
     ),
   )}
   

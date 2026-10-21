@@ -79,7 +79,7 @@ export class ListType<
   @Memoize()
   override get fromRdfResourceValuesFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`,
+      code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.usage})`,
     );
   }
 
@@ -91,14 +91,14 @@ export class ListType<
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`,
+      code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.usage})`,
     );
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`,
+      code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.usage})`,
     );
   }
 

@@ -173,7 +173,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     ObjectType_AbstractProperty["equalsExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
-        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
+        { equalsFunction: ${this.type.equalsFunction.usage}, name: ${literalOf(this.name)} },
         [left, ${variables.leftObject}.${this.name}()],
         [right, ${variables.rightObject}.${this.name}()],
       )`);
@@ -185,7 +185,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     ObjectType_AbstractProperty["filterExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name}())`,
+      code`${this.type.filterFunction.usage}(${variables.filter}.${this.name}, ${variables.object}.${this.name}())`,
     );
   }
 
@@ -208,7 +208,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     ObjectType_AbstractProperty["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.fromRdfResourceValuesFunction}(
+      code`${this.name}: ${this.type.fromRdfResourceValuesFunction.usage}(
           ${this.reusables.snippets.rdfResourceIdentifierValues}(${variables.focusResource}),
           { ...${variables.options}, focusResource: ${variables.focusResource}, propertyPath: ${this.rdfjsTermExpression(rdf.subject)}, schema: ${this.typeSchemaVariable} }
         ).chain(values => values.head())`,
@@ -236,7 +236,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
   >[0]) {
     return Maybe.of({
       condition: code`${variables.focusIdentifier}.termType === "Variable"`,
-      patterns: code`${this.type.valueSparqlWherePatternsFunction}(${{
+      patterns: code`${this.type.valueSparqlWherePatternsFunction.usage}(${{
         filter: code`${variables.filter}?.${this.name}`,
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,

@@ -84,7 +84,7 @@ ${this.reusables.snippets.convertToLazySet}<
     return new AnonymousFunction(
       code`\
 (values, { objectSet, schema, ...otherOptions }) =>
-  ${this.partialType.fromRdfResourceValuesFunction}(values, { ...otherOptions, objectSet, schema: schema.partialType })
+  ${this.partialType.fromRdfResourceValuesFunction.usage}(values, { ...otherOptions, objectSet, schema: schema.partialType })
     .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partials, options) => objectSet.${this.resolveType.itemType.objectSetMethodNames.objects}({ identifiers: partials.map(partial => partial.${this.partialType.itemType.identifierProperty.unsafeCoerce().name}()), ...options }) })))`,
       {
         type: {

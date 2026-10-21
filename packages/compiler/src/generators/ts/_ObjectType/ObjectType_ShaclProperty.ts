@@ -225,7 +225,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["equalsExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
-        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
+        { equalsFunction: ${this.type.equalsFunction.usage}, name: ${literalOf(this.name)} },
         [left, ${variables.leftObject}.${this.name}],
         [right, ${variables.rightObject}.${this.name}],
       )`);
@@ -237,7 +237,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["filterExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name})`,
+      code`${this.type.filterFunction.usage}(${variables.filter}.${this.name}, ${variables.object}.${this.name})`,
     );
   }
 
@@ -266,7 +266,7 @@ export class ObjectType_ShaclProperty<
           focusResource: ${variables.focusResource},
           ignoreRdfType: true,
           propertySchema: ${this.schemaVariable},
-          typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction} 
+          typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction.usage} 
         })`,
     );
   }
@@ -277,7 +277,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`${this.type.hashFunction}(${variables.hasher}, ${variables.object}.${this.name});`,
+      code`${this.type.hashFunction.usage}(${variables.hasher}, ${variables.object}.${this.name});`,
     ];
   }
 

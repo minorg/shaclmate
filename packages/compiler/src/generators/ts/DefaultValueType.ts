@@ -65,7 +65,7 @@ export class DefaultValueType<
   @Memoize()
   override get fromRdfResourceValuesFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`,
+      code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.usage})`,
     );
   }
 
@@ -98,7 +98,7 @@ export class DefaultValueType<
   @Memoize()
   override get valueSparqlWherePatternsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`,
+      code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.usage})`,
     );
   }
 
@@ -169,7 +169,7 @@ export class DefaultValueType<
     parameters: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.itemType.equalsFunction}(${variables.value}, ${this.defaultValueExpression}).isLeft() ? ${this.itemType.toRdfResourceValuesExpression(parameters)} : []`;
+    return code`${this.itemType.equalsFunction.usage}(${variables.value}, ${this.defaultValueExpression}).isLeft() ? ${this.itemType.toRdfResourceValuesExpression(parameters)} : []`;
   }
 
   override toStringExpression(

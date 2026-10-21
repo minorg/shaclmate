@@ -12,7 +12,7 @@ export function AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionE
   ${joinCode(
     this.members.map(
       ({ type, primaryDiscriminantValue }) => code`\
-unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }).concat(), type: "group" });`,
+unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction.usage}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }).concat(), type: "group" });`,
     ),
   )}
   

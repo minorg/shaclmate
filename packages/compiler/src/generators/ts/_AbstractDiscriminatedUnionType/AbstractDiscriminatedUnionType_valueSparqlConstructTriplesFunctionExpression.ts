@@ -12,7 +12,7 @@ export function AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFuncti
   ${joinCode(
     this.members.map(
       ({ type, primaryDiscriminantValue }) => code`\
-triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }));`,
+triples = triples.concat(${type.valueSparqlConstructTriplesFunction.usage}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }));`,
     ),
   )}
   

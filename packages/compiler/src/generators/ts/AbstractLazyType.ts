@@ -45,7 +45,7 @@ export abstract class AbstractLazyType<
   @Memoize()
   override get equalsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`(left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName})`,
+      code`(left, right) => ${this.partialType.equalsFunction.usage}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName})`,
       {
         type: {
           expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
@@ -57,7 +57,7 @@ export abstract class AbstractLazyType<
   @Memoize()
   get filterFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`(filter: ${this.filterType}, value: ${this.expression}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName})`,
+      code`(filter: ${this.filterType}, value: ${this.expression}) => ${this.partialType.filterFunction.usage}(filter, value.${this.runtimeClass.partialPropertyName})`,
     );
   }
 
@@ -72,7 +72,7 @@ export abstract class AbstractLazyType<
   @Memoize()
   override get hashFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`(hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName})`,
+      code`(hasher, value) => ${this.partialType.hashFunction.usage}(hasher, value.${this.runtimeClass.partialPropertyName})`,
     );
   }
 
@@ -114,7 +114,7 @@ export abstract class AbstractLazyType<
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partialType }))`,
+      code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction.usage}({ ...otherParameters, schema: schema.partialType }))`,
       {
         type: {
           expression: code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`,
@@ -126,7 +126,7 @@ export abstract class AbstractLazyType<
   @Memoize()
   override get valueSparqlWherePatternsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partialType }))`,
+      code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction.usage}({ ...otherParameters, schema: schema.partialType }))`,
       {
         type: {
           expression: code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`,

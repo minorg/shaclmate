@@ -45,14 +45,14 @@ export class OptionType<
   @Memoize()
   override get equalsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`((left, right) => ${this.reusables.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction}))`,
+      code`((left, right) => ${this.reusables.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction.usage}))`,
     );
   }
 
   @Memoize()
   get filterFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`,
+      code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.usage})`,
     );
   }
 
@@ -64,7 +64,7 @@ export class OptionType<
   @Memoize()
   override get fromRdfResourceValuesFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`,
+      code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.usage})`,
     );
   }
 
@@ -83,7 +83,7 @@ export class OptionType<
   @Memoize()
   get hashFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction})`,
+      code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction.usage})`,
     );
   }
 
@@ -114,14 +114,14 @@ export class OptionType<
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`,
+      code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.usage})`,
     );
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`,
+      code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.usage})`,
     );
   }
 

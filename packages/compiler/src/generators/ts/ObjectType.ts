@@ -163,85 +163,6 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  private get focusSparqlConstructTriplesFunction(): FunctionLike {
-    const type = {
-      expression: code`${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}>`,
-    };
-    const unannotatedExpression =
-      ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this);
-
-    return this.name
-      .map<FunctionLike>(
-        (name) =>
-          new DeclaredFunction({
-            qualifiedName: [name, "focusSparqlConstructTriples"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
-  }
-
-  @Memoize()
-  private get focusSparqlWherePatternsFunction(): FunctionLike {
-    const type = {
-      expression: code`${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}>`,
-    };
-    const unannotatedExpression =
-      ObjectType_focusSparqlWherePatternsFunctionExpression.call(this);
-
-    return this.name
-      .map<FunctionLike>(
-        (name) =>
-          new DeclaredFunction({
-            qualifiedName: [name, "focusSparqlWherePatterns"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
-  }
-
-  @Memoize()
-  private get _fromRdfResourceFunction(): FunctionLike {
-    const type = {
-      expression: code`${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}>`,
-    };
-    const unannotatedExpression =
-      ObjectType_fromRdfResourceFunctionExpression.call(this);
-
-    return this.name
-      .map<FunctionLike>(
-        (name) =>
-          new DeclaredFunction({
-            qualifiedName: [name, "_fromRdfResource"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
-  }
-
-  @Memoize()
-  protected get fromRdfResourceFunction(): FunctionLike {
-    const type = {
-      expression: code`${this.reusables.snippets.FromRdfResourceFunction}<${this.expression}>`,
-    };
-    const unannotatedExpression = code`${this.reusables.snippets.wrap_FromRdfResourceFunction}(${this._fromRdfResourceFunction.usage});`;
-
-    return this.name
-      .map<FunctionLike>(
-        (name) =>
-          new DeclaredFunction({
-            qualifiedName: [name, "fromRdfResource"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
-  }
-
-  @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
     return this.rdfTypeProperty.map((rdfTypeProperty) =>
       this.name
@@ -429,6 +350,25 @@ export class ObjectType extends AbstractStructuredType {
       .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
   }
 
+  @Memoize()
+  protected get fromRdfResourceFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.FromRdfResourceFunction}<${this.expression}>`,
+    };
+    const unannotatedExpression = code`${this.reusables.snippets.wrap_FromRdfResourceFunction}(${this._fromRdfResourceFunction.usage});`;
+
+    return this.name
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "fromRdfResource"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+  }
+
   protected override get inlineExpression(): Code {
     return code`{ ${joinCode(
       this.properties.flatMap((property) => property.declaration.toList()),
@@ -448,7 +388,7 @@ export class ObjectType extends AbstractStructuredType {
     const type = {
       expression: code`${this.reusables.snippets.ToRdfResourceFunction}<${this.expression}, ${this.identifierTypeAlias}>`,
     };
-    const unannotatedExpression = code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${this._toRdfResourceFunction})`;
+    const unannotatedExpression = code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${this.identifierType.expression}, ${this.expression}>(${this._toRdfResourceFunction.usage})`;
 
     return this.name
       .map<FunctionLike>(
@@ -478,6 +418,26 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
+  private get _fromRdfResourceFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}>`,
+    };
+    const unannotatedExpression =
+      ObjectType_fromRdfResourceFunctionExpression.call(this);
+
+    return this.name
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "_fromRdfResource"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+  }
+
+  @Memoize()
   private get _toRdfResourceFunction(): FunctionLike {
     const type = {
       expression: code`${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.expression}>`,
@@ -490,6 +450,46 @@ export class ObjectType extends AbstractStructuredType {
         (name) =>
           new DeclaredFunction({
             qualifiedName: [name, "_toRdfResourceFunction"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+  }
+
+  @Memoize()
+  private get focusSparqlConstructTriplesFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}>`,
+    };
+    const unannotatedExpression =
+      ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this);
+
+    return this.name
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "focusSparqlConstructTriples"],
+            type,
+            unannotatedExpression,
+          }),
+      )
+      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+  }
+
+  @Memoize()
+  private get focusSparqlWherePatternsFunction(): FunctionLike {
+    const type = {
+      expression: code`${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}>`,
+    };
+    const unannotatedExpression =
+      ObjectType_focusSparqlWherePatternsFunctionExpression.call(this);
+
+    return this.name
+      .map<FunctionLike>(
+        (name) =>
+          new DeclaredFunction({
+            qualifiedName: [name, "focusSparqlWherePatterns"],
             type,
             unannotatedExpression,
           }),

@@ -32,7 +32,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   override get equalsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction}))`,
+      code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction.usage}))`,
       {
         type: {
           expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
@@ -44,7 +44,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   get filterFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`,
+      code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.usage})`,
     );
   }
 
@@ -64,7 +64,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   get hashFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction})`,
+      code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction.usage})`,
     );
   }
 

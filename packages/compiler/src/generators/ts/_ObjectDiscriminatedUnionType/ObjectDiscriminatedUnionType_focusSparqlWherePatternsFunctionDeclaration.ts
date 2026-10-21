@@ -18,7 +18,7 @@ ${joinCode([
   code`let patterns: ${this.reusables.snippets.SparqlPattern}[] = [];`,
   code`\
 if (focusIdentifier.termType === "Variable") {
-  patterns = patterns.concat(${this.identifierType.valueSparqlWherePatternsFunction}({
+  patterns = patterns.concat(${this.identifierType.valueSparqlWherePatternsFunction.usage}({
       filter: filter?.${this.configuration.syntheticNamePrefix}identifier,
       ignoreRdfType: false,
       preferredLanguages,
