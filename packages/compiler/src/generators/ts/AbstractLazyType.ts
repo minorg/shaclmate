@@ -57,7 +57,12 @@ export abstract class AbstractLazyType<
   @Memoize()
   get filterFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`(filter: ${this.filterType}, value: ${this.expression}) => ${this.partialType.filterFunction.usage}(filter, value.${this.runtimeClass.partialPropertyName})`,
+      code`(filter, value) => ${this.partialType.filterFunction.usage}(filter, value.${this.runtimeClass.partialPropertyName})`,
+      {
+        type: {
+          expression: code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.expression}>`,
+        },
+      },
     );
   }
 

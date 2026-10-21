@@ -330,10 +330,15 @@ function $filterArray<ItemT, ItemFilterT>(
   };
 }
 
-function $filterIdentifier(
-  filter: $IdentifierFilter,
-  value: BlankNode | NamedNode,
-) {
+export type $FilterFunction<FilterT, ValueT> = (
+  filter: FilterT,
+  value: ValueT,
+) => boolean;
+
+const $filterIdentifier: $FilterFunction<
+  $IdentifierFilter,
+  BlankNode | NamedNode
+> = (filter, value) => {
   if (
     filter.in !== undefined &&
     !filter.in.some((inValue) => inValue.equals(value))
@@ -346,9 +351,9 @@ function $filterIdentifier(
   }
 
   return true;
-}
+};
 
-function $filterIri(filter: $IriFilter, value: NamedNode) {
+const $filterIri: $FilterFunction<$IriFilter, NamedNode> = (filter, value) => {
   if (
     filter.in !== undefined &&
     !filter.in.some((inValue) => inValue.equals(value))
@@ -357,7 +362,7 @@ function $filterIri(filter: $IriFilter, value: NamedNode) {
   }
 
   return true;
-}
+};
 
 function $filterMaybe<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
@@ -411,7 +416,10 @@ function $filterNumeric<NumericT extends bigint | number>(
   return true;
 }
 
-function $filterString(filter: $StringFilter, value: string) {
+const $filterString: $FilterFunction<$StringFilter, string> = (
+  filter,
+  value,
+) => {
   if (
     filter.in !== undefined &&
     !filter.in.some((inValue) => inValue === value)
@@ -428,7 +436,7 @@ function $filterString(filter: $StringFilter, value: string) {
   }
 
   return true;
-}
+};
 
 function $floatFromRdfResourceValues<FloatT extends number>(
   values: Resource.Values,
@@ -1168,10 +1176,10 @@ export namespace $DefaultPartial {
       | (keyof $DefaultNamespaceT & string);
   }): $DefaultPartial => create(parameters).unsafeCoerce();
 
-  export const filter: (
-    filter: $DefaultPartial.Filter,
-    value: $DefaultPartial,
-  ) => boolean = (filter, value) => {
+  export const filter: $FilterFunction<
+    $DefaultPartial.Filter,
+    $DefaultPartial
+  > = (filter, value) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -1320,10 +1328,10 @@ export namespace AnonymousObject {
     readonly requiredStringProperty: string;
   }): AnonymousObject => create(parameters).unsafeCoerce();
 
-  export const filter: (
-    filter: AnonymousObject.Filter,
-    value: AnonymousObject,
-  ) => boolean = (filter, value) => {
+  export const filter: $FilterFunction<
+    AnonymousObject.Filter,
+    AnonymousObject
+  > = (filter, value) => {
     if (
       filter.requiredStringProperty !== undefined &&
       !$filterString(
@@ -1619,10 +1627,10 @@ export namespace LazyObject {
     readonly requiredStringProperty: string;
   }): LazyObject => create(parameters).unsafeCoerce();
 
-  export const filter: (
-    filter: LazyObject.Filter,
-    value: LazyObject,
-  ) => boolean = (filter, value) => {
+  export const filter: $FilterFunction<LazyObject.Filter, LazyObject> = (
+    filter,
+    value,
+  ) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -2172,10 +2180,10 @@ export namespace RootObject {
     readonly requiredStringProperty: string;
   }): RootObject => create(parameters).unsafeCoerce();
 
-  export const filter: (
-    filter: RootObject.Filter,
-    value: RootObject,
-  ) => boolean = (filter, value) => {
+  export const filter: $FilterFunction<RootObject.Filter, RootObject> = (
+    filter,
+    value,
+  ) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier())
@@ -2184,31 +2192,29 @@ export namespace RootObject {
     }
     if (
       filter.lazyObjectSetProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<$DefaultPartial.Filter>,
-        value: $LazySet<$DefaultPartial, LazyObject>,
-      ) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
-          $DefaultPartial.filter,
-        )(filter, value.partials))(
-        filter.lazyObjectSetProperty,
-        value.lazyObjectSetProperty,
-      )
+      !(
+        ((filter, value) =>
+          $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
+            $DefaultPartial.filter,
+          )(filter, value.partials)) satisfies $FilterFunction<
+          $CollectionFilter<$DefaultPartial.Filter>,
+          $LazySet<$DefaultPartial, LazyObject>
+        >
+      )(filter.lazyObjectSetProperty, value.lazyObjectSetProperty)
     ) {
       return false;
     }
     if (
       filter.optionalLazyProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.Filter>,
-        value: $LazyOption<$DefaultPartial, LazyObject>,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
-          $DefaultPartial.filter,
-        )(filter, value.partial))(
-        filter.optionalLazyProperty,
-        value.optionalLazyProperty,
-      )
+      !(
+        ((filter, value) =>
+          $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
+            $DefaultPartial.filter,
+          )(filter, value.partial)) satisfies $FilterFunction<
+          $MaybeFilter<$DefaultPartial.Filter>,
+          $LazyOption<$DefaultPartial, LazyObject>
+        >
+      )(filter.optionalLazyProperty, value.optionalLazyProperty)
     ) {
       return false;
     }
@@ -2574,10 +2580,10 @@ export namespace UnionMember1 {
     readonly optionalNumberProperty?: number | Maybe<number>;
   }): UnionMember1 => create(parameters).unsafeCoerce();
 
-  export const filter: (
-    filter: UnionMember1.Filter,
-    value: UnionMember1,
-  ) => boolean = (filter, value) => {
+  export const filter: $FilterFunction<UnionMember1.Filter, UnionMember1> = (
+    filter,
+    value,
+  ) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -2833,10 +2839,10 @@ export namespace UnionMember2 {
     readonly optionalStringProperty?: string | Maybe<string>;
   }): UnionMember2 => create(parameters).unsafeCoerce();
 
-  export const filter: (
-    filter: UnionMember2.Filter,
-    value: UnionMember2,
-  ) => boolean = (filter, value) => {
+  export const filter: $FilterFunction<UnionMember2.Filter, UnionMember2> = (
+    filter,
+    value,
+  ) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -2970,7 +2976,7 @@ export namespace Union {
     throw new Error("unable to serialize to string");
   };
 
-  export const filter: (filter: Union.Filter, value: Union) => boolean = (
+  export const filter: $FilterFunction<Union.Filter, Union> = (
     filter,
     value,
   ) => {

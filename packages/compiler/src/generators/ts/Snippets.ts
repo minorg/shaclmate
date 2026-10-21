@@ -64,6 +64,7 @@ import { snippets_EqualsFunction } from "./_snippets/snippets_EqualsFunction.js"
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
 import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
 import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorToProblemDetailsJson.js";
+import { snippets_FilterFunction } from "./_snippets/snippets_FilterFunction.js";
 import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
 import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
 import { snippets_FromJsonFunction } from "./_snippets/snippets_FromJsonFunction.js";
@@ -278,6 +279,11 @@ export class Snippets {
   @Memoize()
   get EqualsResult(): Snippet {
     return this.snippet(snippets_EqualsResult);
+  }
+
+  @Memoize()
+  get FilterFunction(): Snippet {
+    return this.snippet(snippets_FilterFunction);
   }
 
   @Memoize()

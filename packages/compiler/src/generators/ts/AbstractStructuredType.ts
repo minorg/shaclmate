@@ -32,7 +32,7 @@ export abstract class AbstractStructuredType extends AbstractType {
   @Memoize()
   override get filterFunction(): FunctionLike {
     const type = {
-      expression: code`((filter: ${this.filterType}, value: ${this.expression}) => boolean)`,
+      expression: code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.expression}>`,
     };
     const unannotatedExpression = this.filterFunctionExpression();
 
