@@ -296,7 +296,7 @@ export class ObjectType_ShaclProperty<
         propertyName: this.name,
         propertySchema: this.schemaVariable,
         typeSparqlConstructTriples:
-          this.type.valueSparqlConstructTriplesFunction,
+          this.type.valueSparqlConstructTriplesFunction.usage,
         variablePrefix: variables.variablePrefix,
       }})`,
     );
@@ -319,7 +319,8 @@ export class ObjectType_ShaclProperty<
         preferredLanguages: variables.preferredLanguages,
         propertyName: this.name,
         propertySchema: this.schemaVariable,
-        typeSparqlWherePatterns: this.type.valueSparqlWherePatternsFunction,
+        typeSparqlWherePatterns:
+          this.type.valueSparqlWherePatternsFunction.usage,
         variablePrefix: variables.variablePrefix,
       }})`,
     });

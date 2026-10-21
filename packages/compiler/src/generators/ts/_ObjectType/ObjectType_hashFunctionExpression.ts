@@ -41,5 +41,5 @@ export function ObjectType_hashFunctionExpression(this: ObjectType): Code {
     )}> & { ${joinCode(Object.values(replacePropertyDeclarations))} }`;
   }
 
-  return code`(${hasherVariable}, ${this.thisVariable}) { ${joinCode(statements)} }`;
+  return code`(${hasherVariable}, ${this.thisVariable}) => { ${joinCode(statements)} }`;
 }

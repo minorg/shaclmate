@@ -165,7 +165,7 @@ ${this.memberTypeSwitch({
     }
 
     return Maybe.of(code`\
-export const hash = ${this.reusables.snippets.HashFunction}<${this.name}> = (hasher, object) => {
+export const hash: ${this.reusables.snippets.HashFunction}<${this.name}> = (hasher, object) => {
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
     code`${member.hashFunction.usage}(hasher, object); break;`,

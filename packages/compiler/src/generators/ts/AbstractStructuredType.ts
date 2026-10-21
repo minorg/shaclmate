@@ -1,5 +1,6 @@
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import { AnonymousFunction } from "./AnonymousFunction.js";
 import { DeclaredFunction } from "./DeclaredFunction.js";
@@ -15,7 +16,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
     };
-    const unannotatedExpression = this.equalsFunctionExpression();
+    const unannotatedExpression = () => this.equalsFunctionExpression();
 
     return this.name
       .map<FunctionLike>(
@@ -34,7 +35,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.expression}>`,
     };
-    const unannotatedExpression = this.filterFunctionExpression();
+    const unannotatedExpression = () => this.filterFunctionExpression();
 
     return this.name
       .map<FunctionLike>(
@@ -60,7 +61,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`,
     };
-    const unannotatedExpression = this.fromJsonFunctionExpression();
+    const unannotatedExpression = () => this.fromJsonFunctionExpression();
 
     return this.name
       .map<FunctionLike>(
@@ -79,7 +80,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
     };
-    const unannotatedExpression =
+    const unannotatedExpression = () =>
       this.fromRdfResourceValuesFunctionExpression();
 
     return this.name
@@ -99,7 +100,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.HashFunction}<${this.expression}>`,
     };
-    const unannotatedExpression = this.hashFunctionExpression();
+    const unannotatedExpression = () => this.hashFunctionExpression();
 
     return this.name
       .map<FunctionLike>(
@@ -125,7 +126,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`,
     };
-    const unannotatedExpression = this.toJsonFunctionExpression();
+    const unannotatedExpression = () => this.toJsonFunctionExpression();
 
     return this.name
       .map<FunctionLike>(
@@ -144,7 +145,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.ToLoggableFunction}<${this.expression}>`,
     };
-    const unannotatedExpression = this.toLoggableFunctionExpression();
+    const unannotatedExpression = () => this.toLoggableFunctionExpression();
 
     return this.name
       .map<FunctionLike>(
@@ -163,7 +164,8 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}, ${this.toRdfResourceValueTypesExpression}>`,
     };
-    const unannotatedExpression = this.toRdfResourceValuesFunctionExpression();
+    const unannotatedExpression = () =>
+      this.toRdfResourceValuesFunctionExpression();
 
     return this.name
       .map<FunctionLike>(
@@ -182,7 +184,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.ToStringFunction}<${this.expression}>`,
     };
-    const unannotatedExpression = this.toStringFunctionExpression();
+    const unannotatedExpression = () => this.toStringFunctionExpression();
 
     return this.name
       .map<FunctionLike>(
@@ -204,7 +206,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`,
     };
-    const unannotatedExpression =
+    const unannotatedExpression = () =>
       this.valueSparqlConstructTriplesFunctionExpression();
 
     return this.name
@@ -224,7 +226,7 @@ export abstract class AbstractStructuredType extends AbstractType {
     const type = {
       expression: code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`,
     };
-    const unannotatedExpression =
+    const unannotatedExpression = () =>
       this.valueSparqlWherePatternsFunctionExpression();
 
     return this.name
