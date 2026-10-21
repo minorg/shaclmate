@@ -19,6 +19,6 @@ export class AnonymousFunction {
         (type) =>
           code`((${this.unannotatedExpression}) satisfies ${type.expression})`,
       )
-      .orDefault(this.unannotatedExpression);
+      .orDefault(code`(${this.unannotatedExpression})`);
   }
 }

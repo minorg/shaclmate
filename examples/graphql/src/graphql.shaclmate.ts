@@ -993,6 +993,8 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 
+type $ToStringFunction<T> = (value: T) => string;
+
 function $validateMaybe<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
 ) {
@@ -1102,18 +1104,27 @@ export namespace $DefaultPartial {
       ).chain((values) => values.head()),
     }).chain((properties) => $DefaultPartial.create(properties));
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
+  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     $DefaultPartial.Identifier,
     $DefaultPartial
   > = (parameters) => {
     return parameters.resource;
   };
 
-  export const $toString: (_defaultPartial: $DefaultPartial) => string = (
+  export const $toString: $ToStringFunction<$DefaultPartial> = (
     _defaultPartial,
   ) => `$DefaultPartial(${JSON.stringify(toStringRecord(_defaultPartial))})`;
 
-  export const create = <
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => $DefaultPartial.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+  }) => Either<Error, $DefaultPartial> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -1137,7 +1148,7 @@ export namespace $DefaultPartial {
         $monkeyPatchObject(object, { $toString: $DefaultPartial.$toString }),
       );
 
-  export function createUnsafe<
+  export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -1146,9 +1157,16 @@ export namespace $DefaultPartial {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-  }): $DefaultPartial {
-    return create(parameters).unsafeCoerce();
-  }
+  }) => $DefaultPartial = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => $DefaultPartial.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+  }): $DefaultPartial => create(parameters).unsafeCoerce();
 
   export const filter: (
     filter: $DefaultPartial.Filter,
@@ -1165,17 +1183,19 @@ export namespace $DefaultPartial {
 
   export type Filter = { readonly $identifier?: $IdentifierFilter };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const fromRdfResource: $FromRdfResourceFunction<$DefaultPartial> =
+    $wrap_FromRdfResourceFunction($DefaultPartial._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     $DefaultPartial,
-    $DefaultPartial.Schema
+    typeof $DefaultPartial.schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) =>
+          $DefaultPartial.fromRdfResource(resource, options),
+        ),
     );
 
   export type Identifier = BlankNode | NamedNode;
@@ -1199,10 +1219,22 @@ export namespace $DefaultPartial {
 
   export type Schema = typeof schema;
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction<
-    BlankNode | NamedNode,
-    $DefaultPartial
-  >(_toRdfResource);
+  export const toRdfResource: $ToRdfResourceFunction<
+    $DefaultPartial,
+    $DefaultPartial.Identifier
+  > = $wrap_ToRdfResourceFunction<$DefaultPartial.Identifier, $DefaultPartial>(
+    $DefaultPartial._toRdfResourceFunction,
+  );
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    $DefaultPartial,
+    BlankNode | NamedNode
+  > = (value, options) => [
+    $DefaultPartial.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
 
   export const toStringRecord: (
     _defaultPartial: $DefaultPartial,
@@ -1238,7 +1270,7 @@ export namespace AnonymousObject {
       }),
     }).chain((properties) => AnonymousObject.create(properties));
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
+  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     AnonymousObject.Identifier,
     AnonymousObject
   > = (parameters) => {
@@ -1250,11 +1282,16 @@ export namespace AnonymousObject {
     return parameters.resource;
   };
 
-  export const $toString: (_anonymousObject: AnonymousObject) => string = (
+  export const $toString: $ToStringFunction<AnonymousObject> = (
     _anonymousObject,
   ) => `AnonymousObject(${JSON.stringify(toStringRecord(_anonymousObject))})`;
 
-  export const create = <
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly requiredStringProperty: string;
+  }) => Either<Error, AnonymousObject> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -1271,14 +1308,17 @@ export namespace AnonymousObject {
         $monkeyPatchObject(object, { $toString: AnonymousObject.$toString }),
       );
 
-  export function createUnsafe<
+  export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
     readonly requiredStringProperty: string;
-  }): AnonymousObject {
-    return create(parameters).unsafeCoerce();
-  }
+  }) => AnonymousObject = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly requiredStringProperty: string;
+  }): AnonymousObject => create(parameters).unsafeCoerce();
 
   export const filter: (
     filter: AnonymousObject.Filter,
@@ -1298,17 +1338,19 @@ export namespace AnonymousObject {
 
   export type Filter = { readonly requiredStringProperty?: $StringFilter };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const fromRdfResource: $FromRdfResourceFunction<AnonymousObject> =
+    $wrap_FromRdfResourceFunction(AnonymousObject._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     AnonymousObject,
-    AnonymousObject.Schema
+    typeof AnonymousObject.schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) =>
+          AnonymousObject.fromRdfResource(resource, options),
+        ),
     );
 
   export const GraphQL = new GraphQLObjectType<
@@ -1352,10 +1394,22 @@ export namespace AnonymousObject {
 
   export type Schema = typeof schema;
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction<
-    BlankNode,
-    AnonymousObject
-  >(_toRdfResource);
+  export const toRdfResource: $ToRdfResourceFunction<
+    AnonymousObject,
+    AnonymousObject.Identifier
+  > = $wrap_ToRdfResourceFunction<AnonymousObject.Identifier, AnonymousObject>(
+    AnonymousObject._toRdfResourceFunction,
+  );
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    AnonymousObject,
+    BlankNode
+  > = (value, options) => [
+    AnonymousObject.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
 
   export const toStringRecord: (
     _anonymousObject: AnonymousObject,
@@ -1448,7 +1502,7 @@ export namespace LazyObject {
       }).chain((properties) => LazyObject.create(properties)),
     );
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
+  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     LazyObject.Identifier,
     LazyObject
   > = (parameters) => {
@@ -1481,10 +1535,22 @@ export namespace LazyObject {
     return parameters.resource;
   };
 
-  export const $toString: (_lazyObject: LazyObject) => string = (_lazyObject) =>
+  export const $toString: $ToStringFunction<LazyObject> = (_lazyObject) =>
     `LazyObject(${JSON.stringify(toStringRecord(_lazyObject))})`;
 
-  export const create = <
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LazyObject.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly optionalNumberProperty?: number | Maybe<number>;
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }) => Either<Error, LazyObject> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -1527,7 +1593,7 @@ export namespace LazyObject {
         $monkeyPatchObject(object, { $toString: LazyObject.$toString }),
       );
 
-  export function createUnsafe<
+  export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -1539,9 +1605,19 @@ export namespace LazyObject {
     readonly optionalNumberProperty?: number | Maybe<number>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
-  }): LazyObject {
-    return create(parameters).unsafeCoerce();
-  }
+  }) => LazyObject = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => LazyObject.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly optionalNumberProperty?: number | Maybe<number>;
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }): LazyObject => create(parameters).unsafeCoerce();
 
   export const filter: (
     filter: LazyObject.Filter,
@@ -1590,17 +1666,17 @@ export namespace LazyObject {
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const fromRdfResource: $FromRdfResourceFunction<LazyObject> =
+    $wrap_FromRdfResourceFunction(LazyObject._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     LazyObject,
-    LazyObject.Schema
+    typeof LazyObject.schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) => LazyObject.fromRdfResource(resource, options)),
     );
 
   export const GraphQL = new GraphQLObjectType<
@@ -1692,10 +1768,22 @@ export namespace LazyObject {
 
   export type Schema = typeof schema;
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction<
-    BlankNode | NamedNode,
-    LazyObject
-  >(_toRdfResource);
+  export const toRdfResource: $ToRdfResourceFunction<
+    LazyObject,
+    LazyObject.Identifier
+  > = $wrap_ToRdfResourceFunction<LazyObject.Identifier, LazyObject>(
+    LazyObject._toRdfResourceFunction,
+  );
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    LazyObject,
+    BlankNode | NamedNode
+  > = (value, options) => [
+    LazyObject.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
 
   export const toStringRecord: (
     _lazyObject: LazyObject,
@@ -1763,7 +1851,7 @@ export namespace RootObject {
           $LazySet<$DefaultPartial, LazyObject>,
           {
             kind: "LazySet";
-            partialType: $CollectionSchema<$DefaultPartial.Schema>;
+            partialType: $CollectionSchema<typeof $DefaultPartial.schema>;
           }
         >({
           ...options,
@@ -1774,9 +1862,10 @@ export namespace RootObject {
             values,
             { objectSet, schema, ...otherOptions },
           ) =>
-            $setFromRdfResourceValues<$DefaultPartial, $DefaultPartial.Schema>(
-              $DefaultPartial.fromRdfResourceValues,
-            )(values, {
+            $setFromRdfResourceValues<
+              $DefaultPartial,
+              typeof $DefaultPartial.schema
+            >($DefaultPartial.fromRdfResourceValues)(values, {
               ...otherOptions,
               objectSet,
               schema: schema.partialType,
@@ -1798,7 +1887,7 @@ export namespace RootObject {
             $LazySet<$DefaultPartial, LazyObject>,
             {
               kind: "LazySet";
-              partialType: $CollectionSchema<$DefaultPartial.Schema>;
+              partialType: $CollectionSchema<typeof $DefaultPartial.schema>;
             }
           >,
         }),
@@ -1806,7 +1895,7 @@ export namespace RootObject {
           $LazyOption<$DefaultPartial, LazyObject>,
           {
             kind: "LazyOption";
-            partialType: $MaybeSchema<$DefaultPartial.Schema>;
+            partialType: $MaybeSchema<typeof $DefaultPartial.schema>;
           }
         >({
           ...options,
@@ -1819,7 +1908,7 @@ export namespace RootObject {
           ) =>
             $maybeFromRdfResourceValues<
               $DefaultPartial,
-              $DefaultPartial.Schema
+              typeof $DefaultPartial.schema
             >($DefaultPartial.fromRdfResourceValues)(values, {
               ...otherOptions,
               objectSet,
@@ -1837,13 +1926,13 @@ export namespace RootObject {
             $LazyOption<$DefaultPartial, LazyObject>,
             {
               kind: "LazyOption";
-              partialType: $MaybeSchema<$DefaultPartial.Schema>;
+              partialType: $MaybeSchema<typeof $DefaultPartial.schema>;
             }
           >,
         }),
         optionalObjectProperty: $shaclPropertyFromRdf<
           Maybe<AnonymousObject>,
-          $MaybeSchema<AnonymousObject.Schema>
+          $MaybeSchema<typeof AnonymousObject.schema>
         >({
           ...options,
           focusResource: resource,
@@ -1851,7 +1940,7 @@ export namespace RootObject {
           propertySchema: RootObject.schema.properties.optionalObjectProperty,
           typeFromRdfResourceValues: $maybeFromRdfResourceValues<
             AnonymousObject,
-            AnonymousObject.Schema
+            typeof AnonymousObject.schema
           >(AnonymousObject.fromRdfResourceValues),
         }),
         optionalStringProperty: $shaclPropertyFromRdf<
@@ -1881,7 +1970,7 @@ export namespace RootObject {
       }).chain((properties) => RootObject.create(properties)),
     );
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
+  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     RootObject.Identifier,
     RootObject
   > = (parameters) => {
@@ -1894,34 +1983,42 @@ export namespace RootObject {
     }
     parameters.resource.add(
       RootObject.schema.properties.lazyObjectSetProperty.path,
-      parameters.object.lazyObjectSetProperty.partials.flatMap((item) => [
-        $DefaultPartial.toRdfResource(item, {
+      parameters.object.lazyObjectSetProperty.partials.flatMap((item) =>
+        $DefaultPartial.toRdfResourceValues(item, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
+          resource: parameters.resource,
           resourceSet: parameters.resourceSet,
-        }).identifier,
-      ]),
+          propertyPath: RootObject.schema.properties.lazyObjectSetProperty.path,
+        }),
+      ),
       parameters.graph,
     );
     parameters.resource.add(
       RootObject.schema.properties.optionalLazyProperty.path,
-      parameters.object.optionalLazyProperty.partial
-        .toList()
-        .flatMap((value) => [
-          $DefaultPartial.toRdfResource(value, {
-            graph: parameters.graph,
-            resourceSet: parameters.resourceSet,
-          }).identifier,
-        ]),
+      parameters.object.optionalLazyProperty.partial.toList().flatMap((value) =>
+        $DefaultPartial.toRdfResourceValues(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath: RootObject.schema.properties.optionalLazyProperty.path,
+        }),
+      ),
       parameters.graph,
     );
     parameters.resource.add(
       RootObject.schema.properties.optionalObjectProperty.path,
-      parameters.object.optionalObjectProperty.toList().flatMap((value) => [
-        AnonymousObject.toRdfResource(value, {
+      parameters.object.optionalObjectProperty.toList().flatMap((value) =>
+        AnonymousObject.toRdfResourceValues(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
+          resource: parameters.resource,
           resourceSet: parameters.resourceSet,
-        }).identifier,
-      ]),
+          propertyPath:
+            RootObject.schema.properties.optionalObjectProperty.path,
+        }),
+      ),
       parameters.graph,
     );
     parameters.resource.add(
@@ -1939,10 +2036,33 @@ export namespace RootObject {
     return parameters.resource;
   };
 
-  export const $toString: (_rootObject: RootObject) => string = (_rootObject) =>
+  export const $toString: $ToStringFunction<RootObject> = (_rootObject) =>
     `RootObject(${JSON.stringify(toStringRecord(_rootObject))})`;
 
-  export const create = <
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier:
+      | (() => RootObject.Identifier)
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode;
+    readonly lazyObjectSetProperty?:
+      | $LazySet<$DefaultPartial, LazyObject>
+      | readonly $DefaultPartial[]
+      | readonly LazyObject[]
+      | $DefaultPartial
+      | LazyObject;
+    readonly optionalLazyProperty?:
+      | $LazyOption<$DefaultPartial, LazyObject>
+      | Maybe<$DefaultPartial>
+      | Maybe<LazyObject>
+      | $DefaultPartial
+      | LazyObject;
+    readonly optionalObjectProperty?: AnonymousObject | Maybe<AnonymousObject>;
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }) => Either<Error, RootObject> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -2004,7 +2124,7 @@ export namespace RootObject {
         $monkeyPatchObject(object, { $toString: RootObject.$toString }),
       );
 
-  export function createUnsafe<
+  export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -2027,9 +2147,30 @@ export namespace RootObject {
     readonly optionalObjectProperty?: AnonymousObject | Maybe<AnonymousObject>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
-  }): RootObject {
-    return create(parameters).unsafeCoerce();
-  }
+  }) => RootObject = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier:
+      | (() => RootObject.Identifier)
+      | (keyof $DefaultNamespaceT & string)
+      | NamedNode;
+    readonly lazyObjectSetProperty?:
+      | $LazySet<$DefaultPartial, LazyObject>
+      | readonly $DefaultPartial[]
+      | readonly LazyObject[]
+      | $DefaultPartial
+      | LazyObject;
+    readonly optionalLazyProperty?:
+      | $LazyOption<$DefaultPartial, LazyObject>
+      | Maybe<$DefaultPartial>
+      | Maybe<LazyObject>
+      | $DefaultPartial
+      | LazyObject;
+    readonly optionalObjectProperty?: AnonymousObject | Maybe<AnonymousObject>;
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }): RootObject => create(parameters).unsafeCoerce();
 
   export const filter: (
     filter: RootObject.Filter,
@@ -2109,17 +2250,17 @@ export namespace RootObject {
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const fromRdfResource: $FromRdfResourceFunction<RootObject> =
+    $wrap_FromRdfResourceFunction(RootObject._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     RootObject,
-    RootObject.Schema
+    typeof RootObject.schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) => RootObject.fromRdfResource(resource, options)),
     );
 
   export const GraphQL = new GraphQLObjectType<
@@ -2271,10 +2412,22 @@ export namespace RootObject {
 
   export type Schema = typeof schema;
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction<
-    NamedNode,
-    RootObject
-  >(_toRdfResource);
+  export const toRdfResource: $ToRdfResourceFunction<
+    RootObject,
+    RootObject.Identifier
+  > = $wrap_ToRdfResourceFunction<RootObject.Identifier, RootObject>(
+    RootObject._toRdfResourceFunction,
+  );
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    RootObject,
+    NamedNode
+  > = (value, options) => [
+    RootObject.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
 
   export const toStringRecord: (
     _rootObject: RootObject,
@@ -2334,7 +2487,7 @@ export namespace UnionMember1 {
       }).chain((properties) => UnionMember1.create(properties)),
     );
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
+  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     UnionMember1.Identifier,
     UnionMember1
   > = (parameters) => {
@@ -2355,11 +2508,20 @@ export namespace UnionMember1 {
     return parameters.resource;
   };
 
-  export const $toString: (_unionMember1: UnionMember1) => string = (
-    _unionMember1,
-  ) => `UnionMember1(${JSON.stringify(toStringRecord(_unionMember1))})`;
+  export const $toString: $ToStringFunction<UnionMember1> = (_unionMember1) =>
+    `UnionMember1(${JSON.stringify(toStringRecord(_unionMember1))})`;
 
-  export const create = <
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => UnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly optionalNumberProperty?: number | Maybe<number>;
+  }) => Either<Error, UnionMember1> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -2390,7 +2552,7 @@ export namespace UnionMember1 {
         $monkeyPatchObject(object, { $toString: UnionMember1.$toString }),
       );
 
-  export function createUnsafe<
+  export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -2400,9 +2562,17 @@ export namespace UnionMember1 {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly optionalNumberProperty?: number | Maybe<number>;
-  }): UnionMember1 {
-    return create(parameters).unsafeCoerce();
-  }
+  }) => UnionMember1 = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => UnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly optionalNumberProperty?: number | Maybe<number>;
+  }): UnionMember1 => create(parameters).unsafeCoerce();
 
   export const filter: (
     filter: UnionMember1.Filter,
@@ -2431,17 +2601,17 @@ export namespace UnionMember1 {
     readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
   };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const fromRdfResource: $FromRdfResourceFunction<UnionMember1> =
+    $wrap_FromRdfResourceFunction(UnionMember1._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     UnionMember1,
-    UnionMember1.Schema
+    typeof UnionMember1.schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) => UnionMember1.fromRdfResource(resource, options)),
     );
 
   export const GraphQL = new GraphQLObjectType<
@@ -2501,10 +2671,22 @@ export namespace UnionMember1 {
 
   export type Schema = typeof schema;
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction<
-    BlankNode | NamedNode,
-    UnionMember1
-  >(_toRdfResource);
+  export const toRdfResource: $ToRdfResourceFunction<
+    UnionMember1,
+    UnionMember1.Identifier
+  > = $wrap_ToRdfResourceFunction<UnionMember1.Identifier, UnionMember1>(
+    UnionMember1._toRdfResourceFunction,
+  );
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    UnionMember1,
+    BlankNode | NamedNode
+  > = (value, options) => [
+    UnionMember1.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
 
   export const toStringRecord: (
     _unionMember1: UnionMember1,
@@ -2564,7 +2746,7 @@ export namespace UnionMember2 {
       }).chain((properties) => UnionMember2.create(properties)),
     );
 
-  export const _toRdfResource: $_ToRdfResourceFunction<
+  export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     UnionMember2.Identifier,
     UnionMember2
   > = (parameters) => {
@@ -2585,11 +2767,20 @@ export namespace UnionMember2 {
     return parameters.resource;
   };
 
-  export const $toString: (_unionMember2: UnionMember2) => string = (
-    _unionMember2,
-  ) => `UnionMember2(${JSON.stringify(toStringRecord(_unionMember2))})`;
+  export const $toString: $ToStringFunction<UnionMember2> = (_unionMember2) =>
+    `UnionMember2(${JSON.stringify(toStringRecord(_unionMember2))})`;
 
-  export const create = <
+  export const create: <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => UnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly optionalStringProperty?: string | Maybe<string>;
+  }) => Either<Error, UnionMember2> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -2620,7 +2811,7 @@ export namespace UnionMember2 {
         $monkeyPatchObject(object, { $toString: UnionMember2.$toString }),
       );
 
-  export function createUnsafe<
+  export const createUnsafe: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters?: {
     readonly $defaultNamespace?: $DefaultNamespaceT;
@@ -2630,9 +2821,17 @@ export namespace UnionMember2 {
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
     readonly optionalStringProperty?: string | Maybe<string>;
-  }): UnionMember2 {
-    return create(parameters).unsafeCoerce();
-  }
+  }) => UnionMember2 = <
+    $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+  >(parameters?: {
+    readonly $defaultNamespace?: $DefaultNamespaceT;
+    readonly $identifier?:
+      | (() => UnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | (keyof $DefaultNamespaceT & string);
+    readonly optionalStringProperty?: string | Maybe<string>;
+  }): UnionMember2 => create(parameters).unsafeCoerce();
 
   export const filter: (
     filter: UnionMember2.Filter,
@@ -2661,17 +2860,17 @@ export namespace UnionMember2 {
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
   };
 
-  export const fromRdfResource =
-    $wrap_FromRdfResourceFunction(_fromRdfResource);
+  export const fromRdfResource: $FromRdfResourceFunction<UnionMember2> =
+    $wrap_FromRdfResourceFunction(UnionMember2._fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     UnionMember2,
-    UnionMember2.Schema
+    typeof UnionMember2.schema
   > = (values, options) =>
     values.chainMap((value) =>
       value
         .toResource()
-        .chain((resource) => fromRdfResource(resource, options)),
+        .chain((resource) => UnionMember2.fromRdfResource(resource, options)),
     );
 
   export const GraphQL = new GraphQLObjectType<
@@ -2734,10 +2933,22 @@ export namespace UnionMember2 {
 
   export type Schema = typeof schema;
 
-  export const toRdfResource = $wrap_ToRdfResourceFunction<
-    BlankNode | NamedNode,
-    UnionMember2
-  >(_toRdfResource);
+  export const toRdfResource: $ToRdfResourceFunction<
+    UnionMember2,
+    UnionMember2.Identifier
+  > = $wrap_ToRdfResourceFunction<UnionMember2.Identifier, UnionMember2>(
+    UnionMember2._toRdfResourceFunction,
+  );
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    UnionMember2,
+    BlankNode | NamedNode
+  > = (value, options) => [
+    UnionMember2.toRdfResource(value, {
+      graph: options.graph,
+      resourceSet: options.resourceSet,
+    }).identifier,
+  ];
 
   export const toStringRecord: (
     _unionMember2: UnionMember2,
@@ -2748,7 +2959,7 @@ export namespace UnionMember2 {
 export type Union = UnionMember1 | UnionMember2;
 
 export namespace Union {
-  export const $toString = (value: Union): string => {
+  export const $toString: $ToStringFunction<Union> = (value) => {
     if (value["$type"] === "UnionMember1") {
       return UnionMember1.$toString(value);
     }
@@ -2759,7 +2970,10 @@ export namespace Union {
     throw new Error("unable to serialize to string");
   };
 
-  export const filter = (filter: Union.Filter, value: Union) => {
+  export const filter: (filter: Union.Filter, value: Union) => boolean = (
+    filter,
+    value,
+  ) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -2814,7 +3028,7 @@ export namespace Union {
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     Union,
     typeof Union.schema
-  > = ((inputValues, options) => {
+  > = (inputValues, options) => {
     const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
       () =>
         Resource.Values.empty({
@@ -2891,7 +3105,7 @@ export namespace Union {
       }
     }
     return Right(collectedOutputValues);
-  }) satisfies $FromRdfResourceValuesFunction<Union, typeof Union.schema>;
+  };
 
   export const GraphQL = new GraphQLUnionType({
     description: undefined,
@@ -2939,29 +3153,29 @@ export namespace Union {
     throw new Error("unrecognized type");
   };
 
-  export const toRdfResourceValues = ((
-    value,
-    _options,
-  ): (BlankNode | NamedNode)[] => {
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    Union,
+    BlankNode | NamedNode
+  > = (value, _options) => {
     if (value["$type"] === "UnionMember1") {
-      return [
-        UnionMember1.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
+      return UnionMember1.toRdfResourceValues(value, {
+        graph: _options.graph,
+        propertyPath: _options.propertyPath,
+        resource: _options.resource,
+        resourceSet: _options.resourceSet,
+      });
     }
     if (value["$type"] === "UnionMember2") {
-      return [
-        UnionMember2.toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
+      return UnionMember2.toRdfResourceValues(value, {
+        graph: _options.graph,
+        propertyPath: _options.propertyPath,
+        resource: _options.resource,
+        resourceSet: _options.resourceSet,
+      });
     }
 
     throw new Error("unable to serialize to RDF");
-  }) satisfies $ToRdfResourceValuesFunction<Union>;
+  };
 }
 
 export type $Object =
