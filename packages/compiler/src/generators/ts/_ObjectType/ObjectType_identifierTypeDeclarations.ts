@@ -11,7 +11,7 @@ export function ObjectType_identifierTypeDeclarations(
     code`\
 export type Identifier = ${this.identifierType.expression};
 export namespace Identifier {
-  export const parse = ${this.identifierType.parseFunction.usage};
+  export const parse = ${this.identifierType.parseFunction.annotatedUsage};
 }`,
   );
 }

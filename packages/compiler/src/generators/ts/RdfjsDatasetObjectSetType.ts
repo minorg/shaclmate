@@ -104,7 +104,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
             fromRdfTypeVariable: Maybe<Code>;
           },
         ): Code => {
-          return code`{ filter: ${filterFunction.usage}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
+          return code`{ filter: ${filterFunction.annotatedUsage}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
         };
 
         switch (namedObjectType.kind) {

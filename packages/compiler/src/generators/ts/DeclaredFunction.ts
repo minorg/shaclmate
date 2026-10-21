@@ -22,7 +22,12 @@ export class DeclaredFunction {
   }
 
   @Memoize()
-  get usage(): Code {
+  get annotatedUsage(): Code {
+    return code`${this.qualifiedName.join(".")}`;
+  }
+
+  @Memoize()
+  get unannotatedUsage(): Code {
     return code`${this.qualifiedName.join(".")}`;
   }
 

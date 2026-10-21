@@ -1,10 +1,12 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class AnonymousFunction {
-  readonly type: Maybe<{ readonly expression: Code }>;
   #unannotatedExpression: Code | (() => Code);
+
+  readonly type: Maybe<{ readonly expression: Code }>;
 
   constructor(
     unannotatedExpression: Code | (() => Code),
@@ -15,17 +17,22 @@ export class AnonymousFunction {
   }
 
   @Memoize()
-  get usage(): Code {
+  get annotatedUsage(): Code {
     return this.type
       .map(
         (type) =>
           code`((${this.unannotatedExpression}) satisfies ${type.expression})`,
       )
-      .orDefault(code`(${this.unannotatedExpression})`);
+      .orDefault(this.unannotatedUsage);
   }
 
   @Memoize()
-  get unannotatedExpression(): Code {
+  get unannotatedUsage(): Code {
+    return code`(${this.unannotatedExpression})`;
+  }
+
+  @Memoize()
+  private get unannotatedExpression(): Code {
     if (typeof this.#unannotatedExpression === "function") {
       return this.#unannotatedExpression();
     }

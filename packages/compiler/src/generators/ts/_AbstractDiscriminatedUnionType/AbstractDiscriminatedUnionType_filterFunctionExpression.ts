@@ -11,7 +11,7 @@ ${joinCode([
   ...this.identifierProperty
     .map(
       (identifierProperty) => code`\
-if (filter.${identifierProperty.name} !== undefined && !${identifierProperty.type.filterFunction.usage}(filter.${identifierProperty.name}, value.${identifierProperty.name}())) {
+if (filter.${identifierProperty.name} !== undefined && !${identifierProperty.type.filterFunction.annotatedUsage}(filter.${identifierProperty.name}, value.${identifierProperty.name}())) {
   return false;
 }`,
     )
@@ -19,7 +19,7 @@ if (filter.${identifierProperty.name} !== undefined && !${identifierProperty.typ
   ...this.members.map(
     ({ primaryDiscriminantValue, type, typeCheck, unwrap }) => code`\
 if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeCheck(code`value`)}) {
-  if (!${type.filterFunction.usage}(filter.on[${literalOf(primaryDiscriminantValue)}], ${unwrap(code`value`)})) {
+  if (!${type.filterFunction.annotatedUsage}(filter.on[${literalOf(primaryDiscriminantValue)}], ${unwrap(code`value`)})) {
     return false;
   }
 }`,

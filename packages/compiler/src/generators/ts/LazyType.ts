@@ -64,7 +64,7 @@ ${this.reusables.snippets.convertToLazy}<
     return new AnonymousFunction(
       code`\
 (values, { objectSet, schema, ...otherOptions }) =>
-  ${this.partialType.fromRdfResourceValuesFunction.usage}(values, { ...otherOptions, objectSet, schema: schema.partialType })
+  ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { ...otherOptions, objectSet, schema: schema.partialType })
     .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => objectSet.${this.resolveType.objectSetMethodNames.object}(partial.${this.partialType.identifierProperty.unsafeCoerce().name}(), options) })))`,
       {
         type: {

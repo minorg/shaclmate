@@ -11,7 +11,7 @@ ${joinCode(
   this.members.map(
     ({ type, typeCheck, unwrap }) =>
       code`if (${typeCheck(code`left`)} && ${typeCheck(code`right`)}) {
-  return ${type.equalsFunction.usage}(${unwrap(code`left`)} as ${type.expression}, ${unwrap(code`right`)} as ${type.expression});
+  return ${type.equalsFunction.annotatedUsage}(${unwrap(code`left`)} as ${type.expression}, ${unwrap(code`right`)} as ${type.expression});
 }`,
   ),
 )}

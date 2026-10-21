@@ -22,7 +22,7 @@ ${joinCode(
   this.members.map(
     (member, memberI) => code`\
       if (memberI === ${memberI}) {
-        memberOutputValuesEither = ${member.type.fromRdfResourceValuesFunction.usage}(inputValueAsValues, { ...options, ignoreRdfType: false, schema: options.schema.members[${literalOf(member.primaryDiscriminantValue)}].type })
+        memberOutputValuesEither = ${member.type.fromRdfResourceValuesFunction.annotatedUsage}(inputValueAsValues, { ...options, ignoreRdfType: false, schema: options.schema.members[${literalOf(member.primaryDiscriminantValue)}].type })
         if (memberOutputValuesEither.isRight()) {
           memberInputValues[memberI] = memberInputValues[memberI].concat(inputValue);
           break;
@@ -48,7 +48,7 @@ ${joinCode(
     switch (memberI) {
 ${joinCode(
   this.members.map((member, memberI) => {
-    let memberFromRdfResourceValuesExpression = code`${member.type.fromRdfResourceValuesFunction.usage}(memberInputValues[memberI], { ...options, ignoreRdfType: false, schema: options.schema.members[${literalOf(member.primaryDiscriminantValue)}].type })`;
+    let memberFromRdfResourceValuesExpression = code`${member.type.fromRdfResourceValuesFunction.annotatedUsage}(memberInputValues[memberI], { ...options, ignoreRdfType: false, schema: options.schema.members[${literalOf(member.primaryDiscriminantValue)}].type })`;
     if (
       this.discriminant.kind === "Extrinsic" ||
       (this.discriminant.kind === "Hybrid" &&

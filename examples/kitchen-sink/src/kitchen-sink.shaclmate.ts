@@ -3917,7 +3917,7 @@ export namespace $DefaultPartial {
 
   export const $toString: $ToStringFunction<$DefaultPartial> = (
     _defaultPartial,
-  ) => `$DefaultPartial(${JSON.stringify(toStringRecord(_defaultPartial))})`;
+  ) => JSON.stringify($DefaultPartial.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -4293,8 +4293,7 @@ export namespace $NamedDefaultPartial {
 
   export const $toString: $ToStringFunction<$NamedDefaultPartial> = (
     _namedDefaultPartial,
-  ) =>
-    `$NamedDefaultPartial(${JSON.stringify(toStringRecord(_namedDefaultPartial))})`;
+  ) => JSON.stringify($NamedDefaultPartial.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -4793,22 +4792,21 @@ export namespace AnonymousTypesStruct {
                                 { "@id": string; anonymousStructString: string }
                               >,
                               $toString: ((_object) =>
-                                JSON.stringify(
-                                  (
-                                    ((_object) =>
-                                      $compactRecord({
-                                        $identifier: _object
-                                          .$identifier()
-                                          .toString(),
-                                      })) satisfies (_object: {
-                                      readonly $identifier: () =>
-                                        | BlankNode
-                                        | NamedNode;
+                                JSON.stringify(((_object) =>
+                                  $compactRecord({
+                                    $identifier: _object
+                                      .$identifier()
+                                      .toString(),
+                                  })) satisfies (_object: {
+                                  readonly $identifier: () =>
+                                    | BlankNode
+                                    | NamedNode;
 
-                                      readonly anonymousStructString: string;
-                                    }) => Record<string, string>
-                                  )(_object),
-                                )) satisfies $ToStringFunction<{
+                                  readonly anonymousStructString: string;
+                                }) => Record<
+                                  string,
+                                  string
+                                >)) satisfies $ToStringFunction<{
                                 readonly $identifier: () =>
                                   | BlankNode
                                   | NamedNode;
@@ -4883,51 +4881,29 @@ export namespace AnonymousTypesStruct {
     parameters.resource.add(
       AnonymousTypesStruct.schema.properties.anonymousStruct.path,
       parameters.object.anonymousStruct.toList().flatMap((value) =>
-        (
-          ((value, options) => [
-            (
-              $wrap_ToRdfResourceFunction<
-                BlankNode | NamedNode,
-                {
-                  readonly $identifier: () => BlankNode | NamedNode;
-                  readonly anonymousStructString: string;
-                }
-              >(((parameters) => {
-                parameters.resource.add(
-                  dataFactory.namedNode(
-                    "http://example.com/anonymousStructString",
-                  ),
-                  [
-                    $literalFactory.string(
-                      parameters.object.anonymousStructString,
-                    ),
-                  ],
-                  parameters.graph,
-                );
-                return parameters.resource;
-              }) satisfies $_ToRdfResourceFunction<
-                BlankNode | NamedNode,
-                {
-                  readonly $identifier: () => BlankNode | NamedNode;
-                  readonly anonymousStructString: string;
-                }
-              >) satisfies $ToRdfResourceFunction<
-                {
-                  readonly $identifier: () => BlankNode | NamedNode;
-                  readonly anonymousStructString: string;
-                },
-                BlankNode | NamedNode
-              >
-            )(value, { graph: options.graph, resourceSet: options.resourceSet })
-              .identifier,
-          ]) satisfies $ToRdfResourceValuesFunction<
+        ((value, options) => [
+          $wrap_ToRdfResourceFunction<
+            BlankNode | NamedNode,
             {
               readonly $identifier: () => BlankNode | NamedNode;
               readonly anonymousStructString: string;
-            },
-            BlankNode | NamedNode
-          >
-        )(value, {
+            }
+          >(((parameters) => {
+            parameters.resource.add(
+              dataFactory.namedNode("http://example.com/anonymousStructString"),
+              [$literalFactory.string(parameters.object.anonymousStructString)],
+              parameters.graph,
+            );
+            return parameters.resource;
+          }) satisfies $_ToRdfResourceFunction<
+            BlankNode | NamedNode,
+            {
+              readonly $identifier: () => BlankNode | NamedNode;
+              readonly anonymousStructString: string;
+            }
+          >)(value, { graph: options.graph, resourceSet: options.resourceSet })
+            .identifier,
+        ])(value, {
           ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
@@ -4943,8 +4919,7 @@ export namespace AnonymousTypesStruct {
 
   export const $toString: $ToStringFunction<AnonymousTypesStruct> = (
     _anonymousTypesStruct,
-  ) =>
-    `AnonymousTypesStruct(${JSON.stringify(toStringRecord(_anonymousTypesStruct))})`;
+  ) => JSON.stringify(AnonymousTypesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -5047,18 +5022,14 @@ export namespace AnonymousTypesStruct {
                     { "@id": string; anonymousStructString: string }
                   >,
                   $toString: ((_object) =>
-                    JSON.stringify(
-                      (
-                        ((_object) =>
-                          $compactRecord({
-                            $identifier: _object.$identifier().toString(),
-                          })) satisfies (_object: {
-                          readonly $identifier: () => BlankNode | NamedNode;
+                    JSON.stringify(((_object) =>
+                      $compactRecord({
+                        $identifier: _object.$identifier().toString(),
+                      })) satisfies (_object: {
+                      readonly $identifier: () => BlankNode | NamedNode;
 
-                          readonly anonymousStructString: string;
-                        }) => Record<string, string>
-                      )(_object),
-                    )) satisfies $ToStringFunction<{
+                      readonly anonymousStructString: string;
+                    }) => Record<string, string>)) satisfies $ToStringFunction<{
                     readonly $identifier: () => BlankNode | NamedNode;
                     readonly anonymousStructString: string;
                   }>,
@@ -5294,32 +5265,27 @@ export namespace AnonymousTypesStruct {
             };
           }
         >((({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-          (
-            ((parameters) => {
-              let triples: sparqljs.Triple[] = [];
-              triples = triples.concat(
-                $shaclPropertySparqlConstructTriples({
-                  filter: parameters.filter?.anonymousStructString,
-                  focusIdentifier: parameters.focusIdentifier,
-                  ignoreRdfType: true,
-                  propertyName: "anonymousStructString",
-                  propertySchema: {
-                    kind: "Shacl",
-                    path: dataFactory.namedNode(
-                      "http://example.com/anonymousStructString",
-                    ),
-                    type: { kind: "String" as const },
-                  },
-                  typeSparqlConstructTriples: (_: object) => [],
-                  variablePrefix: parameters.variablePrefix,
-                }),
-              );
-              return triples;
-            }) satisfies $FocusSparqlConstructTriplesFunction<{
-              readonly $identifier?: $IdentifierFilter;
-              readonly anonymousStructString?: $StringFilter;
-            }>
-          )({
+          ((parameters) => {
+            let triples: sparqljs.Triple[] = [];
+            triples = triples.concat(
+              $shaclPropertySparqlConstructTriples({
+                filter: parameters.filter?.anonymousStructString,
+                focusIdentifier: parameters.focusIdentifier,
+                ignoreRdfType: true,
+                propertyName: "anonymousStructString",
+                propertySchema: {
+                  kind: "Shacl",
+                  path: dataFactory.namedNode(
+                    "http://example.com/anonymousStructString",
+                  ),
+                  type: { kind: "String" as const },
+                },
+                typeSparqlConstructTriples: (_: object) => [],
+                variablePrefix: parameters.variablePrefix,
+              }),
+            );
+            return triples;
+          })({
             filter,
             focusIdentifier: valueVariable,
             ignoreRdfType,
@@ -5447,46 +5413,41 @@ export namespace AnonymousTypesStruct {
           variablePrefix,
         }) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
-            (
-              ((parameters) => {
-                let patterns: $SparqlPattern[] = [];
-                if (parameters.focusIdentifier.termType === "Variable") {
-                  patterns = patterns.concat(
-                    $identifierSparqlWherePatterns({
-                      filter: parameters.filter?.$identifier,
-                      ignoreRdfType: true,
-                      preferredLanguages: parameters.preferredLanguages,
-                      propertyPatterns: [],
-                      schema: { kind: "Identifier" as const },
-                      valueVariable: parameters.focusIdentifier,
-                      variablePrefix: parameters.variablePrefix,
-                    }),
-                  );
-                }
+            ((parameters) => {
+              let patterns: $SparqlPattern[] = [];
+              if (parameters.focusIdentifier.termType === "Variable") {
                 patterns = patterns.concat(
-                  $shaclPropertySparqlWherePatterns({
-                    filter: parameters.filter?.anonymousStructString,
-                    focusIdentifier: parameters.focusIdentifier,
+                  $identifierSparqlWherePatterns({
+                    filter: parameters.filter?.$identifier,
                     ignoreRdfType: true,
                     preferredLanguages: parameters.preferredLanguages,
-                    propertyName: "anonymousStructString",
-                    propertySchema: {
-                      kind: "Shacl",
-                      path: dataFactory.namedNode(
-                        "http://example.com/anonymousStructString",
-                      ),
-                      type: { kind: "String" as const },
-                    },
-                    typeSparqlWherePatterns: $stringSparqlWherePatterns,
+                    propertyPatterns: [],
+                    schema: { kind: "Identifier" as const },
+                    valueVariable: parameters.focusIdentifier,
                     variablePrefix: parameters.variablePrefix,
                   }),
                 );
-                return patterns;
-              }) satisfies $FocusSparqlWherePatternsFunction<{
-                readonly $identifier?: $IdentifierFilter;
-                readonly anonymousStructString?: $StringFilter;
-              }>
-            )({
+              }
+              patterns = patterns.concat(
+                $shaclPropertySparqlWherePatterns({
+                  filter: parameters.filter?.anonymousStructString,
+                  focusIdentifier: parameters.focusIdentifier,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters.preferredLanguages,
+                  propertyName: "anonymousStructString",
+                  propertySchema: {
+                    kind: "Shacl",
+                    path: dataFactory.namedNode(
+                      "http://example.com/anonymousStructString",
+                    ),
+                    type: { kind: "String" as const },
+                  },
+                  typeSparqlWherePatterns: $stringSparqlWherePatterns,
+                  variablePrefix: parameters.variablePrefix,
+                }),
+              );
+              return patterns;
+            })({
               filter,
               focusIdentifier: valueVariable,
               ignoreRdfType,
@@ -5530,97 +5491,83 @@ export namespace AnonymousTypesStruct {
       ),
       anonymousStruct: Maybe.fromNullable($json["anonymousStruct"])
         .map((item) =>
-          (
-            (($json) =>
+          (($json) =>
+            $sequenceRecord({
+              $identifier: Either.of<Error, BlankNode | NamedNode>(
+                $json["@id"].startsWith("_:")
+                  ? dataFactory.blankNode($json["@id"].substring(2))
+                  : dataFactory.namedNode($json["@id"]),
+              ),
+              anonymousStructString: Either.of<Error, string>(
+                $json["anonymousStructString"],
+              ),
+            }).chain((<
+              $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+            >(parameters: {
+              readonly $defaultNamespace?: $DefaultNamespaceT;
+              readonly $identifier?:
+                | (() => BlankNode | NamedNode)
+                | BlankNode
+                | NamedNode
+                | (keyof $DefaultNamespaceT & string);
+              readonly anonymousStructString: string;
+            }) =>
               $sequenceRecord({
-                $identifier: Either.of<Error, BlankNode | NamedNode>(
-                  $json["@id"].startsWith("_:")
-                    ? dataFactory.blankNode($json["@id"].substring(2))
-                    : dataFactory.namedNode($json["@id"]),
+                $identifier: $convertToIdentifierProperty(
+                  parameters.$identifier,
+                  parameters.$defaultNamespace,
                 ),
-                anonymousStructString: Either.of<Error, string>(
-                  $json["anonymousStructString"],
+                anonymousStructString: Either.of(
+                  parameters.anonymousStructString,
                 ),
-              }).chain((<
-                $DefaultNamespaceT extends
-                  $NamespaceBuilder = $NamespaceBuilder,
-              >(parameters: {
-                readonly $defaultNamespace?: $DefaultNamespaceT;
-                readonly $identifier?:
-                  | (() => BlankNode | NamedNode)
-                  | BlankNode
-                  | NamedNode
-                  | (keyof $DefaultNamespaceT & string);
-                readonly anonymousStructString: string;
-              }) =>
-                $sequenceRecord({
-                  $identifier: $convertToIdentifierProperty(
-                    parameters.$identifier,
-                    parameters.$defaultNamespace,
-                  ),
-                  anonymousStructString: Either.of(
-                    parameters.anonymousStructString,
-                  ),
-                }).map((object) =>
-                  $monkeyPatchObject(object, {
-                    toJson: ((_object) =>
-                      JSON.parse(
-                        JSON.stringify({
-                          "@id":
-                            _object.$identifier().termType === "BlankNode"
-                              ? `_:${_object.$identifier().value}`
-                              : _object.$identifier().value,
-                          anonymousStructString: _object.anonymousStructString,
-                        }),
-                      )) satisfies $ToJsonFunction<
-                      {
-                        readonly $identifier: () => BlankNode | NamedNode;
-                        readonly anonymousStructString: string;
-                      },
-                      { "@id": string; anonymousStructString: string }
-                    >,
-                    $toString: ((_object) =>
-                      JSON.stringify(
-                        (
-                          ((_object) =>
-                            $compactRecord({
-                              $identifier: _object.$identifier().toString(),
-                            })) satisfies (_object: {
-                            readonly $identifier: () => BlankNode | NamedNode;
-
-                            readonly anonymousStructString: string;
-                          }) => Record<string, string>
-                        )(_object),
-                      )) satisfies $ToStringFunction<{
+              }).map((object) =>
+                $monkeyPatchObject(object, {
+                  toJson: ((_object) =>
+                    JSON.parse(
+                      JSON.stringify({
+                        "@id":
+                          _object.$identifier().termType === "BlankNode"
+                            ? `_:${_object.$identifier().value}`
+                            : _object.$identifier().value,
+                        anonymousStructString: _object.anonymousStructString,
+                      }),
+                    )) satisfies $ToJsonFunction<
+                    {
                       readonly $identifier: () => BlankNode | NamedNode;
                       readonly anonymousStructString: string;
-                    }>,
-                  }),
-                )) satisfies <
-                $DefaultNamespaceT extends
-                  $NamespaceBuilder = $NamespaceBuilder,
-              >(parameters: {
-                readonly $defaultNamespace?: $DefaultNamespaceT;
-                readonly $identifier?:
-                  | (() => BlankNode | NamedNode)
-                  | BlankNode
-                  | NamedNode
-                  | (keyof $DefaultNamespaceT & string);
-                readonly anonymousStructString: string;
-              }) => Either<
-                Error,
-                {
-                  readonly $identifier: () => BlankNode | NamedNode;
-                  readonly anonymousStructString: string;
-                }
-              >)) satisfies $FromJsonFunction<
+                    },
+                    { "@id": string; anonymousStructString: string }
+                  >,
+                  $toString: ((_object) =>
+                    JSON.stringify(((_object) =>
+                      $compactRecord({
+                        $identifier: _object.$identifier().toString(),
+                      })) satisfies (_object: {
+                      readonly $identifier: () => BlankNode | NamedNode;
+
+                      readonly anonymousStructString: string;
+                    }) => Record<string, string>)) satisfies $ToStringFunction<{
+                    readonly $identifier: () => BlankNode | NamedNode;
+                    readonly anonymousStructString: string;
+                  }>,
+                }),
+              )) satisfies <
+              $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
+            >(parameters: {
+              readonly $defaultNamespace?: $DefaultNamespaceT;
+              readonly $identifier?:
+                | (() => BlankNode | NamedNode)
+                | BlankNode
+                | NamedNode
+                | (keyof $DefaultNamespaceT & string);
+              readonly anonymousStructString: string;
+            }) => Either<
+              Error,
               {
                 readonly $identifier: () => BlankNode | NamedNode;
                 readonly anonymousStructString: string;
-              },
-              { "@id": string; anonymousStructString: string }
-            >
-          )(item).map((item) => Maybe.of(item)),
+              }
+            >))(item).map((item) => Maybe.of(item)),
         )
         .orDefault(Either.of(Maybe.empty())),
     }).chain(AnonymousTypesStruct.create);
@@ -5898,16 +5845,11 @@ export namespace AnonymousTypesStruct {
       $type: "AnonymousTypesStruct",
       anonymousStruct: _anonymousTypesStruct.anonymousStruct
         .map((item) =>
-          (
-            ((_object) =>
-              $compactRecord({
-                $identifier: _object.$identifier().value,
-                anonymousStructString: _object.anonymousStructString,
-              })) satisfies $ToLoggableFunction<{
-              readonly $identifier: () => BlankNode | NamedNode;
-              readonly anonymousStructString: string;
-            }>
-          )(item),
+          ((_object) =>
+            $compactRecord({
+              $identifier: _object.$identifier().value,
+              anonymousStructString: _object.anonymousStructString,
+            }))(item),
         )
         .extract(),
     });
@@ -6036,8 +5978,7 @@ export namespace BlankNodeIdentifierStruct {
 
   export const $toString: $ToStringFunction<BlankNodeIdentifierStruct> = (
     _blankNodeIdentifierStruct,
-  ) =>
-    `BlankNodeIdentifierStruct(${JSON.stringify(toStringRecord(_blankNodeIdentifierStruct))})`;
+  ) => JSON.stringify(BlankNodeIdentifierStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -6586,8 +6527,7 @@ export namespace BlankNodeOrIriIdentifierStruct {
 
   export const $toString: $ToStringFunction<BlankNodeOrIriIdentifierStruct> = (
     _blankNodeOrIriIdentifierStruct,
-  ) =>
-    `BlankNodeOrIriIdentifierStruct(${JSON.stringify(toStringRecord(_blankNodeOrIriIdentifierStruct))})`;
+  ) => JSON.stringify(BlankNodeOrIriIdentifierStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -7324,8 +7264,7 @@ export namespace ClassConstraintsStruct {
 
   export const $toString: $ToStringFunction<ClassConstraintsStruct> = (
     _classConstraintsStruct,
-  ) =>
-    `ClassConstraintsStruct(${JSON.stringify(toStringRecord(_classConstraintsStruct))})`;
+  ) => JSON.stringify(ClassConstraintsStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -8582,8 +8521,7 @@ export namespace ConvertibleTypesStruct {
 
   export const $toString: $ToStringFunction<ConvertibleTypesStruct> = (
     _convertibleTypesStruct,
-  ) =>
-    `ConvertibleTypesStruct(${JSON.stringify(toStringRecord(_convertibleTypesStruct))})`;
+  ) => JSON.stringify(ConvertibleTypesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -8972,12 +8910,8 @@ export namespace ConvertibleTypesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(
-                left,
-                right,
-                $booleanEquals,
-              )) satisfies $EqualsFunction<readonly NamedNode[]>,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
             name: "convertibleIriNonEmptySet",
           },
           [left, left.convertibleIriNonEmptySet],
@@ -8998,12 +8932,8 @@ export namespace ConvertibleTypesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(
-                left,
-                right,
-                $booleanEquals,
-              )) satisfies $EqualsFunction<readonly NamedNode[]>,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
             name: "convertibleIriSet",
           },
           [left, left.convertibleIriSet],
@@ -9020,12 +8950,8 @@ export namespace ConvertibleTypesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(
-                left,
-                right,
-                $booleanEquals,
-              )) satisfies $EqualsFunction<readonly Literal[]>,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
             name: "convertibleLiteralNonEmptySet",
           },
           [left, left.convertibleLiteralNonEmptySet],
@@ -9046,12 +8972,8 @@ export namespace ConvertibleTypesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(
-                left,
-                right,
-                $booleanEquals,
-              )) satisfies $EqualsFunction<readonly Literal[]>,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
             name: "convertibleLiteralSet",
           },
           [left, left.convertibleLiteralSet],
@@ -9068,14 +8990,8 @@ export namespace ConvertibleTypesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(
-                left,
-                right,
-                $booleanEquals,
-              )) satisfies $EqualsFunction<
-              readonly (BlankNode | NamedNode | Literal)[]
-            >,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
             name: "convertibleTermNonEmptySet",
           },
           [left, left.convertibleTermNonEmptySet],
@@ -9096,14 +9012,8 @@ export namespace ConvertibleTypesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(
-                left,
-                right,
-                $booleanEquals,
-              )) satisfies $EqualsFunction<
-              readonly (BlankNode | NamedNode | Literal)[]
-            >,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $booleanEquals),
             name: "convertibleTermSet",
           },
           [left, left.convertibleTermSet],
@@ -10831,7 +10741,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrDateTime,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -10939,22 +10849,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            { $type: "date"; value: Date } | { $type: "dateTime"; value: Date },
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly date: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-                readonly dateTime: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-              };
-            }
-          >,
+          },
         }),
         dateOrString: $shaclPropertyFromRdf<
           Date | string,
@@ -10977,7 +10872,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrString,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -11057,22 +10952,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            Date | string,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly object: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-              };
-            }
-          >,
+          },
         }),
         dateTimeOrDate: $shaclPropertyFromRdf<
           { $type: "dateTime"; value: Date } | { $type: "date"; value: Date },
@@ -11095,7 +10975,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.dateTimeOrDate,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -11203,22 +11083,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            { $type: "dateTime"; value: Date } | { $type: "date"; value: Date },
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly dateTime: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-                readonly date: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-              };
-            }
-          >,
+          },
         }),
         decimalOrString: $shaclPropertyFromRdf<
           BigDecimal | string,
@@ -11241,7 +11106,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -11324,22 +11189,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            BigDecimal | string,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly object: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $NumericSchema<BigDecimal>;
-                };
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-              };
-            }
-          >,
+          },
         }),
         integerOrString: $shaclPropertyFromRdf<
           bigint | string,
@@ -11362,7 +11212,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -11443,22 +11293,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            bigint | string,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly bigint: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $NumericSchema<bigint>;
-                };
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-              };
-            }
-          >,
+          },
         }),
         jsPrimitive: $shaclPropertyFromRdf<
           boolean | number | bigint | string,
@@ -11489,7 +11324,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 4,
             }).map(() =>
@@ -11619,30 +11454,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            boolean | number | bigint | string,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly boolean: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $BooleanSchema<boolean>;
-                };
-                readonly number: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $NumericSchema<number>;
-                };
-                readonly bigint: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $NumericSchema<bigint>;
-                };
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-              };
-            }
-          >,
+          },
         }),
         langStringOrString: $shaclPropertyFromRdf<
           Literal | string,
@@ -11666,7 +11478,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties
               .langStringOrString,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -11749,22 +11561,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            Literal | string,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly object: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $LangStringSchema;
-                };
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-              };
-            }
-          >,
+          },
         }),
         stringOrDate: $shaclPropertyFromRdf<
           string | Date,
@@ -11787,7 +11584,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDate,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -11867,22 +11664,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            string | Date,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-                readonly object: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $DateSchema;
-                };
-              };
-            }
-          >,
+          },
         }),
         stringOrDecimal: $shaclPropertyFromRdf<
           string | BigDecimal,
@@ -11905,7 +11687,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDecimal,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -11988,22 +11770,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            string | BigDecimal,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-                readonly object: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $NumericSchema<BigDecimal>;
-                };
-              };
-            }
-          >,
+          },
         }),
         stringOrInteger: $shaclPropertyFromRdf<
           string | bigint,
@@ -12026,7 +11793,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ignoreRdfType: true,
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrInteger,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -12107,22 +11874,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            string | bigint,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-                readonly bigint: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $NumericSchema<bigint>;
-                };
-              };
-            }
-          >,
+          },
         }),
         stringOrLangString: $shaclPropertyFromRdf<
           string | Literal,
@@ -12146,7 +11898,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           propertySchema:
             DatatypeDiscriminatedUnionsStruct.schema.properties
               .stringOrLangString,
-          typeFromRdfResourceValues: ((inputValues, options) => {
+          typeFromRdfResourceValues: (inputValues, options) => {
             const memberInputValues: Resource.Values[] = Array.from({
               length: 2,
             }).map(() =>
@@ -12229,22 +11981,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               }
             }
             return Right(collectedOutputValues);
-          }) satisfies $FromRdfResourceValuesFunction<
-            string | Literal,
-            {
-              kind: "DiscriminatedUnion";
-              members: {
-                readonly string: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $StringSchema<string>;
-                };
-                readonly object: {
-                  discriminantValues: readonly (number | string)[];
-                  type: $LangStringSchema;
-                };
-              };
-            }
-          >,
+          },
         }),
       }).chain((properties) =>
         DatatypeDiscriminatedUnionsStruct.create(properties),
@@ -12264,21 +12001,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     }
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrDateTime.path,
-      (
-        ((value, _options): Literal[] => {
-          if (value["$type"] === "date") {
-            return [$literalFactory.date(value.value, $xsd_date)];
-          }
-          if (value["$type"] === "dateTime") {
-            return [$literalFactory.date(value.value, $xsd_dateTime)];
-          }
+      ((value, _options): Literal[] => {
+        if (value["$type"] === "date") {
+          return [$literalFactory.date(value.value, $xsd_date)];
+        }
+        if (value["$type"] === "dateTime") {
+          return [$literalFactory.date(value.value, $xsd_dateTime)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<
-          { $type: "date"; value: Date } | { $type: "dateTime"; value: Date },
-          Literal
-        >
-      )(parameters.object.dateOrDateTime, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.dateOrDateTime, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12291,18 +12023,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrString.path,
-      (
-        ((value, _options): Literal[] => {
-          if (typeof value === "object") {
-            return [$literalFactory.date(value, $xsd_date)];
-          }
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
+      ((value, _options): Literal[] => {
+        if (typeof value === "object") {
+          return [$literalFactory.date(value, $xsd_date)];
+        }
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<Date | string, Literal>
-      )(parameters.object.dateOrString, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.dateOrString, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12314,21 +12044,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.dateTimeOrDate.path,
-      (
-        ((value, _options): Literal[] => {
-          if (value["$type"] === "dateTime") {
-            return [$literalFactory.date(value.value, $xsd_dateTime)];
-          }
-          if (value["$type"] === "date") {
-            return [$literalFactory.date(value.value, $xsd_date)];
-          }
+      ((value, _options): Literal[] => {
+        if (value["$type"] === "dateTime") {
+          return [$literalFactory.date(value.value, $xsd_dateTime)];
+        }
+        if (value["$type"] === "date") {
+          return [$literalFactory.date(value.value, $xsd_date)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<
-          { $type: "dateTime"; value: Date } | { $type: "date"; value: Date },
-          Literal
-        >
-      )(parameters.object.dateTimeOrDate, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.dateTimeOrDate, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12341,18 +12066,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString.path,
-      (
-        ((value, _options): Literal[] => {
-          if (typeof value === "object") {
-            return [$bigDecimalLiteral(value)];
-          }
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
+      ((value, _options): Literal[] => {
+        if (typeof value === "object") {
+          return [$bigDecimalLiteral(value)];
+        }
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<BigDecimal | string, Literal>
-      )(parameters.object.decimalOrString, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.decimalOrString, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12365,18 +12088,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString.path,
-      (
-        ((value, _options): Literal[] => {
-          if (typeof value === "bigint") {
-            return [$literalFactory.bigint(value, $xsd_integer)];
-          }
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
+      ((value, _options): Literal[] => {
+        if (typeof value === "bigint") {
+          return [$literalFactory.bigint(value, $xsd_integer)];
+        }
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<bigint | string, Literal>
-      )(parameters.object.integerOrString, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.integerOrString, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12389,27 +12110,22 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive.path,
-      (
-        ((value, _options): Literal[] => {
-          if (typeof value === "boolean") {
-            return [$literalFactory.boolean(value, $xsd_boolean)];
-          }
-          if (typeof value === "number") {
-            return [$literalFactory.number(value, $xsd_double)];
-          }
-          if (typeof value === "bigint") {
-            return [$literalFactory.bigint(value, $xsd_integer)];
-          }
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
+      ((value, _options): Literal[] => {
+        if (typeof value === "boolean") {
+          return [$literalFactory.boolean(value, $xsd_boolean)];
+        }
+        if (typeof value === "number") {
+          return [$literalFactory.number(value, $xsd_double)];
+        }
+        if (typeof value === "bigint") {
+          return [$literalFactory.bigint(value, $xsd_integer)];
+        }
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<
-          boolean | number | bigint | string,
-          Literal
-        >
-      )(parameters.object.jsPrimitive, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.jsPrimitive, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12422,18 +12138,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.langStringOrString
         .path,
-      (
-        ((value, _options): Literal[] => {
-          if (typeof value === "object") {
-            return [value];
-          }
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
+      ((value, _options): Literal[] => {
+        if (typeof value === "object") {
+          return [value];
+        }
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<Literal | string, Literal>
-      )(parameters.object.langStringOrString, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.langStringOrString, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12446,18 +12160,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDate.path,
-      (
-        ((value, _options): Literal[] => {
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
-          if (typeof value === "object") {
-            return [$literalFactory.date(value, $xsd_date)];
-          }
+      ((value, _options): Literal[] => {
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
+        if (typeof value === "object") {
+          return [$literalFactory.date(value, $xsd_date)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<string | Date, Literal>
-      )(parameters.object.stringOrDate, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.stringOrDate, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12469,18 +12181,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDecimal.path,
-      (
-        ((value, _options): Literal[] => {
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
-          if (typeof value === "object") {
-            return [$bigDecimalLiteral(value)];
-          }
+      ((value, _options): Literal[] => {
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
+        if (typeof value === "object") {
+          return [$bigDecimalLiteral(value)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<string | BigDecimal, Literal>
-      )(parameters.object.stringOrDecimal, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.stringOrDecimal, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12493,18 +12203,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrInteger.path,
-      (
-        ((value, _options): Literal[] => {
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
-          if (typeof value === "bigint") {
-            return [$literalFactory.bigint(value, $xsd_integer)];
-          }
+      ((value, _options): Literal[] => {
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
+        if (typeof value === "bigint") {
+          return [$literalFactory.bigint(value, $xsd_integer)];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<string | bigint, Literal>
-      )(parameters.object.stringOrInteger, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.stringOrInteger, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12518,18 +12226,16 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrLangString
         .path,
-      (
-        ((value, _options): Literal[] => {
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
-          if (typeof value === "object") {
-            return [value];
-          }
+      ((value, _options): Literal[] => {
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
+        if (typeof value === "object") {
+          return [value];
+        }
 
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<string | Literal, Literal>
-      )(parameters.object.stringOrLangString, {
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.stringOrLangString, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -12546,7 +12252,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   export const $toString: $ToStringFunction<
     DatatypeDiscriminatedUnionsStruct
   > = (_datatypeDiscriminatedUnionsStruct) =>
-    `DatatypeDiscriminatedUnionsStruct(${JSON.stringify(toStringRecord(_datatypeDiscriminatedUnionsStruct))})`;
+    JSON.stringify(DatatypeDiscriminatedUnionsStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -12714,7 +12420,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (left["$type"] === "date" && right["$type"] === "date") {
                 return $dateEquals(left.value as Date, right.value as Date);
               }
@@ -12736,10 +12442,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<
-              | { $type: "date"; value: Date }
-              | { $type: "dateTime"; value: Date }
-            >,
+            },
             name: "dateOrDateTime",
           },
           [left, left.dateOrDateTime],
@@ -12749,7 +12452,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "object" && typeof right === "object") {
                 return $dateEquals(left as Date, right as Date);
               }
@@ -12768,7 +12471,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<Date | string>,
+            },
             name: "dateOrString",
           },
           [left, left.dateOrString],
@@ -12778,7 +12481,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (
                 left["$type"] === "dateTime" &&
                 right["$type"] === "dateTime"
@@ -12800,10 +12503,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<
-              | { $type: "dateTime"; value: Date }
-              | { $type: "date"; value: Date }
-            >,
+            },
             name: "dateTimeOrDate",
           },
           [left, left.dateTimeOrDate],
@@ -12813,7 +12513,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "object" && typeof right === "object") {
                 return $booleanEquals(left as BigDecimal, right as BigDecimal);
               }
@@ -12832,7 +12532,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<BigDecimal | string>,
+            },
             name: "decimalOrString",
           },
           [left, left.decimalOrString],
@@ -12842,7 +12542,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "bigint" && typeof right === "bigint") {
                 return $strictEquals(left as bigint, right as bigint);
               }
@@ -12861,7 +12561,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<bigint | string>,
+            },
             name: "integerOrString",
           },
           [left, left.integerOrString],
@@ -12871,7 +12571,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "boolean" && typeof right === "boolean") {
                 return $strictEquals(left as boolean, right as boolean);
               }
@@ -12896,7 +12596,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<boolean | number | bigint | string>,
+            },
             name: "jsPrimitive",
           },
           [left, left.jsPrimitive],
@@ -12906,7 +12606,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "object" && typeof right === "object") {
                 return $booleanEquals(left as Literal, right as Literal);
               }
@@ -12925,7 +12625,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<Literal | string>,
+            },
             name: "langStringOrString",
           },
           [left, left.langStringOrString],
@@ -12935,7 +12635,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "string" && typeof right === "string") {
                 return $strictEquals(left as string, right as string);
               }
@@ -12954,7 +12654,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<string | Date>,
+            },
             name: "stringOrDate",
           },
           [left, left.stringOrDate],
@@ -12964,7 +12664,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "string" && typeof right === "string") {
                 return $strictEquals(left as string, right as string);
               }
@@ -12983,7 +12683,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<string | BigDecimal>,
+            },
             name: "stringOrDecimal",
           },
           [left, left.stringOrDecimal],
@@ -12993,7 +12693,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "string" && typeof right === "string") {
                 return $strictEquals(left as string, right as string);
               }
@@ -13012,7 +12712,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<string | bigint>,
+            },
             name: "stringOrInteger",
           },
           [left, left.stringOrInteger],
@@ -13022,7 +12722,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "string" && typeof right === "string") {
                 return $strictEquals(left as string, right as string);
               }
@@ -13041,7 +12741,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<string | Literal>,
+            },
             name: "stringOrLangString",
           },
           [left, left.stringOrLangString],
@@ -13061,398 +12761,229 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     }
     if (
       filter.dateOrDateTime !== undefined &&
-      !(
-        ((filter, value) => {
-          if (filter.on?.["date"] !== undefined && value["$type"] === "date") {
-            if (!$filterDate(filter.on["date"], value.value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (filter.on?.["date"] !== undefined && value["$type"] === "date") {
+          if (!$filterDate(filter.on["date"], value.value)) {
+            return false;
           }
-          if (
-            filter.on?.["dateTime"] !== undefined &&
-            value["$type"] === "dateTime"
-          ) {
-            if (!$filterDate(filter.on["dateTime"], value.value)) {
-              return false;
-            }
+        }
+        if (
+          filter.on?.["dateTime"] !== undefined &&
+          value["$type"] === "dateTime"
+        ) {
+          if (!$filterDate(filter.on["dateTime"], value.value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          { $type: "date"; value: Date } | { $type: "dateTime"; value: Date }
-        >
-      )(filter.dateOrDateTime, value.dateOrDateTime)
+        return true;
+      })(filter.dateOrDateTime, value.dateOrDateTime)
     ) {
       return false;
     }
     if (
       filter.dateOrString !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["object"] !== undefined &&
-            typeof value === "object"
-          ) {
-            if (!$filterDate(filter.on["object"], value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterDate(filter.on["object"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly object?: $DateFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          Date | string
-        >
-      )(filter.dateOrString, value.dateOrString)
+        return true;
+      })(filter.dateOrString, value.dateOrString)
     ) {
       return false;
     }
     if (
       filter.dateTimeOrDate !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["dateTime"] !== undefined &&
-            value["$type"] === "dateTime"
-          ) {
-            if (!$filterDate(filter.on["dateTime"], value.value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (
+          filter.on?.["dateTime"] !== undefined &&
+          value["$type"] === "dateTime"
+        ) {
+          if (!$filterDate(filter.on["dateTime"], value.value)) {
+            return false;
           }
-          if (filter.on?.["date"] !== undefined && value["$type"] === "date") {
-            if (!$filterDate(filter.on["date"], value.value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["date"] !== undefined && value["$type"] === "date") {
+          if (!$filterDate(filter.on["date"], value.value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly dateTime?: $DateFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          { $type: "dateTime"; value: Date } | { $type: "date"; value: Date }
-        >
-      )(filter.dateTimeOrDate, value.dateTimeOrDate)
+        return true;
+      })(filter.dateTimeOrDate, value.dateTimeOrDate)
     ) {
       return false;
     }
     if (
       filter.decimalOrString !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["object"] !== undefined &&
-            typeof value === "object"
-          ) {
-            if (!$filterBigDecimal(filter.on["object"], value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterBigDecimal(filter.on["object"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly object?: $NumericFilter<BigDecimal>;
-              readonly string?: $StringFilter;
-            };
-          },
-          BigDecimal | string
-        >
-      )(filter.decimalOrString, value.decimalOrString)
+        return true;
+      })(filter.decimalOrString, value.decimalOrString)
     ) {
       return false;
     }
     if (
       filter.integerOrString !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["bigint"] !== undefined &&
-            typeof value === "bigint"
-          ) {
-            if (!$filterNumeric<bigint>(filter.on["bigint"], value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (filter.on?.["bigint"] !== undefined && typeof value === "bigint") {
+          if (!$filterNumeric<bigint>(filter.on["bigint"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly bigint?: $NumericFilter<bigint>;
-              readonly string?: $StringFilter;
-            };
-          },
-          bigint | string
-        >
-      )(filter.integerOrString, value.integerOrString)
+        return true;
+      })(filter.integerOrString, value.integerOrString)
     ) {
       return false;
     }
     if (
       filter.jsPrimitive !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["boolean"] !== undefined &&
-            typeof value === "boolean"
-          ) {
-            if (!$filterBoolean(filter.on["boolean"], value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (
+          filter.on?.["boolean"] !== undefined &&
+          typeof value === "boolean"
+        ) {
+          if (!$filterBoolean(filter.on["boolean"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["number"] !== undefined &&
-            typeof value === "number"
-          ) {
-            if (!$filterNumeric<number>(filter.on["number"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["number"] !== undefined && typeof value === "number") {
+          if (!$filterNumeric<number>(filter.on["number"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["bigint"] !== undefined &&
-            typeof value === "bigint"
-          ) {
-            if (!$filterNumeric<bigint>(filter.on["bigint"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["bigint"] !== undefined && typeof value === "bigint") {
+          if (!$filterNumeric<bigint>(filter.on["bigint"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly boolean?: $BooleanFilter;
-              readonly number?: $NumericFilter<number>;
-              readonly bigint?: $NumericFilter<bigint>;
-              readonly string?: $StringFilter;
-            };
-          },
-          boolean | number | bigint | string
-        >
-      )(filter.jsPrimitive, value.jsPrimitive)
+        return true;
+      })(filter.jsPrimitive, value.jsPrimitive)
     ) {
       return false;
     }
     if (
       filter.langStringOrString !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["object"] !== undefined &&
-            typeof value === "object"
-          ) {
-            if (!$filterLiteral(filter.on["object"], value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterLiteral(filter.on["object"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly object?: $LiteralFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          Literal | string
-        >
-      )(filter.langStringOrString, value.langStringOrString)
+        return true;
+      })(filter.langStringOrString, value.langStringOrString)
     ) {
       return false;
     }
     if (
       filter.stringOrDate !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["object"] !== undefined &&
-            typeof value === "object"
-          ) {
-            if (!$filterDate(filter.on["object"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterDate(filter.on["object"], value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly object?: $DateFilter;
-            };
-          },
-          string | Date
-        >
-      )(filter.stringOrDate, value.stringOrDate)
+        return true;
+      })(filter.stringOrDate, value.stringOrDate)
     ) {
       return false;
     }
     if (
       filter.stringOrDecimal !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["object"] !== undefined &&
-            typeof value === "object"
-          ) {
-            if (!$filterBigDecimal(filter.on["object"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterBigDecimal(filter.on["object"], value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly object?: $NumericFilter<BigDecimal>;
-            };
-          },
-          string | BigDecimal
-        >
-      )(filter.stringOrDecimal, value.stringOrDecimal)
+        return true;
+      })(filter.stringOrDecimal, value.stringOrDecimal)
     ) {
       return false;
     }
     if (
       filter.stringOrInteger !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["bigint"] !== undefined &&
-            typeof value === "bigint"
-          ) {
-            if (!$filterNumeric<bigint>(filter.on["bigint"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["bigint"] !== undefined && typeof value === "bigint") {
+          if (!$filterNumeric<bigint>(filter.on["bigint"], value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly bigint?: $NumericFilter<bigint>;
-            };
-          },
-          string | bigint
-        >
-      )(filter.stringOrInteger, value.stringOrInteger)
+        return true;
+      })(filter.stringOrInteger, value.stringOrInteger)
     ) {
       return false;
     }
     if (
       filter.stringOrLangString !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
+      !((filter, value) => {
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
           }
-          if (
-            filter.on?.["object"] !== undefined &&
-            typeof value === "object"
-          ) {
-            if (!$filterLiteral(filter.on["object"], value)) {
-              return false;
-            }
+        }
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterLiteral(filter.on["object"], value)) {
+            return false;
           }
+        }
 
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly object?: $LiteralFilter;
-            };
-          },
-          string | Literal
-        >
-      )(filter.stringOrLangString, value.stringOrLangString)
+        return true;
+      })(filter.stringOrLangString, value.stringOrLangString)
     ) {
       return false;
     }
@@ -13565,7 +13096,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "dateOrDateTime",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrDateTime,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -13591,27 +13122,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -13623,7 +13134,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "dateOrString",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrString,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -13649,27 +13160,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly object?: $DateFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -13681,7 +13172,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "dateTimeOrDate",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.dateTimeOrDate,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -13707,27 +13198,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly dateTime?: $DateFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -13739,7 +13210,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "decimalOrString",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -13765,27 +13236,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly object?: $NumericFilter<BigDecimal>;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<BigDecimal>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -13797,7 +13248,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "integerOrString",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -13823,27 +13274,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly bigint?: $NumericFilter<bigint>;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -13855,7 +13286,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "jsPrimitive",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -13897,37 +13328,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly boolean?: $BooleanFilter;
-              readonly number?: $NumericFilter<number>;
-              readonly bigint?: $NumericFilter<bigint>;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly boolean: {
-                discriminantValues: readonly (number | string)[];
-                type: $BooleanSchema<boolean>;
-              };
-              readonly number: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<number>;
-              };
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -13940,7 +13341,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties
             .langStringOrString,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -13966,27 +13367,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly object?: $LiteralFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $LangStringSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -13998,7 +13379,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "stringOrDate",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDate,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -14024,27 +13405,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly object?: $DateFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14056,7 +13417,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "stringOrDecimal",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDecimal,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -14082,27 +13443,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly object?: $NumericFilter<BigDecimal>;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<BigDecimal>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14114,7 +13455,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "stringOrInteger",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrInteger,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -14140,27 +13481,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly bigint?: $NumericFilter<bigint>;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14173,7 +13494,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties
             .stringOrLangString,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -14199,27 +13520,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly object?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $LangStringSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14301,7 +13602,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "dateOrDateTime",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrDateTime,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14324,27 +13625,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14357,7 +13638,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "dateOrString",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.dateOrString,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14380,27 +13661,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly object?: $DateFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14413,7 +13674,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "dateTimeOrDate",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.dateTimeOrDate,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14436,27 +13697,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly dateTime?: $DateFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14469,7 +13710,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "decimalOrString",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.decimalOrString,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14492,27 +13733,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly object?: $NumericFilter<BigDecimal>;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<BigDecimal>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14525,7 +13746,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "integerOrString",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.integerOrString,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14548,27 +13769,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly bigint?: $NumericFilter<bigint>;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14581,7 +13782,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "jsPrimitive",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.jsPrimitive,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14622,37 +13823,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly boolean?: $BooleanFilter;
-              readonly number?: $NumericFilter<number>;
-              readonly bigint?: $NumericFilter<bigint>;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly boolean: {
-                discriminantValues: readonly (number | string)[];
-                type: $BooleanSchema<boolean>;
-              };
-              readonly number: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<number>;
-              };
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14666,7 +13837,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties
             .langStringOrString,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14689,27 +13860,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly object?: $LiteralFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $LangStringSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14722,7 +13873,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "stringOrDate",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDate,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14745,27 +13896,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly object?: $DateFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14778,7 +13909,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "stringOrDecimal",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDecimal,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14801,27 +13932,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly object?: $NumericFilter<BigDecimal>;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<BigDecimal>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14834,7 +13945,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertyName: "stringOrInteger",
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrInteger,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14857,27 +13968,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly bigint?: $NumericFilter<bigint>;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14891,7 +13982,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         propertySchema:
           DatatypeDiscriminatedUnionsStruct.schema.properties
             .stringOrLangString,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -14914,27 +14005,7 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly object?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $LangStringSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -14951,290 +14022,182 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      dateOrDateTime: (
-        ((value) => {
-          if (value.$type === "date") {
-            return Either.encase<Error, Date>(
-              () => new Date(value["@value"]),
-            ).map((value) => ({
-              $type: "date" as const,
-              value: value,
-            }));
-          }
-          if (value.$type === "dateTime") {
-            return Either.encase<Error, Date>(
-              () => new Date(value["@value"]),
-            ).map((value) => ({
-              $type: "dateTime" as const,
-              value: value,
-            }));
-          }
+      dateOrDateTime: ((value) => {
+        if (value.$type === "date") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => ({
+            $type: "date" as const,
+            value: value,
+          }));
+        }
+        if (value.$type === "dateTime") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => ({
+            $type: "dateTime" as const,
+            value: value,
+          }));
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          { $type: "date"; value: Date } | { $type: "dateTime"; value: Date },
-          | { $type: "date"; "@type": string; "@value": string }
-          | {
-              $type: "dateTime";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["dateOrDateTime"]),
-      dateOrString: (
-        ((value) => {
-          if (value.$type === "object") {
-            return Either.encase<Error, Date>(
-              () => new Date(value["@value"]),
-            ).map((value) => value);
-          }
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["dateOrDateTime"]),
+      dateOrString: ((value) => {
+        if (value.$type === "object") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => value);
+        }
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          Date | string,
-          | { $type: "object"; "@type": string; "@value": string }
-          | {
-              $type: "string";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["dateOrString"]),
-      dateTimeOrDate: (
-        ((value) => {
-          if (value.$type === "dateTime") {
-            return Either.encase<Error, Date>(
-              () => new Date(value["@value"]),
-            ).map((value) => ({
-              $type: "dateTime" as const,
-              value: value,
-            }));
-          }
-          if (value.$type === "date") {
-            return Either.encase<Error, Date>(
-              () => new Date(value["@value"]),
-            ).map((value) => ({
-              $type: "date" as const,
-              value: value,
-            }));
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["dateOrString"]),
+      dateTimeOrDate: ((value) => {
+        if (value.$type === "dateTime") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => ({
+            $type: "dateTime" as const,
+            value: value,
+          }));
+        }
+        if (value.$type === "date") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => ({
+            $type: "date" as const,
+            value: value,
+          }));
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          { $type: "dateTime"; value: Date } | { $type: "date"; value: Date },
-          | { $type: "dateTime"; "@type": string; "@value": string }
-          | {
-              $type: "date";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["dateTimeOrDate"]),
-      decimalOrString: (
-        ((value) => {
-          if (value.$type === "object") {
-            return Either.encase<Error, BigDecimal>(
-              () => new BigDecimal(value["@value"]),
-            ).map((value) => value);
-          }
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["dateTimeOrDate"]),
+      decimalOrString: ((value) => {
+        if (value.$type === "object") {
+          return Either.encase<Error, BigDecimal>(
+            () => new BigDecimal(value["@value"]),
+          ).map((value) => value);
+        }
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          BigDecimal | string,
-          | { $type: "object"; "@type": string; "@value": string }
-          | {
-              $type: "string";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["decimalOrString"]),
-      integerOrString: (
-        ((value) => {
-          if (value.$type === "bigint") {
-            return Either.encase<Error, bigint>(() =>
-              BigInt(value["@value"]),
-            ).map((value) => value);
-          }
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["decimalOrString"]),
+      integerOrString: ((value) => {
+        if (value.$type === "bigint") {
+          return Either.encase<Error, bigint>(() =>
+            BigInt(value["@value"]),
+          ).map((value) => value);
+        }
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          bigint | string,
-          | { $type: "bigint"; "@type": string; "@value": string }
-          | {
-              $type: "string";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["integerOrString"]),
-      jsPrimitive: (
-        ((value) => {
-          if (value.$type === "boolean") {
-            return Either.of<Error, boolean>(value["@value"]).map(
-              (value) => value,
-            );
-          }
-          if (value.$type === "number") {
-            return Either.of<Error, number>(value["@value"]).map(
-              (value) => value,
-            );
-          }
-          if (value.$type === "bigint") {
-            return Either.encase<Error, bigint>(() =>
-              BigInt(value["@value"]),
-            ).map((value) => value);
-          }
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["integerOrString"]),
+      jsPrimitive: ((value) => {
+        if (value.$type === "boolean") {
+          return Either.of<Error, boolean>(value["@value"]).map(
+            (value) => value,
+          );
+        }
+        if (value.$type === "number") {
+          return Either.of<Error, number>(value["@value"]).map(
+            (value) => value,
+          );
+        }
+        if (value.$type === "bigint") {
+          return Either.encase<Error, bigint>(() =>
+            BigInt(value["@value"]),
+          ).map((value) => value);
+        }
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          boolean | number | bigint | string,
-          | { $type: "boolean"; "@type": string; "@value": boolean }
-          | { $type: "number"; "@type": string; "@value": number }
-          | { $type: "bigint"; "@type": string; "@value": string }
-          | { $type: "string"; "@type": string; "@value": string }
-        >
-      )($json["jsPrimitive"]),
-      langStringOrString: (
-        ((value) => {
-          if (value.$type === "object") {
-            return Either.of<Error, Literal>(
-              dataFactory.literal(value["@value"], value["@language"]),
-            ).map((value) => value);
-          }
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["jsPrimitive"]),
+      langStringOrString: ((value) => {
+        if (value.$type === "object") {
+          return Either.of<Error, Literal>(
+            dataFactory.literal(value["@value"], value["@language"]),
+          ).map((value) => value);
+        }
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          Literal | string,
-          | { $type: "object"; "@language": string; "@value": string }
-          | {
-              $type: "string";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["langStringOrString"]),
-      stringOrDate: (
-        ((value) => {
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
-          if (value.$type === "object") {
-            return Either.encase<Error, Date>(
-              () => new Date(value["@value"]),
-            ).map((value) => value);
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["langStringOrString"]),
+      stringOrDate: ((value) => {
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
+        if (value.$type === "object") {
+          return Either.encase<Error, Date>(
+            () => new Date(value["@value"]),
+          ).map((value) => value);
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          string | Date,
-          | { $type: "string"; "@type": string; "@value": string }
-          | {
-              $type: "object";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["stringOrDate"]),
-      stringOrDecimal: (
-        ((value) => {
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
-          if (value.$type === "object") {
-            return Either.encase<Error, BigDecimal>(
-              () => new BigDecimal(value["@value"]),
-            ).map((value) => value);
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["stringOrDate"]),
+      stringOrDecimal: ((value) => {
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
+        if (value.$type === "object") {
+          return Either.encase<Error, BigDecimal>(
+            () => new BigDecimal(value["@value"]),
+          ).map((value) => value);
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          string | BigDecimal,
-          | { $type: "string"; "@type": string; "@value": string }
-          | {
-              $type: "object";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["stringOrDecimal"]),
-      stringOrInteger: (
-        ((value) => {
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
-          if (value.$type === "bigint") {
-            return Either.encase<Error, bigint>(() =>
-              BigInt(value["@value"]),
-            ).map((value) => value);
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["stringOrDecimal"]),
+      stringOrInteger: ((value) => {
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
+        if (value.$type === "bigint") {
+          return Either.encase<Error, bigint>(() =>
+            BigInt(value["@value"]),
+          ).map((value) => value);
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          string | bigint,
-          | { $type: "string"; "@type": string; "@value": string }
-          | {
-              $type: "bigint";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["stringOrInteger"]),
-      stringOrLangString: (
-        ((value) => {
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
-          if (value.$type === "object") {
-            return Either.of<Error, Literal>(
-              dataFactory.literal(value["@value"], value["@language"]),
-            ).map((value) => value);
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["stringOrInteger"]),
+      stringOrLangString: ((value) => {
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
+        if (value.$type === "object") {
+          return Either.of<Error, Literal>(
+            dataFactory.literal(value["@value"], value["@language"]),
+          ).map((value) => value);
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          string | Literal,
-          | { $type: "string"; "@type": string; "@value": string }
-          | {
-              $type: "object";
-              "@language": string;
-              "@value": string;
-            }
-        >
-      )($json["stringOrLangString"]),
+        throw new Error("unable to deserialize JSON");
+      })($json["stringOrLangString"]),
     }).chain(DatatypeDiscriminatedUnionsStruct.create);
 
   export const fromRdfResource: $FromRdfResourceFunction<DatatypeDiscriminatedUnionsStruct> =
@@ -16081,326 +15044,218 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             : _datatypeDiscriminatedUnionsStruct.$identifier().value,
         "@type": "http://example.com/DatatypeDiscriminatedUnionsStruct",
         $type: _datatypeDiscriminatedUnionsStruct.$type,
-        dateOrDateTime: (
-          ((value) => {
-            if (value["$type"] === "date") {
-              return {
-                $type: "date",
-                "@type": $xsd_date.value,
-                "@value": $toIsoDateString(value.value),
-              };
-            }
-            if (value["$type"] === "dateTime") {
-              return {
-                $type: "dateTime",
-                "@type": $xsd_dateTime.value,
-                "@value": value.value.toISOString(),
-              };
-            }
+        dateOrDateTime: ((value) => {
+          if (value["$type"] === "date") {
+            return {
+              $type: "date",
+              "@type": $xsd_date.value,
+              "@value": $toIsoDateString(value.value),
+            };
+          }
+          if (value["$type"] === "dateTime") {
+            return {
+              $type: "dateTime",
+              "@type": $xsd_dateTime.value,
+              "@value": value.value.toISOString(),
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            { $type: "date"; value: Date } | { $type: "dateTime"; value: Date },
-            | { $type: "date"; "@type": string; "@value": string }
-            | {
-                $type: "dateTime";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.dateOrDateTime),
-        dateOrString: (
-          ((value) => {
-            if (typeof value === "object") {
-              return {
-                $type: "object",
-                "@type": $xsd_date.value,
-                "@value": $toIsoDateString(value),
-              };
-            }
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.dateOrDateTime),
+        dateOrString: ((value) => {
+          if (typeof value === "object") {
+            return {
+              $type: "object",
+              "@type": $xsd_date.value,
+              "@value": $toIsoDateString(value),
+            };
+          }
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            Date | string,
-            | { $type: "object"; "@type": string; "@value": string }
-            | {
-                $type: "string";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.dateOrString),
-        dateTimeOrDate: (
-          ((value) => {
-            if (value["$type"] === "dateTime") {
-              return {
-                $type: "dateTime",
-                "@type": $xsd_dateTime.value,
-                "@value": value.value.toISOString(),
-              };
-            }
-            if (value["$type"] === "date") {
-              return {
-                $type: "date",
-                "@type": $xsd_date.value,
-                "@value": $toIsoDateString(value.value),
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.dateOrString),
+        dateTimeOrDate: ((value) => {
+          if (value["$type"] === "dateTime") {
+            return {
+              $type: "dateTime",
+              "@type": $xsd_dateTime.value,
+              "@value": value.value.toISOString(),
+            };
+          }
+          if (value["$type"] === "date") {
+            return {
+              $type: "date",
+              "@type": $xsd_date.value,
+              "@value": $toIsoDateString(value.value),
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            { $type: "dateTime"; value: Date } | { $type: "date"; value: Date },
-            | { $type: "dateTime"; "@type": string; "@value": string }
-            | {
-                $type: "date";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.dateTimeOrDate),
-        decimalOrString: (
-          ((value) => {
-            if (typeof value === "object") {
-              return {
-                $type: "object",
-                "@type": $xsd_decimal.value,
-                "@value": value.toFixed(),
-              };
-            }
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.dateTimeOrDate),
+        decimalOrString: ((value) => {
+          if (typeof value === "object") {
+            return {
+              $type: "object",
+              "@type": $xsd_decimal.value,
+              "@value": value.toFixed(),
+            };
+          }
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            BigDecimal | string,
-            | { $type: "object"; "@type": string; "@value": string }
-            | {
-                $type: "string";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.decimalOrString),
-        integerOrString: (
-          ((value) => {
-            if (typeof value === "bigint") {
-              return {
-                $type: "bigint",
-                "@type": $xsd_integer.value,
-                "@value": value.toString(),
-              };
-            }
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.decimalOrString),
+        integerOrString: ((value) => {
+          if (typeof value === "bigint") {
+            return {
+              $type: "bigint",
+              "@type": $xsd_integer.value,
+              "@value": value.toString(),
+            };
+          }
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            bigint | string,
-            | { $type: "bigint"; "@type": string; "@value": string }
-            | {
-                $type: "string";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.integerOrString),
-        jsPrimitive: (
-          ((value) => {
-            if (typeof value === "boolean") {
-              return {
-                $type: "boolean",
-                "@type": $xsd_boolean.value,
-                "@value": value,
-              };
-            }
-            if (typeof value === "number") {
-              return {
-                $type: "number",
-                "@type": $xsd_double.value,
-                "@value": value,
-              };
-            }
-            if (typeof value === "bigint") {
-              return {
-                $type: "bigint",
-                "@type": $xsd_integer.value,
-                "@value": value.toString(),
-              };
-            }
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.integerOrString),
+        jsPrimitive: ((value) => {
+          if (typeof value === "boolean") {
+            return {
+              $type: "boolean",
+              "@type": $xsd_boolean.value,
+              "@value": value,
+            };
+          }
+          if (typeof value === "number") {
+            return {
+              $type: "number",
+              "@type": $xsd_double.value,
+              "@value": value,
+            };
+          }
+          if (typeof value === "bigint") {
+            return {
+              $type: "bigint",
+              "@type": $xsd_integer.value,
+              "@value": value.toString(),
+            };
+          }
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            boolean | number | bigint | string,
-            | { $type: "boolean"; "@type": string; "@value": boolean }
-            | { $type: "number"; "@type": string; "@value": number }
-            | { $type: "bigint"; "@type": string; "@value": string }
-            | { $type: "string"; "@type": string; "@value": string }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.jsPrimitive),
-        langStringOrString: (
-          ((value) => {
-            if (typeof value === "object") {
-              return {
-                $type: "object",
-                "@language": value.language,
-                "@value": value.value,
-              };
-            }
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.jsPrimitive),
+        langStringOrString: ((value) => {
+          if (typeof value === "object") {
+            return {
+              $type: "object",
+              "@language": value.language,
+              "@value": value.value,
+            };
+          }
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            Literal | string,
-            | { $type: "object"; "@language": string; "@value": string }
-            | {
-                $type: "string";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.langStringOrString),
-        stringOrDate: (
-          ((value) => {
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
-            if (typeof value === "object") {
-              return {
-                $type: "object",
-                "@type": $xsd_date.value,
-                "@value": $toIsoDateString(value),
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.langStringOrString),
+        stringOrDate: ((value) => {
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
+          if (typeof value === "object") {
+            return {
+              $type: "object",
+              "@type": $xsd_date.value,
+              "@value": $toIsoDateString(value),
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            string | Date,
-            | { $type: "string"; "@type": string; "@value": string }
-            | {
-                $type: "object";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.stringOrDate),
-        stringOrDecimal: (
-          ((value) => {
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
-            if (typeof value === "object") {
-              return {
-                $type: "object",
-                "@type": $xsd_decimal.value,
-                "@value": value.toFixed(),
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.stringOrDate),
+        stringOrDecimal: ((value) => {
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
+          if (typeof value === "object") {
+            return {
+              $type: "object",
+              "@type": $xsd_decimal.value,
+              "@value": value.toFixed(),
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            string | BigDecimal,
-            | { $type: "string"; "@type": string; "@value": string }
-            | {
-                $type: "object";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.stringOrDecimal),
-        stringOrInteger: (
-          ((value) => {
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
-            if (typeof value === "bigint") {
-              return {
-                $type: "bigint",
-                "@type": $xsd_integer.value,
-                "@value": value.toString(),
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.stringOrDecimal),
+        stringOrInteger: ((value) => {
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
+          if (typeof value === "bigint") {
+            return {
+              $type: "bigint",
+              "@type": $xsd_integer.value,
+              "@value": value.toString(),
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            string | bigint,
-            | { $type: "string"; "@type": string; "@value": string }
-            | {
-                $type: "bigint";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.stringOrInteger),
-        stringOrLangString: (
-          ((value) => {
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
-            if (typeof value === "object") {
-              return {
-                $type: "object",
-                "@language": value.language,
-                "@value": value.value,
-              };
-            }
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.stringOrInteger),
+        stringOrLangString: ((value) => {
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
+          if (typeof value === "object") {
+            return {
+              $type: "object",
+              "@language": value.language,
+              "@value": value.value,
+            };
+          }
 
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            string | Literal,
-            | { $type: "string"; "@type": string; "@value": string }
-            | {
-                $type: "object";
-                "@language": string;
-                "@value": string;
-              }
-          >
-        )(_datatypeDiscriminatedUnionsStruct.stringOrLangString),
+          throw new Error("unable to serialize to JSON");
+        })(_datatypeDiscriminatedUnionsStruct.stringOrLangString),
       }),
     );
 
@@ -16410,99 +15265,81 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     $compactRecord({
       $identifier: _datatypeDiscriminatedUnionsStruct.$identifier().value,
       $type: "DatatypeDiscriminatedUnionsStruct",
-      dateOrDateTime: (
-        ((value) => value.value.toISOString()) satisfies $ToLoggableFunction<
-          { $type: "date"; value: Date } | { $type: "dateTime"; value: Date }
-        >
-      )(_datatypeDiscriminatedUnionsStruct.dateOrDateTime),
-      dateOrString: (
-        ((value) => {
-          if (typeof value === "object") {
-            return value.toISOString();
-          }
-          if (typeof value === "string") {
-            return value;
-          }
+      dateOrDateTime: ((value) => value.value.toISOString())(
+        _datatypeDiscriminatedUnionsStruct.dateOrDateTime,
+      ),
+      dateOrString: ((value) => {
+        if (typeof value === "object") {
+          return value.toISOString();
+        }
+        if (typeof value === "string") {
+          return value;
+        }
 
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<Date | string>
-      )(_datatypeDiscriminatedUnionsStruct.dateOrString),
-      dateTimeOrDate: (
-        ((value) => value.value.toISOString()) satisfies $ToLoggableFunction<
-          { $type: "dateTime"; value: Date } | { $type: "date"; value: Date }
-        >
-      )(_datatypeDiscriminatedUnionsStruct.dateTimeOrDate),
-      decimalOrString: (
-        ((value) => {
-          if (typeof value === "object") {
-            return value.toFixed();
-          }
-          if (typeof value === "string") {
-            return value;
-          }
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.dateOrString),
+      dateTimeOrDate: ((value) => value.value.toISOString())(
+        _datatypeDiscriminatedUnionsStruct.dateTimeOrDate,
+      ),
+      decimalOrString: ((value) => {
+        if (typeof value === "object") {
+          return value.toFixed();
+        }
+        if (typeof value === "string") {
+          return value;
+        }
 
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<BigDecimal | string>
-      )(_datatypeDiscriminatedUnionsStruct.decimalOrString),
-      integerOrString: (
-        ((value) => value) satisfies $ToLoggableFunction<bigint | string>
-      )(_datatypeDiscriminatedUnionsStruct.integerOrString),
-      jsPrimitive: (
-        ((value) => value) satisfies $ToLoggableFunction<
-          boolean | number | bigint | string
-        >
-      )(_datatypeDiscriminatedUnionsStruct.jsPrimitive),
-      langStringOrString: (
-        ((value) => {
-          if (typeof value === "object") {
-            return `${JSON.stringify(value.value)}@${value.language}`;
-          }
-          if (typeof value === "string") {
-            return value;
-          }
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.decimalOrString),
+      integerOrString: ((value) => value)(
+        _datatypeDiscriminatedUnionsStruct.integerOrString,
+      ),
+      jsPrimitive: ((value) => value)(
+        _datatypeDiscriminatedUnionsStruct.jsPrimitive,
+      ),
+      langStringOrString: ((value) => {
+        if (typeof value === "object") {
+          return `${JSON.stringify(value.value)}@${value.language}`;
+        }
+        if (typeof value === "string") {
+          return value;
+        }
 
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<Literal | string>
-      )(_datatypeDiscriminatedUnionsStruct.langStringOrString),
-      stringOrDate: (
-        ((value) => {
-          if (typeof value === "string") {
-            return value;
-          }
-          if (typeof value === "object") {
-            return value.toISOString();
-          }
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.langStringOrString),
+      stringOrDate: ((value) => {
+        if (typeof value === "string") {
+          return value;
+        }
+        if (typeof value === "object") {
+          return value.toISOString();
+        }
 
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<string | Date>
-      )(_datatypeDiscriminatedUnionsStruct.stringOrDate),
-      stringOrDecimal: (
-        ((value) => {
-          if (typeof value === "string") {
-            return value;
-          }
-          if (typeof value === "object") {
-            return value.toFixed();
-          }
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.stringOrDate),
+      stringOrDecimal: ((value) => {
+        if (typeof value === "string") {
+          return value;
+        }
+        if (typeof value === "object") {
+          return value.toFixed();
+        }
 
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<string | BigDecimal>
-      )(_datatypeDiscriminatedUnionsStruct.stringOrDecimal),
-      stringOrInteger: (
-        ((value) => value) satisfies $ToLoggableFunction<string | bigint>
-      )(_datatypeDiscriminatedUnionsStruct.stringOrInteger),
-      stringOrLangString: (
-        ((value) => {
-          if (typeof value === "string") {
-            return value;
-          }
-          if (typeof value === "object") {
-            return `${JSON.stringify(value.value)}@${value.language}`;
-          }
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.stringOrDecimal),
+      stringOrInteger: ((value) => value)(
+        _datatypeDiscriminatedUnionsStruct.stringOrInteger,
+      ),
+      stringOrLangString: ((value) => {
+        if (typeof value === "string") {
+          return value;
+        }
+        if (typeof value === "object") {
+          return `${JSON.stringify(value.value)}@${value.language}`;
+        }
 
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<string | Literal>
-      )(_datatypeDiscriminatedUnionsStruct.stringOrLangString),
+        throw new Error("unable to serialize to loggable");
+      })(_datatypeDiscriminatedUnionsStruct.stringOrLangString),
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
@@ -16677,7 +15514,7 @@ export namespace DatesStruct {
   };
 
   export const $toString: $ToStringFunction<DatesStruct> = (_datesStruct) =>
-    `DatesStruct(${JSON.stringify(toStringRecord(_datesStruct))})`;
+    JSON.stringify(DatesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -17572,8 +16409,7 @@ export namespace DefaultValuesStruct {
 
   export const $toString: $ToStringFunction<DefaultValuesStruct> = (
     _defaultValuesStruct,
-  ) =>
-    `DefaultValuesStruct(${JSON.stringify(toStringRecord(_defaultValuesStruct))})`;
+  ) => JSON.stringify(DefaultValuesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -18526,8 +17362,7 @@ export namespace DirectRecursiveStruct {
 
   export const $toString: $ToStringFunction<DirectRecursiveStruct> = (
     _directRecursiveStruct,
-  ) =>
-    `DirectRecursiveStruct(${JSON.stringify(toStringRecord(_directRecursiveStruct))})`;
+  ) => JSON.stringify(DirectRecursiveStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -19153,7 +17988,7 @@ export namespace DisplayStruct {
   };
 
   export const $toString: $ToStringFunction<DisplayStruct> = (_displayStruct) =>
-    `DisplayStruct(${JSON.stringify(toStringRecord(_displayStruct))})`;
+    JSON.stringify(DisplayStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -19834,8 +18669,7 @@ export namespace ExplicitFromToRdfTypesStruct {
 
   export const $toString: $ToStringFunction<ExplicitFromToRdfTypesStruct> = (
     _explicitFromToRdfTypesStruct,
-  ) =>
-    `ExplicitFromToRdfTypesStruct(${JSON.stringify(toStringRecord(_explicitFromToRdfTypesStruct))})`;
+  ) => JSON.stringify(ExplicitFromToRdfTypesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -20429,8 +19263,7 @@ export namespace ExplicitRdfTypeStruct {
 
   export const $toString: $ToStringFunction<ExplicitRdfTypeStruct> = (
     _explicitRdfTypeStruct,
-  ) =>
-    `ExplicitRdfTypeStruct(${JSON.stringify(toStringRecord(_explicitRdfTypeStruct))})`;
+  ) => JSON.stringify(ExplicitRdfTypeStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -21004,7 +19837,7 @@ export namespace FlattenDiscriminatedUnionMember3 {
   export const $toString: $ToStringFunction<
     FlattenDiscriminatedUnionMember3
   > = (_flattenDiscriminatedUnionMember3) =>
-    `FlattenDiscriminatedUnionMember3(${JSON.stringify(toStringRecord(_flattenDiscriminatedUnionMember3))})`;
+    JSON.stringify(FlattenDiscriminatedUnionMember3.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -21596,7 +20429,7 @@ export namespace HasValuesStruct {
 
   export const $toString: $ToStringFunction<HasValuesStruct> = (
     _hasValuesStruct,
-  ) => `HasValuesStruct(${JSON.stringify(toStringRecord(_hasValuesStruct))})`;
+  ) => JSON.stringify(HasValuesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -22173,8 +21006,7 @@ export namespace IgnoredPropertiesStruct {
 
   export const $toString: $ToStringFunction<IgnoredPropertiesStruct> = (
     _ignoredPropertiesStruct,
-  ) =>
-    `IgnoredPropertiesStruct(${JSON.stringify(toStringRecord(_ignoredPropertiesStruct))})`;
+  ) => JSON.stringify(IgnoredPropertiesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -22837,8 +21669,7 @@ export namespace IndirectRecursiveStruct {
 
   export const $toString: $ToStringFunction<IndirectRecursiveStruct> = (
     _indirectRecursiveStruct,
-  ) =>
-    `IndirectRecursiveStruct(${JSON.stringify(toStringRecord(_indirectRecursiveStruct))})`;
+  ) => JSON.stringify(IndirectRecursiveStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -23455,8 +22286,7 @@ export namespace IndirectRecursiveStructHelper {
 
   export const $toString: $ToStringFunction<IndirectRecursiveStructHelper> = (
     _indirectRecursiveStructHelper,
-  ) =>
-    `IndirectRecursiveStructHelper(${JSON.stringify(toStringRecord(_indirectRecursiveStructHelper))})`;
+  ) => JSON.stringify(IndirectRecursiveStructHelper.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -24057,8 +22887,7 @@ export namespace InIdentifierStruct {
 
   export const $toString: $ToStringFunction<InIdentifierStruct> = (
     _inIdentifierStruct,
-  ) =>
-    `InIdentifierStruct(${JSON.stringify(toStringRecord(_inIdentifierStruct))})`;
+  ) => JSON.stringify(InIdentifierStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -24859,8 +23688,7 @@ export namespace InPropertiesStruct {
 
   export const $toString: $ToStringFunction<InPropertiesStruct> = (
     _inPropertiesStruct,
-  ) =>
-    `InPropertiesStruct(${JSON.stringify(toStringRecord(_inPropertiesStruct))})`;
+  ) => JSON.stringify(InPropertiesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -25932,8 +24760,7 @@ export namespace IriIdentifierStruct {
 
   export const $toString: $ToStringFunction<IriIdentifierStruct> = (
     _iriIdentifierStruct,
-  ) =>
-    `IriIdentifierStruct(${JSON.stringify(toStringRecord(_iriIdentifierStruct))})`;
+  ) => JSON.stringify(IriIdentifierStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -26790,18 +25617,16 @@ export namespace LangStringStruct {
     parameters.resource.add(
       LangStringStruct.schema.properties.langStringOrString.path,
       parameters.object.langStringOrString.toList().flatMap((value) =>
-        (
-          ((value, _options): Literal[] => {
-            if (typeof value === "object") {
-              return [value];
-            }
-            if (typeof value === "string") {
-              return [$literalFactory.string(value)];
-            }
+        ((value, _options): Literal[] => {
+          if (typeof value === "object") {
+            return [value];
+          }
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<Literal | string, Literal>
-        )(value, {
+          throw new Error("unable to serialize to RDF");
+        })(value, {
           ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
@@ -26815,18 +25640,16 @@ export namespace LangStringStruct {
     parameters.resource.add(
       LangStringStruct.schema.properties.stringOrLangString.path,
       parameters.object.stringOrLangString.toList().flatMap((value) =>
-        (
-          ((value, _options): Literal[] => {
-            if (typeof value === "string") {
-              return [$literalFactory.string(value)];
-            }
-            if (typeof value === "object") {
-              return [value];
-            }
+        ((value, _options): Literal[] => {
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
+          if (typeof value === "object") {
+            return [value];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<string | Literal, Literal>
-        )(value, {
+          throw new Error("unable to serialize to RDF");
+        })(value, {
           ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
@@ -26842,7 +25665,7 @@ export namespace LangStringStruct {
 
   export const $toString: $ToStringFunction<LangStringStruct> = (
     _langStringStruct,
-  ) => `LangStringStruct(${JSON.stringify(toStringRecord(_langStringStruct))})`;
+  ) => JSON.stringify(LangStringStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -27562,58 +26385,38 @@ export namespace LangStringStruct {
         .orDefault(Either.of(Maybe.empty())),
       langStringOrString: Maybe.fromNullable($json["langStringOrString"])
         .map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "object") {
-                return Either.of<Error, Literal>(
-                  dataFactory.literal(value["@value"], value["@language"]),
-                ).map((value) => value);
-              }
-              if (value.$type === "string") {
-                return Either.of<Error, string>(value["@value"]).map(
-                  (value) => value,
-                );
-              }
+          ((value) => {
+            if (value.$type === "object") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(value["@value"], value["@language"]),
+              ).map((value) => value);
+            }
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
+                (value) => value,
+              );
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              Literal | string,
-              | { $type: "object"; "@language": string; "@value": string }
-              | {
-                  $type: "string";
-                  "@type": string;
-                  "@value": string;
-                }
-            >
-          )(item).map((item) => Maybe.of(item)),
+            throw new Error("unable to deserialize JSON");
+          })(item).map((item) => Maybe.of(item)),
         )
         .orDefault(Either.of(Maybe.empty())),
       stringOrLangString: Maybe.fromNullable($json["stringOrLangString"])
         .map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "string") {
-                return Either.of<Error, string>(value["@value"]).map(
-                  (value) => value,
-                );
-              }
-              if (value.$type === "object") {
-                return Either.of<Error, Literal>(
-                  dataFactory.literal(value["@value"], value["@language"]),
-                ).map((value) => value);
-              }
+          ((value) => {
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
+                (value) => value,
+              );
+            }
+            if (value.$type === "object") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(value["@value"], value["@language"]),
+              ).map((value) => value);
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              string | Literal,
-              | { $type: "string"; "@type": string; "@value": string }
-              | {
-                  $type: "object";
-                  "@language": string;
-                  "@value": string;
-                }
-            >
-          )(item).map((item) => Maybe.of(item)),
+            throw new Error("unable to deserialize JSON");
+          })(item).map((item) => Maybe.of(item)),
         )
         .orDefault(Either.of(Maybe.empty())),
     }).chain(LangStringStruct.create);
@@ -27931,66 +26734,46 @@ export namespace LangStringStruct {
           .extract(),
         langStringOrString: _langStringStruct.langStringOrString
           .map((item) =>
-            (
-              ((value) => {
-                if (typeof value === "object") {
-                  return {
-                    $type: "object",
-                    "@language": value.language,
-                    "@value": value.value,
-                  };
-                }
-                if (typeof value === "string") {
-                  return {
-                    $type: "string",
-                    "@type": $xsd_string.value,
-                    "@value": value,
-                  };
-                }
+            ((value) => {
+              if (typeof value === "object") {
+                return {
+                  $type: "object",
+                  "@language": value.language,
+                  "@value": value.value,
+                };
+              }
+              if (typeof value === "string") {
+                return {
+                  $type: "string",
+                  "@type": $xsd_string.value,
+                  "@value": value,
+                };
+              }
 
-                throw new Error("unable to serialize to JSON");
-              }) satisfies $ToJsonFunction<
-                Literal | string,
-                | { $type: "object"; "@language": string; "@value": string }
-                | {
-                    $type: "string";
-                    "@type": string;
-                    "@value": string;
-                  }
-              >
-            )(item),
+              throw new Error("unable to serialize to JSON");
+            })(item),
           )
           .extract(),
         stringOrLangString: _langStringStruct.stringOrLangString
           .map((item) =>
-            (
-              ((value) => {
-                if (typeof value === "string") {
-                  return {
-                    $type: "string",
-                    "@type": $xsd_string.value,
-                    "@value": value,
-                  };
-                }
-                if (typeof value === "object") {
-                  return {
-                    $type: "object",
-                    "@language": value.language,
-                    "@value": value.value,
-                  };
-                }
+            ((value) => {
+              if (typeof value === "string") {
+                return {
+                  $type: "string",
+                  "@type": $xsd_string.value,
+                  "@value": value,
+                };
+              }
+              if (typeof value === "object") {
+                return {
+                  $type: "object",
+                  "@language": value.language,
+                  "@value": value.value,
+                };
+              }
 
-                throw new Error("unable to serialize to JSON");
-              }) satisfies $ToJsonFunction<
-                string | Literal,
-                | { $type: "string"; "@type": string; "@value": string }
-                | {
-                    $type: "object";
-                    "@language": string;
-                    "@value": string;
-                  }
-              >
-            )(item),
+              throw new Error("unable to serialize to JSON");
+            })(item),
           )
           .extract(),
       }),
@@ -28007,34 +26790,30 @@ export namespace LangStringStruct {
         .extract(),
       langStringOrString: _langStringStruct.langStringOrString
         .map((item) =>
-          (
-            ((value) => {
-              if (typeof value === "object") {
-                return `${JSON.stringify(value.value)}@${value.language}`;
-              }
-              if (typeof value === "string") {
-                return value;
-              }
+          ((value) => {
+            if (typeof value === "object") {
+              return `${JSON.stringify(value.value)}@${value.language}`;
+            }
+            if (typeof value === "string") {
+              return value;
+            }
 
-              throw new Error("unable to serialize to loggable");
-            }) satisfies $ToLoggableFunction<Literal | string>
-          )(item),
+            throw new Error("unable to serialize to loggable");
+          })(item),
         )
         .extract(),
       stringOrLangString: _langStringStruct.stringOrLangString
         .map((item) =>
-          (
-            ((value) => {
-              if (typeof value === "string") {
-                return value;
-              }
-              if (typeof value === "object") {
-                return `${JSON.stringify(value.value)}@${value.language}`;
-              }
+          ((value) => {
+            if (typeof value === "string") {
+              return value;
+            }
+            if (typeof value === "object") {
+              return `${JSON.stringify(value.value)}@${value.language}`;
+            }
 
-              throw new Error("unable to serialize to loggable");
-            }) satisfies $ToLoggableFunction<string | Literal>
-          )(item),
+            throw new Error("unable to serialize to loggable");
+          })(item),
         )
         .extract(),
     });
@@ -28150,7 +26929,7 @@ export namespace LanguageInStruct {
 
   export const $toString: $ToStringFunction<LanguageInStruct> = (
     _languageInStruct,
-  ) => `LanguageInStruct(${JSON.stringify(toStringRecord(_languageInStruct))})`;
+  ) => JSON.stringify(LanguageInStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -28229,12 +27008,8 @@ export namespace LanguageInStruct {
     ).chain(() =>
       $propertyEquals(
         {
-          equalsFunction: ((left, right) =>
-            $arrayEquals(
-              left,
-              right,
-              $booleanEquals,
-            )) satisfies $EqualsFunction<readonly Literal[]>,
+          equalsFunction: (left, right) =>
+            $arrayEquals(left, right, $booleanEquals),
           name: "languageIn",
         },
         [left, left.languageIn],
@@ -28678,9 +27453,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   export const $toString: $ToStringFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct
   > = (_lazilyResolvedBlankNodeOrIriIdentifierStruct) =>
-    `LazilyResolvedBlankNodeOrIriIdentifierStruct(${JSON.stringify(
-      toStringRecord(_lazilyResolvedBlankNodeOrIriIdentifierStruct),
-    )})`;
+    JSON.stringify(LazilyResolvedBlankNodeOrIriIdentifierStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -29294,9 +28067,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   export const $toString: $ToStringFunction<
     LazilyResolvedDiscriminatedUnionMember1
   > = (_lazilyResolvedDiscriminatedUnionMember1) =>
-    `LazilyResolvedDiscriminatedUnionMember1(${JSON.stringify(
-      toStringRecord(_lazilyResolvedDiscriminatedUnionMember1),
-    )})`;
+    JSON.stringify(LazilyResolvedDiscriminatedUnionMember1.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -29894,9 +28665,7 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   export const $toString: $ToStringFunction<
     LazilyResolvedDiscriminatedUnionMember2
   > = (_lazilyResolvedDiscriminatedUnionMember2) =>
-    `LazilyResolvedDiscriminatedUnionMember2(${JSON.stringify(
-      toStringRecord(_lazilyResolvedDiscriminatedUnionMember2),
-    )})`;
+    JSON.stringify(LazilyResolvedDiscriminatedUnionMember2.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -30475,7 +29244,7 @@ export namespace LazilyResolvedIriIdentifierStruct {
   export const $toString: $ToStringFunction<
     LazilyResolvedIriIdentifierStruct
   > = (_lazilyResolvedIriIdentifierStruct) =>
-    `LazilyResolvedIriIdentifierStruct(${JSON.stringify(toStringRecord(_lazilyResolvedIriIdentifierStruct))})`;
+    JSON.stringify(LazilyResolvedIriIdentifierStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -30979,7 +29748,7 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: ((
+        typeFromRdfResourceValues: (
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
@@ -31005,16 +29774,7 @@ export namespace LazyPropertiesStruct {
                     ),
                 }),
             ),
-          )) satisfies $FromRdfResourceValuesFunction<
-          $LazyOption<
-            $DefaultPartial,
-            LazilyResolvedBlankNodeOrIriIdentifierStruct
-          >,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof $DefaultPartial.schema>;
-          }
-        >,
+          ),
       }),
       optionalLazyToResolvedDiscriminatedUnion: $shaclPropertyFromRdf<
         $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>,
@@ -31029,7 +29789,7 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedDiscriminatedUnion,
-        typeFromRdfResourceValues: ((
+        typeFromRdfResourceValues: (
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
@@ -31055,13 +29815,7 @@ export namespace LazyPropertiesStruct {
                     ),
                 }),
             ),
-          )) satisfies $FromRdfResourceValuesFunction<
-          $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof $DefaultPartial.schema>;
-          }
-        >,
+          ),
       }),
       optionalLazyToResolvedIriIdentifier: $shaclPropertyFromRdf<
         $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>,
@@ -31076,7 +29830,7 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedIriIdentifier,
-        typeFromRdfResourceValues: ((
+        typeFromRdfResourceValues: (
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
@@ -31102,13 +29856,7 @@ export namespace LazyPropertiesStruct {
                     ),
                 }),
             ),
-          )) satisfies $FromRdfResourceValuesFunction<
-          $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof $NamedDefaultPartial.schema>;
-          }
-        >,
+          ),
       }),
       optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion:
         $shaclPropertyFromRdf<
@@ -31127,7 +29875,7 @@ export namespace LazyPropertiesStruct {
           propertySchema:
             LazyPropertiesStruct.schema.properties
               .optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
-          typeFromRdfResourceValues: ((
+          typeFromRdfResourceValues: (
             values,
             { objectSet, schema, ...otherOptions },
           ) =>
@@ -31153,18 +29901,7 @@ export namespace LazyPropertiesStruct {
                       ),
                   }),
               ),
-            )) satisfies $FromRdfResourceValuesFunction<
-            $LazyOption<
-              PartialDiscriminatedUnion,
-              LazilyResolvedDiscriminatedUnion
-            >,
-            {
-              kind: "LazyOption";
-              partialType: $MaybeSchema<
-                typeof PartialDiscriminatedUnion.schema
-              >;
-            }
-          >,
+            ),
         }),
       optionalPartialToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $LazyOption<
@@ -31182,7 +29919,7 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: ((
+        typeFromRdfResourceValues: (
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
@@ -31208,16 +29945,7 @@ export namespace LazyPropertiesStruct {
                     ),
                 }),
             ),
-          )) satisfies $FromRdfResourceValuesFunction<
-          $LazyOption<
-            PartialStruct,
-            LazilyResolvedBlankNodeOrIriIdentifierStruct
-          >,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof PartialStruct.schema>;
-          }
-        >,
+          ),
       }),
       optionalPartialToResolvedDiscriminatedUnion: $shaclPropertyFromRdf<
         $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>,
@@ -31232,7 +29960,7 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialToResolvedDiscriminatedUnion,
-        typeFromRdfResourceValues: ((
+        typeFromRdfResourceValues: (
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
@@ -31258,13 +29986,7 @@ export namespace LazyPropertiesStruct {
                     ),
                 }),
             ),
-          )) satisfies $FromRdfResourceValuesFunction<
-          $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof PartialStruct.schema>;
-          }
-        >,
+          ),
       }),
       requiredLazyToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
@@ -31276,7 +29998,7 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredLazyToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: ((
+        typeFromRdfResourceValues: (
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
@@ -31301,10 +30023,7 @@ export namespace LazyPropertiesStruct {
                       ),
                   }),
               ),
-            )) satisfies $FromRdfResourceValuesFunction<
-          $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
-          { kind: "Lazy"; partialType: typeof $DefaultPartial.schema }
-        >,
+            ),
       }),
       requiredPartialToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
@@ -31316,7 +30035,7 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredPartialToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: ((
+        typeFromRdfResourceValues: (
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
@@ -31339,10 +30058,7 @@ export namespace LazyPropertiesStruct {
                     ),
                 }),
             ),
-          )) satisfies $FromRdfResourceValuesFunction<
-          $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
-          { kind: "Lazy"; partialType: typeof PartialStruct.schema }
-        >,
+          ),
       }),
       setLazyToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $LazySet<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
@@ -31357,7 +30073,7 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setLazyToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: ((
+        typeFromRdfResourceValues: (
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
@@ -31385,16 +30101,7 @@ export namespace LazyPropertiesStruct {
                     }),
                 }),
             ),
-          )) satisfies $FromRdfResourceValuesFunction<
-          $LazySet<
-            $DefaultPartial,
-            LazilyResolvedBlankNodeOrIriIdentifierStruct
-          >,
-          {
-            kind: "LazySet";
-            partialType: $CollectionSchema<typeof $DefaultPartial.schema>;
-          }
-        >,
+          ),
       }),
       setPartialToResolvedBlankNodeOrIriIdentifier: $shaclPropertyFromRdf<
         $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
@@ -31409,7 +30116,7 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setPartialToResolvedBlankNodeOrIriIdentifier,
-        typeFromRdfResourceValues: ((
+        typeFromRdfResourceValues: (
           values,
           { objectSet, schema, ...otherOptions },
         ) =>
@@ -31436,13 +30143,7 @@ export namespace LazyPropertiesStruct {
                     }),
                 }),
             ),
-          )) satisfies $FromRdfResourceValuesFunction<
-          $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>,
-          {
-            kind: "LazySet";
-            partialType: $CollectionSchema<typeof PartialStruct.schema>;
-          }
-        >,
+          ),
       }),
     }).chain((properties) => LazyPropertiesStruct.create(properties));
 
@@ -31634,8 +30335,7 @@ export namespace LazyPropertiesStruct {
 
   export const $toString: $ToStringFunction<LazyPropertiesStruct> = (
     _lazyPropertiesStruct,
-  ) =>
-    `LazyPropertiesStruct(${JSON.stringify(toStringRecord(_lazyPropertiesStruct))})`;
+  ) => JSON.stringify(LazyPropertiesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -32025,17 +30725,12 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
+            equalsFunction: (left, right) =>
               ((left, right) =>
                 $maybeEquals(left, right, $DefaultPartial.equals))(
                 left.partial,
                 right.partial,
-              )) satisfies $EqualsFunction<
-              $LazyOption<
-                $DefaultPartial,
-                LazilyResolvedBlankNodeOrIriIdentifierStruct
-              >
-            >,
+              ),
             name: "optionalLazyToResolvedBlankNodeOrIriIdentifier",
           },
           [left, left.optionalLazyToResolvedBlankNodeOrIriIdentifier],
@@ -32045,14 +30740,12 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
+            equalsFunction: (left, right) =>
               ((left, right) =>
                 $maybeEquals(left, right, $DefaultPartial.equals))(
                 left.partial,
                 right.partial,
-              )) satisfies $EqualsFunction<
-              $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
-            >,
+              ),
             name: "optionalLazyToResolvedDiscriminatedUnion",
           },
           [left, left.optionalLazyToResolvedDiscriminatedUnion],
@@ -32062,17 +30755,12 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
+            equalsFunction: (left, right) =>
               ((left, right) =>
                 $maybeEquals(left, right, $NamedDefaultPartial.equals))(
                 left.partial,
                 right.partial,
-              )) satisfies $EqualsFunction<
-              $LazyOption<
-                $NamedDefaultPartial,
-                LazilyResolvedIriIdentifierStruct
-              >
-            >,
+              ),
             name: "optionalLazyToResolvedIriIdentifier",
           },
           [left, left.optionalLazyToResolvedIriIdentifier],
@@ -32082,17 +30770,12 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
+            equalsFunction: (left, right) =>
               ((left, right) =>
                 $maybeEquals(left, right, PartialDiscriminatedUnion.equals))(
                 left.partial,
                 right.partial,
-              )) satisfies $EqualsFunction<
-              $LazyOption<
-                PartialDiscriminatedUnion,
-                LazilyResolvedDiscriminatedUnion
-              >
-            >,
+              ),
             name: "optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion",
           },
           [
@@ -32108,17 +30791,12 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
+            equalsFunction: (left, right) =>
               ((left, right) =>
                 $maybeEquals(left, right, PartialStruct.equals))(
                 left.partial,
                 right.partial,
-              )) satisfies $EqualsFunction<
-              $LazyOption<
-                PartialStruct,
-                LazilyResolvedBlankNodeOrIriIdentifierStruct
-              >
-            >,
+              ),
             name: "optionalPartialToResolvedBlankNodeOrIriIdentifier",
           },
           [left, left.optionalPartialToResolvedBlankNodeOrIriIdentifier],
@@ -32128,14 +30806,12 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
+            equalsFunction: (left, right) =>
               ((left, right) =>
                 $maybeEquals(left, right, PartialStruct.equals))(
                 left.partial,
                 right.partial,
-              )) satisfies $EqualsFunction<
-              $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
-            >,
+              ),
             name: "optionalPartialToResolvedDiscriminatedUnion",
           },
           [left, left.optionalPartialToResolvedDiscriminatedUnion],
@@ -32145,16 +30821,8 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $DefaultPartial.equals(
-                left.partial,
-                right.partial,
-              )) satisfies $EqualsFunction<
-              $Lazy<
-                $DefaultPartial,
-                LazilyResolvedBlankNodeOrIriIdentifierStruct
-              >
-            >,
+            equalsFunction: (left, right) =>
+              $DefaultPartial.equals(left.partial, right.partial),
             name: "requiredLazyToResolvedBlankNodeOrIriIdentifier",
           },
           [left, left.requiredLazyToResolvedBlankNodeOrIriIdentifier],
@@ -32164,13 +30832,8 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              PartialStruct.equals(
-                left.partial,
-                right.partial,
-              )) satisfies $EqualsFunction<
-              $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-            >,
+            equalsFunction: (left, right) =>
+              PartialStruct.equals(left.partial, right.partial),
             name: "requiredPartialToResolvedBlankNodeOrIriIdentifier",
           },
           [left, left.requiredPartialToResolvedBlankNodeOrIriIdentifier],
@@ -32180,7 +30843,7 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
+            equalsFunction: (left, right) =>
               (
                 ((left, right) =>
                   $arrayEquals(
@@ -32188,12 +30851,7 @@ export namespace LazyPropertiesStruct {
                     right,
                     $DefaultPartial.equals,
                   )) satisfies $EqualsFunction<readonly $DefaultPartial[]>
-              )(left.partials, right.partials)) satisfies $EqualsFunction<
-              $LazySet<
-                $DefaultPartial,
-                LazilyResolvedBlankNodeOrIriIdentifierStruct
-              >
-            >,
+              )(left.partials, right.partials),
             name: "setLazyToResolvedBlankNodeOrIriIdentifier",
           },
           [left, left.setLazyToResolvedBlankNodeOrIriIdentifier],
@@ -32203,7 +30861,7 @@ export namespace LazyPropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
+            equalsFunction: (left, right) =>
               (
                 ((left, right) =>
                   $arrayEquals(
@@ -32211,12 +30869,7 @@ export namespace LazyPropertiesStruct {
                     right,
                     PartialStruct.equals,
                   )) satisfies $EqualsFunction<readonly PartialStruct[]>
-              )(left.partials, right.partials)) satisfies $EqualsFunction<
-              $LazySet<
-                PartialStruct,
-                LazilyResolvedBlankNodeOrIriIdentifierStruct
-              >
-            >,
+              )(left.partials, right.partials),
             name: "setPartialToResolvedBlankNodeOrIriIdentifier",
           },
           [left, left.setPartialToResolvedBlankNodeOrIriIdentifier],
@@ -32236,18 +30889,10 @@ export namespace LazyPropertiesStruct {
     }
     if (
       filter.optionalLazyToResolvedBlankNodeOrIriIdentifier !== undefined &&
-      !(
-        ((filter, value) =>
-          $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
-            $DefaultPartial.filter,
-          )(filter, value.partial)) satisfies $FilterFunction<
-          $MaybeFilter<$DefaultPartial.Filter>,
-          $LazyOption<
-            $DefaultPartial,
-            LazilyResolvedBlankNodeOrIriIdentifierStruct
-          >
-        >
-      )(
+      !((filter, value) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
+          $DefaultPartial.filter,
+        )(filter, value.partial))(
         filter.optionalLazyToResolvedBlankNodeOrIriIdentifier,
         value.optionalLazyToResolvedBlankNodeOrIriIdentifier,
       )
@@ -32256,15 +30901,10 @@ export namespace LazyPropertiesStruct {
     }
     if (
       filter.optionalLazyToResolvedDiscriminatedUnion !== undefined &&
-      !(
-        ((filter, value) =>
-          $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
-            $DefaultPartial.filter,
-          )(filter, value.partial)) satisfies $FilterFunction<
-          $MaybeFilter<$DefaultPartial.Filter>,
-          $LazyOption<$DefaultPartial, LazilyResolvedDiscriminatedUnion>
-        >
-      )(
+      !((filter, value) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.Filter>(
+          $DefaultPartial.filter,
+        )(filter, value.partial))(
         filter.optionalLazyToResolvedDiscriminatedUnion,
         value.optionalLazyToResolvedDiscriminatedUnion,
       )
@@ -32273,15 +30913,10 @@ export namespace LazyPropertiesStruct {
     }
     if (
       filter.optionalLazyToResolvedIriIdentifier !== undefined &&
-      !(
-        ((filter, value) =>
-          $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.Filter>(
-            $NamedDefaultPartial.filter,
-          )(filter, value.partial)) satisfies $FilterFunction<
-          $MaybeFilter<$NamedDefaultPartial.Filter>,
-          $LazyOption<$NamedDefaultPartial, LazilyResolvedIriIdentifierStruct>
-        >
-      )(
+      !((filter, value) =>
+        $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.Filter>(
+          $NamedDefaultPartial.filter,
+        )(filter, value.partial))(
         filter.optionalLazyToResolvedIriIdentifier,
         value.optionalLazyToResolvedIriIdentifier,
       )
@@ -32291,22 +30926,11 @@ export namespace LazyPropertiesStruct {
     if (
       filter.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion !==
         undefined &&
-      !(
-        ((filter, value) =>
-          $filterMaybe<
-            PartialDiscriminatedUnion,
-            PartialDiscriminatedUnion.Filter
-          >(PartialDiscriminatedUnion.filter)(
-            filter,
-            value.partial,
-          )) satisfies $FilterFunction<
-          $MaybeFilter<PartialDiscriminatedUnion.Filter>,
-          $LazyOption<
-            PartialDiscriminatedUnion,
-            LazilyResolvedDiscriminatedUnion
-          >
-        >
-      )(
+      !((filter, value) =>
+        $filterMaybe<
+          PartialDiscriminatedUnion,
+          PartialDiscriminatedUnion.Filter
+        >(PartialDiscriminatedUnion.filter)(filter, value.partial))(
         filter.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
         value.optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
       )
@@ -32315,18 +30939,11 @@ export namespace LazyPropertiesStruct {
     }
     if (
       filter.optionalPartialToResolvedBlankNodeOrIriIdentifier !== undefined &&
-      !(
-        ((filter, value) =>
-          $filterMaybe<PartialStruct, PartialStruct.Filter>(
-            PartialStruct.filter,
-          )(filter, value.partial)) satisfies $FilterFunction<
-          $MaybeFilter<PartialStruct.Filter>,
-          $LazyOption<
-            PartialStruct,
-            LazilyResolvedBlankNodeOrIriIdentifierStruct
-          >
-        >
-      )(
+      !((filter, value) =>
+        $filterMaybe<PartialStruct, PartialStruct.Filter>(PartialStruct.filter)(
+          filter,
+          value.partial,
+        ))(
         filter.optionalPartialToResolvedBlankNodeOrIriIdentifier,
         value.optionalPartialToResolvedBlankNodeOrIriIdentifier,
       )
@@ -32335,15 +30952,11 @@ export namespace LazyPropertiesStruct {
     }
     if (
       filter.optionalPartialToResolvedDiscriminatedUnion !== undefined &&
-      !(
-        ((filter, value) =>
-          $filterMaybe<PartialStruct, PartialStruct.Filter>(
-            PartialStruct.filter,
-          )(filter, value.partial)) satisfies $FilterFunction<
-          $MaybeFilter<PartialStruct.Filter>,
-          $LazyOption<PartialStruct, LazilyResolvedDiscriminatedUnion>
-        >
-      )(
+      !((filter, value) =>
+        $filterMaybe<PartialStruct, PartialStruct.Filter>(PartialStruct.filter)(
+          filter,
+          value.partial,
+        ))(
         filter.optionalPartialToResolvedDiscriminatedUnion,
         value.optionalPartialToResolvedDiscriminatedUnion,
       )
@@ -32352,16 +30965,7 @@ export namespace LazyPropertiesStruct {
     }
     if (
       filter.requiredLazyToResolvedBlankNodeOrIriIdentifier !== undefined &&
-      !(
-        ((filter, value) =>
-          $DefaultPartial.filter(
-            filter,
-            value.partial,
-          )) satisfies $FilterFunction<
-          $DefaultPartial.Filter,
-          $Lazy<$DefaultPartial, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-        >
-      )(
+      !((filter, value) => $DefaultPartial.filter(filter, value.partial))(
         filter.requiredLazyToResolvedBlankNodeOrIriIdentifier,
         value.requiredLazyToResolvedBlankNodeOrIriIdentifier,
       )
@@ -32370,16 +30974,7 @@ export namespace LazyPropertiesStruct {
     }
     if (
       filter.requiredPartialToResolvedBlankNodeOrIriIdentifier !== undefined &&
-      !(
-        ((filter, value) =>
-          PartialStruct.filter(
-            filter,
-            value.partial,
-          )) satisfies $FilterFunction<
-          PartialStruct.Filter,
-          $Lazy<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-        >
-      )(
+      !((filter, value) => PartialStruct.filter(filter, value.partial))(
         filter.requiredPartialToResolvedBlankNodeOrIriIdentifier,
         value.requiredPartialToResolvedBlankNodeOrIriIdentifier,
       )
@@ -32388,18 +30983,10 @@ export namespace LazyPropertiesStruct {
     }
     if (
       filter.setLazyToResolvedBlankNodeOrIriIdentifier !== undefined &&
-      !(
-        ((filter, value) =>
-          $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
-            $DefaultPartial.filter,
-          )(filter, value.partials)) satisfies $FilterFunction<
-          $CollectionFilter<$DefaultPartial.Filter>,
-          $LazySet<
-            $DefaultPartial,
-            LazilyResolvedBlankNodeOrIriIdentifierStruct
-          >
-        >
-      )(
+      !((filter, value) =>
+        $filterArray<$DefaultPartial, $DefaultPartial.Filter>(
+          $DefaultPartial.filter,
+        )(filter, value.partials))(
         filter.setLazyToResolvedBlankNodeOrIriIdentifier,
         value.setLazyToResolvedBlankNodeOrIriIdentifier,
       )
@@ -32408,15 +30995,11 @@ export namespace LazyPropertiesStruct {
     }
     if (
       filter.setPartialToResolvedBlankNodeOrIriIdentifier !== undefined &&
-      !(
-        ((filter, value) =>
-          $filterArray<PartialStruct, PartialStruct.Filter>(
-            PartialStruct.filter,
-          )(filter, value.partials)) satisfies $FilterFunction<
-          $CollectionFilter<PartialStruct.Filter>,
-          $LazySet<PartialStruct, LazilyResolvedBlankNodeOrIriIdentifierStruct>
-        >
-      )(
+      !((filter, value) =>
+        $filterArray<PartialStruct, PartialStruct.Filter>(PartialStruct.filter)(
+          filter,
+          value.partials,
+        ))(
         filter.setPartialToResolvedBlankNodeOrIriIdentifier,
         value.setPartialToResolvedBlankNodeOrIriIdentifier,
       )
@@ -32454,20 +31037,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             $DefaultPartial.Filter,
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlConstructTriples)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          $MaybeFilter<$DefaultPartial.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof $DefaultPartial.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32480,20 +31057,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedDiscriminatedUnion,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             $DefaultPartial.Filter,
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlConstructTriples)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          $MaybeFilter<$DefaultPartial.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof $DefaultPartial.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32506,20 +31077,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedIriIdentifier,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             $NamedDefaultPartial.Filter,
             typeof $NamedDefaultPartial.schema
           >($NamedDefaultPartial.valueSparqlConstructTriples)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          $MaybeFilter<$NamedDefaultPartial.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof $NamedDefaultPartial.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32535,20 +31100,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             PartialDiscriminatedUnion.Filter,
             typeof PartialDiscriminatedUnion.schema
           >(PartialDiscriminatedUnion.valueSparqlConstructTriples)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          $MaybeFilter<PartialDiscriminatedUnion.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof PartialDiscriminatedUnion.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32562,20 +31121,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             PartialStruct.Filter,
             typeof PartialStruct.schema
           >(PartialStruct.valueSparqlConstructTriples)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          $MaybeFilter<PartialStruct.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof PartialStruct.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32588,20 +31141,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialToResolvedDiscriminatedUnion,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $maybeSparqlConstructTriples<
             PartialStruct.Filter,
             typeof PartialStruct.schema
           >(PartialStruct.valueSparqlConstructTriples)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          $MaybeFilter<PartialStruct.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof PartialStruct.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32615,14 +31162,11 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredLazyToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $DefaultPartial.valueSparqlConstructTriples({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          $DefaultPartial.Filter,
-          { kind: "Lazy"; partialType: typeof $DefaultPartial.schema }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32636,14 +31180,11 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredPartialToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           PartialStruct.valueSparqlConstructTriples({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          PartialStruct.Filter,
-          { kind: "Lazy"; partialType: typeof PartialStruct.schema }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32656,20 +31197,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setLazyToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $setSparqlConstructTriples<
             $DefaultPartial.Filter,
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlConstructTriples)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          $CollectionFilter<$DefaultPartial.Filter>,
-          {
-            kind: "LazySet";
-            partialType: $CollectionSchema<typeof $DefaultPartial.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32682,20 +31217,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setPartialToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlConstructTriples: (({ schema, ...otherParameters }) =>
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $setSparqlConstructTriples<
             PartialStruct.Filter,
             typeof PartialStruct.schema
           >(PartialStruct.valueSparqlConstructTriples)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlConstructTriplesFunction<
-          $CollectionFilter<PartialStruct.Filter>,
-          {
-            kind: "LazySet";
-            partialType: $CollectionSchema<typeof PartialStruct.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32730,20 +31259,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             $DefaultPartial.Filter,
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlWherePatterns)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          $MaybeFilter<$DefaultPartial.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof $DefaultPartial.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32757,20 +31280,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedDiscriminatedUnion,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             $DefaultPartial.Filter,
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlWherePatterns)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          $MaybeFilter<$DefaultPartial.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof $DefaultPartial.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32784,20 +31301,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalLazyToResolvedIriIdentifier,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             $NamedDefaultPartial.Filter,
             typeof $NamedDefaultPartial.schema
           >($NamedDefaultPartial.valueSparqlWherePatterns)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          $MaybeFilter<$NamedDefaultPartial.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof $NamedDefaultPartial.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32814,20 +31325,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialDiscriminatedUnionToResolvedDiscriminatedUnion,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             PartialDiscriminatedUnion.Filter,
             typeof PartialDiscriminatedUnion.schema
           >(PartialDiscriminatedUnion.valueSparqlWherePatterns)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          $MaybeFilter<PartialDiscriminatedUnion.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof PartialDiscriminatedUnion.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32842,20 +31347,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             PartialStruct.Filter,
             typeof PartialStruct.schema
           >(PartialStruct.valueSparqlWherePatterns)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          $MaybeFilter<PartialStruct.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof PartialStruct.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32869,20 +31368,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .optionalPartialToResolvedDiscriminatedUnion,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $maybeSparqlWherePatterns<
             PartialStruct.Filter,
             typeof PartialStruct.schema
           >(PartialStruct.valueSparqlWherePatterns)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          $MaybeFilter<PartialStruct.Filter>,
-          {
-            kind: "LazyOption";
-            partialType: $MaybeSchema<typeof PartialStruct.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32897,14 +31390,11 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredLazyToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $DefaultPartial.valueSparqlWherePatterns({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          $DefaultPartial.Filter,
-          { kind: "Lazy"; partialType: typeof $DefaultPartial.schema }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32919,14 +31409,11 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .requiredPartialToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           PartialStruct.valueSparqlWherePatterns({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          PartialStruct.Filter,
-          { kind: "Lazy"; partialType: typeof PartialStruct.schema }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32940,20 +31427,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setLazyToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $setSparqlWherePatterns<
             $DefaultPartial.Filter,
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlWherePatterns)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          $CollectionFilter<$DefaultPartial.Filter>,
-          {
-            kind: "LazySet";
-            partialType: $CollectionSchema<typeof $DefaultPartial.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -32967,20 +31448,14 @@ export namespace LazyPropertiesStruct {
         propertySchema:
           LazyPropertiesStruct.schema.properties
             .setPartialToResolvedBlankNodeOrIriIdentifier,
-        typeSparqlWherePatterns: (({ schema, ...otherParameters }) =>
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $setSparqlWherePatterns<
             PartialStruct.Filter,
             typeof PartialStruct.schema
           >(PartialStruct.valueSparqlWherePatterns)({
             ...otherParameters,
             schema: schema.partialType,
-          })) satisfies $ValueSparqlWherePatternsFunction<
-          $CollectionFilter<PartialStruct.Filter>,
-          {
-            kind: "LazySet";
-            partialType: $CollectionSchema<typeof PartialStruct.schema>;
-          }
-        >,
+          }),
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -34081,72 +32556,67 @@ export namespace ListSetsStruct {
     parameters.resource.add(
       ListSetsStruct.schema.properties.listDiscriminatedUnionSet.path,
       parameters.object.listDiscriminatedUnionSet.flatMap((item) =>
-        (
-          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
-            if (typeof value === "object") {
-              return [
-                value.length > 0
-                  ? value.reduce(
-                      (
-                        { currentSubListResource, listResource },
-                        item,
-                        itemIndex,
-                        list,
-                      ) => {
-                        if (itemIndex === 0) {
-                          currentSubListResource = listResource;
-                        } else {
-                          const newSubListResource =
-                            _options.resourceSet.resource(
-                              (() => dataFactory.blankNode())(),
-                            );
-                          currentSubListResource!.add(
-                            $rdf_rest,
-                            newSubListResource.identifier,
-                            _options.graph,
+        ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+          if (typeof value === "object") {
+            return [
+              value.length > 0
+                ? value.reduce(
+                    (
+                      { currentSubListResource, listResource },
+                      item,
+                      itemIndex,
+                      list,
+                    ) => {
+                      if (itemIndex === 0) {
+                        currentSubListResource = listResource;
+                      } else {
+                        const newSubListResource =
+                          _options.resourceSet.resource(
+                            (() => dataFactory.blankNode())(),
                           );
-                          currentSubListResource = newSubListResource;
-                        }
-
-                        currentSubListResource.add(
-                          $rdf_first,
-                          [$literalFactory.string(item)],
+                        currentSubListResource!.add(
+                          $rdf_rest,
+                          newSubListResource.identifier,
                           _options.graph,
                         );
+                        currentSubListResource = newSubListResource;
+                      }
 
-                        if (itemIndex + 1 === list.length) {
-                          currentSubListResource.add(
-                            $rdf_rest,
-                            $rdf_nil,
-                            _options.graph,
-                          );
-                        }
+                      currentSubListResource.add(
+                        $rdf_first,
+                        [$literalFactory.string(item)],
+                        _options.graph,
+                      );
 
-                        return { currentSubListResource, listResource };
-                      },
-                      {
-                        currentSubListResource: null,
-                        listResource: _options.resourceSet.resource(
-                          (() => dataFactory.blankNode())(),
-                        ),
-                      } as {
-                        currentSubListResource: Resource<BlankNode> | null;
-                        listResource: Resource<BlankNode>;
-                      },
-                    ).listResource.identifier
-                  : $rdf_nil,
-              ];
-            }
-            if (typeof value === "string") {
-              return [$literalFactory.string(value)];
-            }
+                      if (itemIndex + 1 === list.length) {
+                        currentSubListResource.add(
+                          $rdf_rest,
+                          $rdf_nil,
+                          _options.graph,
+                        );
+                      }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            readonly string[] | string,
-            BlankNode | NamedNode | Literal
-          >
-        )(item, {
+                      return { currentSubListResource, listResource };
+                    },
+                    {
+                      currentSubListResource: null,
+                      listResource: _options.resourceSet.resource(
+                        (() => dataFactory.blankNode())(),
+                      ),
+                    } as {
+                      currentSubListResource: Resource<BlankNode> | null;
+                      listResource: Resource<BlankNode>;
+                    },
+                  ).listResource.identifier
+                : $rdf_nil,
+            ];
+          }
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
+
+          throw new Error("unable to serialize to RDF");
+        })(item, {
           ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
@@ -34323,7 +32793,7 @@ export namespace ListSetsStruct {
 
   export const $toString: $ToStringFunction<ListSetsStruct> = (
     _listSetsStruct,
-  ) => `ListSetsStruct(${JSON.stringify(toStringRecord(_listSetsStruct))})`;
+  ) => JSON.stringify(ListSetsStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -34441,8 +32911,8 @@ export namespace ListSetsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(left, right, ((left, right) => {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, (left, right) => {
                 if (typeof left === "object" && typeof right === "object") {
                   return (
                     ((left, right) =>
@@ -34468,11 +32938,7 @@ export namespace ListSetsStruct {
                   },
                   type: "property" as const,
                 });
-              }) satisfies $EqualsFunction<
-                readonly string[] | string
-              >)) satisfies $EqualsFunction<
-              readonly (readonly string[] | string)[]
-            >,
+              }),
             name: "listDiscriminatedUnionSet",
           },
           [left, left.listDiscriminatedUnionSet],
@@ -34482,20 +32948,12 @@ export namespace ListSetsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(left, right, ((left, right) =>
-                $arrayEquals(left, right, ((left, right) =>
-                  $arrayEquals(
-                    left,
-                    right,
-                    $strictEquals,
-                  )) satisfies $EqualsFunction<
-                  readonly string[]
-                >)) satisfies $EqualsFunction<
-                readonly (readonly string[])[]
-              >)) satisfies $EqualsFunction<
-              readonly (readonly (readonly string[])[])[]
-            >,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, (left, right) =>
+                $arrayEquals(left, right, (left, right) =>
+                  $arrayEquals(left, right, $strictEquals),
+                ),
+              ),
             name: "listListSet",
           },
           [left, left.listListSet],
@@ -34505,15 +32963,10 @@ export namespace ListSetsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(left, right, ((left, right) =>
-                $arrayEquals(
-                  left,
-                  right,
-                  $strictEquals,
-                )) satisfies $EqualsFunction<
-                readonly string[]
-              >)) satisfies $EqualsFunction<readonly (readonly string[])[]>,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, (left, right) =>
+                $arrayEquals(left, right, $strictEquals),
+              ),
             name: "listSet",
           },
           [left, left.listSet],
@@ -34541,7 +32994,7 @@ export namespace ListSetsStruct {
             readonly string?: $StringFilter;
           };
         }
-      >(((filter, value) => {
+      >((filter, value) => {
         if (filter.on?.["object"] !== undefined && typeof value === "object") {
           if (
             !$filterArray<string, $StringFilter>($filterString)(
@@ -34559,15 +33012,7 @@ export namespace ListSetsStruct {
         }
 
         return true;
-      }) satisfies $FilterFunction<
-        {
-          readonly on?: {
-            readonly object?: $CollectionFilter<$StringFilter>;
-            readonly string?: $StringFilter;
-          };
-        },
-        readonly string[] | string
-      >)(filter.listDiscriminatedUnionSet, value.listDiscriminatedUnionSet)
+      })(filter.listDiscriminatedUnionSet, value.listDiscriminatedUnionSet)
     ) {
       return false;
     }
@@ -34956,26 +33401,20 @@ export namespace ListSetsStruct {
         readonly string[] | string
       >(
         ($json["listDiscriminatedUnionSet"] ?? []).map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "object") {
-                return Either.sequence<Error, string>(
-                  value["@list"].map((item) => Either.of<Error, string>(item)),
-                ).map((value) => value);
-              }
-              if (value.$type === "string") {
-                return Either.of<Error, string>(value["@value"]).map(
-                  (value) => value,
-                );
-              }
+          ((value) => {
+            if (value.$type === "object") {
+              return Either.sequence<Error, string>(
+                value["@list"].map((item) => Either.of<Error, string>(item)),
+              ).map((value) => value);
+            }
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
+                (value) => value,
+              );
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              readonly string[] | string,
-              | { $type: "object"; "@list": string[] }
-              | { $type: "string"; "@type": string; "@value": string }
-            >
-          )(item),
+            throw new Error("unable to deserialize JSON");
+          })(item),
         ),
       ),
       listListSet: Either.sequence<Error, readonly (readonly string[])[]>(
@@ -35282,29 +33721,20 @@ export namespace ListSetsStruct {
         $type: _listSetsStruct.$type,
         listDiscriminatedUnionSet:
           _listSetsStruct.listDiscriminatedUnionSet.map((item) =>
-            (
-              ((value) => {
-                if (typeof value === "object") {
-                  return {
-                    $type: "object",
-                    "@list": value.map((item) => item),
-                  };
-                }
-                if (typeof value === "string") {
-                  return {
-                    $type: "string",
-                    "@type": $xsd_string.value,
-                    "@value": value,
-                  };
-                }
+            ((value) => {
+              if (typeof value === "object") {
+                return { $type: "object", "@list": value.map((item) => item) };
+              }
+              if (typeof value === "string") {
+                return {
+                  $type: "string",
+                  "@type": $xsd_string.value,
+                  "@value": value,
+                };
+              }
 
-                throw new Error("unable to serialize to JSON");
-              }) satisfies $ToJsonFunction<
-                readonly string[] | string,
-                | { $type: "object"; "@list": string[] }
-                | { $type: "string"; "@type": string; "@value": string }
-              >
-            )(item),
+              throw new Error("unable to serialize to JSON");
+            })(item),
           ),
         listListSet: _listSetsStruct.listListSet.map((item) =>
           item.map((item) => item.map((item) => item)),
@@ -35323,18 +33753,16 @@ export namespace ListSetsStruct {
       $type: "ListSetsStruct",
       listDiscriminatedUnionSet: _listSetsStruct.listDiscriminatedUnionSet.map(
         (item) =>
-          (
-            ((value) => {
-              if (typeof value === "object") {
-                return value.map((item) => item);
-              }
-              if (typeof value === "string") {
-                return value;
-              }
+          ((value) => {
+            if (typeof value === "object") {
+              return value.map((item) => item);
+            }
+            if (typeof value === "string") {
+              return value;
+            }
 
-              throw new Error("unable to serialize to loggable");
-            }) satisfies $ToLoggableFunction<readonly string[] | string>
-          )(item),
+            throw new Error("unable to serialize to loggable");
+          })(item),
       ),
       listListSet: _listSetsStruct.listListSet.map((item) =>
         item.map((item) => item.map((item) => item)),
@@ -35809,7 +34237,7 @@ export namespace ListsStruct {
   };
 
   export const $toString: $ToStringFunction<ListsStruct> = (_listsStruct) =>
-    `ListsStruct(${JSON.stringify(toStringRecord(_listsStruct))})`;
+    JSON.stringify(ListsStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -35982,14 +34410,9 @@ export namespace ListsStruct {
           {
             equalsFunction: (left, right) =>
               $maybeEquals(left, right, ((left, right) =>
-                $arrayEquals(left, right, ((left, right) =>
-                  $arrayEquals(
-                    left,
-                    right,
-                    $strictEquals,
-                  )) satisfies $EqualsFunction<
-                  readonly string[]
-                >)) satisfies $EqualsFunction<readonly (readonly string[])[]>),
+                $arrayEquals(left, right, (left, right) =>
+                  $arrayEquals(left, right, $strictEquals),
+                )) satisfies $EqualsFunction<readonly (readonly string[])[]>),
             name: "stringListList",
           },
           [left, left.stringListList],
@@ -36902,8 +35325,7 @@ export namespace MutablePropertiesStruct {
 
   export const $toString: $ToStringFunction<MutablePropertiesStruct> = (
     _mutablePropertiesStruct,
-  ) =>
-    `MutablePropertiesStruct(${JSON.stringify(toStringRecord(_mutablePropertiesStruct))})`;
+  ) => JSON.stringify(MutablePropertiesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -37027,12 +35449,8 @@ export namespace MutablePropertiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(
-                left,
-                right,
-                $strictEquals,
-              )) satisfies $EqualsFunction<string[]>,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $strictEquals),
             name: "mutableSet",
           },
           [left, left.mutableSet],
@@ -37834,7 +36252,7 @@ export namespace NamedTypesStruct {
 
   export const $toString: $ToStringFunction<NamedTypesStruct> = (
     _namedTypesStruct,
-  ) => `NamedTypesStruct(${JSON.stringify(toStringRecord(_namedTypesStruct))})`;
+  ) => JSON.stringify(NamedTypesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -38686,7 +37104,7 @@ export namespace NewName {
   };
 
   export const $toString: $ToStringFunction<NewName> = (_newName) =>
-    `NewName(${JSON.stringify(toStringRecord(_newName))})`;
+    JSON.stringify(NewName.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -39338,7 +37756,7 @@ export namespace NodeKindsStruct {
 
   export const $toString: $ToStringFunction<NodeKindsStruct> = (
     _nodeKindsStruct,
-  ) => `NodeKindsStruct(${JSON.stringify(toStringRecord(_nodeKindsStruct))})`;
+  ) => JSON.stringify(NodeKindsStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -40406,7 +38824,7 @@ export namespace NonClassStruct {
 
   export const $toString: $ToStringFunction<NonClassStruct> = (
     _nonClassStruct,
-  ) => `NonClassStruct(${JSON.stringify(toStringRecord(_nonClassStruct))})`;
+  ) => JSON.stringify(NonClassStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -40869,7 +39287,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   export const $toString: $ToStringFunction<
     NoRdfTypeDiscriminatedUnionMember1
   > = (_noRdfTypeDiscriminatedUnionMember1) =>
-    `NoRdfTypeDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_noRdfTypeDiscriminatedUnionMember1))})`;
+    JSON.stringify(NoRdfTypeDiscriminatedUnionMember1.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -41378,7 +39796,7 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   export const $toString: $ToStringFunction<
     NoRdfTypeDiscriminatedUnionMember2
   > = (_noRdfTypeDiscriminatedUnionMember2) =>
-    `NoRdfTypeDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_noRdfTypeDiscriminatedUnionMember2))})`;
+    JSON.stringify(NoRdfTypeDiscriminatedUnionMember2.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -42246,7 +40664,7 @@ export namespace NumericsStruct {
 
   export const $toString: $ToStringFunction<NumericsStruct> = (
     _numericsStruct,
-  ) => `NumericsStruct(${JSON.stringify(toStringRecord(_numericsStruct))})`;
+  ) => JSON.stringify(NumericsStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -44200,7 +42618,7 @@ export namespace OrderedStruct {
   };
 
   export const $toString: $ToStringFunction<OrderedStruct> = (_orderedStruct) =>
-    `OrderedStruct(${JSON.stringify(toStringRecord(_orderedStruct))})`;
+    JSON.stringify(OrderedStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -44787,7 +43205,7 @@ export namespace PartialDiscriminatedUnionMember1 {
   export const $toString: $ToStringFunction<
     PartialDiscriminatedUnionMember1
   > = (_partialDiscriminatedUnionMember1) =>
-    `PartialDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_partialDiscriminatedUnionMember1))})`;
+    JSON.stringify(PartialDiscriminatedUnionMember1.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -45369,7 +43787,7 @@ export namespace PartialDiscriminatedUnionMember2 {
   export const $toString: $ToStringFunction<
     PartialDiscriminatedUnionMember2
   > = (_partialDiscriminatedUnionMember2) =>
-    `PartialDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_partialDiscriminatedUnionMember2))})`;
+    JSON.stringify(PartialDiscriminatedUnionMember2.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -45927,7 +44345,7 @@ export namespace PartialStruct {
   };
 
   export const $toString: $ToStringFunction<PartialStruct> = (_partialStruct) =>
-    `PartialStruct(${JSON.stringify(toStringRecord(_partialStruct))})`;
+    JSON.stringify(PartialStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -46455,8 +44873,7 @@ export namespace PropertyCardinalitiesStruct {
 
   export const $toString: $ToStringFunction<PropertyCardinalitiesStruct> = (
     _propertyCardinalitiesStruct,
-  ) =>
-    `PropertyCardinalitiesStruct(${JSON.stringify(toStringRecord(_propertyCardinalitiesStruct))})`;
+  ) => JSON.stringify(PropertyCardinalitiesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -46570,12 +44987,8 @@ export namespace PropertyCardinalitiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(
-                left,
-                right,
-                $strictEquals,
-              )) satisfies $EqualsFunction<readonly string[]>,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $strictEquals),
             name: "emptySet",
           },
           [left, left.emptySet],
@@ -46585,12 +44998,8 @@ export namespace PropertyCardinalitiesStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(
-                left,
-                right,
-                $strictEquals,
-              )) satisfies $EqualsFunction<readonly string[]>,
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, $strictEquals),
             name: "nonEmptySet",
           },
           [left, left.nonEmptySet],
@@ -47289,8 +45698,7 @@ export namespace PropertyNamesStruct {
 
   export const $toString: $ToStringFunction<PropertyNamesStruct> = (
     _propertyNamesStruct,
-  ) =>
-    `PropertyNamesStruct(${JSON.stringify(toStringRecord(_propertyNamesStruct))})`;
+  ) => JSON.stringify(PropertyNamesStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -48119,8 +46527,7 @@ export namespace PropertyPathsStruct {
 
   export const $toString: $ToStringFunction<PropertyPathsStruct> = (
     _propertyPathsStruct,
-  ) =>
-    `PropertyPathsStruct(${JSON.stringify(toStringRecord(_propertyPathsStruct))})`;
+  ) => JSON.stringify(PropertyPathsStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -48839,7 +47246,7 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   export const $toString: $ToStringFunction<
     RecursiveDiscriminatedUnionMember1
   > = (_recursiveDiscriminatedUnionMember1) =>
-    `RecursiveDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_recursiveDiscriminatedUnionMember1))})`;
+    JSON.stringify(RecursiveDiscriminatedUnionMember1.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -49480,7 +47887,7 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   export const $toString: $ToStringFunction<
     RecursiveDiscriminatedUnionMember2
   > = (_recursiveDiscriminatedUnionMember2) =>
-    `RecursiveDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_recursiveDiscriminatedUnionMember2))})`;
+    JSON.stringify(RecursiveDiscriminatedUnionMember2.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -50132,8 +48539,7 @@ export namespace StructDiscriminatedUnionMember1 {
 
   export const $toString: $ToStringFunction<StructDiscriminatedUnionMember1> = (
     _structDiscriminatedUnionMember1,
-  ) =>
-    `StructDiscriminatedUnionMember1(${JSON.stringify(toStringRecord(_structDiscriminatedUnionMember1))})`;
+  ) => JSON.stringify(StructDiscriminatedUnionMember1.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -50842,8 +49248,7 @@ export namespace StructDiscriminatedUnionMember2 {
 
   export const $toString: $ToStringFunction<StructDiscriminatedUnionMember2> = (
     _structDiscriminatedUnionMember2,
-  ) =>
-    `StructDiscriminatedUnionMember2(${JSON.stringify(toStringRecord(_structDiscriminatedUnionMember2))})`;
+  ) => JSON.stringify(StructDiscriminatedUnionMember2.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -51537,8 +49942,7 @@ export namespace StructIntersectionMember1 {
 
   export const $toString: $ToStringFunction<StructIntersectionMember1> = (
     _structIntersectionMember1,
-  ) =>
-    `StructIntersectionMember1(${JSON.stringify(toStringRecord(_structIntersectionMember1))})`;
+  ) => JSON.stringify(StructIntersectionMember1.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -52213,8 +50617,7 @@ export namespace StructIntersectionMember2 {
 
   export const $toString: $ToStringFunction<StructIntersectionMember2> = (
     _structIntersectionMember2,
-  ) =>
-    `StructIntersectionMember2(${JSON.stringify(toStringRecord(_structIntersectionMember2))})`;
+  ) => JSON.stringify(StructIntersectionMember2.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -52871,8 +51274,7 @@ export namespace TargetClassStruct {
 
   export const $toString: $ToStringFunction<TargetClassStruct> = (
     _targetClassStruct,
-  ) =>
-    `TargetClassStruct(${JSON.stringify(toStringRecord(_targetClassStruct))})`;
+  ) => JSON.stringify(TargetClassStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -53638,7 +52040,7 @@ export namespace TermsStruct {
   };
 
   export const $toString: $ToStringFunction<TermsStruct> = (_termsStruct) =>
-    `TermsStruct(${JSON.stringify(toStringRecord(_termsStruct))})`;
+    JSON.stringify(TermsStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -56074,7 +54476,7 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredIriOrString,
-        typeFromRdfResourceValues: ((inputValues, options) => {
+        typeFromRdfResourceValues: (inputValues, options) => {
           const memberInputValues: Resource.Values[] = Array.from({
             length: 2,
           }).map(() =>
@@ -56159,22 +54561,7 @@ export namespace UnionDiscriminantsStruct {
             }
           }
           return Right(collectedOutputValues);
-        }) satisfies $FromRdfResourceValuesFunction<
-          NamedNode | string,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
       }),
       requiredNodeOrLiteral: $shaclPropertyFromRdf<
         | {
@@ -56201,7 +54588,7 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral,
-        typeFromRdfResourceValues: ((inputValues, options) => {
+        typeFromRdfResourceValues: (inputValues, options) => {
           const memberInputValues: Resource.Values[] = Array.from({
             length: 2,
           }).map(() =>
@@ -56311,26 +54698,7 @@ export namespace UnionDiscriminantsStruct {
             }
           }
           return Right(collectedOutputValues);
-        }) satisfies $FromRdfResourceValuesFunction<
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly StructDiscriminatedUnionMember1: {
-                discriminantValues: readonly (number | string)[];
-                type: typeof StructDiscriminatedUnionMember1.schema;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >,
+        },
       }),
       requiredNodeOrNodeOrString: $shaclPropertyFromRdf<
         | {
@@ -56365,7 +54733,7 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString,
-        typeFromRdfResourceValues: ((inputValues, options) => {
+        typeFromRdfResourceValues: (inputValues, options) => {
           const memberInputValues: Resource.Values[] = Array.from({
             length: 3,
           }).map(() =>
@@ -56556,34 +54924,7 @@ export namespace UnionDiscriminantsStruct {
             }
           }
           return Right(collectedOutputValues);
-        }) satisfies $FromRdfResourceValuesFunction<
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly StructDiscriminatedUnionMember1: {
-                discriminantValues: readonly (number | string)[];
-                type: typeof StructDiscriminatedUnionMember1.schema;
-              };
-              readonly StructDiscriminatedUnionMember2: {
-                discriminantValues: readonly (number | string)[];
-                type: typeof StructDiscriminatedUnionMember2.schema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
       }),
       requiredTerm: $shaclPropertyFromRdf<
         (BlankNode | NamedNode) | Literal,
@@ -56605,7 +54946,7 @@ export namespace UnionDiscriminantsStruct {
         focusResource: resource,
         ignoreRdfType: true,
         propertySchema: UnionDiscriminantsStruct.schema.properties.requiredTerm,
-        typeFromRdfResourceValues: ((inputValues, options) => {
+        typeFromRdfResourceValues: (inputValues, options) => {
           const memberInputValues: Resource.Values[] = Array.from({
             length: 2,
           }).map(() =>
@@ -56688,22 +55029,7 @@ export namespace UnionDiscriminantsStruct {
             }
           }
           return Right(collectedOutputValues);
-        }) satisfies $FromRdfResourceValuesFunction<
-          (BlankNode | NamedNode) | Literal,
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly BlankNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IdentifierSchema;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >,
+        },
       }),
       setIriOrString: $shaclPropertyFromRdf<
         readonly (NamedNode | string)[],
@@ -57446,21 +55772,16 @@ export namespace UnionDiscriminantsStruct {
     parameters.resource.add(
       UnionDiscriminantsStruct.schema.properties.optionalIriOrString.path,
       parameters.object.optionalIriOrString.toList().flatMap((value) =>
-        (
-          ((value, _options): (NamedNode | Literal)[] => {
-            if (typeof value === "object") {
-              return [value];
-            }
-            if (typeof value === "string") {
-              return [$literalFactory.string(value)];
-            }
+        ((value, _options): (NamedNode | Literal)[] => {
+          if (typeof value === "object") {
+            return [value];
+          }
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            NamedNode | string,
-            NamedNode | Literal
-          >
-        )(value, {
+          throw new Error("unable to serialize to RDF");
+        })(value, {
           ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
@@ -57474,161 +55795,6 @@ export namespace UnionDiscriminantsStruct {
     parameters.resource.add(
       UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral.path,
       parameters.object.optionalNodeOrLiteral.toList().flatMap((value) =>
-        (
-          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
-            if (value["termType"] === "StructDiscriminatedUnionMember1") {
-              return StructDiscriminatedUnionMember1.toRdfResourceValues(
-                value.value,
-                {
-                  graph: _options.graph,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                  resourceSet: _options.resourceSet,
-                },
-              );
-            }
-            if (value["termType"] === "Literal") {
-              return [value];
-            }
-
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            | {
-                termType: "StructDiscriminatedUnionMember1";
-                value: StructDiscriminatedUnionMember1;
-              }
-            | Literal,
-            BlankNode | NamedNode | Literal
-          >
-        )(value, {
-          ignoreRdfType: parameters.ignoreRdfType,
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath:
-            UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral
-              .path,
-        }),
-      ),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      UnionDiscriminantsStruct.schema.properties.optionalNodeOrNodeOrString
-        .path,
-      parameters.object.optionalNodeOrNodeOrString.toList().flatMap((value) =>
-        (
-          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
-            if (value["$type"] === "StructDiscriminatedUnionMember1") {
-              return StructDiscriminatedUnionMember1.toRdfResourceValues(
-                value.value,
-                {
-                  graph: _options.graph,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                  resourceSet: _options.resourceSet,
-                },
-              );
-            }
-            if (value["$type"] === "StructDiscriminatedUnionMember2") {
-              return StructDiscriminatedUnionMember2.toRdfResourceValues(
-                value.value,
-                {
-                  graph: _options.graph,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                  resourceSet: _options.resourceSet,
-                },
-              );
-            }
-            if (value["$type"] === "string") {
-              return [$literalFactory.string(value.value)];
-            }
-
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            | {
-                $type: "StructDiscriminatedUnionMember1";
-                value: StructDiscriminatedUnionMember1;
-              }
-            | {
-                $type: "StructDiscriminatedUnionMember2";
-                value: StructDiscriminatedUnionMember2;
-              }
-            | { $type: "string"; value: string },
-            BlankNode | NamedNode | Literal
-          >
-        )(value, {
-          ignoreRdfType: parameters.ignoreRdfType,
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath:
-            UnionDiscriminantsStruct.schema.properties
-              .optionalNodeOrNodeOrString.path,
-        }),
-      ),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      UnionDiscriminantsStruct.schema.properties.optionalTerm.path,
-      parameters.object.optionalTerm.toList().flatMap((value) =>
-        (
-          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
-            if (
-              value["termType"] === "BlankNode" ||
-              value["termType"] === "NamedNode"
-            ) {
-              return [value];
-            }
-            if (value["termType"] === "Literal") {
-              return [value];
-            }
-
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            (BlankNode | NamedNode) | Literal,
-            BlankNode | NamedNode | Literal
-          >
-        )(value, {
-          ignoreRdfType: parameters.ignoreRdfType,
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath:
-            UnionDiscriminantsStruct.schema.properties.optionalTerm.path,
-        }),
-      ),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      UnionDiscriminantsStruct.schema.properties.requiredIriOrString.path,
-      (
-        ((value, _options): (NamedNode | Literal)[] => {
-          if (typeof value === "object") {
-            return [value];
-          }
-          if (typeof value === "string") {
-            return [$literalFactory.string(value)];
-          }
-
-          throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<
-          NamedNode | string,
-          NamedNode | Literal
-        >
-      )(parameters.object.requiredIriOrString, {
-        ignoreRdfType: parameters.ignoreRdfType,
-        graph: parameters.graph,
-        resource: parameters.resource,
-        resourceSet: parameters.resourceSet,
-        propertyPath:
-          UnionDiscriminantsStruct.schema.properties.requiredIriOrString.path,
-      }),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral.path,
-      (
         ((value, _options): (BlankNode | NamedNode | Literal)[] => {
           if (value["termType"] === "StructDiscriminatedUnionMember1") {
             return StructDiscriminatedUnionMember1.toRdfResourceValues(
@@ -57646,28 +55812,22 @@ export namespace UnionDiscriminantsStruct {
           }
 
           throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal,
-          BlankNode | NamedNode | Literal
-        >
-      )(parameters.object.requiredNodeOrLiteral, {
-        ignoreRdfType: parameters.ignoreRdfType,
-        graph: parameters.graph,
-        resource: parameters.resource,
-        resourceSet: parameters.resourceSet,
-        propertyPath:
-          UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral.path,
-      }),
+        })(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            UnionDiscriminantsStruct.schema.properties.optionalNodeOrLiteral
+              .path,
+        }),
+      ),
       parameters.graph,
     );
     parameters.resource.add(
-      UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString
+      UnionDiscriminantsStruct.schema.properties.optionalNodeOrNodeOrString
         .path,
-      (
+      parameters.object.optionalNodeOrNodeOrString.toList().flatMap((value) =>
         ((value, _options): (BlankNode | NamedNode | Literal)[] => {
           if (value["$type"] === "StructDiscriminatedUnionMember1") {
             return StructDiscriminatedUnionMember1.toRdfResourceValues(
@@ -57696,32 +55856,21 @@ export namespace UnionDiscriminantsStruct {
           }
 
           throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string },
-          BlankNode | NamedNode | Literal
-        >
-      )(parameters.object.requiredNodeOrNodeOrString, {
-        ignoreRdfType: parameters.ignoreRdfType,
-        graph: parameters.graph,
-        resource: parameters.resource,
-        resourceSet: parameters.resourceSet,
-        propertyPath:
-          UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString
-            .path,
-      }),
+        })(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            UnionDiscriminantsStruct.schema.properties
+              .optionalNodeOrNodeOrString.path,
+        }),
+      ),
       parameters.graph,
     );
     parameters.resource.add(
-      UnionDiscriminantsStruct.schema.properties.requiredTerm.path,
-      (
+      UnionDiscriminantsStruct.schema.properties.optionalTerm.path,
+      parameters.object.optionalTerm.toList().flatMap((value) =>
         ((value, _options): (BlankNode | NamedNode | Literal)[] => {
           if (
             value["termType"] === "BlankNode" ||
@@ -57734,11 +55883,124 @@ export namespace UnionDiscriminantsStruct {
           }
 
           throw new Error("unable to serialize to RDF");
-        }) satisfies $ToRdfResourceValuesFunction<
-          (BlankNode | NamedNode) | Literal,
-          BlankNode | NamedNode | Literal
-        >
-      )(parameters.object.requiredTerm, {
+        })(value, {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            UnionDiscriminantsStruct.schema.properties.optionalTerm.path,
+        }),
+      ),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      UnionDiscriminantsStruct.schema.properties.requiredIriOrString.path,
+      ((value, _options): (NamedNode | Literal)[] => {
+        if (typeof value === "object") {
+          return [value];
+        }
+        if (typeof value === "string") {
+          return [$literalFactory.string(value)];
+        }
+
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.requiredIriOrString, {
+        ignoreRdfType: parameters.ignoreRdfType,
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          UnionDiscriminantsStruct.schema.properties.requiredIriOrString.path,
+      }),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral.path,
+      ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+        if (value["termType"] === "StructDiscriminatedUnionMember1") {
+          return StructDiscriminatedUnionMember1.toRdfResourceValues(
+            value.value,
+            {
+              graph: _options.graph,
+              propertyPath: _options.propertyPath,
+              resource: _options.resource,
+              resourceSet: _options.resourceSet,
+            },
+          );
+        }
+        if (value["termType"] === "Literal") {
+          return [value];
+        }
+
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.requiredNodeOrLiteral, {
+        ignoreRdfType: parameters.ignoreRdfType,
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral.path,
+      }),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString
+        .path,
+      ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+        if (value["$type"] === "StructDiscriminatedUnionMember1") {
+          return StructDiscriminatedUnionMember1.toRdfResourceValues(
+            value.value,
+            {
+              graph: _options.graph,
+              propertyPath: _options.propertyPath,
+              resource: _options.resource,
+              resourceSet: _options.resourceSet,
+            },
+          );
+        }
+        if (value["$type"] === "StructDiscriminatedUnionMember2") {
+          return StructDiscriminatedUnionMember2.toRdfResourceValues(
+            value.value,
+            {
+              graph: _options.graph,
+              propertyPath: _options.propertyPath,
+              resource: _options.resource,
+              resourceSet: _options.resourceSet,
+            },
+          );
+        }
+        if (value["$type"] === "string") {
+          return [$literalFactory.string(value.value)];
+        }
+
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.requiredNodeOrNodeOrString, {
+        ignoreRdfType: parameters.ignoreRdfType,
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath:
+          UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString
+            .path,
+      }),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      UnionDiscriminantsStruct.schema.properties.requiredTerm.path,
+      ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+        if (
+          value["termType"] === "BlankNode" ||
+          value["termType"] === "NamedNode"
+        ) {
+          return [value];
+        }
+        if (value["termType"] === "Literal") {
+          return [value];
+        }
+
+        throw new Error("unable to serialize to RDF");
+      })(parameters.object.requiredTerm, {
         ignoreRdfType: parameters.ignoreRdfType,
         graph: parameters.graph,
         resource: parameters.resource,
@@ -57751,21 +56013,16 @@ export namespace UnionDiscriminantsStruct {
     parameters.resource.add(
       UnionDiscriminantsStruct.schema.properties.setIriOrString.path,
       parameters.object.setIriOrString.flatMap((item) =>
-        (
-          ((value, _options): (NamedNode | Literal)[] => {
-            if (typeof value === "object") {
-              return [value];
-            }
-            if (typeof value === "string") {
-              return [$literalFactory.string(value)];
-            }
+        ((value, _options): (NamedNode | Literal)[] => {
+          if (typeof value === "object") {
+            return [value];
+          }
+          if (typeof value === "string") {
+            return [$literalFactory.string(value)];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            NamedNode | string,
-            NamedNode | Literal
-          >
-        )(item, {
+          throw new Error("unable to serialize to RDF");
+        })(item, {
           ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
@@ -57779,33 +56036,24 @@ export namespace UnionDiscriminantsStruct {
     parameters.resource.add(
       UnionDiscriminantsStruct.schema.properties.setNodeOrLiteral.path,
       parameters.object.setNodeOrLiteral.flatMap((item) =>
-        (
-          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
-            if (value["termType"] === "StructDiscriminatedUnionMember1") {
-              return StructDiscriminatedUnionMember1.toRdfResourceValues(
-                value.value,
-                {
-                  graph: _options.graph,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                  resourceSet: _options.resourceSet,
-                },
-              );
-            }
-            if (value["termType"] === "Literal") {
-              return [value];
-            }
+        ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+          if (value["termType"] === "StructDiscriminatedUnionMember1") {
+            return StructDiscriminatedUnionMember1.toRdfResourceValues(
+              value.value,
+              {
+                graph: _options.graph,
+                propertyPath: _options.propertyPath,
+                resource: _options.resource,
+                resourceSet: _options.resourceSet,
+              },
+            );
+          }
+          if (value["termType"] === "Literal") {
+            return [value];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            | {
-                termType: "StructDiscriminatedUnionMember1";
-                value: StructDiscriminatedUnionMember1;
-              }
-            | Literal,
-            BlankNode | NamedNode | Literal
-          >
-        )(item, {
+          throw new Error("unable to serialize to RDF");
+        })(item, {
           ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
@@ -57819,48 +56067,35 @@ export namespace UnionDiscriminantsStruct {
     parameters.resource.add(
       UnionDiscriminantsStruct.schema.properties.setNodeOrNodeOrString.path,
       parameters.object.setNodeOrNodeOrString.flatMap((item) =>
-        (
-          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
-            if (value["$type"] === "StructDiscriminatedUnionMember1") {
-              return StructDiscriminatedUnionMember1.toRdfResourceValues(
-                value.value,
-                {
-                  graph: _options.graph,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                  resourceSet: _options.resourceSet,
-                },
-              );
-            }
-            if (value["$type"] === "StructDiscriminatedUnionMember2") {
-              return StructDiscriminatedUnionMember2.toRdfResourceValues(
-                value.value,
-                {
-                  graph: _options.graph,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                  resourceSet: _options.resourceSet,
-                },
-              );
-            }
-            if (value["$type"] === "string") {
-              return [$literalFactory.string(value.value)];
-            }
+        ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+          if (value["$type"] === "StructDiscriminatedUnionMember1") {
+            return StructDiscriminatedUnionMember1.toRdfResourceValues(
+              value.value,
+              {
+                graph: _options.graph,
+                propertyPath: _options.propertyPath,
+                resource: _options.resource,
+                resourceSet: _options.resourceSet,
+              },
+            );
+          }
+          if (value["$type"] === "StructDiscriminatedUnionMember2") {
+            return StructDiscriminatedUnionMember2.toRdfResourceValues(
+              value.value,
+              {
+                graph: _options.graph,
+                propertyPath: _options.propertyPath,
+                resource: _options.resource,
+                resourceSet: _options.resourceSet,
+              },
+            );
+          }
+          if (value["$type"] === "string") {
+            return [$literalFactory.string(value.value)];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            | {
-                $type: "StructDiscriminatedUnionMember1";
-                value: StructDiscriminatedUnionMember1;
-              }
-            | {
-                $type: "StructDiscriminatedUnionMember2";
-                value: StructDiscriminatedUnionMember2;
-              }
-            | { $type: "string"; value: string },
-            BlankNode | NamedNode | Literal
-          >
-        )(item, {
+          throw new Error("unable to serialize to RDF");
+        })(item, {
           ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
@@ -57875,24 +56110,19 @@ export namespace UnionDiscriminantsStruct {
     parameters.resource.add(
       UnionDiscriminantsStruct.schema.properties.setTerm.path,
       parameters.object.setTerm.flatMap((item) =>
-        (
-          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
-            if (
-              value["termType"] === "BlankNode" ||
-              value["termType"] === "NamedNode"
-            ) {
-              return [value];
-            }
-            if (value["termType"] === "Literal") {
-              return [value];
-            }
+        ((value, _options): (BlankNode | NamedNode | Literal)[] => {
+          if (
+            value["termType"] === "BlankNode" ||
+            value["termType"] === "NamedNode"
+          ) {
+            return [value];
+          }
+          if (value["termType"] === "Literal") {
+            return [value];
+          }
 
-            throw new Error("unable to serialize to RDF");
-          }) satisfies $ToRdfResourceValuesFunction<
-            (BlankNode | NamedNode) | Literal,
-            BlankNode | NamedNode | Literal
-          >
-        )(item, {
+          throw new Error("unable to serialize to RDF");
+        })(item, {
           ignoreRdfType: parameters.ignoreRdfType,
           graph: parameters.graph,
           resource: parameters.resource,
@@ -57907,8 +56137,7 @@ export namespace UnionDiscriminantsStruct {
 
   export const $toString: $ToStringFunction<UnionDiscriminantsStruct> = (
     _unionDiscriminantsStruct,
-  ) =>
-    `UnionDiscriminantsStruct(${JSON.stringify(toStringRecord(_unionDiscriminantsStruct))})`;
+  ) => JSON.stringify(UnionDiscriminantsStruct.toStringRecord);
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -58666,7 +56895,7 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (typeof left === "object" && typeof right === "object") {
                 return $booleanEquals(left as NamedNode, right as NamedNode);
               }
@@ -58685,7 +56914,7 @@ export namespace UnionDiscriminantsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<NamedNode | string>,
+            },
             name: "requiredIriOrString",
           },
           [left, left.requiredIriOrString],
@@ -58695,7 +56924,7 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (
                 left["termType"] === "StructDiscriminatedUnionMember1" &&
                 right["termType"] === "StructDiscriminatedUnionMember1"
@@ -58723,13 +56952,7 @@ export namespace UnionDiscriminantsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<
-              | {
-                  termType: "StructDiscriminatedUnionMember1";
-                  value: StructDiscriminatedUnionMember1;
-                }
-              | Literal
-            >,
+            },
             name: "requiredNodeOrLiteral",
           },
           [left, left.requiredNodeOrLiteral],
@@ -58739,7 +56962,7 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (
                 left["$type"] === "StructDiscriminatedUnionMember1" &&
                 right["$type"] === "StructDiscriminatedUnionMember1"
@@ -58776,17 +56999,7 @@ export namespace UnionDiscriminantsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<
-              | {
-                  $type: "StructDiscriminatedUnionMember1";
-                  value: StructDiscriminatedUnionMember1;
-                }
-              | {
-                  $type: "StructDiscriminatedUnionMember2";
-                  value: StructDiscriminatedUnionMember2;
-                }
-              | { $type: "string"; value: string }
-            >,
+            },
             name: "requiredNodeOrNodeOrString",
           },
           [left, left.requiredNodeOrNodeOrString],
@@ -58796,7 +57009,7 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) => {
+            equalsFunction: (left, right) => {
               if (
                 (left["termType"] === "BlankNode" ||
                   left["termType"] === "NamedNode") &&
@@ -58826,7 +57039,7 @@ export namespace UnionDiscriminantsStruct {
                 },
                 type: "property" as const,
               });
-            }) satisfies $EqualsFunction<(BlankNode | NamedNode) | Literal>,
+            },
             name: "requiredTerm",
           },
           [left, left.requiredTerm],
@@ -58836,8 +57049,8 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(left, right, ((left, right) => {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, (left, right) => {
                 if (typeof left === "object" && typeof right === "object") {
                   return $booleanEquals(left as NamedNode, right as NamedNode);
                 }
@@ -58856,9 +57069,7 @@ export namespace UnionDiscriminantsStruct {
                   },
                   type: "property" as const,
                 });
-              }) satisfies $EqualsFunction<
-                NamedNode | string
-              >)) satisfies $EqualsFunction<readonly (NamedNode | string)[]>,
+              }),
             name: "setIriOrString",
           },
           [left, left.setIriOrString],
@@ -58868,8 +57079,8 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(left, right, ((left, right) => {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, (left, right) => {
                 if (
                   left["termType"] === "StructDiscriminatedUnionMember1" &&
                   right["termType"] === "StructDiscriminatedUnionMember1"
@@ -58897,21 +57108,7 @@ export namespace UnionDiscriminantsStruct {
                   },
                   type: "property" as const,
                 });
-              }) satisfies $EqualsFunction<
-                | {
-                    termType: "StructDiscriminatedUnionMember1";
-                    value: StructDiscriminatedUnionMember1;
-                  }
-                | Literal
-              >)) satisfies $EqualsFunction<
-              readonly (
-                | {
-                    termType: "StructDiscriminatedUnionMember1";
-                    value: StructDiscriminatedUnionMember1;
-                  }
-                | Literal
-              )[]
-            >,
+              }),
             name: "setNodeOrLiteral",
           },
           [left, left.setNodeOrLiteral],
@@ -58921,8 +57118,8 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(left, right, ((left, right) => {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, (left, right) => {
                 if (
                   left["$type"] === "StructDiscriminatedUnionMember1" &&
                   right["$type"] === "StructDiscriminatedUnionMember1"
@@ -58959,29 +57156,7 @@ export namespace UnionDiscriminantsStruct {
                   },
                   type: "property" as const,
                 });
-              }) satisfies $EqualsFunction<
-                | {
-                    $type: "StructDiscriminatedUnionMember1";
-                    value: StructDiscriminatedUnionMember1;
-                  }
-                | {
-                    $type: "StructDiscriminatedUnionMember2";
-                    value: StructDiscriminatedUnionMember2;
-                  }
-                | { $type: "string"; value: string }
-              >)) satisfies $EqualsFunction<
-              readonly (
-                | {
-                    $type: "StructDiscriminatedUnionMember1";
-                    value: StructDiscriminatedUnionMember1;
-                  }
-                | {
-                    $type: "StructDiscriminatedUnionMember2";
-                    value: StructDiscriminatedUnionMember2;
-                  }
-                | { $type: "string"; value: string }
-              )[]
-            >,
+              }),
             name: "setNodeOrNodeOrString",
           },
           [left, left.setNodeOrNodeOrString],
@@ -58991,8 +57166,8 @@ export namespace UnionDiscriminantsStruct {
       .chain(() =>
         $propertyEquals(
           {
-            equalsFunction: ((left, right) =>
-              $arrayEquals(left, right, ((left, right) => {
+            equalsFunction: (left, right) =>
+              $arrayEquals(left, right, (left, right) => {
                 if (
                   (left["termType"] === "BlankNode" ||
                     left["termType"] === "NamedNode") &&
@@ -59022,11 +57197,7 @@ export namespace UnionDiscriminantsStruct {
                   },
                   type: "property" as const,
                 });
-              }) satisfies $EqualsFunction<
-                (BlankNode | NamedNode) | Literal
-              >)) satisfies $EqualsFunction<
-              readonly ((BlankNode | NamedNode) | Literal)[]
-            >,
+              }),
             name: "setTerm",
           },
           [left, left.setTerm],
@@ -59254,192 +57425,7 @@ export namespace UnionDiscriminantsStruct {
     }
     if (
       filter.requiredIriOrString !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["object"] !== undefined &&
-            typeof value === "object"
-          ) {
-            if (!$filterIri(filter.on["object"], value)) {
-              return false;
-            }
-          }
-          if (
-            filter.on?.["string"] !== undefined &&
-            typeof value === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value)) {
-              return false;
-            }
-          }
-
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly object?: $IriFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          NamedNode | string
-        >
-      )(filter.requiredIriOrString, value.requiredIriOrString)
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredNodeOrLiteral !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["StructDiscriminatedUnionMember1"] !== undefined &&
-            value["termType"] === "StructDiscriminatedUnionMember1"
-          ) {
-            if (
-              !StructDiscriminatedUnionMember1.filter(
-                filter.on["StructDiscriminatedUnionMember1"],
-                value.value,
-              )
-            ) {
-              return false;
-            }
-          }
-          if (
-            filter.on?.["Literal"] !== undefined &&
-            value["termType"] === "Literal"
-          ) {
-            if (!$filterLiteral(filter.on["Literal"], value)) {
-              return false;
-            }
-          }
-
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        >
-      )(filter.requiredNodeOrLiteral, value.requiredNodeOrLiteral)
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredNodeOrNodeOrString !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["StructDiscriminatedUnionMember1"] !== undefined &&
-            value["$type"] === "StructDiscriminatedUnionMember1"
-          ) {
-            if (
-              !StructDiscriminatedUnionMember1.filter(
-                filter.on["StructDiscriminatedUnionMember1"],
-                value.value,
-              )
-            ) {
-              return false;
-            }
-          }
-          if (
-            filter.on?.["StructDiscriminatedUnionMember2"] !== undefined &&
-            value["$type"] === "StructDiscriminatedUnionMember2"
-          ) {
-            if (
-              !StructDiscriminatedUnionMember2.filter(
-                filter.on["StructDiscriminatedUnionMember2"],
-                value.value,
-              )
-            ) {
-              return false;
-            }
-          }
-          if (
-            filter.on?.["string"] !== undefined &&
-            value["$type"] === "string"
-          ) {
-            if (!$filterString(filter.on["string"], value.value)) {
-              return false;
-            }
-          }
-
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-              readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
-              readonly string?: $StringFilter;
-            };
-          },
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        >
-      )(filter.requiredNodeOrNodeOrString, value.requiredNodeOrNodeOrString)
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredTerm !== undefined &&
-      !(
-        ((filter, value) => {
-          if (
-            filter.on?.["BlankNode"] !== undefined &&
-            (value["termType"] === "BlankNode" ||
-              value["termType"] === "NamedNode")
-          ) {
-            if (!$filterIdentifier(filter.on["BlankNode"], value)) {
-              return false;
-            }
-          }
-          if (
-            filter.on?.["Literal"] !== undefined &&
-            value["termType"] === "Literal"
-          ) {
-            if (!$filterLiteral(filter.on["Literal"], value)) {
-              return false;
-            }
-          }
-
-          return true;
-        }) satisfies $FilterFunction<
-          {
-            readonly on?: {
-              readonly BlankNode?: $IdentifierFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          (BlankNode | NamedNode) | Literal
-        >
-      )(filter.requiredTerm, value.requiredTerm)
-    ) {
-      return false;
-    }
-    if (
-      filter.setIriOrString !== undefined &&
-      !$filterArray<
-        NamedNode | string,
-        {
-          readonly on?: {
-            readonly object?: $IriFilter;
-            readonly string?: $StringFilter;
-          };
-        }
-      >(((filter, value) => {
+      !((filter, value) => {
         if (filter.on?.["object"] !== undefined && typeof value === "object") {
           if (!$filterIri(filter.on["object"], value)) {
             return false;
@@ -59452,33 +57438,13 @@ export namespace UnionDiscriminantsStruct {
         }
 
         return true;
-      }) satisfies $FilterFunction<
-        {
-          readonly on?: {
-            readonly object?: $IriFilter;
-            readonly string?: $StringFilter;
-          };
-        },
-        NamedNode | string
-      >)(filter.setIriOrString, value.setIriOrString)
+      })(filter.requiredIriOrString, value.requiredIriOrString)
     ) {
       return false;
     }
     if (
-      filter.setNodeOrLiteral !== undefined &&
-      !$filterArray<
-        | {
-            termType: "StructDiscriminatedUnionMember1";
-            value: StructDiscriminatedUnionMember1;
-          }
-        | Literal,
-        {
-          readonly on?: {
-            readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-            readonly Literal?: $LiteralFilter;
-          };
-        }
-      >(((filter, value) => {
+      filter.requiredNodeOrLiteral !== undefined &&
+      !((filter, value) => {
         if (
           filter.on?.["StructDiscriminatedUnionMember1"] !== undefined &&
           value["termType"] === "StructDiscriminatedUnionMember1"
@@ -59502,42 +57468,13 @@ export namespace UnionDiscriminantsStruct {
         }
 
         return true;
-      }) satisfies $FilterFunction<
-        {
-          readonly on?: {
-            readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-            readonly Literal?: $LiteralFilter;
-          };
-        },
-        | {
-            termType: "StructDiscriminatedUnionMember1";
-            value: StructDiscriminatedUnionMember1;
-          }
-        | Literal
-      >)(filter.setNodeOrLiteral, value.setNodeOrLiteral)
+      })(filter.requiredNodeOrLiteral, value.requiredNodeOrLiteral)
     ) {
       return false;
     }
     if (
-      filter.setNodeOrNodeOrString !== undefined &&
-      !$filterArray<
-        | {
-            $type: "StructDiscriminatedUnionMember1";
-            value: StructDiscriminatedUnionMember1;
-          }
-        | {
-            $type: "StructDiscriminatedUnionMember2";
-            value: StructDiscriminatedUnionMember2;
-          }
-        | { $type: "string"; value: string },
-        {
-          readonly on?: {
-            readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-            readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
-            readonly string?: $StringFilter;
-          };
-        }
-      >(((filter, value) => {
+      filter.requiredNodeOrNodeOrString !== undefined &&
+      !((filter, value) => {
         if (
           filter.on?.["StructDiscriminatedUnionMember1"] !== undefined &&
           value["$type"] === "StructDiscriminatedUnionMember1"
@@ -59574,38 +57511,13 @@ export namespace UnionDiscriminantsStruct {
         }
 
         return true;
-      }) satisfies $FilterFunction<
-        {
-          readonly on?: {
-            readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-            readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
-            readonly string?: $StringFilter;
-          };
-        },
-        | {
-            $type: "StructDiscriminatedUnionMember1";
-            value: StructDiscriminatedUnionMember1;
-          }
-        | {
-            $type: "StructDiscriminatedUnionMember2";
-            value: StructDiscriminatedUnionMember2;
-          }
-        | { $type: "string"; value: string }
-      >)(filter.setNodeOrNodeOrString, value.setNodeOrNodeOrString)
+      })(filter.requiredNodeOrNodeOrString, value.requiredNodeOrNodeOrString)
     ) {
       return false;
     }
     if (
-      filter.setTerm !== undefined &&
-      !$filterArray<
-        (BlankNode | NamedNode) | Literal,
-        {
-          readonly on?: {
-            readonly BlankNode?: $IdentifierFilter;
-            readonly Literal?: $LiteralFilter;
-          };
-        }
-      >(((filter, value) => {
+      filter.requiredTerm !== undefined &&
+      !((filter, value) => {
         if (
           filter.on?.["BlankNode"] !== undefined &&
           (value["termType"] === "BlankNode" ||
@@ -59625,15 +57537,170 @@ export namespace UnionDiscriminantsStruct {
         }
 
         return true;
-      }) satisfies $FilterFunction<
+      })(filter.requiredTerm, value.requiredTerm)
+    ) {
+      return false;
+    }
+    if (
+      filter.setIriOrString !== undefined &&
+      !$filterArray<
+        NamedNode | string,
+        {
+          readonly on?: {
+            readonly object?: $IriFilter;
+            readonly string?: $StringFilter;
+          };
+        }
+      >((filter, value) => {
+        if (filter.on?.["object"] !== undefined && typeof value === "object") {
+          if (!$filterIri(filter.on["object"], value)) {
+            return false;
+          }
+        }
+        if (filter.on?.["string"] !== undefined && typeof value === "string") {
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.setIriOrString, value.setIriOrString)
+    ) {
+      return false;
+    }
+    if (
+      filter.setNodeOrLiteral !== undefined &&
+      !$filterArray<
+        | {
+            termType: "StructDiscriminatedUnionMember1";
+            value: StructDiscriminatedUnionMember1;
+          }
+        | Literal,
+        {
+          readonly on?: {
+            readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
+            readonly Literal?: $LiteralFilter;
+          };
+        }
+      >((filter, value) => {
+        if (
+          filter.on?.["StructDiscriminatedUnionMember1"] !== undefined &&
+          value["termType"] === "StructDiscriminatedUnionMember1"
+        ) {
+          if (
+            !StructDiscriminatedUnionMember1.filter(
+              filter.on["StructDiscriminatedUnionMember1"],
+              value.value,
+            )
+          ) {
+            return false;
+          }
+        }
+        if (
+          filter.on?.["Literal"] !== undefined &&
+          value["termType"] === "Literal"
+        ) {
+          if (!$filterLiteral(filter.on["Literal"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.setNodeOrLiteral, value.setNodeOrLiteral)
+    ) {
+      return false;
+    }
+    if (
+      filter.setNodeOrNodeOrString !== undefined &&
+      !$filterArray<
+        | {
+            $type: "StructDiscriminatedUnionMember1";
+            value: StructDiscriminatedUnionMember1;
+          }
+        | {
+            $type: "StructDiscriminatedUnionMember2";
+            value: StructDiscriminatedUnionMember2;
+          }
+        | { $type: "string"; value: string },
+        {
+          readonly on?: {
+            readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
+            readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
+            readonly string?: $StringFilter;
+          };
+        }
+      >((filter, value) => {
+        if (
+          filter.on?.["StructDiscriminatedUnionMember1"] !== undefined &&
+          value["$type"] === "StructDiscriminatedUnionMember1"
+        ) {
+          if (
+            !StructDiscriminatedUnionMember1.filter(
+              filter.on["StructDiscriminatedUnionMember1"],
+              value.value,
+            )
+          ) {
+            return false;
+          }
+        }
+        if (
+          filter.on?.["StructDiscriminatedUnionMember2"] !== undefined &&
+          value["$type"] === "StructDiscriminatedUnionMember2"
+        ) {
+          if (
+            !StructDiscriminatedUnionMember2.filter(
+              filter.on["StructDiscriminatedUnionMember2"],
+              value.value,
+            )
+          ) {
+            return false;
+          }
+        }
+        if (
+          filter.on?.["string"] !== undefined &&
+          value["$type"] === "string"
+        ) {
+          if (!$filterString(filter.on["string"], value.value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.setNodeOrNodeOrString, value.setNodeOrNodeOrString)
+    ) {
+      return false;
+    }
+    if (
+      filter.setTerm !== undefined &&
+      !$filterArray<
+        (BlankNode | NamedNode) | Literal,
         {
           readonly on?: {
             readonly BlankNode?: $IdentifierFilter;
             readonly Literal?: $LiteralFilter;
           };
-        },
-        (BlankNode | NamedNode) | Literal
-      >)(filter.setTerm, value.setTerm)
+        }
+      >((filter, value) => {
+        if (
+          filter.on?.["BlankNode"] !== undefined &&
+          (value["termType"] === "BlankNode" ||
+            value["termType"] === "NamedNode")
+        ) {
+          if (!$filterIdentifier(filter.on["BlankNode"], value)) {
+            return false;
+          }
+        }
+        if (
+          filter.on?.["Literal"] !== undefined &&
+          value["termType"] === "Literal"
+        ) {
+          if (!$filterLiteral(filter.on["Literal"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(filter.setTerm, value.setTerm)
     ) {
       return false;
     }
@@ -60040,7 +58107,7 @@ export namespace UnionDiscriminantsStruct {
         propertyName: "requiredIriOrString",
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredIriOrString,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -60066,27 +58133,7 @@ export namespace UnionDiscriminantsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly object?: $IriFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -60098,7 +58145,7 @@ export namespace UnionDiscriminantsStruct {
         propertyName: "requiredNodeOrLiteral",
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -60124,27 +58171,7 @@ export namespace UnionDiscriminantsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly StructDiscriminatedUnionMember1: {
-                discriminantValues: readonly (number | string)[];
-                type: typeof StructDiscriminatedUnionMember1.schema;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -60156,7 +58183,7 @@ export namespace UnionDiscriminantsStruct {
         propertyName: "requiredNodeOrNodeOrString",
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -60190,32 +58217,7 @@ export namespace UnionDiscriminantsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-              readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly StructDiscriminatedUnionMember1: {
-                discriminantValues: readonly (number | string)[];
-                type: typeof StructDiscriminatedUnionMember1.schema;
-              };
-              readonly StructDiscriminatedUnionMember2: {
-                discriminantValues: readonly (number | string)[];
-                type: typeof StructDiscriminatedUnionMember2.schema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -60226,7 +58228,7 @@ export namespace UnionDiscriminantsStruct {
         ignoreRdfType: true,
         propertyName: "requiredTerm",
         propertySchema: UnionDiscriminantsStruct.schema.properties.requiredTerm,
-        typeSparqlConstructTriples: (({
+        typeSparqlConstructTriples: ({
           ignoreRdfType,
           filter,
           schema,
@@ -60252,27 +58254,7 @@ export namespace UnionDiscriminantsStruct {
           );
 
           return triples;
-        }) satisfies $ValueSparqlConstructTriplesFunction<
-          {
-            readonly on?: {
-              readonly BlankNode?: $IdentifierFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly BlankNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IdentifierSchema;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -60936,7 +58918,7 @@ export namespace UnionDiscriminantsStruct {
         propertyName: "requiredIriOrString",
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredIriOrString,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -60959,27 +58941,7 @@ export namespace UnionDiscriminantsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly object?: $IriFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema<string>;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -60992,7 +58954,7 @@ export namespace UnionDiscriminantsStruct {
         propertyName: "requiredNodeOrLiteral",
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrLiteral,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -61015,27 +58977,7 @@ export namespace UnionDiscriminantsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly StructDiscriminatedUnionMember1: {
-                discriminantValues: readonly (number | string)[];
-                type: typeof StructDiscriminatedUnionMember1.schema;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -61048,7 +58990,7 @@ export namespace UnionDiscriminantsStruct {
         propertyName: "requiredNodeOrNodeOrString",
         propertySchema:
           UnionDiscriminantsStruct.schema.properties.requiredNodeOrNodeOrString,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -61080,32 +59022,7 @@ export namespace UnionDiscriminantsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly StructDiscriminatedUnionMember1?: StructDiscriminatedUnionMember1.Filter;
-              readonly StructDiscriminatedUnionMember2?: StructDiscriminatedUnionMember2.Filter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly StructDiscriminatedUnionMember1: {
-                discriminantValues: readonly (number | string)[];
-                type: typeof StructDiscriminatedUnionMember1.schema;
-              };
-              readonly StructDiscriminatedUnionMember2: {
-                discriminantValues: readonly (number | string)[];
-                type: typeof StructDiscriminatedUnionMember2.schema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema<string>;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -61117,7 +59034,7 @@ export namespace UnionDiscriminantsStruct {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "requiredTerm",
         propertySchema: UnionDiscriminantsStruct.schema.properties.requiredTerm,
-        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+        typeSparqlWherePatterns: ({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -61140,27 +59057,7 @@ export namespace UnionDiscriminantsStruct {
           });
 
           return [{ patterns: unionPatterns, type: "union" }];
-        }) satisfies $ValueSparqlWherePatternsFunction<
-          {
-            readonly on?: {
-              readonly BlankNode?: $IdentifierFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          {
-            kind: "DiscriminatedUnion";
-            members: {
-              readonly BlankNode: {
-                discriminantValues: readonly (number | string)[];
-                type: $IdentifierSchema;
-              };
-              readonly Literal: {
-                discriminantValues: readonly (number | string)[];
-                type: $LiteralSchema;
-              };
-            };
-          }
-        >,
+        },
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -61501,322 +59398,212 @@ export namespace UnionDiscriminantsStruct {
       ),
       optionalIriOrString: Maybe.fromNullable($json["optionalIriOrString"])
         .map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "object") {
-                return Either.of<Error, NamedNode>(
-                  dataFactory.namedNode(value["@id"]),
-                ).map((value) => value);
-              }
-              if (value.$type === "string") {
-                return Either.of<Error, string>(value["@value"]).map(
-                  (value) => value,
-                );
-              }
+          ((value) => {
+            if (value.$type === "object") {
+              return Either.of<Error, NamedNode>(
+                dataFactory.namedNode(value["@id"]),
+              ).map((value) => value);
+            }
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
+                (value) => value,
+              );
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              NamedNode | string,
-              | { $type: "object"; "@id": string }
-              | { $type: "string"; "@type": string; "@value": string }
-            >
-          )(item).map((item) => Maybe.of(item)),
+            throw new Error("unable to deserialize JSON");
+          })(item).map((item) => Maybe.of(item)),
         )
         .orDefault(Either.of(Maybe.empty())),
       optionalNodeOrLiteral: Maybe.fromNullable($json["optionalNodeOrLiteral"])
         .map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "StructDiscriminatedUnionMember1") {
-                return StructDiscriminatedUnionMember1.fromJson(value).map(
-                  (value) => ({
-                    termType: "StructDiscriminatedUnionMember1" as const,
-                    value: value,
-                  }),
-                );
-              }
-              if (value.$type === "Literal") {
-                return Either.of<Error, Literal>(
-                  dataFactory.literal(
-                    value["@value"],
-                    value["@language"] !== undefined
-                      ? value["@language"]
-                      : value["@type"] !== undefined
-                        ? dataFactory.namedNode(value["@type"]!)
-                        : undefined,
-                  ),
-                ).map((value) => value);
-              }
+          ((value) => {
+            if (value.$type === "StructDiscriminatedUnionMember1") {
+              return StructDiscriminatedUnionMember1.fromJson(value).map(
+                (value) => ({
+                  termType: "StructDiscriminatedUnionMember1" as const,
+                  value: value,
+                }),
+              );
+            }
+            if (value.$type === "Literal") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  value["@value"],
+                  value["@language"] !== undefined
+                    ? value["@language"]
+                    : value["@type"] !== undefined
+                      ? dataFactory.namedNode(value["@type"]!)
+                      : undefined,
+                ),
+              ).map((value) => value);
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              | {
-                  termType: "StructDiscriminatedUnionMember1";
-                  value: StructDiscriminatedUnionMember1;
-                }
-              | Literal,
-              | StructDiscriminatedUnionMember1.Json
-              | {
-                  $type: "Literal";
-                  "@language"?: string;
-                  "@type"?: string;
-                  "@value": string;
-                }
-            >
-          )(item).map((item) => Maybe.of(item)),
+            throw new Error("unable to deserialize JSON");
+          })(item).map((item) => Maybe.of(item)),
         )
         .orDefault(Either.of(Maybe.empty())),
       optionalNodeOrNodeOrString: Maybe.fromNullable(
         $json["optionalNodeOrNodeOrString"],
       )
         .map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "StructDiscriminatedUnionMember1") {
-                return StructDiscriminatedUnionMember1.fromJson(value).map(
-                  (value) => ({
-                    $type: "StructDiscriminatedUnionMember1" as const,
-                    value: value,
-                  }),
-                );
-              }
-              if (value.$type === "StructDiscriminatedUnionMember2") {
-                return StructDiscriminatedUnionMember2.fromJson(value).map(
-                  (value) => ({
-                    $type: "StructDiscriminatedUnionMember2" as const,
-                    value: value,
-                  }),
-                );
-              }
-              if (value.$type === "string") {
-                return Either.of<Error, string>(value["@value"]).map(
-                  (value) => ({
-                    $type: "string" as const,
-                    value: value,
-                  }),
-                );
-              }
+          ((value) => {
+            if (value.$type === "StructDiscriminatedUnionMember1") {
+              return StructDiscriminatedUnionMember1.fromJson(value).map(
+                (value) => ({
+                  $type: "StructDiscriminatedUnionMember1" as const,
+                  value: value,
+                }),
+              );
+            }
+            if (value.$type === "StructDiscriminatedUnionMember2") {
+              return StructDiscriminatedUnionMember2.fromJson(value).map(
+                (value) => ({
+                  $type: "StructDiscriminatedUnionMember2" as const,
+                  value: value,
+                }),
+              );
+            }
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map((value) => ({
+                $type: "string" as const,
+                value: value,
+              }));
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              | {
-                  $type: "StructDiscriminatedUnionMember1";
-                  value: StructDiscriminatedUnionMember1;
-                }
-              | {
-                  $type: "StructDiscriminatedUnionMember2";
-                  value: StructDiscriminatedUnionMember2;
-                }
-              | { $type: "string"; value: string },
-              | StructDiscriminatedUnionMember1.Json
-              | StructDiscriminatedUnionMember2.Json
-              | {
-                  $type: "string";
-                  "@type": string;
-                  "@value": string;
-                }
-            >
-          )(item).map((item) => Maybe.of(item)),
+            throw new Error("unable to deserialize JSON");
+          })(item).map((item) => Maybe.of(item)),
         )
         .orDefault(Either.of(Maybe.empty())),
       optionalTerm: Maybe.fromNullable($json["optionalTerm"])
         .map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "BlankNode") {
-                return Either.of<Error, BlankNode | NamedNode>(
-                  value["@id"].startsWith("_:")
-                    ? dataFactory.blankNode(value["@id"].substring(2))
-                    : dataFactory.namedNode(value["@id"]),
-                ).map((value) => value);
-              }
-              if (value.$type === "Literal") {
-                return Either.of<Error, Literal>(
-                  dataFactory.literal(
-                    value["@value"],
-                    value["@language"] !== undefined
-                      ? value["@language"]
-                      : value["@type"] !== undefined
-                        ? dataFactory.namedNode(value["@type"]!)
-                        : undefined,
-                  ),
-                ).map((value) => value);
-              }
+          ((value) => {
+            if (value.$type === "BlankNode") {
+              return Either.of<Error, BlankNode | NamedNode>(
+                value["@id"].startsWith("_:")
+                  ? dataFactory.blankNode(value["@id"].substring(2))
+                  : dataFactory.namedNode(value["@id"]),
+              ).map((value) => value);
+            }
+            if (value.$type === "Literal") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  value["@value"],
+                  value["@language"] !== undefined
+                    ? value["@language"]
+                    : value["@type"] !== undefined
+                      ? dataFactory.namedNode(value["@type"]!)
+                      : undefined,
+                ),
+              ).map((value) => value);
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              (BlankNode | NamedNode) | Literal,
-              | { $type: "BlankNode"; "@id": string }
-              | {
-                  $type: "Literal";
-                  "@language"?: string;
-                  "@type"?: string;
-                  "@value": string;
-                }
-            >
-          )(item).map((item) => Maybe.of(item)),
+            throw new Error("unable to deserialize JSON");
+          })(item).map((item) => Maybe.of(item)),
         )
         .orDefault(Either.of(Maybe.empty())),
-      requiredIriOrString: (
-        ((value) => {
-          if (value.$type === "object") {
-            return Either.of<Error, NamedNode>(
-              dataFactory.namedNode(value["@id"]),
-            ).map((value) => value);
-          }
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map(
-              (value) => value,
-            );
-          }
+      requiredIriOrString: ((value) => {
+        if (value.$type === "object") {
+          return Either.of<Error, NamedNode>(
+            dataFactory.namedNode(value["@id"]),
+          ).map((value) => value);
+        }
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map(
+            (value) => value,
+          );
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          NamedNode | string,
-          | { $type: "object"; "@id": string }
-          | { $type: "string"; "@type": string; "@value": string }
-        >
-      )($json["requiredIriOrString"]),
-      requiredNodeOrLiteral: (
-        ((value) => {
-          if (value.$type === "StructDiscriminatedUnionMember1") {
-            return StructDiscriminatedUnionMember1.fromJson(value).map(
-              (value) => ({
-                termType: "StructDiscriminatedUnionMember1" as const,
-                value: value,
-              }),
-            );
-          }
-          if (value.$type === "Literal") {
-            return Either.of<Error, Literal>(
-              dataFactory.literal(
-                value["@value"],
-                value["@language"] !== undefined
-                  ? value["@language"]
-                  : value["@type"] !== undefined
-                    ? dataFactory.namedNode(value["@type"]!)
-                    : undefined,
-              ),
-            ).map((value) => value);
-          }
-
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal,
-          | StructDiscriminatedUnionMember1.Json
-          | {
-              $type: "Literal";
-              "@language"?: string;
-              "@type"?: string;
-              "@value": string;
-            }
-        >
-      )($json["requiredNodeOrLiteral"]),
-      requiredNodeOrNodeOrString: (
-        ((value) => {
-          if (value.$type === "StructDiscriminatedUnionMember1") {
-            return StructDiscriminatedUnionMember1.fromJson(value).map(
-              (value) => ({
-                $type: "StructDiscriminatedUnionMember1" as const,
-                value: value,
-              }),
-            );
-          }
-          if (value.$type === "StructDiscriminatedUnionMember2") {
-            return StructDiscriminatedUnionMember2.fromJson(value).map(
-              (value) => ({
-                $type: "StructDiscriminatedUnionMember2" as const,
-                value: value,
-              }),
-            );
-          }
-          if (value.$type === "string") {
-            return Either.of<Error, string>(value["@value"]).map((value) => ({
-              $type: "string" as const,
+        throw new Error("unable to deserialize JSON");
+      })($json["requiredIriOrString"]),
+      requiredNodeOrLiteral: ((value) => {
+        if (value.$type === "StructDiscriminatedUnionMember1") {
+          return StructDiscriminatedUnionMember1.fromJson(value).map(
+            (value) => ({
+              termType: "StructDiscriminatedUnionMember1" as const,
               value: value,
-            }));
-          }
+            }),
+          );
+        }
+        if (value.$type === "Literal") {
+          return Either.of<Error, Literal>(
+            dataFactory.literal(
+              value["@value"],
+              value["@language"] !== undefined
+                ? value["@language"]
+                : value["@type"] !== undefined
+                  ? dataFactory.namedNode(value["@type"]!)
+                  : undefined,
+            ),
+          ).map((value) => value);
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string },
-          | StructDiscriminatedUnionMember1.Json
-          | StructDiscriminatedUnionMember2.Json
-          | {
-              $type: "string";
-              "@type": string;
-              "@value": string;
-            }
-        >
-      )($json["requiredNodeOrNodeOrString"]),
-      requiredTerm: (
-        ((value) => {
-          if (value.$type === "BlankNode") {
-            return Either.of<Error, BlankNode | NamedNode>(
-              value["@id"].startsWith("_:")
-                ? dataFactory.blankNode(value["@id"].substring(2))
-                : dataFactory.namedNode(value["@id"]),
-            ).map((value) => value);
-          }
-          if (value.$type === "Literal") {
-            return Either.of<Error, Literal>(
-              dataFactory.literal(
-                value["@value"],
-                value["@language"] !== undefined
-                  ? value["@language"]
-                  : value["@type"] !== undefined
-                    ? dataFactory.namedNode(value["@type"]!)
-                    : undefined,
-              ),
-            ).map((value) => value);
-          }
+        throw new Error("unable to deserialize JSON");
+      })($json["requiredNodeOrLiteral"]),
+      requiredNodeOrNodeOrString: ((value) => {
+        if (value.$type === "StructDiscriminatedUnionMember1") {
+          return StructDiscriminatedUnionMember1.fromJson(value).map(
+            (value) => ({
+              $type: "StructDiscriminatedUnionMember1" as const,
+              value: value,
+            }),
+          );
+        }
+        if (value.$type === "StructDiscriminatedUnionMember2") {
+          return StructDiscriminatedUnionMember2.fromJson(value).map(
+            (value) => ({
+              $type: "StructDiscriminatedUnionMember2" as const,
+              value: value,
+            }),
+          );
+        }
+        if (value.$type === "string") {
+          return Either.of<Error, string>(value["@value"]).map((value) => ({
+            $type: "string" as const,
+            value: value,
+          }));
+        }
 
-          throw new Error("unable to deserialize JSON");
-        }) satisfies $FromJsonFunction<
-          (BlankNode | NamedNode) | Literal,
-          | { $type: "BlankNode"; "@id": string }
-          | {
-              $type: "Literal";
-              "@language"?: string;
-              "@type"?: string;
-              "@value": string;
-            }
-        >
-      )($json["requiredTerm"]),
+        throw new Error("unable to deserialize JSON");
+      })($json["requiredNodeOrNodeOrString"]),
+      requiredTerm: ((value) => {
+        if (value.$type === "BlankNode") {
+          return Either.of<Error, BlankNode | NamedNode>(
+            value["@id"].startsWith("_:")
+              ? dataFactory.blankNode(value["@id"].substring(2))
+              : dataFactory.namedNode(value["@id"]),
+          ).map((value) => value);
+        }
+        if (value.$type === "Literal") {
+          return Either.of<Error, Literal>(
+            dataFactory.literal(
+              value["@value"],
+              value["@language"] !== undefined
+                ? value["@language"]
+                : value["@type"] !== undefined
+                  ? dataFactory.namedNode(value["@type"]!)
+                  : undefined,
+            ),
+          ).map((value) => value);
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })($json["requiredTerm"]),
       setIriOrString: Either.sequence<Error, NamedNode | string>(
         ($json["setIriOrString"] ?? []).map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "object") {
-                return Either.of<Error, NamedNode>(
-                  dataFactory.namedNode(value["@id"]),
-                ).map((value) => value);
-              }
-              if (value.$type === "string") {
-                return Either.of<Error, string>(value["@value"]).map(
-                  (value) => value,
-                );
-              }
+          ((value) => {
+            if (value.$type === "object") {
+              return Either.of<Error, NamedNode>(
+                dataFactory.namedNode(value["@id"]),
+              ).map((value) => value);
+            }
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map(
+                (value) => value,
+              );
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              NamedNode | string,
-              | { $type: "object"; "@id": string }
-              | { $type: "string"; "@type": string; "@value": string }
-            >
-          )(item),
+            throw new Error("unable to deserialize JSON");
+          })(item),
         ),
       ),
       setNodeOrLiteral: Either.sequence<
@@ -61828,45 +59615,30 @@ export namespace UnionDiscriminantsStruct {
         | Literal
       >(
         ($json["setNodeOrLiteral"] ?? []).map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "StructDiscriminatedUnionMember1") {
-                return StructDiscriminatedUnionMember1.fromJson(value).map(
-                  (value) => ({
-                    termType: "StructDiscriminatedUnionMember1" as const,
-                    value: value,
-                  }),
-                );
-              }
-              if (value.$type === "Literal") {
-                return Either.of<Error, Literal>(
-                  dataFactory.literal(
-                    value["@value"],
-                    value["@language"] !== undefined
-                      ? value["@language"]
-                      : value["@type"] !== undefined
-                        ? dataFactory.namedNode(value["@type"]!)
-                        : undefined,
-                  ),
-                ).map((value) => value);
-              }
+          ((value) => {
+            if (value.$type === "StructDiscriminatedUnionMember1") {
+              return StructDiscriminatedUnionMember1.fromJson(value).map(
+                (value) => ({
+                  termType: "StructDiscriminatedUnionMember1" as const,
+                  value: value,
+                }),
+              );
+            }
+            if (value.$type === "Literal") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  value["@value"],
+                  value["@language"] !== undefined
+                    ? value["@language"]
+                    : value["@type"] !== undefined
+                      ? dataFactory.namedNode(value["@type"]!)
+                      : undefined,
+                ),
+              ).map((value) => value);
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              | {
-                  termType: "StructDiscriminatedUnionMember1";
-                  value: StructDiscriminatedUnionMember1;
-                }
-              | Literal,
-              | StructDiscriminatedUnionMember1.Json
-              | {
-                  $type: "Literal";
-                  "@language"?: string;
-                  "@type"?: string;
-                  "@value": string;
-                }
-            >
-          )(item),
+            throw new Error("unable to deserialize JSON");
+          })(item),
         ),
       ),
       setNodeOrNodeOrString: Either.sequence<
@@ -61882,88 +59654,59 @@ export namespace UnionDiscriminantsStruct {
         | { $type: "string"; value: string }
       >(
         ($json["setNodeOrNodeOrString"] ?? []).map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "StructDiscriminatedUnionMember1") {
-                return StructDiscriminatedUnionMember1.fromJson(value).map(
-                  (value) => ({
-                    $type: "StructDiscriminatedUnionMember1" as const,
-                    value: value,
-                  }),
-                );
-              }
-              if (value.$type === "StructDiscriminatedUnionMember2") {
-                return StructDiscriminatedUnionMember2.fromJson(value).map(
-                  (value) => ({
-                    $type: "StructDiscriminatedUnionMember2" as const,
-                    value: value,
-                  }),
-                );
-              }
-              if (value.$type === "string") {
-                return Either.of<Error, string>(value["@value"]).map(
-                  (value) => ({ $type: "string" as const, value: value }),
-                );
-              }
+          ((value) => {
+            if (value.$type === "StructDiscriminatedUnionMember1") {
+              return StructDiscriminatedUnionMember1.fromJson(value).map(
+                (value) => ({
+                  $type: "StructDiscriminatedUnionMember1" as const,
+                  value: value,
+                }),
+              );
+            }
+            if (value.$type === "StructDiscriminatedUnionMember2") {
+              return StructDiscriminatedUnionMember2.fromJson(value).map(
+                (value) => ({
+                  $type: "StructDiscriminatedUnionMember2" as const,
+                  value: value,
+                }),
+              );
+            }
+            if (value.$type === "string") {
+              return Either.of<Error, string>(value["@value"]).map((value) => ({
+                $type: "string" as const,
+                value: value,
+              }));
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              | {
-                  $type: "StructDiscriminatedUnionMember1";
-                  value: StructDiscriminatedUnionMember1;
-                }
-              | {
-                  $type: "StructDiscriminatedUnionMember2";
-                  value: StructDiscriminatedUnionMember2;
-                }
-              | { $type: "string"; value: string },
-              | StructDiscriminatedUnionMember1.Json
-              | StructDiscriminatedUnionMember2.Json
-              | {
-                  $type: "string";
-                  "@type": string;
-                  "@value": string;
-                }
-            >
-          )(item),
+            throw new Error("unable to deserialize JSON");
+          })(item),
         ),
       ),
       setTerm: Either.sequence<Error, (BlankNode | NamedNode) | Literal>(
         ($json["setTerm"] ?? []).map((item) =>
-          (
-            ((value) => {
-              if (value.$type === "BlankNode") {
-                return Either.of<Error, BlankNode | NamedNode>(
-                  value["@id"].startsWith("_:")
-                    ? dataFactory.blankNode(value["@id"].substring(2))
-                    : dataFactory.namedNode(value["@id"]),
-                ).map((value) => value);
-              }
-              if (value.$type === "Literal") {
-                return Either.of<Error, Literal>(
-                  dataFactory.literal(
-                    value["@value"],
-                    value["@language"] !== undefined
-                      ? value["@language"]
-                      : value["@type"] !== undefined
-                        ? dataFactory.namedNode(value["@type"]!)
-                        : undefined,
-                  ),
-                ).map((value) => value);
-              }
+          ((value) => {
+            if (value.$type === "BlankNode") {
+              return Either.of<Error, BlankNode | NamedNode>(
+                value["@id"].startsWith("_:")
+                  ? dataFactory.blankNode(value["@id"].substring(2))
+                  : dataFactory.namedNode(value["@id"]),
+              ).map((value) => value);
+            }
+            if (value.$type === "Literal") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  value["@value"],
+                  value["@language"] !== undefined
+                    ? value["@language"]
+                    : value["@type"] !== undefined
+                      ? dataFactory.namedNode(value["@type"]!)
+                      : undefined,
+                ),
+              ).map((value) => value);
+            }
 
-              throw new Error("unable to deserialize JSON");
-            }) satisfies $FromJsonFunction<
-              (BlankNode | NamedNode) | Literal,
-              | { $type: "BlankNode"; "@id": string }
-              | {
-                  $type: "Literal";
-                  "@language"?: string;
-                  "@type"?: string;
-                  "@value": string;
-                }
-            >
-          )(item),
+            throw new Error("unable to deserialize JSON");
+          })(item),
         ),
       ),
     }).chain(UnionDiscriminantsStruct.create);
@@ -62946,285 +60689,6 @@ export namespace UnionDiscriminantsStruct {
         $type: _unionDiscriminantsStruct.$type,
         optionalIriOrString: _unionDiscriminantsStruct.optionalIriOrString
           .map((item) =>
-            (
-              ((value) => {
-                if (typeof value === "object") {
-                  return { $type: "object", "@id": value.value };
-                }
-                if (typeof value === "string") {
-                  return {
-                    $type: "string",
-                    "@type": $xsd_string.value,
-                    "@value": value,
-                  };
-                }
-
-                throw new Error("unable to serialize to JSON");
-              }) satisfies $ToJsonFunction<
-                NamedNode | string,
-                | { $type: "object"; "@id": string }
-                | { $type: "string"; "@type": string; "@value": string }
-              >
-            )(item),
-          )
-          .extract(),
-        optionalNodeOrLiteral: _unionDiscriminantsStruct.optionalNodeOrLiteral
-          .map((item) =>
-            (
-              ((value) => {
-                if (value["termType"] === "StructDiscriminatedUnionMember1") {
-                  return StructDiscriminatedUnionMember1.toJson(value.value);
-                }
-                if (value["termType"] === "Literal") {
-                  return {
-                    $type: "Literal",
-                    "@language":
-                      value.language.length > 0 ? value.language : undefined,
-                    "@type":
-                      value.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? value.datatype.value
-                        : undefined,
-                    "@value": value.value,
-                  };
-                }
-
-                throw new Error("unable to serialize to JSON");
-              }) satisfies $ToJsonFunction<
-                | {
-                    termType: "StructDiscriminatedUnionMember1";
-                    value: StructDiscriminatedUnionMember1;
-                  }
-                | Literal,
-                | StructDiscriminatedUnionMember1.Json
-                | {
-                    $type: "Literal";
-                    "@language"?: string;
-                    "@type"?: string;
-                    "@value": string;
-                  }
-              >
-            )(item),
-          )
-          .extract(),
-        optionalNodeOrNodeOrString:
-          _unionDiscriminantsStruct.optionalNodeOrNodeOrString
-            .map((item) =>
-              (
-                ((value) => {
-                  if (value["$type"] === "StructDiscriminatedUnionMember1") {
-                    return StructDiscriminatedUnionMember1.toJson(value.value);
-                  }
-                  if (value["$type"] === "StructDiscriminatedUnionMember2") {
-                    return StructDiscriminatedUnionMember2.toJson(value.value);
-                  }
-                  if (value["$type"] === "string") {
-                    return {
-                      $type: "string",
-                      "@type": $xsd_string.value,
-                      "@value": value.value,
-                    };
-                  }
-
-                  throw new Error("unable to serialize to JSON");
-                }) satisfies $ToJsonFunction<
-                  | {
-                      $type: "StructDiscriminatedUnionMember1";
-                      value: StructDiscriminatedUnionMember1;
-                    }
-                  | {
-                      $type: "StructDiscriminatedUnionMember2";
-                      value: StructDiscriminatedUnionMember2;
-                    }
-                  | { $type: "string"; value: string },
-                  | StructDiscriminatedUnionMember1.Json
-                  | StructDiscriminatedUnionMember2.Json
-                  | {
-                      $type: "string";
-                      "@type": string;
-                      "@value": string;
-                    }
-                >
-              )(item),
-            )
-            .extract(),
-        optionalTerm: _unionDiscriminantsStruct.optionalTerm
-          .map((item) =>
-            (
-              ((value) => {
-                if (
-                  value["termType"] === "BlankNode" ||
-                  value["termType"] === "NamedNode"
-                ) {
-                  return {
-                    $type: "BlankNode",
-                    "@id":
-                      value.termType === "BlankNode"
-                        ? `_:${value.value}`
-                        : value.value,
-                  };
-                }
-                if (value["termType"] === "Literal") {
-                  return {
-                    $type: "Literal",
-                    "@language":
-                      value.language.length > 0 ? value.language : undefined,
-                    "@type":
-                      value.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? value.datatype.value
-                        : undefined,
-                    "@value": value.value,
-                  };
-                }
-
-                throw new Error("unable to serialize to JSON");
-              }) satisfies $ToJsonFunction<
-                (BlankNode | NamedNode) | Literal,
-                | { $type: "BlankNode"; "@id": string }
-                | {
-                    $type: "Literal";
-                    "@language"?: string;
-                    "@type"?: string;
-                    "@value": string;
-                  }
-              >
-            )(item),
-          )
-          .extract(),
-        requiredIriOrString: (
-          ((value) => {
-            if (typeof value === "object") {
-              return { $type: "object", "@id": value.value };
-            }
-            if (typeof value === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value,
-              };
-            }
-
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            NamedNode | string,
-            | { $type: "object"; "@id": string }
-            | { $type: "string"; "@type": string; "@value": string }
-          >
-        )(_unionDiscriminantsStruct.requiredIriOrString),
-        requiredNodeOrLiteral: (
-          ((value) => {
-            if (value["termType"] === "StructDiscriminatedUnionMember1") {
-              return StructDiscriminatedUnionMember1.toJson(value.value);
-            }
-            if (value["termType"] === "Literal") {
-              return {
-                $type: "Literal",
-                "@language":
-                  value.language.length > 0 ? value.language : undefined,
-                "@type":
-                  value.datatype.value !==
-                  "http://www.w3.org/2001/XMLSchema#string"
-                    ? value.datatype.value
-                    : undefined,
-                "@value": value.value,
-              };
-            }
-
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            | {
-                termType: "StructDiscriminatedUnionMember1";
-                value: StructDiscriminatedUnionMember1;
-              }
-            | Literal,
-            | StructDiscriminatedUnionMember1.Json
-            | {
-                $type: "Literal";
-                "@language"?: string;
-                "@type"?: string;
-                "@value": string;
-              }
-          >
-        )(_unionDiscriminantsStruct.requiredNodeOrLiteral),
-        requiredNodeOrNodeOrString: (
-          ((value) => {
-            if (value["$type"] === "StructDiscriminatedUnionMember1") {
-              return StructDiscriminatedUnionMember1.toJson(value.value);
-            }
-            if (value["$type"] === "StructDiscriminatedUnionMember2") {
-              return StructDiscriminatedUnionMember2.toJson(value.value);
-            }
-            if (value["$type"] === "string") {
-              return {
-                $type: "string",
-                "@type": $xsd_string.value,
-                "@value": value.value,
-              };
-            }
-
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            | {
-                $type: "StructDiscriminatedUnionMember1";
-                value: StructDiscriminatedUnionMember1;
-              }
-            | {
-                $type: "StructDiscriminatedUnionMember2";
-                value: StructDiscriminatedUnionMember2;
-              }
-            | { $type: "string"; value: string },
-            | StructDiscriminatedUnionMember1.Json
-            | StructDiscriminatedUnionMember2.Json
-            | {
-                $type: "string";
-                "@type": string;
-                "@value": string;
-              }
-          >
-        )(_unionDiscriminantsStruct.requiredNodeOrNodeOrString),
-        requiredTerm: (
-          ((value) => {
-            if (
-              value["termType"] === "BlankNode" ||
-              value["termType"] === "NamedNode"
-            ) {
-              return {
-                $type: "BlankNode",
-                "@id":
-                  value.termType === "BlankNode"
-                    ? `_:${value.value}`
-                    : value.value,
-              };
-            }
-            if (value["termType"] === "Literal") {
-              return {
-                $type: "Literal",
-                "@language":
-                  value.language.length > 0 ? value.language : undefined,
-                "@type":
-                  value.datatype.value !==
-                  "http://www.w3.org/2001/XMLSchema#string"
-                    ? value.datatype.value
-                    : undefined,
-                "@value": value.value,
-              };
-            }
-
-            throw new Error("unable to serialize to JSON");
-          }) satisfies $ToJsonFunction<
-            (BlankNode | NamedNode) | Literal,
-            | { $type: "BlankNode"; "@id": string }
-            | {
-                $type: "Literal";
-                "@language"?: string;
-                "@type"?: string;
-                "@value": string;
-              }
-          >
-        )(_unionDiscriminantsStruct.requiredTerm),
-        setIriOrString: _unionDiscriminantsStruct.setIriOrString.map((item) =>
-          (
             ((value) => {
               if (typeof value === "object") {
                 return { $type: "object", "@id": value.value };
@@ -63238,54 +60702,36 @@ export namespace UnionDiscriminantsStruct {
               }
 
               throw new Error("unable to serialize to JSON");
-            }) satisfies $ToJsonFunction<
-              NamedNode | string,
-              | { $type: "object"; "@id": string }
-              | { $type: "string"; "@type": string; "@value": string }
-            >
-          )(item),
-        ),
-        setNodeOrLiteral: _unionDiscriminantsStruct.setNodeOrLiteral.map(
-          (item) =>
-            (
-              ((value) => {
-                if (value["termType"] === "StructDiscriminatedUnionMember1") {
-                  return StructDiscriminatedUnionMember1.toJson(value.value);
-                }
-                if (value["termType"] === "Literal") {
-                  return {
-                    $type: "Literal",
-                    "@language":
-                      value.language.length > 0 ? value.language : undefined,
-                    "@type":
-                      value.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? value.datatype.value
-                        : undefined,
-                    "@value": value.value,
-                  };
-                }
+            })(item),
+          )
+          .extract(),
+        optionalNodeOrLiteral: _unionDiscriminantsStruct.optionalNodeOrLiteral
+          .map((item) =>
+            ((value) => {
+              if (value["termType"] === "StructDiscriminatedUnionMember1") {
+                return StructDiscriminatedUnionMember1.toJson(value.value);
+              }
+              if (value["termType"] === "Literal") {
+                return {
+                  $type: "Literal",
+                  "@language":
+                    value.language.length > 0 ? value.language : undefined,
+                  "@type":
+                    value.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? value.datatype.value
+                      : undefined,
+                  "@value": value.value,
+                };
+              }
 
-                throw new Error("unable to serialize to JSON");
-              }) satisfies $ToJsonFunction<
-                | {
-                    termType: "StructDiscriminatedUnionMember1";
-                    value: StructDiscriminatedUnionMember1;
-                  }
-                | Literal,
-                | StructDiscriminatedUnionMember1.Json
-                | {
-                    $type: "Literal";
-                    "@language"?: string;
-                    "@type"?: string;
-                    "@value": string;
-                  }
-              >
-            )(item),
-        ),
-        setNodeOrNodeOrString:
-          _unionDiscriminantsStruct.setNodeOrNodeOrString.map((item) =>
-            (
+              throw new Error("unable to serialize to JSON");
+            })(item),
+          )
+          .extract(),
+        optionalNodeOrNodeOrString:
+          _unionDiscriminantsStruct.optionalNodeOrNodeOrString
+            .map((item) =>
               ((value) => {
                 if (value["$type"] === "StructDiscriminatedUnionMember1") {
                   return StructDiscriminatedUnionMember1.toJson(value.value);
@@ -63302,28 +60748,11 @@ export namespace UnionDiscriminantsStruct {
                 }
 
                 throw new Error("unable to serialize to JSON");
-              }) satisfies $ToJsonFunction<
-                | {
-                    $type: "StructDiscriminatedUnionMember1";
-                    value: StructDiscriminatedUnionMember1;
-                  }
-                | {
-                    $type: "StructDiscriminatedUnionMember2";
-                    value: StructDiscriminatedUnionMember2;
-                  }
-                | { $type: "string"; value: string },
-                | StructDiscriminatedUnionMember1.Json
-                | StructDiscriminatedUnionMember2.Json
-                | {
-                    $type: "string";
-                    "@type": string;
-                    "@value": string;
-                  }
-              >
-            )(item),
-          ),
-        setTerm: _unionDiscriminantsStruct.setTerm.map((item) =>
-          (
+              })(item),
+            )
+            .extract(),
+        optionalTerm: _unionDiscriminantsStruct.optionalTerm
+          .map((item) =>
             ((value) => {
               if (
                 value["termType"] === "BlankNode" ||
@@ -63352,17 +60781,178 @@ export namespace UnionDiscriminantsStruct {
               }
 
               throw new Error("unable to serialize to JSON");
-            }) satisfies $ToJsonFunction<
-              (BlankNode | NamedNode) | Literal,
-              | { $type: "BlankNode"; "@id": string }
-              | {
-                  $type: "Literal";
-                  "@language"?: string;
-                  "@type"?: string;
-                  "@value": string;
-                }
-            >
-          )(item),
+            })(item),
+          )
+          .extract(),
+        requiredIriOrString: ((value) => {
+          if (typeof value === "object") {
+            return { $type: "object", "@id": value.value };
+          }
+          if (typeof value === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value,
+            };
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_unionDiscriminantsStruct.requiredIriOrString),
+        requiredNodeOrLiteral: ((value) => {
+          if (value["termType"] === "StructDiscriminatedUnionMember1") {
+            return StructDiscriminatedUnionMember1.toJson(value.value);
+          }
+          if (value["termType"] === "Literal") {
+            return {
+              $type: "Literal",
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_unionDiscriminantsStruct.requiredNodeOrLiteral),
+        requiredNodeOrNodeOrString: ((value) => {
+          if (value["$type"] === "StructDiscriminatedUnionMember1") {
+            return StructDiscriminatedUnionMember1.toJson(value.value);
+          }
+          if (value["$type"] === "StructDiscriminatedUnionMember2") {
+            return StructDiscriminatedUnionMember2.toJson(value.value);
+          }
+          if (value["$type"] === "string") {
+            return {
+              $type: "string",
+              "@type": $xsd_string.value,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_unionDiscriminantsStruct.requiredNodeOrNodeOrString),
+        requiredTerm: ((value) => {
+          if (
+            value["termType"] === "BlankNode" ||
+            value["termType"] === "NamedNode"
+          ) {
+            return {
+              $type: "BlankNode",
+              "@id":
+                value.termType === "BlankNode"
+                  ? `_:${value.value}`
+                  : value.value,
+            };
+          }
+          if (value["termType"] === "Literal") {
+            return {
+              $type: "Literal",
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(_unionDiscriminantsStruct.requiredTerm),
+        setIriOrString: _unionDiscriminantsStruct.setIriOrString.map((item) =>
+          ((value) => {
+            if (typeof value === "object") {
+              return { $type: "object", "@id": value.value };
+            }
+            if (typeof value === "string") {
+              return {
+                $type: "string",
+                "@type": $xsd_string.value,
+                "@value": value,
+              };
+            }
+
+            throw new Error("unable to serialize to JSON");
+          })(item),
+        ),
+        setNodeOrLiteral: _unionDiscriminantsStruct.setNodeOrLiteral.map(
+          (item) =>
+            ((value) => {
+              if (value["termType"] === "StructDiscriminatedUnionMember1") {
+                return StructDiscriminatedUnionMember1.toJson(value.value);
+              }
+              if (value["termType"] === "Literal") {
+                return {
+                  $type: "Literal",
+                  "@language":
+                    value.language.length > 0 ? value.language : undefined,
+                  "@type":
+                    value.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? value.datatype.value
+                      : undefined,
+                  "@value": value.value,
+                };
+              }
+
+              throw new Error("unable to serialize to JSON");
+            })(item),
+        ),
+        setNodeOrNodeOrString:
+          _unionDiscriminantsStruct.setNodeOrNodeOrString.map((item) =>
+            ((value) => {
+              if (value["$type"] === "StructDiscriminatedUnionMember1") {
+                return StructDiscriminatedUnionMember1.toJson(value.value);
+              }
+              if (value["$type"] === "StructDiscriminatedUnionMember2") {
+                return StructDiscriminatedUnionMember2.toJson(value.value);
+              }
+              if (value["$type"] === "string") {
+                return {
+                  $type: "string",
+                  "@type": $xsd_string.value,
+                  "@value": value.value,
+                };
+              }
+
+              throw new Error("unable to serialize to JSON");
+            })(item),
+          ),
+        setTerm: _unionDiscriminantsStruct.setTerm.map((item) =>
+          ((value) => {
+            if (
+              value["termType"] === "BlankNode" ||
+              value["termType"] === "NamedNode"
+            ) {
+              return {
+                $type: "BlankNode",
+                "@id":
+                  value.termType === "BlankNode"
+                    ? `_:${value.value}`
+                    : value.value,
+              };
+            }
+            if (value["termType"] === "Literal") {
+              return {
+                $type: "Literal",
+                "@language":
+                  value.language.length > 0 ? value.language : undefined,
+                "@type":
+                  value.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? value.datatype.value
+                    : undefined,
+                "@value": value.value,
+              };
+            }
+
+            throw new Error("unable to serialize to JSON");
+          })(item),
         ),
       }),
     );
@@ -63375,203 +60965,6 @@ export namespace UnionDiscriminantsStruct {
       $type: "UnionDiscriminantsStruct",
       optionalIriOrString: _unionDiscriminantsStruct.optionalIriOrString
         .map((item) =>
-          (
-            ((value) => {
-              if (typeof value === "object") {
-                return value.value;
-              }
-              if (typeof value === "string") {
-                return value;
-              }
-
-              throw new Error("unable to serialize to loggable");
-            }) satisfies $ToLoggableFunction<NamedNode | string>
-          )(item),
-        )
-        .extract(),
-      optionalNodeOrLiteral: _unionDiscriminantsStruct.optionalNodeOrLiteral
-        .map((item) =>
-          (
-            ((value) => {
-              if (value["termType"] === "StructDiscriminatedUnionMember1") {
-                return StructDiscriminatedUnionMember1.toLoggable(value.value);
-              }
-              if (value["termType"] === "Literal") {
-                return {
-                  "@language":
-                    value.language.length > 0 ? value.language : undefined,
-                  "@type":
-                    value.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? value.datatype.value
-                      : undefined,
-                  "@value": value.value,
-                };
-              }
-
-              throw new Error("unable to serialize to loggable");
-            }) satisfies $ToLoggableFunction<
-              | {
-                  termType: "StructDiscriminatedUnionMember1";
-                  value: StructDiscriminatedUnionMember1;
-                }
-              | Literal
-            >
-          )(item),
-        )
-        .extract(),
-      optionalNodeOrNodeOrString:
-        _unionDiscriminantsStruct.optionalNodeOrNodeOrString
-          .map((item) =>
-            (
-              ((value) => {
-                if (value["$type"] === "StructDiscriminatedUnionMember1") {
-                  return StructDiscriminatedUnionMember1.toLoggable(
-                    value.value,
-                  );
-                }
-                if (value["$type"] === "StructDiscriminatedUnionMember2") {
-                  return StructDiscriminatedUnionMember2.toLoggable(
-                    value.value,
-                  );
-                }
-                if (value["$type"] === "string") {
-                  return value.value;
-                }
-
-                throw new Error("unable to serialize to loggable");
-              }) satisfies $ToLoggableFunction<
-                | {
-                    $type: "StructDiscriminatedUnionMember1";
-                    value: StructDiscriminatedUnionMember1;
-                  }
-                | {
-                    $type: "StructDiscriminatedUnionMember2";
-                    value: StructDiscriminatedUnionMember2;
-                  }
-                | { $type: "string"; value: string }
-              >
-            )(item),
-          )
-          .extract(),
-      optionalTerm: _unionDiscriminantsStruct.optionalTerm
-        .map((item) =>
-          (
-            ((value) => {
-              if (
-                value["termType"] === "BlankNode" ||
-                value["termType"] === "NamedNode"
-              ) {
-                return value.value;
-              }
-              if (value["termType"] === "Literal") {
-                return {
-                  "@language":
-                    value.language.length > 0 ? value.language : undefined,
-                  "@type":
-                    value.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? value.datatype.value
-                      : undefined,
-                  "@value": value.value,
-                };
-              }
-
-              throw new Error("unable to serialize to loggable");
-            }) satisfies $ToLoggableFunction<(BlankNode | NamedNode) | Literal>
-          )(item),
-        )
-        .extract(),
-      requiredIriOrString: (
-        ((value) => {
-          if (typeof value === "object") {
-            return value.value;
-          }
-          if (typeof value === "string") {
-            return value;
-          }
-
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<NamedNode | string>
-      )(_unionDiscriminantsStruct.requiredIriOrString),
-      requiredNodeOrLiteral: (
-        ((value) => {
-          if (value["termType"] === "StructDiscriminatedUnionMember1") {
-            return StructDiscriminatedUnionMember1.toLoggable(value.value);
-          }
-          if (value["termType"] === "Literal") {
-            return {
-              "@language":
-                value.language.length > 0 ? value.language : undefined,
-              "@type":
-                value.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? value.datatype.value
-                  : undefined,
-              "@value": value.value,
-            };
-          }
-
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<
-          | {
-              termType: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | Literal
-        >
-      )(_unionDiscriminantsStruct.requiredNodeOrLiteral),
-      requiredNodeOrNodeOrString: (
-        ((value) => {
-          if (value["$type"] === "StructDiscriminatedUnionMember1") {
-            return StructDiscriminatedUnionMember1.toLoggable(value.value);
-          }
-          if (value["$type"] === "StructDiscriminatedUnionMember2") {
-            return StructDiscriminatedUnionMember2.toLoggable(value.value);
-          }
-          if (value["$type"] === "string") {
-            return value.value;
-          }
-
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<
-          | {
-              $type: "StructDiscriminatedUnionMember1";
-              value: StructDiscriminatedUnionMember1;
-            }
-          | {
-              $type: "StructDiscriminatedUnionMember2";
-              value: StructDiscriminatedUnionMember2;
-            }
-          | { $type: "string"; value: string }
-        >
-      )(_unionDiscriminantsStruct.requiredNodeOrNodeOrString),
-      requiredTerm: (
-        ((value) => {
-          if (
-            value["termType"] === "BlankNode" ||
-            value["termType"] === "NamedNode"
-          ) {
-            return value.value;
-          }
-          if (value["termType"] === "Literal") {
-            return {
-              "@language":
-                value.language.length > 0 ? value.language : undefined,
-              "@type":
-                value.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? value.datatype.value
-                  : undefined,
-              "@value": value.value,
-            };
-          }
-
-          throw new Error("unable to serialize to loggable");
-        }) satisfies $ToLoggableFunction<(BlankNode | NamedNode) | Literal>
-      )(_unionDiscriminantsStruct.requiredTerm),
-      setIriOrString: _unionDiscriminantsStruct.setIriOrString.map((item) =>
-        (
           ((value) => {
             if (typeof value === "object") {
               return value.value;
@@ -63581,11 +60974,11 @@ export namespace UnionDiscriminantsStruct {
             }
 
             throw new Error("unable to serialize to loggable");
-          }) satisfies $ToLoggableFunction<NamedNode | string>
-        )(item),
-      ),
-      setNodeOrLiteral: _unionDiscriminantsStruct.setNodeOrLiteral.map((item) =>
-        (
+          })(item),
+        )
+        .extract(),
+      optionalNodeOrLiteral: _unionDiscriminantsStruct.optionalNodeOrLiteral
+        .map((item) =>
           ((value) => {
             if (value["termType"] === "StructDiscriminatedUnionMember1") {
               return StructDiscriminatedUnionMember1.toLoggable(value.value);
@@ -63604,18 +60997,12 @@ export namespace UnionDiscriminantsStruct {
             }
 
             throw new Error("unable to serialize to loggable");
-          }) satisfies $ToLoggableFunction<
-            | {
-                termType: "StructDiscriminatedUnionMember1";
-                value: StructDiscriminatedUnionMember1;
-              }
-            | Literal
-          >
-        )(item),
-      ),
-      setNodeOrNodeOrString:
-        _unionDiscriminantsStruct.setNodeOrNodeOrString.map((item) =>
-          (
+          })(item),
+        )
+        .extract(),
+      optionalNodeOrNodeOrString:
+        _unionDiscriminantsStruct.optionalNodeOrNodeOrString
+          .map((item) =>
             ((value) => {
               if (value["$type"] === "StructDiscriminatedUnionMember1") {
                 return StructDiscriminatedUnionMember1.toLoggable(value.value);
@@ -63628,21 +61015,11 @@ export namespace UnionDiscriminantsStruct {
               }
 
               throw new Error("unable to serialize to loggable");
-            }) satisfies $ToLoggableFunction<
-              | {
-                  $type: "StructDiscriminatedUnionMember1";
-                  value: StructDiscriminatedUnionMember1;
-                }
-              | {
-                  $type: "StructDiscriminatedUnionMember2";
-                  value: StructDiscriminatedUnionMember2;
-                }
-              | { $type: "string"; value: string }
-            >
-          )(item),
-        ),
-      setTerm: _unionDiscriminantsStruct.setTerm.map((item) =>
-        (
+            })(item),
+          )
+          .extract(),
+      optionalTerm: _unionDiscriminantsStruct.optionalTerm
+        .map((item) =>
           ((value) => {
             if (
               value["termType"] === "BlankNode" ||
@@ -63664,8 +61041,141 @@ export namespace UnionDiscriminantsStruct {
             }
 
             throw new Error("unable to serialize to loggable");
-          }) satisfies $ToLoggableFunction<(BlankNode | NamedNode) | Literal>
-        )(item),
+          })(item),
+        )
+        .extract(),
+      requiredIriOrString: ((value) => {
+        if (typeof value === "object") {
+          return value.value;
+        }
+        if (typeof value === "string") {
+          return value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredIriOrString),
+      requiredNodeOrLiteral: ((value) => {
+        if (value["termType"] === "StructDiscriminatedUnionMember1") {
+          return StructDiscriminatedUnionMember1.toLoggable(value.value);
+        }
+        if (value["termType"] === "Literal") {
+          return {
+            "@language": value.language.length > 0 ? value.language : undefined,
+            "@type":
+              value.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? value.datatype.value
+                : undefined,
+            "@value": value.value,
+          };
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredNodeOrLiteral),
+      requiredNodeOrNodeOrString: ((value) => {
+        if (value["$type"] === "StructDiscriminatedUnionMember1") {
+          return StructDiscriminatedUnionMember1.toLoggable(value.value);
+        }
+        if (value["$type"] === "StructDiscriminatedUnionMember2") {
+          return StructDiscriminatedUnionMember2.toLoggable(value.value);
+        }
+        if (value["$type"] === "string") {
+          return value.value;
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredNodeOrNodeOrString),
+      requiredTerm: ((value) => {
+        if (
+          value["termType"] === "BlankNode" ||
+          value["termType"] === "NamedNode"
+        ) {
+          return value.value;
+        }
+        if (value["termType"] === "Literal") {
+          return {
+            "@language": value.language.length > 0 ? value.language : undefined,
+            "@type":
+              value.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? value.datatype.value
+                : undefined,
+            "@value": value.value,
+          };
+        }
+
+        throw new Error("unable to serialize to loggable");
+      })(_unionDiscriminantsStruct.requiredTerm),
+      setIriOrString: _unionDiscriminantsStruct.setIriOrString.map((item) =>
+        ((value) => {
+          if (typeof value === "object") {
+            return value.value;
+          }
+          if (typeof value === "string") {
+            return value;
+          }
+
+          throw new Error("unable to serialize to loggable");
+        })(item),
+      ),
+      setNodeOrLiteral: _unionDiscriminantsStruct.setNodeOrLiteral.map((item) =>
+        ((value) => {
+          if (value["termType"] === "StructDiscriminatedUnionMember1") {
+            return StructDiscriminatedUnionMember1.toLoggable(value.value);
+          }
+          if (value["termType"] === "Literal") {
+            return {
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to loggable");
+        })(item),
+      ),
+      setNodeOrNodeOrString:
+        _unionDiscriminantsStruct.setNodeOrNodeOrString.map((item) =>
+          ((value) => {
+            if (value["$type"] === "StructDiscriminatedUnionMember1") {
+              return StructDiscriminatedUnionMember1.toLoggable(value.value);
+            }
+            if (value["$type"] === "StructDiscriminatedUnionMember2") {
+              return StructDiscriminatedUnionMember2.toLoggable(value.value);
+            }
+            if (value["$type"] === "string") {
+              return value.value;
+            }
+
+            throw new Error("unable to serialize to loggable");
+          })(item),
+        ),
+      setTerm: _unionDiscriminantsStruct.setTerm.map((item) =>
+        ((value) => {
+          if (
+            value["termType"] === "BlankNode" ||
+            value["termType"] === "NamedNode"
+          ) {
+            return value.value;
+          }
+          if (value["termType"] === "Literal") {
+            return {
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to loggable");
+        })(item),
       ),
     });
 

@@ -204,7 +204,8 @@ export class ObjectType_ShaclProperty<
     const defaultNamespaceVariable = code`${variables.parameters}.${this.configuration.syntheticNamePrefix}defaultNamespace`;
 
     const conversionFunction = this.type.conversionFunction.extract()?.code;
-    const validationFunction = this.type.validationFunction.extract()?.usage;
+    const validationFunction =
+      this.type.validationFunction.extract()?.unannotatedUsage;
     let rhs: Code;
     if (conversionFunction && validationFunction) {
       rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable}).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;
@@ -225,7 +226,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["equalsExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
-        { equalsFunction: ${this.type.equalsFunction.usage}, name: ${literalOf(this.name)} },
+        { equalsFunction: ${this.type.equalsFunction.unannotatedUsage}, name: ${literalOf(this.name)} },
         [left, ${variables.leftObject}.${this.name}],
         [right, ${variables.rightObject}.${this.name}],
       )`);
@@ -237,7 +238,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["filterExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.filterFunction.usage}(${variables.filter}.${this.name}, ${variables.object}.${this.name})`,
+      code`${this.type.filterFunction.unannotatedUsage}(${variables.filter}.${this.name}, ${variables.object}.${this.name})`,
     );
   }
 
@@ -266,7 +267,7 @@ export class ObjectType_ShaclProperty<
           focusResource: ${variables.focusResource},
           ignoreRdfType: true,
           propertySchema: ${this.schemaVariable},
-          typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction.usage} 
+          typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction.unannotatedUsage} 
         })`,
     );
   }
@@ -277,7 +278,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`${this.type.hashFunction.usage}(${variables.hasher}, ${variables.object}.${this.name});`,
+      code`${this.type.hashFunction.annotatedUsage}(${variables.hasher}, ${variables.object}.${this.name});`,
     ];
   }
 
@@ -296,7 +297,7 @@ export class ObjectType_ShaclProperty<
         propertyName: this.name,
         propertySchema: this.schemaVariable,
         typeSparqlConstructTriples:
-          this.type.valueSparqlConstructTriplesFunction.usage,
+          this.type.valueSparqlConstructTriplesFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
       }})`,
     );
@@ -320,7 +321,7 @@ export class ObjectType_ShaclProperty<
         propertyName: this.name,
         propertySchema: this.schemaVariable,
         typeSparqlWherePatterns:
-          this.type.valueSparqlWherePatternsFunction.usage,
+          this.type.valueSparqlWherePatternsFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
       }})`,
     });

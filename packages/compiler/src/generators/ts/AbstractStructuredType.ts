@@ -264,7 +264,7 @@ export abstract class AbstractStructuredType extends AbstractType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    return code`${this.fromJsonFunction.usage}(${variables.value})`;
+    return code`${this.fromJsonFunction.unannotatedUsage}(${variables.value})`;
   }
 
   override graphqlResolveExpression({
@@ -278,26 +278,26 @@ export abstract class AbstractStructuredType extends AbstractType {
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return code`${this.toJsonFunction.usage}(${variables.value})`;
+    return code`${this.toJsonFunction.unannotatedUsage}(${variables.value})`;
   }
 
   override toLoggableExpression({
     variables,
   }: Parameters<AbstractType["toLoggableExpression"]>[0]): Code {
-    return code`${this.toLoggableFunction.usage}(${variables.value})`;
+    return code`${this.toLoggableFunction.unannotatedUsage}(${variables.value})`;
   }
 
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     const { value: valueVariable, ...otherVariables } = variables;
-    return code`${this.toRdfResourceValuesFunction.usage}(${valueVariable}, ${otherVariables})`;
+    return code`${this.toRdfResourceValuesFunction.unannotatedUsage}(${valueVariable}, ${otherVariables})`;
   }
 
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.toStringFunction.usage}(${variables.value})`;
+    return code`${this.toStringFunction.unannotatedUsage}(${variables.value})`;
   }
 
   protected abstract equalsFunctionExpression(): Code;

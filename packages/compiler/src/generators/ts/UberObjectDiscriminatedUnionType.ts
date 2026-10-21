@@ -93,7 +93,7 @@ export function equals(left: ${this.name}, right: ${this.name}): ${this.reusable
 
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
-    code`return ${member.equalsFunction.usage}(left, right as ${member.name.unsafeCoerce()});`,
+    code`return ${member.equalsFunction.annotatedUsage}(left, right as ${member.name.unsafeCoerce()});`,
   variables: { value: code`left` },
 })}
 }`);
@@ -168,7 +168,7 @@ ${this.memberTypeSwitch({
 export const hash: ${this.reusables.snippets.HashFunction}<${this.name}> = (hasher, object) => {
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
-    code`${member.hashFunction.usage}(hasher, object); break;`,
+    code`${member.hashFunction.annotatedUsage}(hasher, object); break;`,
   variables: { value: code`object` },
 })}
 }`);

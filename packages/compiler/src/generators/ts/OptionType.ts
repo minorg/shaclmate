@@ -45,14 +45,14 @@ export class OptionType<
   @Memoize()
   override get equalsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`((left, right) => ${this.reusables.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction.usage}))`,
+      code`((left, right) => ${this.reusables.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction.annotatedUsage}))`,
     );
   }
 
   @Memoize()
   get filterFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.usage})`,
+      code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.annotatedUsage})`,
     );
   }
 
@@ -64,7 +64,7 @@ export class OptionType<
   @Memoize()
   override get fromRdfResourceValuesFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.usage})`,
+      code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.annotatedUsage})`,
     );
   }
 
@@ -83,7 +83,7 @@ export class OptionType<
   @Memoize()
   get hashFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction.usage})`,
+      code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction.annotatedUsage})`,
     );
   }
 
@@ -105,8 +105,8 @@ export class OptionType<
     return Maybe.of(
       new AnonymousFunction(
         code`${this.reusables.snippets.validateMaybe}(${this.itemType.validationFunction
-          .map((_) => _.usage)
-          .orDefault(this.itemValidationFunctionDefault.usage)})`,
+          .map((_) => _.annotatedUsage)
+          .orDefault(this.itemValidationFunctionDefault.annotatedUsage)})`,
       ),
     );
   }
@@ -114,14 +114,14 @@ export class OptionType<
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.usage})`,
+      code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.usage})`,
+      code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.annotatedUsage})`,
     );
   }
 

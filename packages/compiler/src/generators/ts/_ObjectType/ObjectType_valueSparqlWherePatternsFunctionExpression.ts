@@ -7,6 +7,6 @@ export function ObjectType_valueSparqlWherePatternsFunctionExpression(
   return code`\
 ({ filter, ignoreRdfType, preferredLanguages, propertyPatterns, valueVariable, variablePrefix }) =>
   (propertyPatterns as readonly ${this.reusables.snippets.SparqlPattern}[]).concat(
-    ${this.focusSparqlWherePatternsFunction.usage}({ filter, focusIdentifier: valueVariable, ignoreRdfType, preferredLanguages, variablePrefix })
+    ${this.focusSparqlWherePatternsFunction.unannotatedUsage}({ filter, focusIdentifier: valueVariable, ignoreRdfType, preferredLanguages, variablePrefix })
   )`;
 }

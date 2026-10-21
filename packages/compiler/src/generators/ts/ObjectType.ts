@@ -145,7 +145,7 @@ export class ObjectType extends AbstractStructuredType {
     const sourceTypeExpression = code`{ ${joinCode(sourceTypePropertySignatures)} }`;
     const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return Maybe.of({
-      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction.usage}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
+      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction.annotatedUsage}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
       sourceTypes: [
         {
           expression: sourceTypeExpression,
@@ -482,7 +482,7 @@ export class ObjectType extends AbstractStructuredType {
       expression: code`${this.reusables.snippets.FromRdfResourceFunction}<${this.expression}>`,
     };
     const unannotatedExpression = () =>
-      code`${this.reusables.snippets.wrap_FromRdfResourceFunction}(${this._fromRdfResourceFunction.usage})`;
+      code`${this.reusables.snippets.wrap_FromRdfResourceFunction}(${this._fromRdfResourceFunction.annotatedUsage})`;
 
     return this.name
       .map<FunctionLike>(
@@ -519,7 +519,7 @@ export class ObjectType extends AbstractStructuredType {
       expression: code`${this.reusables.snippets.ToRdfResourceFunction}<${this.expression}, ${identifierTypeExpression}>`,
     };
     const unannotatedExpression = () =>
-      code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>(${this._toRdfResourceFunction.usage})`;
+      code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>(${this._toRdfResourceFunction.annotatedUsage})`;
 
     return this.name
       .map<FunctionLike>(
@@ -623,7 +623,7 @@ export class ObjectType extends AbstractStructuredType {
       }
     }
 
-    return code`${this.toJsonFunction.usage}(${variables.value})`;
+    return code`${this.toJsonFunction.annotatedUsage}(${variables.value})`;
   }
 
   protected override staticModuleDeclarations(

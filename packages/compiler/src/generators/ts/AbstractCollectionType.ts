@@ -32,7 +32,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   override get equalsFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction.usage}))`,
+      code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction.unannotatedUsage}))`,
       {
         type: {
           expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
@@ -44,7 +44,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   get filterFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.usage})`,
+      code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.unannotatedUsage})`,
     );
   }
 
@@ -64,7 +64,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   get hashFunction(): FunctionLike {
     return new AnonymousFunction(
-      code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction.usage})`,
+      code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction.annotatedUsage})`,
     );
   }
 
@@ -82,8 +82,8 @@ export abstract class AbstractCollectionType<
     return Maybe.of(
       new AnonymousFunction(
         code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction
-          .map((_) => _.usage)
-          .orDefault(this.itemValidationFunctionDefault.usage)})`,
+          .map((_) => _.unannotatedUsage)
+          .orDefault(this.itemValidationFunctionDefault.unannotatedUsage)})`,
       ),
     );
   }

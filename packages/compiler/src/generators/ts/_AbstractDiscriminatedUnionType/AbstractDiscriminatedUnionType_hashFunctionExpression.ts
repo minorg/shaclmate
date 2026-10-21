@@ -10,7 +10,7 @@ export function AbstractDiscriminatedUnionType_hashFunctionExpression<
 ${joinCode(
   this.members.map(
     ({ type, typeCheck, unwrap }) =>
-      code`if (${typeCheck(code`value`)}) { ${type.hashFunction.usage}(hasher, ${unwrap(code`value`)}); return; }`,
+      code`if (${typeCheck(code`value`)}) { ${type.hashFunction.annotatedUsage}(hasher, ${unwrap(code`value`)}); return; }`,
   ),
 )}
 }`;
