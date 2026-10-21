@@ -66,6 +66,7 @@ import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfRe
 import { snippets_errorToProblemDetailsJson } from "./_snippets/snippets_errorToProblemDetailsJson.js";
 import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
 import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
+import { snippets_FromJsonFunction } from "./_snippets/snippets_FromJsonFunction.js";
 import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
 import { snippets_FromRdfResourceValuesFunction } from "./_snippets/snippets_FromRdfResourceValuesFunction.js";
 import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
@@ -287,6 +288,11 @@ export class Snippets {
   @Memoize()
   get FocusSparqlWherePatternsFunction(): Snippet {
     return this.snippet(snippets_FocusSparqlWherePatternsFunction);
+  }
+
+  @Memoize()
+  get FromJsonFunction(): Snippet {
+    return this.snippet(snippets_FromJsonFunction);
   }
 
   @Memoize()
