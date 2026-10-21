@@ -519,6 +519,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :InIntersection
     a sh:NodeShape ;
+    shaclmate:ignore true ;
     rdfs:comment "Node shape that sh:and's two sh:in node shapes to get the intersection of them." ;
     sh:and ( :InIntersectionMember1 :InIntersectionMember2 ) .
 
@@ -1241,6 +1242,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :StructIntersection
     a sh:NodeShape ;
+    shaclmate:ignore true ;
     rdfs:comment "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type." ;
     sh:and (:StructIntersectionMember1
         :StructIntersectionMember2
