@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
@@ -13,10 +14,12 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
    */
   override readonly conversionFunction: Maybe<AbstractTypedLiteralType.ConversionFunction> =
     Maybe.empty();
-  override readonly equalsFunction =
-    code`${this.reusables.snippets.dateEquals}`;
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterDate}`;
+  override readonly equalsFunction = new FunctionReference(
+    this.reusables.snippets.dateEquals,
+  );
+  override readonly filterFunction = new FunctionReference(
+    this.reusables.snippets.filterDate,
+  );
   override readonly filterType = code`${this.reusables.snippets.DateFilter}`;
   override readonly jsTypes = [
     {
@@ -25,8 +28,9 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
     },
   ] as const;
   override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.dateSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+    this.reusables.snippets.dateSparqlWherePatterns,
+  );
 
   @Memoize()
   protected override get compactJsonType(): AbstractTypedLiteralType.JsonType {

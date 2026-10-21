@@ -4,6 +4,7 @@ import type { Decimal } from "decimal.js";
 import { Maybe } from "purify-ts";
 
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
+import { FunctionReference } from "./FunctionReference.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
@@ -37,23 +38,27 @@ export class BigDecimalType extends AbstractTypedLiteralType<Decimal> {
         },
       ],
     });
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterBigDecimal}`;
+  override readonly filterFunction = new FunctionReference(
+    this.reusables.snippets.filterBigDecimal,
+  );
   override readonly filterType =
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
-  override readonly fromRdfResourceValuesFunction =
-    code`${this.reusables.snippets.bigDecimalFromRdfResourceValues}`;
+  override readonly fromRdfResourceValuesFunction = new FunctionReference(
+    this.reusables.snippets.bigDecimalFromRdfResourceValues,
+  );
   override readonly graphqlType = new AbstractTypedLiteralType.GraphqlType(
     code`${this.reusables.imports.GraphQLString}`,
     this.reusables,
   );
-  override readonly hashFunction =
-    code`${this.reusables.snippets.hashBigDecimal}`;
+  override readonly hashFunction = new FunctionReference(
+    this.reusables.snippets.hashBigDecimal,
+  );
   override readonly kind = "BigDecimal";
   override readonly schemaType =
     code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.bigDecimalSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+    this.reusables.snippets.bigDecimalSparqlWherePatterns,
+  );
 
   override graphqlResolveExpression({
     variables,

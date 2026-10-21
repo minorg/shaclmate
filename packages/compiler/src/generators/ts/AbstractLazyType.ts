@@ -44,12 +44,21 @@ export abstract class AbstractLazyType<
 
   @Memoize()
   override get equalsFunction(): FunctionLike {
-    return code`((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
+    return new AnonymousFunction(
+      code`(left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName})`,
+      {
+        type: {
+          expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
+        },
+      },
+    );
   }
 
   @Memoize()
   get filterFunction(): FunctionLike {
-    return code`((filter: ${this.filterType}, value: ${this.expression}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
+    return new AnonymousFunction(
+      code`(filter: ${this.filterType}, value: ${this.expression}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName})`,
+    );
   }
 
   get filterType(): Code {
@@ -62,7 +71,9 @@ export abstract class AbstractLazyType<
 
   @Memoize()
   override get hashFunction(): FunctionLike {
-    return code`((hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName}))`;
+    return new AnonymousFunction(
+      code`(hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName})`,
+    );
   }
 
   override get inlineExpression(): Code {

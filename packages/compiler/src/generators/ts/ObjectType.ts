@@ -223,7 +223,7 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  private get fromRdfResourceFunction(): FunctionLike {
+  protected get fromRdfResourceFunction(): FunctionLike {
     const type = {
       expression: code`${this.reusables.snippets.FromRdfResourceFunction}<${this.expression}>`,
     };

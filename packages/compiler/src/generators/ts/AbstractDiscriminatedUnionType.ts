@@ -20,7 +20,6 @@ import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpre
 import { AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.js";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import { AbstractType } from "./AbstractType.js";
-import type { FunctionLike } from "./FunctionLike.js";
 import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
@@ -226,17 +225,6 @@ export abstract class AbstractDiscriminatedUnionType<
       default:
         throw this.discriminant satisfies never;
     }
-  }
-
-  @Memoize()
-  override get fromRdfResourceValuesFunction(): FunctionLike {
-    return this.name
-      .map((name) => code`${name}.fromRdfResourceValues`)
-      .orDefault(
-        AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpression.call(
-          this,
-        ),
-      );
   }
 
   @Memoize()

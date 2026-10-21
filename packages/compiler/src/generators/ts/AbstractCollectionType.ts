@@ -81,9 +81,9 @@ export abstract class AbstractCollectionType<
   override get validationFunction(): Maybe<FunctionLike> {
     return Maybe.of(
       new AnonymousFunction(
-        code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction.orDefault(
-          this.itemValidationFunctionDefault.usage,
-        )})`,
+        code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction
+          .map((_) => _.usage)
+          .orDefault(this.itemValidationFunctionDefault.usage)})`,
       ),
     );
   }
