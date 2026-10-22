@@ -609,11 +609,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :IntersectionPropertiesStruct
-    shaclmate:ignore true ;
     a sh:NodeShape ;
     sh:property [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:node :StructIntersection ;
-        sh:path :structIntersection
+        sh:path :namedStructIntersection
     ] .
 
 :IriIdentifierStruct
@@ -1310,7 +1311,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :StructIntersection
-    shaclmate:ignore true ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type." ;
     sh:and (:StructIntersectionMember1
@@ -1322,8 +1322,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:name "intersectionMemberCommon" ;
-    sh:path :intersectionMemberCommon .
+    sh:name "structIntersectionMemberCommon" ;
+    sh:path :structIntersectionMemberCommon .
 
 :StructIntersectionMember1
     a owl:Class, sh:NodeShape ;
@@ -1331,7 +1331,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :intersectionMember1Distinct
+        sh:path :structIntersectionMember1Distinct
     ] .
 
 :StructIntersectionMember2
@@ -1340,7 +1340,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :intersectionMember2Distinct
+        sh:path :structIntersectionMember2Distinct
     ] .
 
 :StructList
