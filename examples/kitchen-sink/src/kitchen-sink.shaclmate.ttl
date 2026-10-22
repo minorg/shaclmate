@@ -152,6 +152,19 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
+        rdfs:comment "Named datatype discriminated union 1" ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :DatatypeDiscriminatedUnion1 ;
+        sh:path :namedDatatypeDiscriminatedUnion1
+    ], [
+        rdfs:comment "Named datatype discriminated union 2" ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :DatatypeDiscriminatedUnion2 ;
+        sh:path :namedDatatypeDiscriminatedUnion2
+    ], 
+    [
         rdfs:comment "Integer or string. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -893,16 +906,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:node :NamedDatatype ;
         sh:path :namedDatatype
-    ], [
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :DatatypeDiscriminatedUnion1 ;
-        sh:path :datatypeDiscriminatedUnion1
-    ], [
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :DatatypeDiscriminatedUnion2 ;
-        sh:path :datatypeDiscriminatedUnion2
     ], [
         sh:maxCount 1 ;
         sh:minCount 1 ;

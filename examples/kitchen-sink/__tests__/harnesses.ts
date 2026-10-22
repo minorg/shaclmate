@@ -97,6 +97,11 @@ export const harnesses = {
       jsPrimitive: true,
       integerOrString: 1n,
       langStringOrString: dataFactory.literal("test", "en"),
+      namedDatatypeDiscriminatedUnion1: "test",
+      namedDatatypeDiscriminatedUnion2: {
+        $type: "date",
+        value: new Date("2025-12-08"),
+      },
       stringOrDate: "2025-12-08", // Shouldn't parse as a Date
       stringOrDecimal: "test",
       stringOrInteger: "test",
@@ -117,6 +122,12 @@ export const harnesses = {
       jsPrimitive: "test",
       integerOrString: "test",
       langStringOrString: "test",
+      namedDatatypeDiscriminatedUnion1:
+        dataFactory.namedNode("http://example.com"),
+      namedDatatypeDiscriminatedUnion2: {
+        $type: "dateTime",
+        value: new Date("2025-12-08T21:17:27+00:00"),
+      },
       stringOrDate: new Date("2025-12-08"),
       stringOrDecimal: new Decimal("1.0"),
       stringOrInteger: 1n,
@@ -453,11 +464,6 @@ export const harnesses = {
     kitchenSink.NamedTypesStruct.createUnsafe({
       $identifier,
       namedDatatype: "test",
-      datatypeDiscriminatedUnion1: "test",
-      datatypeDiscriminatedUnion2: {
-        $type: "date",
-        value: new Date("2025-12-08"),
-      },
       inIri: "http://example.com/InIri1",
       inLiteral: "test1",
     }),
@@ -467,11 +473,6 @@ export const harnesses = {
     kitchenSink.NamedTypesStruct.createUnsafe({
       $identifier,
       namedDatatype: "test",
-      datatypeDiscriminatedUnion1: dataFactory.namedNode("http://example.com"),
-      datatypeDiscriminatedUnion2: {
-        $type: "dateTime",
-        value: new Date("2025-12-08T21:17:27+00:00"),
-      },
       inIri: "http://example.com/InIri2",
       inLiteral: "test2",
     }),

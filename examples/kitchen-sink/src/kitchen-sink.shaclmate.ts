@@ -10574,6 +10574,16 @@ export type DatatypeDiscriminatedUnionsStruct = {
   readonly langStringOrString: Literal | string;
 
   /**
+   * Named datatype discriminated union 1
+   */
+  readonly namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1;
+
+  /**
+   * Named datatype discriminated union 2
+   */
+  readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
+
+  /**
    * String or date. These don't need discriminant values because they're different types in TypeScript.
    */
   readonly stringOrDate: string | Date;
@@ -11466,6 +11476,32 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             return Right(collectedOutputValues);
           },
         }),
+        namedDatatypeDiscriminatedUnion1: $shaclPropertyFromRdf<
+          DatatypeDiscriminatedUnion1,
+          typeof DatatypeDiscriminatedUnion1.schema
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DatatypeDiscriminatedUnionsStruct.schema.properties
+              .namedDatatypeDiscriminatedUnion1,
+          typeFromRdfResourceValues:
+            DatatypeDiscriminatedUnion1.fromRdfResourceValues,
+        }),
+        namedDatatypeDiscriminatedUnion2: $shaclPropertyFromRdf<
+          DatatypeDiscriminatedUnion2,
+          typeof DatatypeDiscriminatedUnion2.schema
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            DatatypeDiscriminatedUnionsStruct.schema.properties
+              .namedDatatypeDiscriminatedUnion2,
+          typeFromRdfResourceValues:
+            DatatypeDiscriminatedUnion2.fromRdfResourceValues,
+        }),
         stringOrDate: $shaclPropertyFromRdf<
           string | Date,
           {
@@ -12062,6 +12098,40 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       parameters.graph,
     );
     parameters.resource.add(
+      DatatypeDiscriminatedUnionsStruct.schema.properties
+        .namedDatatypeDiscriminatedUnion1.path,
+      DatatypeDiscriminatedUnion1.toRdfResourceValues(
+        parameters.object.namedDatatypeDiscriminatedUnion1,
+        {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            DatatypeDiscriminatedUnionsStruct.schema.properties
+              .namedDatatypeDiscriminatedUnion1.path,
+        },
+      ),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      DatatypeDiscriminatedUnionsStruct.schema.properties
+        .namedDatatypeDiscriminatedUnion2.path,
+      DatatypeDiscriminatedUnion2.toRdfResourceValues(
+        parameters.object.namedDatatypeDiscriminatedUnion2,
+        {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            DatatypeDiscriminatedUnionsStruct.schema.properties
+              .namedDatatypeDiscriminatedUnion2.path,
+        },
+      ),
+      parameters.graph,
+    );
+    parameters.resource.add(
       DatatypeDiscriminatedUnionsStruct.schema.properties.stringOrDate.path,
       ((value, _options): Literal[] => {
         if (typeof value === "string") {
@@ -12181,6 +12251,8 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly integerOrString: bigint | string;
     readonly jsPrimitive: boolean | number | bigint | string;
     readonly langStringOrString: Literal | string;
+    readonly namedDatatypeDiscriminatedUnion1: NamedNode | string;
+    readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
     readonly stringOrDate: string | Date;
     readonly stringOrDecimal: string | BigDecimal;
     readonly stringOrInteger: string | bigint;
@@ -12205,6 +12277,8 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly integerOrString: bigint | string;
     readonly jsPrimitive: boolean | number | bigint | string;
     readonly langStringOrString: Literal | string;
+    readonly namedDatatypeDiscriminatedUnion1: NamedNode | string;
+    readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
     readonly stringOrDate: string | Date;
     readonly stringOrDecimal: string | BigDecimal;
     readonly stringOrInteger: string | bigint;
@@ -12236,6 +12310,13 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       langStringOrString: $identityConversionFunction(
         parameters.langStringOrString,
         parameters.$defaultNamespace,
+      ),
+      namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.convert(
+        parameters.namedDatatypeDiscriminatedUnion1,
+        parameters.$defaultNamespace,
+      ),
+      namedDatatypeDiscriminatedUnion2: Either.of(
+        parameters.namedDatatypeDiscriminatedUnion2,
       ),
       stringOrDate: $identityConversionFunction(
         parameters.stringOrDate,
@@ -12285,6 +12366,8 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly integerOrString: bigint | string;
     readonly jsPrimitive: boolean | number | bigint | string;
     readonly langStringOrString: Literal | string;
+    readonly namedDatatypeDiscriminatedUnion1: NamedNode | string;
+    readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
     readonly stringOrDate: string | Date;
     readonly stringOrDecimal: string | BigDecimal;
     readonly stringOrInteger: string | bigint;
@@ -12309,6 +12392,8 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     readonly integerOrString: bigint | string;
     readonly jsPrimitive: boolean | number | bigint | string;
     readonly langStringOrString: Literal | string;
+    readonly namedDatatypeDiscriminatedUnion1: NamedNode | string;
+    readonly namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
     readonly stringOrDate: string | Date;
     readonly stringOrDecimal: string | BigDecimal;
     readonly stringOrInteger: string | bigint;
@@ -12537,6 +12622,26 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           },
           [left, left.langStringOrString],
           [right, right.langStringOrString],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: DatatypeDiscriminatedUnion1.equals,
+            name: "namedDatatypeDiscriminatedUnion1",
+          },
+          [left, left.namedDatatypeDiscriminatedUnion1],
+          [right, right.namedDatatypeDiscriminatedUnion1],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: DatatypeDiscriminatedUnion2.equals,
+            name: "namedDatatypeDiscriminatedUnion2",
+          },
+          [left, left.namedDatatypeDiscriminatedUnion2],
+          [right, right.namedDatatypeDiscriminatedUnion2],
         ),
       )
       .chain(() =>
@@ -12819,6 +12924,24 @@ export namespace DatatypeDiscriminatedUnionsStruct {
       return false;
     }
     if (
+      filter.namedDatatypeDiscriminatedUnion1 !== undefined &&
+      !DatatypeDiscriminatedUnion1.filter(
+        filter.namedDatatypeDiscriminatedUnion1,
+        value.namedDatatypeDiscriminatedUnion1,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.namedDatatypeDiscriminatedUnion2 !== undefined &&
+      !DatatypeDiscriminatedUnion2.filter(
+        filter.namedDatatypeDiscriminatedUnion2,
+        value.namedDatatypeDiscriminatedUnion2,
+      )
+    ) {
+      return false;
+    }
+    if (
       filter.stringOrDate !== undefined &&
       !((filter, value) => {
         if (filter.on?.["string"] !== undefined && typeof value === "string") {
@@ -12943,6 +13066,8 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         readonly string?: $StringFilter;
       };
     };
+    readonly namedDatatypeDiscriminatedUnion1?: DatatypeDiscriminatedUnion1.Filter;
+    readonly namedDatatypeDiscriminatedUnion2?: DatatypeDiscriminatedUnion2.Filter;
     readonly stringOrDate?: {
       readonly on?: {
         readonly string?: $StringFilter;
@@ -13275,6 +13400,34 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
           return triples;
         },
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.namedDatatypeDiscriminatedUnion1,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "namedDatatypeDiscriminatedUnion1",
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties
+            .namedDatatypeDiscriminatedUnion1,
+        typeSparqlConstructTriples:
+          DatatypeDiscriminatedUnion1.valueSparqlConstructTriples,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.namedDatatypeDiscriminatedUnion2,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "namedDatatypeDiscriminatedUnion2",
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties
+            .namedDatatypeDiscriminatedUnion2,
+        typeSparqlConstructTriples:
+          DatatypeDiscriminatedUnion2.valueSparqlConstructTriples,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -13773,6 +13926,36 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.namedDatatypeDiscriminatedUnion1,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "namedDatatypeDiscriminatedUnion1",
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties
+            .namedDatatypeDiscriminatedUnion1,
+        typeSparqlWherePatterns:
+          DatatypeDiscriminatedUnion1.valueSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.namedDatatypeDiscriminatedUnion2,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "namedDatatypeDiscriminatedUnion2",
+        propertySchema:
+          DatatypeDiscriminatedUnionsStruct.schema.properties
+            .namedDatatypeDiscriminatedUnion2,
+        typeSparqlWherePatterns:
+          DatatypeDiscriminatedUnion2.valueSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.stringOrDate,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -14049,6 +14232,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
         throw new Error("unable to deserialize JSON");
       })($json["langStringOrString"]),
+      namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.fromJson(
+        $json["namedDatatypeDiscriminatedUnion1"],
+      ),
+      namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.fromJson(
+        $json["namedDatatypeDiscriminatedUnion2"],
+      ),
       stringOrDate: ((value) => {
         if (value.$type === "string") {
           return Either.of<Error, string>(value["@value"]).map(
@@ -14232,6 +14421,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
         }
       }) satisfies $HashFunction<Literal | string>
     )(hasher, _datatypeDiscriminatedUnionsStruct.langStringOrString);
+    DatatypeDiscriminatedUnion1.hash(
+      hasher,
+      _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion1,
+    );
+    DatatypeDiscriminatedUnion2.hash(
+      hasher,
+      _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion2,
+    );
     (
       ((hasher, value) => {
         if (typeof value === "string") {
@@ -14343,6 +14540,8 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           "@type": string;
           "@value": string;
         };
+    namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.Json;
+    namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.Json;
     stringOrDate:
       | { $type: "string"; "@type": string; "@value": string }
       | {
@@ -14516,6 +14715,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
             description:
               "rdf:langString or string. These don't need discriminant values because they're different types in TypeScript.",
           }),
+        namedDatatypeDiscriminatedUnion1:
+          DatatypeDiscriminatedUnion1.Json.schema().meta({
+            description: "Named datatype discriminated union 1",
+          }),
+        namedDatatypeDiscriminatedUnion2:
+          DatatypeDiscriminatedUnion2.Json.schema().meta({
+            description: "Named datatype discriminated union 2",
+          }),
         stringOrDate: z
           .discriminatedUnion("$type", [
             z.object({
@@ -14632,6 +14839,14 @@ export namespace DatatypeDiscriminatedUnionsStruct {
           },
           {
             scope: `${_parameters?.scopePrefix ?? "#"}/properties/langStringOrString`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedDatatypeDiscriminatedUnion1`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedDatatypeDiscriminatedUnion2`,
             type: "Control",
           },
           {
@@ -14803,6 +15018,24 @@ export namespace DatatypeDiscriminatedUnionsStruct {
               type: { kind: "String" as const },
             },
           },
+        },
+      },
+      namedDatatypeDiscriminatedUnion1: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/namedDatatypeDiscriminatedUnion1",
+        ),
+        get type() {
+          return DatatypeDiscriminatedUnion1.schema;
+        },
+      },
+      namedDatatypeDiscriminatedUnion2: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/namedDatatypeDiscriminatedUnion2",
+        ),
+        get type() {
+          return DatatypeDiscriminatedUnion2.schema;
         },
       },
       stringOrDate: {
@@ -15091,6 +15324,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
           throw new Error("unable to serialize to JSON");
         })(_datatypeDiscriminatedUnionsStruct.langStringOrString),
+        namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.toJson(
+          _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion1,
+        ),
+        namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.toJson(
+          _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion2,
+        ),
         stringOrDate: ((value) => {
           if (typeof value === "string") {
             return {
@@ -15214,6 +15453,12 @@ export namespace DatatypeDiscriminatedUnionsStruct {
 
         throw new Error("unable to serialize to loggable");
       })(_datatypeDiscriminatedUnionsStruct.langStringOrString),
+      namedDatatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.toLoggable(
+        _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion1,
+      ),
+      namedDatatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.toLoggable(
+        _datatypeDiscriminatedUnionsStruct.namedDatatypeDiscriminatedUnion2,
+      ),
       stringOrDate: ((value) => {
         if (typeof value === "string") {
           return value;
@@ -35858,10 +36103,6 @@ export type NamedTypesStruct = {
 
   readonly $type: "NamedTypesStruct";
 
-  readonly datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1;
-
-  readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
-
   readonly inIri: InIri;
 
   readonly inLiteral: InLiteral;
@@ -35894,30 +36135,6 @@ export namespace NamedTypesStruct {
             schema: NamedTypesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
-        datatypeDiscriminatedUnion1: $shaclPropertyFromRdf<
-          DatatypeDiscriminatedUnion1,
-          typeof DatatypeDiscriminatedUnion1.schema
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1,
-          typeFromRdfResourceValues:
-            DatatypeDiscriminatedUnion1.fromRdfResourceValues,
-        }),
-        datatypeDiscriminatedUnion2: $shaclPropertyFromRdf<
-          DatatypeDiscriminatedUnion2,
-          typeof DatatypeDiscriminatedUnion2.schema
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2,
-          typeFromRdfResourceValues:
-            DatatypeDiscriminatedUnion2.fromRdfResourceValues,
-        }),
         inIri: $shaclPropertyFromRdf<InIri, $IriSchema<InIri["value"]>>({
           ...options,
           focusResource: resource,
@@ -35958,36 +36175,6 @@ export namespace NamedTypesStruct {
       );
     }
     parameters.resource.add(
-      NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1.path,
-      DatatypeDiscriminatedUnion1.toRdfResourceValues(
-        parameters.object.datatypeDiscriminatedUnion1,
-        {
-          ignoreRdfType: parameters.ignoreRdfType,
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath:
-            NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1.path,
-        },
-      ),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2.path,
-      DatatypeDiscriminatedUnion2.toRdfResourceValues(
-        parameters.object.datatypeDiscriminatedUnion2,
-        {
-          ignoreRdfType: parameters.ignoreRdfType,
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath:
-            NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2.path,
-        },
-      ),
-      parameters.graph,
-    );
-    parameters.resource.add(
       NamedTypesStruct.schema.properties.inIri.path,
       [parameters.object.inIri],
       parameters.graph,
@@ -36019,8 +36206,6 @@ export namespace NamedTypesStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly datatypeDiscriminatedUnion1: NamedNode | string;
-    readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
     readonly inIri: InIri["value"] | InIri;
     readonly inLiteral: InLiteral;
     readonly namedDatatype: NamedDatatype;
@@ -36033,8 +36218,6 @@ export namespace NamedTypesStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly datatypeDiscriminatedUnion1: NamedNode | string;
-    readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
     readonly inIri: InIri["value"] | InIri;
     readonly inLiteral: InLiteral;
     readonly namedDatatype: NamedDatatype;
@@ -36043,13 +36226,6 @@ export namespace NamedTypesStruct {
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
-      ),
-      datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.convert(
-        parameters.datatypeDiscriminatedUnion1,
-        parameters.$defaultNamespace,
-      ),
-      datatypeDiscriminatedUnion2: Either.of(
-        parameters.datatypeDiscriminatedUnion2,
       ),
       inIri: $convertToInIri<InIri["value"]>(
         parameters.inIri,
@@ -36078,8 +36254,6 @@ export namespace NamedTypesStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly datatypeDiscriminatedUnion1: NamedNode | string;
-    readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
     readonly inIri: InIri["value"] | InIri;
     readonly inLiteral: InLiteral;
     readonly namedDatatype: NamedDatatype;
@@ -36092,8 +36266,6 @@ export namespace NamedTypesStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
-    readonly datatypeDiscriminatedUnion1: NamedNode | string;
-    readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
     readonly inIri: InIri["value"] | InIri;
     readonly inLiteral: InLiteral;
     readonly namedDatatype: NamedDatatype;
@@ -36105,26 +36277,6 @@ export namespace NamedTypesStruct {
       [left, left.$identifier()],
       [right, right.$identifier()],
     )
-      .chain(() =>
-        $propertyEquals(
-          {
-            equalsFunction: DatatypeDiscriminatedUnion1.equals,
-            name: "datatypeDiscriminatedUnion1",
-          },
-          [left, left.datatypeDiscriminatedUnion1],
-          [right, right.datatypeDiscriminatedUnion1],
-        ),
-      )
-      .chain(() =>
-        $propertyEquals(
-          {
-            equalsFunction: DatatypeDiscriminatedUnion2.equals,
-            name: "datatypeDiscriminatedUnion2",
-          },
-          [left, left.datatypeDiscriminatedUnion2],
-          [right, right.datatypeDiscriminatedUnion2],
-        ),
-      )
       .chain(() =>
         $propertyEquals(
           { equalsFunction: $booleanEquals, name: "inIri" },
@@ -36157,24 +36309,6 @@ export namespace NamedTypesStruct {
     ) {
       return false;
     }
-    if (
-      filter.datatypeDiscriminatedUnion1 !== undefined &&
-      !DatatypeDiscriminatedUnion1.filter(
-        filter.datatypeDiscriminatedUnion1,
-        value.datatypeDiscriminatedUnion1,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.datatypeDiscriminatedUnion2 !== undefined &&
-      !DatatypeDiscriminatedUnion2.filter(
-        filter.datatypeDiscriminatedUnion2,
-        value.datatypeDiscriminatedUnion2,
-      )
-    ) {
-      return false;
-    }
     if (filter.inIri !== undefined && !$filterIri(filter.inIri, value.inIri)) {
       return false;
     }
@@ -36195,8 +36329,6 @@ export namespace NamedTypesStruct {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly datatypeDiscriminatedUnion1?: DatatypeDiscriminatedUnion1.Filter;
-    readonly datatypeDiscriminatedUnion2?: DatatypeDiscriminatedUnion2.Filter;
     readonly inIri?: $IriFilter;
     readonly inLiteral?: $StringFilter;
     readonly namedDatatype?: $StringFilter;
@@ -36227,32 +36359,6 @@ export namespace NamedTypesStruct {
               ),
             },
           ],
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.datatypeDiscriminatedUnion1,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "datatypeDiscriminatedUnion1",
-        propertySchema:
-          NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1,
-        typeSparqlConstructTriples:
-          DatatypeDiscriminatedUnion1.valueSparqlConstructTriples,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.datatypeDiscriminatedUnion2,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "datatypeDiscriminatedUnion2",
-        propertySchema:
-          NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2,
-        typeSparqlConstructTriples:
-          DatatypeDiscriminatedUnion2.valueSparqlConstructTriples,
-        variablePrefix: parameters.variablePrefix,
-      }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
@@ -36354,34 +36460,6 @@ export namespace NamedTypesStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.datatypeDiscriminatedUnion1,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "datatypeDiscriminatedUnion1",
-        propertySchema:
-          NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1,
-        typeSparqlWherePatterns:
-          DatatypeDiscriminatedUnion1.valueSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.datatypeDiscriminatedUnion2,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "datatypeDiscriminatedUnion2",
-        propertySchema:
-          NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2,
-        typeSparqlWherePatterns:
-          DatatypeDiscriminatedUnion2.valueSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.inIri,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -36429,12 +36507,6 @@ export namespace NamedTypesStruct {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
-      datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.fromJson(
-        $json["datatypeDiscriminatedUnion1"],
-      ),
-      datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.fromJson(
-        $json["datatypeDiscriminatedUnion2"],
-      ),
       inIri: Either.of<Error, InIri>(dataFactory.namedNode($json["inIri"])),
       inLiteral: Either.encase<Error, InLiteral>(
         () => $json["inLiteral"] as InLiteral,
@@ -36469,14 +36541,6 @@ export namespace NamedTypesStruct {
     if (_namedTypesStruct.$type) {
       hasher.update(_namedTypesStruct.$type);
     }
-    DatatypeDiscriminatedUnion1.hash(
-      hasher,
-      _namedTypesStruct.datatypeDiscriminatedUnion1,
-    );
-    DatatypeDiscriminatedUnion2.hash(
-      hasher,
-      _namedTypesStruct.datatypeDiscriminatedUnion2,
-    );
     $hashTerm(hasher, _namedTypesStruct.inIri);
     $hashString(hasher, _namedTypesStruct.inLiteral);
     $hashString(hasher, _namedTypesStruct.namedDatatype);
@@ -36495,8 +36559,6 @@ export namespace NamedTypesStruct {
     "@id": string;
     "@type": string;
     $type: "NamedTypesStruct";
-    datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.Json;
-    datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.Json;
     inIri: "http://example.com/InIri1" | "http://example.com/InIri2";
     inLiteral: "test1" | "test2";
     namedDatatype: string;
@@ -36516,8 +36578,6 @@ export namespace NamedTypesStruct {
         "@id": z.string().min(1),
         "@type": z.string(),
         $type: z.literal("NamedTypesStruct"),
-        datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.Json.schema(),
-        datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.Json.schema(),
         inIri: z.enum(InIri.schema.in.map((_) => _.value)),
         inLiteral: z.enum(InLiteral.schema.in),
         namedDatatype: z.string(),
@@ -36541,14 +36601,6 @@ export namespace NamedTypesStruct {
               effect: "HIDE",
             },
             scope: `${_parameters?.scopePrefix ?? "#"}/properties/$type`,
-            type: "Control",
-          },
-          {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/datatypeDiscriminatedUnion1`,
-            type: "Control",
-          },
-          {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/datatypeDiscriminatedUnion2`,
             type: "Control",
           },
           {
@@ -36586,24 +36638,6 @@ export namespace NamedTypesStruct {
         ],
       },
       $type: { kind: "Discriminant", value: "NamedTypesStruct" },
-      datatypeDiscriminatedUnion1: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/datatypeDiscriminatedUnion1",
-        ),
-        get type() {
-          return DatatypeDiscriminatedUnion1.schema;
-        },
-      },
-      datatypeDiscriminatedUnion2: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/datatypeDiscriminatedUnion2",
-        ),
-        get type() {
-          return DatatypeDiscriminatedUnion2.schema;
-        },
-      },
       inIri: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/inIri"),
@@ -36698,12 +36732,6 @@ export namespace NamedTypesStruct {
             : _namedTypesStruct.$identifier().value,
         "@type": "http://example.com/NamedTypesStruct",
         $type: _namedTypesStruct.$type,
-        datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.toJson(
-          _namedTypesStruct.datatypeDiscriminatedUnion1,
-        ),
-        datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.toJson(
-          _namedTypesStruct.datatypeDiscriminatedUnion2,
-        ),
         inIri: _namedTypesStruct.inIri.value,
         inLiteral: _namedTypesStruct.inLiteral,
         namedDatatype: _namedTypesStruct.namedDatatype,
@@ -36716,12 +36744,6 @@ export namespace NamedTypesStruct {
     $compactRecord({
       $identifier: _namedTypesStruct.$identifier().value,
       $type: "NamedTypesStruct",
-      datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.toLoggable(
-        _namedTypesStruct.datatypeDiscriminatedUnion1,
-      ),
-      datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.toLoggable(
-        _namedTypesStruct.datatypeDiscriminatedUnion2,
-      ),
       inIri: _namedTypesStruct.inIri.value,
       inLiteral: _namedTypesStruct.inLiteral,
       namedDatatype: _namedTypesStruct.namedDatatype,
