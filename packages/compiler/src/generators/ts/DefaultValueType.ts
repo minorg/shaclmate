@@ -65,7 +65,7 @@ export class DefaultValueType<
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.annotatedUsage})`,
+      code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
     );
   }
 
@@ -98,7 +98,7 @@ export class DefaultValueType<
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Callable {
     return new InlineCallable(
-      code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.annotatedUsage})`,
+      code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
     );
   }
 

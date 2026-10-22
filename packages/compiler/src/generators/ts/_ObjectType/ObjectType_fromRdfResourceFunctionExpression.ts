@@ -48,6 +48,6 @@ export function ObjectType_fromRdfResourceFunctionExpression(
     .reduce(
       (acc, { expression, variable }) =>
         code`(${expression}).chain(${variable} => ${acc})`,
-      code`(${this.createFunction.annotatedUsage}(properties))`,
+      code`(${this.createFunction.unannotatedUsage}(properties))`,
     )}`;
 }

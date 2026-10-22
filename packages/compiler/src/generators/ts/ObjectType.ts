@@ -145,7 +145,7 @@ export class ObjectType extends AbstractStructuredType {
     const sourceTypeExpression = code`{ ${joinCode(sourceTypePropertySignatures)} }`;
     const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return Maybe.of({
-      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction.annotatedUsage}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
+      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction.unannotatedUsage}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
       sourceTypes: [
         {
           expression: sourceTypeExpression,
