@@ -46,6 +46,11 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:class properties" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass1, :UndefinedClass2 ;
+        sh:maxCount 1 ;
+        sh:path :multiClass
+    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -68,11 +73,6 @@
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
         sh:path :singleClass
-    ], [
-        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass1, :UndefinedClass2 ;
-        sh:maxCount 1 ;
-        sh:path :multiClass
     ] .
 
 :ConvertibleTypesStruct
@@ -124,62 +124,34 @@
         sh:path :convertibleIri
     ] .
 
+:DatatypeDiscriminatedUnion1
+    a sh:NodeShape ;
+    rdfs:comment "Named discriminated union of IRI and string" ;
+    sh:xone ([
+            sh:nodeKind sh:IRI
+        ]
+        [
+            sh:datatype xsd:string
+        ]
+    ) .
+
+:DatatypeDiscriminatedUnion2
+    a sh:NodeShape ;
+    rdfs:comment "Named discriminated union of date and date-time" ;
+    sh:xone ([
+            shaclmate:discriminantValue "date" ;
+            sh:datatype xsd:date
+        ]
+        [
+            shaclmate:discriminantValue "dateTime" ;
+            sh:datatype xsd:dateTime
+        ]
+    ) .
+
 :DatatypeDiscriminatedUnionsStruct
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:xone (union) properties over both permutations of two sh:datatype node shapes. These unions are common in actual models." ;
     sh:property [
-        rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :dateOrDateTime ;
-        sh:xone ([
-                shaclmate:discriminantValue "date" ;
-                sh:datatype xsd:date
-            ]
-            [
-                shaclmate:discriminantValue "dateTime" ;
-                sh:datatype xsd:dateTime
-            ]
-        )
-    ], [
-        rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :dateTimeOrDate ;
-        sh:xone ([
-                shaclmate:discriminantValue "dateTime" ;
-                sh:datatype xsd:dateTime
-            ]
-            [
-                shaclmate:discriminantValue "date" ;
-                sh:datatype xsd:date
-            ]
-        )
-    ], [
-        rdfs:comment "Date or string. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :dateOrString ;
-        sh:xone ([
-                sh:datatype xsd:date
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
-        rdfs:comment "Decimal or string. These don't need discriminant values because they're different types in TypeScript." ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :decimalOrString ;
-        sh:xone ([
-                sh:datatype xsd:decimal
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
         rdfs:comment "Integer or string. These don't need discriminant values because they're different types in TypeScript." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -196,8 +168,7 @@
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :jsPrimitive ;
-        sh:xone (
-            [
+        sh:xone ([
                 rdfs:comment "JavaScript boolean" ;
                 sh:datatype xsd:boolean
             ]
@@ -274,6 +245,75 @@
                 sh:datatype rdf:langString
             ]
         )
+    ], [
+        rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :dateOrDateTime ;
+        sh:xone ([
+                shaclmate:discriminantValue "date" ;
+                sh:datatype xsd:date
+            ]
+            [
+                shaclmate:discriminantValue "dateTime" ;
+                sh:datatype xsd:dateTime
+            ]
+        )
+    ], [
+        rdfs:comment "Date or date time. These must have discriminant values because they're the same type in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :dateTimeOrDate ;
+        sh:xone ([
+                shaclmate:discriminantValue "dateTime" ;
+                sh:datatype xsd:dateTime
+            ]
+            [
+                shaclmate:discriminantValue "date" ;
+                sh:datatype xsd:date
+            ]
+        )
+    ], [
+        rdfs:comment "Date or string. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :dateOrString ;
+        sh:xone ([
+                sh:datatype xsd:date
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "Decimal or string. These don't need discriminant values because they're different types in TypeScript." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :decimalOrString ;
+        sh:xone ([
+                sh:datatype xsd:decimal
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ] .
+
+:DatesStruct
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Struct node shape with properties that have date sh:datatype's" ;
+    sh:property [
+        sh:datatype xsd:date ;
+        sh:maxCount 1 ;
+        sh:path :date
+    ], [
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1 ;
+        sh:path :dateTime
+    ], [
+        sh:datatype xsd:dateTimeStamp ;
+        sh:maxCount 1 ;
+        sh:path :dateTimeStamp
     ] .
 
 :DefaultValuesStruct
@@ -462,6 +502,44 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :inIdentifierString
     ] .
 
+:InIntersection
+    shaclmate:ignore true ;
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that sh:and's two sh:in node shapes to get the intersection of them." ;
+    sh:and (:InIntersectionMember1
+        :InIntersectionMember2
+    ) .
+
+:InIntersectionMember1
+    a sh:NodeShape ;
+    sh:in ("test1"
+        "test2"
+        "test3"
+        "test4"
+    ) .
+
+:InIntersectionMember2
+    a sh:NodeShape ;
+    sh:in ("test3"
+        "test4"
+        "test5"
+        "test6"
+    ) .
+
+:InIri
+    a sh:NodeShape ;
+    rdfs:comment "Named sh:in of IRIs" ;
+    sh:in (:InIri1
+        :InIri2
+    ) .
+
+:InLiteral
+    a sh:NodeShape ;
+    rdfs:comment "Named sh:in of literals" ;
+    sh:in ("test1"
+        "test2"
+    ) .
+
 :InPropertiesStruct
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape with sh:in properties." ;
@@ -517,23 +595,9 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :indirectRecursive
     ] .
 
-:InIntersection
-    a sh:NodeShape ;
-    shaclmate:ignore true ;
-    rdfs:comment "Node shape that sh:and's two sh:in node shapes to get the intersection of them." ;
-    sh:and ( :InIntersectionMember1 :InIntersectionMember2 ) .
-
-:InIntersectionMember1
-    a sh:NodeShape ;
-    sh:in ("test1" "test2" "test3" "test4") .
-
-:InIntersectionMember2
-    a sh:NodeShape ;
-    sh:in ("test3" "test4" "test5" "test6") .
-
 :IntersectionPropertiesStruct
-    a sh:NodeShape ;
     shaclmate:ignore true ;
+    a sh:NodeShape ;
     sh:property [
         sh:node :StructIntersection ;
         sh:path :structIntersection
@@ -596,11 +660,23 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ], [
         sh:maxCount 1 ;
         sh:path :langStringOrString ;
-        sh:xone ( [ sh:datatype rdf:langString ] [ sh:datatype xsd:string ])
+        sh:xone ([
+                sh:datatype rdf:langString
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
     ], [
         sh:maxCount 1 ;
         sh:path :stringOrLangString ;
-        sh:xone ( [ sh:datatype xsd:string ] [ sh:datatype rdf:langString ])
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype rdf:langString
+            ]
+        )
     ] .
 
 :LanguageInStruct
@@ -809,40 +885,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Named sh:datatype" ;
     sh:datatype xsd:string .
 
-:DatatypeDiscriminatedUnion1
-    a sh:NodeShape ;
-    rdfs:comment "Named discriminated union of IRI and string" ;
-    sh:xone ([
-            sh:nodeKind sh:IRI
-        ]
-        [
-            sh:datatype xsd:string
-        ]
-    ) .
-
-:DatatypeDiscriminatedUnion2
-    a sh:NodeShape ;
-    rdfs:comment "Named discriminated union of date and date-time" ;
-    sh:xone ([
-            shaclmate:discriminantValue "date" ;
-            sh:datatype xsd:date
-        ]
-        [
-            shaclmate:discriminantValue "dateTime" ;
-            sh:datatype xsd:dateTime
-        ]
-    ) .
-
-:InIri
-    a sh:NodeShape ;
-    rdfs:comment "Named sh:in of IRIs" ;
-    sh:in ( :InIri1 :InIri2 ) .
-
-:InLiteral
-    a sh:NodeShape ;
-    rdfs:comment "Named sh:in of literals" ;
-    sh:in ( "test1" "test2" ) .
-
 :NamedTypesStruct
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Struct node shape that uses named types in properties with sh:node" ;
@@ -941,23 +983,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :nonClassString
-    ] .
-
-:DatesStruct
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Struct node shape with properties that have date sh:datatype's" ;
-    sh:property [
-        sh:datatype xsd:date ;
-        sh:maxCount 1 ;
-        sh:path :date
-    ], [
-        sh:datatype xsd:dateTime ;
-        sh:maxCount 1 ;
-        sh:path :dateTime
-    ], [
-        sh:datatype xsd:dateTimeStamp ;
-        sh:maxCount 1 ;
-        sh:path :dateTimeStamp
     ] .
 
 :NumericsStruct
@@ -1248,40 +1273,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
-:StructIntersection
-    a sh:NodeShape ;
-    shaclmate:ignore true ;
-    rdfs:comment "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type." ;
-    sh:and (:StructIntersectionMember1
-        :StructIntersectionMember2
-    ) .
-
-:StructIntersectionMember-common
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:name "intersectionMemberCommon" ;
-    sh:path :intersectionMemberCommon .
-
-:StructIntersectionMember1
-    a owl:Class, sh:NodeShape ;
-    sh:property :StructIntersectionMember-common, [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :intersectionMember1Distinct
-    ] .
-
-:StructIntersectionMember2
-    a owl:Class, sh:NodeShape ;
-    sh:property :StructIntersectionMember-common, [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :intersectionMember2Distinct
-    ] .
-
 :StructDiscriminatedUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
@@ -1313,6 +1304,40 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :structDiscriminatedUnionMember2Distinct
+    ] .
+
+:StructIntersection
+    shaclmate:ignore true ;
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type." ;
+    sh:and (:StructIntersectionMember1
+        :StructIntersectionMember2
+    ) .
+
+:StructIntersectionMember-common
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:name "intersectionMemberCommon" ;
+    sh:path :intersectionMemberCommon .
+
+:StructIntersectionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property :StructIntersectionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :intersectionMember1Distinct
+    ] .
+
+:StructIntersectionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property :StructIntersectionMember-common, [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :intersectionMember2Distinct
     ] .
 
 :StructList
@@ -1414,8 +1439,7 @@ The sh:targetClass is expected on deserialization and added on serialization."""
                 sh:datatype xsd:string
             ]
         )
-    ], 
-    [
+    ], [
         rdfs:comment "Discriminated union that can be discriminated by an intrinsic discriminant property (termType)." ;
         sh:maxCount 1 ;
         sh:path :optionalTerm ;
@@ -1543,3 +1567,4 @@ The sh:targetClass is expected on deserialization and added on serialization."""
             ]
         )
     ] .
+
