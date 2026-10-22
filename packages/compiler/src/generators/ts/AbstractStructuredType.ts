@@ -13,7 +13,7 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractStructuredType extends AbstractType {
   @Memoize()
   override get equalsFunction(): Callable {
-    const type = code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`;
+    const type = this.equalsFunctionType;
     const unannotatedExpression = () => this.equalsFunctionExpression();
 
     return this.name
@@ -30,7 +30,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get filterFunction(): Callable {
-    const type = code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.expression}>`;
+    const type = this.filterFunctionType;
     const unannotatedExpression = () => this.filterFunctionExpression();
 
     return this.name
@@ -54,7 +54,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get fromJsonFunction(): Callable {
-    const type = code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
+    const type = this.fromJsonFunctionType;
     const unannotatedExpression = () => this.fromJsonFunctionExpression();
 
     return this.name
@@ -71,7 +71,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
-    const type = code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`;
+    const type = this.fromRdfResourceValuesFunctionType;
     const unannotatedExpression = () =>
       this.fromRdfResourceValuesFunctionExpression();
 
@@ -89,7 +89,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get hashFunction(): Callable {
-    const type = code`${this.reusables.snippets.HashFunction}<${this.expression}>`;
+    const type = this.hashFunctionType;
     const unannotatedExpression = () => this.hashFunctionExpression();
 
     return this.name
@@ -113,7 +113,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toJsonFunction(): Callable {
-    const type = code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
+    const type = this.toJsonFunctionType;
     const unannotatedExpression = () => this.toJsonFunctionExpression();
 
     return this.name
@@ -130,7 +130,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toLoggableFunction(): Callable {
-    const type = code`${this.reusables.snippets.ToLoggableFunction}<${this.expression}>`;
+    const type = this.toLoggableFunctionType;
     const unannotatedExpression = () => this.toLoggableFunctionExpression();
 
     return this.name
@@ -147,7 +147,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toRdfResourceValuesFunction(): Callable {
-    const type = code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}, ${this.toRdfResourceValueTypesExpression}>`;
+    const type = this.toRdfResourceValuesFunctionType;
     const unannotatedExpression = () =>
       this.toRdfResourceValuesFunctionExpression();
 
@@ -165,7 +165,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toStringFunction(): Callable {
-    const type = code`${this.reusables.snippets.ToStringFunction}<${this.expression}>`;
+    const type = this.toStringFunctionType;
     const unannotatedExpression = () => this.toStringFunctionExpression();
 
     return this.name
@@ -185,7 +185,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Callable {
-    const type = code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`;
+    const type = this.valueSparqlConstructTriplesType;
     const unannotatedExpression = () =>
       this.valueSparqlConstructTriplesFunctionExpression();
 
@@ -203,7 +203,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Callable {
-    const type = code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`;
+    const type = this.valueSparqlWherePatternsFunctionType;
     const unannotatedExpression = () =>
       this.valueSparqlWherePatternsFunctionExpression();
 
@@ -217,6 +217,34 @@ export abstract class AbstractStructuredType extends AbstractType {
           }),
       )
       .orDefault(new InlineCallable(unannotatedExpression, { type }));
+  }
+
+  protected get equalsFunctionType(): Code {
+    return code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`;
+  }
+
+  protected get filterFunctionType(): Code {
+    return code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.expression}>`;
+  }
+
+  protected get fromJsonFunctionType(): Code {
+    return code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
+  }
+
+  protected get fromRdfResourceValuesFunctionType(): Code {
+    return code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`;
+  }
+
+  protected get hashFunctionType(): Code {
+    return code`${this.reusables.snippets.HashFunction}<${this.expression}>`;
+  }
+
+  protected get toJsonFunctionType(): Code {
+    return code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
+  }
+
+  protected get toLoggableFunctionType() {
+    return code`${this.reusables.snippets.ToLoggableFunction}<${this.expression}>`;
   }
 
   @Memoize()
@@ -237,6 +265,22 @@ export abstract class AbstractStructuredType extends AbstractType {
       }),
       { on: " | " },
     );
+  }
+
+  protected get toRdfResourceValuesFunctionType(): Code {
+    return code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}, ${this.toRdfResourceValueTypesExpression}>`;
+  }
+
+  protected get toStringFunctionType(): Code {
+    return code`${this.reusables.snippets.ToStringFunction}<${this.expression}>`;
+  }
+
+  protected get valueSparqlConstructTriplesType(): Code {
+    return code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`;
+  }
+
+  protected get valueSparqlWherePatternsFunctionType(): Code {
+    return code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`;
   }
 
   override fromJsonExpression({
