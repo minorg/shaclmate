@@ -531,6 +531,13 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     sh:in ("test3" "test4" "test5" "test6") .
 
+:IntersectionPropertiesStruct
+    a sh:NodeShape ;
+    sh:property [
+        sh:node :StructIntersection ;
+        sh:path :namedStructIntersection
+    ] .
+
 :IriIdentifierStruct
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that only allows IRI identifiers." ;
@@ -801,7 +808,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Named sh:datatype" ;
     sh:datatype xsd:string .
 
-:NamedDiscriminatedUnion1
+:DatatypeDiscriminatedUnion1
     a sh:NodeShape ;
     rdfs:comment "Named discriminated union of IRI and string" ;
     sh:xone ([
@@ -812,7 +819,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
-:NamedDiscriminatedUnion2
+:DatatypeDiscriminatedUnion2
     a sh:NodeShape ;
     rdfs:comment "Named discriminated union of date and date-time" ;
     sh:xone ([
@@ -825,12 +832,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
-:NamedInIri
+:InIri
     a sh:NodeShape ;
     rdfs:comment "Named sh:in of IRIs" ;
-    sh:in ( :NamedInIri1 :NamedInIri2 ) .
+    sh:in ( :InIri1 :InIri2 ) .
 
-:NamedInLiteral
+:InLiteral
     a sh:NodeShape ;
     rdfs:comment "Named sh:in of literals" ;
     sh:in ( "test1" "test2" ) .
@@ -846,23 +853,23 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ], [
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :NamedDiscriminatedUnion1 ;
-        sh:path :namedDiscriminatedUnion1
+        sh:node :DatatypeDiscriminatedUnion1 ;
+        sh:path :datatypeDiscriminatedUnion1
     ], [
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :NamedDiscriminatedUnion2 ;
-        sh:path :namedDiscriminatedUnion2
+        sh:node :DatatypeDiscriminatedUnion2 ;
+        sh:path :datatypeDiscriminatedUnion2
     ], [
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :NamedInIri ;
-        sh:path :namedInIri
+        sh:node :InIri ;
+        sh:path :inIri
     ], [
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :NamedInLiteral ;
-        sh:path :namedInLiteral
+        sh:node :InLiteral ;
+        sh:path :inLiteral
     ] .
 
 :NoRdfTypeDiscriminatedUnion
@@ -1242,7 +1249,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :StructIntersection
     a sh:NodeShape ;
-    shaclmate:ignore true ;
     rdfs:comment "Node shape that sh:and's other struct node shapes. This will be generated as an intersection type or flattened into a single type." ;
     sh:and (:StructIntersectionMember1
         :StructIntersectionMember2
