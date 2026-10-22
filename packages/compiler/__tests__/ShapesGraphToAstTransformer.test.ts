@@ -187,6 +187,7 @@ describe("ShapesGraphToAstTransformer", () => {
           case "objectDiscriminantProperty":
           case "propertyShapeNameConflicts":
           case "propertyShapesOnly":
+          case "restExample":
           case "shaclShacl":
           case "syntax":
             throw new RangeError(id);
