@@ -22,8 +22,16 @@ function isStructTypeFieldRequired(field: {
       return field.type.kind === "Iri";
     case "Shacl": {
       switch (field.type.kind) {
+        case "DiscriminatedUnion":
+          return field.type.members.every((member) =>
+            isStructTypeFieldRequired({ kind: "Shacl", type: member.type }),
+          );
         case "DefaultValue":
           return false;
+        case "Intersection":
+          return field.type.members.every((member) =>
+            isStructTypeFieldRequired({ kind: "Shacl", type: member.type }),
+          );
         case "LazyOption":
           return false;
         case "LazySet":
@@ -32,10 +40,6 @@ function isStructTypeFieldRequired(field: {
           return false;
         case "Set":
           return field.type.minCount > 0;
-        case "DiscriminatedUnion":
-          return field.type.members.every((member) =>
-            isStructTypeFieldRequired({ kind: "Shacl", type: member.type }),
-          );
         case "BlankNode":
         case "Identifier":
         case "Iri":
@@ -45,8 +49,6 @@ function isStructTypeFieldRequired(field: {
         case "Struct":
         case "Term":
           return true;
-        case "Intersection":
-          throw new Error("unsupported");
         default:
           field.type satisfies never;
           throw new Error("should never reach this point");
