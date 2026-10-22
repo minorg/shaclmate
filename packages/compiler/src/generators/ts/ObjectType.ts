@@ -253,7 +253,7 @@ export class ObjectType extends AbstractStructuredType {
   @Memoize()
   get toStringRecordFunction(): FunctionLike {
     const type = {
-      expression: code`(${this.thisVariable}: ${this.expression}) => Record<string, string>`,
+      expression: code`${this.reusables.snippets.ToStringRecordFunction}<${this.expression}>`,
     };
     const unannotatedExpression = () =>
       ObjectType_toStringRecordFunctionExpression.call(this);

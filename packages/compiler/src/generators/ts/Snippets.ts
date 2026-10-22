@@ -170,6 +170,7 @@ import { snippets_ToLoggableFunction } from "./_snippets/snippets_ToLoggableFunc
 import { snippets_ToRdfResourceFunction } from "./_snippets/snippets_ToRdfResourceFunction.js";
 import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdfResourceValuesFunction.js";
 import { snippets_ToStringFunction } from "./_snippets/snippets_ToStringFunction.js";
+import { snippets_ToStringRecordFunction } from "./_snippets/snippets_ToStringRecordFunction.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
 import { snippets_termFromRdfResourceValues } from "./_snippets/snippets_termFromRdfResourceValues.js";
 import { snippets_termLikeFromRdfResourceValues } from "./_snippets/snippets_termLikeFromRdfResourceValues.js";
@@ -474,6 +475,11 @@ export class Snippets {
   @Memoize()
   get ToStringFunction(): Snippet {
     return this.snippet(snippets_ToStringFunction);
+  }
+
+  @Memoize()
+  get ToStringRecordFunction(): Snippet {
+    return this.snippet(snippets_ToStringRecordFunction);
   }
 
   @Memoize()

@@ -3667,6 +3667,8 @@ export type $ToRdfResourceValuesFunction<
 
 export type $ToStringFunction<T> = (value: T) => string;
 
+export type $ToStringRecordFunction<T> = (value: T) => Record<string, string>;
+
 function $validateArray<ItemSchemaT, ItemValueT>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
 ): $ValidationFunction<$CollectionSchema<ItemSchemaT>, readonly ItemValueT[]> {
@@ -3917,7 +3919,8 @@ export namespace $DefaultPartial {
 
   export const $toString: $ToStringFunction<$DefaultPartial> = (
     _defaultPartial,
-  ) => JSON.stringify($DefaultPartial.toStringRecord);
+  ) =>
+    `$DefaultPartial(${JSON.stringify($DefaultPartial.toStringRecord(_defaultPartial))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -4224,9 +4227,9 @@ export namespace $DefaultPartial {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _defaultPartial: $DefaultPartial,
-  ) => Record<string, string> = (_defaultPartial) =>
+  export const toStringRecord: $ToStringRecordFunction<$DefaultPartial> = (
+    _defaultPartial,
+  ) =>
     $compactRecord({ $identifier: _defaultPartial.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -4293,7 +4296,8 @@ export namespace $NamedDefaultPartial {
 
   export const $toString: $ToStringFunction<$NamedDefaultPartial> = (
     _namedDefaultPartial,
-  ) => JSON.stringify($NamedDefaultPartial.toStringRecord);
+  ) =>
+    `$NamedDefaultPartial(${JSON.stringify($NamedDefaultPartial.toStringRecord(_namedDefaultPartial))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -4591,9 +4595,9 @@ export namespace $NamedDefaultPartial {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _namedDefaultPartial: $NamedDefaultPartial,
-  ) => Record<string, string> = (_namedDefaultPartial) =>
+  export const toStringRecord: $ToStringRecordFunction<$NamedDefaultPartial> = (
+    _namedDefaultPartial,
+  ) =>
     $compactRecord({
       $identifier: _namedDefaultPartial.$identifier().toString(),
     });
@@ -4792,21 +4796,14 @@ export namespace AnonymousTypesStruct {
                                 { "@id": string; anonymousStructString: string }
                               >,
                               $toString: ((_object) =>
-                                JSON.stringify(((_object) =>
-                                  $compactRecord({
-                                    $identifier: _object
-                                      .$identifier()
-                                      .toString(),
-                                  })) satisfies (_object: {
-                                  readonly $identifier: () =>
-                                    | BlankNode
-                                    | NamedNode;
-
-                                  readonly anonymousStructString: string;
-                                }) => Record<
-                                  string,
-                                  string
-                                >)) satisfies $ToStringFunction<{
+                                JSON.stringify(
+                                  ((_object) =>
+                                    $compactRecord({
+                                      $identifier: _object
+                                        .$identifier()
+                                        .toString(),
+                                    }))(_object),
+                                )) satisfies $ToStringFunction<{
                                 readonly $identifier: () =>
                                   | BlankNode
                                   | NamedNode;
@@ -4919,7 +4916,8 @@ export namespace AnonymousTypesStruct {
 
   export const $toString: $ToStringFunction<AnonymousTypesStruct> = (
     _anonymousTypesStruct,
-  ) => JSON.stringify(AnonymousTypesStruct.toStringRecord);
+  ) =>
+    `AnonymousTypesStruct(${JSON.stringify(AnonymousTypesStruct.toStringRecord(_anonymousTypesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -5022,14 +5020,12 @@ export namespace AnonymousTypesStruct {
                     { "@id": string; anonymousStructString: string }
                   >,
                   $toString: ((_object) =>
-                    JSON.stringify(((_object) =>
-                      $compactRecord({
-                        $identifier: _object.$identifier().toString(),
-                      })) satisfies (_object: {
-                      readonly $identifier: () => BlankNode | NamedNode;
-
-                      readonly anonymousStructString: string;
-                    }) => Record<string, string>)) satisfies $ToStringFunction<{
+                    JSON.stringify(
+                      ((_object) =>
+                        $compactRecord({
+                          $identifier: _object.$identifier().toString(),
+                        }))(_object),
+                    )) satisfies $ToStringFunction<{
                     readonly $identifier: () => BlankNode | NamedNode;
                     readonly anonymousStructString: string;
                   }>,
@@ -5539,14 +5535,12 @@ export namespace AnonymousTypesStruct {
                     { "@id": string; anonymousStructString: string }
                   >,
                   $toString: ((_object) =>
-                    JSON.stringify(((_object) =>
-                      $compactRecord({
-                        $identifier: _object.$identifier().toString(),
-                      })) satisfies (_object: {
-                      readonly $identifier: () => BlankNode | NamedNode;
-
-                      readonly anonymousStructString: string;
-                    }) => Record<string, string>)) satisfies $ToStringFunction<{
+                    JSON.stringify(
+                      ((_object) =>
+                        $compactRecord({
+                          $identifier: _object.$identifier().toString(),
+                        }))(_object),
+                    )) satisfies $ToStringFunction<{
                     readonly $identifier: () => BlankNode | NamedNode;
                     readonly anonymousStructString: string;
                   }>,
@@ -5872,9 +5866,9 @@ export namespace AnonymousTypesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _anonymousTypesStruct: AnonymousTypesStruct,
-  ) => Record<string, string> = (_anonymousTypesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<AnonymousTypesStruct> = (
+    _anonymousTypesStruct,
+  ) =>
     $compactRecord({
       $identifier: _anonymousTypesStruct.$identifier().toString(),
     });
@@ -5978,7 +5972,10 @@ export namespace BlankNodeIdentifierStruct {
 
   export const $toString: $ToStringFunction<BlankNodeIdentifierStruct> = (
     _blankNodeIdentifierStruct,
-  ) => JSON.stringify(BlankNodeIdentifierStruct.toStringRecord);
+  ) =>
+    `BlankNodeIdentifierStruct(${JSON.stringify(
+      BlankNodeIdentifierStruct.toStringRecord(_blankNodeIdentifierStruct),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -6406,10 +6403,9 @@ export namespace BlankNodeIdentifierStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _blankNodeIdentifierStruct: BlankNodeIdentifierStruct,
-  ) => Record<string, string> = (_blankNodeIdentifierStruct) =>
-    $compactRecord({});
+  export const toStringRecord: $ToStringRecordFunction<
+    BlankNodeIdentifierStruct
+  > = (_blankNodeIdentifierStruct) => $compactRecord({});
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     BlankNodeIdentifierStruct.Filter,
@@ -6527,7 +6523,12 @@ export namespace BlankNodeOrIriIdentifierStruct {
 
   export const $toString: $ToStringFunction<BlankNodeOrIriIdentifierStruct> = (
     _blankNodeOrIriIdentifierStruct,
-  ) => JSON.stringify(BlankNodeOrIriIdentifierStruct.toStringRecord);
+  ) =>
+    `BlankNodeOrIriIdentifierStruct(${JSON.stringify(
+      BlankNodeOrIriIdentifierStruct.toStringRecord(
+        _blankNodeOrIriIdentifierStruct,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -7039,9 +7040,9 @@ export namespace BlankNodeOrIriIdentifierStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _blankNodeOrIriIdentifierStruct: BlankNodeOrIriIdentifierStruct,
-  ) => Record<string, string> = (_blankNodeOrIriIdentifierStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    BlankNodeOrIriIdentifierStruct
+  > = (_blankNodeOrIriIdentifierStruct) =>
     $compactRecord({
       $identifier: _blankNodeOrIriIdentifierStruct.$identifier().toString(),
     });
@@ -7264,7 +7265,8 @@ export namespace ClassConstraintsStruct {
 
   export const $toString: $ToStringFunction<ClassConstraintsStruct> = (
     _classConstraintsStruct,
-  ) => JSON.stringify(ClassConstraintsStruct.toStringRecord);
+  ) =>
+    `ClassConstraintsStruct(${JSON.stringify(ClassConstraintsStruct.toStringRecord(_classConstraintsStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -8184,9 +8186,9 @@ export namespace ClassConstraintsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _classConstraintsStruct: ClassConstraintsStruct,
-  ) => Record<string, string> = (_classConstraintsStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    ClassConstraintsStruct
+  > = (_classConstraintsStruct) =>
     $compactRecord({
       $identifier: _classConstraintsStruct.$identifier().toString(),
     });
@@ -8521,7 +8523,8 @@ export namespace ConvertibleTypesStruct {
 
   export const $toString: $ToStringFunction<ConvertibleTypesStruct> = (
     _convertibleTypesStruct,
-  ) => JSON.stringify(ConvertibleTypesStruct.toStringRecord);
+  ) =>
+    `ConvertibleTypesStruct(${JSON.stringify(ConvertibleTypesStruct.toStringRecord(_convertibleTypesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -10583,9 +10586,9 @@ export namespace ConvertibleTypesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _convertibleTypesStruct: ConvertibleTypesStruct,
-  ) => Record<string, string> = (_convertibleTypesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    ConvertibleTypesStruct
+  > = (_convertibleTypesStruct) =>
     $compactRecord({
       $identifier: _convertibleTypesStruct.$identifier().toString(),
     });
@@ -12252,7 +12255,11 @@ export namespace DatatypeDiscriminatedUnionsStruct {
   export const $toString: $ToStringFunction<
     DatatypeDiscriminatedUnionsStruct
   > = (_datatypeDiscriminatedUnionsStruct) =>
-    JSON.stringify(DatatypeDiscriminatedUnionsStruct.toStringRecord);
+    `DatatypeDiscriminatedUnionsStruct(${JSON.stringify(
+      DatatypeDiscriminatedUnionsStruct.toStringRecord(
+        _datatypeDiscriminatedUnionsStruct,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -15360,9 +15367,9 @@ export namespace DatatypeDiscriminatedUnionsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _datatypeDiscriminatedUnionsStruct: DatatypeDiscriminatedUnionsStruct,
-  ) => Record<string, string> = (_datatypeDiscriminatedUnionsStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    DatatypeDiscriminatedUnionsStruct
+  > = (_datatypeDiscriminatedUnionsStruct) =>
     $compactRecord({
       $identifier: _datatypeDiscriminatedUnionsStruct.$identifier().toString(),
     });
@@ -15514,7 +15521,7 @@ export namespace DatesStruct {
   };
 
   export const $toString: $ToStringFunction<DatesStruct> = (_datesStruct) =>
-    JSON.stringify(DatesStruct.toStringRecord);
+    `DatesStruct(${JSON.stringify(DatesStruct.toStringRecord(_datesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -16155,10 +16162,9 @@ export namespace DatesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _datesStruct: DatesStruct,
-  ) => Record<string, string> = (_datesStruct) =>
-    $compactRecord({ $identifier: _datesStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<DatesStruct> = (
+    _datesStruct,
+  ) => $compactRecord({ $identifier: _datesStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     DatesStruct.Filter,
@@ -16409,7 +16415,8 @@ export namespace DefaultValuesStruct {
 
   export const $toString: $ToStringFunction<DefaultValuesStruct> = (
     _defaultValuesStruct,
-  ) => JSON.stringify(DefaultValuesStruct.toStringRecord);
+  ) =>
+    `DefaultValuesStruct(${JSON.stringify(DefaultValuesStruct.toStringRecord(_defaultValuesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -17243,9 +17250,9 @@ export namespace DefaultValuesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _defaultValuesStruct: DefaultValuesStruct,
-  ) => Record<string, string> = (_defaultValuesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<DefaultValuesStruct> = (
+    _defaultValuesStruct,
+  ) =>
     $compactRecord({
       $identifier: _defaultValuesStruct.$identifier().toString(),
     });
@@ -17362,7 +17369,8 @@ export namespace DirectRecursiveStruct {
 
   export const $toString: $ToStringFunction<DirectRecursiveStruct> = (
     _directRecursiveStruct,
-  ) => JSON.stringify(DirectRecursiveStruct.toStringRecord);
+  ) =>
+    `DirectRecursiveStruct(${JSON.stringify(DirectRecursiveStruct.toStringRecord(_directRecursiveStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -17836,9 +17844,9 @@ export namespace DirectRecursiveStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _directRecursiveStruct: DirectRecursiveStruct,
-  ) => Record<string, string> = (_directRecursiveStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    DirectRecursiveStruct
+  > = (_directRecursiveStruct) =>
     $compactRecord({
       $identifier: _directRecursiveStruct.$identifier().toString(),
     });
@@ -17988,7 +17996,7 @@ export namespace DisplayStruct {
   };
 
   export const $toString: $ToStringFunction<DisplayStruct> = (_displayStruct) =>
-    JSON.stringify(DisplayStruct.toStringRecord);
+    `DisplayStruct(${JSON.stringify(DisplayStruct.toStringRecord(_displayStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -18552,9 +18560,9 @@ export namespace DisplayStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _displayStruct: DisplayStruct,
-  ) => Record<string, string> = (_displayStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<DisplayStruct> = (
+    _displayStruct,
+  ) =>
     $compactRecord({
       $identifier: _displayStruct.$identifier().toString(),
       explicitTrueDisplay: _displayStruct.explicitTrueDisplay.toString(),
@@ -18669,7 +18677,12 @@ export namespace ExplicitFromToRdfTypesStruct {
 
   export const $toString: $ToStringFunction<ExplicitFromToRdfTypesStruct> = (
     _explicitFromToRdfTypesStruct,
-  ) => JSON.stringify(ExplicitFromToRdfTypesStruct.toStringRecord);
+  ) =>
+    `ExplicitFromToRdfTypesStruct(${JSON.stringify(
+      ExplicitFromToRdfTypesStruct.toStringRecord(
+        _explicitFromToRdfTypesStruct,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -19151,9 +19164,9 @@ export namespace ExplicitFromToRdfTypesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _explicitFromToRdfTypesStruct: ExplicitFromToRdfTypesStruct,
-  ) => Record<string, string> = (_explicitFromToRdfTypesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    ExplicitFromToRdfTypesStruct
+  > = (_explicitFromToRdfTypesStruct) =>
     $compactRecord({
       $identifier: _explicitFromToRdfTypesStruct.$identifier().toString(),
     });
@@ -19263,7 +19276,8 @@ export namespace ExplicitRdfTypeStruct {
 
   export const $toString: $ToStringFunction<ExplicitRdfTypeStruct> = (
     _explicitRdfTypeStruct,
-  ) => JSON.stringify(ExplicitRdfTypeStruct.toStringRecord);
+  ) =>
+    `ExplicitRdfTypeStruct(${JSON.stringify(ExplicitRdfTypeStruct.toStringRecord(_explicitRdfTypeStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -19716,9 +19730,9 @@ export namespace ExplicitRdfTypeStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _explicitRdfTypeStruct: ExplicitRdfTypeStruct,
-  ) => Record<string, string> = (_explicitRdfTypeStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    ExplicitRdfTypeStruct
+  > = (_explicitRdfTypeStruct) =>
     $compactRecord({
       $identifier: _explicitRdfTypeStruct.$identifier().toString(),
     });
@@ -19837,7 +19851,11 @@ export namespace FlattenDiscriminatedUnionMember3 {
   export const $toString: $ToStringFunction<
     FlattenDiscriminatedUnionMember3
   > = (_flattenDiscriminatedUnionMember3) =>
-    JSON.stringify(FlattenDiscriminatedUnionMember3.toStringRecord);
+    `FlattenDiscriminatedUnionMember3(${JSON.stringify(
+      FlattenDiscriminatedUnionMember3.toStringRecord(
+        _flattenDiscriminatedUnionMember3,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -20326,9 +20344,9 @@ export namespace FlattenDiscriminatedUnionMember3 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _flattenDiscriminatedUnionMember3: FlattenDiscriminatedUnionMember3,
-  ) => Record<string, string> = (_flattenDiscriminatedUnionMember3) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    FlattenDiscriminatedUnionMember3
+  > = (_flattenDiscriminatedUnionMember3) =>
     $compactRecord({
       $identifier: _flattenDiscriminatedUnionMember3.$identifier().toString(),
     });
@@ -20429,7 +20447,8 @@ export namespace HasValuesStruct {
 
   export const $toString: $ToStringFunction<HasValuesStruct> = (
     _hasValuesStruct,
-  ) => JSON.stringify(HasValuesStruct.toStringRecord);
+  ) =>
+    `HasValuesStruct(${JSON.stringify(HasValuesStruct.toStringRecord(_hasValuesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -20869,9 +20888,9 @@ export namespace HasValuesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _hasValuesStruct: HasValuesStruct,
-  ) => Record<string, string> = (_hasValuesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<HasValuesStruct> = (
+    _hasValuesStruct,
+  ) =>
     $compactRecord({ $identifier: _hasValuesStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -21006,7 +21025,8 @@ export namespace IgnoredPropertiesStruct {
 
   export const $toString: $ToStringFunction<IgnoredPropertiesStruct> = (
     _ignoredPropertiesStruct,
-  ) => JSON.stringify(IgnoredPropertiesStruct.toStringRecord);
+  ) =>
+    `IgnoredPropertiesStruct(${JSON.stringify(IgnoredPropertiesStruct.toStringRecord(_ignoredPropertiesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -21549,9 +21569,9 @@ export namespace IgnoredPropertiesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _ignoredPropertiesStruct: IgnoredPropertiesStruct,
-  ) => Record<string, string> = (_ignoredPropertiesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    IgnoredPropertiesStruct
+  > = (_ignoredPropertiesStruct) =>
     $compactRecord({
       $identifier: _ignoredPropertiesStruct.$identifier().toString(),
     });
@@ -21669,7 +21689,8 @@ export namespace IndirectRecursiveStruct {
 
   export const $toString: $ToStringFunction<IndirectRecursiveStruct> = (
     _indirectRecursiveStruct,
-  ) => JSON.stringify(IndirectRecursiveStruct.toStringRecord);
+  ) =>
+    `IndirectRecursiveStruct(${JSON.stringify(IndirectRecursiveStruct.toStringRecord(_indirectRecursiveStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -22160,9 +22181,9 @@ export namespace IndirectRecursiveStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _indirectRecursiveStruct: IndirectRecursiveStruct,
-  ) => Record<string, string> = (_indirectRecursiveStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    IndirectRecursiveStruct
+  > = (_indirectRecursiveStruct) =>
     $compactRecord({
       $identifier: _indirectRecursiveStruct.$identifier().toString(),
     });
@@ -22286,7 +22307,12 @@ export namespace IndirectRecursiveStructHelper {
 
   export const $toString: $ToStringFunction<IndirectRecursiveStructHelper> = (
     _indirectRecursiveStructHelper,
-  ) => JSON.stringify(IndirectRecursiveStructHelper.toStringRecord);
+  ) =>
+    `IndirectRecursiveStructHelper(${JSON.stringify(
+      IndirectRecursiveStructHelper.toStringRecord(
+        _indirectRecursiveStructHelper,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -22772,9 +22798,9 @@ export namespace IndirectRecursiveStructHelper {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _indirectRecursiveStructHelper: IndirectRecursiveStructHelper,
-  ) => Record<string, string> = (_indirectRecursiveStructHelper) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    IndirectRecursiveStructHelper
+  > = (_indirectRecursiveStructHelper) =>
     $compactRecord({
       $identifier: _indirectRecursiveStructHelper.$identifier().toString(),
     });
@@ -22887,7 +22913,8 @@ export namespace InIdentifierStruct {
 
   export const $toString: $ToStringFunction<InIdentifierStruct> = (
     _inIdentifierStruct,
-  ) => JSON.stringify(InIdentifierStruct.toStringRecord);
+  ) =>
+    `InIdentifierStruct(${JSON.stringify(InIdentifierStruct.toStringRecord(_inIdentifierStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -23430,9 +23457,9 @@ export namespace InIdentifierStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _inIdentifierStruct: InIdentifierStruct,
-  ) => Record<string, string> = (_inIdentifierStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<InIdentifierStruct> = (
+    _inIdentifierStruct,
+  ) =>
     $compactRecord({
       $identifier: _inIdentifierStruct.$identifier().toString(),
     });
@@ -23688,7 +23715,8 @@ export namespace InPropertiesStruct {
 
   export const $toString: $ToStringFunction<InPropertiesStruct> = (
     _inPropertiesStruct,
-  ) => JSON.stringify(InPropertiesStruct.toStringRecord);
+  ) =>
+    `InPropertiesStruct(${JSON.stringify(InPropertiesStruct.toStringRecord(_inPropertiesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -24645,9 +24673,9 @@ export namespace InPropertiesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _inPropertiesStruct: InPropertiesStruct,
-  ) => Record<string, string> = (_inPropertiesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<InPropertiesStruct> = (
+    _inPropertiesStruct,
+  ) =>
     $compactRecord({
       $identifier: _inPropertiesStruct.$identifier().toString(),
     });
@@ -24760,7 +24788,8 @@ export namespace IriIdentifierStruct {
 
   export const $toString: $ToStringFunction<IriIdentifierStruct> = (
     _iriIdentifierStruct,
-  ) => JSON.stringify(IriIdentifierStruct.toStringRecord);
+  ) =>
+    `IriIdentifierStruct(${JSON.stringify(IriIdentifierStruct.toStringRecord(_iriIdentifierStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -25232,9 +25261,9 @@ export namespace IriIdentifierStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _iriIdentifierStruct: IriIdentifierStruct,
-  ) => Record<string, string> = (_iriIdentifierStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<IriIdentifierStruct> = (
+    _iriIdentifierStruct,
+  ) =>
     $compactRecord({
       $identifier: _iriIdentifierStruct.$identifier().toString(),
     });
@@ -25665,7 +25694,8 @@ export namespace LangStringStruct {
 
   export const $toString: $ToStringFunction<LangStringStruct> = (
     _langStringStruct,
-  ) => JSON.stringify(LangStringStruct.toStringRecord);
+  ) =>
+    `LangStringStruct(${JSON.stringify(LangStringStruct.toStringRecord(_langStringStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -26836,9 +26866,9 @@ export namespace LangStringStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _langStringStruct: LangStringStruct,
-  ) => Record<string, string> = (_langStringStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<LangStringStruct> = (
+    _langStringStruct,
+  ) =>
     $compactRecord({ $identifier: _langStringStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -26929,7 +26959,8 @@ export namespace LanguageInStruct {
 
   export const $toString: $ToStringFunction<LanguageInStruct> = (
     _languageInStruct,
-  ) => JSON.stringify(LanguageInStruct.toStringRecord);
+  ) =>
+    `LanguageInStruct(${JSON.stringify(LanguageInStruct.toStringRecord(_languageInStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -27339,9 +27370,9 @@ export namespace LanguageInStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _languageInStruct: LanguageInStruct,
-  ) => Record<string, string> = (_languageInStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<LanguageInStruct> = (
+    _languageInStruct,
+  ) =>
     $compactRecord({ $identifier: _languageInStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -27453,7 +27484,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
   export const $toString: $ToStringFunction<
     LazilyResolvedBlankNodeOrIriIdentifierStruct
   > = (_lazilyResolvedBlankNodeOrIriIdentifierStruct) =>
-    JSON.stringify(LazilyResolvedBlankNodeOrIriIdentifierStruct.toStringRecord);
+    `LazilyResolvedBlankNodeOrIriIdentifierStruct(${JSON.stringify(
+      LazilyResolvedBlankNodeOrIriIdentifierStruct.toStringRecord(
+        _lazilyResolvedBlankNodeOrIriIdentifierStruct,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -27950,11 +27985,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _lazilyResolvedBlankNodeOrIriIdentifierStruct: LazilyResolvedBlankNodeOrIriIdentifierStruct,
-  ) => Record<string, string> = (
-    _lazilyResolvedBlankNodeOrIriIdentifierStruct,
-  ) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    LazilyResolvedBlankNodeOrIriIdentifierStruct
+  > = (_lazilyResolvedBlankNodeOrIriIdentifierStruct) =>
     $compactRecord({
       $identifier: _lazilyResolvedBlankNodeOrIriIdentifierStruct
         .$identifier()
@@ -28067,7 +28100,11 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
   export const $toString: $ToStringFunction<
     LazilyResolvedDiscriminatedUnionMember1
   > = (_lazilyResolvedDiscriminatedUnionMember1) =>
-    JSON.stringify(LazilyResolvedDiscriminatedUnionMember1.toStringRecord);
+    `LazilyResolvedDiscriminatedUnionMember1(${JSON.stringify(
+      LazilyResolvedDiscriminatedUnionMember1.toStringRecord(
+        _lazilyResolvedDiscriminatedUnionMember1,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -28550,9 +28587,9 @@ export namespace LazilyResolvedDiscriminatedUnionMember1 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _lazilyResolvedDiscriminatedUnionMember1: LazilyResolvedDiscriminatedUnionMember1,
-  ) => Record<string, string> = (_lazilyResolvedDiscriminatedUnionMember1) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    LazilyResolvedDiscriminatedUnionMember1
+  > = (_lazilyResolvedDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _lazilyResolvedDiscriminatedUnionMember1
         .$identifier()
@@ -28665,7 +28702,11 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
   export const $toString: $ToStringFunction<
     LazilyResolvedDiscriminatedUnionMember2
   > = (_lazilyResolvedDiscriminatedUnionMember2) =>
-    JSON.stringify(LazilyResolvedDiscriminatedUnionMember2.toStringRecord);
+    `LazilyResolvedDiscriminatedUnionMember2(${JSON.stringify(
+      LazilyResolvedDiscriminatedUnionMember2.toStringRecord(
+        _lazilyResolvedDiscriminatedUnionMember2,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -29148,9 +29189,9 @@ export namespace LazilyResolvedDiscriminatedUnionMember2 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _lazilyResolvedDiscriminatedUnionMember2: LazilyResolvedDiscriminatedUnionMember2,
-  ) => Record<string, string> = (_lazilyResolvedDiscriminatedUnionMember2) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    LazilyResolvedDiscriminatedUnionMember2
+  > = (_lazilyResolvedDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _lazilyResolvedDiscriminatedUnionMember2
         .$identifier()
@@ -29244,7 +29285,11 @@ export namespace LazilyResolvedIriIdentifierStruct {
   export const $toString: $ToStringFunction<
     LazilyResolvedIriIdentifierStruct
   > = (_lazilyResolvedIriIdentifierStruct) =>
-    JSON.stringify(LazilyResolvedIriIdentifierStruct.toStringRecord);
+    `LazilyResolvedIriIdentifierStruct(${JSON.stringify(
+      LazilyResolvedIriIdentifierStruct.toStringRecord(
+        _lazilyResolvedIriIdentifierStruct,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -29619,9 +29664,9 @@ export namespace LazilyResolvedIriIdentifierStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _lazilyResolvedIriIdentifierStruct: LazilyResolvedIriIdentifierStruct,
-  ) => Record<string, string> = (_lazilyResolvedIriIdentifierStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    LazilyResolvedIriIdentifierStruct
+  > = (_lazilyResolvedIriIdentifierStruct) =>
     $compactRecord({
       $identifier: _lazilyResolvedIriIdentifierStruct.$identifier().toString(),
     });
@@ -30335,7 +30380,8 @@ export namespace LazyPropertiesStruct {
 
   export const $toString: $ToStringFunction<LazyPropertiesStruct> = (
     _lazyPropertiesStruct,
-  ) => JSON.stringify(LazyPropertiesStruct.toStringRecord);
+  ) =>
+    `LazyPropertiesStruct(${JSON.stringify(LazyPropertiesStruct.toStringRecord(_lazyPropertiesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -32272,9 +32318,9 @@ export namespace LazyPropertiesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _lazyPropertiesStruct: LazyPropertiesStruct,
-  ) => Record<string, string> = (_lazyPropertiesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<LazyPropertiesStruct> = (
+    _lazyPropertiesStruct,
+  ) =>
     $compactRecord({
       $identifier: _lazyPropertiesStruct.$identifier().toString(),
     });
@@ -32793,7 +32839,8 @@ export namespace ListSetsStruct {
 
   export const $toString: $ToStringFunction<ListSetsStruct> = (
     _listSetsStruct,
-  ) => JSON.stringify(ListSetsStruct.toStringRecord);
+  ) =>
+    `ListSetsStruct(${JSON.stringify(ListSetsStruct.toStringRecord(_listSetsStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -33787,9 +33834,9 @@ export namespace ListSetsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _listSetsStruct: ListSetsStruct,
-  ) => Record<string, string> = (_listSetsStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<ListSetsStruct> = (
+    _listSetsStruct,
+  ) =>
     $compactRecord({ $identifier: _listSetsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -34237,7 +34284,7 @@ export namespace ListsStruct {
   };
 
   export const $toString: $ToStringFunction<ListsStruct> = (_listsStruct) =>
-    JSON.stringify(ListsStruct.toStringRecord);
+    `ListsStruct(${JSON.stringify(ListsStruct.toStringRecord(_listsStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -35107,10 +35154,9 @@ export namespace ListsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _listsStruct: ListsStruct,
-  ) => Record<string, string> = (_listsStruct) =>
-    $compactRecord({ $identifier: _listsStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<ListsStruct> = (
+    _listsStruct,
+  ) => $compactRecord({ $identifier: _listsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     ListsStruct.Filter,
@@ -35325,7 +35371,8 @@ export namespace MutablePropertiesStruct {
 
   export const $toString: $ToStringFunction<MutablePropertiesStruct> = (
     _mutablePropertiesStruct,
-  ) => JSON.stringify(MutablePropertiesStruct.toStringRecord);
+  ) =>
+    `MutablePropertiesStruct(${JSON.stringify(MutablePropertiesStruct.toStringRecord(_mutablePropertiesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -36014,9 +36061,9 @@ export namespace MutablePropertiesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _mutablePropertiesStruct: MutablePropertiesStruct,
-  ) => Record<string, string> = (_mutablePropertiesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    MutablePropertiesStruct
+  > = (_mutablePropertiesStruct) =>
     $compactRecord({
       $identifier: _mutablePropertiesStruct.$identifier().toString(),
     });
@@ -36252,7 +36299,8 @@ export namespace NamedTypesStruct {
 
   export const $toString: $ToStringFunction<NamedTypesStruct> = (
     _namedTypesStruct,
-  ) => JSON.stringify(NamedTypesStruct.toStringRecord);
+  ) =>
+    `NamedTypesStruct(${JSON.stringify(NamedTypesStruct.toStringRecord(_namedTypesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -36994,9 +37042,9 @@ export namespace NamedTypesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _namedTypesStruct: NamedTypesStruct,
-  ) => Record<string, string> = (_namedTypesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<NamedTypesStruct> = (
+    _namedTypesStruct,
+  ) =>
     $compactRecord({ $identifier: _namedTypesStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -37104,7 +37152,7 @@ export namespace NewName {
   };
 
   export const $toString: $ToStringFunction<NewName> = (_newName) =>
-    JSON.stringify(NewName.toStringRecord);
+    `NewName(${JSON.stringify(NewName.toStringRecord(_newName))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -37566,9 +37614,8 @@ export namespace NewName {
     }).identifier,
   ];
 
-  export const toStringRecord: (_newName: NewName) => Record<string, string> = (
-    _newName,
-  ) => $compactRecord({ $identifier: _newName.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<NewName> = (_newName) =>
+    $compactRecord({ $identifier: _newName.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     NewName.Filter,
@@ -37756,7 +37803,8 @@ export namespace NodeKindsStruct {
 
   export const $toString: $ToStringFunction<NodeKindsStruct> = (
     _nodeKindsStruct,
-  ) => JSON.stringify(NodeKindsStruct.toStringRecord);
+  ) =>
+    `NodeKindsStruct(${JSON.stringify(NodeKindsStruct.toStringRecord(_nodeKindsStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -38737,9 +38785,9 @@ export namespace NodeKindsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _nodeKindsStruct: NodeKindsStruct,
-  ) => Record<string, string> = (_nodeKindsStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<NodeKindsStruct> = (
+    _nodeKindsStruct,
+  ) =>
     $compactRecord({ $identifier: _nodeKindsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -38824,7 +38872,8 @@ export namespace NonClassStruct {
 
   export const $toString: $ToStringFunction<NonClassStruct> = (
     _nonClassStruct,
-  ) => JSON.stringify(NonClassStruct.toStringRecord);
+  ) =>
+    `NonClassStruct(${JSON.stringify(NonClassStruct.toStringRecord(_nonClassStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -39189,9 +39238,9 @@ export namespace NonClassStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _nonClassStruct: NonClassStruct,
-  ) => Record<string, string> = (_nonClassStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<NonClassStruct> = (
+    _nonClassStruct,
+  ) =>
     $compactRecord({ $identifier: _nonClassStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -39287,7 +39336,11 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
   export const $toString: $ToStringFunction<
     NoRdfTypeDiscriminatedUnionMember1
   > = (_noRdfTypeDiscriminatedUnionMember1) =>
-    JSON.stringify(NoRdfTypeDiscriminatedUnionMember1.toStringRecord);
+    `NoRdfTypeDiscriminatedUnionMember1(${JSON.stringify(
+      NoRdfTypeDiscriminatedUnionMember1.toStringRecord(
+        _noRdfTypeDiscriminatedUnionMember1,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -39696,9 +39749,9 @@ export namespace NoRdfTypeDiscriminatedUnionMember1 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _noRdfTypeDiscriminatedUnionMember1: NoRdfTypeDiscriminatedUnionMember1,
-  ) => Record<string, string> = (_noRdfTypeDiscriminatedUnionMember1) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    NoRdfTypeDiscriminatedUnionMember1
+  > = (_noRdfTypeDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _noRdfTypeDiscriminatedUnionMember1.$identifier().toString(),
     });
@@ -39796,7 +39849,11 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
   export const $toString: $ToStringFunction<
     NoRdfTypeDiscriminatedUnionMember2
   > = (_noRdfTypeDiscriminatedUnionMember2) =>
-    JSON.stringify(NoRdfTypeDiscriminatedUnionMember2.toStringRecord);
+    `NoRdfTypeDiscriminatedUnionMember2(${JSON.stringify(
+      NoRdfTypeDiscriminatedUnionMember2.toStringRecord(
+        _noRdfTypeDiscriminatedUnionMember2,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -40205,9 +40262,9 @@ export namespace NoRdfTypeDiscriminatedUnionMember2 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _noRdfTypeDiscriminatedUnionMember2: NoRdfTypeDiscriminatedUnionMember2,
-  ) => Record<string, string> = (_noRdfTypeDiscriminatedUnionMember2) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    NoRdfTypeDiscriminatedUnionMember2
+  > = (_noRdfTypeDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _noRdfTypeDiscriminatedUnionMember2.$identifier().toString(),
     });
@@ -40664,7 +40721,8 @@ export namespace NumericsStruct {
 
   export const $toString: $ToStringFunction<NumericsStruct> = (
     _numericsStruct,
-  ) => JSON.stringify(NumericsStruct.toStringRecord);
+  ) =>
+    `NumericsStruct(${JSON.stringify(NumericsStruct.toStringRecord(_numericsStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -42504,9 +42562,9 @@ export namespace NumericsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _numericsStruct: NumericsStruct,
-  ) => Record<string, string> = (_numericsStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<NumericsStruct> = (
+    _numericsStruct,
+  ) =>
     $compactRecord({ $identifier: _numericsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -42618,7 +42676,7 @@ export namespace OrderedStruct {
   };
 
   export const $toString: $ToStringFunction<OrderedStruct> = (_orderedStruct) =>
-    JSON.stringify(OrderedStruct.toStringRecord);
+    `OrderedStruct(${JSON.stringify(OrderedStruct.toStringRecord(_orderedStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -43095,10 +43153,9 @@ export namespace OrderedStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _orderedStruct: OrderedStruct,
-  ) => Record<string, string> = (_orderedStruct) =>
-    $compactRecord({ $identifier: _orderedStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<OrderedStruct> = (
+    _orderedStruct,
+  ) => $compactRecord({ $identifier: _orderedStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     OrderedStruct.Filter,
@@ -43205,7 +43262,11 @@ export namespace PartialDiscriminatedUnionMember1 {
   export const $toString: $ToStringFunction<
     PartialDiscriminatedUnionMember1
   > = (_partialDiscriminatedUnionMember1) =>
-    JSON.stringify(PartialDiscriminatedUnionMember1.toStringRecord);
+    `PartialDiscriminatedUnionMember1(${JSON.stringify(
+      PartialDiscriminatedUnionMember1.toStringRecord(
+        _partialDiscriminatedUnionMember1,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -43675,9 +43736,9 @@ export namespace PartialDiscriminatedUnionMember1 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _partialDiscriminatedUnionMember1: PartialDiscriminatedUnionMember1,
-  ) => Record<string, string> = (_partialDiscriminatedUnionMember1) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    PartialDiscriminatedUnionMember1
+  > = (_partialDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _partialDiscriminatedUnionMember1.$identifier().toString(),
     });
@@ -43787,7 +43848,11 @@ export namespace PartialDiscriminatedUnionMember2 {
   export const $toString: $ToStringFunction<
     PartialDiscriminatedUnionMember2
   > = (_partialDiscriminatedUnionMember2) =>
-    JSON.stringify(PartialDiscriminatedUnionMember2.toStringRecord);
+    `PartialDiscriminatedUnionMember2(${JSON.stringify(
+      PartialDiscriminatedUnionMember2.toStringRecord(
+        _partialDiscriminatedUnionMember2,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -44257,9 +44322,9 @@ export namespace PartialDiscriminatedUnionMember2 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _partialDiscriminatedUnionMember2: PartialDiscriminatedUnionMember2,
-  ) => Record<string, string> = (_partialDiscriminatedUnionMember2) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    PartialDiscriminatedUnionMember2
+  > = (_partialDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _partialDiscriminatedUnionMember2.$identifier().toString(),
     });
@@ -44345,7 +44410,7 @@ export namespace PartialStruct {
   };
 
   export const $toString: $ToStringFunction<PartialStruct> = (_partialStruct) =>
-    JSON.stringify(PartialStruct.toStringRecord);
+    `PartialStruct(${JSON.stringify(PartialStruct.toStringRecord(_partialStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -44707,10 +44772,9 @@ export namespace PartialStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _partialStruct: PartialStruct,
-  ) => Record<string, string> = (_partialStruct) =>
-    $compactRecord({ $identifier: _partialStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<PartialStruct> = (
+    _partialStruct,
+  ) => $compactRecord({ $identifier: _partialStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     PartialStruct.Filter,
@@ -44873,7 +44937,10 @@ export namespace PropertyCardinalitiesStruct {
 
   export const $toString: $ToStringFunction<PropertyCardinalitiesStruct> = (
     _propertyCardinalitiesStruct,
-  ) => JSON.stringify(PropertyCardinalitiesStruct.toStringRecord);
+  ) =>
+    `PropertyCardinalitiesStruct(${JSON.stringify(
+      PropertyCardinalitiesStruct.toStringRecord(_propertyCardinalitiesStruct),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -45521,9 +45588,9 @@ export namespace PropertyCardinalitiesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _propertyCardinalitiesStruct: PropertyCardinalitiesStruct,
-  ) => Record<string, string> = (_propertyCardinalitiesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    PropertyCardinalitiesStruct
+  > = (_propertyCardinalitiesStruct) =>
     $compactRecord({
       $identifier: _propertyCardinalitiesStruct.$identifier().toString(),
     });
@@ -45698,7 +45765,8 @@ export namespace PropertyNamesStruct {
 
   export const $toString: $ToStringFunction<PropertyNamesStruct> = (
     _propertyNamesStruct,
-  ) => JSON.stringify(PropertyNamesStruct.toStringRecord);
+  ) =>
+    `PropertyNamesStruct(${JSON.stringify(PropertyNamesStruct.toStringRecord(_propertyNamesStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -46393,9 +46461,9 @@ export namespace PropertyNamesStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _propertyNamesStruct: PropertyNamesStruct,
-  ) => Record<string, string> = (_propertyNamesStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<PropertyNamesStruct> = (
+    _propertyNamesStruct,
+  ) =>
     $compactRecord({
       $identifier: _propertyNamesStruct.$identifier().toString(),
     });
@@ -46527,7 +46595,8 @@ export namespace PropertyPathsStruct {
 
   export const $toString: $ToStringFunction<PropertyPathsStruct> = (
     _propertyPathsStruct,
-  ) => JSON.stringify(PropertyPathsStruct.toStringRecord);
+  ) =>
+    `PropertyPathsStruct(${JSON.stringify(PropertyPathsStruct.toStringRecord(_propertyPathsStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -47113,9 +47182,9 @@ export namespace PropertyPathsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _propertyPathsStruct: PropertyPathsStruct,
-  ) => Record<string, string> = (_propertyPathsStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<PropertyPathsStruct> = (
+    _propertyPathsStruct,
+  ) =>
     $compactRecord({
       $identifier: _propertyPathsStruct.$identifier().toString(),
     });
@@ -47246,7 +47315,11 @@ export namespace RecursiveDiscriminatedUnionMember1 {
   export const $toString: $ToStringFunction<
     RecursiveDiscriminatedUnionMember1
   > = (_recursiveDiscriminatedUnionMember1) =>
-    JSON.stringify(RecursiveDiscriminatedUnionMember1.toStringRecord);
+    `RecursiveDiscriminatedUnionMember1(${JSON.stringify(
+      RecursiveDiscriminatedUnionMember1.toStringRecord(
+        _recursiveDiscriminatedUnionMember1,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -47754,9 +47827,9 @@ export namespace RecursiveDiscriminatedUnionMember1 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _recursiveDiscriminatedUnionMember1: RecursiveDiscriminatedUnionMember1,
-  ) => Record<string, string> = (_recursiveDiscriminatedUnionMember1) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    RecursiveDiscriminatedUnionMember1
+  > = (_recursiveDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _recursiveDiscriminatedUnionMember1.$identifier().toString(),
     });
@@ -47887,7 +47960,11 @@ export namespace RecursiveDiscriminatedUnionMember2 {
   export const $toString: $ToStringFunction<
     RecursiveDiscriminatedUnionMember2
   > = (_recursiveDiscriminatedUnionMember2) =>
-    JSON.stringify(RecursiveDiscriminatedUnionMember2.toStringRecord);
+    `RecursiveDiscriminatedUnionMember2(${JSON.stringify(
+      RecursiveDiscriminatedUnionMember2.toStringRecord(
+        _recursiveDiscriminatedUnionMember2,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -48395,9 +48472,9 @@ export namespace RecursiveDiscriminatedUnionMember2 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _recursiveDiscriminatedUnionMember2: RecursiveDiscriminatedUnionMember2,
-  ) => Record<string, string> = (_recursiveDiscriminatedUnionMember2) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    RecursiveDiscriminatedUnionMember2
+  > = (_recursiveDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _recursiveDiscriminatedUnionMember2.$identifier().toString(),
     });
@@ -48539,7 +48616,12 @@ export namespace StructDiscriminatedUnionMember1 {
 
   export const $toString: $ToStringFunction<StructDiscriminatedUnionMember1> = (
     _structDiscriminatedUnionMember1,
-  ) => JSON.stringify(StructDiscriminatedUnionMember1.toStringRecord);
+  ) =>
+    `StructDiscriminatedUnionMember1(${JSON.stringify(
+      StructDiscriminatedUnionMember1.toStringRecord(
+        _structDiscriminatedUnionMember1,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -49104,9 +49186,9 @@ export namespace StructDiscriminatedUnionMember1 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _structDiscriminatedUnionMember1: StructDiscriminatedUnionMember1,
-  ) => Record<string, string> = (_structDiscriminatedUnionMember1) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    StructDiscriminatedUnionMember1
+  > = (_structDiscriminatedUnionMember1) =>
     $compactRecord({
       $identifier: _structDiscriminatedUnionMember1.$identifier().toString(),
     });
@@ -49248,7 +49330,12 @@ export namespace StructDiscriminatedUnionMember2 {
 
   export const $toString: $ToStringFunction<StructDiscriminatedUnionMember2> = (
     _structDiscriminatedUnionMember2,
-  ) => JSON.stringify(StructDiscriminatedUnionMember2.toStringRecord);
+  ) =>
+    `StructDiscriminatedUnionMember2(${JSON.stringify(
+      StructDiscriminatedUnionMember2.toStringRecord(
+        _structDiscriminatedUnionMember2,
+      ),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -49813,9 +49900,9 @@ export namespace StructDiscriminatedUnionMember2 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _structDiscriminatedUnionMember2: StructDiscriminatedUnionMember2,
-  ) => Record<string, string> = (_structDiscriminatedUnionMember2) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    StructDiscriminatedUnionMember2
+  > = (_structDiscriminatedUnionMember2) =>
     $compactRecord({
       $identifier: _structDiscriminatedUnionMember2.$identifier().toString(),
     });
@@ -49942,7 +50029,10 @@ export namespace StructIntersectionMember1 {
 
   export const $toString: $ToStringFunction<StructIntersectionMember1> = (
     _structIntersectionMember1,
-  ) => JSON.stringify(StructIntersectionMember1.toStringRecord);
+  ) =>
+    `StructIntersectionMember1(${JSON.stringify(
+      StructIntersectionMember1.toStringRecord(_structIntersectionMember1),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -50488,9 +50578,9 @@ export namespace StructIntersectionMember1 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _structIntersectionMember1: StructIntersectionMember1,
-  ) => Record<string, string> = (_structIntersectionMember1) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    StructIntersectionMember1
+  > = (_structIntersectionMember1) =>
     $compactRecord({
       $identifier: _structIntersectionMember1.$identifier().toString(),
     });
@@ -50617,7 +50707,10 @@ export namespace StructIntersectionMember2 {
 
   export const $toString: $ToStringFunction<StructIntersectionMember2> = (
     _structIntersectionMember2,
-  ) => JSON.stringify(StructIntersectionMember2.toStringRecord);
+  ) =>
+    `StructIntersectionMember2(${JSON.stringify(
+      StructIntersectionMember2.toStringRecord(_structIntersectionMember2),
+    )})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -51163,9 +51256,9 @@ export namespace StructIntersectionMember2 {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _structIntersectionMember2: StructIntersectionMember2,
-  ) => Record<string, string> = (_structIntersectionMember2) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    StructIntersectionMember2
+  > = (_structIntersectionMember2) =>
     $compactRecord({
       $identifier: _structIntersectionMember2.$identifier().toString(),
     });
@@ -51274,7 +51367,8 @@ export namespace TargetClassStruct {
 
   export const $toString: $ToStringFunction<TargetClassStruct> = (
     _targetClassStruct,
-  ) => JSON.stringify(TargetClassStruct.toStringRecord);
+  ) =>
+    `TargetClassStruct(${JSON.stringify(TargetClassStruct.toStringRecord(_targetClassStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -51719,9 +51813,9 @@ export namespace TargetClassStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _targetClassStruct: TargetClassStruct,
-  ) => Record<string, string> = (_targetClassStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<TargetClassStruct> = (
+    _targetClassStruct,
+  ) =>
     $compactRecord({
       $identifier: _targetClassStruct.$identifier().toString(),
     });
@@ -52040,7 +52134,7 @@ export namespace TermsStruct {
   };
 
   export const $toString: $ToStringFunction<TermsStruct> = (_termsStruct) =>
-    JSON.stringify(TermsStruct.toStringRecord);
+    `TermsStruct(${JSON.stringify(TermsStruct.toStringRecord(_termsStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -53556,10 +53650,9 @@ export namespace TermsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _termsStruct: TermsStruct,
-  ) => Record<string, string> = (_termsStruct) =>
-    $compactRecord({ $identifier: _termsStruct.$identifier().toString() });
+  export const toStringRecord: $ToStringRecordFunction<TermsStruct> = (
+    _termsStruct,
+  ) => $compactRecord({ $identifier: _termsStruct.$identifier().toString() });
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     TermsStruct.Filter,
@@ -56137,7 +56230,8 @@ export namespace UnionDiscriminantsStruct {
 
   export const $toString: $ToStringFunction<UnionDiscriminantsStruct> = (
     _unionDiscriminantsStruct,
-  ) => JSON.stringify(UnionDiscriminantsStruct.toStringRecord);
+  ) =>
+    `UnionDiscriminantsStruct(${JSON.stringify(UnionDiscriminantsStruct.toStringRecord(_unionDiscriminantsStruct))})`;
 
   export const create: <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
@@ -61197,9 +61291,9 @@ export namespace UnionDiscriminantsStruct {
     }).identifier,
   ];
 
-  export const toStringRecord: (
-    _unionDiscriminantsStruct: UnionDiscriminantsStruct,
-  ) => Record<string, string> = (_unionDiscriminantsStruct) =>
+  export const toStringRecord: $ToStringRecordFunction<
+    UnionDiscriminantsStruct
+  > = (_unionDiscriminantsStruct) =>
     $compactRecord({
       $identifier: _unionDiscriminantsStruct.$identifier().toString(),
     });
