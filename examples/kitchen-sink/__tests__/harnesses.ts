@@ -453,13 +453,13 @@ export const harnesses = {
     kitchenSink.NamedTypesStruct.createUnsafe({
       $identifier,
       namedDatatype: "test",
-      namedDiscriminatedUnion1: "test",
-      namedDiscriminatedUnion2: {
+      datatypeDiscriminatedUnion1: "test",
+      datatypeDiscriminatedUnion2: {
         $type: "date",
         value: new Date("2025-12-08"),
       },
-      namedInIri: "http://example.com/NamedInIri1",
-      namedInLiteral: "test1",
+      inIri: "http://example.com/InIri1",
+      inLiteral: "test1",
     }),
     kitchenSink.NamedTypesStruct,
   ),
@@ -467,13 +467,13 @@ export const harnesses = {
     kitchenSink.NamedTypesStruct.createUnsafe({
       $identifier,
       namedDatatype: "test",
-      namedDiscriminatedUnion1: dataFactory.namedNode("http://example.com"),
-      namedDiscriminatedUnion2: {
+      datatypeDiscriminatedUnion1: dataFactory.namedNode("http://example.com"),
+      datatypeDiscriminatedUnion2: {
         $type: "dateTime",
         value: new Date("2025-12-08T21:17:27+00:00"),
       },
-      namedInIri: "http://example.com/NamedInIri2",
-      namedInLiteral: "test2",
+      inIri: "http://example.com/InIri2",
+      inLiteral: "test2",
     }),
     kitchenSink.NamedTypesStruct,
   ),

@@ -23417,6 +23417,30 @@ export namespace InIntersectionMember2 {
   };
 }
 
+export type InIri = NamedNode<(typeof InIri.schema)["inValues"][number]>;
+
+export namespace InIri {
+  const inValues = [
+    "http://example.com/InIri1",
+    "http://example.com/InIri2",
+  ] as const;
+
+  export const schema = {
+    kind: "Iri" as const,
+    in: inValues.map((inValue) => dataFactory.namedNode(inValue)),
+    inValues,
+  };
+}
+
+export type InLiteral = (typeof InLiteral.schema)["in"][number];
+
+export namespace InLiteral {
+  export const schema = {
+    kind: "String" as const,
+    in: ["test1", "test2"] as const,
+  };
+}
+
 /**
  * Struct node shape with sh:in properties.
  */
@@ -35826,32 +35850,6 @@ export namespace NamedDatatype {
   export const schema = { kind: "String" as const };
 }
 
-export type NamedInIri = NamedNode<
-  (typeof NamedInIri.schema)["inValues"][number]
->;
-
-export namespace NamedInIri {
-  const inValues = [
-    "http://example.com/NamedInIri1",
-    "http://example.com/NamedInIri2",
-  ] as const;
-
-  export const schema = {
-    kind: "Iri" as const,
-    in: inValues.map((inValue) => dataFactory.namedNode(inValue)),
-    inValues,
-  };
-}
-
-export type NamedInLiteral = (typeof NamedInLiteral.schema)["in"][number];
-
-export namespace NamedInLiteral {
-  export const schema = {
-    kind: "String" as const,
-    in: ["test1", "test2"] as const,
-  };
-}
-
 /**
  * Struct node shape that uses named types in properties with sh:node
  */
@@ -35860,15 +35858,15 @@ export type NamedTypesStruct = {
 
   readonly $type: "NamedTypesStruct";
 
+  readonly datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1;
+
+  readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
+
+  readonly inIri: InIri;
+
+  readonly inLiteral: InLiteral;
+
   readonly namedDatatype: NamedDatatype;
-
-  readonly namedDiscriminatedUnion1: NamedDiscriminatedUnion1;
-
-  readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
-
-  readonly namedInIri: NamedInIri;
-
-  readonly namedInLiteral: NamedInLiteral;
 };
 
 export namespace NamedTypesStruct {
@@ -35896,6 +35894,44 @@ export namespace NamedTypesStruct {
             schema: NamedTypesStruct.schema.properties.$identifier.type,
           },
         ).chain((values) => values.head()),
+        datatypeDiscriminatedUnion1: $shaclPropertyFromRdf<
+          DatatypeDiscriminatedUnion1,
+          typeof DatatypeDiscriminatedUnion1.schema
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1,
+          typeFromRdfResourceValues:
+            DatatypeDiscriminatedUnion1.fromRdfResourceValues,
+        }),
+        datatypeDiscriminatedUnion2: $shaclPropertyFromRdf<
+          DatatypeDiscriminatedUnion2,
+          typeof DatatypeDiscriminatedUnion2.schema
+        >({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema:
+            NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2,
+          typeFromRdfResourceValues:
+            DatatypeDiscriminatedUnion2.fromRdfResourceValues,
+        }),
+        inIri: $shaclPropertyFromRdf<InIri, $IriSchema<InIri["value"]>>({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: NamedTypesStruct.schema.properties.inIri,
+          typeFromRdfResourceValues: $iriFromRdfResourceValues<InIri["value"]>,
+        }),
+        inLiteral: $shaclPropertyFromRdf<InLiteral, $StringSchema<InLiteral>>({
+          ...options,
+          focusResource: resource,
+          ignoreRdfType: true,
+          propertySchema: NamedTypesStruct.schema.properties.inLiteral,
+          typeFromRdfResourceValues: $stringFromRdfResourceValues<InLiteral>,
+        }),
         namedDatatype: $shaclPropertyFromRdf<
           NamedDatatype,
           $StringSchema<NamedDatatype>
@@ -35906,53 +35942,6 @@ export namespace NamedTypesStruct {
           propertySchema: NamedTypesStruct.schema.properties.namedDatatype,
           typeFromRdfResourceValues:
             $stringFromRdfResourceValues<NamedDatatype>,
-        }),
-        namedDiscriminatedUnion1: $shaclPropertyFromRdf<
-          NamedDiscriminatedUnion1,
-          typeof NamedDiscriminatedUnion1.schema
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NamedTypesStruct.schema.properties.namedDiscriminatedUnion1,
-          typeFromRdfResourceValues:
-            NamedDiscriminatedUnion1.fromRdfResourceValues,
-        }),
-        namedDiscriminatedUnion2: $shaclPropertyFromRdf<
-          NamedDiscriminatedUnion2,
-          typeof NamedDiscriminatedUnion2.schema
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema:
-            NamedTypesStruct.schema.properties.namedDiscriminatedUnion2,
-          typeFromRdfResourceValues:
-            NamedDiscriminatedUnion2.fromRdfResourceValues,
-        }),
-        namedInIri: $shaclPropertyFromRdf<
-          NamedInIri,
-          $IriSchema<NamedInIri["value"]>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NamedTypesStruct.schema.properties.namedInIri,
-          typeFromRdfResourceValues: $iriFromRdfResourceValues<
-            NamedInIri["value"]
-          >,
-        }),
-        namedInLiteral: $shaclPropertyFromRdf<
-          NamedInLiteral,
-          $StringSchema<NamedInLiteral>
-        >({
-          ...options,
-          focusResource: resource,
-          ignoreRdfType: true,
-          propertySchema: NamedTypesStruct.schema.properties.namedInLiteral,
-          typeFromRdfResourceValues:
-            $stringFromRdfResourceValues<NamedInLiteral>,
         }),
       }).chain((properties) => NamedTypesStruct.create(properties)),
     );
@@ -35969,48 +35958,48 @@ export namespace NamedTypesStruct {
       );
     }
     parameters.resource.add(
+      NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1.path,
+      DatatypeDiscriminatedUnion1.toRdfResourceValues(
+        parameters.object.datatypeDiscriminatedUnion1,
+        {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1.path,
+        },
+      ),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2.path,
+      DatatypeDiscriminatedUnion2.toRdfResourceValues(
+        parameters.object.datatypeDiscriminatedUnion2,
+        {
+          ignoreRdfType: parameters.ignoreRdfType,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath:
+            NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2.path,
+        },
+      ),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      NamedTypesStruct.schema.properties.inIri.path,
+      [parameters.object.inIri],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      NamedTypesStruct.schema.properties.inLiteral.path,
+      [$literalFactory.string(parameters.object.inLiteral)],
+      parameters.graph,
+    );
+    parameters.resource.add(
       NamedTypesStruct.schema.properties.namedDatatype.path,
       [$literalFactory.string(parameters.object.namedDatatype)],
-      parameters.graph,
-    );
-    parameters.resource.add(
-      NamedTypesStruct.schema.properties.namedDiscriminatedUnion1.path,
-      NamedDiscriminatedUnion1.toRdfResourceValues(
-        parameters.object.namedDiscriminatedUnion1,
-        {
-          ignoreRdfType: parameters.ignoreRdfType,
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath:
-            NamedTypesStruct.schema.properties.namedDiscriminatedUnion1.path,
-        },
-      ),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      NamedTypesStruct.schema.properties.namedDiscriminatedUnion2.path,
-      NamedDiscriminatedUnion2.toRdfResourceValues(
-        parameters.object.namedDiscriminatedUnion2,
-        {
-          ignoreRdfType: parameters.ignoreRdfType,
-          graph: parameters.graph,
-          resource: parameters.resource,
-          resourceSet: parameters.resourceSet,
-          propertyPath:
-            NamedTypesStruct.schema.properties.namedDiscriminatedUnion2.path,
-        },
-      ),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      NamedTypesStruct.schema.properties.namedInIri.path,
-      [parameters.object.namedInIri],
-      parameters.graph,
-    );
-    parameters.resource.add(
-      NamedTypesStruct.schema.properties.namedInLiteral.path,
-      [$literalFactory.string(parameters.object.namedInLiteral)],
       parameters.graph,
     );
     return parameters.resource;
@@ -36030,11 +36019,11 @@ export namespace NamedTypesStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly datatypeDiscriminatedUnion1: NamedNode | string;
+    readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
+    readonly inIri: InIri["value"] | InIri;
+    readonly inLiteral: InLiteral;
     readonly namedDatatype: NamedDatatype;
-    readonly namedDiscriminatedUnion1: NamedNode | string;
-    readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
-    readonly namedInIri: NamedInIri["value"] | NamedInIri;
-    readonly namedInLiteral: NamedInLiteral;
   }) => Either<Error, NamedTypesStruct> = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -36044,28 +36033,30 @@ export namespace NamedTypesStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly datatypeDiscriminatedUnion1: NamedNode | string;
+    readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
+    readonly inIri: InIri["value"] | InIri;
+    readonly inLiteral: InLiteral;
     readonly namedDatatype: NamedDatatype;
-    readonly namedDiscriminatedUnion1: NamedNode | string;
-    readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
-    readonly namedInIri: NamedInIri["value"] | NamedInIri;
-    readonly namedInLiteral: NamedInLiteral;
   }): Either<Error, NamedTypesStruct> =>
     $sequenceRecord({
       $identifier: $convertToIdentifierProperty(
         parameters.$identifier,
         parameters.$defaultNamespace,
       ),
+      datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.convert(
+        parameters.datatypeDiscriminatedUnion1,
+        parameters.$defaultNamespace,
+      ),
+      datatypeDiscriminatedUnion2: Either.of(
+        parameters.datatypeDiscriminatedUnion2,
+      ),
+      inIri: $convertToInIri<InIri["value"]>(
+        parameters.inIri,
+        parameters.$defaultNamespace,
+      ),
+      inLiteral: Either.of(parameters.inLiteral),
       namedDatatype: Either.of(parameters.namedDatatype),
-      namedDiscriminatedUnion1: NamedDiscriminatedUnion1.convert(
-        parameters.namedDiscriminatedUnion1,
-        parameters.$defaultNamespace,
-      ),
-      namedDiscriminatedUnion2: Either.of(parameters.namedDiscriminatedUnion2),
-      namedInIri: $convertToInIri<NamedInIri["value"]>(
-        parameters.namedInIri,
-        parameters.$defaultNamespace,
-      ),
-      namedInLiteral: Either.of(parameters.namedInLiteral),
     })
       .map((properties) => ({
         ...properties,
@@ -36087,11 +36078,11 @@ export namespace NamedTypesStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly datatypeDiscriminatedUnion1: NamedNode | string;
+    readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
+    readonly inIri: InIri["value"] | InIri;
+    readonly inLiteral: InLiteral;
     readonly namedDatatype: NamedDatatype;
-    readonly namedDiscriminatedUnion1: NamedNode | string;
-    readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
-    readonly namedInIri: NamedInIri["value"] | NamedInIri;
-    readonly namedInLiteral: NamedInLiteral;
   }) => NamedTypesStruct = <
     $DefaultNamespaceT extends $NamespaceBuilder = $NamespaceBuilder,
   >(parameters: {
@@ -36101,11 +36092,11 @@ export namespace NamedTypesStruct {
       | BlankNode
       | NamedNode
       | (keyof $DefaultNamespaceT & string);
+    readonly datatypeDiscriminatedUnion1: NamedNode | string;
+    readonly datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2;
+    readonly inIri: InIri["value"] | InIri;
+    readonly inLiteral: InLiteral;
     readonly namedDatatype: NamedDatatype;
-    readonly namedDiscriminatedUnion1: NamedNode | string;
-    readonly namedDiscriminatedUnion2: NamedDiscriminatedUnion2;
-    readonly namedInIri: NamedInIri["value"] | NamedInIri;
-    readonly namedInLiteral: NamedInLiteral;
   }): NamedTypesStruct => create(parameters).unsafeCoerce();
 
   export const equals: $EqualsFunction<NamedTypesStruct> = (left, right) =>
@@ -36116,43 +36107,43 @@ export namespace NamedTypesStruct {
     )
       .chain(() =>
         $propertyEquals(
+          {
+            equalsFunction: DatatypeDiscriminatedUnion1.equals,
+            name: "datatypeDiscriminatedUnion1",
+          },
+          [left, left.datatypeDiscriminatedUnion1],
+          [right, right.datatypeDiscriminatedUnion1],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          {
+            equalsFunction: DatatypeDiscriminatedUnion2.equals,
+            name: "datatypeDiscriminatedUnion2",
+          },
+          [left, left.datatypeDiscriminatedUnion2],
+          [right, right.datatypeDiscriminatedUnion2],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          { equalsFunction: $booleanEquals, name: "inIri" },
+          [left, left.inIri],
+          [right, right.inIri],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
+          { equalsFunction: $strictEquals, name: "inLiteral" },
+          [left, left.inLiteral],
+          [right, right.inLiteral],
+        ),
+      )
+      .chain(() =>
+        $propertyEquals(
           { equalsFunction: $strictEquals, name: "namedDatatype" },
           [left, left.namedDatatype],
           [right, right.namedDatatype],
-        ),
-      )
-      .chain(() =>
-        $propertyEquals(
-          {
-            equalsFunction: NamedDiscriminatedUnion1.equals,
-            name: "namedDiscriminatedUnion1",
-          },
-          [left, left.namedDiscriminatedUnion1],
-          [right, right.namedDiscriminatedUnion1],
-        ),
-      )
-      .chain(() =>
-        $propertyEquals(
-          {
-            equalsFunction: NamedDiscriminatedUnion2.equals,
-            name: "namedDiscriminatedUnion2",
-          },
-          [left, left.namedDiscriminatedUnion2],
-          [right, right.namedDiscriminatedUnion2],
-        ),
-      )
-      .chain(() =>
-        $propertyEquals(
-          { equalsFunction: $booleanEquals, name: "namedInIri" },
-          [left, left.namedInIri],
-          [right, right.namedInIri],
-        ),
-      )
-      .chain(() =>
-        $propertyEquals(
-          { equalsFunction: $strictEquals, name: "namedInLiteral" },
-          [left, left.namedInLiteral],
-          [right, right.namedInLiteral],
         ),
       );
 
@@ -36167,38 +36158,35 @@ export namespace NamedTypesStruct {
       return false;
     }
     if (
+      filter.datatypeDiscriminatedUnion1 !== undefined &&
+      !DatatypeDiscriminatedUnion1.filter(
+        filter.datatypeDiscriminatedUnion1,
+        value.datatypeDiscriminatedUnion1,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.datatypeDiscriminatedUnion2 !== undefined &&
+      !DatatypeDiscriminatedUnion2.filter(
+        filter.datatypeDiscriminatedUnion2,
+        value.datatypeDiscriminatedUnion2,
+      )
+    ) {
+      return false;
+    }
+    if (filter.inIri !== undefined && !$filterIri(filter.inIri, value.inIri)) {
+      return false;
+    }
+    if (
+      filter.inLiteral !== undefined &&
+      !$filterString(filter.inLiteral, value.inLiteral)
+    ) {
+      return false;
+    }
+    if (
       filter.namedDatatype !== undefined &&
       !$filterString(filter.namedDatatype, value.namedDatatype)
-    ) {
-      return false;
-    }
-    if (
-      filter.namedDiscriminatedUnion1 !== undefined &&
-      !NamedDiscriminatedUnion1.filter(
-        filter.namedDiscriminatedUnion1,
-        value.namedDiscriminatedUnion1,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.namedDiscriminatedUnion2 !== undefined &&
-      !NamedDiscriminatedUnion2.filter(
-        filter.namedDiscriminatedUnion2,
-        value.namedDiscriminatedUnion2,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.namedInIri !== undefined &&
-      !$filterIri(filter.namedInIri, value.namedInIri)
-    ) {
-      return false;
-    }
-    if (
-      filter.namedInLiteral !== undefined &&
-      !$filterString(filter.namedInLiteral, value.namedInLiteral)
     ) {
       return false;
     }
@@ -36207,11 +36195,11 @@ export namespace NamedTypesStruct {
 
   export type Filter = {
     readonly $identifier?: $IdentifierFilter;
+    readonly datatypeDiscriminatedUnion1?: DatatypeDiscriminatedUnion1.Filter;
+    readonly datatypeDiscriminatedUnion2?: DatatypeDiscriminatedUnion2.Filter;
+    readonly inIri?: $IriFilter;
+    readonly inLiteral?: $StringFilter;
     readonly namedDatatype?: $StringFilter;
-    readonly namedDiscriminatedUnion1?: NamedDiscriminatedUnion1.Filter;
-    readonly namedDiscriminatedUnion2?: NamedDiscriminatedUnion2.Filter;
-    readonly namedInIri?: $IriFilter;
-    readonly namedInLiteral?: $StringFilter;
   };
 
   export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
@@ -36242,59 +36230,59 @@ export namespace NamedTypesStruct {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.datatypeDiscriminatedUnion1,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "datatypeDiscriminatedUnion1",
+        propertySchema:
+          NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1,
+        typeSparqlConstructTriples:
+          DatatypeDiscriminatedUnion1.valueSparqlConstructTriples,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.datatypeDiscriminatedUnion2,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "datatypeDiscriminatedUnion2",
+        propertySchema:
+          NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2,
+        typeSparqlConstructTriples:
+          DatatypeDiscriminatedUnion2.valueSparqlConstructTriples,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inIri,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inIri",
+        propertySchema: NamedTypesStruct.schema.properties.inIri,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inLiteral,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inLiteral",
+        propertySchema: NamedTypesStruct.schema.properties.inLiteral,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.namedDatatype,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         propertyName: "namedDatatype",
         propertySchema: NamedTypesStruct.schema.properties.namedDatatype,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.namedDiscriminatedUnion1,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "namedDiscriminatedUnion1",
-        propertySchema:
-          NamedTypesStruct.schema.properties.namedDiscriminatedUnion1,
-        typeSparqlConstructTriples:
-          NamedDiscriminatedUnion1.valueSparqlConstructTriples,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.namedDiscriminatedUnion2,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "namedDiscriminatedUnion2",
-        propertySchema:
-          NamedTypesStruct.schema.properties.namedDiscriminatedUnion2,
-        typeSparqlConstructTriples:
-          NamedDiscriminatedUnion2.valueSparqlConstructTriples,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.namedInIri,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "namedInIri",
-        propertySchema: NamedTypesStruct.schema.properties.namedInIri,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.namedInLiteral,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "namedInLiteral",
-        propertySchema: NamedTypesStruct.schema.properties.namedInLiteral,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36366,64 +36354,64 @@ export namespace NamedTypesStruct {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.namedDatatype,
+        filter: parameters.filter?.datatypeDiscriminatedUnion1,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "namedDatatype",
-        propertySchema: NamedTypesStruct.schema.properties.namedDatatype,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.namedDiscriminatedUnion1,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "namedDiscriminatedUnion1",
+        propertyName: "datatypeDiscriminatedUnion1",
         propertySchema:
-          NamedTypesStruct.schema.properties.namedDiscriminatedUnion1,
+          NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion1,
         typeSparqlWherePatterns:
-          NamedDiscriminatedUnion1.valueSparqlWherePatterns,
+          DatatypeDiscriminatedUnion1.valueSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.namedDiscriminatedUnion2,
+        filter: parameters.filter?.datatypeDiscriminatedUnion2,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "namedDiscriminatedUnion2",
+        propertyName: "datatypeDiscriminatedUnion2",
         propertySchema:
-          NamedTypesStruct.schema.properties.namedDiscriminatedUnion2,
+          NamedTypesStruct.schema.properties.datatypeDiscriminatedUnion2,
         typeSparqlWherePatterns:
-          NamedDiscriminatedUnion2.valueSparqlWherePatterns,
+          DatatypeDiscriminatedUnion2.valueSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.namedInIri,
+        filter: parameters.filter?.inIri,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "namedInIri",
-        propertySchema: NamedTypesStruct.schema.properties.namedInIri,
+        propertyName: "inIri",
+        propertySchema: NamedTypesStruct.schema.properties.inIri,
         typeSparqlWherePatterns: $iriSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.namedInLiteral,
+        filter: parameters.filter?.inLiteral,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
         preferredLanguages: parameters.preferredLanguages,
-        propertyName: "namedInLiteral",
-        propertySchema: NamedTypesStruct.schema.properties.namedInLiteral,
+        propertyName: "inLiteral",
+        propertySchema: NamedTypesStruct.schema.properties.inLiteral,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.namedDatatype,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "namedDatatype",
+        propertySchema: NamedTypesStruct.schema.properties.namedDatatype,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36441,19 +36429,17 @@ export namespace NamedTypesStruct {
           ? dataFactory.blankNode($json["@id"].substring(2))
           : dataFactory.namedNode($json["@id"]),
       ),
+      datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.fromJson(
+        $json["datatypeDiscriminatedUnion1"],
+      ),
+      datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.fromJson(
+        $json["datatypeDiscriminatedUnion2"],
+      ),
+      inIri: Either.of<Error, InIri>(dataFactory.namedNode($json["inIri"])),
+      inLiteral: Either.encase<Error, InLiteral>(
+        () => $json["inLiteral"] as InLiteral,
+      ),
       namedDatatype: Either.of<Error, NamedDatatype>($json["namedDatatype"]),
-      namedDiscriminatedUnion1: NamedDiscriminatedUnion1.fromJson(
-        $json["namedDiscriminatedUnion1"],
-      ),
-      namedDiscriminatedUnion2: NamedDiscriminatedUnion2.fromJson(
-        $json["namedDiscriminatedUnion2"],
-      ),
-      namedInIri: Either.of<Error, NamedInIri>(
-        dataFactory.namedNode($json["namedInIri"]),
-      ),
-      namedInLiteral: Either.encase<Error, NamedInLiteral>(
-        () => $json["namedInLiteral"] as NamedInLiteral,
-      ),
     }).chain(NamedTypesStruct.create);
 
   export const fromRdfResource: $FromRdfResourceFunction<NamedTypesStruct> =
@@ -36483,17 +36469,17 @@ export namespace NamedTypesStruct {
     if (_namedTypesStruct.$type) {
       hasher.update(_namedTypesStruct.$type);
     }
+    DatatypeDiscriminatedUnion1.hash(
+      hasher,
+      _namedTypesStruct.datatypeDiscriminatedUnion1,
+    );
+    DatatypeDiscriminatedUnion2.hash(
+      hasher,
+      _namedTypesStruct.datatypeDiscriminatedUnion2,
+    );
+    $hashTerm(hasher, _namedTypesStruct.inIri);
+    $hashString(hasher, _namedTypesStruct.inLiteral);
     $hashString(hasher, _namedTypesStruct.namedDatatype);
-    NamedDiscriminatedUnion1.hash(
-      hasher,
-      _namedTypesStruct.namedDiscriminatedUnion1,
-    );
-    NamedDiscriminatedUnion2.hash(
-      hasher,
-      _namedTypesStruct.namedDiscriminatedUnion2,
-    );
-    $hashTerm(hasher, _namedTypesStruct.namedInIri);
-    $hashString(hasher, _namedTypesStruct.namedInLiteral);
   };
 
   export type Identifier = BlankNode | NamedNode;
@@ -36509,13 +36495,11 @@ export namespace NamedTypesStruct {
     "@id": string;
     "@type": string;
     $type: "NamedTypesStruct";
+    datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.Json;
+    datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.Json;
+    inIri: "http://example.com/InIri1" | "http://example.com/InIri2";
+    inLiteral: "test1" | "test2";
     namedDatatype: string;
-    namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json;
-    namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json;
-    namedInIri:
-      | "http://example.com/NamedInIri1"
-      | "http://example.com/NamedInIri2";
-    namedInLiteral: "test1" | "test2";
   };
 
   export namespace Json {
@@ -36532,11 +36516,11 @@ export namespace NamedTypesStruct {
         "@id": z.string().min(1),
         "@type": z.string(),
         $type: z.literal("NamedTypesStruct"),
+        datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.Json.schema(),
+        datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.Json.schema(),
+        inIri: z.enum(InIri.schema.in.map((_) => _.value)),
+        inLiteral: z.enum(InLiteral.schema.in),
         namedDatatype: z.string(),
-        namedDiscriminatedUnion1: NamedDiscriminatedUnion1.Json.schema(),
-        namedDiscriminatedUnion2: NamedDiscriminatedUnion2.Json.schema(),
-        namedInIri: z.enum(NamedInIri.schema.in.map((_) => _.value)),
-        namedInLiteral: z.enum(NamedInLiteral.schema.in),
       }) satisfies z.ZodType<Json>;
     }
 
@@ -36560,23 +36544,23 @@ export namespace NamedTypesStruct {
             type: "Control",
           },
           {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/datatypeDiscriminatedUnion1`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/datatypeDiscriminatedUnion2`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inIri`,
+            type: "Control",
+          },
+          {
+            scope: `${_parameters?.scopePrefix ?? "#"}/properties/inLiteral`,
+            type: "Control",
+          },
+          {
             scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedDatatype`,
-            type: "Control",
-          },
-          {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedDiscriminatedUnion1`,
-            type: "Control",
-          },
-          {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedDiscriminatedUnion2`,
-            type: "Control",
-          },
-          {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedInIri`,
-            type: "Control",
-          },
-          {
-            scope: `${_parameters?.scopePrefix ?? "#"}/properties/namedInLiteral`,
             type: "Control",
           },
         ],
@@ -36602,43 +36586,43 @@ export namespace NamedTypesStruct {
         ],
       },
       $type: { kind: "Discriminant", value: "NamedTypesStruct" },
+      datatypeDiscriminatedUnion1: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/datatypeDiscriminatedUnion1",
+        ),
+        get type() {
+          return DatatypeDiscriminatedUnion1.schema;
+        },
+      },
+      datatypeDiscriminatedUnion2: {
+        kind: "Shacl",
+        path: dataFactory.namedNode(
+          "http://example.com/datatypeDiscriminatedUnion2",
+        ),
+        get type() {
+          return DatatypeDiscriminatedUnion2.schema;
+        },
+      },
+      inIri: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/inIri"),
+        get type() {
+          return InIri.schema;
+        },
+      },
+      inLiteral: {
+        kind: "Shacl",
+        path: dataFactory.namedNode("http://example.com/inLiteral"),
+        get type() {
+          return InLiteral.schema;
+        },
+      },
       namedDatatype: {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedDatatype"),
         get type() {
           return NamedDatatype.schema;
-        },
-      },
-      namedDiscriminatedUnion1: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/namedDiscriminatedUnion1",
-        ),
-        get type() {
-          return NamedDiscriminatedUnion1.schema;
-        },
-      },
-      namedDiscriminatedUnion2: {
-        kind: "Shacl",
-        path: dataFactory.namedNode(
-          "http://example.com/namedDiscriminatedUnion2",
-        ),
-        get type() {
-          return NamedDiscriminatedUnion2.schema;
-        },
-      },
-      namedInIri: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/namedInIri"),
-        get type() {
-          return NamedInIri.schema;
-        },
-      },
-      namedInLiteral: {
-        kind: "Shacl",
-        path: dataFactory.namedNode("http://example.com/namedInLiteral"),
-        get type() {
-          return NamedInLiteral.schema;
         },
       },
     },
@@ -36714,15 +36698,15 @@ export namespace NamedTypesStruct {
             : _namedTypesStruct.$identifier().value,
         "@type": "http://example.com/NamedTypesStruct",
         $type: _namedTypesStruct.$type,
+        datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.toJson(
+          _namedTypesStruct.datatypeDiscriminatedUnion1,
+        ),
+        datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.toJson(
+          _namedTypesStruct.datatypeDiscriminatedUnion2,
+        ),
+        inIri: _namedTypesStruct.inIri.value,
+        inLiteral: _namedTypesStruct.inLiteral,
         namedDatatype: _namedTypesStruct.namedDatatype,
-        namedDiscriminatedUnion1: NamedDiscriminatedUnion1.toJson(
-          _namedTypesStruct.namedDiscriminatedUnion1,
-        ),
-        namedDiscriminatedUnion2: NamedDiscriminatedUnion2.toJson(
-          _namedTypesStruct.namedDiscriminatedUnion2,
-        ),
-        namedInIri: _namedTypesStruct.namedInIri.value,
-        namedInLiteral: _namedTypesStruct.namedInLiteral,
       }),
     );
 
@@ -36732,15 +36716,15 @@ export namespace NamedTypesStruct {
     $compactRecord({
       $identifier: _namedTypesStruct.$identifier().value,
       $type: "NamedTypesStruct",
+      datatypeDiscriminatedUnion1: DatatypeDiscriminatedUnion1.toLoggable(
+        _namedTypesStruct.datatypeDiscriminatedUnion1,
+      ),
+      datatypeDiscriminatedUnion2: DatatypeDiscriminatedUnion2.toLoggable(
+        _namedTypesStruct.datatypeDiscriminatedUnion2,
+      ),
+      inIri: _namedTypesStruct.inIri.value,
+      inLiteral: _namedTypesStruct.inLiteral,
       namedDatatype: _namedTypesStruct.namedDatatype,
-      namedDiscriminatedUnion1: NamedDiscriminatedUnion1.toLoggable(
-        _namedTypesStruct.namedDiscriminatedUnion1,
-      ),
-      namedDiscriminatedUnion2: NamedDiscriminatedUnion2.toLoggable(
-        _namedTypesStruct.namedDiscriminatedUnion2,
-      ),
-      namedInIri: _namedTypesStruct.namedInIri.value,
-      namedInLiteral: _namedTypesStruct.namedInLiteral,
     });
 
   export const toRdfResource: $ToRdfResourceFunction<
@@ -60514,6 +60498,680 @@ export namespace UnionDiscriminantsStruct {
 }
 
 /**
+ * Named discriminated union of IRI and string
+ */
+export type DatatypeDiscriminatedUnion1 = NamedNode | string;
+
+export namespace DatatypeDiscriminatedUnion1 {
+  export const $toString: $ToStringFunction<DatatypeDiscriminatedUnion1> = (
+    value,
+  ) => {
+    if (typeof value === "object") {
+      return value.toString();
+    }
+    if (typeof value === "string") {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
+  export const convert = $identityConversionFunction;
+
+  export const equals: $EqualsFunction<DatatypeDiscriminatedUnion1> = (
+    left,
+    right,
+  ) => {
+    if (typeof left === "object" && typeof right === "object") {
+      return $booleanEquals(left as NamedNode, right as NamedNode);
+    }
+    if (typeof left === "string" && typeof right === "string") {
+      return $strictEquals(left as string, right as string);
+    }
+
+    return Left({
+      left,
+      right,
+      propertyName: "type",
+      propertyValuesUnequal: {
+        left: typeof left,
+        right: typeof right,
+        type: "boolean" as const,
+      },
+      type: "property" as const,
+    });
+  };
+
+  export const filter: $FilterFunction<
+    DatatypeDiscriminatedUnion1.Filter,
+    DatatypeDiscriminatedUnion1
+  > = (filter, value) => {
+    if (filter.on?.["object"] !== undefined && typeof value === "object") {
+      if (!$filterIri(filter.on["object"], value)) {
+        return false;
+      }
+    }
+    if (filter.on?.["string"] !== undefined && typeof value === "string") {
+      if (!$filterString(filter.on["string"], value)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  export type Filter = {
+    readonly on?: {
+      readonly object?: $IriFilter;
+      readonly string?: $StringFilter;
+    };
+  };
+
+  export const fromJson: $FromJsonFunction<
+    DatatypeDiscriminatedUnion1,
+    DatatypeDiscriminatedUnion1.Json
+  > = (value) => {
+    if (value.$type === "object") {
+      return Either.of<Error, NamedNode>(
+        dataFactory.namedNode(value["@id"]),
+      ).map((value) => value);
+    }
+    if (value.$type === "string") {
+      return Either.of<Error, string>(value["@value"]).map((value) => value);
+    }
+
+    throw new Error("unable to deserialize JSON");
+  };
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    DatatypeDiscriminatedUnion1,
+    typeof DatatypeDiscriminatedUnion1.schema
+  > = (inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither = $iriFromRdfResourceValues<string>(
+            inputValueAsValues,
+            {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["object"].type,
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither = $stringFromRdfResourceValues<string>(
+            inputValueAsValues,
+            {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["string"].type,
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<DatatypeDiscriminatedUnion1> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...$iriFromRdfResourceValues<string>(memberInputValues[memberI], {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["object"].type,
+            }).unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...$stringFromRdfResourceValues<string>(
+              memberInputValues[memberI],
+              {
+                ...options,
+                ignoreRdfType: false,
+                schema: options.schema.members["string"].type,
+              },
+            ).unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  };
+
+  export const hash: $HashFunction<DatatypeDiscriminatedUnion1> = (
+    hasher,
+    value,
+  ) => {
+    if (typeof value === "object") {
+      $hashTerm(hasher, value);
+      return;
+    }
+    if (typeof value === "string") {
+      $hashString(hasher, value);
+      return;
+    }
+  };
+
+  export type Json =
+    | { $type: "object"; "@id": string }
+    | { $type: "string"; "@type": string; "@value": string };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        z.object({ $type: z.literal("object"), "@id": z.string().min(1) }),
+        z.object({
+          $type: z.literal("string"),
+          "@type": z.string(),
+          "@value": z.string(),
+        }),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
+
+  export const schema = {
+    kind: "DiscriminatedUnion" as const,
+    members: {
+      object: {
+        discriminantValues: ["object"],
+        type: { kind: "Iri" as const },
+      },
+      string: {
+        discriminantValues: ["string"],
+        type: { kind: "String" as const },
+      },
+    },
+  };
+
+  export const toJson: $ToJsonFunction<
+    DatatypeDiscriminatedUnion1,
+    DatatypeDiscriminatedUnion1.Json
+  > = (value) => {
+    if (typeof value === "object") {
+      return { $type: "object", "@id": value.value };
+    }
+    if (typeof value === "string") {
+      return { $type: "string", "@type": $xsd_string.value, "@value": value };
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
+
+  export const toLoggable: $ToLoggableFunction<DatatypeDiscriminatedUnion1> = (
+    value,
+  ) => {
+    if (typeof value === "object") {
+      return value.value;
+    }
+    if (typeof value === "string") {
+      return value;
+    }
+
+    throw new Error("unable to serialize to loggable");
+  };
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    DatatypeDiscriminatedUnion1,
+    NamedNode | Literal
+  > = (value, _options): (NamedNode | Literal)[] => {
+    if (typeof value === "object") {
+      return [value];
+    }
+    if (typeof value === "string") {
+      return [$literalFactory.string(value)];
+    }
+
+    throw new Error("unable to serialize to RDF");
+  };
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    DatatypeDiscriminatedUnion1.Filter,
+    typeof DatatypeDiscriminatedUnion1.schema
+  > = ({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["object"],
+        ignoreRdfType: false,
+        schema: schema.members["object"].type,
+      }),
+    );
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["string"],
+        ignoreRdfType: false,
+        schema: schema.members["string"].type,
+      }),
+    );
+
+    return triples;
+  };
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    DatatypeDiscriminatedUnion1.Filter,
+    typeof DatatypeDiscriminatedUnion1.schema
+  > = ({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: $iriSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["object"],
+        ignoreRdfType: false,
+        schema: schema.members["object"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: $stringSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["string"],
+        ignoreRdfType: false,
+        schema: schema.members["string"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  };
+}
+
+/**
+ * Named discriminated union of date and date-time
+ */
+export type DatatypeDiscriminatedUnion2 =
+  | { $type: "date"; value: Date }
+  | { $type: "dateTime"; value: Date };
+
+export namespace DatatypeDiscriminatedUnion2 {
+  export const $toString: $ToStringFunction<DatatypeDiscriminatedUnion2> = (
+    value,
+  ) => {
+    if (value["$type"] === "date") {
+      return value.value.toString();
+    }
+    if (value["$type"] === "dateTime") {
+      return value.value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
+  export const equals: $EqualsFunction<DatatypeDiscriminatedUnion2> = (
+    left,
+    right,
+  ) => {
+    if (left["$type"] === "date" && right["$type"] === "date") {
+      return $dateEquals(left.value as Date, right.value as Date);
+    }
+    if (left["$type"] === "dateTime" && right["$type"] === "dateTime") {
+      return $dateEquals(left.value as Date, right.value as Date);
+    }
+
+    return Left({
+      left,
+      right,
+      propertyName: "type",
+      propertyValuesUnequal: {
+        left: typeof left,
+        right: typeof right,
+        type: "boolean" as const,
+      },
+      type: "property" as const,
+    });
+  };
+
+  export const filter: $FilterFunction<
+    DatatypeDiscriminatedUnion2.Filter,
+    DatatypeDiscriminatedUnion2
+  > = (filter, value) => {
+    if (filter.on?.["date"] !== undefined && value["$type"] === "date") {
+      if (!$filterDate(filter.on["date"], value.value)) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["dateTime"] !== undefined &&
+      value["$type"] === "dateTime"
+    ) {
+      if (!$filterDate(filter.on["dateTime"], value.value)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  export type Filter = {
+    readonly on?: {
+      readonly date?: $DateFilter;
+      readonly dateTime?: $DateFilter;
+    };
+  };
+
+  export const fromJson: $FromJsonFunction<
+    DatatypeDiscriminatedUnion2,
+    DatatypeDiscriminatedUnion2.Json
+  > = (value) => {
+    if (value.$type === "date") {
+      return Either.encase<Error, Date>(() => new Date(value["@value"])).map(
+        (value) => ({
+          $type: "date" as const,
+          value: value,
+        }),
+      );
+    }
+    if (value.$type === "dateTime") {
+      return Either.encase<Error, Date>(() => new Date(value["@value"])).map(
+        (value) => ({
+          $type: "dateTime" as const,
+          value: value,
+        }),
+      );
+    }
+
+    throw new Error("unable to deserialize JSON");
+  };
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    DatatypeDiscriminatedUnion2,
+    typeof DatatypeDiscriminatedUnion2.schema
+  > = (inputValues, options) => {
+    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
+      () =>
+        Resource.Values.empty({
+          focusResource: inputValues.focusResource,
+          propertyPath: inputValues.propertyPath,
+        }),
+    );
+    for (const inputValue of inputValues) {
+      const inputValueAsValues = inputValue.toValues();
+      let memberOutputValuesEither: Either<Error, unknown> | undefined;
+      for (let memberI = 0; memberI < 2; memberI++) {
+        if (memberI === 0) {
+          memberOutputValuesEither = $dateFromRdfResourceValues(
+            inputValueAsValues,
+            {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["date"].type,
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        } else if (memberI === 1) {
+          memberOutputValuesEither = $dateTimeFromRdfResourceValues(
+            inputValueAsValues,
+            {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["dateTime"].type,
+            },
+          );
+          if (memberOutputValuesEither.isRight()) {
+            memberInputValues[memberI] =
+              memberInputValues[memberI].concat(inputValue);
+            break;
+          }
+        }
+      }
+      if (memberOutputValuesEither!.isLeft()) {
+        return memberOutputValuesEither;
+      }
+    }
+
+    let collectedOutputValues: Resource.Values<DatatypeDiscriminatedUnion2> =
+      Resource.Values.empty({
+        focusResource: inputValues.focusResource,
+        propertyPath: inputValues.propertyPath,
+      });
+    for (let memberI = 0; memberI < 2; memberI++) {
+      if (memberInputValues[memberI].length === 0) {
+        continue;
+      }
+      switch (memberI) {
+        case 0:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...$dateFromRdfResourceValues(memberInputValues[memberI], {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["date"].type,
+            })
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({
+                      $type: "date" as const,
+                      value,
+                    }) as DatatypeDiscriminatedUnion2,
+                ),
+              )
+              .unsafeCoerce(),
+          );
+          break;
+        case 1:
+          collectedOutputValues = collectedOutputValues.concat(
+            ...$dateTimeFromRdfResourceValues(memberInputValues[memberI], {
+              ...options,
+              ignoreRdfType: false,
+              schema: options.schema.members["dateTime"].type,
+            })
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({
+                      $type: "dateTime" as const,
+                      value,
+                    }) as DatatypeDiscriminatedUnion2,
+                ),
+              )
+              .unsafeCoerce(),
+          );
+          break;
+      }
+    }
+    return Right(collectedOutputValues);
+  };
+
+  export const hash: $HashFunction<DatatypeDiscriminatedUnion2> = (
+    hasher,
+    value,
+  ) => {
+    if (value["$type"] === "date") {
+      $hashDate(hasher, value.value);
+      return;
+    }
+    if (value["$type"] === "dateTime") {
+      $hashDateTime(hasher, value.value);
+      return;
+    }
+  };
+
+  export type Json =
+    | { $type: "date"; "@type": string; "@value": string }
+    | {
+        $type: "dateTime";
+        "@type": string;
+        "@value": string;
+      };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.discriminatedUnion("$type", [
+        z.object({
+          $type: z.literal("date"),
+          "@type": z.string(),
+          "@value": z.iso.date(),
+        }),
+        z.object({
+          $type: z.literal("dateTime"),
+          "@type": z.string(),
+          "@value": z.iso.datetime(),
+        }),
+      ]) satisfies z.ZodType<Json>;
+    }
+  }
+
+  export const schema = {
+    kind: "DiscriminatedUnion" as const,
+    members: {
+      date: { discriminantValues: ["date"], type: { kind: "Date" as const } },
+      dateTime: {
+        discriminantValues: ["dateTime"],
+        type: { kind: "DateTime" as const },
+      },
+    },
+  };
+
+  export const toJson: $ToJsonFunction<
+    DatatypeDiscriminatedUnion2,
+    DatatypeDiscriminatedUnion2.Json
+  > = (value) => {
+    if (value["$type"] === "date") {
+      return {
+        $type: "date",
+        "@type": $xsd_date.value,
+        "@value": $toIsoDateString(value.value),
+      };
+    }
+    if (value["$type"] === "dateTime") {
+      return {
+        $type: "dateTime",
+        "@type": $xsd_dateTime.value,
+        "@value": value.value.toISOString(),
+      };
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
+
+  export const toLoggable: $ToLoggableFunction<DatatypeDiscriminatedUnion2> = (
+    value,
+  ) => value.value.toISOString();
+
+  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
+    DatatypeDiscriminatedUnion2,
+    Literal
+  > = (value, _options): Literal[] => {
+    if (value["$type"] === "date") {
+      return [$literalFactory.date(value.value, $xsd_date)];
+    }
+    if (value["$type"] === "dateTime") {
+      return [$literalFactory.date(value.value, $xsd_dateTime)];
+    }
+
+    throw new Error("unable to serialize to RDF");
+  };
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    DatatypeDiscriminatedUnion2.Filter,
+    typeof DatatypeDiscriminatedUnion2.schema
+  > = ({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["date"],
+        ignoreRdfType: false,
+        schema: schema.members["date"].type,
+      }),
+    );
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["dateTime"],
+        ignoreRdfType: false,
+        schema: schema.members["dateTime"].type,
+      }),
+    );
+
+    return triples;
+  };
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    DatatypeDiscriminatedUnion2.Filter,
+    typeof DatatypeDiscriminatedUnion2.schema
+  > = ({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: $dateSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["date"],
+        ignoreRdfType: false,
+        schema: schema.members["date"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: $dateSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["dateTime"],
+        ignoreRdfType: false,
+        schema: schema.members["dateTime"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  };
+}
+
+/**
  * Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.
  */
 export type FlattenDiscriminatedUnion =
@@ -61812,680 +62470,6 @@ export namespace LazilyResolvedDiscriminatedUnion {
           schema:
             schema.members["LazilyResolvedDiscriminatedUnionMember2"].type,
         }).concat(),
-      type: "group",
-    });
-
-    return [{ patterns: unionPatterns, type: "union" }];
-  };
-}
-
-/**
- * Named discriminated union of IRI and string
- */
-export type NamedDiscriminatedUnion1 = NamedNode | string;
-
-export namespace NamedDiscriminatedUnion1 {
-  export const $toString: $ToStringFunction<NamedDiscriminatedUnion1> = (
-    value,
-  ) => {
-    if (typeof value === "object") {
-      return value.toString();
-    }
-    if (typeof value === "string") {
-      return value.toString();
-    }
-
-    throw new Error("unable to serialize to string");
-  };
-
-  export const convert = $identityConversionFunction;
-
-  export const equals: $EqualsFunction<NamedDiscriminatedUnion1> = (
-    left,
-    right,
-  ) => {
-    if (typeof left === "object" && typeof right === "object") {
-      return $booleanEquals(left as NamedNode, right as NamedNode);
-    }
-    if (typeof left === "string" && typeof right === "string") {
-      return $strictEquals(left as string, right as string);
-    }
-
-    return Left({
-      left,
-      right,
-      propertyName: "type",
-      propertyValuesUnequal: {
-        left: typeof left,
-        right: typeof right,
-        type: "boolean" as const,
-      },
-      type: "property" as const,
-    });
-  };
-
-  export const filter: $FilterFunction<
-    NamedDiscriminatedUnion1.Filter,
-    NamedDiscriminatedUnion1
-  > = (filter, value) => {
-    if (filter.on?.["object"] !== undefined && typeof value === "object") {
-      if (!$filterIri(filter.on["object"], value)) {
-        return false;
-      }
-    }
-    if (filter.on?.["string"] !== undefined && typeof value === "string") {
-      if (!$filterString(filter.on["string"], value)) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  export type Filter = {
-    readonly on?: {
-      readonly object?: $IriFilter;
-      readonly string?: $StringFilter;
-    };
-  };
-
-  export const fromJson: $FromJsonFunction<
-    NamedDiscriminatedUnion1,
-    NamedDiscriminatedUnion1.Json
-  > = (value) => {
-    if (value.$type === "object") {
-      return Either.of<Error, NamedNode>(
-        dataFactory.namedNode(value["@id"]),
-      ).map((value) => value);
-    }
-    if (value.$type === "string") {
-      return Either.of<Error, string>(value["@value"]).map((value) => value);
-    }
-
-    throw new Error("unable to deserialize JSON");
-  };
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    NamedDiscriminatedUnion1,
-    typeof NamedDiscriminatedUnion1.schema
-  > = (inputValues, options) => {
-    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
-      () =>
-        Resource.Values.empty({
-          focusResource: inputValues.focusResource,
-          propertyPath: inputValues.propertyPath,
-        }),
-    );
-    for (const inputValue of inputValues) {
-      const inputValueAsValues = inputValue.toValues();
-      let memberOutputValuesEither: Either<Error, unknown> | undefined;
-      for (let memberI = 0; memberI < 2; memberI++) {
-        if (memberI === 0) {
-          memberOutputValuesEither = $iriFromRdfResourceValues<string>(
-            inputValueAsValues,
-            {
-              ...options,
-              ignoreRdfType: false,
-              schema: options.schema.members["object"].type,
-            },
-          );
-          if (memberOutputValuesEither.isRight()) {
-            memberInputValues[memberI] =
-              memberInputValues[memberI].concat(inputValue);
-            break;
-          }
-        } else if (memberI === 1) {
-          memberOutputValuesEither = $stringFromRdfResourceValues<string>(
-            inputValueAsValues,
-            {
-              ...options,
-              ignoreRdfType: false,
-              schema: options.schema.members["string"].type,
-            },
-          );
-          if (memberOutputValuesEither.isRight()) {
-            memberInputValues[memberI] =
-              memberInputValues[memberI].concat(inputValue);
-            break;
-          }
-        }
-      }
-      if (memberOutputValuesEither!.isLeft()) {
-        return memberOutputValuesEither;
-      }
-    }
-
-    let collectedOutputValues: Resource.Values<NamedDiscriminatedUnion1> =
-      Resource.Values.empty({
-        focusResource: inputValues.focusResource,
-        propertyPath: inputValues.propertyPath,
-      });
-    for (let memberI = 0; memberI < 2; memberI++) {
-      if (memberInputValues[memberI].length === 0) {
-        continue;
-      }
-      switch (memberI) {
-        case 0:
-          collectedOutputValues = collectedOutputValues.concat(
-            ...$iriFromRdfResourceValues<string>(memberInputValues[memberI], {
-              ...options,
-              ignoreRdfType: false,
-              schema: options.schema.members["object"].type,
-            }).unsafeCoerce(),
-          );
-          break;
-        case 1:
-          collectedOutputValues = collectedOutputValues.concat(
-            ...$stringFromRdfResourceValues<string>(
-              memberInputValues[memberI],
-              {
-                ...options,
-                ignoreRdfType: false,
-                schema: options.schema.members["string"].type,
-              },
-            ).unsafeCoerce(),
-          );
-          break;
-      }
-    }
-    return Right(collectedOutputValues);
-  };
-
-  export const hash: $HashFunction<NamedDiscriminatedUnion1> = (
-    hasher,
-    value,
-  ) => {
-    if (typeof value === "object") {
-      $hashTerm(hasher, value);
-      return;
-    }
-    if (typeof value === "string") {
-      $hashString(hasher, value);
-      return;
-    }
-  };
-
-  export type Json =
-    | { $type: "object"; "@id": string }
-    | { $type: "string"; "@type": string; "@value": string };
-
-  export namespace Json {
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z.discriminatedUnion("$type", [
-        z.object({ $type: z.literal("object"), "@id": z.string().min(1) }),
-        z.object({
-          $type: z.literal("string"),
-          "@type": z.string(),
-          "@value": z.string(),
-        }),
-      ]) satisfies z.ZodType<Json>;
-    }
-  }
-
-  export const schema = {
-    kind: "DiscriminatedUnion" as const,
-    members: {
-      object: {
-        discriminantValues: ["object"],
-        type: { kind: "Iri" as const },
-      },
-      string: {
-        discriminantValues: ["string"],
-        type: { kind: "String" as const },
-      },
-    },
-  };
-
-  export const toJson: $ToJsonFunction<
-    NamedDiscriminatedUnion1,
-    NamedDiscriminatedUnion1.Json
-  > = (value) => {
-    if (typeof value === "object") {
-      return { $type: "object", "@id": value.value };
-    }
-    if (typeof value === "string") {
-      return { $type: "string", "@type": $xsd_string.value, "@value": value };
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
-
-  export const toLoggable: $ToLoggableFunction<NamedDiscriminatedUnion1> = (
-    value,
-  ) => {
-    if (typeof value === "object") {
-      return value.value;
-    }
-    if (typeof value === "string") {
-      return value;
-    }
-
-    throw new Error("unable to serialize to loggable");
-  };
-
-  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    NamedDiscriminatedUnion1,
-    NamedNode | Literal
-  > = (value, _options): (NamedNode | Literal)[] => {
-    if (typeof value === "object") {
-      return [value];
-    }
-    if (typeof value === "string") {
-      return [$literalFactory.string(value)];
-    }
-
-    throw new Error("unable to serialize to RDF");
-  };
-
-  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    NamedDiscriminatedUnion1.Filter,
-    typeof NamedDiscriminatedUnion1.schema
-  > = ({ ignoreRdfType, filter, schema, ...otherParameters }) => {
-    let triples: sparqljs.Triple[] = [];
-
-    triples = triples.concat(
-      ((_: object) => [])({
-        ...otherParameters,
-        filter: filter?.on?.["object"],
-        ignoreRdfType: false,
-        schema: schema.members["object"].type,
-      }),
-    );
-    triples = triples.concat(
-      ((_: object) => [])({
-        ...otherParameters,
-        filter: filter?.on?.["string"],
-        ignoreRdfType: false,
-        schema: schema.members["string"].type,
-      }),
-    );
-
-    return triples;
-  };
-
-  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    NamedDiscriminatedUnion1.Filter,
-    typeof NamedDiscriminatedUnion1.schema
-  > = ({ filter, schema, ...otherParameters }) => {
-    const unionPatterns: sparqljs.GroupPattern[] = [];
-
-    unionPatterns.push({
-      patterns: $iriSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["object"],
-        ignoreRdfType: false,
-        schema: schema.members["object"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: $stringSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["string"],
-        ignoreRdfType: false,
-        schema: schema.members["string"].type,
-      }).concat(),
-      type: "group",
-    });
-
-    return [{ patterns: unionPatterns, type: "union" }];
-  };
-}
-
-/**
- * Named discriminated union of date and date-time
- */
-export type NamedDiscriminatedUnion2 =
-  | { $type: "date"; value: Date }
-  | { $type: "dateTime"; value: Date };
-
-export namespace NamedDiscriminatedUnion2 {
-  export const $toString: $ToStringFunction<NamedDiscriminatedUnion2> = (
-    value,
-  ) => {
-    if (value["$type"] === "date") {
-      return value.value.toString();
-    }
-    if (value["$type"] === "dateTime") {
-      return value.value.toString();
-    }
-
-    throw new Error("unable to serialize to string");
-  };
-
-  export const equals: $EqualsFunction<NamedDiscriminatedUnion2> = (
-    left,
-    right,
-  ) => {
-    if (left["$type"] === "date" && right["$type"] === "date") {
-      return $dateEquals(left.value as Date, right.value as Date);
-    }
-    if (left["$type"] === "dateTime" && right["$type"] === "dateTime") {
-      return $dateEquals(left.value as Date, right.value as Date);
-    }
-
-    return Left({
-      left,
-      right,
-      propertyName: "type",
-      propertyValuesUnequal: {
-        left: typeof left,
-        right: typeof right,
-        type: "boolean" as const,
-      },
-      type: "property" as const,
-    });
-  };
-
-  export const filter: $FilterFunction<
-    NamedDiscriminatedUnion2.Filter,
-    NamedDiscriminatedUnion2
-  > = (filter, value) => {
-    if (filter.on?.["date"] !== undefined && value["$type"] === "date") {
-      if (!$filterDate(filter.on["date"], value.value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["dateTime"] !== undefined &&
-      value["$type"] === "dateTime"
-    ) {
-      if (!$filterDate(filter.on["dateTime"], value.value)) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  export type Filter = {
-    readonly on?: {
-      readonly date?: $DateFilter;
-      readonly dateTime?: $DateFilter;
-    };
-  };
-
-  export const fromJson: $FromJsonFunction<
-    NamedDiscriminatedUnion2,
-    NamedDiscriminatedUnion2.Json
-  > = (value) => {
-    if (value.$type === "date") {
-      return Either.encase<Error, Date>(() => new Date(value["@value"])).map(
-        (value) => ({
-          $type: "date" as const,
-          value: value,
-        }),
-      );
-    }
-    if (value.$type === "dateTime") {
-      return Either.encase<Error, Date>(() => new Date(value["@value"])).map(
-        (value) => ({
-          $type: "dateTime" as const,
-          value: value,
-        }),
-      );
-    }
-
-    throw new Error("unable to deserialize JSON");
-  };
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    NamedDiscriminatedUnion2,
-    typeof NamedDiscriminatedUnion2.schema
-  > = (inputValues, options) => {
-    const memberInputValues: Resource.Values[] = Array.from({ length: 2 }).map(
-      () =>
-        Resource.Values.empty({
-          focusResource: inputValues.focusResource,
-          propertyPath: inputValues.propertyPath,
-        }),
-    );
-    for (const inputValue of inputValues) {
-      const inputValueAsValues = inputValue.toValues();
-      let memberOutputValuesEither: Either<Error, unknown> | undefined;
-      for (let memberI = 0; memberI < 2; memberI++) {
-        if (memberI === 0) {
-          memberOutputValuesEither = $dateFromRdfResourceValues(
-            inputValueAsValues,
-            {
-              ...options,
-              ignoreRdfType: false,
-              schema: options.schema.members["date"].type,
-            },
-          );
-          if (memberOutputValuesEither.isRight()) {
-            memberInputValues[memberI] =
-              memberInputValues[memberI].concat(inputValue);
-            break;
-          }
-        } else if (memberI === 1) {
-          memberOutputValuesEither = $dateTimeFromRdfResourceValues(
-            inputValueAsValues,
-            {
-              ...options,
-              ignoreRdfType: false,
-              schema: options.schema.members["dateTime"].type,
-            },
-          );
-          if (memberOutputValuesEither.isRight()) {
-            memberInputValues[memberI] =
-              memberInputValues[memberI].concat(inputValue);
-            break;
-          }
-        }
-      }
-      if (memberOutputValuesEither!.isLeft()) {
-        return memberOutputValuesEither;
-      }
-    }
-
-    let collectedOutputValues: Resource.Values<NamedDiscriminatedUnion2> =
-      Resource.Values.empty({
-        focusResource: inputValues.focusResource,
-        propertyPath: inputValues.propertyPath,
-      });
-    for (let memberI = 0; memberI < 2; memberI++) {
-      if (memberInputValues[memberI].length === 0) {
-        continue;
-      }
-      switch (memberI) {
-        case 0:
-          collectedOutputValues = collectedOutputValues.concat(
-            ...$dateFromRdfResourceValues(memberInputValues[memberI], {
-              ...options,
-              ignoreRdfType: false,
-              schema: options.schema.members["date"].type,
-            })
-              .map((values) =>
-                values.map(
-                  (value) =>
-                    ({
-                      $type: "date" as const,
-                      value,
-                    }) as NamedDiscriminatedUnion2,
-                ),
-              )
-              .unsafeCoerce(),
-          );
-          break;
-        case 1:
-          collectedOutputValues = collectedOutputValues.concat(
-            ...$dateTimeFromRdfResourceValues(memberInputValues[memberI], {
-              ...options,
-              ignoreRdfType: false,
-              schema: options.schema.members["dateTime"].type,
-            })
-              .map((values) =>
-                values.map(
-                  (value) =>
-                    ({
-                      $type: "dateTime" as const,
-                      value,
-                    }) as NamedDiscriminatedUnion2,
-                ),
-              )
-              .unsafeCoerce(),
-          );
-          break;
-      }
-    }
-    return Right(collectedOutputValues);
-  };
-
-  export const hash: $HashFunction<NamedDiscriminatedUnion2> = (
-    hasher,
-    value,
-  ) => {
-    if (value["$type"] === "date") {
-      $hashDate(hasher, value.value);
-      return;
-    }
-    if (value["$type"] === "dateTime") {
-      $hashDateTime(hasher, value.value);
-      return;
-    }
-  };
-
-  export type Json =
-    | { $type: "date"; "@type": string; "@value": string }
-    | {
-        $type: "dateTime";
-        "@type": string;
-        "@value": string;
-      };
-
-  export namespace Json {
-    export function parse(json: unknown): Either<Error, Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z.discriminatedUnion("$type", [
-        z.object({
-          $type: z.literal("date"),
-          "@type": z.string(),
-          "@value": z.iso.date(),
-        }),
-        z.object({
-          $type: z.literal("dateTime"),
-          "@type": z.string(),
-          "@value": z.iso.datetime(),
-        }),
-      ]) satisfies z.ZodType<Json>;
-    }
-  }
-
-  export const schema = {
-    kind: "DiscriminatedUnion" as const,
-    members: {
-      date: { discriminantValues: ["date"], type: { kind: "Date" as const } },
-      dateTime: {
-        discriminantValues: ["dateTime"],
-        type: { kind: "DateTime" as const },
-      },
-    },
-  };
-
-  export const toJson: $ToJsonFunction<
-    NamedDiscriminatedUnion2,
-    NamedDiscriminatedUnion2.Json
-  > = (value) => {
-    if (value["$type"] === "date") {
-      return {
-        $type: "date",
-        "@type": $xsd_date.value,
-        "@value": $toIsoDateString(value.value),
-      };
-    }
-    if (value["$type"] === "dateTime") {
-      return {
-        $type: "dateTime",
-        "@type": $xsd_dateTime.value,
-        "@value": value.value.toISOString(),
-      };
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
-
-  export const toLoggable: $ToLoggableFunction<NamedDiscriminatedUnion2> = (
-    value,
-  ) => value.value.toISOString();
-
-  export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    NamedDiscriminatedUnion2,
-    Literal
-  > = (value, _options): Literal[] => {
-    if (value["$type"] === "date") {
-      return [$literalFactory.date(value.value, $xsd_date)];
-    }
-    if (value["$type"] === "dateTime") {
-      return [$literalFactory.date(value.value, $xsd_dateTime)];
-    }
-
-    throw new Error("unable to serialize to RDF");
-  };
-
-  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    NamedDiscriminatedUnion2.Filter,
-    typeof NamedDiscriminatedUnion2.schema
-  > = ({ ignoreRdfType, filter, schema, ...otherParameters }) => {
-    let triples: sparqljs.Triple[] = [];
-
-    triples = triples.concat(
-      ((_: object) => [])({
-        ...otherParameters,
-        filter: filter?.on?.["date"],
-        ignoreRdfType: false,
-        schema: schema.members["date"].type,
-      }),
-    );
-    triples = triples.concat(
-      ((_: object) => [])({
-        ...otherParameters,
-        filter: filter?.on?.["dateTime"],
-        ignoreRdfType: false,
-        schema: schema.members["dateTime"].type,
-      }),
-    );
-
-    return triples;
-  };
-
-  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    NamedDiscriminatedUnion2.Filter,
-    typeof NamedDiscriminatedUnion2.schema
-  > = ({ filter, schema, ...otherParameters }) => {
-    const unionPatterns: sparqljs.GroupPattern[] = [];
-
-    unionPatterns.push({
-      patterns: $dateSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["date"],
-        ignoreRdfType: false,
-        schema: schema.members["date"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: $dateSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["dateTime"],
-        ignoreRdfType: false,
-        schema: schema.members["dateTime"].type,
-      }).concat(),
       type: "group",
     });
 
