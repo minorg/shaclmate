@@ -5,9 +5,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { AnonymousFunction } from "./AnonymousFunction.js";
-import type { FunctionLike } from "./FunctionLike.js";
-import { FunctionReference } from "./FunctionReference.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import {
   arrayOf,
   type Code,
@@ -17,7 +17,7 @@ import {
 } from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
-  override readonly filterFunction = new FunctionReference(
+  override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterIri,
   );
   override readonly filterType = code`${this.reusables.snippets.IriFilter}`;
@@ -25,7 +25,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly nodeKinds = nodeKinds;
   override readonly schemaType =
     code`${this.reusables.snippets.IriSchema}<${this.valueTypeExpression}>`;
-  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.iriSparqlWherePatterns,
   );
 
@@ -54,20 +54,20 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }
 
   @Memoize()
-  get fromRdfResourceValuesFunction(): FunctionLike {
-    return new FunctionReference(
+  get fromRdfResourceValuesFunction(): Callable {
+    return new ReferenceCallable(
       code`${this.reusables.snippets.iriFromRdfResourceValues}<${this.valueTypeExpression}>`,
     );
   }
 
   @Memoize()
-  get parseFunction(): FunctionLike {
+  get parseFunction(): Callable {
     if (this.in_.length > 0) {
-      return new AnonymousFunction(
+      return new InlineCallable(
         code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.expression});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`,
       );
     }
-    return new FunctionReference(this.reusables.snippets.parseIri);
+    return new ReferenceCallable(this.reusables.snippets.parseIri);
   }
 
   @Memoize()

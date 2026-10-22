@@ -146,7 +146,7 @@ ${joinCode(
     ({ type }) => code`${type.hashFunction.annotatedUsage}(hasher, value);`,
   ),
 )}
-})`;
+}`;
   }
 
   protected schemaTypeExpression(): Code {
@@ -180,8 +180,6 @@ ${joinCode(
       }),
     );
 
-    const returnTypeAnnotation = this.recursive ? code`: any` : code``;
-
     // If every toLoggable expression is the same, use that expression and don't bother discriminating the member type.
     if (
       memberToLoggableExpressions.every(
@@ -193,10 +191,10 @@ ${joinCode(
           ),
       )
     ) {
-      return code`(value: ${this.expression})${returnTypeAnnotation} => ${memberToLoggableExpressions[0]}`;
+      return code`(value) => ${memberToLoggableExpressions[0]}`;
     }
 
-    return code`(value: ${this.expression})${returnTypeAnnotation} => [${joinCode(memberToLoggableExpressions, { on: "," })}]`;
+    return code`(value) => [${joinCode(memberToLoggableExpressions, { on: "," })}]`;
   }
 
   protected toRdfResourceValuesFunctionExpression(): Code {

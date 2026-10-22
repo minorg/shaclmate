@@ -2,7 +2,11 @@ import { Memoize } from "typescript-memoize";
 
 import { type Code, code } from "./ts-poet-wrapper.js";
 
-export class DeclaredFunction {
+/**
+ * A callable that is bound to an annotated variable. Consumers reference the variable, so there's no distinction
+ * between annotated and unannotated usage.
+ */
+export class DeclaredCallable {
   private readonly qualifiedName: readonly string[];
   private readonly type: { readonly expression: Code };
   readonly #unannotatedExpression: Code | (() => Code);

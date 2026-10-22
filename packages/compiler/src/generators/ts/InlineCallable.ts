@@ -3,7 +3,11 @@ import { Memoize } from "typescript-memoize";
 
 import { type Code, code } from "./ts-poet-wrapper.js";
 
-export class AnonymousFunction {
+/**
+ * A callable that isn't bound to a variable but always used inline. Annotated and unannotated usage differ in the inclusion of
+ * an optional "satisfies" type annotation on the unannotated expression.
+ */
+export class InlineCallable {
   #unannotatedExpression: Code | (() => Code);
 
   readonly type: Maybe<{ readonly expression: Code }>;

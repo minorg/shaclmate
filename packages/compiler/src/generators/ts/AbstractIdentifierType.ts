@@ -1,7 +1,7 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { AbstractTermType } from "./AbstractTermType.js";
-import type { FunctionLike } from "./FunctionLike.js";
+import type { Callable } from "./Callable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractIdentifierType<
@@ -16,7 +16,7 @@ export abstract class AbstractIdentifierType<
   ] as const;
   abstract override readonly kind: "BlankNode" | "Identifier" | "Iri";
   abstract override readonly nodeKinds: ReadonlySet<IdentifierNodeKind>;
-  abstract readonly parseFunction: FunctionLike;
+  abstract readonly parseFunction: Callable;
 
   override fromJsonExpression({
     form,

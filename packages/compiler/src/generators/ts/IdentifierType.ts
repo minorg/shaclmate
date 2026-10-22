@@ -4,7 +4,7 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { FunctionReference } from "./FunctionReference.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class IdentifierType extends AbstractIdentifierType<
@@ -37,22 +37,22 @@ export class IdentifierType extends AbstractIdentifierType<
         },
       ],
     });
-  override readonly filterFunction = new FunctionReference(
+  override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterIdentifier,
   );
   override readonly filterType =
     code`${this.reusables.snippets.IdentifierFilter}`;
-  override readonly fromRdfResourceValuesFunction = new FunctionReference(
+  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.identifierFromRdfResourceValues,
   );
   override readonly kind = "Identifier";
   override readonly nodeKinds = nodeKinds;
-  override readonly parseFunction = new FunctionReference(
+  override readonly parseFunction = new ReferenceCallable(
     this.reusables.snippets.parseIdentifier,
   );
   override readonly schemaType =
     code`${this.reusables.snippets.IdentifierSchema}`;
-  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.identifierSparqlWherePatterns,
   );
 

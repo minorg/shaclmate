@@ -5,8 +5,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
-import type { FunctionLike } from "./FunctionLike.js";
-import { FunctionReference } from "./FunctionReference.js";
+import type { Callable } from "./Callable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
@@ -46,8 +46,8 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override readonly kind = "BigInt";
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): FunctionLike {
-    return new FunctionReference(
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new ReferenceCallable(
       code`${this.reusables.snippets.bigIntFromRdfResourceValues}<${this.expression}>`,
     );
   }

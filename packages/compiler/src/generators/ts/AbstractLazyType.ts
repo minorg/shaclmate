@@ -3,8 +3,8 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-import { AnonymousFunction } from "./AnonymousFunction.js";
-import type { FunctionLike } from "./FunctionLike.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
@@ -43,8 +43,8 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  override get equalsFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get equalsFunction(): Callable {
+    return new InlineCallable(
       code`(left, right) => ${this.partialType.equalsFunction.annotatedUsage}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName})`,
       {
         type: {
@@ -55,8 +55,8 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  get filterFunction(): FunctionLike {
-    return new AnonymousFunction(
+  get filterFunction(): Callable {
+    return new InlineCallable(
       code`(filter, value) => ${this.partialType.filterFunction.annotatedUsage}(filter, value.${this.runtimeClass.partialPropertyName})`,
       {
         type: {
@@ -75,8 +75,8 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  override get hashFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get hashFunction(): Callable {
+    return new InlineCallable(
       code`(hasher, value) => ${this.partialType.hashFunction.annotatedUsage}(hasher, value.${this.runtimeClass.partialPropertyName})`,
     );
   }
@@ -117,8 +117,8 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(
       code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction.annotatedUsage}({ ...otherParameters, schema: schema.partialType }))`,
       {
         type: {
@@ -129,8 +129,8 @@ export abstract class AbstractLazyType<
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
       code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction.annotatedUsage}({ ...otherParameters, schema: schema.partialType }))`,
       {
         type: {

@@ -2,8 +2,8 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractLazyType } from "./AbstractLazyType.js";
-import { AnonymousFunction } from "./AnonymousFunction.js";
-import type { FunctionLike } from "./FunctionLike.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -80,8 +80,8 @@ ${this.reusables.snippets.convertToLazySet}<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
       code`\
 (values, { objectSet, schema, ...otherOptions }) =>
   ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { ...otherOptions, objectSet, schema: schema.partialType })

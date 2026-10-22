@@ -6,8 +6,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import type { FunctionLike } from "./FunctionLike.js";
-import { FunctionReference } from "./FunctionReference.js";
+import type { Callable } from "./Callable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
@@ -15,7 +15,7 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   override readonly conversionFunction: Maybe<AbstractPrimitiveType.ConversionFunction> =
     Maybe.empty();
-  override readonly filterFunction = new FunctionReference(
+  override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterString,
   );
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
@@ -23,7 +23,7 @@ export class StringType extends AbstractPrimitiveType<string> {
     code`${this.reusables.imports.GraphQLString}`,
     this.reusables,
   );
-  override readonly hashFunction = new FunctionReference(
+  override readonly hashFunction = new ReferenceCallable(
     this.reusables.snippets.hashString,
   );
   override readonly jsTypes = [
@@ -32,7 +32,7 @@ export class StringType extends AbstractPrimitiveType<string> {
     },
   ] as const;
   override readonly kind = "String";
-  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.stringSparqlWherePatterns,
   );
 
@@ -47,8 +47,8 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  get fromRdfResourceValuesFunction(): FunctionLike {
-    return new FunctionReference(
+  get fromRdfResourceValuesFunction(): Callable {
+    return new ReferenceCallable(
       code`${this.reusables.snippets.stringFromRdfResourceValues}<${this.expression}>`,
     );
   }

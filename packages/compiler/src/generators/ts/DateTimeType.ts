@@ -2,11 +2,11 @@ import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
 
 import { AbstractDateType } from "./AbstractDateType.js";
-import { FunctionReference } from "./FunctionReference.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateTimeType extends AbstractDateType {
-  override readonly fromRdfResourceValuesFunction = new FunctionReference(
+  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.dateTimeFromRdfResourceValues,
   );
   override readonly graphqlType = new DateTimeType.GraphqlType(
@@ -14,7 +14,7 @@ export class DateTimeType extends AbstractDateType {
     this.reusables,
   );
   protected override readonly jsonStringFormat = "datetime";
-  override readonly hashFunction = new FunctionReference(
+  override readonly hashFunction = new ReferenceCallable(
     this.reusables.snippets.hashDateTime,
   );
   override readonly kind = "DateTime";

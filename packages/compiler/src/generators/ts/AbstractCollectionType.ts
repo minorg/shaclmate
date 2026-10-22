@@ -2,8 +2,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
-import { AnonymousFunction } from "./AnonymousFunction.js";
-import type { FunctionLike } from "./FunctionLike.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -30,8 +30,8 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get equalsFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get equalsFunction(): Callable {
+    return new InlineCallable(
       code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction.unannotatedUsage}))`,
       {
         type: {
@@ -42,8 +42,8 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  get filterFunction(): FunctionLike {
-    return new AnonymousFunction(
+  get filterFunction(): Callable {
+    return new InlineCallable(
       code`${this.reusables.snippets.filterArray}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.unannotatedUsage})`,
     );
   }
@@ -62,8 +62,8 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  get hashFunction(): FunctionLike {
-    return new AnonymousFunction(
+  get hashFunction(): Callable {
+    return new InlineCallable(
       code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction.annotatedUsage})`,
     );
   }
@@ -78,9 +78,9 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get validationFunction(): Maybe<FunctionLike> {
+  override get validationFunction(): Maybe<Callable> {
     return Maybe.of(
-      new AnonymousFunction(
+      new InlineCallable(
         code`${this._mutable ? this.reusables.snippets.validateMutableArray : this.reusables.snippets.validateArray}(${this.itemType.validationFunction
           .map((_) => _.unannotatedUsage)
           .orDefault(this.itemValidationFunctionDefault.unannotatedUsage)})`,

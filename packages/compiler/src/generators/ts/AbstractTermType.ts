@@ -5,9 +5,9 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-import { AnonymousFunction } from "./AnonymousFunction.js";
-import type { FunctionLike } from "./FunctionLike.js";
-import { FunctionReference } from "./FunctionReference.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -25,12 +25,12 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  readonly equalsFunction = new FunctionReference(
+  readonly equalsFunction = new ReferenceCallable(
     this.reusables.snippets.booleanEquals,
   );
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
-  override readonly hashFunction = new FunctionReference(
+  override readonly hashFunction = new ReferenceCallable(
     this.reusables.snippets.hashTerm,
   );
   readonly in_: readonly ConstantTermT[];
@@ -77,8 +77,8 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): FunctionLike {
-    return new AnonymousFunction(code`((_: object) => [])`);
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(code`((_: object) => [])`);
   }
 
   protected override get schemaInitializers() {

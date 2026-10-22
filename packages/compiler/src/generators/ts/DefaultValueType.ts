@@ -6,9 +6,9 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
-import { AnonymousFunction } from "./AnonymousFunction.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
-import type { FunctionLike } from "./FunctionLike.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import type { Type } from "./Type.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -50,11 +50,11 @@ export class DefaultValueType<
     });
   }
 
-  override get equalsFunction(): FunctionLike {
+  override get equalsFunction(): Callable {
     return this.itemType.equalsFunction;
   }
 
-  override get filterFunction(): FunctionLike {
+  override get filterFunction(): Callable {
     return this.itemType.filterFunction;
   }
 
@@ -63,8 +63,8 @@ export class DefaultValueType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
       code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.annotatedUsage})`,
     );
   }
@@ -73,7 +73,7 @@ export class DefaultValueType<
     return this.itemType.graphqlType;
   }
 
-  override get hashFunction(): FunctionLike {
+  override get hashFunction(): Callable {
     return this.itemType.hashFunction;
   }
 
@@ -91,13 +91,13 @@ export class DefaultValueType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): FunctionLike {
+  override get valueSparqlConstructTriplesFunction(): Callable {
     return this.itemType.valueSparqlConstructTriplesFunction;
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
       code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.annotatedUsage})`,
     );
   }

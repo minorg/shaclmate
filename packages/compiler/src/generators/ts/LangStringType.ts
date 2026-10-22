@@ -2,7 +2,7 @@ import type { Literal } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { FunctionReference } from "./FunctionReference.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class LangStringType extends AbstractLiteralType {
@@ -21,11 +21,11 @@ export class LangStringType extends AbstractLiteralType {
         },
       ],
     });
-  override readonly filterFunction = new FunctionReference(
+  override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterLiteral,
   );
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
-  override readonly fromRdfResourceValuesFunction = new FunctionReference(
+  override readonly fromRdfResourceValuesFunction = new ReferenceCallable(
     this.reusables.snippets.langStringFromRdfResourceValues,
   );
   override readonly jsTypes = [
@@ -34,7 +34,7 @@ export class LangStringType extends AbstractLiteralType {
   override readonly kind = "LangString";
   override readonly schemaType =
     code`${this.reusables.snippets.LangStringSchema}`;
-  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.langStringSparqlWherePatterns,
   );
 

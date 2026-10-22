@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTypedLiteralType } from "./AbstractTypedLiteralType.js";
-import { FunctionReference } from "./FunctionReference.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
@@ -14,10 +14,10 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
    */
   override readonly conversionFunction: Maybe<AbstractTypedLiteralType.ConversionFunction> =
     Maybe.empty();
-  override readonly equalsFunction = new FunctionReference(
+  override readonly equalsFunction = new ReferenceCallable(
     this.reusables.snippets.dateEquals,
   );
-  override readonly filterFunction = new FunctionReference(
+  override readonly filterFunction = new ReferenceCallable(
     this.reusables.snippets.filterDate,
   );
   override readonly filterType = code`${this.reusables.snippets.DateFilter}`;
@@ -28,7 +28,7 @@ export abstract class AbstractDateType extends AbstractTypedLiteralType<Date> {
     },
   ] as const;
   override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
-  override readonly valueSparqlWherePatternsFunction = new FunctionReference(
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
     this.reusables.snippets.dateSparqlWherePatterns,
   );
 

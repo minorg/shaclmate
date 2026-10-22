@@ -2,9 +2,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-import { AnonymousFunction } from "./AnonymousFunction.js";
-import { DeclaredFunction } from "./DeclaredFunction.js";
-import type { FunctionLike } from "./FunctionLike.js";
+import type { Callable } from "./Callable.js";
+import { DeclaredCallable } from "./DeclaredCallable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -12,41 +12,41 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
  */
 export abstract class AbstractStructuredType extends AbstractType {
   @Memoize()
-  override get equalsFunction(): FunctionLike {
+  override get equalsFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
     };
     const unannotatedExpression = () => this.equalsFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "equals"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get filterFunction(): FunctionLike {
+  override get filterFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.expression}>`,
     };
     const unannotatedExpression = () => this.filterFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "filter"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
@@ -57,26 +57,26 @@ export abstract class AbstractStructuredType extends AbstractType {
   }
 
   @Memoize()
-  get fromJsonFunction(): FunctionLike {
+  get fromJsonFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`,
     };
     const unannotatedExpression = () => this.fromJsonFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "fromJson"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): FunctionLike {
+  override get fromRdfResourceValuesFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
     };
@@ -84,34 +84,34 @@ export abstract class AbstractStructuredType extends AbstractType {
       this.fromRdfResourceValuesFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "fromRdfResourceValues"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get hashFunction(): FunctionLike {
+  override get hashFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.HashFunction}<${this.expression}>`,
     };
     const unannotatedExpression = () => this.hashFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "hash"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
@@ -122,45 +122,45 @@ export abstract class AbstractStructuredType extends AbstractType {
   }
 
   @Memoize()
-  get toJsonFunction(): FunctionLike {
+  get toJsonFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`,
     };
     const unannotatedExpression = () => this.toJsonFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "toJson"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  get toLoggableFunction(): FunctionLike {
+  get toLoggableFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.ToLoggableFunction}<${this.expression}>`,
     };
     const unannotatedExpression = () => this.toLoggableFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "toLoggable"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  get toRdfResourceValuesFunction(): FunctionLike {
+  get toRdfResourceValuesFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}, ${this.toRdfResourceValueTypesExpression}>`,
     };
@@ -168,28 +168,28 @@ export abstract class AbstractStructuredType extends AbstractType {
       this.toRdfResourceValuesFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "toRdfResourceValues"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  get toStringFunction(): FunctionLike {
+  get toStringFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.ToStringFunction}<${this.expression}>`,
     };
     const unannotatedExpression = () => this.toStringFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [
               name,
               `${this.configuration.syntheticNamePrefix}toString`,
@@ -198,11 +198,11 @@ export abstract class AbstractStructuredType extends AbstractType {
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): FunctionLike {
+  override get valueSparqlConstructTriplesFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`,
     };
@@ -210,19 +210,19 @@ export abstract class AbstractStructuredType extends AbstractType {
       this.valueSparqlConstructTriplesFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "valueSparqlConstructTriples"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): FunctionLike {
+  override get valueSparqlWherePatternsFunction(): Callable {
     const type = {
       expression: code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`,
     };
@@ -230,15 +230,15 @@ export abstract class AbstractStructuredType extends AbstractType {
       this.valueSparqlWherePatternsFunctionExpression();
 
     return this.name
-      .map<FunctionLike>(
+      .map<Callable>(
         (name) =>
-          new DeclaredFunction({
+          new DeclaredCallable({
             qualifiedName: [name, "valueSparqlWherePatterns"],
             type,
             unannotatedExpression,
           }),
       )
-      .orDefault(new AnonymousFunction(unannotatedExpression, { type }));
+      .orDefault(new InlineCallable(unannotatedExpression, { type }));
   }
 
   @Memoize()
@@ -321,8 +321,8 @@ export abstract class AbstractStructuredType extends AbstractType {
       ...super.staticModuleDeclarations(name),
     };
 
-    function addFunctionDeclaration(function_: FunctionLike) {
-      invariant(function_ instanceof DeclaredFunction);
+    function addFunctionDeclaration(function_: Callable) {
+      invariant(function_ instanceof DeclaredCallable);
       staticModuleDeclarations[function_.unqualifiedName] =
         code`export ${function_.declaration}`;
     }

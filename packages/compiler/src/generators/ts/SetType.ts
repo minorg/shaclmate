@@ -4,8 +4,8 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AbstractContainerType } from "./AbstractContainerType.js";
-import { AnonymousFunction } from "./AnonymousFunction.js";
-import type { FunctionLike } from "./FunctionLike.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import type { Snippet } from "./Snippet.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -88,8 +88,8 @@ export class SetType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
       code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.annotatedUsage})`,
     );
   }
@@ -99,15 +99,15 @@ export class SetType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(
       code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.annotatedUsage})`,
     );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): FunctionLike {
-    return new AnonymousFunction(
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
       code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.annotatedUsage})`,
     );
   }
