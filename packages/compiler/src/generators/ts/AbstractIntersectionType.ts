@@ -105,39 +105,6 @@ ${joinCode(
     );
   }
 
-  protected fromJsonFunctionExpression(): Code {
-    return code`\
-(value) =>
-    ${joinCode(
-      this.members.map(
-        (member, memberI) => code`
-${member.type.fromJsonExpression({
-  form: "compact",
-  variables: {
-    value: code`value`,
-  },
-})}.${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
-      ),
-    )} ({ ${joinCode(
-      this.members.map((_, memberI) => code`...member${memberI}`),
-      { on: "," },
-    )} }) ${")".repeat(this.members.length)}`;
-  }
-
-  protected fromRdfResourceValuesFunctionExpression(): Code {
-    return code`\
-(inputValues, options) =>
-    ${joinCode(
-      this.members.map(
-        (member, memberI) => code`\
-      ${member.type.fromRdfResourceValuesFunction.annotatedUsage}(inputValues, { ...options, ignoreRdfType: true, schema: options.schema.members[${literalOf(memberI)}] }).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
-      ),
-    )} ({ ${joinCode(
-      this.members.map((_, memberI) => code`...member${memberI}`),
-      { on: "," },
-    )} }) ${")".repeat(this.members.length)}`;
-  }
-
   protected hashFunctionExpression(): Code {
     return code`\
 (hasher, value) => {
@@ -157,20 +124,6 @@ ${joinCode(
         { on: ", " },
       )}]`,
     }}`;
-  }
-
-  protected toJsonFunctionExpression(): Code {
-    return code`\
-(value) => ({
-${joinCode(
-  this.members.map(
-    ({ type }) =>
-      code`...${type.toJsonExpression({
-        form: "compact",
-        variables: { value: code`value` },
-      })} }`,
-  ),
-)}})`;
   }
 
   protected toLoggableFunctionExpression(): Code {
@@ -274,7 +227,7 @@ triples = triples.concat(${type.valueSparqlConstructTriplesFunction.annotatedUsa
   ${joinCode(
     this.members.map(
       ({ type }, memberI) => code`\
-intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatternsFunction.annotatedUsage}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}] });`,
+intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatternsFunction.annotatedUsage}({ ...otherParameters, filter, ignoreRdfType: true, schema: schema.members[${literalOf(memberI)}] }));`,
     ),
   )}
   

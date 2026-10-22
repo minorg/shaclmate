@@ -4,7 +4,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType> {
   override readonly kind = "ObjectIntersection";
@@ -26,12 +26,60 @@ export class ObjectIntersectionType extends AbstractIntersectionType<ObjectType>
       this.members.map((member) => {
         let memberTypeExpression = member.type.expression;
         member.type.discriminantProperty.ifJust((discriminantProperty) => {
-          memberTypeExpression = code`Omit<${memberTypeExpression}, ${discriminantProperty.name}>`;
+          memberTypeExpression = code`Omit<${memberTypeExpression}, ${literalOf(discriminantProperty.name)}>`;
         });
         return memberTypeExpression;
       }),
       { on: "&" },
     );
+  }
+
+  protected fromJsonFunctionExpression(): Code {
+    return code`\
+(value) =>
+    ${joinCode(
+      this.members.map(
+        (member, memberI) => code`
+${member.type.fromJsonExpression({
+  form: "compact",
+  variables: {
+    value: code`value`,
+  },
+})}.${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
+      ),
+    )} ({ ${joinCode(
+      this.members.map((_, memberI) => code`...member${memberI}`),
+      { on: "," },
+    )} }) ${")".repeat(this.members.length)}`;
+  }
+
+  protected fromRdfResourceValuesFunctionExpression(): Code {
+    return code`\
+(inputValues, options) =>
+    ${joinCode(
+      this.members.map(
+        (member, memberI) => code`\
+      ${member.type.fromRdfResourceValuesFunction.annotatedUsage}(inputValues, { ...options, ignoreRdfType: true, schema: options.schema.members[${literalOf(memberI)}] }).${memberI + 1 < this.members.length ? "chain" : "map"}(member${memberI} =>`,
+      ),
+    )} ({ ${joinCode(
+      this.members.map((_, memberI) => code`...member${memberI}`),
+      { on: "," },
+    )} }) ${")".repeat(this.members.length)}`;
+  }
+
+  protected toJsonFunctionExpression(): Code {
+    return code`\
+(value) => ({
+${joinCode(
+  this.members.map(
+    ({ type }) =>
+      code`...${type.toJsonExpression({
+        form: "compact",
+        variables: { value: code`value` },
+      })}`,
+  ),
+  { on: "," },
+)}})`;
   }
 
   @Memoize()

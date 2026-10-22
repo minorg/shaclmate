@@ -1,4 +1,5 @@
 import { Memoize } from "typescript-memoize";
+
 import { AbstractIntersectionType } from "./AbstractIntersectionType.js";
 import type { Type } from "./Type.js";
 import { type Code, joinCode } from "./ts-poet-wrapper.js";
@@ -11,6 +12,24 @@ export class IntersectionType extends AbstractIntersectionType<Type> {
     return joinCode(
       this.members.map((member) => member.type.expression),
       { on: "&" },
+    );
+  }
+
+  protected override fromJsonFunctionExpression(): Code {
+    throw new Error(
+      "IntersectionType: not implemented: fromJsonFunctionExpression",
+    );
+  }
+
+  protected fromRdfResourceValuesFunctionExpression(): Code {
+    throw new Error(
+      "IntersectionType: not implemented: fromRdfResourceValuesFunctionExpression",
+    );
+  }
+
+  protected override toJsonFunctionExpression(): Code {
+    throw new Error(
+      "IntersectionType: not implemented: toJsonFunctionExpression",
     );
   }
 }
