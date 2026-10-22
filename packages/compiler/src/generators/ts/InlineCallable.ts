@@ -10,11 +10,11 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export class InlineCallable {
   #unannotatedExpression: Code | (() => Code);
 
-  readonly type: Maybe<{ readonly expression: Code }>;
+  readonly type: Maybe<Code>;
 
   constructor(
     unannotatedExpression: Code | (() => Code),
-    options?: { type?: { readonly expression: Code } },
+    options?: { type?: Code },
   ) {
     this.#unannotatedExpression = unannotatedExpression;
     this.type = Maybe.fromNullable(options?.type);
@@ -23,10 +23,7 @@ export class InlineCallable {
   @Memoize()
   get annotatedUsage(): Code {
     return this.type
-      .map(
-        (type) =>
-          code`((${this.unannotatedExpression}) satisfies ${type.expression})`,
-      )
+      .map((type) => code`((${this.unannotatedExpression}) satisfies ${type})`)
       .orDefault(this.unannotatedUsage);
   }
 

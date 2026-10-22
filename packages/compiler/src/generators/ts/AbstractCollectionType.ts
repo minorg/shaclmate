@@ -34,9 +34,7 @@ export abstract class AbstractCollectionType<
     return new InlineCallable(
       code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction.unannotatedUsage}))`,
       {
-        type: {
-          expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
-        },
+        type: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
       },
     );
   }

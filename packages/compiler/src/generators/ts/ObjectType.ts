@@ -252,9 +252,7 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   get toStringRecordFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.ToStringRecordFunction}<${this.expression}>`,
-    };
+    const type = code`${this.reusables.snippets.ToStringRecordFunction}<${this.expression}>`;
     const unannotatedExpression = () =>
       ObjectType_toStringRecordFunctionExpression.call(this);
 
@@ -279,9 +277,7 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   protected get _fromRdfResourceFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}>`,
-    };
+    const type = code`${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}>`;
     const unannotatedExpression = () =>
       ObjectType_fromRdfResourceFunctionExpression.call(this);
 
@@ -302,9 +298,7 @@ export class ObjectType extends AbstractStructuredType {
     const identifierTypeExpression = this.name
       .map(() => this.identifierTypeAlias)
       .orDefault(this.identifierType.expression);
-    const type = {
-      expression: code`${this.reusables.snippets._ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>`,
-    };
+    const type = code`${this.reusables.snippets._ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>`;
     const unannotatedExpression = () =>
       ObjectType_toRdfResourceFunctionExpression.call(this);
 
@@ -356,9 +350,7 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   protected get createFunction(): Callable {
-    const type = {
-      expression: code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}>`,
-    };
+    const type = code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}>`;
     const unannotatedExpression = () =>
       ObjectType_createFunctionExpression.call(this);
 
@@ -376,9 +368,7 @@ export class ObjectType extends AbstractStructuredType {
 
   protected get createUnsafeFunction(): Callable {
     const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-    const type = {
-      expression: code`<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}) => ${this.expression}`,
-    };
+    const type = code`<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}) => ${this.expression}`;
     const unannotatedExpression = () =>
       code`<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}): ${this.expression} => create(${this.constructorParameters.variable}).unsafeCoerce()`;
 
@@ -396,9 +386,7 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   protected get focusSparqlConstructTriplesFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}>`,
-    };
+    const type = code`${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}>`;
     const unannotatedExpression = () =>
       ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this);
 
@@ -416,9 +404,7 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   protected get focusSparqlWherePatternsFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}>`,
-    };
+    const type = code`${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}>`;
     const unannotatedExpression = () =>
       ObjectType_focusSparqlWherePatternsFunctionExpression.call(this);
 
@@ -459,9 +445,7 @@ export class ObjectType extends AbstractStructuredType {
       )}> & { ${joinCode(Object.values(replacePropertyDeclarations))} }`;
     }
 
-    const type = {
-      expression: code`${this.reusables.snippets.HashFunction}<${thisTypeExpression}>`,
-    };
+    const type = code`${this.reusables.snippets.HashFunction}<${thisTypeExpression}>`;
     const unannotatedExpression = () => this.hashFunctionExpression();
 
     return this.name
@@ -478,9 +462,7 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   protected get fromRdfResourceFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.FromRdfResourceFunction}<${this.expression}>`,
-    };
+    const type = code`${this.reusables.snippets.FromRdfResourceFunction}<${this.expression}>`;
     const unannotatedExpression = () =>
       code`${this.reusables.snippets.wrap_FromRdfResourceFunction}(${this._fromRdfResourceFunction.annotatedUsage})`;
 
@@ -515,9 +497,7 @@ export class ObjectType extends AbstractStructuredType {
     const identifierTypeExpression = this.name
       .map(() => this.identifierTypeAlias)
       .orDefault(this.identifierType.expression);
-    const type = {
-      expression: code`${this.reusables.snippets.ToRdfResourceFunction}<${this.expression}, ${identifierTypeExpression}>`,
-    };
+    const type = code`${this.reusables.snippets.ToRdfResourceFunction}<${this.expression}, ${identifierTypeExpression}>`;
     const unannotatedExpression = () =>
       code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>(${this._toRdfResourceFunction.annotatedUsage})`;
 

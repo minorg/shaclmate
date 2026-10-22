@@ -13,9 +13,7 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractStructuredType extends AbstractType {
   @Memoize()
   override get equalsFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`,
-    };
+    const type = code`${this.reusables.snippets.EqualsFunction}<${this.expression}>`;
     const unannotatedExpression = () => this.equalsFunctionExpression();
 
     return this.name
@@ -32,9 +30,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get filterFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.expression}>`,
-    };
+    const type = code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.expression}>`;
     const unannotatedExpression = () => this.filterFunctionExpression();
 
     return this.name
@@ -58,9 +54,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get fromJsonFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`,
-    };
+    const type = code`${this.reusables.snippets.FromJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
     const unannotatedExpression = () => this.fromJsonFunctionExpression();
 
     return this.name
@@ -77,9 +71,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
-    };
+    const type = code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`;
     const unannotatedExpression = () =>
       this.fromRdfResourceValuesFunctionExpression();
 
@@ -97,9 +89,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get hashFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.HashFunction}<${this.expression}>`,
-    };
+    const type = code`${this.reusables.snippets.HashFunction}<${this.expression}>`;
     const unannotatedExpression = () => this.hashFunctionExpression();
 
     return this.name
@@ -123,9 +113,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toJsonFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`,
-    };
+    const type = code`${this.reusables.snippets.ToJsonFunction}<${this.expression}, ${this.jsonType({ form: "expanded" }).expression}>`;
     const unannotatedExpression = () => this.toJsonFunctionExpression();
 
     return this.name
@@ -142,9 +130,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toLoggableFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.ToLoggableFunction}<${this.expression}>`,
-    };
+    const type = code`${this.reusables.snippets.ToLoggableFunction}<${this.expression}>`;
     const unannotatedExpression = () => this.toLoggableFunctionExpression();
 
     return this.name
@@ -161,9 +147,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toRdfResourceValuesFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}, ${this.toRdfResourceValueTypesExpression}>`,
-    };
+    const type = code`${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.expression}, ${this.toRdfResourceValueTypesExpression}>`;
     const unannotatedExpression = () =>
       this.toRdfResourceValuesFunctionExpression();
 
@@ -181,9 +165,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toStringFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.ToStringFunction}<${this.expression}>`,
-    };
+    const type = code`${this.reusables.snippets.ToStringFunction}<${this.expression}>`;
     const unannotatedExpression = () => this.toStringFunctionExpression();
 
     return this.name
@@ -203,9 +185,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`,
-    };
+    const type = code`${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>`;
     const unannotatedExpression = () =>
       this.valueSparqlConstructTriplesFunctionExpression();
 
@@ -223,9 +203,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Callable {
-    const type = {
-      expression: code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`,
-    };
+    const type = code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`;
     const unannotatedExpression = () =>
       this.valueSparqlWherePatternsFunctionExpression();
 

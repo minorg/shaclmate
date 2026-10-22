@@ -8,7 +8,7 @@ import { type Code, code } from "./ts-poet-wrapper.js";
  */
 export class DeclaredCallable {
   private readonly qualifiedName: readonly string[];
-  private readonly type: { readonly expression: Code };
+  private readonly type: Code;
   readonly #unannotatedExpression: Code | (() => Code);
 
   constructor({
@@ -18,7 +18,7 @@ export class DeclaredCallable {
   }: {
     unannotatedExpression: Code | (() => Code);
     qualifiedName: readonly string[];
-    type: { readonly expression: Code };
+    type: Code;
   }) {
     this.#unannotatedExpression = unannotatedExpression;
     this.qualifiedName = qualifiedName;
@@ -37,7 +37,7 @@ export class DeclaredCallable {
 
   @Memoize()
   get declaration(): Code {
-    return code`const ${this.unqualifiedName}: ${this.type.expression} = ${this.unannotatedExpression};`;
+    return code`const ${this.unqualifiedName}: ${this.type} = ${this.unannotatedExpression};`;
   }
 
   get unqualifiedName(): string {
