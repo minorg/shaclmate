@@ -5,7 +5,13 @@ import type { ObjectType } from "../ObjectType.js";
 import { code, joinCode } from "../ts-poet-wrapper.js";
 
 export function ObjectType_toStringRecordFunction(this: ObjectType): Callable {
-  const type = code`${this.reusables.snippets.ToStringRecordFunction}<${this.expression}>`;
+  const type = code`${this.reusables.snippets.ToStringRecordFunction}<${this.propertySubsetExpression(
+    (property) =>
+      property
+        .toStringInitializer({ variables: { object: code`object` } })
+        .isJust(),
+  )}>`;
+
   const unannotatedExpression = () =>
     code`(${this.thisVariable}) => ${this.reusables.snippets.compactRecord}({${joinCode(
       this.properties.flatMap((property) =>

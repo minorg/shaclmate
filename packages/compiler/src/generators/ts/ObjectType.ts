@@ -368,6 +368,51 @@ export class ObjectType extends AbstractStructuredType {
     return code`${this.toJsonFunction.annotatedUsage}(${variables.value})`;
   }
 
+  protected propertySubsetExpression(
+    propertyFilter: (property: ObjectType.Property) => boolean,
+  ): Code {
+    return this.name
+      .map((name) => {
+        const omitProperties: ObjectType.Property[] = [];
+        const pickProperties: ObjectType.Property[] = [];
+        for (const property of this.properties) {
+          if (propertyFilter(property)) {
+            pickProperties.push(property);
+          } else {
+            omitProperties.push(property);
+          }
+        }
+
+        if (pickProperties.length === 0) {
+          return code`{}`;
+        }
+
+        if (pickProperties.length === this.properties.length) {
+          return this.expression;
+        }
+
+        if (pickProperties.length <= this.properties.length / 2) {
+          return code`Pick<${name}, ${joinCode(
+            pickProperties.map((property) => code`${literalOf(property.name)}`),
+            { on: " | " },
+          )}>`;
+        } else {
+          return code`Omit<${name}, ${joinCode(
+            omitProperties.map((property) => code`${literalOf(property.name)}`),
+            { on: " | " },
+          )}>`;
+        }
+      })
+      .orDefaultLazy(() => {
+        return code`{ ${joinCode(
+          this.properties.flatMap((property) =>
+            propertyFilter(property) ? property.declaration.toList() : [],
+          ),
+          { on: "\n\n" },
+        )} }`;
+      });
+  }
+
   protected override staticModuleDeclarations(
     name: string,
   ): Record<string, Code> {
