@@ -1,4 +1,5 @@
 import type { ConditionalOutput } from "ts-poet/build/ConditionalOutput.js";
+import { AbstractCallable } from "./AbstractCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -6,11 +7,12 @@ import { type Code, code } from "./ts-poet-wrapper.js";
  *
  * Callers assume the referent carries its own type annotations, so there's no distinction between annotated and unannotated usage.
  */
-export class ReferenceCallable {
-  readonly annotatedUsage: Code;
-  readonly unannotatedUsage: Code;
+export class ReferenceCallable extends AbstractCallable {
+  override readonly annotatedUsage: Code;
+  override readonly unannotatedUsage: Code;
 
   constructor(reference: ConditionalOutput | Code) {
+    super();
     this.annotatedUsage = this.unannotatedUsage = code`${reference}`;
   }
 }
