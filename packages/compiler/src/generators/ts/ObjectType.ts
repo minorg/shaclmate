@@ -4,20 +4,27 @@ import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { ObjectType_createFunctionExpression } from "./_ObjectType/ObjectType_createFunctionExpression.js";
+import { ObjectType__fromRdfResourceFunction } from "./_ObjectType/ObjectType__fromRdfResourceFunction.js";
+import { ObjectType__toRdfResourceFunction } from "./_ObjectType/ObjectType__toRdfResourceFunction.js";
+import { ObjectType_constructorParameters } from "./_ObjectType/ObjectType_constructorParameters.js";
+import { ObjectType_conversionFunction } from "./_ObjectType/ObjectType_conversionFunction.js";
+import { ObjectType_createFunction } from "./_ObjectType/ObjectType_createFunction.js";
+import { ObjectType_createUnsafeFunction } from "./_ObjectType/ObjectType_createUnsafeFunction.js";
 import { ObjectType_DiscriminantProperty } from "./_ObjectType/ObjectType_DiscriminantProperty.js";
 import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
 import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunctionExpression.js";
 import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterTypeExpression.js";
-import { ObjectType_focusSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionExpression.js";
-import { ObjectType_focusSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionExpression.js";
+import { ObjectType_focusSparqlConstructTriplesFunction } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunction.js";
+import { ObjectType_focusSparqlWherePatternsFunction } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunction.js";
 import { ObjectType_fromJsonFunctionExpression } from "./_ObjectType/ObjectType_fromJsonFunctionExpression.js";
-import { ObjectType_fromRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceFunctionExpression.js";
+import { ObjectType_fromRdfResourceFunction } from "./_ObjectType/ObjectType_fromRdfResourceFunction.js";
 import { ObjectType_fromRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionExpression.js";
 import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
 import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
+import { ObjectType_hashFunctionType } from "./_ObjectType/ObjectType_hashFunctionType.js";
 import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
+import { ObjectType_jsonType } from "./_ObjectType/ObjectType_jsonType.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import type { ObjectType_Property } from "./_ObjectType/ObjectType_Property.js";
 import { ObjectType_RdfTypeProperty } from "./_ObjectType/ObjectType_RdfTypeProperty.js";
@@ -28,10 +35,11 @@ import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectTyp
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunctionExpression.js";
 import { ObjectType_toLoggableFunctionExpression } from "./_ObjectType/ObjectType_toLoggableFunctionExpression.js";
-import { ObjectType_toRdfResourceFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceFunctionExpression.js";
+import { ObjectType_toRdfResourceFunction } from "./_ObjectType/ObjectType_toRdfResourceFunction.js";
 import { ObjectType_toRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceValuesFunctionExpression.js";
 import { ObjectType_toStringFunctionExpression } from "./_ObjectType/ObjectType_toStringFunctionExpression.js";
-import { ObjectType_toStringRecordFunctionExpression } from "./_ObjectType/ObjectType_toStringRecordFunctionExpression.js";
+import { ObjectType_toStringFunctionType } from "./_ObjectType/ObjectType_toStringFunctionType.js";
+import { ObjectType_toStringRecordFunction } from "./_ObjectType/ObjectType_toStringRecordFunction.js";
 import { ObjectType_typeGuardFunctionExpression } from "./_ObjectType/ObjectType_typeGuardFunctionExpression.js";
 import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.js";
 import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.js";
@@ -42,7 +50,6 @@ import type { Callable } from "./Callable.js";
 import { codeEquals } from "./codeEquals.js";
 import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import { InlineCallable } from "./InlineCallable.js";
 import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
 import {
@@ -130,32 +137,7 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
-    if (this.name.isJust()) {
-      return Maybe.empty();
-    }
-
-    const sourceTypePropertySignatures: Code[] = [];
-    for (const property of this.properties) {
-      property.constructorParameter.ifJust((propertyConstructorParameter) => {
-        sourceTypePropertySignatures.push(
-          propertyConstructorParameter.signature,
-        );
-      });
-    }
-    const sourceTypeExpression = code`{ ${joinCode(sourceTypePropertySignatures)} }`;
-    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-    return Maybe.of({
-      code: code`(<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(value: ${sourceTypeExpression}, ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT) => ${this.createFunction.unannotatedUsage}({ ...value, ${syntheticNamePrefix}defaultNamespace }))`,
-      sourceTypes: [
-        {
-          expression: sourceTypeExpression,
-          jsType: {
-            instanceof: "Object",
-            typeof: "object",
-          },
-        },
-      ],
-    });
+    return ObjectType_conversionFunction.call(this);
   }
 
   override get declaration(): Maybe<Code> {
@@ -252,20 +234,7 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   get toStringRecordFunction(): Callable {
-    const type = code`${this.reusables.snippets.ToStringRecordFunction}<${this.expression}>`;
-    const unannotatedExpression = () =>
-      ObjectType_toStringRecordFunctionExpression.call(this);
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "toStringRecord"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return ObjectType_toStringRecordFunction.call(this);
   }
 
   @Memoize()
@@ -277,41 +246,12 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   protected get _fromRdfResourceFunction(): Callable {
-    const type = code`${this.reusables.snippets._FromRdfResourceFunction}<${this.expression}>`;
-    const unannotatedExpression = () =>
-      ObjectType_fromRdfResourceFunctionExpression.call(this);
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "_fromRdfResource"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return ObjectType__fromRdfResourceFunction.call(this);
   }
 
   @Memoize()
   protected get _toRdfResourceFunction(): Callable {
-    const identifierTypeExpression = this.name
-      .map(() => this.identifierTypeAlias)
-      .orDefault(this.identifierType.expression);
-    const type = code`${this.reusables.snippets._ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>`;
-    const unannotatedExpression = () =>
-      ObjectType_toRdfResourceFunctionExpression.call(this);
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "_toRdfResourceFunction"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return ObjectType__toRdfResourceFunction.call(this);
   }
 
   @Memoize()
@@ -323,159 +263,36 @@ export class ObjectType extends AbstractStructuredType {
     };
     variable: Code;
   } {
-    let hasQuestionToken: boolean = true;
-    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-    const propertySignatures: Code[] = [
-      code`readonly ${syntheticNamePrefix}defaultNamespace?: ${syntheticNamePrefix}DefaultNamespaceT;`,
-    ];
-    for (const property of this.properties) {
-      property.constructorParameter.ifJust((propertyConstructorParameter) => {
-        hasQuestionToken =
-          hasQuestionToken && propertyConstructorParameter.hasQuestionToken;
-        propertySignatures.push(propertyConstructorParameter.signature);
-      });
-    }
-
-    const typeExpression = code`{ ${joinCode(propertySignatures)} }`;
-
-    return {
-      hasQuestionToken,
-      signature: code`parameters${hasQuestionToken ? "?" : ""}: ${typeExpression}`,
-      type: {
-        expression: typeExpression,
-      },
-      variable: code`parameters`,
-    };
+    return ObjectType_constructorParameters.call(this);
   }
 
   @Memoize()
   protected get createFunction(): Callable {
-    const type = code`<${this.configuration.syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}) => ${this.reusables.imports.Either}<Error, ${this.expression}>`;
-    const unannotatedExpression = () =>
-      ObjectType_createFunctionExpression.call(this);
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "create"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return ObjectType_createFunction.call(this);
   }
 
+  @Memoize()
   protected get createUnsafeFunction(): Callable {
-    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-    const type = code`<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}) => ${this.expression}`;
-    const unannotatedExpression = () =>
-      code`<${syntheticNamePrefix}DefaultNamespaceT extends ${this.reusables.snippets.NamespaceBuilder} = ${this.reusables.snippets.NamespaceBuilder}>(${this.constructorParameters.signature}): ${this.expression} => create(${this.constructorParameters.variable}).unsafeCoerce()`;
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "createUnsafe"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return ObjectType_createUnsafeFunction.call(this);
   }
 
   @Memoize()
   protected get focusSparqlConstructTriplesFunction(): Callable {
-    const type = code`${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}>`;
-    const unannotatedExpression = () =>
-      ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this);
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "focusSparqlConstructTriples"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return ObjectType_focusSparqlConstructTriplesFunction.call(this);
   }
 
   @Memoize()
   protected get focusSparqlWherePatternsFunction(): Callable {
-    const type = code`${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}>`;
-    const unannotatedExpression = () =>
-      ObjectType_focusSparqlWherePatternsFunctionExpression.call(this);
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "focusSparqlWherePatterns"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
-  }
-
-  override get hashFunction(): Callable {
-    const replacePropertyDeclarations: Record<string, Code> = {};
-    for (const property of this.properties) {
-      const declaration = property.declaration.extract();
-      const hashFunctionParameter = property.hashFunctionParameter.extract();
-      if (
-        declaration &&
-        hashFunctionParameter &&
-        !codeEquals(hashFunctionParameter, declaration)
-      ) {
-        replacePropertyDeclarations[property.name] =
-          code`${hashFunctionParameter}`;
-      }
-    }
-
-    let thisTypeExpression = this.expression;
-    if (Object.keys(replacePropertyDeclarations).length > 0) {
-      thisTypeExpression = code`Omit<${thisTypeExpression}, ${joinCode(
-        Object.keys(replacePropertyDeclarations).map(
-          (propertyName) => code`${literalOf(propertyName)}`,
-        ),
-        { on: " | " },
-      )}> & { ${joinCode(Object.values(replacePropertyDeclarations))} }`;
-    }
-
-    const type = code`${this.reusables.snippets.HashFunction}<${thisTypeExpression}>`;
-    const unannotatedExpression = () => this.hashFunctionExpression();
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "hash"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return ObjectType_focusSparqlWherePatternsFunction.call(this);
   }
 
   @Memoize()
   protected get fromRdfResourceFunction(): Callable {
-    const type = code`${this.reusables.snippets.FromRdfResourceFunction}<${this.expression}>`;
-    const unannotatedExpression = () =>
-      code`${this.reusables.snippets.wrap_FromRdfResourceFunction}(${this._fromRdfResourceFunction.annotatedUsage})`;
+    return ObjectType_fromRdfResourceFunction.call(this);
+  }
 
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "fromRdfResource"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+  protected override get hashFunctionType(): Code {
+    return ObjectType_hashFunctionType.call(this);
   }
 
   protected override get inlineExpression(): Code {
@@ -494,23 +311,7 @@ export class ObjectType extends AbstractStructuredType {
 
   @Memoize()
   protected get toRdfResourceFunction(): Callable {
-    const identifierTypeExpression = this.name
-      .map(() => this.identifierTypeAlias)
-      .orDefault(this.identifierType.expression);
-    const type = code`${this.reusables.snippets.ToRdfResourceFunction}<${this.expression}, ${identifierTypeExpression}>`;
-    const unannotatedExpression = () =>
-      code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>(${this._toRdfResourceFunction.annotatedUsage})`;
-
-    return this.name
-      .map<Callable>(
-        (name) =>
-          new DeclaredCallable({
-            qualifiedName: [name, "toRdfResource"],
-            type,
-            unannotatedExpression,
-          }),
-      )
-      .orDefault(new InlineCallable(unannotatedExpression, { type }));
+    return ObjectType_toRdfResourceFunction.call(this);
   }
 
   @Memoize()
@@ -528,53 +329,14 @@ export class ObjectType extends AbstractStructuredType {
     );
   }
 
-  override jsonType({
-    discriminantProperty,
-  }: Parameters<AbstractType["jsonType"]>[0]): AbstractType.JsonType {
-    const jsonObjectTypeMembers = this.properties.flatMap((property) =>
-      property.jsonObjectMember.toList(),
-    );
+  protected override get toStringFunctionType(): Code {
+    return ObjectType_toStringFunctionType.call(this);
+  }
 
-    if (discriminantProperty) {
-      const discriminantPropertyName = Object.keys(discriminantProperty)[0];
-      invariant(discriminantPropertyName);
-      const discriminantPropertyType =
-        discriminantProperty[discriminantPropertyName].type;
-      invariant(discriminantPropertyType);
-
-      invariant(
-        discriminantPropertyType.kind === "JsonNumber" ||
-          discriminantPropertyType.kind === "JsonString",
-      );
-      const discriminantPropertyValue = discriminantPropertyType.in_[0];
-      invariant(typeof discriminantPropertyValue !== "undefined");
-
-      const thisDiscriminantProperty = this.discriminantProperty.extract();
-      if (thisDiscriminantProperty) {
-        if (
-          discriminantPropertyName !== thisDiscriminantProperty.name ||
-          discriminantPropertyValue !== thisDiscriminantProperty.value
-        ) {
-          throw new Error(
-            `${this.shapeIdentifier}: overriding the discriminant property is unsupported`,
-          );
-        }
-      } else {
-        jsonObjectTypeMembers.unshift({
-          description: Maybe.empty(),
-          label: Maybe.empty(),
-          name: discriminantPropertyName,
-          optional: false,
-          recursive: false,
-          type: discriminantPropertyType,
-          uiSchemaElement: Maybe.empty(),
-        });
-      }
-    }
-
-    return this.jsonTypeFactory.createJsonObjectType(jsonObjectTypeMembers, {
-      name: this.name.map((name) => [name, "Json"]).extract(),
-    });
+  override jsonType(
+    parameters: Parameters<AbstractType["jsonType"]>[0],
+  ): AbstractType.JsonType {
+    return ObjectType_jsonType.call(this, parameters);
   }
 
   override toJsonExpression({

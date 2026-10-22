@@ -1,3 +1,6 @@
+import type { Callable } from "../Callable.js";
+import { DeclaredCallable } from "../DeclaredCallable.js";
+import { InlineCallable } from "../InlineCallable.js";
 import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -8,7 +11,7 @@ const variables = {
   variablePrefix: code`parameters.variablePrefix`,
 };
 
-export function ObjectType_focusSparqlConstructTriplesFunctionExpression(
+function ObjectType_focusSparqlConstructTriplesFunctionExpression(
   this: ObjectType,
 ): Code {
   let triplesVariableDeclarationKeyword = "const";
@@ -41,4 +44,23 @@ ${
     : "return [];"
 }
 }`;
+}
+
+export function ObjectType_focusSparqlConstructTriplesFunction(
+  this: ObjectType,
+): Callable {
+  const type = code`${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}>`;
+  const unannotatedExpression = () =>
+    ObjectType_focusSparqlConstructTriplesFunctionExpression.call(this);
+
+  return this.name
+    .map<Callable>(
+      (name) =>
+        new DeclaredCallable({
+          qualifiedName: [name, "focusSparqlConstructTriples"],
+          type,
+          unannotatedExpression,
+        }),
+    )
+    .orDefault(new InlineCallable(unannotatedExpression, { type }));
 }
