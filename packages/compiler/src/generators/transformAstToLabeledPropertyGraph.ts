@@ -17,25 +17,29 @@ export function transformAstToLabeledPropertyGraph(
         name: { type: "string", value: typeName(namedType) },
       };
 
-      for (const namedObjectTypeProperty of namedStructType.fields) {
+      for (const namedStructTypeField of namedStructType.fields) {
+        if (namedStructTypeField.kind !== "Shacl") {
+          continue;
+        }
+
         let itemType: ast.Type;
 
-        switch (namedObjectTypeProperty.type.kind) {
+        switch (namedStructTypeField.type.kind) {
           case "DefaultValue":
           case "List":
           case "Option":
           case "Set":
-            itemType = namedObjectTypeProperty.type.itemType;
+            itemType = namedStructTypeField.type.itemType;
             break;
           case "Lazy":
-            itemType = namedObjectTypeProperty.type.resolveType;
+            itemType = namedStructTypeField.type.resolveType;
             break;
           case "LazyOption":
           case "LazySet":
-            itemType = namedObjectTypeProperty.type.resolveType.itemType;
+            itemType = namedStructTypeField.type.resolveType.itemType;
             break;
           default:
-            itemType = namedObjectTypeProperty.type;
+            itemType = namedStructTypeField.type;
             break;
         }
 
@@ -45,8 +49,8 @@ export function transformAstToLabeledPropertyGraph(
           case "DiscriminatedUnion":
             if (itemType.name.isJust()) {
               relationships.push({
-                id: namedObjectTypeProperty.shapeIdentifier.toString(),
-                label: Maybe.of(namedObjectTypeProperty.name),
+                id: namedStructTypeField.shapeIdentifier.toString(),
+                label: Maybe.of(namedStructTypeField.name),
                 properties: {},
                 sourceNodeId: id,
                 targetNodeId: typeId(itemType),
@@ -54,9 +58,9 @@ export function transformAstToLabeledPropertyGraph(
             }
             break;
           default:
-            properties[namedObjectTypeProperty.name] = {
+            properties[namedStructTypeField.name] = {
               type: "string",
-              value: namedObjectTypeProperty.toString(),
+              value: namedStructTypeField.toString(),
             };
         }
       }

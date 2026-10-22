@@ -1,90 +1,97 @@
 {
   "$type": "UnionDiscriminantsStruct",
   "@id": "http://example.com/instance",
-  "optionalIriOrString": "test",
-  "optionalNodeOrLiteral": {
+  "optionalIriOrString": {
+    "$type": "string",
+    "@type": "http://www.w3.org/2001/XMLSchema#string",
     "@value": "test",
-    "termType": "Literal",
+  },
+  "optionalNodeOrLiteral": {
+    "$type": "Literal",
+    "@value": "test",
   },
   "optionalNodeOrNodeOrString": {
-    "$type": "DiscriminatedUnionMember2",
-    "value": {
-      "$type": "DiscriminatedUnionMember2",
-      "@id": "http://example.com/discriminatedUnionMember2a",
-      "discriminatedUnionMember2Distinct": "test",
-      "discriminatedUnionMemberCommon": "test",
-    },
+    "$type": "StructDiscriminatedUnionMember2",
+    "@id": "http://example.com/discriminatedUnionMember2a",
+    "@type": "http://example.com/StructDiscriminatedUnionMember2",
+    "structDiscriminatedUnionMember2Distinct": "test",
+    "structDiscriminatedUnionMemberCommon": "test",
   },
   "optionalTerm": {
+    "$type": "Literal",
     "@value": "test",
-    "termType": "Literal",
   },
-  "requiredIriOrString": "test",
-  "requiredNodeOrLiteral": {
+  "requiredIriOrString": {
+    "$type": "string",
+    "@type": "http://www.w3.org/2001/XMLSchema#string",
     "@value": "test",
-    "termType": "Literal",
+  },
+  "requiredNodeOrLiteral": {
+    "$type": "Literal",
+    "@value": "test",
   },
   "requiredNodeOrNodeOrString": {
     "$type": "string",
-    "value": "test",
+    "@type": "http://www.w3.org/2001/XMLSchema#string",
+    "@value": "test",
   },
   "requiredTerm": {
+    "$type": "Literal",
     "@value": "test",
-    "termType": "Literal",
   },
   "setIriOrString": [
-    "test",
     {
+      "$type": "string",
+      "@type": "http://www.w3.org/2001/XMLSchema#string",
+      "@value": "test",
+    },
+    {
+      "$type": "object",
       "@id": "http://example.com",
     },
   ],
   "setNodeOrLiteral": [
     {
+      "$type": "Literal",
       "@value": "test",
-      "termType": "Literal",
     },
     {
-      "termType": "DiscriminatedUnionMember1",
-      "value": {
-        "$type": "DiscriminatedUnionMember1",
-        "@id": "http://example.com/discriminatedUnionMember1c",
-        "discriminatedUnionMember1Distinct": "test",
-        "discriminatedUnionMemberCommon": "test",
-      },
+      "$type": "StructDiscriminatedUnionMember1",
+      "@id": "http://example.com/discriminatedUnionMember1c",
+      "@type": "http://example.com/StructDiscriminatedUnionMember1",
+      "structDiscriminatedUnionMember1Distinct": "test",
+      "structDiscriminatedUnionMemberCommon": "test",
     },
   ],
   "setNodeOrNodeOrString": [
     {
       "$type": "string",
-      "value": "test",
+      "@type": "http://www.w3.org/2001/XMLSchema#string",
+      "@value": "test",
     },
     {
-      "$type": "DiscriminatedUnionMember2",
-      "value": {
-        "$type": "DiscriminatedUnionMember2",
-        "@id": "http://example.com/discriminatedUnionMember2b",
-        "discriminatedUnionMember2Distinct": "test",
-        "discriminatedUnionMemberCommon": "test",
-      },
+      "$type": "StructDiscriminatedUnionMember2",
+      "@id": "http://example.com/discriminatedUnionMember2b",
+      "@type": "http://example.com/StructDiscriminatedUnionMember2",
+      "structDiscriminatedUnionMember2Distinct": "test",
+      "structDiscriminatedUnionMemberCommon": "test",
     },
     {
-      "$type": "DiscriminatedUnionMember1",
-      "value": {
-        "$type": "DiscriminatedUnionMember1",
-        "@id": "http://example.com/discriminatedUnionMember1b",
-        "discriminatedUnionMember1Distinct": "test",
-        "discriminatedUnionMemberCommon": "test",
-      },
+      "$type": "StructDiscriminatedUnionMember1",
+      "@id": "http://example.com/discriminatedUnionMember1b",
+      "@type": "http://example.com/StructDiscriminatedUnionMember1",
+      "structDiscriminatedUnionMember1Distinct": "test",
+      "structDiscriminatedUnionMemberCommon": "test",
     },
   ],
   "setTerm": [
     {
+      "$type": "Literal",
       "@value": "test",
-      "termType": "Literal",
     },
     {
+      "$type": "BlankNode",
       "@id": "http://example.com",
-      "termType": "NamedNode",
     },
   ],
 }

@@ -1,13 +1,20 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
 import { xsd } from "@tpluscode/rdf-ns-builders";
-
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractTermType } from "./AbstractTermType.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import type { Callable } from "./Callable.js";
+import { ReferenceCallable } from "./ReferenceCallable.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -18,15 +25,17 @@ export class TermType<
 > extends AbstractTermType {
   override readonly conversionFunction: Maybe<AbstractTermType.ConversionFunction> =
     Maybe.empty();
-  override readonly filterFunction =
-    code`${this.reusables.snippets.filterTerm}`;
+  override readonly filterFunction = new ReferenceCallable(
+    this.reusables.snippets.filterTerm,
+  );
   override readonly jsTypes = [
     { instanceof: "Object", typeof: "object" },
   ] as const;
   override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
-  override readonly valueSparqlWherePatternsFunction =
-    code`${this.reusables.snippets.termSparqlWherePatterns}`;
+  override readonly valueSparqlWherePatternsFunction = new ReferenceCallable(
+    this.reusables.snippets.termSparqlWherePatterns,
+  );
 
   constructor({
     nodeKinds,
@@ -46,13 +55,15 @@ export class TermType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.termFromRdfResourceValues}<${this.expression}>`;
+  override get filterType(): Code {
+    return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
   }
 
   @Memoize()
-  override get filterType(): Code {
-    return code`${this.reusables.snippets.TermFilter}<${this.expression}>`;
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new ReferenceCallable(
+      code`${this.reusables.snippets.termFromRdfResourceValues}<${this.expression}>`,
+    );
   }
 
   override get graphqlType(): AbstractTermType.GraphqlType {
@@ -98,24 +109,24 @@ export class TermType<
     return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${[
       ...this.nodeKinds,
     ].reduce(
-      (expression, nodeKind) => {
-        let valueToNodeKind: Code;
+      (combinedFromJsonExpression, nodeKind) => {
+        let fromJsonExpression: Code;
         switch (nodeKind) {
           case "BlankNode":
-            valueToNodeKind = code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
+            fromJsonExpression = code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
             break;
           case "IRI":
-            valueToNodeKind = code`${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])`;
+            fromJsonExpression = code`${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])`;
             break;
           case "Literal":
-            valueToNodeKind = code`${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined))`;
+            fromJsonExpression = code`${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined))`;
             break;
           default:
             throw new RangeError(nodeKind);
         }
-        return expression == null
-          ? valueToNodeKind
-          : code`((${variables.value}.termType === "${NodeKind.toTermType(nodeKind)}") ? (${valueToNodeKind}) : (${expression}))`;
+        return combinedFromJsonExpression == null
+          ? fromJsonExpression
+          : code`((${variables.value}.${this.configuration.objectDiscriminantProperty.jsonName} === "${NodeKind.toTermType(nodeKind)}") ? (${fromJsonExpression}) : (${combinedFromJsonExpression}))`;
       },
       null as Code | null,
     )!})`;
@@ -127,34 +138,49 @@ export class TermType<
     throw new Error("not implemented");
   }
 
-  override jsonSchema(
-    _parameters: Parameters<AbstractTermType["jsonSchema"]>[0],
-  ): Code {
-    return code`${this.reusables.imports.z}.discriminatedUnion("termType", [${joinCode(
+  @Memoize()
+  override jsonType(): AbstractTermType.JsonType {
+    return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
       [...this.nodeKinds].map((nodeKind) => {
+        const discriminantProperty = singleEntryRecord(
+          this.configuration.objectDiscriminantProperty.jsonName,
+          {
+            type: this.jsonTypeFactory.createJsonStringType({
+              in_: [NodeKind.toTermType(nodeKind)],
+            }),
+          },
+        );
         switch (nodeKind) {
           case "BlankNode":
           case "IRI":
-            return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1), termType: ${this.reusables.imports.z}.literal("${NodeKind.toTermType(nodeKind)}") })`;
+            return this.jsonTypeFactory.createJsonObjectType({
+              ...discriminantProperty,
+              "@id": {
+                type: this.jsonTypeFactory.createJsonStringType({
+                  minLength: 1n,
+                }),
+              },
+            });
           case "Literal":
-            return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string().optional(), "@type": ${this.reusables.imports.z}.string().optional(), "@value": ${this.reusables.imports.z}.string(), termType: ${this.reusables.imports.z}.literal("Literal") })`;
+            return this.jsonTypeFactory.createJsonObjectType({
+              ...discriminantProperty,
+              "@language": {
+                optional: true,
+                type: this.jsonTypeFactory.createJsonStringType(),
+              },
+              "@type": {
+                optional: true,
+                type: this.jsonTypeFactory.createJsonStringType(),
+              },
+              "@value": {
+                type: this.jsonTypeFactory.createJsonStringType(),
+              },
+            });
           default:
+            nodeKind satisfies never;
             throw new RangeError(nodeKind);
         }
       }),
-      { on: "," },
-    )}])`;
-  }
-
-  @Memoize()
-  override jsonType(): AbstractTermType.JsonType {
-    return new AbstractTermType.JsonType(
-      code`{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
-        .filter((nodeKind) => nodeKind !== "Literal")
-        .map((nodeKind) => `"${NodeKind.toTermType(nodeKind)}"`)
-        .join(
-          " | ",
-        )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`,
     );
   }
 
@@ -162,26 +188,38 @@ export class TermType<
     variables,
   }: Parameters<AbstractTermType["toJsonExpression"]>[0]): Code {
     return [...this.nodeKinds].reduce(
-      (expression, nodeKind) => {
-        let valueToNodeKind: Code;
+      (combinedToJsonExpression, nodeKind) => {
+        const toJsonExpression: Record<string, Code> = {};
+        toJsonExpression[
+          this.configuration.objectDiscriminantProperty.jsonName
+        ] = code`${literalOf(NodeKind.toTermType(nodeKind))} as const`;
         switch (nodeKind) {
           case "BlankNode":
-            valueToNodeKind = code`{ "@id": \`_:\${${variables.value}.value}\`, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
+            toJsonExpression["@id"] = code`\`_:\${${variables.value}.value}\``;
             break;
           case "IRI":
-            valueToNodeKind = code`{ "@id": ${variables.value}.value, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
+            toJsonExpression["@id"] = code`${variables.value}.value`;
             break;
           case "Literal":
-            valueToNodeKind = code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value, termType: "${NodeKind.toTermType(nodeKind)}" as const }`;
+            toJsonExpression["@language"] =
+              code`${variables.value}.language.length > 0 ? ${variables.value}.language : undefined`;
+            toJsonExpression["@type"] =
+              code`${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined`;
+            toJsonExpression["@value"] = code`${variables.value}.value`;
             break;
-          default:
-            throw new RangeError(nodeKind);
         }
-        return expression === null
-          ? valueToNodeKind
-          : code`(${variables.value}.termType === "${NodeKind.toTermType(nodeKind)}") ? ${valueToNodeKind} : ${expression}`;
+
+        return combinedToJsonExpression === null
+          ? code`${toJsonExpression}`
+          : code`(${variables.value}.termType === "${NodeKind.toTermType(nodeKind)}") ? ${toJsonExpression} : ${combinedToJsonExpression}`;
       },
       null as Code | null,
     )!;
+  }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<AbstractTermType["toLoggableExpression"]>[0]): Code {
+    return this.toJsonExpression({ form: "expanded", variables });
   }
 }

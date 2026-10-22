@@ -2,6 +2,8 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractLazyType } from "./AbstractLazyType.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LazyType extends AbstractLazyType<
@@ -58,15 +60,16 @@ ${this.reusables.snippets.convertToLazy}<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`\
-(
-    (
-      (values, { objectSet, schema, ...otherOptions }) =>
-        ${this.partialType.fromRdfResourceValuesFunction}(values, { ...otherOptions, objectSet, schema: schema.partialType })
-          .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => objectSet.${this.resolveType.objectSetMethodNames.object}(partial.${this.configuration.syntheticNamePrefix}identifier(), options) })))
-    ) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>
-)`;
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
+      code`\
+(values, { objectSet, schema, ...otherOptions }) =>
+  ${this.partialType.fromRdfResourceValuesFunction.annotatedUsage}(values, { ...otherOptions, objectSet, schema: schema.partialType })
+    .map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (partial, options) => objectSet.${this.resolveType.objectSetMethodNames.object}(partial.${this.partialType.identifierProperty.unsafeCoerce().name}(), options) })))`,
+      {
+        type: code`${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>`,
+      },
+    );
   }
 
   override graphqlResolveExpression({

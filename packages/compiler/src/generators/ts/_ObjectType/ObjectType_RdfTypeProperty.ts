@@ -4,7 +4,13 @@ import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "../ts-poet-wrapper.js";
 import { ObjectType_AbstractProperty } from "./ObjectType_AbstractProperty.js";
 
 export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
@@ -18,10 +24,6 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
   override readonly graphqlField: ObjectType_AbstractProperty["graphqlField"] =
     Maybe.empty();
   override readonly hashFunctionParameter: ObjectType_AbstractProperty["hashFunctionParameter"] =
-    Maybe.empty();
-  override readonly jsonSchema: ObjectType_AbstractProperty["jsonSchema"] =
-    Maybe.empty();
-  override readonly jsonSignature: ObjectType_AbstractProperty["jsonSignature"] =
     Maybe.empty();
   override readonly kind = "RdfType";
   override readonly mutable = false;
@@ -49,12 +51,35 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     this.toRdfTypes = toRdfTypes;
   }
 
+  @Memoize()
   override get schema(): Maybe<Code> {
     return Maybe.of(
       code`${{ fromRdfType: this.rdfjsTermExpression(this.fromRdfType), kind: this.kind, toRdfTypes: this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)) }}`,
     );
   }
 
+  @Memoize()
+  get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
+    return Maybe.of({
+      description: Maybe.empty(),
+      label: Maybe.empty(),
+      name: "@type",
+      optional: false,
+      recursive: this.recursive,
+      type:
+        this.toRdfTypes.length === 1
+          ? this.jsonTypeFactory.createJsonStringType()
+          : this.jsonTypeFactory.createJsonArrayType(
+              this.jsonTypeFactory.createJsonStringType(),
+              {
+                minCount: 1n,
+              },
+            ),
+      uiSchemaElement: Maybe.empty(),
+    });
+  }
+
+  @Memoize()
   override get schemaType(): Maybe<Code> {
     return Maybe.of(
       code`${{ fromRdfType: code`${this.reusables.imports.NamedNode}`, kind: this.kind, toRdfTypes: code`readonly ${this.reusables.imports.NamedNode}[]` }}`,
@@ -85,10 +110,6 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
 
   override hashStatements(): readonly Code[] {
     return [];
-  }
-
-  override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
   }
 
   override sparqlConstructTriplesExpression({
@@ -152,7 +173,19 @@ type: "optional" as const
     });
   }
 
+  @Memoize()
   override toJsonInitializer(): Maybe<Code> {
+    return Maybe.of(
+      code`"@type":
+          ${
+            this.toRdfTypes.length === 1
+              ? code`${literalOf(this.toRdfTypes[0].value)}`
+              : code`${arrayOf(...this.toRdfTypes.map((toRdfType) => toRdfType.value))}`
+          }`,
+    );
+  }
+
+  override toLoggableInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
 

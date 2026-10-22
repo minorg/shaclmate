@@ -22,5 +22,5 @@ export function ObjectType_filterFunctionExpression(this: ObjectType): Code {
   }
   statements.push(code`return true;`);
 
-  return code`((filter, value) => { ${joinCode(statements)} })`;
+  return code`(filter, value) => { ${joinCode(statements)} }`;
 }

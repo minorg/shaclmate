@@ -1,19 +1,20 @@
 import type { AbstractDiscriminatedUnionType } from "../AbstractDiscriminatedUnionType.js";
 import type { Type } from "../Type.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export function AbstractDiscriminatedUnionType_fromJsonFunctionExpression<
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-((value: ${this.jsonType().expression}): ${this.reusables.imports.Either}<Error, ${this.expression}> => {
+(value) => {
 ${joinCode(
   this.members.map(
-    ({ jsonType, jsonTypeCheck, type, unwrap, wrap }) =>
-      code`if (${jsonTypeCheck(code`value`)}) { return ${type.fromJsonExpression(
+    ({ primaryDiscriminantValue, type, wrap }) =>
+      code`if (value.${this.configuration.objectDiscriminantProperty.jsonName} === ${literalOf(primaryDiscriminantValue)}) { return ${type.fromJsonExpression(
         {
+          form: "expanded",
           variables: {
-            value: code`(${unwrap(code`value`)} as ${jsonType})`,
+            value: code`value`,
           },
         },
       )}.map(value => (${wrap(code`value`)})); }`,
@@ -21,5 +22,5 @@ ${joinCode(
 )}
 
   throw new Error("unable to deserialize JSON");
-})`;
+}`;
 }

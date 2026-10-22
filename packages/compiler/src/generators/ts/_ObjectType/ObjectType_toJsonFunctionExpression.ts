@@ -3,7 +3,7 @@ import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function ObjectType_toJsonFunctionExpression(this: ObjectType): Code {
   return code`\
-((${this.thisVariable}) => JSON.parse(JSON.stringify({ ${joinCode(
+(${this.thisVariable}) => JSON.parse(JSON.stringify({ ${joinCode(
     this.properties.flatMap((property) =>
       property
         .toJsonInitializer({
@@ -14,5 +14,5 @@ export function ObjectType_toJsonFunctionExpression(this: ObjectType): Code {
         .toList(),
     ),
     { on: "," },
-  )} } satisfies ${this.jsonType().expression})))`;
+  )} }))`;
 }

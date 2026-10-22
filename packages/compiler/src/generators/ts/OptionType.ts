@@ -3,7 +3,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import type { Callable } from "./Callable.js";
 import { codeEquals } from "./codeEquals.js";
+import { InlineCallable } from "./InlineCallable.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class OptionType<
@@ -41,13 +43,17 @@ export class OptionType<
   }
 
   @Memoize()
-  override get equalsFunction(): Code {
-    return code`((left, right) => ${this.reusables.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction}))`;
+  override get equalsFunction(): Callable {
+    return new InlineCallable(
+      code`((left, right) => ${this.reusables.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction.annotatedUsage}))`,
+    );
   }
 
   @Memoize()
-  get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+  get filterFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
@@ -56,8 +62,10 @@ export class OptionType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.maybeFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
@@ -73,8 +81,10 @@ export class OptionType<
   }
 
   @Memoize()
-  get hashFunction(): Code {
-    return code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction})`;
+  get hashFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction.annotatedUsage})`,
+    );
   }
 
   override get mutable(): boolean {
@@ -91,22 +101,28 @@ export class OptionType<
   }
 
   @Memoize()
-  override get validationFunction(): Maybe<Code> {
+  override get validationFunction(): Maybe<Callable> {
     return Maybe.of(
-      code`${this.reusables.snippets.validateMaybe}(${this.itemType.validationFunction.orDefault(
-        this.itemValidationFunctionDefault,
-      )})`,
+      new InlineCallable(
+        code`${this.reusables.snippets.validateMaybe}(${this.itemType.validationFunction
+          .map((_) => _.annotatedUsage)
+          .orDefault(this.itemValidationFunctionDefault.annotatedUsage)})`,
+      ),
     );
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
@@ -115,15 +131,17 @@ export class OptionType<
   }
 
   override fromJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
     const expression = code`${this.reusables.imports.Maybe}.fromNullable(${variables.value})`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
+      form,
       variables: { value: code`item` },
     });
-    return code`${expression}.map(item => (${itemFromJsonExpression}).map(${this.reusables.imports.Maybe}.of)).orDefault(${this.reusables.imports.Either}.of(${this.reusables.imports.Maybe}.empty()))`;
+    return code`${expression}.map(item => (${itemFromJsonExpression}).map(item => ${this.reusables.imports.Maybe}.of(item))).orDefault(${this.reusables.imports.Either}.of(${this.reusables.imports.Maybe}.empty()))`;
   }
 
   override graphqlResolveExpression(
@@ -134,37 +152,28 @@ export class OptionType<
     return code`${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    return code`${this.itemType.jsonSchema(parameters)}.optional()`;
-  }
-
   @Memoize()
   override jsonType(
-    parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
   ): AbstractContainerType.JsonType {
-    const itemTypeJsonType = this.itemType.jsonType(parameters);
-    invariant(!itemTypeJsonType.optional);
-    return new AbstractContainerType.JsonType(itemTypeJsonType.expression, {
-      optional: true,
-    });
-  }
-
-  override jsonUiSchemaElement(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.jsonUiSchemaElement(parameters);
+    return this.itemType.jsonType(parameters);
   }
 
   override toJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["toJsonExpression"]
   >[0]): Code {
-    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })})).extract()`;
+    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form, variables: { value: code`item` } })})).extract()`;
+  }
+
+  override toLoggableExpression({
+    variables,
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toLoggableExpression"]
+  >[0]): Code {
+    return code`${variables.value}.map(item => (${this.itemType.toLoggableExpression({ variables: { value: code`item` } })})).extract()`;
   }
 
   override toRdfResourceValuesExpression({

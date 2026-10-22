@@ -1,6 +1,7 @@
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractObjectSetType } from "./AbstractObjectSetType.js";
+import type { Callable } from "./Callable.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class RdfjsDatasetObjectSetType extends AbstractObjectSetType {
@@ -97,13 +98,13 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
         ];
 
         const runtimeObjectType = (
-          filterFunction: Code,
+          filterFunction: Callable,
           namedObjectType: {
             expression: Code;
             fromRdfTypeVariable: Maybe<Code>;
           },
         ): Code => {
-          return code`{ filter: ${filterFunction}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
+          return code`{ filter: ${filterFunction.annotatedUsage}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${namedObjectType.fromRdfTypeVariable.map((fromRdfTypeVariable) => code`[${fromRdfTypeVariable}]`).orDefault(code`[]`)} }`;
         };
 
         switch (namedObjectType.kind) {

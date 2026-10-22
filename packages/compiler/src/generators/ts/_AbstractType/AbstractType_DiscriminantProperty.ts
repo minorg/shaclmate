@@ -1,5 +1,4 @@
 export interface AbstractType_DiscriminantProperty {
-  readonly jsonName: string;
   readonly name: string;
   readonly values: readonly AbstractType_DiscriminantProperty.Value[];
 }

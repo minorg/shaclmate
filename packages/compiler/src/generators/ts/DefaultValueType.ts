@@ -7,6 +7,8 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import type { Type } from "./Type.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -19,7 +21,7 @@ export class DefaultValueType<
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly jsTypes = this.itemType.jsTypes;
   override readonly kind = "DefaultValue";
-  override readonly validationFunction: Maybe<Code> =
+  override readonly validationFunction: AbstractType["validationFunction"] =
     this.itemType.validationFunction;
 
   constructor({
@@ -48,11 +50,11 @@ export class DefaultValueType<
     });
   }
 
-  override get equalsFunction(): Code {
+  override get equalsFunction(): Callable {
     return this.itemType.equalsFunction;
   }
 
-  override get filterFunction(): Code {
+  override get filterFunction(): Callable {
     return this.itemType.filterFunction;
   }
 
@@ -61,15 +63,17 @@ export class DefaultValueType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.defaultValueFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+    );
   }
 
   override get graphqlType(): AbstractContainerType.GraphqlType {
     return this.itemType.graphqlType;
   }
 
-  override get hashFunction(): Code {
+  override get hashFunction(): Callable {
     return this.itemType.hashFunction;
   }
 
@@ -87,13 +91,15 @@ export class DefaultValueType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
+  override get valueSparqlConstructTriplesFunction(): Callable {
     return this.itemType.valueSparqlConstructTriplesFunction;
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+    );
   }
 
   protected override get inlineExpression(): Code {
@@ -114,10 +120,12 @@ export class DefaultValueType<
       case "Literal":
       case "Term":
         return this.rdfjsTermExpression(this.defaultValue);
+      case "DiscriminatedUnion":
+      case "Intersection":
       case "List":
       case "Object":
       case "ObjectDiscriminatedUnion":
-      case "DiscriminatedUnion":
+      case "ObjectIntersection":
         throw new RangeError(`not implemented ${this.itemType.kind}`);
     }
 
@@ -139,24 +147,10 @@ export class DefaultValueType<
     return this.itemType.graphqlResolveExpression(parameters);
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    return this.itemType.jsonSchema(parameters);
-  }
-
   override jsonType(
-    parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
   ): AbstractType.JsonType {
     return this.itemType.jsonType(parameters);
-  }
-
-  override jsonUiSchemaElement(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.jsonUiSchemaElement(parameters);
   }
 
   override toJsonExpression(
@@ -165,11 +159,17 @@ export class DefaultValueType<
     return this.itemType.toJsonExpression(parameters);
   }
 
+  override toLoggableExpression(
+    parameters: Parameters<AbstractType["toLoggableExpression"]>[0],
+  ): Code {
+    return this.itemType.toLoggableExpression(parameters);
+  }
+
   override toRdfResourceValuesExpression(
     parameters: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.itemType.equalsFunction}(${variables.value}, ${this.defaultValueExpression}).isLeft() ? ${this.itemType.toRdfResourceValuesExpression(parameters)} : []`;
+    return code`${this.itemType.equalsFunction.annotatedUsage}(${variables.value}, ${this.defaultValueExpression}).isLeft() ? ${this.itemType.toRdfResourceValuesExpression(parameters)} : []`;
   }
 
   override toStringExpression(

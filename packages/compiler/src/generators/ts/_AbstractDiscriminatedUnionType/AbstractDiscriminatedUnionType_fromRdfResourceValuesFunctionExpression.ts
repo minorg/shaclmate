@@ -9,7 +9,7 @@ export function AbstractDiscriminatedUnionType_fromRdfResourceValuesFunctionExpr
   // 1. Apportion input values to different union members. For each value, let each member try to map the value until one succeeds (Right). If none succeed, return Left.
   // 2. Pass all of a member's successfully-mapped input values back into the member's mapper so it can potentially reorder them (by e.g., preferred language)
   return code`\
-(((inputValues, options) => {
+(inputValues, options) => {
   const memberInputValues: ${this.reusables.imports.Resource}.Values[] = Array.from({ length: ${this.members.length} }).map(() => ${this.reusables.imports.Resource}.Values.empty({
     focusResource: inputValues.focusResource,
     propertyPath: inputValues.propertyPath
@@ -22,7 +22,7 @@ ${joinCode(
   this.members.map(
     (member, memberI) => code`\
       if (memberI === ${memberI}) {
-        memberOutputValuesEither = ${member.type.fromRdfResourceValuesFunction}(inputValueAsValues, { ...options, ignoreRdfType: false, schema: options.schema.members[${literalOf(member.primaryDiscriminantValue)}].type })
+        memberOutputValuesEither = ${member.type.fromRdfResourceValuesFunction.unannotatedUsage}(inputValueAsValues, { ...options, ignoreRdfType: false, schema: options.schema.members[${literalOf(member.primaryDiscriminantValue)}].type })
         if (memberOutputValuesEither.isRight()) {
           memberInputValues[memberI] = memberInputValues[memberI].concat(inputValue);
           break;
@@ -48,7 +48,7 @@ ${joinCode(
     switch (memberI) {
 ${joinCode(
   this.members.map((member, memberI) => {
-    let memberFromRdfResourceValuesExpression = code`${member.type.fromRdfResourceValuesFunction}(memberInputValues[memberI], { ...options, ignoreRdfType: false, schema: options.schema.members[${literalOf(member.primaryDiscriminantValue)}].type })`;
+    let memberFromRdfResourceValuesExpression = code`${member.type.fromRdfResourceValuesFunction.annotatedUsage}(memberInputValues[memberI], { ...options, ignoreRdfType: false, schema: options.schema.members[${literalOf(member.primaryDiscriminantValue)}].type })`;
     if (
       this.discriminant.kind === "Extrinsic" ||
       (this.discriminant.kind === "Hybrid" &&
@@ -67,5 +67,5 @@ ${joinCode(
     }
   }
   return ${this.reusables.imports.Right}(collectedOutputValues);
-}) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.expression}, ${this.schemaType}>)`;
+}`;
 }

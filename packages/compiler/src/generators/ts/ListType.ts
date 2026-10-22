@@ -10,16 +10,20 @@ import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
+import type { Callable } from "./Callable.js";
 import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
 import type { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import { InlineCallable } from "./InlineCallable.js";
+import type { IntersectionType } from "./IntersectionType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import type { LangStringType } from "./LangStringType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
@@ -73,8 +77,10 @@ export class ListType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
+      code`${this._mutable ? this.reusables.snippets.mutableListFromRdfResourceValues : this.reusables.snippets.listFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
@@ -83,42 +89,72 @@ export class ListType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+    );
   }
 
   override fromJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
-    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${variables.value}.map(item => (${this.itemType.fromJsonExpression(
+    let valueVariable = variables.value;
+    if (form === "expanded") {
+      valueVariable = code`${valueVariable}["@list"]`;
+    }
+
+    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${valueVariable}.map(item => (${this.itemType.fromJsonExpression(
       {
+        form: "compact",
         variables: { value: code`item` },
       },
     )})))`;
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractCollectionType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
-    if (!this._mutable) {
-      schema = code`${schema}.readonly()`;
+  override jsonType({
+    discriminantProperty,
+    form,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["jsonType"]
+  >[0]): AbstractCollectionType.JsonType {
+    const compactJsonType = this.jsonTypeFactory.createJsonArrayType(
+      this.itemType.jsonType({ form: "compact" }),
+    );
+    switch (form) {
+      case "compact":
+        return compactJsonType;
+      case "expanded":
+        return this.jsonTypeFactory.createJsonObjectType({
+          ...discriminantProperty,
+          "@list": { type: compactJsonType },
+        });
     }
-    return schema;
   }
 
-  @Memoize()
-  override jsonType(): AbstractCollectionType.JsonType {
-    return new AbstractCollectionType.JsonType(
-      code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().expression})[]`,
-    );
+  override toJsonExpression({
+    discriminantProperty,
+    form,
+    variables,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["toJsonExpression"]
+  >[0]): Code {
+    const toCompactJsonExpression = code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form: "compact", variables: { value: code`item` } })}))`;
+    switch (form) {
+      case "compact":
+        return toCompactJsonExpression;
+      case "expanded":
+        return code`${{ ...discriminantProperty, "@list": toCompactJsonExpression }}`;
+    }
   }
 
   override toRdfResourceValuesExpression({
@@ -192,11 +228,13 @@ export namespace ListType {
     | FloatType
     | IdentifierType
     | IntType
+    | IntersectionType
     | IriType
     | LangStringType
     | ListType<ListType.ItemType>
     | LiteralType
     | ObjectDiscriminatedUnionType
+    | ObjectIntersectionType
     | ObjectType
     | StringType
     | TermType;
@@ -212,12 +250,14 @@ export namespace ListType {
       case "DiscriminatedUnion":
       case "Float":
       case "Identifier":
-      case "Iri":
       case "Int":
+      case "Intersection":
+      case "Iri":
       case "LangString":
       case "List":
       case "Literal":
       case "ObjectDiscriminatedUnion":
+      case "ObjectIntersection":
       case "Object":
       case "String":
       case "Term":

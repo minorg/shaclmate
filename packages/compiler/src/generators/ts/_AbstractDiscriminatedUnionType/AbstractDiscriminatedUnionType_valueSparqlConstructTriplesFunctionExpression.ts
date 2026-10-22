@@ -6,16 +6,16 @@ export function AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFuncti
   MemberTypeT extends Type,
 >(this: AbstractDiscriminatedUnionType<MemberTypeT>): Code {
   return code`\
-((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+({ ignoreRdfType, filter, schema, ...otherParameters }) => {
   let triples: ${this.reusables.imports.sparqljs}.Triple[] = [];
 
   ${joinCode(
     this.members.map(
       ({ type, primaryDiscriminantValue }) => code`\
-triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }));`,
+triples = triples.concat(${type.valueSparqlConstructTriplesFunction.unannotatedUsage}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }));`,
     ),
   )}
   
   return triples;
-}) satisfies ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>)`;
+}`;
 }

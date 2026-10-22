@@ -2,7 +2,6 @@ import type { PropertyPath } from "@rdfx/resource";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
@@ -15,6 +14,7 @@ export class ObjectType_ShaclProperty<
   private readonly description: Maybe<string>;
   private readonly display: boolean;
   private readonly label: Maybe<string>;
+  private readonly minCount: bigint;
 
   override readonly kind = "Shacl";
   override readonly mutable: boolean;
@@ -27,6 +27,7 @@ export class ObjectType_ShaclProperty<
     description,
     display,
     label,
+    minCount,
     mutable,
     path,
     recursive,
@@ -37,6 +38,7 @@ export class ObjectType_ShaclProperty<
     description: Maybe<string>;
     display: boolean;
     label: Maybe<string>;
+    minCount: bigint;
     mutable: boolean;
     path: PropertyPath;
     recursive: boolean;
@@ -47,6 +49,7 @@ export class ObjectType_ShaclProperty<
     this.description = description;
     this.display = display;
     this.label = label;
+    this.minCount = minCount;
     this.mutable = mutable;
     this.path = path;
     this.recursive = recursive;
@@ -123,36 +126,29 @@ export class ObjectType_ShaclProperty<
   }
 
   @Memoize()
-  override get jsonSchema(): ObjectType_AbstractProperty["jsonSchema"] {
-    let schema = this.type.jsonSchema({
-      context: "property",
-    });
-
-    const meta: Record<string, string> = {
-      // id: `${this.namedObjectType.name}-${this.name}`, // id's must be unique
-    };
-    this.comment.alt(this.description).ifJust((description) => {
-      meta["description"] = description;
-    });
-    this.label.ifJust((label) => {
-      meta["title"] = label;
-    });
-    if (Object.keys(meta).length > 0) {
-      schema = code`${schema}.meta(${meta})`;
-    }
-
+  get jsonObjectMember(): ObjectType_AbstractProperty["jsonObjectMember"] {
     return Maybe.of({
-      key: this.name,
-      schema,
+      description: this.description.alt(this.comment),
+      label: this.label,
+      name: this.name,
+      optional: this.minCount === 0n && this.type.kind !== "DefaultValue",
+      recursive: this.recursive,
+      type: this.recursive
+        ? () => this.type.jsonType({ form: "compact" })
+        : this.type.jsonType({ form: "compact" }),
+      uiSchemaElement: Maybe.of(({ variables }) => {
+        const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
+        return this.type
+          .jsonType({ form: "compact" })
+          .uiSchemaElement({ variables })
+          .altLazy(() =>
+            Maybe.of(
+              code`{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
+            ),
+          )
+          .unsafeCoerce();
+      }),
     });
-  }
-
-  @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    const typeJsonType = this.type.jsonType();
-    return Maybe.of(
-      code`${!this.mutable ? "readonly " : ""}${this.name}${typeJsonType.optional ? "?" : ""}: ${typeJsonType.requiredExpression}`,
-    );
   }
 
   override get schema(): Maybe<Code> {
@@ -208,7 +204,8 @@ export class ObjectType_ShaclProperty<
     const defaultNamespaceVariable = code`${variables.parameters}.${this.configuration.syntheticNamePrefix}defaultNamespace`;
 
     const conversionFunction = this.type.conversionFunction.extract()?.code;
-    const validationFunction = this.type.validationFunction.extract();
+    const validationFunction =
+      this.type.validationFunction.extract()?.unannotatedUsage;
     let rhs: Code;
     if (conversionFunction && validationFunction) {
       rhs = code`${conversionFunction}(${parameterVariable}, ${defaultNamespaceVariable}).chain(value => ${validationFunction}(${this.typeSchemaVariable}, value))`;
@@ -229,7 +226,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["equalsExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(code`${this.reusables.snippets.propertyEquals}(
-        { equalsFunction: ${this.type.equalsFunction}, name: ${literalOf(this.name)} },
+        { equalsFunction: ${this.type.equalsFunction.unannotatedUsage}, name: ${literalOf(this.name)} },
         [left, ${variables.leftObject}.${this.name}],
         [right, ${variables.rightObject}.${this.name}],
       )`);
@@ -241,7 +238,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["filterExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.filterFunction}(${variables.filter}.${this.name}, ${variables.object}.${this.name})`,
+      code`${this.type.filterFunction.unannotatedUsage}(${variables.filter}.${this.name}, ${variables.object}.${this.name})`,
     );
   }
 
@@ -252,6 +249,7 @@ export class ObjectType_ShaclProperty<
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: ${this.type.fromJsonExpression({
+        form: "compact",
         variables: { value: code`${variables.jsonObject}["${this.name}"]` },
       })}`,
     );
@@ -269,7 +267,7 @@ export class ObjectType_ShaclProperty<
           focusResource: ${variables.focusResource},
           ignoreRdfType: true,
           propertySchema: ${this.schemaVariable},
-          typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction} 
+          typeFromRdfResourceValues: ${this.type.fromRdfResourceValuesFunction.unannotatedUsage} 
         })`,
     );
   }
@@ -280,23 +278,8 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["hashStatements"]
   >[0]): readonly Code[] {
     return [
-      code`${this.type.hashFunction}(${variables.hasher}, ${variables.object}.${this.name});`,
+      code`${this.type.hashFunction.annotatedUsage}(${variables.hasher}, ${variables.object}.${this.name});`,
     ];
-  }
-
-  jsonUiSchemaElement({
-    variables,
-  }: Parameters<
-    ObjectType_AbstractProperty["jsonUiSchemaElement"]
-  >[0]): Maybe<Code> {
-    const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
-    return this.type
-      .jsonUiSchemaElement({ variables: { scopePrefix: scope } })
-      .altLazy(() =>
-        Maybe.of(
-          code`{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
-        ),
-      );
   }
 
   override sparqlConstructTriplesExpression({
@@ -314,7 +297,7 @@ export class ObjectType_ShaclProperty<
         propertyName: this.name,
         propertySchema: this.schemaVariable,
         typeSparqlConstructTriples:
-          this.type.valueSparqlConstructTriplesFunction,
+          this.type.valueSparqlConstructTriplesFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
       }})`,
     );
@@ -337,7 +320,8 @@ export class ObjectType_ShaclProperty<
         preferredLanguages: variables.preferredLanguages,
         propertyName: this.name,
         propertySchema: this.schemaVariable,
-        typeSparqlWherePatterns: this.type.valueSparqlWherePatternsFunction,
+        typeSparqlWherePatterns:
+          this.type.valueSparqlWherePatternsFunction.unannotatedUsage,
         variablePrefix: variables.variablePrefix,
       }})`,
     });
@@ -349,7 +333,7 @@ export class ObjectType_ShaclProperty<
     ObjectType_AbstractProperty["toJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.toJsonExpression({ variables: { value: code`${variables.object}.${this.name}` } })}`,
+      code`${this.name}: ${this.type.toJsonExpression({ form: "compact", variables: { value: code`${variables.object}.${this.name}` } })}`,
     );
   }
 
@@ -387,6 +371,17 @@ export class ObjectType_ShaclProperty<
         },
       )}, ${variables.graph});`,
     ];
+  }
+
+  override toLoggableInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toLoggableInitializer"]
+  >[0]): Maybe<Code> {
+    const { object: objectVariable, ...otherVariables } = variables;
+    return Maybe.of(
+      code`${literalOf(this.name)}: ${this.type.toLoggableExpression({ variables: { ...otherVariables, value: code`${objectVariable}.${this.name}` } })}`,
+    );
   }
 
   override toStringInitializer({

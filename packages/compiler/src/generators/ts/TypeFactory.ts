@@ -4,10 +4,14 @@ import { literalDatatypeDefinitions } from "@rdfx/literal";
 import type { Logger } from "@rdfx/logger";
 import base62 from "@sindresorhus/base62";
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
+
 import * as ast from "../../ast/index.js";
+import { AbstractType_JsonTypeFactory } from "./_AbstractType/AbstractType_JsonType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
@@ -18,6 +22,7 @@ import { DefaultValueType } from "./DefaultValueType.js";
 import { DiscriminatedUnionType } from "./DiscriminatedUnionType.js";
 import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
+import { IntersectionType } from "./IntersectionType.js";
 import { IntType } from "./IntType.js";
 import { IriType } from "./IriType.js";
 import { LangStringType } from "./LangStringType.js";
@@ -27,6 +32,7 @@ import { LazyType } from "./LazyType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
 import { ObjectDiscriminatedUnionType } from "./ObjectDiscriminatedUnionType.js";
+import { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import { ObjectType } from "./ObjectType.js";
 import { OptionType } from "./OptionType.js";
 import type { Reusables } from "./Reusables.js";
@@ -38,21 +44,21 @@ import type { Type } from "./Type.js";
 
 export class TypeFactory {
   private readonly configuration: TsGenerator.Configuration;
+  private readonly constructorParameters: {
+    configuration: TsGenerator.Configuration;
+    jsonTypeFactory: AbstractType.JsonTypeFactory;
+    logger: Logger;
+    reusables: Reusables;
+  };
+  private readonly jsonTypeFactory: AbstractType.JsonTypeFactory;
   private readonly logger: Logger;
-  private readonly reusables: Reusables;
 
-  private cachedObjectDiscriminatedUnionTypesByShapeIdentifier: TermMap<
+  private cachedObjectTypeShaclPropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
-    ObjectDiscriminatedUnionType
+    ObjectType.ShaclProperty<Type>
   > = new TermMap();
-  private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
-    BlankNode | NamedNode,
-    ObjectType.Property
-  > = new TermMap();
-  private cachedObjectTypesByShapeIdentifier: TermMap<
-    BlankNode | NamedNode,
-    ObjectType
-  > = new TermMap();
+  private cachedTypesByShapeIdentifier: TermMap<BlankNode | NamedNode, Type> =
+    new TermMap();
 
   constructor({
     configuration,
@@ -64,54 +70,264 @@ export class TypeFactory {
     reusables: Reusables;
   }) {
     this.configuration = configuration;
+    this.jsonTypeFactory = new AbstractType_JsonTypeFactory({
+      configuration,
+      reusables,
+    });
     this.logger = logger;
-    this.reusables = reusables;
+    this.constructorParameters = {
+      configuration,
+      logger,
+      jsonTypeFactory: this.jsonTypeFactory,
+      reusables,
+    };
+  }
+
+  createDiscriminatedUnionType(
+    astType: ast.DiscriminatedUnionType,
+  ): DiscriminatedUnionType | ObjectDiscriminatedUnionType {
+    if (astType.isStructDiscriminatedUnionType()) {
+      return this.createObjectDiscriminatedUnionType(astType);
+    }
+
+    return new DiscriminatedUnionType({
+      ...this.constructorParameters,
+      comment: astType.comment,
+      identifierProperty: Maybe.empty(),
+      label: astType.label,
+      members: astType.members.map((member) => ({
+        discriminantValue: member.discriminantValue,
+        type: this.createType(member.type),
+      })),
+      name: astType.name.map((name) => this.tsName(name)),
+      recursive: astType.recursive,
+      shapeIdentifier: astType.shapeIdentifier,
+      synthetic: astType.synthetic,
+    });
+  }
+
+  createIntersectionType(
+    astType: ast.IntersectionType,
+  ): IntersectionType | ObjectIntersectionType {
+    if (astType.isStructIntersectionType()) {
+      return this.createObjectIntersectionType(astType);
+    }
+
+    return new IntersectionType({
+      ...this.constructorParameters,
+      comment: astType.comment,
+      identifierProperty: Maybe.empty(),
+      label: astType.label,
+      members: astType.members.map((member) => ({
+        type: this.createType(member.type),
+      })),
+      name: astType.name.map((name) => this.tsName(name)),
+      recursive: astType.recursive,
+      shapeIdentifier: astType.shapeIdentifier,
+      synthetic: astType.synthetic,
+    });
+  }
+
+  createObjectDiscriminatedUnionType(
+    astType: ast.StructDiscriminatedUnionType,
+  ): ObjectDiscriminatedUnionType {
+    {
+      const cachedType = this.cachedTypesByShapeIdentifier.get(
+        astType.shapeIdentifier,
+      );
+      if (cachedType) {
+        invariant(
+          cachedType.kind === "ObjectDiscriminatedUnion",
+          cachedType.kind,
+        );
+        return cachedType;
+      }
+    }
+
+    const objectDiscriminatedUnionIdentifierType = this.createIdentifierType(
+      ast.StructCompoundType.identifierType(astType),
+    );
+
+    const objectDiscriminatedUnionTypeName = astType.name.map((name) =>
+      this.tsName(name),
+    );
+
+    const objectDiscriminatedUnionType = new ObjectDiscriminatedUnionType({
+      ...this.constructorParameters,
+      comment: astType.comment,
+      identifierProperty:
+        astType.isStructDiscriminatedUnionType() &&
+        astType.members.every((member) => {
+          switch (member.type.kind) {
+            case "DiscriminatedUnion":
+              return member.type.members.every((member) =>
+                member.type.identifierField.isJust(),
+              );
+            case "Struct":
+              return member.type.identifierField.isJust();
+            default:
+              member.type satisfies never;
+              throw new Error("should never reach this point");
+          }
+        })
+          ? Maybe.of(
+              new ObjectType.IdentifierProperty({
+                ...this.constructorParameters,
+                name: `${this.configuration.syntheticNamePrefix}identifier`,
+                objectType: { name: objectDiscriminatedUnionTypeName },
+                type: objectDiscriminatedUnionIdentifierType,
+              }),
+            )
+          : Maybe.empty(),
+      identifierType: objectDiscriminatedUnionIdentifierType,
+      label: astType.label,
+      members: ast.StructCompoundType.memberStructTypes(astType).map(
+        (astStructType) => ({
+          discriminantValue: Maybe.empty(),
+          type: this.createObjectType(astStructType),
+        }),
+      ),
+      name: objectDiscriminatedUnionTypeName,
+      recursive: astType.recursive,
+      shapeIdentifier: astType.shapeIdentifier,
+      synthetic: astType.synthetic,
+    });
+
+    this.cachedTypesByShapeIdentifier.set(
+      astType.shapeIdentifier,
+      objectDiscriminatedUnionType,
+    );
+
+    return objectDiscriminatedUnionType;
+  }
+
+  createObjectIntersectionType(
+    astType: ast.StructIntersectionType,
+  ): ObjectIntersectionType {
+    {
+      const cachedType = this.cachedTypesByShapeIdentifier.get(
+        astType.shapeIdentifier,
+      );
+      if (cachedType) {
+        invariant(cachedType.kind === "ObjectIntersection", cachedType.kind);
+        return cachedType;
+      }
+    }
+
+    const objectIntersectionIdentifierType = this.createIdentifierType(
+      ast.StructCompoundType.identifierType(astType),
+    );
+
+    const objectIntersectionTypeName = astType.name.map((name) =>
+      this.tsName(name),
+    );
+
+    const objectIntersectionType = new ObjectIntersectionType({
+      ...this.constructorParameters,
+      comment: astType.comment,
+      identifierProperty:
+        astType.isStructIntersectionType() &&
+        astType.members.every((member) => {
+          switch (member.type.kind) {
+            case "Intersection":
+              return member.type.members.every((member) =>
+                member.type.identifierField.isJust(),
+              );
+            case "Struct":
+              return member.type.identifierField.isJust();
+            default:
+              member.type satisfies never;
+              throw new Error("should never reach this point");
+          }
+        })
+          ? Maybe.of(
+              new ObjectType.IdentifierProperty({
+                ...this.constructorParameters,
+                name: `${this.configuration.syntheticNamePrefix}identifier`,
+                objectType: { name: objectIntersectionTypeName },
+                type: objectIntersectionIdentifierType,
+              }),
+            )
+          : Maybe.empty(),
+      identifierType: objectIntersectionIdentifierType,
+      label: astType.label,
+      members: ast.StructCompoundType.memberStructTypes(astType).map(
+        (astStructType) => ({
+          type: this.createObjectType(astStructType),
+        }),
+      ),
+      name: objectIntersectionTypeName,
+      recursive: astType.recursive,
+      shapeIdentifier: astType.shapeIdentifier,
+      synthetic: astType.synthetic,
+    });
+
+    this.cachedTypesByShapeIdentifier.set(
+      astType.shapeIdentifier,
+      objectIntersectionType,
+    );
+
+    return objectIntersectionType;
   }
 
   createObjectType(astType: ast.StructType): ObjectType {
     {
-      const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
+      const cachedType = this.cachedTypesByShapeIdentifier.get(
         astType.shapeIdentifier,
       );
-      if (cachedObjectType) {
-        return cachedObjectType;
+      if (cachedType) {
+        invariant(cachedType.kind === "Object", cachedType.kind);
+        return cachedType;
       }
     }
+
+    const objectTypeName = astType.name.map((name) =>
+      this.tsName(name, { synthetic: astType.synthetic }),
+    );
+    const objectTypeStub = { name: objectTypeName };
 
     const discriminantProperty = astType.name.map(
       (name) =>
         new ObjectType.DiscriminantProperty({
-          configuration: this.configuration,
-          logger: this.logger,
-          objectType: { name: astType.name },
-          reusables: this.reusables,
+          ...this.constructorParameters,
+          objectType: objectTypeStub,
           value: name,
+        }),
+    );
+
+    const identifierType = this.createIdentifierType(astType.identifierType);
+
+    const identifierProperty = astType.identifierField.map(
+      () =>
+        new ObjectType.IdentifierProperty({
+          ...this.constructorParameters,
+          name: `${this.configuration.syntheticNamePrefix}identifier`,
+          objectType: objectTypeStub,
+          type: identifierType,
         }),
     );
 
     const rdfTypeProperty = astType.fromRdfType.map(
       (fromRdfType) =>
         new ObjectType.RdfTypeProperty({
-          configuration: this.configuration,
+          ...this.constructorParameters,
           fromRdfType,
-          logger: this.logger,
-          objectType: { name: astType.name },
-          reusables: this.reusables,
+          objectType: objectTypeStub,
           toRdfTypes: astType.toRdfTypes,
         }),
     );
 
-    const identifierType = this.createIdentifierType(astType.identifierType);
-
     const objectType = new ObjectType({
+      ...this.constructorParameters,
       discriminantProperty,
       comment: astType.comment,
-      configuration: this.configuration,
       extern: astType.extern,
+      identifierProperty,
       identifierType,
       label: astType.label,
       lazyProperties: (objectType: ObjectType) => {
         const properties: ObjectType.Property[] = astType.fields
+          .filter((field) => field.kind === "Shacl")
           .toSorted((left, right) => {
             if (left.order < right.order) {
               return -1;
@@ -124,94 +340,32 @@ export class TypeFactory {
             );
           })
           .map((astField) =>
-            this.createObjectTypeProperty({
+            this.createObjectTypeShaclProperty({
               astStructField: astField,
               objectType,
             }),
           );
 
-        discriminantProperty.ifJust((discriminantProperty) => {
-          properties.splice(0, 0, discriminantProperty);
-        });
-
-        rdfTypeProperty.ifJust((rdfTypeProperty) => {
-          properties.splice(0, 0, rdfTypeProperty);
-        });
-
-        properties.splice(
-          0,
-          0,
-          new ObjectType.IdentifierProperty({
-            configuration: this.configuration,
-            logger: this.logger,
-            name: `${this.configuration.syntheticNamePrefix}identifier`,
-            objectType,
-            reusables: this.reusables,
-            type: identifierType,
-          }),
-        );
+        for (const specialProperty of [
+          discriminantProperty,
+          rdfTypeProperty,
+          identifierProperty,
+        ]) {
+          specialProperty.ifJust((specialProperty) => {
+            properties.splice(0, 0, specialProperty);
+          });
+        }
 
         return properties;
       },
-      logger: this.logger,
-      name: astType.name.map((name) =>
-        this.tsName(name, { synthetic: astType.synthetic }),
-      ),
+      name: objectTypeName,
       rdfTypeProperty,
       recursive: astType.recursive,
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
       synthetic: astType.synthetic,
     });
-    this.cachedObjectTypesByShapeIdentifier.set(
-      astType.shapeIdentifier,
-      objectType,
-    );
+    this.cachedTypesByShapeIdentifier.set(astType.shapeIdentifier, objectType);
     return objectType;
-  }
-
-  createObjectDiscriminatedUnionType(
-    astType: ast.StructDiscriminatedUnionType,
-  ): ObjectDiscriminatedUnionType {
-    {
-      const cachedObjectDiscriminatedUnionType =
-        this.cachedObjectDiscriminatedUnionTypesByShapeIdentifier.get(
-          astType.shapeIdentifier,
-        );
-      if (cachedObjectDiscriminatedUnionType) {
-        return cachedObjectDiscriminatedUnionType;
-      }
-    }
-
-    const objectDiscriminatedUnionType = new ObjectDiscriminatedUnionType({
-      comment: astType.comment,
-      configuration: this.configuration,
-      identifierType: Maybe.of(
-        this.createIdentifierType(
-          ast.StructCompoundType.identifierType(astType),
-        ),
-      ),
-      label: astType.label,
-      logger: this.logger,
-      members: ast.StructCompoundType.memberStructTypes(astType).map(
-        (astStructType) => ({
-          discriminantValue: Maybe.empty(),
-          type: this.createObjectType(astStructType),
-        }),
-      ),
-      name: astType.name.map((name) => this.tsName(name)),
-      recursive: astType.recursive,
-      reusables: this.reusables,
-      shapeIdentifier: astType.shapeIdentifier,
-      synthetic: astType.synthetic,
-    });
-
-    this.cachedObjectDiscriminatedUnionTypesByShapeIdentifier.set(
-      astType.shapeIdentifier,
-      objectDiscriminatedUnionType,
-    );
-
-    return objectDiscriminatedUnionType;
   }
 
   createType(
@@ -223,10 +377,12 @@ export class TypeFactory {
         return this.createBlankNodeType(astType);
       case "DefaultValue":
         return this.createDefaultValueType(astType);
+      case "DiscriminatedUnion":
+        return this.createDiscriminatedUnionType(astType);
       case "Identifier":
         return this.createIdentifierType(astType);
       case "Intersection":
-        throw new Error("not implemented");
+        return this.createIntersectionType(astType);
       case "Iri":
         return this.createIriType(astType);
       case "Lazy":
@@ -247,44 +403,15 @@ export class TypeFactory {
         return this.createObjectType(astType);
       case "Term":
         return this.createTermType(astType);
-      case "DiscriminatedUnion":
-        return this.createDiscriminatedUnionType(astType);
     }
-  }
-
-  createDiscriminatedUnionType(
-    astType: ast.DiscriminatedUnionType,
-  ): DiscriminatedUnionType | ObjectDiscriminatedUnionType {
-    if (astType.isStructDiscriminatedUnionType()) {
-      return this.createObjectDiscriminatedUnionType(astType);
-    }
-
-    return new DiscriminatedUnionType({
-      comment: astType.comment,
-      configuration: this.configuration,
-      identifierType: Maybe.empty(),
-      label: astType.label,
-      logger: this.logger,
-      members: astType.members.map((member) => ({
-        discriminantValue: member.discriminantValue,
-        type: this.createType(member.type),
-      })),
-      name: astType.name.map((name) => this.tsName(name)),
-      recursive: astType.recursive,
-      reusables: this.reusables,
-      shapeIdentifier: astType.shapeIdentifier,
-      synthetic: astType.synthetic,
-    });
   }
 
   private createBlankNodeType(astType: ast.BlankNodeType): BlankNodeType {
     return new BlankNodeType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       label: astType.label,
-      logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }
@@ -295,14 +422,12 @@ export class TypeFactory {
     });
     invariant(DefaultValueType.isItemType(itemType));
     return new DefaultValueType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       defaultValue: astType.defaultValue,
       itemType,
       label: astType.label,
-      logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }
@@ -315,12 +440,10 @@ export class TypeFactory {
         return this.createBlankNodeType(astType);
       case "Identifier":
         return new IdentifierType({
+          ...this.constructorParameters,
           comment: astType.comment,
-          configuration: this.configuration,
           label: astType.label,
-          logger: this.logger,
           name: astType.name.map((name) => this.tsName(name)),
-          reusables: this.reusables,
           shapeIdentifier: astType.shapeIdentifier,
         });
       case "Iri":
@@ -330,24 +453,21 @@ export class TypeFactory {
 
   private createIriType(astType: ast.IriType): IriType {
     return new IriType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       hasValues: astType.hasValues,
       in_: astType.in_,
       label: astType.label,
-      logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
   private createLazyOptionType(astType: ast.LazyOptionType): Type {
     return new LazyOptionType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       label: astType.label,
-      logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       partialType: this.createOptionType(astType.partialType) as OptionType<
         ObjectType | ObjectDiscriminatedUnionType
@@ -355,17 +475,15 @@ export class TypeFactory {
       resolveType: this.createOptionType(astType.resolveType) as OptionType<
         ObjectType | ObjectDiscriminatedUnionType
       >,
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
   private createLazySetType(astType: ast.LazySetType): Type {
     return new LazySetType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       label: astType.label,
-      logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       partialType: this.createSetType(astType.partialType) as SetType<
         ObjectType | ObjectDiscriminatedUnionType
@@ -373,17 +491,15 @@ export class TypeFactory {
       resolveType: this.createSetType(astType.resolveType) as SetType<
         ObjectType | ObjectDiscriminatedUnionType
       >,
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
   private createLazyType(astType: ast.LazyType): Type {
     return new LazyType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       label: astType.label,
-      logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       partialType: this.createType(astType.partialType) as
         | ObjectType
@@ -391,7 +507,6 @@ export class TypeFactory {
       resolveType: this.createType(astType.resolveType) as
         | ObjectType
         | ObjectDiscriminatedUnionType,
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }
@@ -400,15 +515,13 @@ export class TypeFactory {
     const itemType = this.createType(astType.itemType);
     invariant(ListType.isItemType(itemType));
     return new ListType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       identifierNodeKind: astType.identifierNodeKind,
       itemType,
       label: astType.label,
-      logger: this.logger,
       mutable: astType.mutable,
       name: astType.name.map((name) => this.tsName(name)),
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
       toRdfTypes: astType.toRdfTypes,
     });
@@ -441,45 +554,43 @@ export class TypeFactory {
     if (datatypes.size === 1) {
       const datatype = [...datatypes][0];
 
-      const typeParameters = {
+      const constructorParameters = {
+        ...this.constructorParameters,
         comment: astType.comment,
-        configuration: this.configuration,
         datatype,
         hasValues: astType.hasValues,
         in_: astType.in_,
         label: astType.label,
         languageIn: astType.languageIn,
-        logger: this.logger,
         name: astType.name.map((name) => this.tsName(name)),
-        reusables: this.reusables,
         shapeIdentifier: astType.shapeIdentifier,
       };
 
       if (datatype.equals(rdf.langString)) {
-        return new LangStringType(typeParameters);
+        return new LangStringType(constructorParameters);
       }
 
       const datatypeDefinition = literalDatatypeDefinitions[datatype.value];
       if (datatypeDefinition) {
         switch (datatypeDefinition.kind) {
           case "bigdecimal":
-            return new BigDecimalType(typeParameters);
+            return new BigDecimalType(constructorParameters);
           case "bigint":
-            return new BigIntType(typeParameters);
+            return new BigIntType(constructorParameters);
           case "boolean":
-            return new BooleanType(typeParameters);
+            return new BooleanType(constructorParameters);
           case "date":
           case "datetime":
             return new (
               datatypeDefinition.kind === "date" ? DateType : DateTimeType
-            )(typeParameters);
+            )(constructorParameters);
           case "float":
           case "int":
             return new (
               datatypeDefinition.kind === "float" ? FloatType : IntType
-            )(typeParameters);
+            )(constructorParameters);
           case "string":
-            return new StringType(typeParameters);
+            return new StringType(constructorParameters);
         }
       }
 
@@ -495,29 +606,27 @@ export class TypeFactory {
     // }
 
     return new LiteralType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       hasValues: astType.hasValues,
       in_: astType.in_,
       label: astType.label,
       languageIn: astType.languageIn,
-      logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
-  private createObjectTypeProperty({
+  private createObjectTypeShaclProperty({
     astStructField,
     objectType,
   }: {
-    astStructField: ast.StructType.Field;
+    astStructField: ast.StructType.ShaclField;
     objectType: ObjectType;
-  }): ObjectType.Property {
+  }): ObjectType.ShaclProperty<Type> {
     {
       const cachedProperty =
-        this.cachedObjectTypePropertiesByShapeIdentifier.get(
+        this.cachedObjectTypeShaclPropertiesByShapeIdentifier.get(
           astStructField.shapeIdentifier,
         );
       if (cachedProperty) {
@@ -526,22 +635,21 @@ export class TypeFactory {
     }
 
     const property = new ObjectType.ShaclProperty({
+      ...this.constructorParameters,
       comment: astStructField.comment,
-      configuration: this.configuration,
       description: astStructField.description,
       display: astStructField.display,
       label: astStructField.label,
-      logger: this.logger,
+      minCount: astStructField.minCount,
       mutable: astStructField.mutable,
       name: this.tsName(astStructField.name),
       objectType,
       path: astStructField.path,
       recursive: !!astStructField.recursive,
-      reusables: this.reusables,
       type: this.createType(astStructField.type),
     });
 
-    this.cachedObjectTypePropertiesByShapeIdentifier.set(
+    this.cachedObjectTypeShaclPropertiesByShapeIdentifier.set(
       astStructField.shapeIdentifier,
       property,
     );
@@ -553,13 +661,11 @@ export class TypeFactory {
     const itemType = this.createType(astType.itemType);
     invariant(OptionType.isItemType(itemType));
     return new OptionType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       itemType,
       label: astType.label,
-      logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }
@@ -568,30 +674,26 @@ export class TypeFactory {
     const itemType = this.createType(astType.itemType);
     invariant(SetType.isItemType(itemType));
     return new SetType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       itemType,
       label: astType.label,
-      logger: this.logger,
       mutable: astType.mutable,
       minCount: astType.minCount,
       name: astType.name.map((name) => this.tsName(name)),
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }
 
   private createTermType(astType: ast.TermType) {
     return new TermType({
+      ...this.constructorParameters,
       comment: astType.comment,
-      configuration: this.configuration,
       hasValues: astType.hasValues,
       in_: astType.in_,
       label: astType.label,
-      logger: this.logger,
       name: astType.name.map((name) => this.tsName(name)),
       nodeKinds: astType.nodeKinds,
-      reusables: this.reusables,
       shapeIdentifier: astType.shapeIdentifier,
     });
   }

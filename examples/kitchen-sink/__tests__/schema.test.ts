@@ -7,15 +7,17 @@ describe("schema", () => {
       expect,
     }) => {
       expect(
-        kitchenSink.DiscriminatedUnion.schema.properties
-          .discriminatedUnionMemberCommon.path.value,
-      ).toStrictEqual("http://example.com/discriminatedUnionMemberCommon");
+        kitchenSink.StructDiscriminatedUnion.schema.properties
+          .structDiscriminatedUnionMemberCommon.path.value,
+      ).toStrictEqual(
+        "http://example.com/structDiscriminatedUnionMemberCommon",
+      );
     });
 
     it("object union common properties", ({ expect }) => {
-      expect(kitchenSink.DiscriminatedUnion.schema.properties).toHaveProperty(
-        "discriminatedUnionMemberCommon",
-      );
+      expect(
+        kitchenSink.StructDiscriminatedUnion.schema.properties,
+      ).toHaveProperty("structDiscriminatedUnionMemberCommon");
     });
 
     describe("$rdfType", () => {

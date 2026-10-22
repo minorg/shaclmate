@@ -4,6 +4,8 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AbstractContainerType } from "./AbstractContainerType.js";
+import type { Callable } from "./Callable.js";
+import { InlineCallable } from "./InlineCallable.js";
 import type { Snippet } from "./Snippet.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -86,8 +88,10 @@ export class SetType<
   }
 
   @Memoize()
-  override get fromRdfResourceValuesFunction(): Code {
-    return code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction})`;
+  override get fromRdfResourceValuesFunction(): Callable {
+    return new InlineCallable(
+      code`${this._mutable ? this.reusables.snippets.mutableSetFromRdfResourceValues : this.reusables.snippets.setFromRdfResourceValues}<${this.itemType.expression}, ${this.itemType.schemaType}>(${this.itemType.fromRdfResourceValuesFunction.unannotatedUsage})`,
+    );
   }
 
   override get toRdfResourceValueTypes(): AbstractCollectionType<ItemTypeT>["toRdfResourceValueTypes"] {
@@ -95,13 +99,17 @@ export class SetType<
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction.unannotatedUsage})`,
+    );
   }
 
   @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Callable {
+    return new InlineCallable(
+      code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction.unannotatedUsage})`,
+    );
   }
 
   protected override get schemaInitializers() {
@@ -115,43 +123,47 @@ export class SetType<
   }
 
   override fromJsonExpression({
+    form,
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
+    invariant(form === "compact");
     let expression = variables.value;
     if (this.minCount === 0n) {
       expression = code`(${expression} ?? [])`;
     }
     return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.expression}>(${expression}.map(item => (${this.itemType.fromJsonExpression(
       {
+        form,
         variables: { value: code`item` },
       },
     )})))`;
   }
 
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
-    if (this.minCount > 0n) {
-      schema = code`${schema}.nonempty().min(${this.minCount})`;
-    } else {
-      schema = code`${schema}.optional()`;
-    }
-    if (!this._mutable) {
-      schema = code`${schema}.readonly()`;
-    }
-    return schema;
+  override jsonType({
+    form,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["jsonType"]
+  >[0]): AbstractCollectionType.JsonType {
+    invariant(form === "compact");
+    return this.jsonTypeFactory.createJsonArrayType(
+      this.itemType.jsonType({ form }),
+      {
+        minCount: this.minCount,
+        name: this.name.map((name) => [name, "Json"]).extract(),
+      },
+    );
   }
 
-  @Memoize()
-  override jsonType(): AbstractCollectionType.JsonType {
-    const name = code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().expression})[]`;
-    if (this.minCount === 0n) {
-      return new AbstractCollectionType.JsonType(name, { optional: true });
-    }
-    return new AbstractCollectionType.JsonType(name);
+  override toJsonExpression({
+    form,
+    variables,
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toJsonExpression"]
+  >[0]): Code {
+    invariant(form === "compact");
+    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ form, variables: { value: code`item` } })}))`;
   }
 
   override toRdfResourceValuesExpression({

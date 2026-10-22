@@ -30,7 +30,7 @@ export function ObjectType_focusSparqlConstructTriplesFunctionExpression(
   }
 
   return code`\
-((${statements.length === 0 ? "_" : ""}parameters) => {
+(${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([
@@ -40,5 +40,5 @@ ${
       ])
     : "return [];"
 }
-})`;
+}`;
 }
