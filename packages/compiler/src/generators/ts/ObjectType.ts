@@ -42,7 +42,10 @@ import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schema
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunction.js";
-import { ObjectType_toLoggableFunctionExpression } from "./_ObjectType/ObjectType_toLoggableFunction.js";
+import {
+  ObjectType_toLoggableFunctionExpression,
+  ObjectType_toLoggableFunctionType,
+} from "./_ObjectType/ObjectType_toLoggableFunction.js";
 import { ObjectType_toRdfResourceFunction } from "./_ObjectType/ObjectType_toRdfResourceFunction.js";
 import {
   ObjectType_toRdfResourceValuesFunctionExpression,
@@ -88,6 +91,7 @@ export class ObjectType extends AbstractStructuredType {
     ObjectType_toJsonFunctionExpression;
   protected override toLoggableFunctionExpression =
     ObjectType_toLoggableFunctionExpression;
+  protected override toLoggableFunctionType = ObjectType_toLoggableFunctionType;
   protected override toRdfResourceValuesFunctionExpression =
     ObjectType_toRdfResourceValuesFunctionExpression;
   protected override toRdfResourceValuesFunctionType =
@@ -374,7 +378,7 @@ export class ObjectType extends AbstractStructuredType {
         }
 
         if (pickProperties.length === 0) {
-          return this.expression;
+          return code`object`;
         }
 
         if (pickProperties.length === this.properties.length) {
@@ -382,23 +386,29 @@ export class ObjectType extends AbstractStructuredType {
         }
 
         if (pickProperties.length <= this.properties.length / 2) {
-          return code`Pick<${name}, ${joinCode(
-            pickProperties.flatMap((property) =>
-              property.kind !== "RdfType"
-                ? [code`${literalOf(property.name)}`]
-                : [],
-            ),
-            { on: " | " },
-          )}>`;
+          const pickPropertyNames = pickProperties.flatMap((property) =>
+            property.kind !== "RdfType"
+              ? [code`${literalOf(property.name)}`]
+              : [],
+          );
+          if (pickPropertyNames.length === 0) {
+            return code`object`;
+          }
+          return code`Pick<${name}, ${joinCode(pickPropertyNames, {
+            on: " | ",
+          })}>`;
         } else {
-          return code`Omit<${name}, ${joinCode(
-            omitProperties.flatMap((property) =>
-              property.kind !== "RdfType"
-                ? [code`${literalOf(property.name)}`]
-                : [],
-            ),
-            { on: " | " },
-          )}>`;
+          const omitPropertyNames = omitProperties.flatMap((property) =>
+            property.kind !== "RdfType"
+              ? [code`${literalOf(property.name)}`]
+              : [],
+          );
+          if (omitPropertyNames.length === 0) {
+            return this.expression;
+          }
+          return code`Omit<${name}, ${joinCode(omitPropertyNames, {
+            on: " | ",
+          })}>`;
         }
       })
       .orDefaultLazy(() => {
@@ -406,7 +416,7 @@ export class ObjectType extends AbstractStructuredType {
           propertyFilter(property) ? property.declaration.toList() : [],
         );
         if (propertyDeclarations.length === 0) {
-          return this.expression;
+          return code`object`;
         }
         return code`{ ${joinCode(propertyDeclarations, { on: "\n\n" })} }`;
       });

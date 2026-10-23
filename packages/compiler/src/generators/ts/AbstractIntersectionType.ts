@@ -153,7 +153,7 @@ ${joinCode(
   protected toRdfResourceValuesFunctionExpression(): Code {
     return code`\
 (value, _options) => {
-  let rdfResourceValues: ${this.toRdfResourceValueTypesExpression} = [];
+  let rdfResourceValues: (${this.toRdfResourceValueTypesExpression})[] = [];
 ${joinCode(
   this.members.map(
     ({ type }) =>

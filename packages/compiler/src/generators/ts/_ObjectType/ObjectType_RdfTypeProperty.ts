@@ -110,7 +110,7 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     ObjectType_AbstractProperty["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`!${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.focusResource}, ${arrayOf(
+      code`${this.name}: !${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.focusResource}, ${arrayOf(
         variables.objectSchema
           .map(
             (schemaVariable) =>
