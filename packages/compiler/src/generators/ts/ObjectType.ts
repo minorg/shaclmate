@@ -384,7 +384,7 @@ export class ObjectType extends AbstractStructuredType {
         }
 
         if (pickProperties.length === 0) {
-          return code`{}`;
+          return code`object`;
         }
 
         if (pickProperties.length === this.properties.length) {
@@ -404,12 +404,13 @@ export class ObjectType extends AbstractStructuredType {
         }
       })
       .orDefaultLazy(() => {
-        return code`{ ${joinCode(
-          this.properties.flatMap((property) =>
-            propertyFilter(property) ? property.declaration.toList() : [],
-          ),
-          { on: "\n\n" },
-        )} }`;
+        const propertyDeclarations = this.properties.flatMap((property) =>
+          propertyFilter(property) ? property.declaration.toList() : [],
+        );
+        if (propertyDeclarations.length === 0) {
+          return code`object`;
+        }
+        return code`{ ${joinCode(propertyDeclarations, { on: "\n\n" })} }`;
       });
   }
 
