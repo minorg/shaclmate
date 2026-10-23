@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCallable } from "./AbstractCallable.js";
+import { CodeThunk } from "./CodeThunk.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -9,17 +10,16 @@ import { type Code, code } from "./ts-poet-wrapper.js";
  * an optional "satisfies" type annotation on the unannotated expression.
  */
 export class InlineCallable extends AbstractCallable {
-  #unannotatedExpression: Code | (() => Code);
-
-  readonly type: Maybe<Code>;
+  #unannotatedExpression: CodeThunk;
+  #type: Maybe<CodeThunk>;
 
   constructor(
-    unannotatedExpression: Code | (() => Code),
-    options?: { type?: Code },
+    unannotatedExpression: CodeThunk,
+    options?: { type?: CodeThunk },
   ) {
     super();
     this.#unannotatedExpression = unannotatedExpression;
-    this.type = Maybe.fromNullable(options?.type);
+    this.#type = Maybe.fromNullable(options?.type);
   }
 
   @Memoize()
@@ -30,15 +30,17 @@ export class InlineCallable extends AbstractCallable {
   }
 
   @Memoize()
+  private get type(): Maybe<Code> {
+    return this.#type.map(CodeThunk.evaluate);
+  }
+
+  @Memoize()
   override get unannotatedUsage(): Code {
     return code`(${this.unannotatedExpression})`;
   }
 
   @Memoize()
   private get unannotatedExpression(): Code {
-    if (typeof this.#unannotatedExpression === "function") {
-      return this.#unannotatedExpression();
-    }
-    return this.#unannotatedExpression;
+    return CodeThunk.evaluate(this.#unannotatedExpression);
   }
 }

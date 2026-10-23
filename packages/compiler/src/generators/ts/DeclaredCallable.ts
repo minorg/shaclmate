@@ -1,6 +1,7 @@
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCallable } from "./AbstractCallable.js";
+import { CodeThunk } from "./CodeThunk.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
@@ -9,22 +10,22 @@ import { type Code, code } from "./ts-poet-wrapper.js";
  */
 export class DeclaredCallable extends AbstractCallable {
   private readonly qualifiedName: readonly string[];
-  private readonly type: Code;
-  readonly #unannotatedExpression: Code | (() => Code);
+  readonly #type: CodeThunk;
+  readonly #unannotatedExpression: CodeThunk;
 
   constructor({
-    unannotatedExpression,
     qualifiedName,
     type,
+    unannotatedExpression,
   }: {
-    unannotatedExpression: Code | (() => Code);
     qualifiedName: readonly string[];
-    type: Code;
+    type: CodeThunk;
+    unannotatedExpression: CodeThunk;
   }) {
     super();
     this.#unannotatedExpression = unannotatedExpression;
     this.qualifiedName = qualifiedName;
-    this.type = type;
+    this.#type = type;
   }
 
   @Memoize()
@@ -38,11 +39,13 @@ export class DeclaredCallable extends AbstractCallable {
   }
 
   @Memoize()
+  get type(): Code {
+    return CodeThunk.evaluate(this.#type);
+  }
+
+  @Memoize()
   get unannotatedExpression(): Code {
-    if (typeof this.#unannotatedExpression === "function") {
-      return this.#unannotatedExpression();
-    }
-    return this.#unannotatedExpression;
+    return CodeThunk.evaluate(this.#unannotatedExpression);
   }
 
   @Memoize()

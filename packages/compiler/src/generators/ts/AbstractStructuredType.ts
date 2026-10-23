@@ -13,7 +13,7 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractStructuredType extends AbstractType {
   @Memoize()
   override get equalsFunction(): Callable {
-    const type = this.equalsFunctionType();
+    const type = () => this.equalsFunctionType();
     const unannotatedExpression = () => this.equalsFunctionExpression();
 
     return this.name
@@ -30,7 +30,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get filterFunction(): Callable {
-    const type = this.filterFunctionType();
+    const type = () => this.filterFunctionType();
     const unannotatedExpression = () => this.filterFunctionExpression();
 
     return this.name
@@ -54,7 +54,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get fromJsonFunction(): Callable {
-    const type = this.fromJsonFunctionType();
+    const type = () => this.fromJsonFunctionType();
     const unannotatedExpression = () => this.fromJsonFunctionExpression();
 
     return this.name
@@ -71,7 +71,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get fromRdfResourceValuesFunction(): Callable {
-    const type = this.fromRdfResourceValuesFunctionType();
+    const type = () => this.fromRdfResourceValuesFunctionType();
     const unannotatedExpression = () =>
       this.fromRdfResourceValuesFunctionExpression();
 
@@ -89,7 +89,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get hashFunction(): Callable {
-    const type = this.hashFunctionType();
+    const type = () => this.hashFunctionType();
     const unannotatedExpression = () => this.hashFunctionExpression();
 
     return this.name
@@ -113,7 +113,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toJsonFunction(): Callable {
-    const type = this.toJsonFunctionType();
+    const type = () => this.toJsonFunctionType();
     const unannotatedExpression = () => this.toJsonFunctionExpression();
 
     return this.name
@@ -130,7 +130,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toLoggableFunction(): Callable {
-    const type = this.toLoggableFunctionType();
+    const type = () => this.toLoggableFunctionType();
     const unannotatedExpression = () => this.toLoggableFunctionExpression();
 
     return this.name
@@ -147,7 +147,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toRdfResourceValuesFunction(): Callable {
-    const type = this.toRdfResourceValuesFunctionType();
+    const type = () => this.toRdfResourceValuesFunctionType();
     const unannotatedExpression = () =>
       this.toRdfResourceValuesFunctionExpression();
 
@@ -165,7 +165,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   get toStringFunction(): Callable {
-    const type = this.toStringFunctionType();
+    const type = () => this.toStringFunctionType();
     const unannotatedExpression = () => this.toStringFunctionExpression();
 
     return this.name
@@ -185,7 +185,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Callable {
-    const type = this.valueSparqlConstructTriplesType();
+    const type = () => this.valueSparqlConstructTriplesType();
     const unannotatedExpression = () =>
       this.valueSparqlConstructTriplesFunctionExpression();
 
@@ -203,7 +203,7 @@ export abstract class AbstractStructuredType extends AbstractType {
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Callable {
-    const type = this.valueSparqlWherePatternsFunctionType();
+    const type = () => this.valueSparqlWherePatternsFunctionType();
     const unannotatedExpression = () =>
       this.valueSparqlWherePatternsFunctionExpression();
 

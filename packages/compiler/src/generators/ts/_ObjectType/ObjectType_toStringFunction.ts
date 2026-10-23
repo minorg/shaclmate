@@ -7,8 +7,8 @@ export function ObjectType_toStringFunctionExpression(this: ObjectType): Code {
 }
 
 export function ObjectType_toStringFunctionType(this: ObjectType): Code {
+  const variables = { object: this.thisVariable };
   return code`${this.reusables.snippets.ToStringFunction}<${this.propertySubsetExpression(
-    (property) =>
-      property.kind !== "Discriminant" && property.kind !== "RdfType",
+    (property) => property.toStringInitializer({ variables }).isJust(),
   )}>`;
 }
