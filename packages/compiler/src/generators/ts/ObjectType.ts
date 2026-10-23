@@ -11,17 +11,19 @@ import { ObjectType_conversionFunction } from "./_ObjectType/ObjectType_conversi
 import { ObjectType_createFunction } from "./_ObjectType/ObjectType_createFunction.js";
 import { ObjectType_createUnsafeFunction } from "./_ObjectType/ObjectType_createUnsafeFunction.js";
 import { ObjectType_DiscriminantProperty } from "./_ObjectType/ObjectType_DiscriminantProperty.js";
-import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunctionExpression.js";
-import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunctionExpression.js";
-import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterTypeExpression.js";
+import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunction.js";
+import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunction.js";
+import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterType.js";
 import { ObjectType_focusSparqlConstructTriplesFunction } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunction.js";
 import { ObjectType_focusSparqlWherePatternsFunction } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunction.js";
-import { ObjectType_fromJsonFunctionExpression } from "./_ObjectType/ObjectType_fromJsonFunctionExpression.js";
+import { ObjectType_fromJsonFunctionExpression } from "./_ObjectType/ObjectType_fromJsonFunction.js";
 import { ObjectType_fromRdfResourceFunction } from "./_ObjectType/ObjectType_fromRdfResourceFunction.js";
-import { ObjectType_fromRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionExpression.js";
-import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlTypeExpression.js";
-import { ObjectType_hashFunctionExpression } from "./_ObjectType/ObjectType_hashFunctionExpression.js";
-import { ObjectType_hashFunctionType } from "./_ObjectType/ObjectType_hashFunctionType.js";
+import { ObjectType_fromRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunction.js";
+import { ObjectType_graphqlTypeExpression } from "./_ObjectType/ObjectType_graphqlType.js";
+import {
+  ObjectType_hashFunctionExpression,
+  ObjectType_hashFunctionType,
+} from "./_ObjectType/ObjectType_hashFunction.js";
 import { ObjectType_IdentifierProperty } from "./_ObjectType/ObjectType_IdentifierProperty.js";
 import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { ObjectType_jsonType } from "./_ObjectType/ObjectType_jsonType.js";
@@ -33,16 +35,18 @@ import { ObjectType_schemaExpression } from "./_ObjectType/ObjectType_schemaExpr
 import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schemaTypeExpression.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunctionExpression.js";
-import { ObjectType_toLoggableFunctionExpression } from "./_ObjectType/ObjectType_toLoggableFunctionExpression.js";
+import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunction.js";
+import { ObjectType_toLoggableFunctionExpression } from "./_ObjectType/ObjectType_toLoggableFunction.js";
 import { ObjectType_toRdfResourceFunction } from "./_ObjectType/ObjectType_toRdfResourceFunction.js";
-import { ObjectType_toRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceValuesFunctionExpression.js";
-import { ObjectType_toStringFunctionExpression } from "./_ObjectType/ObjectType_toStringFunctionExpression.js";
-import { ObjectType_toStringFunctionType } from "./_ObjectType/ObjectType_toStringFunctionType.js";
+import { ObjectType_toRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceValuesFunction.js";
+import {
+  ObjectType_toStringFunctionExpression,
+  ObjectType_toStringFunctionType,
+} from "./_ObjectType/ObjectType_toStringFunction.js";
 import { ObjectType_toStringRecordFunction } from "./_ObjectType/ObjectType_toStringRecordFunction.js";
-import { ObjectType_typeGuardFunctionExpression } from "./_ObjectType/ObjectType_typeGuardFunctionExpression.js";
-import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionExpression.js";
-import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionExpression.js";
+import { ObjectType_typeGuardFunctionExpression } from "./_ObjectType/ObjectType_typeGuardFunction.js";
+import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunction.js";
+import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunction.js";
 import { AbstractStructuredType } from "./AbstractStructuredType.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -73,6 +77,7 @@ export class ObjectType extends AbstractStructuredType {
   protected override fromRdfResourceValuesFunctionExpression =
     ObjectType_fromRdfResourceValuesFunctionExpression;
   protected override hashFunctionExpression = ObjectType_hashFunctionExpression;
+  protected override hashFunctionType = ObjectType_hashFunctionType;
   protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
   protected override toJsonFunctionExpression =
     ObjectType_toJsonFunctionExpression;
@@ -82,6 +87,7 @@ export class ObjectType extends AbstractStructuredType {
     ObjectType_toRdfResourceValuesFunctionExpression;
   protected override toStringFunctionExpression =
     ObjectType_toStringFunctionExpression;
+  protected override toStringFunctionType = ObjectType_toStringFunctionType;
   protected override valueSparqlConstructTriplesFunctionExpression =
     ObjectType_valueSparqlConstructTriplesFunctionExpression;
   protected override valueSparqlWherePatternsFunctionExpression =
@@ -291,10 +297,6 @@ export class ObjectType extends AbstractStructuredType {
     return ObjectType_fromRdfResourceFunction.call(this);
   }
 
-  protected override get hashFunctionType(): Code {
-    return ObjectType_hashFunctionType.call(this);
-  }
-
   protected override get inlineExpression(): Code {
     return code`{ ${joinCode(
       this.properties.flatMap((property) => property.declaration.toList()),
@@ -327,10 +329,6 @@ export class ObjectType extends AbstractStructuredType {
             code`${arrayOf(...rdfTypeProperty.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
         ),
     );
-  }
-
-  protected override get toStringFunctionType(): Code {
-    return ObjectType_toStringFunctionType.call(this);
   }
 
   override jsonType(
