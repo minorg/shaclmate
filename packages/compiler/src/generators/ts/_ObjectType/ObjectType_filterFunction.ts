@@ -24,3 +24,7 @@ export function ObjectType_filterFunctionExpression(this: ObjectType): Code {
 
   return code`(filter, value) => { ${joinCode(statements)} }`;
 }
+
+export function ObjectType_filterFunctionType(this: ObjectType): Code {
+  return code`${this.reusables.snippets.FilterFunction}<${this.filterType}, ${this.propertySubsetExpression((property) => property.filterProperty.isJust())}>`;
+}

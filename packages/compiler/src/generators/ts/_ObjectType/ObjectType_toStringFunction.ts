@@ -9,8 +9,6 @@ export function ObjectType_toStringFunctionExpression(this: ObjectType): Code {
 export function ObjectType_toStringFunctionType(this: ObjectType): Code {
   return code`${this.reusables.snippets.ToStringFunction}<${this.propertySubsetExpression(
     (property) =>
-      property
-        .toStringInitializer({ variables: { object: code`object` } })
-        .isJust(),
+      property.kind !== "Discriminant" && property.kind !== "RdfType",
   )}>`;
 }

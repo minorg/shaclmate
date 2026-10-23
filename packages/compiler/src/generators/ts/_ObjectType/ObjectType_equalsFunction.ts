@@ -21,3 +21,10 @@ export function ObjectType_equalsFunctionExpression(this: ObjectType): Code {
     { on: "." },
   )}`;
 }
+
+export function ObjectType_equalsFunctionType(this: ObjectType): Code {
+  return code`${this.reusables.snippets.EqualsFunction}<${this.propertySubsetExpression(
+    (property) =>
+      property.kind !== "Discriminant" && property.kind !== "RdfType",
+  )}>`;
+}

@@ -11,8 +11,14 @@ import { ObjectType_conversionFunction } from "./_ObjectType/ObjectType_conversi
 import { ObjectType_createFunction } from "./_ObjectType/ObjectType_createFunction.js";
 import { ObjectType_createUnsafeFunction } from "./_ObjectType/ObjectType_createUnsafeFunction.js";
 import { ObjectType_DiscriminantProperty } from "./_ObjectType/ObjectType_DiscriminantProperty.js";
-import { ObjectType_equalsFunctionExpression } from "./_ObjectType/ObjectType_equalsFunction.js";
-import { ObjectType_filterFunctionExpression } from "./_ObjectType/ObjectType_filterFunction.js";
+import {
+  ObjectType_equalsFunctionExpression,
+  ObjectType_equalsFunctionType,
+} from "./_ObjectType/ObjectType_equalsFunction.js";
+import {
+  ObjectType_filterFunctionExpression,
+  ObjectType_filterFunctionType,
+} from "./_ObjectType/ObjectType_filterFunction.js";
 import { ObjectType_filterTypeExpression } from "./_ObjectType/ObjectType_filterType.js";
 import { ObjectType_focusSparqlConstructTriplesFunction } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunction.js";
 import { ObjectType_focusSparqlWherePatternsFunction } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunction.js";
@@ -69,8 +75,10 @@ export class ObjectType extends AbstractStructuredType {
 
   protected override equalsFunctionExpression =
     ObjectType_equalsFunctionExpression;
+  protected override equalsFunctionType = ObjectType_equalsFunctionType;
   protected override filterFunctionExpression =
     ObjectType_filterFunctionExpression;
+  protected override filterFunctionType = ObjectType_filterFunctionType;
   protected override filterTypeExpression = ObjectType_filterTypeExpression;
   protected override fromJsonFunctionExpression =
     ObjectType_fromJsonFunctionExpression;
@@ -391,12 +399,20 @@ export class ObjectType extends AbstractStructuredType {
 
         if (pickProperties.length <= this.properties.length / 2) {
           return code`Pick<${name}, ${joinCode(
-            pickProperties.map((property) => code`${literalOf(property.name)}`),
+            pickProperties.flatMap((property) =>
+              property.kind !== "RdfType"
+                ? [code`${literalOf(property.name)}`]
+                : [],
+            ),
             { on: " | " },
           )}>`;
         } else {
           return code`Omit<${name}, ${joinCode(
-            omitProperties.map((property) => code`${literalOf(property.name)}`),
+            omitProperties.flatMap((property) =>
+              property.kind !== "RdfType"
+                ? [code`${literalOf(property.name)}`]
+                : [],
+            ),
             { on: " | " },
           )}>`;
         }
