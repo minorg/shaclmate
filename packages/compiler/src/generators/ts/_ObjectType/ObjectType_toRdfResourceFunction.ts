@@ -8,9 +8,12 @@ export function ObjectType_toRdfResourceFunction(this: ObjectType): Callable {
   const identifierTypeExpression = this.name
     .map(() => this.identifierTypeAlias)
     .orDefault(this.identifierType.expression);
-  const type = code`${this.reusables.snippets.ToRdfResourceFunction}<${this.expression}, ${identifierTypeExpression}>`;
+  const thisTypeExpression = this.propertySubsetExpression(
+    (property) => property.kind !== "Discriminant",
+  );
+  const type = code`${this.reusables.snippets.ToRdfResourceFunction}<${identifierTypeExpression}, ${thisTypeExpression}>`;
   const unannotatedExpression = () =>
-    code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${this.expression}>(${this._toRdfResourceFunction.annotatedUsage})`;
+    code`${this.reusables.snippets.wrap_ToRdfResourceFunction}<${identifierTypeExpression}, ${thisTypeExpression}>(${this._toRdfResourceFunction.annotatedUsage})`;
 
   return this.name
     .map<Callable>(

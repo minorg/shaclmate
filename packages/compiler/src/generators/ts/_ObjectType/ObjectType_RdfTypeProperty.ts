@@ -104,8 +104,21 @@ export class ObjectType_RdfTypeProperty extends ObjectType_AbstractProperty {
     return Maybe.empty();
   }
 
-  override fromRdfResourceValuesInitializer(): Maybe<Code> {
-    return Maybe.empty();
+  override fromRdfResourceValuesInitializer({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["fromRdfResourceValuesInitializer"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`!${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.focusResource}, ${arrayOf(
+        variables.objectSchema
+          .map(
+            (schemaVariable) =>
+              code`${schemaVariable}.properties.${this.name}.fromRdfType`,
+          )
+          .orDefaultLazy(() => this.rdfjsTermExpression(this.fromRdfType)),
+      )}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
+    );
   }
 
   override hashStatements(): readonly Code[] {
@@ -189,8 +202,22 @@ type: "optional" as const
     return Maybe.empty();
   }
 
-  override toRdfRdfResourceValuesStatements(): readonly Code[] {
-    return [];
+  override toRdfResourceValuesStatements({
+    variables,
+  }: Parameters<
+    ObjectType_AbstractProperty["toRdfResourceValuesStatements"]
+  >[0]): readonly Code[] {
+    return [
+      code`if (!${variables.ignoreRdfType}) { ${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${variables.objectSchema
+        .map(
+          (schemaVariable) =>
+            code`${schemaVariable}.properties.${this.name}.toRdfTypes`,
+        )
+        .orDefaultLazy(
+          () =>
+            code`${arrayOf(...this.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
+        )}, ${variables.graph}); }`,
+    ];
   }
 
   override toStringInitializer(): Maybe<Code> {

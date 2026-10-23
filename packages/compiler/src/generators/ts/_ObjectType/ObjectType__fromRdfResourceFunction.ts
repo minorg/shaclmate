@@ -3,7 +3,7 @@ import type { Callable } from "../Callable.js";
 import { DeclaredCallable } from "../DeclaredCallable.js";
 import { InlineCallable } from "../InlineCallable.js";
 import type { ObjectType } from "../ObjectType.js";
-import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 function ObjectType__fromRdfResourceFunctionExpression(this: ObjectType): Code {
   const optionsVariable = code`options`;
@@ -12,6 +12,7 @@ function ObjectType__fromRdfResourceFunctionExpression(this: ObjectType): Code {
     context: code`${optionsVariable}.context`,
     graph: code`${optionsVariable}.graph`,
     ignoreRdfType: code`${optionsVariable}.ignoreRdfType`,
+    objectSchema: this.schemaVariable,
     objectSet: code`${optionsVariable}.objectSet`,
     preferredLanguages: code`${optionsVariable}.preferredLanguages`,
     resource: code`resource`,
@@ -19,19 +20,15 @@ function ObjectType__fromRdfResourceFunctionExpression(this: ObjectType): Code {
 
   const chains: { expression: Code; variable: string }[] = [];
 
-  this.fromRdfTypeVariable.ifJust((fromRdfTypeVariable) => {
-    chains.push({
-      expression: code`!${variables.ignoreRdfType} ? ${this.reusables.snippets.ensureRdfResourceType}(${variables.resource}, ${arrayOf(fromRdfTypeVariable)}, ${{ graph: variables.graph }}) : ${this.reusables.imports.Right}(true as const)`,
-      variable: `_rdfTypeCheck`,
-    });
-  });
-
   const propertyFromRdfResourceValuesInitializers: Code[] =
     this.properties.flatMap((property) =>
       property
         .fromRdfResourceValuesInitializer({
           variables: {
             focusResource: variables.resource,
+            graph: variables.graph,
+            ignoreRdfType: variables.ignoreRdfType,
+            objectSchema: variables.objectSchema,
             options: optionsVariable,
           },
         })

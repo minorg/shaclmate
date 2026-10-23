@@ -178,6 +178,9 @@ export abstract class ObjectType_AbstractProperty {
   abstract fromRdfResourceValuesInitializer(parameters: {
     variables: {
       focusResource: Code;
+      graph: Code;
+      ignoreRdfType: Code;
+      objectSchema: Maybe<Code>;
       options: Code;
     };
   }): Maybe<Code>;
@@ -254,11 +257,11 @@ export abstract class ObjectType_AbstractProperty {
   /**
    * Statements to serialize this property to an RDF resource.
    */
-  abstract toRdfRdfResourceValuesStatements(parameters: {
+  abstract toRdfResourceValuesStatements(parameters: {
     variables: Omit<
       Parameters<Type["toRdfResourceValuesExpression"]>[0]["variables"],
       "propertyPath" | "value"
-    > & { object: Code };
+    > & { ignoreRdfType: Code; object: Code; objectSchema: Maybe<Code> };
   }): readonly Code[];
 
   /**

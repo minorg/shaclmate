@@ -44,7 +44,10 @@ import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_Obj
 import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunction.js";
 import { ObjectType_toLoggableFunctionExpression } from "./_ObjectType/ObjectType_toLoggableFunction.js";
 import { ObjectType_toRdfResourceFunction } from "./_ObjectType/ObjectType_toRdfResourceFunction.js";
-import { ObjectType_toRdfResourceValuesFunctionExpression } from "./_ObjectType/ObjectType_toRdfResourceValuesFunction.js";
+import {
+  ObjectType_toRdfResourceValuesFunctionExpression,
+  ObjectType_toRdfResourceValuesFunctionType,
+} from "./_ObjectType/ObjectType_toRdfResourceValuesFunction.js";
 import {
   ObjectType_toStringFunctionExpression,
   ObjectType_toStringFunctionType,
@@ -62,13 +65,7 @@ import { DeclaredCallable } from "./DeclaredCallable.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import type { Type } from "./Type.js";
-import {
-  arrayOf,
-  type Code,
-  code,
-  joinCode,
-  literalOf,
-} from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class ObjectType extends AbstractStructuredType {
   private readonly rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
@@ -93,6 +90,8 @@ export class ObjectType extends AbstractStructuredType {
     ObjectType_toLoggableFunctionExpression;
   protected override toRdfResourceValuesFunctionExpression =
     ObjectType_toRdfResourceValuesFunctionExpression;
+  protected override toRdfResourceValuesFunctionType =
+    ObjectType_toRdfResourceValuesFunctionType;
   protected override toStringFunctionExpression =
     ObjectType_toStringFunctionExpression;
   protected override toStringFunctionType = ObjectType_toStringFunctionType;
@@ -324,21 +323,6 @@ export class ObjectType extends AbstractStructuredType {
     return ObjectType_toRdfResourceFunction.call(this);
   }
 
-  @Memoize()
-  protected get toRdfTypesVariable(): Maybe<Code> {
-    return this.rdfTypeProperty.map((rdfTypeProperty) =>
-      this.schemaVariable
-        .map(
-          (schemaVariable) =>
-            code`${schemaVariable}.properties.${rdfTypeProperty.name}.toRdfTypes`,
-        )
-        .orDefaultLazy(
-          () =>
-            code`${arrayOf(...rdfTypeProperty.toRdfTypes.map((toRdfType) => this.rdfjsTermExpression(toRdfType)))}`,
-        ),
-    );
-  }
-
   override jsonType(
     parameters: Parameters<AbstractType["jsonType"]>[0],
   ): AbstractType.JsonType {
@@ -390,7 +374,7 @@ export class ObjectType extends AbstractStructuredType {
         }
 
         if (pickProperties.length === 0) {
-          return code`object`;
+          return this.expression;
         }
 
         if (pickProperties.length === this.properties.length) {
@@ -422,7 +406,7 @@ export class ObjectType extends AbstractStructuredType {
           propertyFilter(property) ? property.declaration.toList() : [],
         );
         if (propertyDeclarations.length === 0) {
-          return code`object`;
+          return this.expression;
         }
         return code`{ ${joinCode(propertyDeclarations, { on: "\n\n" })} }`;
       });

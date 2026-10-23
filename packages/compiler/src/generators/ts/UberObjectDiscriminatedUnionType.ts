@@ -144,7 +144,7 @@ ${this.memberTypeSwitch({
     }
 
     return Maybe.of(code`\
-export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${this.name}> = (object, options) => {
+export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${this.reusables.imports.Resource}.Identifier, ${this.name}> = (object, options) => {
 ${this.memberTypeSwitch({
   caseBlock: (member) =>
     code`return ${member.name.unsafeCoerce()}.toRdfResource(object, options);`,

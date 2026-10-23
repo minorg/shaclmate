@@ -135,7 +135,7 @@ export class ObjectType_DiscriminantProperty extends ObjectType_AbstractProperty
     return Maybe.of(code`${literalOf(this.name)}: ${literalOf(this.value)}`);
   }
 
-  override toRdfRdfResourceValuesStatements(): readonly Code[] {
+  override toRdfResourceValuesStatements(): readonly Code[] {
     return [];
   }
 

@@ -337,10 +337,10 @@ export class ObjectType_ShaclProperty<
     );
   }
 
-  override toRdfRdfResourceValuesStatements({
+  override toRdfResourceValuesStatements({
     variables,
   }: Parameters<
-    ObjectType_AbstractProperty["toRdfRdfResourceValuesStatements"]
+    ObjectType_AbstractProperty["toRdfResourceValuesStatements"]
   >[0]): readonly Code[] {
     switch (this.path.termType) {
       case "NamedNode":
@@ -358,7 +358,11 @@ export class ObjectType_ShaclProperty<
       .map(() => code`${this.schemaVariable}.path`)
       .orDefault(this.propertyPathToCode(this.path));
 
-    const { object: objectVariable, ...otherVariables } = variables;
+    const {
+      object: objectVariable,
+      objectSchema: _objectSchema,
+      ...otherVariables
+    } = variables;
 
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(

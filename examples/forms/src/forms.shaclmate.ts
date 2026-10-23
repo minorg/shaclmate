@@ -224,8 +224,10 @@ export namespace $PropertyPath {
 
   export type Schema = typeof schema;
 
-  export const toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
-    RdfxResourcePropertyPath.toResource;
+  export const toRdfResource: $ToRdfResourceFunction<
+    Resource.Identifier,
+    $PropertyPath
+  > = RdfxResourcePropertyPath.toResource;
 
   export const $toString = RdfxResourcePropertyPath.toString;
 }
@@ -249,8 +251,8 @@ function $sequenceRecord<T extends Record<string, unknown>>(
 export type $ToJsonFunction<T, JsonT> = (value: T) => JsonT;
 
 export type $ToRdfResourceFunction<
+  IdentifierT extends Resource.Identifier,
   ObjectT extends object,
-  IdentifierT extends Resource.Identifier = Resource.Identifier,
 > = (
   object: ObjectT,
   options?: {
@@ -323,19 +325,19 @@ function $wrap_ToRdfResourceFunction<
   ObjectT extends { $identifier: () => IdentifierT },
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
-): $ToRdfResourceFunction<ObjectT, IdentifierT>;
+): $ToRdfResourceFunction<IdentifierT, ObjectT>;
 function $wrap_ToRdfResourceFunction<
   _IdentifierT extends BlankNode,
   ObjectT extends object,
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<BlankNode, ObjectT>,
-): $ToRdfResourceFunction<ObjectT, BlankNode>;
+): $ToRdfResourceFunction<BlankNode, ObjectT>;
 function $wrap_ToRdfResourceFunction<
   IdentifierT extends Resource.Identifier,
   ObjectT extends object & { $identifier?: () => IdentifierT },
 >(
   _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
-): $ToRdfResourceFunction<ObjectT, IdentifierT> {
+): $ToRdfResourceFunction<IdentifierT, ObjectT> {
   return (object, options) => {
     let { graph, ignoreRdfType = false, resourceSet } = options ?? {};
     if (!resourceSet) {
@@ -408,7 +410,7 @@ export type FormStruct = {
 export namespace FormStruct {
   export const _toRdfResourceFunction: $_ToRdfResourceFunction<
     FormStruct.Identifier,
-    FormStruct
+    Omit<FormStruct, "$type">
   > = (parameters) => {
     parameters.resource.add(
       FormStruct.schema.properties.emptyStringSetProperty.path,
@@ -485,7 +487,7 @@ export namespace FormStruct {
     return parameters.resource;
   };
 
-  export const $toString: $ToStringFunction<Pick<FormStruct, "$identifier">> = (
+  export const $toString: $ToStringFunction<Omit<FormStruct, "$type">> = (
     _formStruct,
   ) => `FormStruct(${JSON.stringify(FormStruct.toStringRecord(_formStruct))})`;
 
@@ -610,6 +612,11 @@ export namespace FormStruct {
                     }))(_object),
                 )) satisfies $ToStringFunction<{
                 readonly $identifier: () => BlankNode | NamedNode;
+
+                /**
+                 * Required string
+                 */
+                readonly requiredStringProperty: string;
               }>,
             }),
           ))({ ...value, $defaultNamespace }))(
@@ -766,6 +773,11 @@ export namespace FormStruct {
                     }))(_object),
                 )) satisfies $ToStringFunction<{
                 readonly $identifier: () => BlankNode | NamedNode;
+
+                /**
+                 * Required string
+                 */
+                readonly requiredStringProperty: string;
               }>,
             }),
           )) satisfies <
@@ -1052,14 +1064,15 @@ export namespace FormStruct {
     );
 
   export const toRdfResource: $ToRdfResourceFunction<
-    FormStruct,
-    FormStruct.Identifier
-  > = $wrap_ToRdfResourceFunction<FormStruct.Identifier, FormStruct>(
-    FormStruct._toRdfResourceFunction,
-  );
+    FormStruct.Identifier,
+    Omit<FormStruct, "$type">
+  > = $wrap_ToRdfResourceFunction<
+    FormStruct.Identifier,
+    Omit<FormStruct, "$type">
+  >(FormStruct._toRdfResourceFunction);
 
   export const toRdfResourceValues: $ToRdfResourceValuesFunction<
-    FormStruct,
+    Omit<FormStruct, "$type">,
     BlankNode | NamedNode
   > = (value, options) => [
     FormStruct.toRdfResource(value, {

@@ -9,12 +9,15 @@ export function ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration(
     return {};
   }
 
+  const identifierTypeExpression = this.name
+    .map(() => this.identifierTypeAlias)
+    .orDefault(this.identifierType.expression);
   const name = this.name.unsafeCoerce();
 
   return singleEntryRecord(
     `toRdfResource`,
     code`\
-export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${name}> = (object, options) => {
+export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${identifierTypeExpression}, ${name}> = (object, options) => {
 ${joinCode(
   this.members
     .map(

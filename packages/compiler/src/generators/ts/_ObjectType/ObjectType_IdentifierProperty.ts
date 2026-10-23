@@ -283,7 +283,7 @@ export class ObjectType_IdentifierProperty extends ObjectType_AbstractProperty {
     );
   }
 
-  override toRdfRdfResourceValuesStatements(): readonly Code[] {
+  override toRdfResourceValuesStatements(): readonly Code[] {
     return [];
   }
 

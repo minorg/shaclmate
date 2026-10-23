@@ -17,14 +17,14 @@ function ${functionName}<
   ObjectT extends { ${identifierPropertyName}: () => IdentifierT },
 >(
   _toRdfResourceFunction: ${syntheticNamePrefix}_ToRdfResourceFunction<IdentifierT, ObjectT>,
-): ${syntheticNamePrefix}ToRdfResourceFunction<ObjectT, IdentifierT>;
+): ${syntheticNamePrefix}ToRdfResourceFunction<IdentifierT, ObjectT>;
 function ${functionName}<
   _IdentifierT extends ${imports.BlankNode},
   ObjectT extends object,
 >(
   _toRdfResourceFunction: ${syntheticNamePrefix}_ToRdfResourceFunction<${imports.BlankNode}, ObjectT>,
-): ${syntheticNamePrefix}ToRdfResourceFunction<ObjectT, ${imports.BlankNode}>;
-function ${functionName}<IdentifierT extends ${imports.Resource}.Identifier, ObjectT extends object & { ${identifierPropertyName}?: () => IdentifierT }>(_toRdfResourceFunction: ${snippets._ToRdfResourceFunction}<IdentifierT, ObjectT>): ${snippets.ToRdfResourceFunction}<ObjectT, IdentifierT> {
+): ${syntheticNamePrefix}ToRdfResourceFunction<${imports.BlankNode}, ObjectT>;
+function ${functionName}<IdentifierT extends ${imports.Resource}.Identifier, ObjectT extends object & { ${identifierPropertyName}?: () => IdentifierT }>(_toRdfResourceFunction: ${snippets._ToRdfResourceFunction}<IdentifierT, ObjectT>): ${snippets.ToRdfResourceFunction}<IdentifierT, ObjectT> {
   return (object, options) => {
     let { graph, ignoreRdfType = false, resourceSet } = (options ?? {});
     if (!resourceSet) {
