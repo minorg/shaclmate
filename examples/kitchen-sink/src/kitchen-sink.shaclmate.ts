@@ -65522,6 +65522,11 @@ export namespace StructIntersection {
     StructIntersectionMember2.hash(hasher, value);
   };
 
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+  }
+
   export type Json = Omit<StructIntersectionMember1.Json, "$type"> &
     Omit<StructIntersectionMember2.Json, "$type">;
 

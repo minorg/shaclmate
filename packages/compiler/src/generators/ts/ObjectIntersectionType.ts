@@ -1,4 +1,5 @@
 import { Memoize } from "typescript-memoize";
+import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { AbstractIntersectionType } from "./AbstractIntersectionType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -145,45 +146,45 @@ ${joinCode(
   //   return this.name.map((name) => code`${name}.is${name}`);
   // }
 
-  // protected override staticModuleDeclarations(
-  //   name: string,
-  // ): Record<string, Code> {
-  //   return {
-  //     ...super.staticModuleDeclarations(name),
-  //     ...ObjectIntersectionType_identifierTypeDeclarations.call(this),
-  //     ...ObjectIntersectionType_focusSparqlConstructTriplesFunctionDeclaration.call(
-  //       this,
-  //     ),
-  //     ...ObjectIntersectionType_focusSparqlWherePatternsFunctionDeclaration.call(
-  //       this,
-  //     ),
-  //     ...ObjectIntersectionType_fromRdfResourceFunctionDeclaration.call(this),
-  //     ...ObjectIntersectionType_graphqlTypeVariableStatement.call(this),
-  //     ...ObjectIntersectionType_typeGuardFunctionDeclaration.call(this),
-  //     ...ObjectIntersectionType_schemaVariableStatement.call(this),
-  //     ...(this.configuration.features.has("Object.SPARQL")
-  //       ? {
-  //           ...singleEntryRecord(
-  //             "sparqlConstructQuery",
-  //             ObjectType_sparqlConstructQueryFunctionDeclaration.call({
-  //               name,
-  //               configuration: this.configuration,
-  //               filterType: this.filterType,
-  //               reusables: this.reusables,
-  //             }),
-  //           ),
-  //           ...singleEntryRecord(
-  //             "sparqlConstructQueryString",
-  //             ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-  //               name,
-  //               configuration: this.configuration,
-  //               filterType: this.filterType,
-  //               reusables: this.reusables,
-  //             }),
-  //           ),
-  //         }
-  //       : {}),
-  //     ...ObjectIntersectionType_toRdfResourceFunctionDeclaration.call(this),
-  //   };
-  // }
+  protected override staticModuleDeclarations(
+    name: string,
+  ): Record<string, Code> {
+    return {
+      ...super.staticModuleDeclarations(name),
+      ...ObjectType_identifierTypeDeclarations.call(this),
+      //     ...ObjectIntersectionType_focusSparqlConstructTriplesFunctionDeclaration.call(
+      //       this,
+      //     ),
+      //     ...ObjectIntersectionType_focusSparqlWherePatternsFunctionDeclaration.call(
+      //       this,
+      //     ),
+      //     ...ObjectIntersectionType_fromRdfResourceFunctionDeclaration.call(this),
+      //     ...ObjectIntersectionType_graphqlTypeVariableStatement.call(this),
+      //     ...ObjectIntersectionType_typeGuardFunctionDeclaration.call(this),
+      //     ...ObjectIntersectionType_schemaVariableStatement.call(this),
+      //     ...(this.configuration.features.has("Object.SPARQL")
+      //       ? {
+      //           ...singleEntryRecord(
+      //             "sparqlConstructQuery",
+      //             ObjectType_sparqlConstructQueryFunctionDeclaration.call({
+      //               name,
+      //               configuration: this.configuration,
+      //               filterType: this.filterType,
+      //               reusables: this.reusables,
+      //             }),
+      //           ),
+      //           ...singleEntryRecord(
+      //             "sparqlConstructQueryString",
+      //             ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
+      //               name,
+      //               configuration: this.configuration,
+      //               filterType: this.filterType,
+      //               reusables: this.reusables,
+      //             }),
+      //           ),
+      //         }
+      //       : {}),
+      //     ...ObjectIntersectionType_toRdfResourceFunctionDeclaration.call(this),
+    };
+  }
 }
