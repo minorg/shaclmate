@@ -76,8 +76,10 @@ export class TsGenerator implements Generator {
 
     for (const tsNamedType of tsNamedTypes) {
       switch (tsNamedType.kind) {
-        case "ObjectDiscriminatedUnion":
+        case "Intersection":
         case "DiscriminatedUnion":
+        case "ObjectDiscriminatedUnion":
+        case "ObjectIntersection":
           continue; // Declare compound types last.
       }
 
@@ -89,8 +91,10 @@ export class TsGenerator implements Generator {
     // Declare compound types last.
     for (const tsNamedType of tsNamedTypes) {
       switch (tsNamedType.kind) {
-        case "ObjectDiscriminatedUnion":
         case "DiscriminatedUnion":
+        case "Intersection":
+        case "ObjectDiscriminatedUnion":
+        case "ObjectIntersection":
           break;
         default:
           continue;
