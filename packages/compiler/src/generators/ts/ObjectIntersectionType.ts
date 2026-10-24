@@ -91,6 +91,10 @@ if (member${memberI}ValuesArray.length !== member0Values.length) {
     return this.jsonTypeFactory.createJsonIntersectionType(
       this.members.map((member) => member.type.jsonType({ form: "compact" })),
       {
+        memberTypeExpression: (memberType) =>
+          code`Omit<${memberType.expression}, ${literalOf(this.configuration.objectDiscriminantProperty.jsonName)}>`,
+        memberTypeSchema: (memberType) =>
+          code`${memberType.schema}.omit({ ${this.configuration.objectDiscriminantProperty.jsonName}: true })`,
         name: this.name.map((name) => [name, "Json"]).extract(),
         recursive: this.recursive,
       },

@@ -227,24 +227,46 @@ class JsonDiscriminatedUnionType extends AbstractJsonType {
 }
 
 class JsonIntersectionType extends AbstractJsonType {
+  private readonly memberTypeExpression: (
+    memberType: JsonType,
+    memberI: number,
+  ) => Code;
+  private readonly memberTypeSchema: (
+    memberType: JsonType,
+    memberI: number,
+  ) => Code;
   override readonly kind = "JsonIntersection";
   readonly memberTypes: readonly JsonType[];
 
   constructor({
+    memberTypeExpression,
     memberTypes,
+    memberTypeSchema,
     ...superParameters
   }: {
+    memberTypeExpression: Maybe<
+      (memberType: JsonType, memberI: number) => Code
+    >;
     memberTypes: readonly JsonType[];
+    memberTypeSchema: Maybe<(memberType: JsonType, memberI: number) => Code>;
     recursive: boolean;
   } & ConstructorParameters<typeof AbstractJsonType>[0]) {
     super(superParameters);
+    this.memberTypeExpression = memberTypeExpression.orDefault(
+      (memberType) => memberType.expression,
+    );
     this.memberTypes = memberTypes;
+    this.memberTypeSchema = memberTypeSchema.orDefault(
+      (memberType) => memberType.schema,
+    );
   }
 
   @Memoize()
   protected get inlineExpression(): Code {
     return code`(${joinCode(
-      this.memberTypes.map((memberType) => memberType.expression),
+      this.memberTypes.map((memberType, memberI) =>
+        this.memberTypeExpression(memberType, memberI),
+      ),
       { on: " & " },
     )})`;
   }
@@ -252,7 +274,9 @@ class JsonIntersectionType extends AbstractJsonType {
   @Memoize()
   protected get schemaExpression(): Code {
     return code`${this.reusables.imports.z}.intersection(${joinCode(
-      this.memberTypes.map((memberType) => memberType.schema),
+      this.memberTypes.map((memberType, memberI) =>
+        this.memberTypeSchema(memberType, memberI),
+      ),
       { on: ", " },
     )})`;
   }
@@ -496,13 +520,17 @@ class JsonTypeFactory {
   createJsonIntersectionType(
     memberTypes: readonly JsonType[],
     options?: {
+      memberTypeExpression?: (memberType: JsonType, memberI: number) => Code;
+      memberTypeSchema?: (memberType: JsonType, memberI: number) => Code;
       name?: AbstractJsonType.Name;
       recursive?: boolean;
     },
   ): JsonIntersectionType {
     return new JsonIntersectionType({
       ...this.constructorParameters,
+      memberTypeExpression: Maybe.fromNullable(options?.memberTypeExpression),
       memberTypes,
+      memberTypeSchema: Maybe.fromNullable(options?.memberTypeSchema),
       name: Maybe.fromNullable(options?.name),
       recursive: !!options?.recursive,
     });
