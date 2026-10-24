@@ -41,7 +41,10 @@ import { ObjectType_schemaExpression } from "./_ObjectType/ObjectType_schemaExpr
 import { ObjectType_schemaTypeExpression } from "./_ObjectType/ObjectType_schemaTypeExpression.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import { ObjectType_toJsonFunctionExpression } from "./_ObjectType/ObjectType_toJsonFunction.js";
+import {
+  ObjectType_toJsonFunctionExpression,
+  ObjectType_toJsonFunctionType,
+} from "./_ObjectType/ObjectType_toJsonFunction.js";
 import {
   ObjectType_toLoggableFunctionExpression,
   ObjectType_toLoggableFunctionType,
@@ -89,6 +92,7 @@ export class ObjectType extends AbstractStructuredType {
   protected override schemaTypeExpression = ObjectType_schemaTypeExpression;
   protected override toJsonFunctionExpression =
     ObjectType_toJsonFunctionExpression;
+  protected override toJsonFunctionType = ObjectType_toJsonFunctionType;
   protected override toLoggableFunctionExpression =
     ObjectType_toLoggableFunctionExpression;
   protected override toLoggableFunctionType = ObjectType_toLoggableFunctionType;
