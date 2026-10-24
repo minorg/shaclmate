@@ -29,7 +29,7 @@ export class Harness<
         subject: NamedNode | Variable;
       }) => string;
       toJson: $ToJsonFunction<T, any>;
-      toRdfResource: $ToRdfResourceFunction<T>;
+      toRdfResource: $ToRdfResourceFunction<Resource.Identifier, T>;
       $toString: $ToStringFunction<T>;
     }>,
     shapeName?: string,
