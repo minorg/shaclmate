@@ -4,10 +4,10 @@ import { ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunctionDeclara
 import { ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_focusSparqlWherePatternsFunctionDeclaration.js";
 import { ObjectDiscriminatedUnionType_fromRdfResourceFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_fromRdfResourceFunctionDeclaration.js";
 import { ObjectDiscriminatedUnionType_graphqlTypeVariableStatement } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_graphqlTypeVariableStatement.js";
-import { ObjectDiscriminatedUnionType_identifierTypeDeclarations } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_identifierTypeDeclarations.js";
 import { ObjectDiscriminatedUnionType_schemaVariableStatement } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_schemaVariableStatement.js";
 import { ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_toRdfResourceFunctionDeclaration.js";
 import { ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration } from "./_ObjectDiscriminatedUnionType/ObjectDiscriminatedUnionType_typeGuardFunctionDeclaration.js";
+import { ObjectType_identifierTypeDeclarations } from "./_ObjectType/ObjectType_identifierTypeDeclarations.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
@@ -69,7 +69,7 @@ export class ObjectDiscriminatedUnionType extends AbstractDiscriminatedUnionType
   ): Record<string, Code> {
     return {
       ...super.staticModuleDeclarations(name),
-      ...ObjectDiscriminatedUnionType_identifierTypeDeclarations.call(this),
+      ...ObjectType_identifierTypeDeclarations.call(this),
       ...ObjectDiscriminatedUnionType_focusSparqlConstructTriplesFunctionDeclaration.call(
         this,
       ),
