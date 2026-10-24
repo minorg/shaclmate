@@ -67,6 +67,17 @@ ${member.type.fromJsonExpression({
     )} }) ${")".repeat(this.members.length)}`;
   }
 
+  @Memoize()
+  override jsonType(): AbstractIntersectionType.JsonType {
+    return this.jsonTypeFactory.createJsonIntersectionType(
+      this.members.map((member) => member.type.jsonType({ form: "compact" })),
+      {
+        name: this.name.map((name) => [name, "Json"]).extract(),
+        recursive: this.recursive,
+      },
+    );
+  }
+
   protected toJsonFunctionExpression(): Code {
     return code`\
 (value) => ({

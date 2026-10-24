@@ -416,3 +416,14 @@ export abstract class AbstractStructuredType extends AbstractType {
     return code`${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>`;
   }
 }
+
+export namespace AbstractStructuredType {
+  export type ConversionFunction = AbstractType.ConversionFunction;
+  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
+  export namespace DiscriminantProperty {
+    export type Value = AbstractType.DiscriminantProperty.Value;
+  }
+  export type GraphqlType = AbstractType.GraphqlType;
+  export type JsonType = AbstractType.JsonType;
+  export type JsType = AbstractType.JsType;
+}

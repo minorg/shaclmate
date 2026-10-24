@@ -15,6 +15,10 @@ export class IntersectionType extends AbstractIntersectionType<Type> {
     );
   }
 
+  override jsonType(): AbstractIntersectionType.JsonType {
+    throw new Error("IntersectionType: not implemented: jsonType");
+  }
+
   protected override fromJsonFunctionExpression(): Code {
     throw new Error(
       "IntersectionType: not implemented: fromJsonFunctionExpression",

@@ -2,7 +2,6 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
-import { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
@@ -14,17 +13,26 @@ export abstract class AbstractIntersectionType<
   AbstractIntersectionType.Member<MemberTypeT>,
   MemberTypeT
 > {
-  override readonly conversionFunction: AbstractType["conversionFunction"] =
-    Maybe.empty();
-  override readonly discriminantProperty: AbstractType["discriminantProperty"] =
-    Maybe.empty();
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly conversionFunction: AbstractCompoundType<
+    AbstractIntersectionType.Member<MemberTypeT>,
+    MemberTypeT
+  >["conversionFunction"] = Maybe.empty();
+  override readonly discriminantProperty: AbstractCompoundType<
+    AbstractIntersectionType.Member<MemberTypeT>,
+    MemberTypeT
+  >["discriminantProperty"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractCompoundType<
+    AbstractIntersectionType.Member<MemberTypeT>,
+    MemberTypeT
+  >["graphqlArgs"] = Maybe.empty();
   readonly identifierProperty: Maybe<ObjectType.IdentifierProperty>;
   abstract override readonly kind: "ObjectIntersection" | "Intersection";
   readonly members: readonly AbstractIntersectionType.Member<MemberTypeT>[];
   override readonly recursive: boolean;
-  override readonly validationFunction: AbstractType["validationFunction"] =
-    Maybe.empty();
+  override readonly validationFunction: AbstractCompoundType<
+    AbstractIntersectionType.Member<MemberTypeT>,
+    MemberTypeT
+  >["validationFunction"] = Maybe.empty();
 
   constructor({
     identifierProperty,
@@ -36,7 +44,12 @@ export abstract class AbstractIntersectionType<
     members: readonly AbstractIntersectionType.Member<MemberTypeT>[];
     recursive: boolean;
     synthetic: boolean;
-  } & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<
+    typeof AbstractCompoundType<
+      AbstractIntersectionType.Member<MemberTypeT>,
+      MemberTypeT
+    >
+  >[0]) {
     super(superParameters);
     this.identifierProperty = identifierProperty;
     invariant(members.length >= 2);
@@ -45,18 +58,21 @@ export abstract class AbstractIntersectionType<
   }
 
   @Memoize()
-  override get graphqlType(): AbstractType.GraphqlType {
+  override get graphqlType(): AbstractCompoundType.GraphqlType {
     throw new Error("not implemented");
   }
 
   @Memoize()
-  override get jsTypes(): AbstractType["jsTypes"] {
-    const jsTypes: AbstractType.JsType[] = [];
+  override get jsTypes(): AbstractCompoundType<
+    AbstractIntersectionType.Member<MemberTypeT>,
+    MemberTypeT
+  >["jsTypes"] {
+    const jsTypes: AbstractCompoundType.JsType[] = [];
     for (const member of this.members) {
       for (const memberJsType of member.type.jsTypes) {
         if (
           !jsTypes.some((jsType) =>
-            AbstractType.JsType.equals(jsType, memberJsType),
+            AbstractCompoundType.JsType.equals(jsType, memberJsType),
           )
         ) {
           jsTypes.push(memberJsType);
@@ -234,20 +250,10 @@ intersectionPatterns = intersectionPatterns.concat(${type.valueSparqlWherePatter
   return intersectionPatterns;
 }`;
   }
-
-  @Memoize()
-  override jsonType(): AbstractType.JsonType {
-    return this.jsonTypeFactory.createJsonIntersectionType(
-      this.members.map((member) => member.type.jsonType({ form: "compact" })),
-      {
-        name: this.name.map((name) => [name, "Json"]).extract(),
-        recursive: this.recursive,
-      },
-    );
-  }
 }
 
 export namespace AbstractIntersectionType {
+  export type JsonType = AbstractCompoundType.JsonType;
   export interface Member<TypeT extends Type> {
     readonly type: TypeT;
   }

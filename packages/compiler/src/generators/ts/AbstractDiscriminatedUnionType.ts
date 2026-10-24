@@ -19,7 +19,6 @@ import { AbstractDiscriminatedUnionType_toStringFunctionExpression } from "./_Ab
 import { AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlConstructTriplesFunctionExpression.js";
 import { AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression } from "./_AbstractDiscriminatedUnionType/AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression.js";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
-import { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
@@ -60,14 +59,19 @@ export abstract class AbstractDiscriminatedUnionType<
   protected override valueSparqlWherePatternsFunctionExpression =
     AbstractDiscriminatedUnionType_valueSparqlWherePatternsFunctionExpression;
 
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractCompoundType<
+    AbstractDiscriminatedUnionType.Member<MemberTypeT>,
+    MemberTypeT
+  >["graphqlArgs"] = Maybe.empty();
   readonly identifierProperty: Maybe<ObjectType.IdentifierProperty>;
   abstract override readonly kind:
     | "ObjectDiscriminatedUnion"
     | "DiscriminatedUnion";
   override readonly recursive: boolean;
-  override readonly validationFunction: AbstractType["validationFunction"] =
-    Maybe.empty();
+  override readonly validationFunction: AbstractCompoundType<
+    AbstractDiscriminatedUnionType.Member<MemberTypeT>,
+    MemberTypeT
+  >["validationFunction"] = Maybe.empty();
 
   constructor({
     identifierProperty,
@@ -84,7 +88,12 @@ export abstract class AbstractDiscriminatedUnionType<
     })[];
     recursive: boolean;
     synthetic: boolean;
-  } & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<
+    typeof AbstractCompoundType<
+      AbstractDiscriminatedUnionType.Member<MemberTypeT>,
+      MemberTypeT
+    >
+  >[0]) {
     super(superParameters);
     this.identifierProperty = identifierProperty;
     invariant(members.length >= 2);
@@ -96,7 +105,7 @@ export abstract class AbstractDiscriminatedUnionType<
 
     this.lazyMembers = () =>
       members.map((member, memberI) => {
-        let discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
+        let discriminantValues: readonly AbstractCompoundType.DiscriminantProperty.Value[];
         switch (this.discriminant.kind) {
           case "Extrinsic":
             discriminantValues = [this.discriminant.memberValues[memberI]];
@@ -187,7 +196,7 @@ export abstract class AbstractDiscriminatedUnionType<
   }
 
   @Memoize()
-  override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
+  override get conversionFunction(): Maybe<AbstractCompoundType.ConversionFunction> {
     if (this.conversionFunctionExpression.isNothing()) {
       return this.conversionFunctionExpression;
     }
@@ -203,7 +212,7 @@ export abstract class AbstractDiscriminatedUnionType<
   }
 
   @Memoize()
-  override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
+  override get discriminantProperty(): Maybe<AbstractCompoundType.DiscriminantProperty> {
     switch (this.discriminant.kind) {
       case "Extrinsic":
         return Maybe.of({
@@ -228,7 +237,7 @@ export abstract class AbstractDiscriminatedUnionType<
   }
 
   @Memoize()
-  override get graphqlType(): AbstractType.GraphqlType {
+  override get graphqlType(): AbstractCompoundType.GraphqlType {
     const name = this.name.extract();
     if (
       !name ||
@@ -236,17 +245,23 @@ export abstract class AbstractDiscriminatedUnionType<
     ) {
       throw new Error("not implemented");
     }
-    return new AbstractType.GraphqlType(code`${name}.GraphQL`, this.reusables);
+    return new AbstractCompoundType.GraphqlType(
+      code`${name}.GraphQL`,
+      this.reusables,
+    );
   }
 
   @Memoize()
-  override get jsTypes(): AbstractType["jsTypes"] {
-    const jsTypes: AbstractType.JsType[] = [];
+  override get jsTypes(): AbstractCompoundType<
+    AbstractDiscriminatedUnionType.Member<MemberTypeT>,
+    MemberTypeT
+  >["jsTypes"] {
+    const jsTypes: AbstractCompoundType.JsType[] = [];
     for (const member of this.members) {
       for (const memberJsType of member.type.jsTypes) {
         if (
           !jsTypes.some((jsType) =>
-            AbstractType.JsType.equals(jsType, memberJsType),
+            AbstractCompoundType.JsType.equals(jsType, memberJsType),
           )
         ) {
           jsTypes.push(memberJsType);
@@ -282,14 +297,14 @@ export abstract class AbstractDiscriminatedUnionType<
   }
 
   @Memoize()
-  private get conversionFunctionExpression(): Maybe<AbstractType.ConversionFunction> {
+  private get conversionFunctionExpression(): Maybe<AbstractCompoundType.ConversionFunction> {
     return AbstractDiscriminatedUnionType_conversionFunctionExpression.call(
       this,
     );
   }
 
   @Memoize()
-  override jsonType(): AbstractType.JsonType {
+  override jsonType(): AbstractCompoundType.JsonType {
     return this.jsonTypeFactory.createJsonDiscriminatedUnionType(
       this.members.map((member) => {
         const memberJsonType = member.type.jsonType({
@@ -340,8 +355,8 @@ export namespace AbstractDiscriminatedUnionType {
   export type Discriminant = AbstractDiscriminatedUnionType_Discriminant;
 
   export interface Member<TypeT extends Type> {
-    readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
-    readonly primaryDiscriminantValue: AbstractType.DiscriminantProperty.Value;
+    readonly discriminantValues: readonly AbstractCompoundType.DiscriminantProperty.Value[];
+    readonly primaryDiscriminantValue: AbstractCompoundType.DiscriminantProperty.Value;
     readonly type: TypeT;
     readonly typeCheck: (instance: Code) => Code;
     readonly unwrap: (instance: Code) => Code;

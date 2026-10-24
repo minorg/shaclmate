@@ -63,7 +63,6 @@ import { ObjectType_typeGuardFunctionExpression } from "./_ObjectType/ObjectType
 import { ObjectType_valueSparqlConstructTriplesFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunction.js";
 import { ObjectType_valueSparqlWherePatternsFunctionExpression } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunction.js";
 import { AbstractStructuredType } from "./AbstractStructuredType.js";
-import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Callable } from "./Callable.js";
 import { codeEquals } from "./codeEquals.js";
@@ -110,7 +109,8 @@ export class ObjectType extends AbstractStructuredType {
 
   override readonly discriminantProperty: Maybe<ObjectType.DiscriminantProperty>;
   readonly extern: boolean;
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractStructuredType["graphqlArgs"] =
+    Maybe.empty();
   readonly identifierProperty: Maybe<ObjectType.IdentifierProperty>;
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly jsTypes = [
@@ -119,7 +119,7 @@ export class ObjectType extends AbstractStructuredType {
   override readonly kind = "Object";
   override readonly recursive: boolean;
   readonly synthetic: boolean;
-  override readonly validationFunction: AbstractType["validationFunction"] =
+  override readonly validationFunction: AbstractStructuredType["validationFunction"] =
     Maybe.empty();
 
   constructor({
@@ -143,7 +143,7 @@ export class ObjectType extends AbstractStructuredType {
     rdfTypeProperty: Maybe<ObjectType.RdfTypeProperty>;
     recursive: boolean;
     synthetic: boolean;
-  } & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<typeof AbstractStructuredType>[0]) {
     super(superParameters);
     this.discriminantProperty = discriminantProperty;
     this.extern = extern;
@@ -157,7 +157,7 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
+  override get conversionFunction(): Maybe<AbstractStructuredType.ConversionFunction> {
     return ObjectType_conversionFunction.call(this);
   }
 
@@ -180,8 +180,8 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  get graphqlType(): AbstractType.GraphqlType {
-    return new AbstractType.GraphqlType(
+  get graphqlType(): AbstractStructuredType.GraphqlType {
+    return new AbstractStructuredType.GraphqlType(
       this.name
         .map((name) => code`${name}.GraphQL`)
         .orDefaultLazy(() => ObjectType_graphqlTypeExpression.call(this)),
@@ -244,7 +244,7 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   @Memoize()
-  get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
+  get toRdfResourceValueTypes(): AbstractStructuredType["toRdfResourceValueTypes"] {
     return new Set([...this.identifierType.nodeKinds].map(NodeKind.toTermType));
   }
 
@@ -332,15 +332,15 @@ export class ObjectType extends AbstractStructuredType {
   }
 
   override jsonType(
-    parameters: Parameters<AbstractType["jsonType"]>[0],
-  ): AbstractType.JsonType {
+    parameters: Parameters<AbstractStructuredType["jsonType"]>[0],
+  ): AbstractStructuredType.JsonType {
     return ObjectType_jsonType.call(this, parameters);
   }
 
   override toJsonExpression({
     discriminantProperty,
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
+  }: Parameters<AbstractStructuredType["toJsonExpression"]>[0]): Code {
     if (discriminantProperty) {
       const discriminantPropertyName = Object.keys(discriminantProperty)[0];
       invariant(discriminantPropertyName);

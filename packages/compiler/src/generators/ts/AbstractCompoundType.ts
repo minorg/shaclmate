@@ -31,3 +31,15 @@ export abstract class AbstractCompoundType<
     return set;
   }
 }
+
+export namespace AbstractCompoundType {
+  export type ConversionFunction = AbstractStructuredType.ConversionFunction;
+  export type DiscriminantProperty =
+    AbstractStructuredType.DiscriminantProperty;
+  export namespace DiscriminantProperty {
+    export type Value = AbstractStructuredType.DiscriminantProperty.Value;
+  }
+  export type GraphqlType = AbstractStructuredType.GraphqlType;
+  export type JsonType = AbstractStructuredType.JsonType;
+  export type JsType = AbstractStructuredType.JsType;
+}
